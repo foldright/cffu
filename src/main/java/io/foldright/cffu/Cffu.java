@@ -60,4 +60,15 @@ public class Cffu {
                         Triple.of((T1) ret[0], (T2) ret[1], (T3) ret[2])
                 );
     }
+
+    @SuppressWarnings("unchecked")
+    public static <T> CompletableFuture<T> anyOf(CompletableFuture<T>... cfs) {
+        return (CompletableFuture<T>) CompletableFuture.anyOf(cfs);
+    }
+
+    public static <T> CompletableFuture<T> anyOf(List<? extends CompletableFuture<T>> cfs) {
+        @SuppressWarnings("unchecked")
+        CompletableFuture<T>[] arr = cfs.toArray(new CompletableFuture[0]);
+        return anyOf(arr);
+    }
 }
