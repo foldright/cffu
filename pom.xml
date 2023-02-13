@@ -1,25 +1,749 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.example</groupId>
-  <artifactId>cffu</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+	<groupId>io.foldright</groupId>
+	<artifactId>cffu</artifactId>
+	<version>0.9.0-SNAPSHOT</version>
+	<name>CompletableFuture-Fu(cffu)</name>
+	<description>${project.name}</description>
+	<url>https://github.com/foldright/cffu</url>
+	<inceptionYear>2023</inceptionYear>
 
-  <name>cffu</name>
-  <url>http://maven.apache.org</url>
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:git:git@github.com:foldright/cffu.git</connection>
+		<developerConnection>scm:git:git@github.com:foldright/cffu.git</developerConnection>
+		<url>https://github.com/foldright/cffu</url>
+	</scm>
+	<issueManagement>
+		<url>https://github.com/foldright/cffu/issues</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.deploy.skip>false</maven.deploy.skip>
 
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+		<spotbugs.annotations.version>4.7.3</spotbugs.annotations.version>
+		<jsr305.version>3.0.2</jsr305.version>
+		<jetbrains.annotations.version>24.0.0</jetbrains.annotations.version>
+
+		<kotlin.version>1.8.10</kotlin.version>
+		<kotlin.compiler.jvmTarget>${maven.compiler.source}</kotlin.compiler.jvmTarget>
+
+		<slf4j.version>2.0.6</slf4j.version>
+
+		<!-- testing dependencies versions -->
+		<junit5.version>5.9.2</junit5.version>
+		<kotest.version>5.5.5</kotest.version>
+	</properties>
+
+	<dependencies>
+		<!-- QA libs -->
+		<dependency>
+			<groupId>com.github.spotbugs</groupId>
+			<artifactId>spotbugs-annotations</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>jsr305</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- logging libs -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.github.microutils</groupId>
+			<artifactId>kotlin-logging-jvm</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- testing libs -->
+		<dependency>
+			<groupId>io.kotest</groupId>
+			<artifactId>kotest-runner-junit4-jvm</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.kotest</groupId>
+			<artifactId>kotest-runner-junit5-jvm</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.kotest</groupId>
+			<artifactId>kotest-assertions-core-jvm</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.kotest</groupId>
+			<artifactId>kotest-property-jvm</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.javatuples</groupId>
+			<artifactId>javatuples</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- bom -->
+			<dependency>
+				<groupId>org.jetbrains.kotlin</groupId>
+				<artifactId>kotlin-bom</artifactId>
+				<version>${kotlin.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit</groupId>
+				<artifactId>junit-bom</artifactId>
+				<version>${junit5.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!--
+				QA libs
+				make qa libs optional, 0-dependency and smaller deployment
+			-->
+			<dependency>
+				<!--
+					JSR305 is already Dormant status, so SpotBugs does not release jsr305 jar file.
+					Please continue using findbugs’ one.
+					depend on spotbugs-annotations instead.
+					https://spotbugs.readthedocs.io/en/stable/migration.html
+				-->
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-annotations</artifactId>
+				<version>${spotbugs.annotations.version}</version>
+				<optional>true</optional>
+			</dependency>
+			<dependency>
+				<groupId>com.google.code.findbugs</groupId>
+				<artifactId>jsr305</artifactId>
+				<version>${jsr305.version}</version>
+				<optional>true</optional>
+			</dependency>
+			<dependency>
+				<!-- https://www.jetbrains.com/help/idea/annotating-source-code.html -->
+				<groupId>org.jetbrains</groupId>
+				<artifactId>annotations</artifactId>
+				<version>${jetbrains.annotations.version}</version>
+				<optional>true</optional>
+			</dependency>
+
+			<dependency>
+				<groupId>org.javatuples</groupId>
+				<artifactId>javatuples</artifactId>
+				<version>1.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.12.0</version>
+			</dependency>
+
+			<!-- logging libs -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-simple</artifactId>
+				<version>${slf4j.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.github.microutils</groupId>
+				<artifactId>kotlin-logging-jvm</artifactId>
+				<version>3.0.0</version>
+			</dependency>
+
+			<!--
+				testing libs
+			-->
+			<!-- https://github.com/kotlintest/kotlintest -->
+			<dependency>
+				<groupId>io.kotest</groupId>
+				<artifactId>kotest-runner-junit4-jvm</artifactId>
+				<version>${kotest.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.kotest</groupId>
+				<artifactId>kotest-runner-junit5-jvm</artifactId>
+				<version>${kotest.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.kotest</groupId>
+				<artifactId>kotest-assertions-core-jvm</artifactId>
+				<version>${kotest.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.kotest</groupId>
+				<artifactId>kotest-property-jvm</artifactId>
+				<version>${kotest.version}</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<!--
+					Compiling Kotlin and Java sources - Using Maven - Kotlin Programming Language
+					https://kotlinlang.org/docs/reference/using-maven.html#compiling-kotlin-and-java-sources
+
+					Making sure that the kotlin plugin is above the maven-compiler-plugin in your pom.xml file!
+				-->
+				<groupId>org.jetbrains.kotlin</groupId>
+				<artifactId>kotlin-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>compile</id>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+						<configuration>
+							<sourceDirs>
+								<sourceDir>${project.basedir}/src/main/java</sourceDir>
+							</sourceDirs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>test-compile</id>
+						<goals>
+							<goal>test-compile</goal>
+						</goals>
+						<configuration>
+							<sourceDirs>
+								<sourceDir>${project.basedir}/src/test/java</sourceDir>
+							</sourceDirs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<executions>
+					<!-- Replacing default-compile as it is treated specially by maven -->
+					<execution>
+						<id>default-compile</id>
+						<phase>none</phase>
+					</execution>
+					<!-- Replacing default-testCompile as it is treated specially by maven -->
+					<execution>
+						<id>default-testCompile</id>
+						<phase>none</phase>
+					</execution>
+					<execution>
+						<id>java-compile</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>java-test-compile</id>
+						<phase>test-compile</phase>
+						<goals>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!--
+				official docs: https://maven.apache.org/enforcer/enforcer-rules/requireMavenVersion.html
+
+				add maven-enforce-plugin to make sure the right jdk is used
+				https://stackoverflow.com/a/18420462/922688
+			-->
+			<plugin>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>enforce-maven</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireMavenVersion>
+									<version>3.3.9</version>
+								</requireMavenVersion>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>3.2.0</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>3.3.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.jetbrains.kotlin</groupId>
+					<artifactId>kotlin-maven-plugin</artifactId>
+					<version>${kotlin.version}</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.10.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>3.0.0-M8</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.3.0</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-shade-plugin</artifactId>
+					<version>3.4.1</version>
+					<configuration>
+						<shadeSourcesContent>true</shadeSourcesContent>
+						<dependencyReducedPomLocation>
+							${project.build.directory}/dependency-reduced-pom.xml
+						</dependencyReducedPomLocation>
+					</configuration>
+				</plugin>
+				<plugin>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>3.2.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>3.4.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>3.0.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.12.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>3.1.0</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>3.1.0</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>3.2.1</version>
+				</plugin>
+				<plugin>
+					<groupId>io.github.git-commit-id</groupId>
+					<artifactId>git-commit-id-maven-plugin</artifactId>
+					<version>5.0.0</version>
+				</plugin>
+				<plugin>
+					<groupId>com.github.spotbugs</groupId>
+					<artifactId>spotbugs-maven-plugin</artifactId>
+					<version>4.7.2.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>0.8.8</version>
+				</plugin>
+				<plugin>
+					<groupId>org.sonatype.plugins</groupId>
+					<artifactId>nexus-staging-maven-plugin</artifactId>
+					<version>1.6.13</version>
+				</plugin>
+				<plugin>
+					<!--
+						config example: https://github.com/mojohaus/versions-maven-plugin/issues/157#issuecomment-306041074
+					-->
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>versions-maven-plugin</artifactId>
+					<version>2.14.2</version>
+					<configuration>
+						<rulesUri>file://${project.basedir}/src/versions-rules.xml</rulesUri>
+						<generateBackupPoms>false</generateBackupPoms>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<profiles>
+		<profile>
+			<id>gen-src</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-source-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>gen-api-doc</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<properties>
+				<javadoc.default.exclude.packages>
+					*.internal:*.internal.*:*.internal.*.*:*.internal.*.*.*:*.internal.*.*.*.*
+				</javadoc.default.exclude.packages>
+				<!--
+					Apache Maven Javadoc Plugin – Configuring links and offlineLinks Parameters
+					https://maven.apache.org/plugins/maven-javadoc-plugin/examples/links-configuration.html
+
+					more infos about link setting:
+					Links to JSR 305 in Javadoc are broken https://github.com/google/guava/issues/2479
+					Fix links to javadoc.io for Maven Javadoc Plugin #2628 https://github.com/google/guava/pull/2628
+					Can't link to JDK10 in Javadoc comments https://stackoverflow.com/questions/49457896
+
+					About package-list vs.element-list
+					- Can't link to JDK10 in Javadoc comments
+					  https://stackoverflow.com/a/49498219/922688
+					- Missing javadoc/package-list for release 5.1
+					  https://github.com/gradle/gradle/issues/8183
+					  https://github.com/gradle/gradle/commit/5e88351dd456a5252d21f3a7ad25bff1b62a2fd2
+
+
+					Using the linkoffline Option
+					https://docs.oracle.com/en/java/javase/11/javadoc/javadoc-command.html#GUID-51213F2C-6E01-4A03-A82A-17428A258A0F
+				-->
+				<javadoc.package.list.dir>${project.basedir}/src/package-list</javadoc.package.list.dir>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<!--
+							https://maven.apache.org/plugins/maven-javadoc-plugin/javadoc-mojo.html
+
+							https://docs.oracle.com/en/java/javase/11/javadoc/javadoc-command.html
+						-->
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<configuration>
+							<source>8</source>
+							<show>protected</show>
+							<charset>UTF-8</charset>
+							<encoding>UTF-8</encoding>
+							<docencoding>UTF-8</docencoding>
+							<quiet>true</quiet>
+							<!--
+								How to disable Javadoc warnings in Maven Javadoc Plugin? - Stack Overflow
+								https://stackoverflow.com/questions/39616344
+							-->
+							<doclint>all,-missing</doclint>
+							<!-- https://maven.apache.org/plugins/maven-javadoc-plugin/examples/exclude-package-names.html -->
+							<excludePackageNames>${javadoc.default.exclude.packages}</excludePackageNames>
+							<isOffline>true</isOffline>
+							<!-- https://maven.apache.org/plugins/maven-javadoc-plugin/javadoc-mojo.html#detectOfflineLinks -->
+							<detectOfflineLinks>false</detectOfflineLinks>
+							<offlineLinks>
+								<offlineLink>
+									<url>https://docs.oracle.com/javase/10/docs/api/</url>
+									<location>${javadoc.package.list.dir}/java/</location>
+								</offlineLink>
+								<offlineLink>
+									<url>
+										https://www.javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/${spotbugs.annotations.version}/
+									</url>
+									<location>${javadoc.package.list.dir}/spotbugs-annotations/</location>
+								</offlineLink>
+								<offlineLink>
+									<url>https://www.javadoc.io/doc/com.google.code.findbugs/jsr305/${jsr305.version}/</url>
+									<location>${javadoc.package.list.dir}/jsr305/</location>
+								</offlineLink>
+								<offlineLink>
+									<url>https://www.javadoc.io/doc/org.jetbrains/annotations/${jetbrains.annotations.version}/</url>
+									<location>${javadoc.package.list.dir}/jetbrains-annotations/</location>
+								</offlineLink>
+							</offlineLinks>
+							<additionalOptions>
+								<!--
+									Maven javadoc Search redirects to "/undefined/.." url - Stack Overflow
+									https://stackoverflow.com/questions/52326318
+								-->
+								<additionalOption>--no-module-directories</additionalOption>
+								<additionalOption>-html5</additionalOption>
+							</additionalOptions>
+							<additionalJOptions>
+								<additionalJOption>-J-Duser.language=en</additionalJOption>
+								<additionalJOption>-J-Duser.country=US</additionalJOption>
+							</additionalJOptions>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>gen-sign</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>lint</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<!--
+							https://spotbugs.github.io/
+							https://spotbugs.readthedocs.io/en/latest/introduction.html
+							https://spotbugs.readthedocs.io/en/latest/maven.html
+
+							https://spotbugs.github.io/spotbugs-maven-plugin/check-mojo.html
+								Binds by default to the lifecycle phase: verify.
+
+							Spotbugs support @SuppressWarnings
+							https://github.com/spotbugs/spotbugs/issues/737#issuecomment-416118033
+						-->
+						<groupId>com.github.spotbugs</groupId>
+						<artifactId>spotbugs-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>verify</phase>
+								<goals>
+									<goal>check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>gen-git-properties</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<!--
+						Maven plugin which includes build-time git repository information into an POJO / *.properties).
+						Make your apps tell you which version exactly they were built from! Priceless in large distributed deployments.
+							https://github.com/git-commit-id/git-commit-id-maven-plugin
+					-->
+					<plugin>
+						<groupId>io.github.git-commit-id</groupId>
+						<artifactId>git-commit-id-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>get-the-git-infos</id>
+								<goals>
+									<goal>revision</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>validate-the-git-infos</id>
+								<goals>
+									<goal>validateRevision</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<validationProperties>
+								<!-- verify that the current repository is not dirty -->
+								<validationProperty>
+									<name>validating git dirty</name>
+									<value>${git.dirty}</value>
+									<shouldMatchTo>false</shouldMatchTo>
+								</validationProperty>
+							</validationProperties>
+							<generateGitPropertiesFile>true</generateGitPropertiesFile>
+							<generateGitPropertiesFilename>
+								${project.build.outputDirectory}/META-INF/scm/${project.groupId}/${project.artifactId}/git.properties
+							</generateGitPropertiesFilename>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>gen-code-cov</id>
+			<build>
+				<plugins>
+					<plugin>
+						<!-- for codecov.io -->
+						<!-- config example: https://github.com/codecov/example-java -->
+						<!-- plugin docs: https://eclemma.org/jacoco/trunk/doc/ -->
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>report</id>
+								<phase>test</phase>
+								<goals>
+									<goal>report</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>force-jdk11-when-release</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<!--
+						add maven-enforce-plugin to make sure the right jdk is used
+						https://stackoverflow.com/a/18420462/922688
+					-->
+					<plugin>
+						<artifactId>maven-enforcer-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>enforce-jdk-versions</id>
+								<goals>
+									<goal>enforce</goal>
+								</goals>
+								<configuration>
+									<rules>
+										<requireJavaVersion>
+											<version>11</version>
+										</requireJavaVersion>
+									</rules>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>deploy-settings</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<extensions>true</extensions>
+						<!--
+							In multi-module builds using the deploy-at-end feature,
+							the deployment of all components is performed in the last module based on the reactor order.
+							If this property is set to true in the last module,
+							all staging deployment for all modules will be skipped.
+							so, we'll config nexus deploy after every moudle's deploy phase
+
+							see: https://github.com/sonatype/nexus-maven-plugins/tree/master/staging/maven-plugin#configuring-the-plugin
+						-->
+						<configuration>
+							<serverId>ossrh</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+							<!--
+								If you are deploying to Maven Central, it is the Nexus Staging Plugin that is
+								doing the deployment instead of the Deploy plugin,
+								so the configuration of the deploy plugin has no effect.
+								To make the Nexus deploy plugin skip, set skipNexusStagingDeployMojo
+								in its configuration to true.
+
+								see: https://stackoverflow.com/questions/59552549/preventing-maven-modules-from-being-deployed
+							-->
+							<skipNexusStagingDeployMojo>${maven.deploy.skip}</skipNexusStagingDeployMojo>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
