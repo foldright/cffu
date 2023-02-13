@@ -9,7 +9,12 @@ import java.util.concurrent.CompletableFuture;
 
 public class Cffu {
     @SuppressWarnings("unchecked")
-    public static <T> CompletableFuture<List<T>> allOf(List<? extends CompletableFuture<T>> cfs) {
+    public static <T> CompletableFuture<List<T>> resultAllOf(CompletableFuture<T>... cfs) {
+        return resultAllOf(Arrays.asList(cfs));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> CompletableFuture<List<T>> resultAllOf(List<? extends CompletableFuture<T>> cfs) {
         final int size = cfs.size();
         final Object[] result = new Object[size];
 
@@ -28,31 +33,31 @@ public class Cffu {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T, U> CompletableFuture<Pair<T, U>> allOf(
-            CompletableFuture<T> cf1, CompletableFuture<U> cf2) {
+    public static <T1, T2> CompletableFuture<Pair<T1, T2>> resultOf(
+            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
         final Object[] result = {null, null};
 
         return CompletableFuture.allOf(
-                        cf1.thenAccept(t -> result[0] = t),
-                        cf2.thenAccept(u -> result[1] = u)
+                        cf1.thenAccept(t1 -> result[0] = t1),
+                        cf2.thenAccept(t2 -> result[1] = t2)
                 )
                 .thenApply(unused ->
-                        Pair.of((T) result[0], (U) result[1])
+                        Pair.of((T1) result[0], (T2) result[1])
                 );
     }
 
     @SuppressWarnings("unchecked")
-    public static <T, U, V> CompletableFuture<Triple<T, U, V>> allOf(
-            CompletableFuture<T> cf1, CompletableFuture<U> cf2, CompletableFuture<V> cf3) {
+    public static <T1, T2, T3> CompletableFuture<Triple<T1, T2, T3>> resultOf(
+            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
         final Object[] ret = {null, null, null};
 
         return CompletableFuture.allOf(
-                        cf1.thenAccept(t -> ret[0] = t),
-                        cf2.thenAccept(u -> ret[1] = u),
-                        cf3.thenAccept(v -> ret[2] = v)
+                        cf1.thenAccept(t1 -> ret[0] = t1),
+                        cf2.thenAccept(t2 -> ret[1] = t2),
+                        cf3.thenAccept(t3 -> ret[2] = t3)
                 )
                 .thenApply(unused ->
-                        Triple.of((T) ret[0], (U) ret[1], (V) ret[2])
+                        Triple.of((T1) ret[0], (T2) ret[1], (T3) ret[2])
                 );
     }
 }
