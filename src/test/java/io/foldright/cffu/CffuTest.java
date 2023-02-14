@@ -47,11 +47,7 @@ public class CffuTest {
     public void test_anyOf() throws Exception {
         Supplier<CompletableFuture<Integer>> gen = () ->
                 CompletableFuture.supplyAsync(() -> {
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                    UtilsKt.sleep(10);
                     return 100;
                 });
         CompletableFuture<Integer> f = CompletableFuture.completedFuture(42);
