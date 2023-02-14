@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class Cffu {
-    @SuppressWarnings("unchecked")
+    @SafeVarargs
     public static <T> CompletableFuture<List<T>> resultAllOf(CompletableFuture<T>... cfs) {
         return resultAllOf(Arrays.asList(cfs));
     }
@@ -62,6 +62,7 @@ public class Cffu {
     }
 
     @SuppressWarnings("unchecked")
+    @SafeVarargs
     public static <T> CompletableFuture<T> anyOf(CompletableFuture<T>... cfs) {
         return (CompletableFuture<T>) CompletableFuture.anyOf(cfs);
     }

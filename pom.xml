@@ -49,6 +49,15 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.javatuples</groupId>
+			<artifactId>javatuples</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+
 		<!-- QA libs -->
 		<dependency>
 			<groupId>com.github.spotbugs</groupId>
@@ -98,15 +107,6 @@
 			<groupId>io.kotest</groupId>
 			<artifactId>kotest-property-jvm</artifactId>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.javatuples</groupId>
-			<artifactId>javatuples</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
 		</dependency>
 	</dependencies>
 
