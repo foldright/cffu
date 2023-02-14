@@ -1,7 +1,7 @@
 package io.foldright.cffu
 
 import io.kotest.assertions.fail
-import io.kotest.core.spec.style.AnnotationSpec
+import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -15,15 +15,49 @@ import java.util.concurrent.atomic.AtomicLong
 import kotlin.random.Random
 import kotlin.random.nextULong
 
-class CompletableFutureUseTest : AnnotationSpec() {
+class CompletableFutureUseTest : FunSpec({
+
+    lateinit var threadPoolExecutor: ExecutorService
+    lateinit var forkJoinPoolExecutor: ExecutorService
+
+    val threadNamePrefixOfThreadPoolExecutor = "CompletableFutureUseTest_ThreadPool_${Random.nextULong()}-"
+    val threadNamePrefixOfForkJoinPoolExecutor = "CompletableFutureUseTest_ForkJoinPool_${Random.nextULong()}-"
+
+    val threadCountOfPool = 10
+
+    val assertInExecutor: (ExecutorService) -> Unit = {
+        when (it) {
+            threadPoolExecutor -> Thread.currentThread().name shouldStartWith threadNamePrefixOfThreadPoolExecutor
+            forkJoinPoolExecutor -> Thread.currentThread().name shouldStartWith threadNamePrefixOfForkJoinPoolExecutor
+            else -> fail("should be happened")
+        }
+    }
+
+    val assertNotInExecutor: (ExecutorService) -> Unit = {
+        when (it) {
+            threadPoolExecutor -> Thread.currentThread().name shouldNotStartWith threadNamePrefixOfThreadPoolExecutor
+            forkJoinPoolExecutor -> Thread.currentThread().name shouldNotStartWith threadNamePrefixOfForkJoinPoolExecutor
+            else -> fail("should be happened")
+        }
+    }
+
+    val addCurrentThreadName: (List<String>) -> List<String> = { it + Thread.currentThread().name }
+
+    //val randSleep: () -> Unit = { sleep(Random.nextLong(1, 5)) }
+    val sleep: () -> Unit = { sleep(3) }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // test logic
+    ////////////////////////////////////////////////////////////////////////////////
+
     /**
      * - `Async` methods(e.g. `runAsync`/`thenRunAsync`, etc.) can set `executor`;
      * if executor argument is absent use default executor of [CompletableFuture.ASYNC_POOL] (normally is a [ForkJoinPool]).
      * - non-`Async` methods(`thenRun/thenApply`) use the thread of notification;
      *   if there is single previous [CompletableFuture], use the same thread of previous CF.
+     *   CAUTION: restrict the concurrency!!
      */
-    @Test
-    fun executor_thread_inheritance_behavior() {
+    test("executor_thread_inheritance_behavior").config(invocations = 100) {
         val testThread = Thread.currentThread()
         lateinit var thenNonAsyncThread: Thread
 
@@ -68,8 +102,8 @@ class CompletableFutureUseTest : AnnotationSpec() {
     /**
      * this normal process CF will be skipped, if previous CF is exceptional.
      */
-    @Test
-    fun exceptionally_behavior() {
+    @Suppress("BlockingMethodInNonBlockingContext")
+    test("exceptionally_behavior") {
         val mark = AtomicBoolean()
 
         CompletableFuture<String>()
@@ -86,14 +120,7 @@ class CompletableFutureUseTest : AnnotationSpec() {
             }
     }
 
-    @Test
-    fun thread_switch_behavior_thenApplyAsync() {
-        checkThreadSwitchBehaviorThenApplyAsync(threadPoolExecutor)
-
-        checkThreadSwitchBehaviorThenApplyAsync(forkJoinPoolExecutor)
-    }
-
-    private fun checkThreadSwitchBehaviorThenApplyAsync(executor: ExecutorService) {
+    fun checkThreadSwitchBehaviorThenApplyAsync(executor: ExecutorService) {
         val f0 = CompletableFuture.supplyAsync(
             { assertInExecutor(executor) } andThen { -> emptyList<String>() },
             executor,
@@ -115,47 +142,21 @@ class CompletableFutureUseTest : AnnotationSpec() {
         threadNameList.toSet().also { println("\n$it") }.shouldHaveSize(threadCountOfPool)
     }
 
+    /**
+     *
+     */
+    test("thread_switch_behavior_thenApplyAsync") {
+        checkThreadSwitchBehaviorThenApplyAsync(threadPoolExecutor)
 
-    ////////////////////////////////////////////////////////////////////////////////
-    // utils
-    ////////////////////////////////////////////////////////////////////////////////
-
-    private val addCurrentThreadName: (List<String>) -> List<String> = { it + Thread.currentThread().name }
-
-    //private val randSleep: () -> Unit = { sleep(Random.nextLong(1, 5)) }
-    private val sleep: () -> Unit = { sleep(3) }
-
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // executor related fields
-    ////////////////////////////////////////////////////////////////////////////////
-
-    private lateinit var threadPoolExecutor: ExecutorService
-    private lateinit var forkJoinPoolExecutor: ExecutorService
-
-    private val threadCountOfPool = 10
-
-    private val threadNamePrefixOfThreadPoolExecutor = "CompletableFutureUseTest_ThreadPool_${Random.nextULong()}-"
-    private val threadNamePrefixOfForkJoinPoolExecutor = "CompletableFutureUseTest_ForkJoinPool_${Random.nextULong()}-"
-
-    private val assertInExecutor: (ExecutorService) -> Unit = {
-        when (it) {
-            threadPoolExecutor -> Thread.currentThread().name shouldStartWith threadNamePrefixOfThreadPoolExecutor
-            forkJoinPoolExecutor -> Thread.currentThread().name shouldStartWith threadNamePrefixOfForkJoinPoolExecutor
-            else -> fail("should be happened")
-        }
+        checkThreadSwitchBehaviorThenApplyAsync(forkJoinPoolExecutor)
     }
 
-    private val assertNotInExecutor: (ExecutorService) -> Unit = {
-        when (it) {
-            threadPoolExecutor -> Thread.currentThread().name shouldNotStartWith threadNamePrefixOfThreadPoolExecutor
-            forkJoinPoolExecutor -> Thread.currentThread().name shouldNotStartWith threadNamePrefixOfForkJoinPoolExecutor
-            else -> fail("should be happened")
-        }
-    }
 
-    @BeforeAll
-    fun beforeAll() {
+    ////////////////////////////////////////////////////////////////////////////////
+    // before/after Spec
+    ////////////////////////////////////////////////////////////////////////////////
+
+    beforeSpec {
         threadPoolExecutor = run {
             val counter = AtomicLong()
             ThreadPoolExecutor(
@@ -191,12 +192,13 @@ class CompletableFutureUseTest : AnnotationSpec() {
         fs2.map { it.get() }
     }
 
-    @AfterAll
-    fun afterAll() {
+    afterSpec {
         threadPoolExecutor.shutdown()
         forkJoinPoolExecutor.shutdown()
 
+        @Suppress("BlockingMethodInNonBlockingContext")
         threadPoolExecutor.awaitTermination(1, TimeUnit.SECONDS) shouldBe true
+        @Suppress("BlockingMethodInNonBlockingContext")
         forkJoinPoolExecutor.awaitTermination(1, TimeUnit.SECONDS) shouldBe true
     }
-}
+})
