@@ -1,11 +1,14 @@
 package io.foldright.cffu
 
 import io.kotest.core.spec.style.AnnotationSpec
+import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldNotStartWith
 import io.kotest.matchers.string.shouldStartWith
 import java.util.concurrent.*
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.random.Random
 import kotlin.random.nextULong
@@ -43,8 +46,29 @@ class CompletableFutureUseTest : AnnotationSpec() {
             .join()
     }
 
+    /**
+     * this normal process CF will be skipped, if previous CF is exceptional.
+     */
+    @Test
+    fun exceptionally_behavior() {
+        val mark = AtomicBoolean()
+
+        CompletableFuture<String>()
+            .apply { completeExceptionally(RuntimeException("Bang")) }
+            .thenApply { // skip normal process since previous CF is exceptional
+                mark.set(true)
+                "error"
+            }
+            .exceptionally { it.message!! + "!!" }
+            .get()
+            .also {
+                mark.get().shouldBeFalse()
+                it shouldEndWith  "Bang!!"
+            }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
-    // executor field
+    // executor fields
     ////////////////////////////////////////////////////////////////////////////////
 
     private lateinit var executor: ExecutorService
