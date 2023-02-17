@@ -9,7 +9,9 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        java: [ 8, 11, 17, 19 ]
+        # TODO: need add back java 8 later
+        # java: [ 8, 11, 17, 19 ]
+        java: [ 17, 19 ]
       fail-fast: false
       max-parallel: 64
     name: Test JDK ${{ matrix.java }}

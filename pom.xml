@@ -29,7 +29,8 @@
 	</issueManagement>
 
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
+		<!-- TODO: set back to 1.8 after CI setting -->
+		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.deploy.skip>false</maven.deploy.skip>
@@ -645,9 +646,11 @@
 			<build>
 				<plugins>
 					<plugin>
-						<!-- for codecov.io -->
-						<!-- config example: https://github.com/codecov/example-java -->
-						<!-- plugin docs: https://eclemma.org/jacoco/trunk/doc/ -->
+						<!--
+							for codecov.io
+							config example: https://github.com/codecov/example-java
+							plugin docs: https://eclemma.org/jacoco/trunk/doc/
+						-->
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
 						<executions>

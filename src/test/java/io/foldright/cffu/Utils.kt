@@ -1,5 +1,9 @@
 package io.foldright.cffu
 
+import io.kotest.core.test.TestCase
+import org.apache.commons.lang3.JavaVersion
+import org.apache.commons.lang3.SystemUtils
+
 infix fun <T, R> (() -> Unit).andThen(f: (T) -> R): (T) -> R = {
     this()
     f(it)
@@ -22,3 +26,6 @@ infix fun <T> List<T>.merge(other: List<T>): List<T> = mutableListOf<T>().apply 
 inline fun sleep(millis: Long) {
     Thread.sleep(millis)
 }
+
+val java9Plus: (TestCase) -> Boolean = { SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_9) }
+val java12Plus: (TestCase) -> Boolean = { SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_12) }
