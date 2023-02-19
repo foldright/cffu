@@ -1,0 +1,5 @@
+logo is created by https://www.logoly.pro
+
+font: Alegreya
+color: 215,105,0
+logo.fond-size: 75
