@@ -4,6 +4,7 @@ import io.kotest.assertions.fail
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldEndWith
@@ -20,6 +21,9 @@ import kotlin.random.Random
 import kotlin.random.nextULong
 
 class CompletableFutureUseTest : FunSpec({
+    ////////////////////////////////////////////////////////////////////////////////
+    // test helper fields and methods
+    ////////////////////////////////////////////////////////////////////////////////
 
     lateinit var threadPoolExecutor: ExecutorService
     lateinit var forkJoinPoolExecutor: ExecutorService
@@ -47,6 +51,8 @@ class CompletableFutureUseTest : FunSpec({
 
     fun addCurrentThreadName(names: List<String>) = names + currentThread().name
 
+    val n = 42
+
     ////////////////////////////////////////////////////////////////////////////////
     // test logic
     ////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +65,7 @@ class CompletableFutureUseTest : FunSpec({
 
         sequenceChecker.assertSeq("\nstart", 0)
 
-        val f1 = CompletableFuture.completedFuture(42) // a new CompletableFuture that is already COMPLETED
+        val f1 = CompletableFuture.completedFuture(n) // a new CompletableFuture that is already COMPLETED
             .thenApply {
                 sequenceChecker.assertSeq("thenApply", 1)
                 currentThread() shouldBe mainThread
@@ -78,7 +84,7 @@ class CompletableFutureUseTest : FunSpec({
         sequenceChecker.assertSeq("beforeGet", 4)
 
         @Suppress("BlockingMethodInNonBlockingContext")
-        f1.get()
+        f1.get().shouldBeNull()
         sequenceChecker.assertSeq("afterGet", 5)
     }
 
@@ -92,13 +98,14 @@ class CompletableFutureUseTest : FunSpec({
 
         val f1 = CompletableFuture.supplyAsync({
             sequenceChecker.assertSeq("supplyAsync completed CF", 1)
-            42
+
+            n
         }, threadPoolExecutor)
         @Suppress("BlockingMethodInNonBlockingContext")
-        f1.get() // wait f1 COMPLETED
+        f1.get() shouldBe n // wait f1 COMPLETED
         sequenceChecker.assertSeq("got", 2)
 
-        f1.thenApply {
+        val f2 = f1.thenApply {
             sleep(1)
             sequenceChecker.assertSeq("thenApply", 3)
             currentThread() shouldBe mainThread
@@ -114,7 +121,7 @@ class CompletableFutureUseTest : FunSpec({
         sequenceChecker.assertSeq("beforeGet", 6)
 
         @Suppress("BlockingMethodInNonBlockingContext")
-        f1.get()
+        f2.get().shouldBeNull()
         sequenceChecker.assertSeq("afterGet", 7)
     }
 
@@ -201,7 +208,6 @@ class CompletableFutureUseTest : FunSpec({
             mark.get().shouldBeFalse()
             it shouldEndWith "HERE"
         }
-
     }
 
     test("exceptionally behavior: exceptionallyAsync").config(enabledIf = java12Plus, invocations = 100) {
@@ -265,7 +271,6 @@ class CompletableFutureUseTest : FunSpec({
 
     test("trigger computation by CF.complete").config(invocations = 100) {
         val mainThread = currentThread()
-        val result = 42
 
         // create a CF to be completed later
         val f0 = CompletableFuture<String>()
@@ -273,7 +278,7 @@ class CompletableFutureUseTest : FunSpec({
         val f1 = f0.thenApply {
             currentThread() shouldBe mainThread
 
-            result
+            n
         }
         // `complete` will trigger above `thenApply` computation
         // since *non-async* run computation
@@ -281,12 +286,11 @@ class CompletableFutureUseTest : FunSpec({
         f0.complete("done")
 
         @Suppress("BlockingMethodInNonBlockingContext")
-        f1.get() shouldBe result
+        f1.get() shouldBe n
     }
 
     test("trigger computation by CF.completeAsync").config(enabledIf = java9Plus, invocations = 100) {
         val mainThread = currentThread()
-        val result = 42
 
         // create a CF to be completed later
         val f0 = CompletableFuture<String>()
@@ -294,7 +298,7 @@ class CompletableFutureUseTest : FunSpec({
         val f1 = f0.thenApply {
             currentThread() shouldNotBe mainThread
 
-            result
+            n
         }
         // `complete` will trigger above `thenApply` computation
         // since *non-async* run computation in-place(aka. mainThread)
@@ -305,7 +309,7 @@ class CompletableFutureUseTest : FunSpec({
         }, threadPoolExecutor)
 
         @Suppress("BlockingMethodInNonBlockingContext")
-        f1.get() shouldBe result
+        f1.get() shouldBe n
     }
 
     xtest("performance CF then*").config(invocations = 10) {
@@ -368,8 +372,8 @@ class CompletableFutureUseTest : FunSpec({
         val fs2 = (0 until threadCountOfPool * 2).map {
             forkJoinPoolExecutor.submit { sleep(2) }
         }
-        fs1.map { it.get() }
-        fs2.map { it.get() }
+        fs1.forEach { it.get() }
+        fs2.forEach { it.get() }
     }
 
     afterSpec {

@@ -1,3 +1,5 @@
+@file:JvmName("Utils")
+
 package io.foldright.cffu
 
 import io.kotest.core.test.TestCase
