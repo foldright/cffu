@@ -8,7 +8,8 @@ import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static io.foldright.cffu.Utils.sleep;
+import static io.foldright.cffu.TestUtils.createExceptionallyCompletedFutureWithSleep;
+import static io.foldright.cffu.TestUtils.createNormallyCompletedFutureWithSleep;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -19,27 +20,17 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class CffuTest {
     ////////////////////////////////////////////////////////////////////////////////
-    // test helper fields and methods
+    // test constants
     ////////////////////////////////////////////////////////////////////////////////
 
     private static final int n = 42;
+    private static final int other_n = 424242;
+
     private static final String s = "S42";
+
     private static final double d = 42.1;
+
     private static final RuntimeException rte = new RuntimeException("Bang");
-
-    private static CompletableFuture<Integer> createNormallyCompletedFutureWithSleep() {
-        return CompletableFuture.supplyAsync(() -> {
-            sleep(10);
-            return 100;
-        });
-    }
-
-    private static CompletableFuture<Integer> createExceptionallyCompletedFutureWithSleep() {
-        return CompletableFuture.supplyAsync(() -> {
-            sleep(10);
-            throw rte;
-        });
-    }
 
     ////////////////////////////////////////////////////////////////////////////////
     // test logic
@@ -113,14 +104,14 @@ public class CffuTest {
     @Test
     public void test_anyOf() throws Exception {
         assertEquals(n, Cffu.anyOf(
-                createNormallyCompletedFutureWithSleep(),
-                createNormallyCompletedFutureWithSleep(),
+                createNormallyCompletedFutureWithSleep(other_n),
+                createNormallyCompletedFutureWithSleep(other_n),
                 CompletableFuture.completedFuture(n)
         ).get());
         assertEquals(n, Cffu.anyOf(Arrays.asList(
-                createNormallyCompletedFutureWithSleep(),
+                createNormallyCompletedFutureWithSleep(other_n),
                 CompletableFuture.completedFuture(n),
-                createNormallyCompletedFutureWithSleep()
+                createNormallyCompletedFutureWithSleep(other_n)
         )).get());
     }
 
@@ -131,8 +122,8 @@ public class CffuTest {
 
         try {
             Cffu.anyOf(
-                    createNormallyCompletedFutureWithSleep(),
-                    createNormallyCompletedFutureWithSleep(),
+                    createNormallyCompletedFutureWithSleep(other_n),
+                    createNormallyCompletedFutureWithSleep(other_n),
                     CompletableFuture.failedFuture(rte)
             ).get();
 
@@ -143,9 +134,9 @@ public class CffuTest {
 
         try {
             Cffu.anyOf(Arrays.asList(
-                    createNormallyCompletedFutureWithSleep(),
+                    createNormallyCompletedFutureWithSleep(other_n),
                     CompletableFuture.failedFuture(rte),
-                    createNormallyCompletedFutureWithSleep()
+                    createNormallyCompletedFutureWithSleep(other_n)
             )).get();
 
             fail();
@@ -157,15 +148,15 @@ public class CffuTest {
         // even later cfs exceptionally completed!
 
         assertEquals(n, Cffu.anyOf(
-                createExceptionallyCompletedFutureWithSleep(),
-                createExceptionallyCompletedFutureWithSleep(),
+                createExceptionallyCompletedFutureWithSleep(rte),
+                createExceptionallyCompletedFutureWithSleep(rte),
                 CompletableFuture.completedFuture(n)
         ).get());
 
         assertEquals(n, Cffu.anyOf(Arrays.asList(
-                createExceptionallyCompletedFutureWithSleep(),
+                createExceptionallyCompletedFutureWithSleep(rte),
                 CompletableFuture.completedFuture(n),
-                createExceptionallyCompletedFutureWithSleep()
+                createExceptionallyCompletedFutureWithSleep(rte)
         )).get());
     }
 }

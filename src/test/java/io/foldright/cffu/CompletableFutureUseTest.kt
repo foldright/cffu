@@ -1,6 +1,5 @@
 package io.foldright.cffu
 
-import io.kotest.assertions.fail
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.collections.shouldHaveSize
@@ -8,49 +7,17 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldEndWith
-import io.kotest.matchers.string.shouldNotStartWith
-import io.kotest.matchers.string.shouldStartWith
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import io.kotest.matchers.types.shouldBeTypeOf
 import java.lang.System.currentTimeMillis
 import java.lang.Thread.currentThread
 import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicLong
-import kotlin.random.Random
-import kotlin.random.nextULong
 
 class CompletableFutureUseTest : FunSpec({
     ////////////////////////////////////////////////////////////////////////////////
-    // test helper fields and methods
+    // test constants
     ////////////////////////////////////////////////////////////////////////////////
-
-    lateinit var threadPoolExecutor: ExecutorService
-    lateinit var forkJoinPoolExecutor: ExecutorService
-
-    val threadNamePrefixOfThreadPoolExecutor = "CompletableFutureUseTest_ThreadPool_${Random.nextULong()}-"
-    val threadNamePrefixOfForkJoinPoolExecutor = "CompletableFutureUseTest_ForkJoinPool_${Random.nextULong()}-"
-
-    val threadCountOfPool = 10
-
-    fun assertRunInExecutor(executor: Executor) {
-        when (executor) {
-            threadPoolExecutor -> currentThread().name shouldStartWith threadNamePrefixOfThreadPoolExecutor
-            forkJoinPoolExecutor -> currentThread().name shouldStartWith threadNamePrefixOfForkJoinPoolExecutor
-            else -> fail("should be happened")
-        }
-    }
-
-    fun assertRunNotInExecutor(executor: Executor) {
-        when (executor) {
-            threadPoolExecutor -> currentThread().name shouldNotStartWith threadNamePrefixOfThreadPoolExecutor
-            forkJoinPoolExecutor -> currentThread().name shouldNotStartWith threadNamePrefixOfForkJoinPoolExecutor
-            else -> fail("should be happened")
-        }
-    }
-
-    fun addCurrentThreadName(names: List<String>) = names + currentThread().name
-
     val n = 42
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -260,7 +227,7 @@ class CompletableFutureUseTest : FunSpec({
         val threadNameList = forks.reduce { acc, f -> acc.thenCombine(f, ::merge) }.get()
 
         threadNameList.shouldHaveSize(forkCount * times)
-        threadNameList.toSet().also { println("\n$it") }.shouldHaveSize(threadCountOfPool)
+        threadNameList.toSet().also { println("\n$it") }.shouldHaveSize(THREAD_COUNT_OF_POOL)
     }
 
     test("thread switch behavior of CF.thenApplyAsync") {
@@ -336,53 +303,4 @@ class CompletableFutureUseTest : FunSpec({
         ).run(::println)
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
-    // before/after Spec
-    ////////////////////////////////////////////////////////////////////////////////
-
-    beforeSpec {
-        threadPoolExecutor = run {
-            val counter = AtomicLong()
-            ThreadPoolExecutor(
-                threadCountOfPool, threadCountOfPool, 1, TimeUnit.DAYS,
-                ArrayBlockingQueue(threadCountOfPool * 2)
-            ) { r ->
-                Thread(r).apply {
-                    name = "$threadNamePrefixOfThreadPoolExecutor${counter.getAndIncrement()}"
-                    isDaemon = true
-                }
-            }
-        }
-        forkJoinPoolExecutor = run {
-            val counter = AtomicLong()
-            ForkJoinPool(
-                threadCountOfPool, {
-                    ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(it).apply {
-                        name = "$threadNamePrefixOfForkJoinPoolExecutor${counter.getAndIncrement()}"
-                    }
-                },
-                null, false
-            )
-        }
-
-        // warmup
-        val fs1: List<Future<*>> = (0 until threadCountOfPool * 2).map {
-            threadPoolExecutor.submit { sleep(2) }
-        }
-        val fs2 = (0 until threadCountOfPool * 2).map {
-            forkJoinPoolExecutor.submit { sleep(2) }
-        }
-        fs1.forEach { it.get() }
-        fs2.forEach { it.get() }
-    }
-
-    afterSpec {
-        threadPoolExecutor.shutdown()
-        forkJoinPoolExecutor.shutdown()
-
-        @Suppress("BlockingMethodInNonBlockingContext")
-        threadPoolExecutor.awaitTermination(1, TimeUnit.SECONDS) shouldBe true
-        @Suppress("BlockingMethodInNonBlockingContext")
-        forkJoinPoolExecutor.awaitTermination(1, TimeUnit.SECONDS) shouldBe true
-    }
 })
