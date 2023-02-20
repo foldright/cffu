@@ -9,8 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static io.foldright.cffu.Utils.sleep;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * NOTE:
@@ -78,6 +77,8 @@ public class CffuTest {
                     CompletableFuture.failedFuture(rte),
                     CompletableFuture.completedFuture(s)
             ).get();
+
+            fail();
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
@@ -90,6 +91,8 @@ public class CffuTest {
                     CompletableFuture.completedFuture(n),
                     CompletableFuture.failedFuture(rte)
             ).get();
+
+            fail();
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
@@ -100,6 +103,8 @@ public class CffuTest {
                     CompletableFuture.failedFuture(rte),
                     CompletableFuture.completedFuture(s)
             ).get();
+
+            fail();
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
@@ -130,6 +135,8 @@ public class CffuTest {
                     createNormallyCompletedFutureWithSleep(),
                     CompletableFuture.failedFuture(rte)
             ).get();
+
+            fail();
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
@@ -140,6 +147,8 @@ public class CffuTest {
                     CompletableFuture.failedFuture(rte),
                     createNormallyCompletedFutureWithSleep()
             )).get();
+
+            fail();
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
