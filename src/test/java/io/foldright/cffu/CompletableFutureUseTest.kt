@@ -209,10 +209,10 @@ class CompletableFutureUseTest : FunSpec({
     }
 
     fun checkThreadSwitchBehaviorThenApplyAsync(executor: ExecutorService) {
-        val f0 = CompletableFuture.supplyAsync(
-            { assertRunInExecutor(executor) } andThen { -> emptyList<String>() },
-            executor,
-        )
+        val f0 = CompletableFuture.supplyAsync({
+            assertRunInExecutor(executor)
+            emptyList<String>()
+        }, executor)
 
         val forkCount = 10
         val forks = Array(forkCount) { f0 }
@@ -220,7 +220,10 @@ class CompletableFutureUseTest : FunSpec({
         val times = 100
         repeat(times) {
             for ((index, f) in forks.withIndex()) {
-                forks[index] = f.thenApplyAsync({ sleep(2) } andThen ::addCurrentThreadName, executor)
+                forks[index] = f.thenApplyAsync({
+                    sleep(2)
+                    addCurrentThreadName(it)
+                }, executor)
             }
         }
 
@@ -302,5 +305,4 @@ class CompletableFutureUseTest : FunSpec({
             times, buildTime, runTime
         ).run(::println)
     }
-
 })
