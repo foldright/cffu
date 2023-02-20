@@ -1,6 +1,5 @@
 @file:JvmName("TestThreadPoolManager")
 
-
 package io.foldright.cffu
 
 import io.kotest.assertions.fail
@@ -10,47 +9,49 @@ import io.kotest.core.listeners.BeforeProjectListener
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldNotStartWith
 import io.kotest.matchers.string.shouldStartWith
+import java.lang.Thread.currentThread
 import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.random.Random
 import kotlin.random.nextULong
 
-lateinit var threadPoolExecutor: ExecutorService
-lateinit var forkJoinPoolExecutor: ExecutorService
+
+lateinit var testThreadPoolExecutor: ExecutorService
+lateinit var testForkJoinPoolExecutor: ExecutorService
 
 const val THREAD_COUNT_OF_POOL = 10
 
 private val threadNamePrefixOfThreadPoolExecutor = "CompletableFutureUseTest_ThreadPool_${Random.nextULong()}-"
 private val threadNamePrefixOfForkJoinPoolExecutor = "CompletableFutureUseTest_ForkJoinPool_${Random.nextULong()}-"
 
+fun assertRunInTestThreadPoolExecutor() {
+    currentThread().name shouldStartWith threadNamePrefixOfThreadPoolExecutor
+}
+
+fun assertRunInTestForkJoinPoolExecutor() {
+    currentThread().name shouldStartWith threadNamePrefixOfForkJoinPoolExecutor
+}
+
+fun assertRunNotInTestThreadPoolExecutor() {
+    currentThread().name shouldNotStartWith threadNamePrefixOfThreadPoolExecutor
+}
+
+fun assertRunNotInTestForkJoinPoolExecutor() {
+    currentThread().name shouldNotStartWith threadNamePrefixOfForkJoinPoolExecutor
+}
+
 fun assertRunInExecutor(executor: Executor) {
     when (executor) {
-        threadPoolExecutor -> Thread.currentThread().name shouldStartWith threadNamePrefixOfThreadPoolExecutor
-        forkJoinPoolExecutor -> Thread.currentThread().name shouldStartWith threadNamePrefixOfForkJoinPoolExecutor
+        testThreadPoolExecutor -> assertRunInTestThreadPoolExecutor()
+        testForkJoinPoolExecutor -> assertRunInTestForkJoinPoolExecutor()
         else -> fail("should be happened")
     }
 }
 
-fun assertRunInTestThreadPoolExecutor() {
-    Thread.currentThread().name shouldStartWith threadNamePrefixOfThreadPoolExecutor
-}
-
-fun assertRunInTestForkJoinPoolExecutor() {
-    Thread.currentThread().name shouldStartWith threadNamePrefixOfForkJoinPoolExecutor
-}
-
-fun assertRunNotInTestThreadPoolExecutor() {
-    Thread.currentThread().name shouldNotStartWith threadNamePrefixOfThreadPoolExecutor
-}
-
-fun assertRunNotInTestForkJoinPoolExecutor() {
-    Thread.currentThread().name shouldNotStartWith threadNamePrefixOfForkJoinPoolExecutor
-}
-
 fun assertRunNotInExecutor(executor: Executor) {
     when (executor) {
-        threadPoolExecutor -> Thread.currentThread().name shouldNotStartWith threadNamePrefixOfThreadPoolExecutor
-        forkJoinPoolExecutor -> Thread.currentThread().name shouldNotStartWith threadNamePrefixOfForkJoinPoolExecutor
+        testThreadPoolExecutor -> assertRunNotInTestThreadPoolExecutor()
+        testForkJoinPoolExecutor -> assertRunNotInTestForkJoinPoolExecutor()
         else -> fail("should be happened")
     }
 }
@@ -65,7 +66,7 @@ fun assertRunNotInExecutor(executor: Executor) {
 @AutoScan
 object InitTestThreadPoolsProjectListener : BeforeProjectListener, AfterProjectListener {
     override suspend fun beforeProject() {
-        threadPoolExecutor = run {
+        testThreadPoolExecutor = run {
             val counter = AtomicLong()
             ThreadPoolExecutor(
                 THREAD_COUNT_OF_POOL, THREAD_COUNT_OF_POOL, 1, TimeUnit.DAYS,
@@ -77,7 +78,7 @@ object InitTestThreadPoolsProjectListener : BeforeProjectListener, AfterProjectL
                 }
             }
         }
-        forkJoinPoolExecutor = run {
+        testForkJoinPoolExecutor = run {
             val counter = AtomicLong()
             ForkJoinPool(
                 THREAD_COUNT_OF_POOL, {
@@ -91,23 +92,23 @@ object InitTestThreadPoolsProjectListener : BeforeProjectListener, AfterProjectL
 
         // warmup
         val fs1: List<Future<*>> = (0 until THREAD_COUNT_OF_POOL * 2).map {
-            threadPoolExecutor.submit { sleep(2) }
+            testThreadPoolExecutor.submit { sleep() }
         }
         val fs2 = (0 until THREAD_COUNT_OF_POOL * 2).map {
-            forkJoinPoolExecutor.submit { sleep(2) }
+            testForkJoinPoolExecutor.submit { sleep() }
         }
         fs1.forEach { it.get() }
         fs2.forEach { it.get() }
     }
 
     override suspend fun afterProject() {
-        threadPoolExecutor.shutdown()
-        forkJoinPoolExecutor.shutdown()
+        testThreadPoolExecutor.shutdown()
+        testForkJoinPoolExecutor.shutdown()
 
         @Suppress("BlockingMethodInNonBlockingContext")
-        threadPoolExecutor.awaitTermination(1, TimeUnit.SECONDS) shouldBe true
+        testThreadPoolExecutor.awaitTermination(1, TimeUnit.SECONDS) shouldBe true
         @Suppress("BlockingMethodInNonBlockingContext")
-        forkJoinPoolExecutor.awaitTermination(1, TimeUnit.SECONDS) shouldBe true
+        testForkJoinPoolExecutor.awaitTermination(1, TimeUnit.SECONDS) shouldBe true
     }
 }
 

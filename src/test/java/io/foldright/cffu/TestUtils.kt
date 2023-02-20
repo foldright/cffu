@@ -4,12 +4,12 @@ package io.foldright.cffu
 
 import io.kotest.core.test.TestCase
 import org.apache.commons.lang3.JavaVersion
-import org.apache.commons.lang3.SystemUtils
+import org.apache.commons.lang3.SystemUtils.isJavaVersionAtLeast
 import java.util.concurrent.CompletableFuture
 
 
-@Suppress("NOTHING_TO_INLINE")
-inline fun sleep(millis: Long) {
+@JvmOverloads
+fun sleep(millis: Long = 2) {
     Thread.sleep(millis)
 }
 
@@ -22,10 +22,10 @@ fun <T> createNormallyCompletedFutureWithSleep(value: T): CompletableFuture<T> =
     value
 }
 
-fun <T, E : Throwable> createExceptionallyCompletedFutureWithSleep(exception: E): CompletableFuture<T> =
+fun <T, E : Throwable> createExceptionallyCompletedFutureWithSleep(ex: E): CompletableFuture<T> =
     CompletableFuture.supplyAsync {
         sleep(10)
-        throw exception
+        throw ex
     }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,6 +46,6 @@ fun addCurrentThreadName(names: List<String>) = names + Thread.currentThread().n
 // Kotest conditions
 ////////////////////////////////////////////////////////////////////////////////
 
-val java9Plus: (TestCase) -> Boolean = { SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_9) }
+val java9Plus: (TestCase) -> Boolean = { isJavaVersionAtLeast(JavaVersion.JAVA_9) }
 
-val java12Plus: (TestCase) -> Boolean = { SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_12) }
+val java12Plus: (TestCase) -> Boolean = { isJavaVersionAtLeast(JavaVersion.JAVA_12) }

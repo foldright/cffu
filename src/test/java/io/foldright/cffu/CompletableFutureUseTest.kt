@@ -15,14 +15,7 @@ import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 class CompletableFutureUseTest : FunSpec({
-    ////////////////////////////////////////////////////////////////////////////////
-    // test constants
-    ////////////////////////////////////////////////////////////////////////////////
     val n = 42
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // test logic
-    ////////////////////////////////////////////////////////////////////////////////
 
     test("execution thread/executor behavior: then*(non-Async) operations/methods of completed CF(Immediate value) run in place").config(
         invocations = 100
@@ -39,7 +32,7 @@ class CompletableFutureUseTest : FunSpec({
                 it * 2
             }
             .thenAccept {
-                sleep(1)
+                sleep()
                 sequenceChecker.assertSeq("thenAccept", 2)
                 currentThread() shouldBe mainThread
             }
@@ -67,13 +60,13 @@ class CompletableFutureUseTest : FunSpec({
             sequenceChecker.assertSeq("supplyAsync completed CF", 1)
 
             n
-        }, threadPoolExecutor)
+        }, testThreadPoolExecutor)
         @Suppress("BlockingMethodInNonBlockingContext")
         f1.get() shouldBe n // wait f1 COMPLETED
         sequenceChecker.assertSeq("got", 2)
 
         val f2 = f1.thenApply {
-            sleep(1)
+            sleep()
             sequenceChecker.assertSeq("thenApply", 3)
             currentThread() shouldBe mainThread
             it * 2
@@ -109,13 +102,13 @@ class CompletableFutureUseTest : FunSpec({
                 buildFinish.await() // make sure build CF chain is finished before run
 
                 currentThread() shouldNotBe mainThread
-                assertRunNotInExecutor(threadPoolExecutor)
+                assertRunNotInTestThreadPoolExecutor()
             }
             .thenRunAsync({
                 thenAsyncThread = currentThread()
 
-                assertRunInExecutor(threadPoolExecutor)
-            }, threadPoolExecutor) // !! switch executor !!
+                assertRunInTestThreadPoolExecutor()
+            }, testThreadPoolExecutor) // !! switch executor !!
             .thenApply {
                 // when NOT async,
                 // use same thread of single previous CF
@@ -138,7 +131,7 @@ class CompletableFutureUseTest : FunSpec({
                 //
                 // - executor is NOT inherited after switch!!
                 // - use the DEFAULT EXECUTOR of CompletableFuture, if no executor specified.
-                assertRunNotInExecutor(threadPoolExecutor)
+                assertRunNotInExecutor(testThreadPoolExecutor)
             }
 
         buildFinish.countDown()
@@ -194,12 +187,12 @@ class CompletableFutureUseTest : FunSpec({
             }
             .exceptionallyAsync({
                 currentThread() shouldNotBe mainThread
-                assertRunInExecutor(threadPoolExecutor)
+                assertRunInTestThreadPoolExecutor()
 
                 it.shouldBeTypeOf<CompletionException>()
                 it.cause shouldBeSameInstanceAs rte
                 "HERE"
-            }, threadPoolExecutor)
+            }, testThreadPoolExecutor)
 
         @Suppress("BlockingMethodInNonBlockingContext")
         f1.get().also {
@@ -221,7 +214,7 @@ class CompletableFutureUseTest : FunSpec({
         repeat(times) {
             for ((index, f) in forks.withIndex()) {
                 forks[index] = f.thenApplyAsync({
-                    sleep(2)
+                    sleep()
                     addCurrentThreadName(it)
                 }, executor)
             }
@@ -234,9 +227,9 @@ class CompletableFutureUseTest : FunSpec({
     }
 
     test("thread switch behavior of CF.thenApplyAsync") {
-        checkThreadSwitchBehaviorThenApplyAsync(threadPoolExecutor)
+        checkThreadSwitchBehaviorThenApplyAsync(testThreadPoolExecutor)
 
-        checkThreadSwitchBehaviorThenApplyAsync(forkJoinPoolExecutor)
+        checkThreadSwitchBehaviorThenApplyAsync(testForkJoinPoolExecutor)
     }
 
     test("trigger computation by CF.complete").config(invocations = 100) {
@@ -274,9 +267,9 @@ class CompletableFutureUseTest : FunSpec({
         // since *non-async* run computation in-place(aka. mainThread)
         @Suppress("Since15") // completeAsync api is since java 9
         f0.completeAsync({
-            assertRunInExecutor(threadPoolExecutor)
+            assertRunInTestThreadPoolExecutor()
             "done"
-        }, threadPoolExecutor)
+        }, testThreadPoolExecutor)
 
         @Suppress("BlockingMethodInNonBlockingContext")
         f1.get() shouldBe n
@@ -287,7 +280,7 @@ class CompletableFutureUseTest : FunSpec({
 
         var f = CompletableFuture.supplyAsync(
             { sleep(100); currentTimeMillis() },
-            threadPoolExecutor
+            testThreadPoolExecutor
         )
 
         val tick = currentTimeMillis()

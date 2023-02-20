@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger
 class SequenceChecker(private val logSequenceInfo: Boolean = false) {
     private val sequencer = AtomicInteger()
 
+    @JvmOverloads
     fun assertSeq(message: String, seqShouldBe: Int = -1, forceLog: Boolean = false) {
         val s = sequencer.getAndIncrement()
         if (forceLog || logSequenceInfo) p(s, message)
@@ -13,6 +14,7 @@ class SequenceChecker(private val logSequenceInfo: Boolean = false) {
         if (seqShouldBe > 0) s shouldBe seqShouldBe
     }
 
+    @JvmOverloads
     fun logSeq(message: String, forceLog: Boolean = false, increaseSeq: Boolean = false) {
         val s = if (increaseSeq) sequencer.getAndIncrement() else sequencer.get()
 
