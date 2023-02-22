@@ -1,5 +1,6 @@
-package io.foldright.cffu
+package io.foldright.showcases
 
+import io.foldright.cffu.*
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.collections.shouldHaveSize
@@ -14,75 +15,88 @@ import java.lang.Thread.currentThread
 import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicBoolean
 
-class CompletableFutureUseTest : FunSpec({
+class CompletableFutureUsageShowcaseTest : FunSpec({
     val n = 42
 
-    test("execution thread/executor behavior: then*(non-Async) operations/methods of completed CF(Immediate value) run in place").config(
+    test("execution thread/executor behavior: then*(non-Async) operations/methods of completed CF with immediate value, run in place SEQUENTIALLY").config(
         invocations = 100
     ) {
         val mainThread = currentThread()
         val sequenceChecker = SequenceChecker()
+        var seq = 0
 
-        sequenceChecker.assertSeq("\nstart", 0)
+        sequenceChecker.assertSeq("\nstart", seq++)
 
-        val f1 = CompletableFuture.completedFuture(n) // a new CompletableFuture that is already COMPLETED
-            .thenApply {
-                sequenceChecker.assertSeq("thenApply", 1)
-                currentThread() shouldBe mainThread
-                it * 2
-            }
-            .thenAccept {
-                sleep()
-                sequenceChecker.assertSeq("thenAccept", 2)
-                currentThread() shouldBe mainThread
-            }
-            .thenRun {
-                sequenceChecker.assertSeq("thenRun", 3)
-                currentThread() shouldBe mainThread
-            }
+        // a new CompletableFuture with value that is already COMPLETED
+        val f0 = CompletableFuture.completedFuture(n)
 
-        sequenceChecker.assertSeq("beforeGet", 4)
+        val f1 = f0.thenApply {
+            sequenceChecker.assertSeq("thenApply", seq++)
+            currentThread() shouldBe mainThread
+            it * 2
+        }
+        sequenceChecker.assertSeq("after thenApply", seq++)
+
+        val f2 = f1.thenAccept {
+            sleep()
+            sequenceChecker.assertSeq("thenAccept", seq++)
+            currentThread() shouldBe mainThread
+        }
+        sequenceChecker.assertSeq("after thenAccept", seq++)
+
+        val f3 = f2.thenRun {
+            sequenceChecker.assertSeq("thenRun", seq++)
+            currentThread() shouldBe mainThread
+        }
+        sequenceChecker.assertSeq("after thenRun", seq++)
 
         @Suppress("BlockingMethodInNonBlockingContext")
-        f1.get().shouldBeNull()
-        sequenceChecker.assertSeq("afterGet", 5)
+        f3.get().shouldBeNull()
+        sequenceChecker.assertSeq("after get", seq++)
     }
 
-    test("execution thread/executor behavior: then*(non-Async) operations/methods of completed CF run in place").config(
+    test("execution thread/executor behavior: then*(non-Async) operations/methods of completed CF by get, run in place SEQUENTIALLY").config(
         invocations = 100
     ) {
         val mainThread = currentThread()
         val sequenceChecker = SequenceChecker()
+        var seq = 0
 
-        sequenceChecker.assertSeq("\nstart", 0)
+        sequenceChecker.assertSeq("\nstart", seq++)
 
-        val f1 = CompletableFuture.supplyAsync({
-            sequenceChecker.assertSeq("supplyAsync completed CF", 1)
+        val f0 = CompletableFuture.supplyAsync({
+            sequenceChecker.assertSeq("supplyAsync completed CF", seq++)
 
             n
         }, testThreadPoolExecutor)
+        // ensure f0 is already COMPLETED
         @Suppress("BlockingMethodInNonBlockingContext")
-        f1.get() shouldBe n // wait f1 COMPLETED
-        sequenceChecker.assertSeq("got", 2)
+        f0.get() shouldBe n // wait f1 COMPLETED
+        sequenceChecker.assertSeq("after f0 get", seq++)
 
-        val f2 = f1.thenApply {
+        val f1 = f0.thenApply {
             sleep()
-            sequenceChecker.assertSeq("thenApply", 3)
+            sequenceChecker.assertSeq("thenApply", seq++)
             currentThread() shouldBe mainThread
             it * 2
-        }.thenAccept {
-            sequenceChecker.assertSeq("thenAccept", 4)
-            currentThread() shouldBe mainThread
-        }.thenRun {
-            sequenceChecker.assertSeq("thenRun", 5)
+        }
+        sequenceChecker.assertSeq("after thenApply", seq++)
+
+        val f2 = f1.thenAccept {
+            sequenceChecker.assertSeq("thenAccept", seq++)
             currentThread() shouldBe mainThread
         }
+        sequenceChecker.assertSeq("after thenAccept", seq++)
 
-        sequenceChecker.assertSeq("beforeGet", 6)
+        val f3 = f2.thenRun {
+            sequenceChecker.assertSeq("thenRun", seq++)
+            currentThread() shouldBe mainThread
+        }
+        sequenceChecker.assertSeq("after thenRun", seq++)
 
         @Suppress("BlockingMethodInNonBlockingContext")
-        f2.get().shouldBeNull()
-        sequenceChecker.assertSeq("afterGet", 7)
+        f3.get().shouldBeNull()
+        sequenceChecker.assertSeq("after f3 get", seq++)
     }
 
     /**
@@ -92,8 +106,11 @@ class CompletableFutureUseTest : FunSpec({
      *   if there is single previous [CompletableFuture], use the same thread of previous CF.
      *   CAUTION: restrict the concurrency!!
      */
-    test("execution thread/executor behavior: run in uncompleted previous CF executor").config(invocations = 100) {
+    test("execution thread/executor behavior: then*(non-Async) operations/methods of completed CF, run in previous CF executor").config(
+        invocations = 100
+    ) {
         val mainThread = currentThread()
+
         lateinit var thenAsyncThread: Thread
         val buildFinish = CountDownLatch(1)
 
