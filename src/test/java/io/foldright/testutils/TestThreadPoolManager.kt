@@ -1,6 +1,6 @@
 @file:JvmName("TestThreadPoolManager")
 
-package io.foldright.cffu
+package io.foldright.testutils
 
 import io.kotest.assertions.fail
 import io.kotest.core.annotation.AutoScan

@@ -1,4 +1,4 @@
-package io.foldright.cffu
+package io.foldright.testutils
 
 import io.kotest.matchers.shouldBe
 import java.util.concurrent.atomic.AtomicInteger

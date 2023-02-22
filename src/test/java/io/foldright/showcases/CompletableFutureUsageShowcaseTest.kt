@@ -1,6 +1,7 @@
 package io.foldright.showcases
 
 import io.foldright.cffu.*
+import io.foldright.testutils.*
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.collections.shouldHaveSize

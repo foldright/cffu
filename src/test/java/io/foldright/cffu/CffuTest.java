@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static io.foldright.cffu.TestUtils.createExceptionallyCompletedFutureWithSleep;
-import static io.foldright.cffu.TestUtils.createNormallyCompletedFutureWithSleep;
+import static io.foldright.testutils.TestUtils.createExceptionallyCompletedFutureWithSleep;
+import static io.foldright.testutils.TestUtils.createNormallyCompletedFutureWithSleep;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,6 +1,6 @@
 @file:JvmName("TestUtils")
 
-package io.foldright.cffu
+package io.foldright.testutils
 
 import io.kotest.core.test.TestCase
 import org.apache.commons.lang3.JavaVersion
