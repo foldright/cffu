@@ -17,7 +17,7 @@
 <a href="https://github.com/foldright/cffu"><img src="https://img.shields.io/github/repo-size/foldright/cffu" alt="GitHub repo size"></a>
 </p>
 
-<a href="#dummy"><img src="docs/shifu1.png" width="15%" align="right" alt="shifu" /></a>
+<a href="#dummy"><img src="docs/shifu1.png" width="20%" align="right" alt="shifu" /></a>
 
 如何管理并发执行是个复杂易错的问题，业界有大量的工具、框架可以采用。
 
@@ -55,7 +55,7 @@
 
 - [🎯 〇、目标](#-%E3%80%87%E7%9B%AE%E6%A0%87)
 - [📚 一、`CompletableFuture` Guide](#-%E4%B8%80completablefuture-guide)
-  - [并发执行的描述及其用语](#%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E7%9A%84%E6%8F%8F%E8%BF%B0%E5%8F%8A%E5%85%B6%E7%94%A8%E8%AF%AD)
+  - [`CF`并发执行的描述及其用语](#cf%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E7%9A%84%E6%8F%8F%E8%BF%B0%E5%8F%8A%E5%85%B6%E7%94%A8%E8%AF%AD)
   - [`CF`并发执行的关注方面](#cf%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E7%9A%84%E5%85%B3%E6%B3%A8%E6%96%B9%E9%9D%A2)
     - [1. 输入输出](#1-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA)
     - [2. 调度](#2-%E8%B0%83%E5%BA%A6)
@@ -67,8 +67,11 @@
     - [3. `CF`的流程编排](#3-cf%E7%9A%84%E6%B5%81%E7%A8%8B%E7%BC%96%E6%8E%92)
     - [4. 设计辅助方法](#4-%E8%AE%BE%E8%AE%A1%E8%BE%85%E5%8A%A9%E6%96%B9%E6%B3%95)
   - [`CF`的设计模式](#cf%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F)
+    - [使用`CF`异步执行与主逻辑并发以缩短`RT`](#%E4%BD%BF%E7%94%A8cf%E5%BC%82%E6%AD%A5%E6%89%A7%E8%A1%8C%E4%B8%8E%E4%B8%BB%E9%80%BB%E8%BE%91%E5%B9%B6%E5%8F%91%E4%BB%A5%E7%BC%A9%E7%9F%ADrt)
   - [`CF`的最佳实现与使用陷阱](#cf%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E7%8E%B0%E4%B8%8E%E4%BD%BF%E7%94%A8%E9%99%B7%E9%98%B1)
+    - [`CF`创建子`CF`（两个`CF`使用同一线程池），且阻塞等待子`CF`结果](#cf%E5%88%9B%E5%BB%BA%E5%AD%90cf%E4%B8%A4%E4%B8%AAcf%E4%BD%BF%E7%94%A8%E5%90%8C%E4%B8%80%E7%BA%BF%E7%A8%8B%E6%B1%A0%E4%B8%94%E9%98%BB%E5%A1%9E%E7%AD%89%E5%BE%85%E5%AD%90cf%E7%BB%93%E6%9E%9C)
 - [📦 二、库功能](#-%E4%BA%8C%E5%BA%93%E5%8A%9F%E8%83%BD)
+  - [`Cffu.java`](#cffujava)
 - [👋 ∞、关于库名](#-%E2%88%9E%E5%85%B3%E4%BA%8E%E5%BA%93%E5%90%8D)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -80,7 +83,7 @@
 - 作为文档库：
   - 完备说明`CompletableFuture`的使用方式
   - 给出 最佳实践建议 与 使用陷阱注意
-  - 期望在业务中，有效地使用`CompletableFuture`
+  - 期望在业务中，更有效安全地使用`CompletableFuture`
   - 这部分是主要目标
 - 作为代码库：
   - 补齐在业务使用中`CompletableFuture`所缺失的功能
@@ -93,7 +96,7 @@
 
 > 为了阅读的简洁方便，后文`CompletableFuture`会简写成`CF`。
 
-## 并发执行的描述及其用语
+## `CF`并发执行的描述及其用语
 
 <a href="#dummy"><img src="docs/cf-graph.png" width="150" align="right" alt="cf-graph" /></a>
 
@@ -108,13 +111,13 @@
   - 取消（`Cancelled`）
   - 完成（`Completed`/`Done`）
     - 成功（`Successed`/`Success`）/正常完成（`Completed Normally`）/成功完成（`Completed Successfully`）
-    - 失败（`Failed`/`Fail`）、异常完成（`Completed Exceptionally`）
+    - 失败（`Failed`/`Fail`）/异常完成（`Completed Exceptionally`）
 - 业务流程（`Biz Flow`）、`CF`链（`Chain`）
   - 流程图（`Flow Graph`）、有向无环图/`DAG`
     - 为什么构建的`CF`链一定是`DAG`？
   - 流程编排（`Flow Choreography`）
 - 前驱（`Predecessor`）/后继（`Successor`）
-  - 上游任务/前驱任务/依赖的任务（`Dependent Task`）、下游任务/后继任务
+  - 上游任务/前驱任务、下游任务/后继任务/依赖的任务（`Dependent Task`）
 - 状态变化、事件（`Event`）、触发（`Trigger`）
 
 ## `CF`并发执行的关注方面
@@ -130,7 +133,7 @@
 - **任务的超时处理**
   - 处理超时是并发的基础关注方面之一
   - 在实现上可以看成`CF`的使用方式
-  - `Java 9`通过新增的`completeOnTimeout(...)/orTimeout(...)/delayedExecutor(...)`方法提供了内置支持
+  - `Java 9`通过新增的`completeOnTimeout(...)/orTimeout(...)`方法提供了内置支持
 
 > 本节『并发关注方面』会举例一些`CF`方法名，以说明`CF`方法的命名模式，可以先不用关心方法的具体功能。  
 > 在下一节『`CF`的功能』会分类展开说明`CF`方法的功能。
@@ -223,8 +226,6 @@
 
 | Method Name                                                      | 🅒/🅵 | 结果类型   | `Executor`       |                                            |
 |------------------------------------------------------------------|-------|--------|------------------|--------------------------------------------|
-| `CompletableFuture<T>()`<sup><b><i>〚1〛</i></b></sup>             | 🅒    | `T`    | 无需               | 显式通过`CF`对象的写方法完成，无需`Executor`来运行           |
-|                                                                  |       |        |                  |                                            |
 | `completedFuture(U value)`                                       | 🅵    | `U`    | 无需               | 用入参`value`直接创建一个已完成的`CF`，无需`Executor`来运行   |
 | `completedStage(U value)`<sup><b><i>J9</i></b></sup>             | 🅵    | `U`    | 无需               | 与上一方法一样，只是返回的类型是`CompletionStage`而不`CF`    |
 | `failedFuture(Throwable ex)`<sup><b><i>J9</i></b></sup>          | 🅵    | `U`    | 无需               | 用入参`ex`直接创建一个已完成的`CF`，无需`Executor`来运行      |
@@ -235,17 +236,19 @@
 | `runAsync(Runnable runnable)`                                    | 🅵    | `Void` | `CF`缺省`Executor` |                                            |
 | `runAsync(Runnable runnable, Executor executor)`                 | 🅵    | `Void` | `executor`入参     |                                            |
 |                                                                  |       |        |                  |                                            |
-| `allOf(CompletableFuture<?>... cfs)`<sup><b><i>〚2〛</i></b></sup> | 🅵    | `Void` | 无需               | 组合输入的多个`CF`，本身无执行逻辑，所以无需`Executor`         |
-| `anyOf(CompletableFuture<?>... cfs)`<sup><b><i>〚2〛</i></b></sup> | 🅵    | `Void` | 无需               | 同上                                         |
+| `allOf(CompletableFuture<?>... cfs)`<sup><b><i>〚1〛</i></b></sup> | 🅵    | `Void` | 无需               | 组合输入的多个`CF`，本身无执行逻辑，所以无需`Executor`         |
+| `anyOf(CompletableFuture<?>... cfs)`<sup><b><i>〚1〛</i></b></sup> | 🅵    | `Void` | 无需               | 同上                                         |
+|                                                                  |       |        |                  |                                            |
+| `CompletableFuture<T>()`<sup><b><i>〚2〛</i></b></sup>             | 🅒    | `T`    | 无需               | 显式通过`CF`对象的写方法完成，无需`Executor`来运行           |
 
 注：
 
-- 〚1〛：在日常的业务开发中使用`CF`来编排业务流程，几乎一定不应该使用 这个构造方法。
-  - 构造函数创建的`CF`的使用场景：在已有异步处理线程，即不与`CF`关联的`Executor`，显式调用`CF`对象的写方法设置其它结果；
-  - 往往是在中间件中会有必要这样使用，比如在网络`IO`框架的回调（线程）中完成处理后设置`CF`结果。
-- 〚2〛：`allOf`/`anyOf`这个2个方法虽然是静态工厂方法；但不是`CF`链的起点，而是输入多个`CF`，用于编排多路的流程。
+- 〚1〛：`allOf`/`anyOf`这个2个方法虽然是静态工厂方法；但不是`CF`链的起点，而是输入多个`CF`，用于编排多路的流程。
   - 在功能与使用的上，应该和下面【3. 流程编排】一节的方法归类在一起。
   - 这2个方法也列在上面的表格，只是为了体现出是静态工厂方法这个特点。
+- 〚2〛：在日常的业务开发中使用`CF`来编排业务流程，几乎一定不应该使用 这个构造方法。
+  - 构造函数创建的`CF`的使用场景：在已有异步处理线程，即不与`CF`关联的`Executor`，显式调用`CF`对象的写方法设置其它结果；
+  - 往往是在中间件中会有必要这样使用，比如在网络`IO`框架的回调（线程）中完成处理后设置`CF`结果。
 
 ### 2. `CF`的显式读写方法
 
@@ -255,11 +258,11 @@
 |--------------------------------------------------------|----------|-------------------------------------|-------------------------------------------------------------------------|
 | `boolean isDone()`                                     | `Future` |                                     |                                                                         |
 |                                                        |          |                                     |                                                                         |
-| `T join()`                                             | -        | **阻塞❗️**                            |                                                                         |
 | `T get()`                                              | `Future` | **阻塞❗**                             |                                                                         |
 | `T get(long timeout, TimeUnit unit)`                   | `Future` | **阻塞❗**<sup><b><i>〚1〛</i></b></sup> |                                                                         |
 | `T getNow(T valueIfAbsent)`                            | -        |                                     |                                                                         |
 | `T resultNow()`<sup><b><i>J19</i></b></sup>            | `Future` |                                     | 返回已正常完成`CF`的正常结果；如果`CF`不是正常完成（未完成/被取消/异常完成）则抛出`IllegalStateException`异常 |
+| `T join()`                                             | -        | **阻塞❗️**                            |                                                                         |
 |                                                        |          |                                     |                                                                         |
 | `boolean isCompletedExceptionally()`                   | -        |                                     |                                                                         |
 | `Throwable exceptionNow()`<sup><b><i>J19</i></b></sup> | `Future` |                                     | 返回已异常完成`CF`的出错异常；如果`CF`不是异常完成（未完成/被取消/正常完成）则抛出`IllegalStateException`异常 |
@@ -267,8 +270,6 @@
 | `boolean isCancelled()`                                | -        |                                     |                                                                         |
 |                                                        |          |                                     |                                                                         |
 | `State state()`<sup><b><i>J19</i></b></sup>            | `Future` |                                     |                                                                         |
-|                                                        |          |                                     |                                                                         |
-| `int getNumberOfDependents()`                          | -        |                                     |                                                                         |
 
 注：
 
@@ -286,9 +287,9 @@
 | `exceptionallyAsync(Function<Throwable, ? extends T> fn)`                           | -        |     |                   |
 |                                                                                     |          |     |                   |
 | `boolean cancel(boolean mayInterruptIfRunning)`                                     | `Future` |     |                   |
+|                                                                                     |          |     |                   |
 | `void obtrudeValue(T value)`                                                        | -        |     |                   |
 | `void obtrudeException(Throwable ex)`                                               | -        |     |                   |
-|                                                                                     |          |     |                   |
 
 ### 3. `CF`的流程编排
 
@@ -297,7 +298,6 @@
 |                                                                                            |       |     |     |
 | `completeOnTimeout(T value, long timeout, TimeUnit unit)`<sup><b><i>J9</i></b></sup>       | -     |     |     |
 | `orTimeout(long timeout, TimeUnit unit)`<sup><b><i>J9</i></b></sup>                        | -     |     |     |
-| `Executor defaultExecutor()`<sup><b><i>J9</i></b></sup>                                    | -     |     |     |
 | `delayedExecutor(long delay, TimeUnit unit, Executor executor)`<sup><b><i>J9</i></b></sup> | -     |     |     |
 
 ### 4. 设计辅助方法
@@ -310,6 +310,10 @@
 |                                                                                                      |      |     |
 | `CompletableFuture<U> newIncompleteFuture()`<sup><b><i>J9</i></b></sup><sup><b><i>〚1〛</i></b></sup>  | `T`  |     |
 | `CompletionStage<T> minimalCompletionStage()`<sup><b><i>J9</i></b></sup><sup><b><i>〚1〛</i></b></sup> | `T`  |     |
+|                                                                                                      |      |     |                                                                         |
+| `Executor defaultExecutor()`<sup><b><i>J9</i></b></sup>                                              | -    |     |     |
+|                                                                                                      |      |     |                                                                         |
+| `int getNumberOfDependents()`                                                                        | -    |     |                                                                         |
 
 注：
 
@@ -320,7 +324,15 @@
 
 **_WIP..._**
 
+### 使用`CF`异步执行与主逻辑并发以缩短`RT`
+
 ## `CF`的最佳实现与使用陷阱
+
+**_WIP..._**
+
+### `CF`创建子`CF`（两个`CF`使用同一线程池），且阻塞等待子`CF`结果
+
+会形成（池型）死锁。
 
 **_WIP..._**
 
