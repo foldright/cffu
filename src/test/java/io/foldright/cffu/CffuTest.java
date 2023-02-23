@@ -24,7 +24,7 @@ public class CffuTest {
     ////////////////////////////////////////////////////////////////////////////////
 
     private static final int n = 42;
-    private static final int other_n = 424242;
+    private static final int another_n = 424242;
 
     private static final String s = "S42";
 
@@ -104,14 +104,14 @@ public class CffuTest {
     @Test
     public void test_anyOf() throws Exception {
         assertEquals(n, Cffu.anyOf(
-                createNormallyCompletedFutureWithSleep(other_n),
-                createNormallyCompletedFutureWithSleep(other_n),
+                createNormallyCompletedFutureWithSleep(another_n),
+                createNormallyCompletedFutureWithSleep(another_n),
                 CompletableFuture.completedFuture(n)
         ).get());
         assertEquals(n, Cffu.anyOf(Arrays.asList(
-                createNormallyCompletedFutureWithSleep(other_n),
+                createNormallyCompletedFutureWithSleep(another_n),
                 CompletableFuture.completedFuture(n),
-                createNormallyCompletedFutureWithSleep(other_n)
+                createNormallyCompletedFutureWithSleep(another_n)
         )).get());
     }
 
@@ -122,8 +122,8 @@ public class CffuTest {
 
         try {
             Cffu.anyOf(
-                    createNormallyCompletedFutureWithSleep(other_n),
-                    createNormallyCompletedFutureWithSleep(other_n),
+                    createNormallyCompletedFutureWithSleep(another_n),
+                    createNormallyCompletedFutureWithSleep(another_n),
                     CompletableFuture.failedFuture(rte)
             ).get();
 
@@ -134,9 +134,9 @@ public class CffuTest {
 
         try {
             Cffu.anyOf(Arrays.asList(
-                    createNormallyCompletedFutureWithSleep(other_n),
+                    createNormallyCompletedFutureWithSleep(another_n),
                     CompletableFuture.failedFuture(rte),
-                    createNormallyCompletedFutureWithSleep(other_n)
+                    createNormallyCompletedFutureWithSleep(another_n)
             )).get();
 
             fail();

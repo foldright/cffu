@@ -5,6 +5,7 @@ import io.foldright.testutils.*
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.longs.shouldBeBetween
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -18,6 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 class CompletableFutureUsageShowcaseTest : FunSpec({
     val n = 42
+    val anotherN = 424242
 
     test("execution thread/executor behavior: then*(non-Async) operations/methods of completed CF with immediate value, run in place SEQUENTIALLY").config(
         invocations = 100
@@ -72,7 +74,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
         }, testThreadPoolExecutor)
         // ensure f0 is already COMPLETED
         @Suppress("BlockingMethodInNonBlockingContext")
-        f0.get() shouldBe n // wait f1 COMPLETED
+        f0.get() shouldBe n // wait f0 COMPLETED
         sequenceChecker.assertSeq("after f0 get", seq++)
 
         val f1 = f0.thenApply {
@@ -112,7 +114,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
     ) {
         val mainThread = currentThread()
 
-        lateinit var thenAsyncThread: Thread
+        lateinit var thenNonAsyncOpThread: Thread
         val buildFinish = CountDownLatch(1)
 
         val f = CompletableFuture
@@ -123,26 +125,26 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
                 assertRunNotInTestThreadPoolExecutor()
             }
             .thenRunAsync({
-                thenAsyncThread = currentThread()
+                thenNonAsyncOpThread = currentThread()
 
                 assertRunInTestThreadPoolExecutor()
             }, testThreadPoolExecutor) // !! switch executor !!
             .thenApply {
                 // when NOT async,
                 // use same thread of single previous CF
-                currentThread() shouldBe thenAsyncThread
+                currentThread() shouldBe thenNonAsyncOpThread
 
                 "apply"
             }
             .thenAccept {
                 // when NOT async,
                 // use same thread of single previous CF
-                currentThread() shouldBe thenAsyncThread
+                currentThread() shouldBe thenNonAsyncOpThread
             }
             .thenRun {
                 // when NOT async,
                 // use same thread of single previous CF
-                currentThread() shouldBe thenAsyncThread
+                currentThread() shouldBe thenNonAsyncOpThread
             }
             .thenRunAsync {
                 // when run ASYNC,
@@ -291,6 +293,46 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
 
         @Suppress("BlockingMethodInNonBlockingContext")
         f1.get() shouldBe n
+    }
+
+    test("timeout control: replacement value") {
+        val f = CompletableFuture.supplyAsync {
+            sleep(10)
+            n
+        }.completeOnTimeout(anotherN, 1, TimeUnit.MILLISECONDS)
+
+        @Suppress("BlockingMethodInNonBlockingContext")
+        f.get() shouldBe anotherN
+    }
+
+    test("timeout control: exceptionally completed with java.util.concurrent.TimeoutException") {
+        val f = CompletableFuture
+            .supplyAsync {
+                sleep(10)
+                n
+            }
+            .orTimeout(1, TimeUnit.MILLISECONDS)
+            .exceptionally {
+                it.shouldBeTypeOf<TimeoutException>()
+                anotherN
+            }
+
+        @Suppress("BlockingMethodInNonBlockingContext")
+        f.get() shouldBe anotherN
+    }
+
+    test("delay execution") {
+        val tick = currentTimeMillis()
+        val delay = 5L
+
+        val delayer = CompletableFuture.delayedExecutor(delay, TimeUnit.MILLISECONDS)
+
+        @Suppress("BlockingMethodInNonBlockingContext")
+        val duration = CompletableFuture.supplyAsync({
+            currentTimeMillis() - tick
+        }, delayer).get()
+
+        duration.shouldBeBetween(delay, delay + 2)
     }
 
     xtest("performance CF then*").config(invocations = 10) {
