@@ -20,8 +20,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 class CompletableFutureUsageShowcaseTest : FunSpec({
     val n = 42
     val anotherN = 424242
+    val rte = RuntimeException("Bang")
 
-    test("execution thread/executor behavior: then*(non-Async) operations/methods of completed CF with immediate value, run in place SEQUENTIALLY").config(
+    test("execution thread/executor behavior: then*(non-Async) operations chained after COMPLETED CF(completed by immediate value), trigger by then* invocation and run in place SEQUENTIALLY").config(
         invocations = 100
     ) {
         val mainThread = currentThread()
@@ -32,6 +33,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
 
         // a new CompletableFuture with value that is already COMPLETED
         val f0 = CompletableFuture.completedFuture(n)
+        sequenceChecker.assertSeq("create f0", seq++)
 
         val f1 = f0.thenApply {
             sequenceChecker.assertSeq("thenApply", seq++)
@@ -41,7 +43,6 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
         sequenceChecker.assertSeq("after thenApply", seq++)
 
         val f2 = f1.thenAccept {
-            sleep()
             sequenceChecker.assertSeq("thenAccept", seq++)
             currentThread() shouldBe mainThread
         }
@@ -55,10 +56,10 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
 
         @Suppress("BlockingMethodInNonBlockingContext")
         f3.get().shouldBeNull()
-        sequenceChecker.assertSeq("after get", seq++)
+        sequenceChecker.assertSeq("after f3 get", seq++)
     }
 
-    test("execution thread/executor behavior: then*(non-Async) operations/methods of completed CF by get, run in place SEQUENTIALLY").config(
+    test("execution thread/executor behavior: then*(non-Async) operations chained after *Async COMPLETED CF(completed by get), trigger by then* invocation and run in place SEQUENTIALLY").config(
         invocations = 100
     ) {
         val mainThread = currentThread()
@@ -70,6 +71,9 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
         val f0 = CompletableFuture.supplyAsync({
             sequenceChecker.assertSeq("supplyAsync completed CF", seq++)
 
+            currentThread() shouldNotBe mainThread
+            assertRunInTestThreadPoolExecutor()
+
             n
         }, testThreadPoolExecutor)
         // ensure f0 is already COMPLETED
@@ -78,7 +82,6 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
         sequenceChecker.assertSeq("after f0 get", seq++)
 
         val f1 = f0.thenApply {
-            sleep()
             sequenceChecker.assertSeq("thenApply", seq++)
             currentThread() shouldBe mainThread
             it * 2
@@ -109,17 +112,19 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
      *   if there is single previous [CompletableFuture], use the same thread of previous CF.
      *   CAUTION: restrict the concurrency!!
      */
-    test("execution thread/executor behavior: then*(non-Async) operations/methods of completed CF, run in previous CF executor").config(
+    test("execution thread/executor behavior: then*(non-Async) operations chained after *Async UNCOMPLETED CF, trigger by previous *Async CF complete and run in previous Async CF executor").config(
         invocations = 100
     ) {
         val mainThread = currentThread()
 
         lateinit var thenNonAsyncOpThread: Thread
-        val buildFinish = CountDownLatch(1)
+        val cfChainBuildFinishedLatch = CountDownLatch(1)
 
         val f = CompletableFuture
             .runAsync {
-                buildFinish.await() // make sure build CF chain is finished before run
+                // make sure build CF chain is finished before this `runAsync`
+                // aka. this CF is not completed
+                cfChainBuildFinishedLatch.await()
 
                 currentThread() shouldNotBe mainThread
                 assertRunNotInTestThreadPoolExecutor()
@@ -154,71 +159,8 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
                 assertRunNotInExecutor(testThreadPoolExecutor)
             }
 
-        buildFinish.countDown()
+        cfChainBuildFinishedLatch.countDown()
         f.join()
-    }
-
-    /**
-     * this normal process CF will be skipped, if previous CF is exceptional.
-     */
-    test("exceptionally behavior: exceptionally").config(enabledIf = java9Plus, invocations = 100) {
-        val mainThread = currentThread()
-
-        val mark = AtomicBoolean()
-        val rte = RuntimeException("Bang")
-
-        val exceptionalCf = CompletableFuture<String>().apply { completeExceptionally(rte) }
-
-        val f1 = exceptionalCf
-            .thenApply { // skip normal process since previous CF is exceptional
-                mark.set(true)
-                currentThread() shouldBe mainThread
-                "error"
-            }
-            .exceptionally {
-                currentThread() shouldBe mainThread
-
-                it.shouldBeTypeOf<CompletionException>()
-                it.cause shouldBeSameInstanceAs rte
-                "HERE"
-            }
-
-        @Suppress("BlockingMethodInNonBlockingContext")
-        f1.get().also {
-            mark.get().shouldBeFalse()
-            it shouldEndWith "HERE"
-        }
-    }
-
-    test("exceptionally behavior: exceptionallyAsync").config(enabledIf = java12Plus, invocations = 100) {
-        val mainThread = currentThread()
-
-        val mark = AtomicBoolean()
-        val rte = RuntimeException("Bang")
-
-        val exceptionalCf = CompletableFuture<String>().apply { completeExceptionally(rte) }
-
-        @Suppress("Since15") // exceptionallyAsync api is since java 12
-        val f1 = exceptionalCf
-            .thenApply { // skip normal process since previous CF is exceptional
-                mark.set(true)
-                currentThread() shouldBe mainThread
-                "error"
-            }
-            .exceptionallyAsync({
-                currentThread() shouldNotBe mainThread
-                assertRunInTestThreadPoolExecutor()
-
-                it.shouldBeTypeOf<CompletionException>()
-                it.cause shouldBeSameInstanceAs rte
-                "HERE"
-            }, testThreadPoolExecutor)
-
-        @Suppress("BlockingMethodInNonBlockingContext")
-        f1.get().also {
-            mark.get().shouldBeFalse()
-            it shouldEndWith "HERE"
-        }
     }
 
     fun checkThreadSwitchBehaviorThenApplyAsync(executor: ExecutorService) {
@@ -246,56 +188,149 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
         threadNameList.toSet().also { println("\n$it") }.shouldHaveSize(THREAD_COUNT_OF_POOL)
     }
 
-    test("thread switch behavior of CF.thenApplyAsync") {
+    test("execution thread/executor behavior: then*Async operations of CF, run in switched thread(re-submit task into Executor)") {
         checkThreadSwitchBehaviorThenApplyAsync(testThreadPoolExecutor)
 
         checkThreadSwitchBehaviorThenApplyAsync(testForkJoinPoolExecutor)
     }
 
-    test("trigger computation by CF.complete").config(invocations = 100) {
+    /**
+     * this normal process CF will be skipped, if previous CF is exceptional.
+     */
+    test("exceptionally behavior: exceptionally").config(enabledIf = java9Plus, invocations = 100) {
         val mainThread = currentThread()
+        val sequenceChecker = SequenceChecker()
+
+        val mark = AtomicBoolean()
+
+        val exceptionalCf = CompletableFuture<String>().apply { completeExceptionally(rte) }
+        sequenceChecker.assertSeq("create exceptionalCf", 0)
+
+        val f1 = exceptionalCf
+            .thenApply { // skip normal process since previous CF is exceptional
+                mark.set(true)
+                currentThread() shouldBe mainThread
+                "error"
+            }
+            .exceptionally {
+                sequenceChecker.assertSeq("exceptionally", 1)
+
+                currentThread() shouldBe mainThread
+
+                it.shouldBeTypeOf<CompletionException>()
+                it.cause shouldBeSameInstanceAs rte
+                "HERE"
+            }
+        sequenceChecker.assertSeq("after exceptionally", 2)
+
+
+        @Suppress("BlockingMethodInNonBlockingContext")
+        f1.get().also {
+            mark.get().shouldBeFalse()
+            it shouldEndWith "HERE"
+        }
+        sequenceChecker.assertSeq("after get", 3)
+    }
+
+    test("exceptionally behavior: exceptionallyAsync").config(enabledIf = java12Plus, invocations = 100) {
+        val mainThread = currentThread()
+        val sequenceChecker = SequenceChecker()
+
+        val mark = AtomicBoolean()
+
+        val exceptionalCf = CompletableFuture<String>().apply { completeExceptionally(rte) }
+        sequenceChecker.assertSeq("create exceptionalCf", 0)
+
+        @Suppress("Since15") // exceptionallyAsync api is since java 12
+        val f1 = exceptionalCf
+            .thenApply { // skip normal process since previous CF is exceptional
+                mark.set(true)
+                currentThread() shouldBe mainThread
+                "error"
+            }
+            .exceptionallyAsync({
+                sequenceChecker.assertSeq("create exceptionallyAsync", 1)
+
+                currentThread() shouldNotBe mainThread
+                assertRunInTestThreadPoolExecutor()
+
+                it.shouldBeTypeOf<CompletionException>()
+                it.cause shouldBeSameInstanceAs rte
+                "HERE"
+            }, testThreadPoolExecutor)
+
+        @Suppress("BlockingMethodInNonBlockingContext")
+        f1.get().also {
+            mark.get().shouldBeFalse()
+            it shouldEndWith "HERE"
+        }
+        sequenceChecker.assertSeq("after get", 2)
+    }
+
+    test("trigger task by CF.complete").config(invocations = 100) {
+        val mainThread = currentThread()
+        val sequenceChecker = SequenceChecker()
 
         // create a CF to be completed later
         val f0 = CompletableFuture<String>()
+        sequenceChecker.assertSeq("create f0", 0)
 
         val f1 = f0.thenApply {
+            sequenceChecker.assertSeq("thenApply", 2)
             currentThread() shouldBe mainThread
 
             n
         }
-        // `complete` will trigger above `thenApply` computation
-        // since *non-async* run computation
-        // in-place, aka. immediately after previous CF without submit task to executor
+        sequenceChecker.assertSeq("after thenApply", 1)
+
+        // `complete` invocation will trigger above task of `thenApply` f1
+        //
+        // since *non-async*,
+        // run task of `thenApply` f1 in-place(in mainThread), aka. immediately run in the `complete` invocation without submit task to executor
         f0.complete("done")
+        sequenceChecker.assertSeq("after complete", 3)
 
         @Suppress("BlockingMethodInNonBlockingContext")
         f1.get() shouldBe n
+        sequenceChecker.assertSeq("after get", 4)
     }
 
-    test("trigger computation by CF.completeAsync").config(enabledIf = java9Plus, invocations = 100) {
+    test("trigger task by CF.completeAsync").config(enabledIf = java9Plus, invocations = 100) {
         val mainThread = currentThread()
+        val sequenceChecker = SequenceChecker()
 
         // create a CF to be completed later
         val f0 = CompletableFuture<String>()
+        sequenceChecker.assertSeq("create f0", 0)
 
         val f1 = f0.thenApply {
+            sequenceChecker.assertSeq("thenApply", 3)
+
             currentThread() shouldNotBe mainThread
 
             n
         }
-        // `complete` will trigger above `thenApply` computation
-        // since *non-async* run computation in-place(aka. mainThread)
+        sequenceChecker.assertSeq("after thenApply", 1)
+
+        // `complete` invocation will trigger above `thenApply` f1
+        //
+        // since *non-async*,
+        // run task in-place(in mainThread), aka. immediately run in the `complete` invocation without submit task to executor
         @Suppress("Since15") // completeAsync api is since java 9
         f0.completeAsync({
+            sequenceChecker.assertSeq("in completeAsync", 2)
+
             assertRunInTestThreadPoolExecutor()
+
             "done"
         }, testThreadPoolExecutor)
 
         @Suppress("BlockingMethodInNonBlockingContext")
         f1.get() shouldBe n
+        sequenceChecker.assertSeq("in completeAsync", 4)
     }
 
-    test("timeout control: replacement value") {
+    test("timeout control: normally completed with replacement value") {
         val f = CompletableFuture.supplyAsync {
             sleep(10)
             n
