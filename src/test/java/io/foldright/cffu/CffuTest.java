@@ -1,5 +1,6 @@
 package io.foldright.cffu;
 
+import io.foldright.testutils.TestThreadPoolManager;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.junit.jupiter.api.Test;
@@ -32,28 +33,47 @@ public class CffuTest {
 
     private static final RuntimeException rte = new RuntimeException("Bang");
 
+    private static final CffuFactory cffuFactory = CffuFactoryBuilder
+            .newCffuFactoryBuilder()
+            .defaultExecutor(TestThreadPoolManager.getTestThreadPoolExecutor())
+            .build();
+
     ////////////////////////////////////////////////////////////////////////////////
-    // test logic
+    // new methods of CompletableFuture missing functions
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
-    public void test_resultAllOf() throws Exception {
+    public void test_cffuAllOfWithResults() throws Exception {
         final CompletableFuture<Integer> f1 = CompletableFuture.completedFuture(n);
         final CompletableFuture<Integer> f2 = CompletableFuture.completedFuture(n + 1);
         final CompletableFuture<Integer> f3 = CompletableFuture.completedFuture(n + 2);
 
-        assertEquals(Arrays.asList(n, n + 1, n + 2), Cffu.resultAllOf(f1, f2, f3).get());
-        assertEquals(Arrays.asList(n, n + 1, n + 2), Cffu.resultAllOf(Arrays.asList(f1, f2, f3)).get());
+        assertEquals(Arrays.asList(n, n + 1, n + 2), cffuFactory.cffuAllOfWithResults(f1, f2, f3).get());
     }
 
     @Test
-    public void test_resultOf_2_or_3() throws Exception {
-        assertEquals(Pair.of(n, s), Cffu.resultOf(
+    void test_cffuAllOfWithResults_exceptionally() throws Exception {
+        try {
+            cffuFactory.cffuAllOfWithResults(
+                    CompletableFuture.completedFuture(n),
+                    failedCf(),
+                    CompletableFuture.completedFuture(s)
+            ).get();
+
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+    }
+
+    @Test
+    public void test_cffuOf_2_or_3() throws Exception {
+        assertEquals(Pair.of(n, s), cffuFactory.cffuOf2(
                 CompletableFuture.completedFuture(n),
                 CompletableFuture.completedFuture(s)
         ).get());
 
-        assertEquals(Triple.of(n, s, d), Cffu.resultOf(
+        assertEquals(Triple.of(n, s, d), cffuFactory.cffuOf3(
                 CompletableFuture.completedFuture(n),
                 CompletableFuture.completedFuture(s),
                 CompletableFuture.completedFuture(d)
@@ -61,24 +81,9 @@ public class CffuTest {
     }
 
     @Test
-    void test_resultAllOf_exceptionally() throws Exception {
-        try {
-            Cffu.resultAllOf(
-                    CompletableFuture.completedFuture(n),
-                    failedCf(),
-                    CompletableFuture.completedFuture(s)
-            ).get();
-
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-    }
-
-    @Test
     void test_resultOf_2_or_3_exceptionally() throws Exception {
         try {
-            Cffu.resultOf(
+            cffuFactory.cffuOf2(
                     CompletableFuture.completedFuture(n),
                     failedCf()
             ).get();
@@ -89,7 +94,7 @@ public class CffuTest {
         }
 
         try {
-            Cffu.resultOf(
+            cffuFactory.cffuOf3(
                     CompletableFuture.completedFuture(n),
                     failedCf(),
                     CompletableFuture.completedFuture(s)
@@ -102,29 +107,24 @@ public class CffuTest {
     }
 
     @Test
-    public void test_anyOf() throws Exception {
-        assertEquals(n, Cffu.anyOf(
-                createNormallyCompletedFutureWithSleep(another_n),
-                createNormallyCompletedFutureWithSleep(another_n),
-                CompletableFuture.completedFuture(n)
-        ).get());
-        assertEquals(n, Cffu.anyOf(Arrays.asList(
+    public void test_cffuAnyOf() throws Exception {
+        assertEquals(n, cffuFactory.cffuAnyOf(
                 createNormallyCompletedFutureWithSleep(another_n),
                 CompletableFuture.completedFuture(n),
                 createNormallyCompletedFutureWithSleep(another_n)
-        )).get());
+        ).get());
     }
 
     @Test
-    public void test_anyOf_exceptionally() throws Exception {
-        // first exceptionally completed anyOf cf win,
+    public void test_cffuAnyOf_exceptionally() throws Exception {
+        // first exceptionally completed cffuAnyOf cf win,
         // even later cfs normally completed!
 
         try {
-            Cffu.anyOf(
+            cffuFactory.cffuAnyOf(
                     createNormallyCompletedFutureWithSleep(another_n),
-                    createNormallyCompletedFutureWithSleep(another_n),
-                    failedCf()
+                    failedCf(),
+                    createNormallyCompletedFutureWithSleep(another_n)
             ).get();
 
             fail();
@@ -132,38 +132,32 @@ public class CffuTest {
             assertSame(rte, expected.getCause());
         }
 
-        try {
-            Cffu.anyOf(Arrays.asList(
-                    createNormallyCompletedFutureWithSleep(another_n),
-                    failedCf(),
-                    createNormallyCompletedFutureWithSleep(another_n)
-            )).get();
-
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-
-        // first normally completed anyOf cf win,
+        // first normally completed cffuAnyOf cf win,
         // even later cfs exceptionally completed!
 
-        assertEquals(n, Cffu.anyOf(
-                createExceptionallyCompletedFutureWithSleep(rte),
-                createExceptionallyCompletedFutureWithSleep(rte),
-                CompletableFuture.completedFuture(n)
-        ).get());
-
-        assertEquals(n, Cffu.anyOf(Arrays.asList(
+        assertEquals(n, cffuFactory.cffuAnyOf(
                 createExceptionallyCompletedFutureWithSleep(rte),
                 CompletableFuture.completedFuture(n),
                 createExceptionallyCompletedFutureWithSleep(rte)
-        )).get());
+        ).get());
     }
-
 
     private static <T> CompletableFuture<T> failedCf() {
         CompletableFuture<T> cf = new CompletableFuture<>();
         cf.completeExceptionally(rte);
         return cf;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // backport codes from CompletableFuture
+    ////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////
+    // timeout control
+    ////////////////////////////////////////
+
+
+    @Test
+    void name() {
     }
 }
