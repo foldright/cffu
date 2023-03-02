@@ -29,8 +29,7 @@
 	</issueManagement>
 
 	<properties>
-		<!-- TODO: set back to 1.8 after CI setting -->
-		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.deploy.skip>false</maven.deploy.skip>
@@ -518,7 +517,6 @@
 									Maven javadoc Search redirects to "/undefined/.." url - Stack Overflow
 									https://stackoverflow.com/questions/52326318
 								-->
-								<additionalOption>--no-module-directories</additionalOption>
 								<additionalOption>-html5</additionalOption>
 							</additionalOptions>
 							<additionalJOptions>
@@ -672,7 +670,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>force-jdk11-when-release</id>
+			<id>force-jdk-version-when-release</id>
 			<activation>
 				<property>
 					<name>performRelease</name>
@@ -696,7 +694,7 @@
 								<configuration>
 									<rules>
 										<requireJavaVersion>
-											<version>11</version>
+											<version>19</version>
 										</requireJavaVersion>
 									</rules>
 								</configuration>

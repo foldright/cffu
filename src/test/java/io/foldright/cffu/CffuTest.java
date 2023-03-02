@@ -65,7 +65,7 @@ public class CffuTest {
         try {
             Cffu.resultAllOf(
                     CompletableFuture.completedFuture(n),
-                    CompletableFuture.failedFuture(rte),
+                    failedCf(),
                     CompletableFuture.completedFuture(s)
             ).get();
 
@@ -80,7 +80,7 @@ public class CffuTest {
         try {
             Cffu.resultOf(
                     CompletableFuture.completedFuture(n),
-                    CompletableFuture.failedFuture(rte)
+                    failedCf()
             ).get();
 
             fail();
@@ -91,7 +91,7 @@ public class CffuTest {
         try {
             Cffu.resultOf(
                     CompletableFuture.completedFuture(n),
-                    CompletableFuture.failedFuture(rte),
+                    failedCf(),
                     CompletableFuture.completedFuture(s)
             ).get();
 
@@ -124,7 +124,7 @@ public class CffuTest {
             Cffu.anyOf(
                     createNormallyCompletedFutureWithSleep(another_n),
                     createNormallyCompletedFutureWithSleep(another_n),
-                    CompletableFuture.failedFuture(rte)
+                    failedCf()
             ).get();
 
             fail();
@@ -135,7 +135,7 @@ public class CffuTest {
         try {
             Cffu.anyOf(Arrays.asList(
                     createNormallyCompletedFutureWithSleep(another_n),
-                    CompletableFuture.failedFuture(rte),
+                    failedCf(),
                     createNormallyCompletedFutureWithSleep(another_n)
             )).get();
 
@@ -158,5 +158,12 @@ public class CffuTest {
                 CompletableFuture.completedFuture(n),
                 createExceptionallyCompletedFutureWithSleep(rte)
         )).get());
+    }
+
+
+    private static <T> CompletableFuture<T> failedCf() {
+        CompletableFuture<T> cf = new CompletableFuture<>();
+        cf.completeExceptionally(rte);
+        return cf;
     }
 }
