@@ -330,7 +330,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
         sequenceChecker.assertSeq("in completeAsync", 4)
     }
 
-    test("timeout control: normally completed with replacement value") {
+    test("timeout control: normally completed with replacement value").config(enabledIf = java9Plus) {
         val f = CompletableFuture.supplyAsync {
             sleep(10)
             n
@@ -340,7 +340,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
         f.get() shouldBe anotherN
     }
 
-    test("timeout control: exceptionally completed with java.util.concurrent.TimeoutException") {
+    test("timeout control: exceptionally completed with java.util.concurrent.TimeoutException").config(enabledIf = java9Plus) {
         val f = CompletableFuture
             .supplyAsync {
                 sleep(10)
@@ -356,9 +356,9 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
         f.get() shouldBe anotherN
     }
 
-    test("delay execution") {
+    test("delay execution").config(enabledIf = java9Plus) {
         val tick = currentTimeMillis()
-        val delay = 5L
+        val delay = 10L
 
         val delayer = CompletableFuture.delayedExecutor(delay, TimeUnit.MILLISECONDS)
 
@@ -367,7 +367,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
             currentTimeMillis() - tick
         }, delayer).get()
 
-        duration.shouldBeBetween(delay, delay + 2)
+        duration.shouldBeBetween(delay, delay + 4)
     }
 
     xtest("performance CF then*").config(invocations = 10) {

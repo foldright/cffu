@@ -5,22 +5,64 @@ name: CI
 on: [ push, pull_request, workflow_dispatch ]
 jobs:
   test:
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#choosing-github-hosted-runners
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    strategy:
-      matrix:
-        # TODO: need add back java 8 later
-        # java: [ 8, 11, 17, 19 ]
-        java: [ 17, 19 ]
-      fail-fast: false
-      max-parallel: 64
-    name: Test JDK ${{ matrix.java }}
+    timeout-minutes: 20
+    name: test by multiply java versions
 
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+
+      - name: setup java19
+        uses: actions/setup-java@v3
         with:
-          java-version: ${{ matrix.java }}
+          java-version: 19
+          distribution: temurin
+          cache: maven
+
+      - name: build and test with java 19
+        run: >
+          ./mvnw -V --no-transfer-progress
+          help:evaluate -Dexpression=settings.localRepository
+          -DperformRelease -P'!gen-sign'
+          clean install
+
+      - name: setup java8
+        uses: actions/setup-java@v3
+        with:
+          java-version: 8
           distribution: zulu
           cache: maven
-      - run: ./mvnw -V --no-transfer-progress clean package
+
+      - run: ./mvnw -V surefire:test
+
+      - name: setup java11
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          distribution: microsoft
+          cache: maven
+
+      - run: ./mvnw -V surefire:test
+
+      - name: setup java17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: microsoft
+          cache: maven
+
+      - run: ./mvnw -V surefire:test
+
+      - name: setup java20
+        uses: actions/setup-java@v3
+        with:
+          java-version: 20-ea
+          distribution: zulu
+          cache: maven
+
+      - run: ./mvnw -V surefire:test
+
+      - name: remove self maven install files
+        run: rm -rf $HOME/.m2/repository/io/foldright/cffu/
+
