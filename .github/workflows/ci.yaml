@@ -7,61 +7,49 @@ jobs:
   test:
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#choosing-github-hosted-runners
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     name: test by multiply java versions
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: setup java19
-        uses: actions/setup-java@v3
         with:
-          java-version: 19
-          distribution: temurin
-          cache: maven
-
-      - name: build and test with java 19
-        run: >
-          ./mvnw -V --no-transfer-progress
-          help:evaluate -Dexpression=settings.localRepository
-          -DperformRelease -P'!gen-sign'
-          clean install
+          submodules: recursive
 
       - name: setup java8
         uses: actions/setup-java@v3
         with:
           java-version: 8
           distribution: zulu
+          # only first java setup need enable cache
           cache: maven
-
-      - run: ./mvnw -V surefire:test
-
       - name: setup java11
         uses: actions/setup-java@v3
         with:
           java-version: 11
           distribution: microsoft
-          cache: maven
-
-      - run: ./mvnw -V surefire:test
-
       - name: setup java17
         uses: actions/setup-java@v3
         with:
           java-version: 17
           distribution: microsoft
-          cache: maven
-
-      - run: ./mvnw -V surefire:test
-
+      - name: setup java19
+        uses: actions/setup-java@v3
+        with:
+          java-version: 19
+          distribution: temurin
       - name: setup java20
         uses: actions/setup-java@v3
         with:
           java-version: 20-ea
           distribution: zulu
-          cache: maven
 
-      - run: ./mvnw -V surefire:test
+      - run: scripts/integration_test
+        env:
+          JAVA8_HOME: ${{ env.JAVA_HOME_8_X64 }}
+          JAVA11_HOME: ${{ env.JAVA_HOME_11_X64 }}
+          JAVA17_HOME: ${{ env.JAVA_HOME_17_X64 }}
+          JAVA19_HOME: ${{ env.JAVA_HOME_19_X64 }}
+          JAVA20_HOME: ${{ env.JAVA_HOME_20_X64 }}
 
       - name: remove self maven install files
         run: rm -rf $HOME/.m2/repository/io/foldright/cffu/
