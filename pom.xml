@@ -306,6 +306,9 @@
 						</goals>
 						<configuration>
 							<rules>
+								<requireJavaVersion>
+									<version>19</version>
+								</requireJavaVersion>
 								<requireMavenVersion>
 									<version>3.3.9</version>
 								</requireMavenVersion>
@@ -489,7 +492,6 @@
 							<doclint>all,-missing</doclint>
 							<!-- https://maven.apache.org/plugins/maven-javadoc-plugin/examples/exclude-package-names.html -->
 							<excludePackageNames>${javadoc.default.exclude.packages}</excludePackageNames>
-							<isOffline>true</isOffline>
 							<!-- https://maven.apache.org/plugins/maven-javadoc-plugin/javadoc-mojo.html#detectOfflineLinks -->
 							<detectOfflineLinks>false</detectOfflineLinks>
 							<offlineLinks>
@@ -663,41 +665,6 @@
 								<goals>
 									<goal>report</goal>
 								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>force-jdk-version-when-release</id>
-			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<!--
-						add maven-enforce-plugin to make sure the right jdk is used
-						https://stackoverflow.com/a/18420462/922688
-					-->
-					<plugin>
-						<artifactId>maven-enforcer-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>enforce-jdk-versions</id>
-								<goals>
-									<goal>enforce</goal>
-								</goals>
-								<configuration>
-									<rules>
-										<requireJavaVersion>
-											<version>19</version>
-										</requireJavaVersion>
-									</rules>
-								</configuration>
 							</execution>
 						</executions>
 					</plugin>
