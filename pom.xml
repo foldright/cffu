@@ -399,11 +399,6 @@
 					<version>0.8.8</version>
 				</plugin>
 				<plugin>
-					<groupId>org.sonatype.plugins</groupId>
-					<artifactId>nexus-staging-maven-plugin</artifactId>
-					<version>1.6.13</version>
-				</plugin>
-				<plugin>
 					<!--
 						config example: https://github.com/mojohaus/versions-maven-plugin/issues/157#issuecomment-306041074
 					-->
@@ -684,6 +679,7 @@
 					<plugin>
 						<groupId>org.sonatype.plugins</groupId>
 						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.13</version>
 						<extensions>true</extensions>
 						<!--
 							In multi-module builds using the deploy-at-end feature,

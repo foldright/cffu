@@ -30,15 +30,16 @@ readonly default_jh_var_name="JAVA${default_build_jdk_version}_HOME"
 #   https://stackoverflow.com/questions/25201430
 #
 # shellcheck disable=SC2034
-JVB_MVN_OPTS=(
+readonly JVB_MVN_OPTS=(
   "${JVB_DEFAULT_MVN_OPTS[@]}"
   -DperformRelease -P'!gen-sign'
+  ${CI_MORE_MVN_OPTS:+${CI_MORE_MVN_OPTS}}
 )
 
 cd ..
 
 ########################################
-# do build and test by default version jdk
+# build and test by default version jdk
 ########################################
 
 [ -d "${!default_jh_var_name:-}" ] || cu::die "\$${default_jh_var_name}(${!default_jh_var_name:-}) dir is not existed!"
@@ -48,7 +49,7 @@ cu::head_line_echo "build and test with Java $default_build_jdk_version: $JAVA_H
 jvb::mvn_cmd clean install
 
 ########################################
-# test by multi-version jdk
+# test by multiply version jdks
 ########################################
 
 for jdk_version in "${JDK_VERSIONS[@]}"; do
@@ -61,5 +62,5 @@ for jdk_version in "${JDK_VERSIONS[@]}"; do
 
   # just test without build
   cu::head_line_echo "test with Java $jdk_version: $JAVA_HOME"
-  jvb::mvn_cmd surefire:test -Denforcer.skip
+  jvb::mvn_cmd surefire:test
 done
