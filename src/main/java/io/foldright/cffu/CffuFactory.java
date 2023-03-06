@@ -5,9 +5,9 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
+import java.util.Objects;
+import java.util.concurrent.*;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 
@@ -81,7 +81,7 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    // Factory Methods
+    //# Factory Methods
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -135,9 +135,8 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    // allOf / anyOf methods
-    //
-    // similar to CompletableFuture
+    //# allOf / anyOf methods
+    //  similar to CompletableFuture
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -173,9 +172,8 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    // type-safe allOf / anyOf methods
-    //
-    // method name prefix with `cffu`
+    //# type-safe allOf / anyOf methods
+    //  method name prefix with `cffu`
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -235,7 +233,7 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    // of2, of3 methods
+    //# type-safe of2/of3 methods
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -280,5 +278,201 @@ public final class CffuFactory {
                         Triple.of((T1) result[0], (T2) result[1], (T3) result[2])
                 );
         return new0(ret);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //#  backport codes from CompletableFuture
+    ////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////
+    //# Executors
+    ////////////////////////////////////////
+
+    private static final boolean USE_COMMON_POOL =
+            (ForkJoinPool.getCommonPoolParallelism() > 1);
+
+    /**
+     * Default executor -- ForkJoinPool.commonPool() unless it cannot
+     * support parallelism.
+     */
+    private static final Executor ASYNC_POOL = USE_COMMON_POOL ?
+            ForkJoinPool.commonPool() : new ThreadPerTaskExecutor();
+
+    /**
+     * Fallback if ForkJoinPool.commonPool() cannot support parallelism
+     */
+    private static final class ThreadPerTaskExecutor implements Executor {
+        public void execute(Runnable r) {
+            Objects.requireNonNull(r);
+            new Thread(r).start();
+        }
+    }
+
+    /**
+     * Null-checks user executor argument, and translates uses of
+     * commonPool to ASYNC_POOL in case parallelism disabled.
+     */
+    static Executor screenExecutor(Executor e) {
+        if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool())
+            return ASYNC_POOL;
+        if (e == null) throw new NullPointerException();
+        return e;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# delay execution
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new Executor that submits a task to the given base
+     * executor after the given delay (or no delay if non-positive).
+     * Each delay commences upon invocation of the returned executor's
+     * {@code execute} method.
+     *
+     * @param delay    how long to delay, in units of {@code unit}
+     * @param unit     a {@code TimeUnit} determining how to interpret the
+     *                 {@code delay} parameter
+     * @param executor the base executor
+     * @return the new delayed executor
+     * @since 9
+     */
+    public static Executor delayedExecutor(
+            long delay, TimeUnit unit, Executor executor) {
+        if (unit == null || executor == null) throw new NullPointerException();
+        return new DelayedExecutor(delay, unit, executor);
+    }
+
+    /**
+     * Returns a new Executor that submits a task to the default
+     * executor after the given delay (or no delay if non-positive).
+     * Each delay commences upon invocation of the returned executor's
+     * {@code execute} method.
+     *
+     * @param delay how long to delay, in units of {@code unit}
+     * @param unit  a {@code TimeUnit} determining how to interpret the
+     *              {@code delay} parameter
+     * @return the new delayed executor
+     * @since 9
+     */
+    public static Executor delayedExecutor(long delay, TimeUnit unit) {
+        if (unit == null) throw new NullPointerException();
+        return new DelayedExecutor(delay, unit, ASYNC_POOL);
+    }
+
+    ////////////////////////////////////////
+    //# delay execution helper classes
+    ////////////////////////////////////////
+
+    /**
+     * Singleton delay scheduler, used only for starting and
+     * cancelling tasks.
+     */
+    static final class Delayer {
+        static ScheduledFuture<?> delay(Runnable command, long delay,
+                                        TimeUnit unit) {
+            return delayer.schedule(command, delay, unit);
+        }
+
+        static final class DaemonThreadFactory implements ThreadFactory {
+            public Thread newThread(Runnable r) {
+                Thread t = new Thread(r);
+                t.setDaemon(true);
+                t.setName("CompletableFutureDelayScheduler");
+                return t;
+            }
+        }
+
+        static final ScheduledThreadPoolExecutor delayer;
+
+        static {
+            (delayer = new ScheduledThreadPoolExecutor(
+                    1, new Delayer.DaemonThreadFactory())).
+                    setRemoveOnCancelPolicy(true);
+        }
+    }
+
+    // Little class-ified lambdas to better support monitoring
+
+    private static final class DelayedExecutor implements Executor {
+        final long delay;
+        final TimeUnit unit;
+        final Executor executor;
+
+        DelayedExecutor(long delay, TimeUnit unit, Executor executor) {
+            this.delay = delay;
+            this.unit = unit;
+            this.executor = executor;
+        }
+
+        public void execute(Runnable r) {
+            Delayer.delay(new TaskSubmitter(executor, r), delay, unit);
+        }
+    }
+
+    /**
+     * Action to submit user task
+     */
+    private static final class TaskSubmitter implements Runnable {
+        final Executor executor;
+        final Runnable action;
+
+        TaskSubmitter(Executor executor, Runnable action) {
+            this.executor = executor;
+            this.action = action;
+        }
+
+        public void run() {
+            executor.execute(action);
+        }
+    }
+
+    /**
+     * Action to completeExceptionally on timeout
+     */
+    static final class Timeout implements Runnable {
+        final CompletableFuture<?> f;
+
+        Timeout(CompletableFuture<?> f) {
+            this.f = f;
+        }
+
+        public void run() {
+            if (f != null && !f.isDone())
+                f.completeExceptionally(new TimeoutException());
+        }
+    }
+
+    /**
+     * Action to complete on timeout
+     */
+    static final class DelayedCompleter<U> implements Runnable {
+        final CompletableFuture<U> f;
+        final U u;
+
+        DelayedCompleter(CompletableFuture<U> f, U u) {
+            this.f = f;
+            this.u = u;
+        }
+
+        public void run() {
+            if (f != null)
+                f.complete(u);
+        }
+    }
+
+    /**
+     * Action to cancel unneeded timeouts
+     */
+    static final class Canceller implements BiConsumer<Object, Throwable> {
+        final Future<?> f;
+
+        Canceller(Future<?> f) {
+            this.f = f;
+        }
+
+        public void accept(Object ignore, Throwable ex) {
+            if (ex == null && f != null && !f.isDone())
+                f.cancel(false);
+        }
     }
 }
