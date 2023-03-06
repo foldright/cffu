@@ -5,22 +5,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.concurrent.*;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.*;
 
 
 public class Cffu<T> implements Future<T>, CompletionStage<T> {
-    private final boolean forbidObtrudeMethods;
-
-    private final Executor defaultExecutor;
+    private final CffuFactory factory;
 
     private final CompletableFuture<T> cf;
 
-    Cffu(boolean forbidObtrudeMethods, Executor defaultExecutor, CompletableFuture<T> cf) {
-        this.forbidObtrudeMethods = forbidObtrudeMethods;
-        this.defaultExecutor = defaultExecutor;
+    Cffu(CffuFactory cffuFactory, CompletableFuture<T> cf) {
+        this.factory = cffuFactory;
         this.cf = cf;
     }
 
@@ -29,9 +23,131 @@ public class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @return wrapped CompletableFuture
      */
+    @Override
     @SuppressFBWarnings("EI_EXPOSE_REP")
     public CompletableFuture<T> toCompletableFuture() {
         return cf;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // read explicitly methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public T get() throws InterruptedException, ExecutionException {
+        return cf.get();
+    }
+
+    @Override
+    public T get(long timeout, @NotNull TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        return cf.get(timeout, unit);
+    }
+
+    public T getNow(T valueIfAbsent) {
+        return cf.getNow(valueIfAbsent);
+    }
+
+    public T join() {
+        return cf.join();
+    }
+
+    @Override
+    public T resultNow() {
+        return cf.resultNow();
+    }
+
+    @Override
+    public Throwable exceptionNow() {
+        return cf.exceptionNow();
+    }
+
+    @Override
+    public boolean isDone() {
+        return cf.isDone();
+    }
+
+    public boolean isCompletedExceptionally() {
+        return cf.isCompletedExceptionally();
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cf.isCancelled();
+    }
+
+    @Override
+    public State state() {
+        return cf.state();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // write explicitly methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    public boolean complete(T value) {
+        return cf.complete(value);
+    }
+
+    public Cffu<T> completeAsync(Supplier<? extends T> supplier) {
+        return factory.toCffu(cf.completeAsync(supplier));
+    }
+
+    public Cffu<T> completeAsync(Supplier<? extends T> supplier, Executor executor) {
+        return factory.toCffu(cf.completeAsync(supplier, executor));
+    }
+
+    public boolean completeExceptionally(Throwable ex) {
+        return cf.completeExceptionally(ex);
+    }
+
+    @Override
+    public Cffu<T> exceptionallyAsync(Function<Throwable, ? extends T> fn) {
+        return factory.toCffu(cf.exceptionallyAsync(fn));
+    }
+
+    @Override
+    public Cffu<T> exceptionallyAsync(Function<Throwable, ? extends T> fn, Executor executor) {
+        return factory.toCffu(cf.exceptionallyAsync(fn, executor));
+    }
+
+    @Override
+    public Cffu<T> exceptionallyCompose(Function<Throwable, ? extends CompletionStage<T>> fn) {
+        return factory.toCffu(cf.exceptionallyCompose(fn));
+    }
+
+    @Override
+    public Cffu<T> exceptionallyComposeAsync(Function<Throwable, ? extends CompletionStage<T>> fn) {
+        return factory.toCffu(cf.exceptionallyComposeAsync(fn));
+    }
+
+    @Override
+    public Cffu<T> exceptionallyComposeAsync(
+            Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
+        return factory.toCffu(cf.exceptionallyComposeAsync(fn, executor));
+    }
+
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        return cf.cancel(mayInterruptIfRunning);
+    }
+
+    ////////////////////////////////////////
+    // nonfunctional methods
+    //   vs. user functional API
+    ////////////////////////////////////////
+
+    public void obtrudeValue(T value) {
+        if (factory.forbidObtrudeMethods) {
+            throw new UnsupportedOperationException("obtrudeValue is forbidden by cffu");
+        }
+        cf.obtrudeValue(value);
+    }
+
+    public void obtrudeException(Throwable ex) {
+        if (factory.forbidObtrudeMethods) {
+            throw new UnsupportedOperationException("obtrudeException is forbidden by cffu");
+        }
+        cf.obtrudeException(ex);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -284,8 +400,8 @@ public class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     @Override
     public Cffu<Void> thenRunAsync(Runnable action) {
-        if (defaultExecutor != null) {
-            return convert(cf.thenRunAsync(action, defaultExecutor));
+        if (factory.defaultExecutor != null) {
+            return convert(cf.thenRunAsync(action, factory.defaultExecutor));
         }
         return convert(cf.thenRunAsync(action));
     }
@@ -298,7 +414,7 @@ public class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public <U> Cffu<U> thenApplyAsync(Function<? super T, ? extends U> fn) {
         final CompletableFuture<U> u;
-        if (defaultExecutor != null) u = cf.thenApplyAsync(fn, defaultExecutor);
+        if (factory.defaultExecutor != null) u = cf.thenApplyAsync(fn, factory.defaultExecutor);
         else u = cf.thenApplyAsync(fn);
 
         return convert(u);
@@ -310,108 +426,22 @@ public class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    // nonfunctional methods(vs. user functional API)
-    ////////////////////////////////////////////////////////////////////////////////
-
-    public void obtrudeValue(T value) {
-        if (forbidObtrudeMethods) {
-            throw new UnsupportedOperationException("obtrudeValue is forbidden by cffu");
-        }
-        cf.obtrudeValue(value);
-    }
-
-    public void obtrudeException(Throwable ex) {
-        if (forbidObtrudeMethods) {
-            throw new UnsupportedOperationException("obtrudeException is forbidden by cffu");
-        }
-        cf.obtrudeException(ex);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
     // Constructor and implementation methods, for internal usage
     ////////////////////////////////////////////////////////////////////////////////
 
     private <U> Cffu<U> convert(CompletableFuture<U> cf) {
-        return new Cffu<>(forbidObtrudeMethods, defaultExecutor, cf);
+        return new Cffu<>(factory, cf);
     }
 
     public Executor defaultExecutor() {
-        if (defaultExecutor == null) return cf.defaultExecutor();
-        else return defaultExecutor;
+        if (factory.defaultExecutor == null) return cf.defaultExecutor();
+        else return factory.defaultExecutor;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
     // TBD
     ////////////////////////////////////////////////////////////////////////////////
 
-    @Override
-    public T resultNow() {
-        return cf.resultNow();
-    }
-
-    @Override
-    public Throwable exceptionNow() {
-        return cf.exceptionNow();
-    }
-
-    @Override
-    public State state() {
-        return cf.state();
-    }
-
-    @Override
-    public boolean cancel(boolean mayInterruptIfRunning) {
-        return cf.cancel(mayInterruptIfRunning);
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return cf.isCancelled();
-    }
-
-    @Override
-    public boolean isDone() {
-        return cf.isDone();
-    }
-
-    @Override
-    public T get() throws InterruptedException, ExecutionException {
-        return cf.get();
-    }
-
-    @Override
-    public T get(long timeout, @NotNull TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        return cf.get(timeout, unit);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // TBD
-    ////////////////////////////////////////////////////////////////////////////////
-
-    @Override
-    public CompletionStage<T> exceptionallyAsync(Function<Throwable, ? extends T> fn) {
-        return CompletionStage.super.exceptionallyAsync(fn);
-    }
-
-    @Override
-    public CompletionStage<T> exceptionallyAsync(Function<Throwable, ? extends T> fn, Executor executor) {
-        return CompletionStage.super.exceptionallyAsync(fn, executor);
-    }
-
-    @Override
-    public CompletionStage<T> exceptionallyCompose(Function<Throwable, ? extends CompletionStage<T>> fn) {
-        return CompletionStage.super.exceptionallyCompose(fn);
-    }
-
-    @Override
-    public CompletionStage<T> exceptionallyComposeAsync(Function<Throwable, ? extends CompletionStage<T>> fn) {
-        return CompletionStage.super.exceptionallyComposeAsync(fn);
-    }
-
-    @Override
-    public CompletionStage<T> exceptionallyComposeAsync(Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
-        return CompletionStage.super.exceptionallyComposeAsync(fn, executor);
-    }
 
     @Override
     public <U> CompletionStage<U> thenApply(Function<? super T, ? extends U> fn) {
@@ -439,32 +469,38 @@ public class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     @Override
-    public <U, V> CompletionStage<V> thenCombine(CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
+    public <U, V> CompletionStage<V> thenCombine(CompletionStage<? extends U> other, BiFunction<? super T, ?
+            super U, ? extends V> fn) {
         return null;
     }
 
     @Override
-    public <U, V> CompletionStage<V> thenCombineAsync(CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
+    public <U, V> CompletionStage<V> thenCombineAsync(CompletionStage<? extends
+            U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
         return null;
     }
 
     @Override
-    public <U, V> CompletionStage<V> thenCombineAsync(CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
+    public <U, V> CompletionStage<V> thenCombineAsync(CompletionStage<? extends
+            U> other, BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
         return null;
     }
 
     @Override
-    public <U> CompletionStage<Void> thenAcceptBoth(CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
+    public <U> CompletionStage<Void> thenAcceptBoth(CompletionStage<? extends U> other, BiConsumer<? super
+            T, ? super U> action) {
         return null;
     }
 
     @Override
-    public <U> CompletionStage<Void> thenAcceptBothAsync(CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
+    public <U> CompletionStage<Void> thenAcceptBothAsync(CompletionStage<? extends
+            U> other, BiConsumer<? super T, ? super U> action) {
         return null;
     }
 
     @Override
-    public <U> CompletionStage<Void> thenAcceptBothAsync(CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action, Executor executor) {
+    public <U> CompletionStage<Void> thenAcceptBothAsync(CompletionStage<? extends
+            U> other, BiConsumer<? super T, ? super U> action, Executor executor) {
         return null;
     }
 
@@ -484,17 +520,20 @@ public class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     @Override
-    public <U> CompletionStage<U> applyToEither(CompletionStage<? extends T> other, Function<? super T, U> fn) {
+    public <U> CompletionStage<U> applyToEither(CompletionStage<? extends T> other, Function<? super
+            T, U> fn) {
         return null;
     }
 
     @Override
-    public <U> CompletionStage<U> applyToEitherAsync(CompletionStage<? extends T> other, Function<? super T, U> fn) {
+    public <U> CompletionStage<U> applyToEitherAsync(CompletionStage<? extends T> other, Function<? super
+            T, U> fn) {
         return null;
     }
 
     @Override
-    public <U> CompletionStage<U> applyToEitherAsync(CompletionStage<? extends T> other, Function<? super T, U> fn, Executor executor) {
+    public <U> CompletionStage<U> applyToEitherAsync(CompletionStage<? extends T> other, Function<? super
+            T, U> fn, Executor executor) {
         return null;
     }
 
@@ -504,12 +543,14 @@ public class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     @Override
-    public CompletionStage<Void> acceptEitherAsync(CompletionStage<? extends T> other, Consumer<? super T> action) {
+    public CompletionStage<Void> acceptEitherAsync(CompletionStage<? extends T> other, Consumer<? super
+            T> action) {
         return null;
     }
 
     @Override
-    public CompletionStage<Void> acceptEitherAsync(CompletionStage<? extends T> other, Consumer<? super T> action, Executor executor) {
+    public CompletionStage<Void> acceptEitherAsync(CompletionStage<? extends T> other, Consumer<? super
+            T> action, Executor executor) {
         return null;
     }
 
@@ -524,7 +565,8 @@ public class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     @Override
-    public CompletionStage<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action, Executor executor) {
+    public CompletionStage<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action, Executor
+            executor) {
         return null;
     }
 
@@ -539,7 +581,8 @@ public class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     @Override
-    public <U> CompletionStage<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>> fn, Executor executor) {
+    public <U> CompletionStage<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>>
+                                                           fn, Executor executor) {
         return null;
     }
 
@@ -554,7 +597,8 @@ public class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     @Override
-    public <U> CompletionStage<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn, Executor executor) {
+    public <U> CompletionStage<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn, Executor
+            executor) {
         return null;
     }
 
@@ -569,7 +613,8 @@ public class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     @Override
-    public CompletionStage<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action, Executor executor) {
+    public CompletionStage<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action, Executor
+            executor) {
         return null;
     }
 

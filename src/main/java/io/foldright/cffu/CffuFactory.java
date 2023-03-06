@@ -20,9 +20,9 @@ import java.util.function.Supplier;
  * </ul>
  */
 public final class CffuFactory {
-    private final Executor defaultExecutor;
+    final Executor defaultExecutor;
 
-    private final boolean forbidObtrudeMethods;
+    final boolean forbidObtrudeMethods;
 
     CffuFactory(Executor defaultExecutor, boolean forbidObtrudeMethods) {
         this.defaultExecutor = defaultExecutor;
@@ -30,7 +30,7 @@ public final class CffuFactory {
     }
 
     private <T> Cffu<T> new0(CompletableFuture<T> cf) {
-        return new Cffu<>(forbidObtrudeMethods, defaultExecutor, cf);
+        return new Cffu<>(this, cf);
     }
 
     /**
