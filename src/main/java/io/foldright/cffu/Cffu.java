@@ -8,150 +8,280 @@ import java.util.function.*;
 
 
 public class Cffu<T> implements Future<T>, CompletionStage<T> {
-    private final CffuFactory factory;
+    private final CffuFactory fac;
 
     private final CompletableFuture<T> cf;
 
     Cffu(CffuFactory cffuFactory, CompletableFuture<T> cf) {
-        this.factory = cffuFactory;
+        this.fac = cffuFactory;
         this.cf = cf;
     }
 
-    /**
-     * Returns underneath wrapped CompletableFuture.
-     *
-     * @return underneath wrapped CompletableFuture
-     */
-    @Override
-    @SuppressFBWarnings("EI_EXPOSE_REP")
-    public CompletableFuture<T> toCompletableFuture() {
-        return cf;
-    }
-
     ////////////////////////////////////////////////////////////////////////////////
-    //# read explicitly methods
+    //# CompletionStage methods simple then* methods:
+    //
+    //   thenRun*(Runnable): Void -> Void
+    //   thenAccept*(Consumer): T -> Void
+    //   thenApply*(Function): T -> U
     ////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public T get() throws InterruptedException, ExecutionException {
-        return cf.get();
+    public Cffu<Void> thenRun(Runnable action) {
+        return fac.new0(cf.thenRun(action));
     }
 
     @Override
-    public T get(long timeout, @NotNull TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        return cf.get(timeout, unit);
-    }
-
-    public T getNow(T valueIfAbsent) {
-        return cf.getNow(valueIfAbsent);
-    }
-
-    public T join() {
-        return cf.join();
-    }
-
-    @Override
-    public T resultNow() {
-        return cf.resultNow();
-    }
-
-    @Override
-    public Throwable exceptionNow() {
-        return cf.exceptionNow();
-    }
-
-    @Override
-    public boolean isDone() {
-        return cf.isDone();
-    }
-
-    public boolean isCompletedExceptionally() {
-        return cf.isCompletedExceptionally();
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return cf.isCancelled();
-    }
-
-    @Override
-    public State state() {
-        return cf.state();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    //# write explicitly methods
-    ////////////////////////////////////////////////////////////////////////////////
-
-    public boolean complete(T value) {
-        return cf.complete(value);
-    }
-
-    public Cffu<T> completeAsync(Supplier<? extends T> supplier) {
-        return factory.new0(cf.completeAsync(supplier));
-    }
-
-    public Cffu<T> completeAsync(Supplier<? extends T> supplier, Executor executor) {
-        return factory.new0(cf.completeAsync(supplier, executor));
-    }
-
-    public boolean completeExceptionally(Throwable ex) {
-        return cf.completeExceptionally(ex);
-    }
-
-    @Override
-    public Cffu<T> exceptionallyAsync(Function<Throwable, ? extends T> fn) {
-        return factory.new0(cf.exceptionallyAsync(fn));
-    }
-
-    @Override
-    public Cffu<T> exceptionallyAsync(Function<Throwable, ? extends T> fn, Executor executor) {
-        return factory.new0(cf.exceptionallyAsync(fn, executor));
-    }
-
-    @Override
-    public Cffu<T> exceptionallyCompose(Function<Throwable, ? extends CompletionStage<T>> fn) {
-        return factory.new0(cf.exceptionallyCompose(fn));
-    }
-
-    @Override
-    public Cffu<T> exceptionallyComposeAsync(Function<Throwable, ? extends CompletionStage<T>> fn) {
-        return factory.new0(cf.exceptionallyComposeAsync(fn));
-    }
-
-    @Override
-    public Cffu<T> exceptionallyComposeAsync(
-            Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
-        return factory.new0(cf.exceptionallyComposeAsync(fn, executor));
-    }
-
-    @Override
-    public boolean cancel(boolean mayInterruptIfRunning) {
-        return cf.cancel(mayInterruptIfRunning);
-    }
-
-    ////////////////////////////////////////
-    // nonfunctional methods
-    //   vs. user functional API
-    ////////////////////////////////////////
-
-    public void obtrudeValue(T value) {
-        if (factory.forbidObtrudeMethods) {
-            throw new UnsupportedOperationException("obtrudeValue is forbidden by cffu");
+    public Cffu<Void> thenRunAsync(Runnable action) {
+        if (fac.defaultExecutor != null) {
+            return fac.new0(cf.thenRunAsync(action, fac.defaultExecutor));
         }
-        cf.obtrudeValue(value);
+        return fac.new0(cf.thenRunAsync(action));
     }
 
-    public void obtrudeException(Throwable ex) {
-        if (factory.forbidObtrudeMethods) {
-            throw new UnsupportedOperationException("obtrudeException is forbidden by cffu");
+    @Override
+    public Cffu<Void> thenRunAsync(Runnable action, Executor executor) {
+        return fac.new0(cf.thenRunAsync(action, executor));
+    }
+
+    @Override
+    public Cffu<Void> thenAccept(Consumer<? super T> action) {
+        return fac.new0(cf.thenAccept(action));
+    }
+
+    @Override
+    public Cffu<Void> thenAcceptAsync(Consumer<? super T> action) {
+        if (fac.defaultExecutor != null) {
+            return fac.new0(cf.thenAcceptAsync(action, fac.defaultExecutor));
         }
-        cf.obtrudeException(ex);
+        return fac.new0(cf.thenAcceptAsync(action));
     }
 
-    ////////////////////////////////////////
-    // timeout control
-    ////////////////////////////////////////
+    @Override
+    public Cffu<Void> thenAcceptAsync(Consumer<? super T> action, Executor executor) {
+        return fac.new0(cf.thenAcceptAsync(action, executor));
+    }
+
+    @Override
+    public <U> Cffu<U> thenApply(Function<? super T, ? extends U> fn) {
+        return fac.new0(cf.thenApply(fn));
+    }
+
+    @Override
+    public <U> Cffu<U> thenApplyAsync(Function<? super T, ? extends U> fn) {
+        if (fac.defaultExecutor != null) {
+            return fac.new0(cf.thenApplyAsync(fn, fac.defaultExecutor));
+        }
+        return fac.new0(cf.thenApplyAsync(fn));
+    }
+
+    @Override
+    public <U> Cffu<U> thenApplyAsync(Function<? super T, ? extends U> fn, Executor executor) {
+        return fac.new0(cf.thenApplyAsync(fn, executor));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# CompletionStage methods `then both(binary input)` methods:
+    //
+    //   runAfterBoth*(Runnable): Void, Void -> Void
+    //   thenAcceptBoth*(BiConsumer): T1, T2 -> Void
+    //   thenCombine*(BiFunction): T1, T2 -> U
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public Cffu<Void> runAfterBoth(CompletionStage<?> other, Runnable action) {
+        return fac.new0(cf.runAfterBoth(other, action));
+    }
+
+    @Override
+    public Cffu<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action) {
+        if (fac.defaultExecutor != null) {
+            return fac.new0(cf.runAfterBothAsync(other, action, fac.defaultExecutor));
+        }
+        return fac.new0(cf.runAfterBothAsync(other, action));
+    }
+
+    @Override
+    public Cffu<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action, Executor executor) {
+        return fac.new0(cf.runAfterBothAsync(other, action, executor));
+    }
+
+    @Override
+    public <U> Cffu<Void> thenAcceptBoth(
+            CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
+        return fac.new0(cf.thenAcceptBoth(other, action));
+    }
+
+    @Override
+    public <U> Cffu<Void> thenAcceptBothAsync(
+            CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
+        if (fac.defaultExecutor != null) {
+            return fac.new0(cf.thenAcceptBothAsync(other, action, fac.defaultExecutor));
+        }
+        return fac.new0(cf.thenAcceptBothAsync(other, action));
+    }
+
+    @Override
+    public <U> Cffu<Void> thenAcceptBothAsync(
+            CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action, Executor executor) {
+        return fac.new0(cf.thenAcceptBothAsync(other, action, executor));
+    }
+
+    @Override
+    public <U, V> Cffu<V> thenCombine(
+            CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
+        return fac.new0(cf.thenCombine(other, fn));
+    }
+
+    @Override
+    public <U, V> Cffu<V> thenCombineAsync(
+            CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
+        if (fac.defaultExecutor != null) {
+            return fac.new0(cf.thenCombineAsync(other, fn, fac.defaultExecutor));
+        }
+        return fac.new0(cf.thenCombineAsync(other, fn));
+    }
+
+    @Override
+    public <U, V> Cffu<V> thenCombineAsync(
+            CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
+        return fac.new0(cf.thenCombineAsync(other, fn, fac.defaultExecutor));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# CompletionStage methods `then either(binary input)` methods:
+    //
+    //   runAfterEither*(Runnable): Void, Void -> Void
+    //   acceptEither*(BiConsumer): T1, T2 -> Void
+    //   applyToEither*(BiFunction): T1, T2 -> U
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public Cffu<Void> runAfterEither(CompletionStage<?> other, Runnable action) {
+        return fac.new0(cf.runAfterEither(other, action));
+    }
+
+    @Override
+    public Cffu<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action) {
+        if (fac.defaultExecutor != null) {
+            return fac.new0(cf.runAfterEitherAsync(other, action, fac.defaultExecutor));
+        }
+        return fac.new0(cf.runAfterEitherAsync(other, action));
+    }
+
+    @Override
+    public Cffu<Void> runAfterEitherAsync(
+            CompletionStage<?> other, Runnable action, Executor executor) {
+        return fac.new0(cf.runAfterEitherAsync(other, action, executor));
+    }
+
+    @Override
+    public Cffu<Void> acceptEither(CompletionStage<? extends T> other, Consumer<? super T> action) {
+        return fac.new0(cf.acceptEither(other, action));
+    }
+
+    @Override
+    public Cffu<Void> acceptEitherAsync(CompletionStage<? extends T> other, Consumer<? super
+            T> action) {
+        if (fac.defaultExecutor != null) {
+            return fac.new0(cf.acceptEitherAsync(other, action, fac.defaultExecutor));
+        }
+        return fac.new0(cf.acceptEitherAsync(other, action));
+    }
+
+    @Override
+    public Cffu<Void> acceptEitherAsync(
+            CompletionStage<? extends T> other, Consumer<? super T> action, Executor executor) {
+        return fac.new0(cf.acceptEitherAsync(other, action, executor));
+    }
+
+    @Override
+    public <U> Cffu<U> applyToEither(CompletionStage<? extends T> other, Function<? super T, U> fn) {
+        return fac.new0(cf.applyToEither(other, fn));
+    }
+
+    @Override
+    public <U> Cffu<U> applyToEitherAsync(CompletionStage<? extends T> other, Function<? super
+            T, U> fn) {
+        if (fac.defaultExecutor != null) {
+            return fac.new0(cf.applyToEitherAsync(other, fn, fac.defaultExecutor));
+        }
+        return fac.new0(cf.applyToEitherAsync(other, fn));
+    }
+
+    @Override
+    public <U> Cffu<U> applyToEitherAsync(
+            CompletionStage<? extends T> other, Function<? super T, U> fn, Executor executor) {
+        return fac.new0(cf.applyToEitherAsync(other, fn, executor));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# CompletionStage methods advanced methods:
+    //
+    //   thenCompose*
+    //   handle*
+    //   whenComplete*
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public <U> Cffu<U> thenCompose(Function<? super T, ? extends CompletionStage<U>> fn) {
+        return fac.new0(cf.thenCompose(fn));
+    }
+
+    @Override
+    public <U> Cffu<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>> fn) {
+        if (fac.defaultExecutor != null) {
+            return fac.new0(cf.thenComposeAsync(fn, fac.defaultExecutor));
+        }
+        return fac.new0(cf.thenComposeAsync(fn));
+    }
+
+    @Override
+    public <U> Cffu<U> thenComposeAsync(
+            Function<? super T, ? extends CompletionStage<U>> fn, Executor executor) {
+        return fac.new0(cf.thenComposeAsync(fn, executor));
+    }
+
+    @Override
+    public <U> Cffu<U> handle(BiFunction<? super T, Throwable, ? extends U> fn) {
+        return null;
+    }
+
+    @Override
+    public <U> Cffu<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn) {
+        if (fac.defaultExecutor != null) {
+            return fac.new0(cf.handleAsync(fn, fac.defaultExecutor));
+        }
+        return fac.new0(cf.handleAsync(fn));
+    }
+
+    @Override
+    public <U> Cffu<U> handleAsync(
+            BiFunction<? super T, Throwable, ? extends U> fn, Executor executor) {
+        return fac.new0(cf.handleAsync(fn, executor));
+    }
+
+    @Override
+    public Cffu<T> whenComplete(BiConsumer<? super T, ? super Throwable> action) {
+        return fac.new0(cf.whenComplete(action));
+    }
+
+    @Override
+    public Cffu<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action) {
+        if (fac.defaultExecutor != null) {
+            return fac.new0(cf.whenCompleteAsync(action, fac.defaultExecutor));
+        }
+        return fac.new0(cf.whenCompleteAsync(action));
+    }
+
+    @Override
+    public Cffu<T> whenCompleteAsync(
+            BiConsumer<? super T, ? super Throwable> action, Executor executor) {
+        return fac.new0(cf.whenCompleteAsync(action, executor));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# timeout control
+    ////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Exceptionally completes this CompletableFuture with
@@ -200,226 +330,163 @@ public class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# overridden methods of CF
+    //# read(explicitly) methods
     ////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public Cffu<Void> thenRunAsync(Runnable action) {
-        if (factory.defaultExecutor != null) {
-            return factory.new0(cf.thenRunAsync(action, factory.defaultExecutor));
+    public T get() throws InterruptedException, ExecutionException {
+        return cf.get();
+    }
+
+    @Override
+    public T get(long timeout, @NotNull TimeUnit unit)
+            throws InterruptedException, ExecutionException, TimeoutException {
+        return cf.get(timeout, unit);
+    }
+
+    public T getNow(T valueIfAbsent) {
+        return cf.getNow(valueIfAbsent);
+    }
+
+    public T join() {
+        return cf.join();
+    }
+
+    @Override
+    public T resultNow() {
+        return cf.resultNow();
+    }
+
+    @Override
+    public Throwable exceptionNow() {
+        return cf.exceptionNow();
+    }
+
+    @Override
+    public boolean isDone() {
+        return cf.isDone();
+    }
+
+    public boolean isCompletedExceptionally() {
+        return cf.isCompletedExceptionally();
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cf.isCancelled();
+    }
+
+    @Override
+    public State state() {
+        return cf.state();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# write methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////
+    //# write(implicitly) methods
+    ////////////////////////////////////////
+
+    public Cffu<T> completeAsync(Supplier<? extends T> supplier) {
+        if (fac.defaultExecutor != null) {
+            return fac.new0(cf.completeAsync(supplier, fac.defaultExecutor));
         }
-        return factory.new0(cf.thenRunAsync(action));
+        return fac.new0(cf.completeAsync(supplier));
+    }
+
+    public Cffu<T> completeAsync(Supplier<? extends T> supplier, Executor executor) {
+        return fac.new0(cf.completeAsync(supplier, executor));
     }
 
     @Override
-    public Cffu<Void> thenRunAsync(Runnable action, Executor executor) {
-        return factory.new0(cf.thenRunAsync(action, executor));
+    public Cffu<T> exceptionally(Function<Throwable, ? extends T> fn) {
+        return fac.new0(cf.exceptionally(fn));
     }
 
     @Override
-    public <U> Cffu<U> thenApplyAsync(Function<? super T, ? extends U> fn) {
-        final CompletableFuture<U> u;
-        if (factory.defaultExecutor != null) u = cf.thenApplyAsync(fn, factory.defaultExecutor);
-        else u = cf.thenApplyAsync(fn);
-
-        return factory.new0(u);
+    public Cffu<T> exceptionallyAsync(Function<Throwable, ? extends T> fn) {
+        if (fac.defaultExecutor != null) {
+            return fac.new0(cf.exceptionallyAsync(fn, fac.defaultExecutor));
+        }
+        return fac.new0(cf.exceptionallyAsync(fn));
     }
 
     @Override
-    public <U> Cffu<U> thenApplyAsync(Function<? super T, ? extends U> fn, Executor executor) {
-        return factory.new0(cf.thenApplyAsync(fn, executor));
+    public Cffu<T> exceptionallyAsync(Function<Throwable, ? extends T> fn, Executor executor) {
+        return fac.new0(cf.exceptionallyAsync(fn, executor));
+    }
+
+    @Override
+    public Cffu<T> exceptionallyCompose(Function<Throwable, ? extends CompletionStage<T>> fn) {
+        return fac.new0(cf.exceptionallyCompose(fn));
+    }
+
+    @Override
+    public Cffu<T> exceptionallyComposeAsync(Function<Throwable, ? extends CompletionStage<T>> fn) {
+        if (fac.defaultExecutor != null) {
+            return fac.new0(cf.exceptionallyComposeAsync(fn, fac.defaultExecutor));
+        }
+
+        return fac.new0(cf.exceptionallyComposeAsync(fn));
+    }
+
+    @Override
+    public Cffu<T> exceptionallyComposeAsync(
+            Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
+        return fac.new0(cf.exceptionallyComposeAsync(fn, executor));
+    }
+
+    ////////////////////////////////////////
+    //# write(explicitly) methods
+    ////////////////////////////////////////
+
+    public boolean complete(T value) {
+        return cf.complete(value);
+    }
+
+    public boolean completeExceptionally(Throwable ex) {
+        return cf.completeExceptionally(ex);
+    }
+
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        return cf.cancel(mayInterruptIfRunning);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# Constructor and implementation methods, for internal usage
+    //# nonfunctional methods
+    //   vs. user functional API
     ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns underneath wrapped CompletableFuture.
+     *
+     * @return underneath wrapped CompletableFuture
+     */
+    @Override
+    @SuppressFBWarnings("EI_EXPOSE_REP")
+    public CompletableFuture<T> toCompletableFuture() {
+        return cf;
+    }
 
     public Executor defaultExecutor() {
-        if (factory.defaultExecutor == null) return cf.defaultExecutor();
-        else return factory.defaultExecutor;
+        if (fac.defaultExecutor == null) return cf.defaultExecutor();
+        else return fac.defaultExecutor;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
-    // TBD
-    ////////////////////////////////////////////////////////////////////////////////
-
-
-    @Override
-    public <U> CompletionStage<U> thenApply(Function<? super T, ? extends U> fn) {
-        return null;
+    public void obtrudeValue(T value) {
+        if (fac.forbidObtrudeMethods) {
+            throw new UnsupportedOperationException("obtrudeValue is forbidden by cffu");
+        }
+        cf.obtrudeValue(value);
     }
 
-    @Override
-    public CompletionStage<Void> thenAccept(Consumer<? super T> action) {
-        return null;
-    }
-
-    @Override
-    public CompletionStage<Void> thenAcceptAsync(Consumer<? super T> action) {
-        return null;
-    }
-
-    @Override
-    public CompletionStage<Void> thenAcceptAsync(Consumer<? super T> action, Executor executor) {
-        return null;
-    }
-
-    @Override
-    public CompletionStage<Void> thenRun(Runnable action) {
-        return null;
-    }
-
-    @Override
-    public <U, V> CompletionStage<V> thenCombine(
-            CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
-        return null;
-    }
-
-    @Override
-    public <U, V> CompletionStage<V> thenCombineAsync(
-            CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
-        return null;
-    }
-
-    @Override
-    public <U, V> CompletionStage<V> thenCombineAsync(
-            CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
-        return null;
-    }
-
-    @Override
-    public <U> CompletionStage<Void> thenAcceptBoth(
-            CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
-        return null;
-    }
-
-    @Override
-    public <U> CompletionStage<Void> thenAcceptBothAsync(
-            CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
-        return null;
-    }
-
-    @Override
-    public <U> CompletionStage<Void> thenAcceptBothAsync(
-            CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action, Executor executor) {
-        return null;
-    }
-
-    @Override
-    public CompletionStage<Void> runAfterBoth(CompletionStage<?> other, Runnable action) {
-        return null;
-    }
-
-    @Override
-    public CompletionStage<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action) {
-        return null;
-    }
-
-    @Override
-    public CompletionStage<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action, Executor executor) {
-        return null;
-    }
-
-    @Override
-    public <U> CompletionStage<U> applyToEither(CompletionStage<? extends T> other, Function<? super T, U> fn) {
-        return null;
-    }
-
-    @Override
-    public <U> CompletionStage<U> applyToEitherAsync(CompletionStage<? extends T> other, Function<? super
-            T, U> fn) {
-        return null;
-    }
-
-    @Override
-    public <U> CompletionStage<U> applyToEitherAsync(
-            CompletionStage<? extends T> other, Function<? super T, U> fn, Executor executor) {
-        return null;
-    }
-
-    @Override
-    public CompletionStage<Void> acceptEither(CompletionStage<? extends T> other, Consumer<? super T> action) {
-        return null;
-    }
-
-    @Override
-    public CompletionStage<Void> acceptEitherAsync(CompletionStage<? extends T> other, Consumer<? super
-            T> action) {
-        return null;
-    }
-
-    @Override
-    public CompletionStage<Void> acceptEitherAsync(
-            CompletionStage<? extends T> other, Consumer<? super T> action, Executor executor) {
-        return null;
-    }
-
-    @Override
-    public CompletionStage<Void> runAfterEither(CompletionStage<?> other, Runnable action) {
-        return null;
-    }
-
-    @Override
-    public CompletionStage<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action) {
-        return null;
-    }
-
-    @Override
-    public CompletionStage<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action, Executor
-            executor) {
-        return null;
-    }
-
-    @Override
-    public <U> CompletionStage<U> thenCompose(Function<? super T, ? extends CompletionStage<U>> fn) {
-        return null;
-    }
-
-    @Override
-    public <U> CompletionStage<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>> fn) {
-        return null;
-    }
-
-    @Override
-    public <U> CompletionStage<U> thenComposeAsync(
-            Function<? super T, ? extends CompletionStage<U>> fn, Executor executor) {
-        return null;
-    }
-
-    @Override
-    public <U> CompletionStage<U> handle(BiFunction<? super T, Throwable, ? extends U> fn) {
-        return null;
-    }
-
-    @Override
-    public <U> CompletionStage<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn) {
-        return null;
-    }
-
-    @Override
-    public <U> CompletionStage<U> handleAsync(
-            BiFunction<? super T, Throwable, ? extends U> fn, Executor executor) {
-        return null;
-    }
-
-    @Override
-    public CompletionStage<T> whenComplete(BiConsumer<? super T, ? super Throwable> action) {
-        return null;
-    }
-
-    @Override
-    public CompletionStage<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action) {
-        return null;
-    }
-
-    @Override
-    public CompletionStage<T> whenCompleteAsync(
-            BiConsumer<? super T, ? super Throwable> action, Executor executor) {
-        return null;
-    }
-
-    @Override
-    public CompletionStage<T> exceptionally(Function<Throwable, ? extends T> fn) {
-        return null;
+    public void obtrudeException(Throwable ex) {
+        if (fac.forbidObtrudeMethods) {
+            throw new UnsupportedOperationException("obtrudeException is forbidden by cffu");
+        }
+        cf.obtrudeException(ex);
     }
 }

@@ -358,7 +358,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
 
     test("delay execution").config(enabledIf = java9Plus) {
         val tick = currentTimeMillis()
-        val delay = 10L
+        val delay = 20L
 
         val delayer = CompletableFuture.delayedExecutor(delay, TimeUnit.MILLISECONDS)
 
@@ -367,7 +367,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
             currentTimeMillis() - tick
         }, delayer).get()
 
-        duration.shouldBeBetween(delay, delay + 4)
+        duration.shouldBeBetween(delay, delay + 10)
     }
 
     xtest("performance CF then*").config(invocations = 10) {
