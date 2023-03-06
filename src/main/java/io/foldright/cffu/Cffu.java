@@ -344,12 +344,12 @@ public class Cffu<T> implements Future<T>, CompletionStage<T> {
         return cf.get(timeout, unit);
     }
 
-    public T getNow(T valueIfAbsent) {
-        return cf.getNow(valueIfAbsent);
-    }
-
     public T join() {
         return cf.join();
+    }
+
+    public T getNow(T valueIfAbsent) {
+        return cf.getNow(valueIfAbsent);
     }
 
     @Override
@@ -471,9 +471,8 @@ public class Cffu<T> implements Future<T>, CompletionStage<T> {
         return cf;
     }
 
-    public Executor defaultExecutor() {
-        if (fac.defaultExecutor == null) return cf.defaultExecutor();
-        else return fac.defaultExecutor;
+    public Cffu<T> copy() {
+        return fac.new0(cf.copy());
     }
 
     public void obtrudeValue(T value) {
@@ -488,5 +487,25 @@ public class Cffu<T> implements Future<T>, CompletionStage<T> {
             throw new UnsupportedOperationException("obtrudeException is forbidden by cffu");
         }
         cf.obtrudeException(ex);
+    }
+
+    public Executor defaultExecutor() {
+        if (fac.defaultExecutor == null) return cf.defaultExecutor();
+        else return fac.defaultExecutor;
+    }
+
+    public int getNumberOfDependents() {
+        return cf.getNumberOfDependents();
+    }
+
+    // FIXME public CompletionStage<T> minimalCompletionStage() {
+
+    public <U> Cffu<U> newIncompleteFuture() {
+        return fac.new0(new CompletableFuture<>());
+    }
+
+    @Override
+    public String toString() {
+        return "Cffu: " + cf.toString();
     }
 }

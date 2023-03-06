@@ -81,7 +81,11 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# Factory Methods
+    //# Factory Methods, similar to CompletableFuture static methods
+    //
+    //  create by immediate value
+    //   - completedFuture/completedStage
+    //   - failedFuture/failedStage
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -92,8 +96,11 @@ public final class CffuFactory {
         return new0(cf);
     }
 
-    private <T> Cffu<T> dummy() {
-        return completedFuture(null);
+    /**
+     * @see CompletableFuture#completedStage(Object)
+     */
+    public <U> CompletionStage<U> completedStage(U value) {
+        return completedFuture(value);
     }
 
     /**
@@ -104,6 +111,22 @@ public final class CffuFactory {
         //       need compatibility logic
         CompletableFuture<T> cf = CompletableFuture.failedFuture(ex);
         return new0(cf);
+    }
+
+    public <U> CompletionStage<U> failedStage(Throwable ex) {
+        return failedFuture(ex);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Factory Methods, similar to CompletableFuture static methods
+    //
+    //  create by logic/lambda
+    //   - runAsync*
+    //   - supplyAsync*
+    ////////////////////////////////////////////////////////////////////////////////
+
+    private <T> Cffu<T> dummy() {
+        return completedFuture(null);
     }
 
     /**
@@ -135,8 +158,7 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# allOf / anyOf methods
-    //  similar to CompletableFuture
+    //# allOf / anyOf methods, similar to CompletableFuture static methods
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -320,7 +342,7 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# delay execution
+    //# delay execution, similar to CompletableFuture static methods
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
