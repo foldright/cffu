@@ -52,6 +52,8 @@ jvb::mvn_cmd clean install
 # test by multiply version jdks
 ########################################
 
+[ "${CI:-}" = true ] && more_maven_goals='jacoco:prepare-agent'
+
 for jdk_version in "${JDK_VERSIONS[@]}"; do
   # skip default jdk, already tested above
   [ "$jdk_version" = "$default_build_jdk_version" ] && continue
@@ -62,5 +64,5 @@ for jdk_version in "${JDK_VERSIONS[@]}"; do
 
   # just test without build
   cu::head_line_echo "test with Java $jdk_version: $JAVA_HOME"
-  jvb::mvn_cmd surefire:test
+  jvb::mvn_cmd ${more_maven_goals:-} surefire:test
 done

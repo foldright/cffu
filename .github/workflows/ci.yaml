@@ -54,3 +54,8 @@ jobs:
       - name: remove self maven install files
         run: rm -rf $HOME/.m2/repository/io/foldright/cffu/
 
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          name: codecov-umbrella
+          token: ${{ secrets.CODECOV_TOKEN }}
