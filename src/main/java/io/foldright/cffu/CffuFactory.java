@@ -6,6 +6,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
@@ -29,17 +30,20 @@ public final class CffuFactory {
         this.forbidObtrudeMethods = forbidObtrudeMethods;
     }
 
-    private <T> Cffu<T> new0(CompletableFuture<T> cf) {
+    <T> Cffu<T> new0(CompletableFuture<T> cf) {
         return new Cffu<>(this, cf);
     }
 
     /**
-     * Convert {@link CompletableFuture} to {@link Cffu}.
+     * Convert {@link CompletionStage} to {@link Cffu}.
+     * <p>
+     * <b><i>NOTE:<br></i></b>
+     * if input is a {@link Cffu}, re-wrapped with the config of this {@link CffuFactory} from {@link CffuFactoryBuilder}.
      *
      * @see Cffu#toCompletableFuture()
      */
-    public <T> Cffu<T> toCffu(CompletableFuture<T> cf) {
-        return new0(cf);
+    public <T> Cffu<T> toCffu(CompletionStage<T> cf) {
+        return new0(cf.toCompletableFuture());
     }
 
     /**
@@ -51,18 +55,18 @@ public final class CffuFactory {
         @SuppressWarnings("unchecked")
         Cffu<T>[] ret = new Cffu[cfs.length];
         for (int i = 0; i < cfs.length; i++) {
-            ret[i] = toCffu(cfs[i]);
+            ret[i] = new0(cfs[i]);
         }
         return ret;
     }
 
     @SuppressWarnings("unchecked")
-    public static <U> Cffu<U>[] cffuListToArray(List<Cffu<U>> cffuList) {
+    public static <T> Cffu<T>[] cffuListToArray(List<Cffu<T>> cffuList) {
         return cffuList.toArray(new Cffu[0]);
     }
 
     @SuppressWarnings("unchecked")
-    public static <U> CompletableFuture<U>[] completableFutureListToArray(List<CompletableFuture<U>> cfList) {
+    public static <T> CompletableFuture<T>[] completableFutureListToArray(List<CompletableFuture<T>> cfList) {
         return cfList.toArray(new CompletableFuture[0]);
     }
 
