@@ -29,7 +29,7 @@ public final class CffuFactory {
     final boolean forbidObtrudeMethods;
 
     CffuFactory(Executor defaultExecutor, boolean forbidObtrudeMethods) {
-        this.defaultExecutor = defaultExecutor;
+        this.defaultExecutor = screenExecutor(defaultExecutor);
         this.forbidObtrudeMethods = forbidObtrudeMethods;
     }
 
@@ -310,41 +310,6 @@ public final class CffuFactory {
     //#  backport codes from CompletableFuture
     ////////////////////////////////////////////////////////////////////////////////
 
-    ////////////////////////////////////////
-    //# Executors
-    ////////////////////////////////////////
-
-    private static final boolean USE_COMMON_POOL =
-            (ForkJoinPool.getCommonPoolParallelism() > 1);
-
-    /**
-     * Default executor -- ForkJoinPool.commonPool() unless it cannot
-     * support parallelism.
-     */
-    private static final Executor ASYNC_POOL = USE_COMMON_POOL ?
-            ForkJoinPool.commonPool() : new ThreadPerTaskExecutor();
-
-    /**
-     * Fallback if ForkJoinPool.commonPool() cannot support parallelism
-     */
-    private static final class ThreadPerTaskExecutor implements Executor {
-        public void execute(Runnable r) {
-            Objects.requireNonNull(r);
-            new Thread(r).start();
-        }
-    }
-
-    /**
-     * Null-checks user executor argument, and translates uses of
-     * commonPool to ASYNC_POOL in case parallelism disabled.
-     */
-    static Executor screenExecutor(Executor e) {
-        if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool())
-            return ASYNC_POOL;
-        if (e == null) throw new NullPointerException();
-        return e;
-    }
-
     ////////////////////////////////////////////////////////////////////////////////
     //# delay execution, similar to CompletableFuture static methods
     ////////////////////////////////////////////////////////////////////////////////
@@ -362,8 +327,7 @@ public final class CffuFactory {
      * @return the new delayed executor
      * @since 9
      */
-    public static Executor delayedExecutor(
-            long delay, TimeUnit unit, Executor executor) {
+    public static Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
         if (unit == null || executor == null) throw new NullPointerException();
         return new DelayedExecutor(delay, unit, executor);
     }
@@ -382,6 +346,47 @@ public final class CffuFactory {
      */
     public static Executor delayedExecutor(long delay, TimeUnit unit) {
         if (unit == null) throw new NullPointerException();
-        return new DelayedExecutor(delay, unit, ASYNC_POOL);
+        return new DelayedExecutor(delay, unit, AsyncPoolHolder.ASYNC_POOL);
+    }
+
+    ////////////////////////////////////////
+    //# Executors
+    ////////////////////////////////////////
+
+    private static final boolean USE_COMMON_POOL =
+            (ForkJoinPool.getCommonPoolParallelism() > 1);
+
+    /**
+     * Fallback if ForkJoinPool.commonPool() cannot support parallelism
+     */
+    private static final class ThreadPerTaskExecutor implements Executor {
+        public void execute(Runnable r) {
+            Objects.requireNonNull(r);
+            new Thread(r).start();
+        }
+    }
+
+    /**
+     * hold {@link #ASYNC_POOL} as static field to lazy load.
+     */
+    private static class AsyncPoolHolder {
+        /**
+         * Default executor -- ForkJoinPool.commonPool()
+         * unless it cannot support parallelism.
+         */
+        private static final Executor ASYNC_POOL = USE_COMMON_POOL ?
+                ForkJoinPool.commonPool() : new ThreadPerTaskExecutor();
+    }
+
+    /**
+     * Null-checks user executor argument, and translates uses of
+     * commonPool to ASYNC_POOL in case parallelism disabled.
+     */
+    @SuppressWarnings("resource")
+    private static Executor screenExecutor(Executor e) {
+        if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool())
+            return AsyncPoolHolder.ASYNC_POOL;
+        if (e == null) throw new NullPointerException();
+        return e;
     }
 }
