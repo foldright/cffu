@@ -3,11 +3,12 @@ package io.foldright.cffu;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.*;
-import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 
@@ -20,6 +21,8 @@ import java.util.function.Supplier;
  *          {@link #cffuListToArray(List)} and {@link #completableFutureListToArray(List)} to convert it first.
  * </ul>
  */
+@Immutable
+@ThreadSafe
 public final class CffuFactory {
     final Executor defaultExecutor;
 
@@ -41,6 +44,7 @@ public final class CffuFactory {
      * if input is a {@link Cffu}, re-wrapped with the config of this {@link CffuFactory} from {@link CffuFactoryBuilder}.
      *
      * @see Cffu#toCompletableFuture()
+     * @see CffuFactory#toCffu(CompletableFuture[])
      */
     public <T> Cffu<T> toCffu(CompletionStage<T> cf) {
         return new0(cf.toCompletableFuture());
@@ -50,12 +54,27 @@ public final class CffuFactory {
      * Convert {@link CompletableFuture} array to {@link Cffu} array.
      *
      * @see Cffu#toCompletableFuture()
+     * @see CffuFactory#toCffu(CompletionStage)
      */
-    public <T> Cffu<T>[] toCffuArray(CompletableFuture<T>... cfs) {
+    public <T> Cffu<T>[] toCffu(CompletableFuture<T>... cfs) {
         @SuppressWarnings("unchecked")
         Cffu<T>[] ret = new Cffu[cfs.length];
         for (int i = 0; i < cfs.length; i++) {
             ret[i] = new0(cfs[i]);
+        }
+        return ret;
+    }
+
+    /**
+     * @see Cffu#toCompletableFuture()
+     * @see CffuFactory#toCffu(CompletableFuture[])
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<T>[] toCompletableFuture(Cffu<T>... cfs) {
+        @SuppressWarnings("unchecked")
+        CompletableFuture<T>[] ret = new CompletableFuture[cfs.length];
+        for (int i = 0; i < cfs.length; i++) {
+            ret[i] = cfs[i].toCompletableFuture();
         }
         return ret;
     }
@@ -68,16 +87,6 @@ public final class CffuFactory {
     @SuppressWarnings("unchecked")
     public static <T> CompletableFuture<T>[] completableFutureListToArray(List<CompletableFuture<T>> cfList) {
         return cfList.toArray(new CompletableFuture[0]);
-    }
-
-    @SafeVarargs
-    private static <T> CompletableFuture<T>[] toCompletableFuture(Cffu<T>... cfs) {
-        @SuppressWarnings("unchecked")
-        CompletableFuture<T>[] ret = new CompletableFuture[cfs.length];
-        for (int i = 0; i < cfs.length; i++) {
-            ret[i] = cfs[i].toCompletableFuture();
-        }
-        return ret;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -236,12 +245,7 @@ public final class CffuFactory {
      */
     @SafeVarargs
     public final <T> Cffu<T> cffuAnyOf(Cffu<T>... cfs) {
-        @SuppressWarnings("unchecked")
-        CompletableFuture<T>[] args = new CompletableFuture[cfs.length];
-        for (int i = 0; i < cfs.length; i++) {
-            args[i] = cfs[i].toCompletableFuture();
-        }
-        return cffuAnyOf(args);
+        return cffuAnyOf(toCompletableFuture(cfs));
     }
 
     /**
@@ -379,122 +383,5 @@ public final class CffuFactory {
     public static Executor delayedExecutor(long delay, TimeUnit unit) {
         if (unit == null) throw new NullPointerException();
         return new DelayedExecutor(delay, unit, ASYNC_POOL);
-    }
-
-    ////////////////////////////////////////
-    //# delay execution helper classes
-    ////////////////////////////////////////
-
-    /**
-     * Singleton delay scheduler, used only for starting and
-     * cancelling tasks.
-     */
-    static final class Delayer {
-        static ScheduledFuture<?> delay(Runnable command, long delay,
-                                        TimeUnit unit) {
-            return delayer.schedule(command, delay, unit);
-        }
-
-        static final class DaemonThreadFactory implements ThreadFactory {
-            public Thread newThread(Runnable r) {
-                Thread t = new Thread(r);
-                t.setDaemon(true);
-                t.setName("CompletableFutureDelayScheduler");
-                return t;
-            }
-        }
-
-        static final ScheduledThreadPoolExecutor delayer;
-
-        static {
-            (delayer = new ScheduledThreadPoolExecutor(
-                    1, new Delayer.DaemonThreadFactory())).
-                    setRemoveOnCancelPolicy(true);
-        }
-    }
-
-    // Little class-ified lambdas to better support monitoring
-
-    private static final class DelayedExecutor implements Executor {
-        final long delay;
-        final TimeUnit unit;
-        final Executor executor;
-
-        DelayedExecutor(long delay, TimeUnit unit, Executor executor) {
-            this.delay = delay;
-            this.unit = unit;
-            this.executor = executor;
-        }
-
-        public void execute(Runnable r) {
-            Delayer.delay(new TaskSubmitter(executor, r), delay, unit);
-        }
-    }
-
-    /**
-     * Action to submit user task
-     */
-    private static final class TaskSubmitter implements Runnable {
-        final Executor executor;
-        final Runnable action;
-
-        TaskSubmitter(Executor executor, Runnable action) {
-            this.executor = executor;
-            this.action = action;
-        }
-
-        public void run() {
-            executor.execute(action);
-        }
-    }
-
-    /**
-     * Action to completeExceptionally on timeout
-     */
-    static final class Timeout implements Runnable {
-        final CompletableFuture<?> f;
-
-        Timeout(CompletableFuture<?> f) {
-            this.f = f;
-        }
-
-        public void run() {
-            if (f != null && !f.isDone())
-                f.completeExceptionally(new TimeoutException());
-        }
-    }
-
-    /**
-     * Action to complete on timeout
-     */
-    static final class DelayedCompleter<U> implements Runnable {
-        final CompletableFuture<U> f;
-        final U u;
-
-        DelayedCompleter(CompletableFuture<U> f, U u) {
-            this.f = f;
-            this.u = u;
-        }
-
-        public void run() {
-            if (f != null)
-                f.complete(u);
-        }
-    }
-
-    /**
-     * Action to cancel unneeded timeouts
-     */
-    static final class Canceller implements BiConsumer<Object, Throwable> {
-        final Future<?> f;
-
-        Canceller(Future<?> f) {
-            this.f = f;
-        }
-
-        public void accept(Object ignore, Throwable ex) {
-            if (ex == null && f != null && !f.isDone())
-                f.cancel(false);
-        }
     }
 }

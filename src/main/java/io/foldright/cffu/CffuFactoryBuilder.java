@@ -1,8 +1,9 @@
 package io.foldright.cffu;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.Executor;
 
-
+@ThreadSafe
 public class CffuFactoryBuilder {
     // FIXME make defaultExecutor field compulsory??
     private volatile Executor defaultExecutor;
