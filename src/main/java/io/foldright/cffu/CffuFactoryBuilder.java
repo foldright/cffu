@@ -1,12 +1,15 @@
 package io.foldright.cffu;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
 import org.jetbrains.annotations.Contract;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.Executor;
 
 @ThreadSafe
+@ParametersAreNonnullByDefault
+@ReturnValuesAreNonnullByDefault
 public final class CffuFactoryBuilder {
     // FIXME make defaultExecutor field compulsory??
     private volatile Executor defaultExecutor;
@@ -20,29 +23,25 @@ public final class CffuFactoryBuilder {
     // Builder Methods
     ////////////////////////////////////////////////////////////////////////////////
 
-    @NonNull
     @Contract(pure = true)
     public static CffuFactoryBuilder newCffuFactoryBuilder() {
         return new CffuFactoryBuilder();
     }
 
-    @NonNull
-    @SuppressWarnings("ConstantValue")
     @Contract(pure = true)
-    public CffuFactoryBuilder defaultExecutor(@NonNull Executor defaultExecutor) {
+    @SuppressWarnings("ConstantValue")
+    public CffuFactoryBuilder defaultExecutor(Executor defaultExecutor) {
         if (defaultExecutor == null) throw new NullPointerException("defaultExecutor is null");
         this.defaultExecutor = defaultExecutor;
         return this;
     }
 
-    @NonNull
     @Contract(pure = true)
     public CffuFactoryBuilder forbidObtrudeMethods(boolean forbid) {
         this.forbidObtrudeMethods = forbid;
         return this;
     }
 
-    @NonNull
     @Contract(pure = true)
     public CffuFactory build() {
         return new CffuFactory(defaultExecutor, forbidObtrudeMethods);
