@@ -39,7 +39,7 @@ final class Delayer {
     }
 }
 
-// Little class-ified lambdas to better support monitoring
+// Little classified lambdas to better support monitoring
 
 final class DelayedExecutor implements Executor {
     private final long delay;

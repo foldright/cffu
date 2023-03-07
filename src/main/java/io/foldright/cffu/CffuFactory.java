@@ -27,6 +27,7 @@ import java.util.function.Supplier;
 @Immutable
 @ThreadSafe
 public final class CffuFactory {
+    @NonNull
     final Executor defaultExecutor;
 
     final boolean forbidObtrudeMethods;
@@ -423,7 +424,7 @@ public final class CffuFactory {
      */
     private static final class ThreadPerTaskExecutor implements Executor {
         @Override
-        public void execute(Runnable r) {
+        public void execute(@NonNull Runnable r) {
             Objects.requireNonNull(r);
             new Thread(r).start();
         }

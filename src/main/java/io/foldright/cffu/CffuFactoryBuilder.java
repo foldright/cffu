@@ -27,8 +27,10 @@ public final class CffuFactoryBuilder {
     }
 
     @NonNull
+    @SuppressWarnings("ConstantValue")
     @Contract(pure = true)
     public CffuFactoryBuilder defaultExecutor(@NonNull Executor defaultExecutor) {
+        if (defaultExecutor == null) throw new NullPointerException("defaultExecutor is null");
         this.defaultExecutor = defaultExecutor;
         return this;
     }

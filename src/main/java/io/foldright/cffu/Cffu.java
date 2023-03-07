@@ -11,11 +11,12 @@ import java.util.function.*;
 
 
 public final class Cffu<T> implements Future<T>, CompletionStage<T> {
+    @NonNull
     private final CffuFactory fac;
-
+    @NonNull
     private final CompletableFuture<T> cf;
 
-    Cffu(CffuFactory cffuFactory, CompletableFuture<T> cf) {
+    Cffu(@NonNull CffuFactory cffuFactory, @NonNull CompletableFuture<T> cf) {
         this.fac = cffuFactory;
         this.cf = cf;
     }
@@ -37,10 +38,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @NonNull
     @Override
     public Cffu<Void> thenRunAsync(@NonNull Runnable action) {
-        if (fac.defaultExecutor != null) {
-            return fac.new0(cf.thenRunAsync(action, fac.defaultExecutor));
-        }
-        return fac.new0(cf.thenRunAsync(action));
+        return fac.new0(cf.thenRunAsync(action, fac.defaultExecutor));
     }
 
     @NonNull
@@ -58,10 +56,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @NonNull
     @Override
     public Cffu<Void> thenAcceptAsync(@NonNull Consumer<? super T> action) {
-        if (fac.defaultExecutor != null) {
-            return fac.new0(cf.thenAcceptAsync(action, fac.defaultExecutor));
-        }
-        return fac.new0(cf.thenAcceptAsync(action));
+        return fac.new0(cf.thenAcceptAsync(action, fac.defaultExecutor));
     }
 
     @NonNull
@@ -78,10 +73,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     @Override
     public <U> Cffu<U> thenApplyAsync(@NonNull Function<? super T, ? extends U> fn) {
-        if (fac.defaultExecutor != null) {
-            return fac.new0(cf.thenApplyAsync(fn, fac.defaultExecutor));
-        }
-        return fac.new0(cf.thenApplyAsync(fn));
+        return fac.new0(cf.thenApplyAsync(fn, fac.defaultExecutor));
     }
 
     @NonNull
@@ -107,10 +99,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @NonNull
     @Override
     public Cffu<Void> runAfterBothAsync(@NonNull CompletionStage<?> other, @NonNull Runnable action) {
-        if (fac.defaultExecutor != null) {
-            return fac.new0(cf.runAfterBothAsync(other, action, fac.defaultExecutor));
-        }
-        return fac.new0(cf.runAfterBothAsync(other, action));
+        return fac.new0(cf.runAfterBothAsync(other, action, fac.defaultExecutor));
     }
 
     @NonNull
@@ -131,10 +120,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public <U> Cffu<Void> thenAcceptBothAsync(
             CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
-        if (fac.defaultExecutor != null) {
-            return fac.new0(cf.thenAcceptBothAsync(other, action, fac.defaultExecutor));
-        }
-        return fac.new0(cf.thenAcceptBothAsync(other, action));
+        return fac.new0(cf.thenAcceptBothAsync(other, action, fac.defaultExecutor));
     }
 
     @NonNull
@@ -156,10 +142,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public <U, V> Cffu<V> thenCombineAsync(
             @NonNull CompletionStage<? extends U> other, @NonNull BiFunction<? super T, ? super U, ? extends V> fn) {
-        if (fac.defaultExecutor != null) {
-            return fac.new0(cf.thenCombineAsync(other, fn, fac.defaultExecutor));
-        }
-        return fac.new0(cf.thenCombineAsync(other, fn));
+        return fac.new0(cf.thenCombineAsync(other, fn, fac.defaultExecutor));
     }
 
     @NonNull
@@ -187,10 +170,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @NonNull
     @Override
     public Cffu<Void> runAfterEitherAsync(@NonNull CompletionStage<?> other, @NonNull Runnable action) {
-        if (fac.defaultExecutor != null) {
-            return fac.new0(cf.runAfterEitherAsync(other, action, fac.defaultExecutor));
-        }
-        return fac.new0(cf.runAfterEitherAsync(other, action));
+        return fac.new0(cf.runAfterEitherAsync(other, action, fac.defaultExecutor));
     }
 
     @NonNull
@@ -211,10 +191,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public Cffu<Void> acceptEitherAsync(
             @NonNull CompletionStage<? extends T> other, @NonNull Consumer<? super T> action) {
-        if (fac.defaultExecutor != null) {
-            return fac.new0(cf.acceptEitherAsync(other, action, fac.defaultExecutor));
-        }
-        return fac.new0(cf.acceptEitherAsync(other, action));
+        return fac.new0(cf.acceptEitherAsync(other, action, fac.defaultExecutor));
     }
 
     @NonNull
@@ -236,10 +213,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public <U> Cffu<U> applyToEitherAsync(
             @NonNull CompletionStage<? extends T> other, @NonNull Function<? super T, U> fn) {
-        if (fac.defaultExecutor != null) {
-            return fac.new0(cf.applyToEitherAsync(other, fn, fac.defaultExecutor));
-        }
-        return fac.new0(cf.applyToEitherAsync(other, fn));
+        return fac.new0(cf.applyToEitherAsync(other, fn, fac.defaultExecutor));
     }
 
     @NonNull
@@ -267,10 +241,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @NonNull
     @Override
     public <U> Cffu<U> thenComposeAsync(@NonNull Function<? super T, ? extends CompletionStage<U>> fn) {
-        if (fac.defaultExecutor != null) {
-            return fac.new0(cf.thenComposeAsync(fn, fac.defaultExecutor));
-        }
-        return fac.new0(cf.thenComposeAsync(fn));
+        return fac.new0(cf.thenComposeAsync(fn, fac.defaultExecutor));
     }
 
     @NonNull
@@ -289,10 +260,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @NonNull
     @Override
     public <U> Cffu<U> handleAsync(@NonNull BiFunction<? super T, Throwable, ? extends U> fn) {
-        if (fac.defaultExecutor != null) {
-            return fac.new0(cf.handleAsync(fn, fac.defaultExecutor));
-        }
-        return fac.new0(cf.handleAsync(fn));
+        return fac.new0(cf.handleAsync(fn, fac.defaultExecutor));
     }
 
     @NonNull
@@ -311,10 +279,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @NonNull
     @Override
     public Cffu<T> whenCompleteAsync(@NonNull BiConsumer<? super T, ? super Throwable> action) {
-        if (fac.defaultExecutor != null) {
-            return fac.new0(cf.whenCompleteAsync(action, fac.defaultExecutor));
-        }
-        return fac.new0(cf.whenCompleteAsync(action));
+        return fac.new0(cf.whenCompleteAsync(action, fac.defaultExecutor));
     }
 
     @NonNull
@@ -338,7 +303,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param unit    a {@code TimeUnit} determining how to interpret the
      *                {@code timeout} parameter
      * @return this CompletableFuture
-     * @since 9
      */
     @NonNull
     @Contract(pure = true)
@@ -362,7 +326,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param unit    a {@code TimeUnit} determining how to interpret the
      *                {@code timeout} parameter
      * @return this CompletableFuture
-     * @since 9
      */
     @NonNull
     @Contract(pure = true)
@@ -449,10 +412,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     @NonNull
     public Cffu<T> completeAsync(@NonNull Supplier<? extends T> supplier) {
-        if (fac.defaultExecutor != null) {
-            return fac.new0(cf.completeAsync(supplier, fac.defaultExecutor));
-        }
-        return fac.new0(cf.completeAsync(supplier));
+        return fac.new0(cf.completeAsync(supplier, fac.defaultExecutor));
     }
 
     @NonNull
@@ -469,10 +429,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @NonNull
     @Override
     public Cffu<T> exceptionallyAsync(@NonNull Function<Throwable, ? extends T> fn) {
-        if (fac.defaultExecutor != null) {
-            return fac.new0(cf.exceptionallyAsync(fn, fac.defaultExecutor));
-        }
-        return fac.new0(cf.exceptionallyAsync(fn));
+        return fac.new0(cf.exceptionallyAsync(fn, fac.defaultExecutor));
     }
 
     @NonNull
@@ -490,10 +447,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @NonNull
     @Override
     public Cffu<T> exceptionallyComposeAsync(@NonNull Function<Throwable, ? extends CompletionStage<T>> fn) {
-        if (fac.defaultExecutor != null) {
-            return fac.new0(cf.exceptionallyComposeAsync(fn, fac.defaultExecutor));
-        }
-        return fac.new0(cf.exceptionallyComposeAsync(fn));
+        return fac.new0(cf.exceptionallyComposeAsync(fn, fac.defaultExecutor));
     }
 
     @NonNull
@@ -561,8 +515,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @NonNull
     @Contract(pure = true)
     public Executor defaultExecutor() {
-        if (fac.defaultExecutor == null) return cf.defaultExecutor();
-        else return fac.defaultExecutor;
+        return fac.defaultExecutor;
     }
 
     public int getNumberOfDependents() {
