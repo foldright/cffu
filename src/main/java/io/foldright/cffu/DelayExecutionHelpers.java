@@ -7,6 +7,8 @@ package io.foldright.cffu;
 ////////////////////////////////////////////////////////////////////////////////
 
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 
@@ -21,7 +23,7 @@ final class Delayer {
 
     private static final class DaemonThreadFactory implements ThreadFactory {
         @Override
-        public Thread newThread(Runnable r) {
+        public Thread newThread(@NonNull Runnable r) {
             Thread t = new Thread(r);
             t.setDaemon(true);
             t.setName("CffuDelayScheduler");
@@ -51,7 +53,7 @@ final class DelayedExecutor implements Executor {
     }
 
     @Override
-    public void execute(Runnable r) {
+    public void execute(@NonNull Runnable r) {
         Delayer.delay(new TaskSubmitter(executor, r), delay, unit);
     }
 }

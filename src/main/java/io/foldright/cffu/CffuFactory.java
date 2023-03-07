@@ -1,7 +1,10 @@
 package io.foldright.cffu;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
@@ -28,12 +31,14 @@ public final class CffuFactory {
 
     final boolean forbidObtrudeMethods;
 
-    CffuFactory(Executor defaultExecutor, boolean forbidObtrudeMethods) {
+    CffuFactory(@NonNull Executor defaultExecutor, boolean forbidObtrudeMethods) {
         this.defaultExecutor = screenExecutor(defaultExecutor);
         this.forbidObtrudeMethods = forbidObtrudeMethods;
     }
 
-    <T> Cffu<T> new0(CompletableFuture<T> cf) {
+    @NonNull
+    @Contract(pure = true)
+    <T> Cffu<T> new0(@NonNull CompletableFuture<T> cf) {
         return new Cffu<>(this, cf);
     }
 
@@ -46,7 +51,9 @@ public final class CffuFactory {
      * @see Cffu#toCompletableFuture()
      * @see CffuFactory#toCffu(CompletableFuture[])
      */
-    public <T> Cffu<T> toCffu(CompletionStage<T> cf) {
+    @NonNull
+    @Contract(pure = true)
+    public <T> Cffu<T> toCffu(@NonNull CompletionStage<T> cf) {
         return new0(cf.toCompletableFuture());
     }
 
@@ -56,8 +63,10 @@ public final class CffuFactory {
      * @see Cffu#toCompletableFuture()
      * @see CffuFactory#toCffu(CompletionStage)
      */
+    @NonNull
+    @Contract(pure = true)
     @SafeVarargs
-    public final <T> Cffu<T>[] toCffu(CompletableFuture<T>... cfs) {
+    public final <T> Cffu<T>[] toCffu(@NonNull CompletableFuture<T>... cfs) {
         @SuppressWarnings("unchecked")
         Cffu<T>[] ret = new Cffu[cfs.length];
         for (int i = 0; i < cfs.length; i++) {
@@ -70,8 +79,10 @@ public final class CffuFactory {
      * @see Cffu#toCompletableFuture()
      * @see CffuFactory#toCffu(CompletableFuture[])
      */
+    @NonNull
+    @Contract(pure = true)
     @SafeVarargs
-    public static <T> CompletableFuture<T>[] toCompletableFuture(Cffu<T>... cfs) {
+    public static <T> CompletableFuture<T>[] toCompletableFuture(@NonNull Cffu<T>... cfs) {
         @SuppressWarnings("unchecked")
         CompletableFuture<T>[] ret = new CompletableFuture[cfs.length];
         for (int i = 0; i < cfs.length; i++) {
@@ -80,13 +91,17 @@ public final class CffuFactory {
         return ret;
     }
 
+    @NonNull
+    @Contract(pure = true)
     @SuppressWarnings("unchecked")
-    public static <T> Cffu<T>[] cffuListToArray(List<Cffu<T>> cffuList) {
+    public static <T> Cffu<T>[] cffuListToArray(@NonNull List<Cffu<T>> cffuList) {
         return cffuList.toArray(new Cffu[0]);
     }
 
+    @NonNull
+    @Contract(pure = true)
     @SuppressWarnings("unchecked")
-    public static <T> CompletableFuture<T>[] completableFutureListToArray(List<CompletableFuture<T>> cfList) {
+    public static <T> CompletableFuture<T>[] completableFutureListToArray(@NonNull List<CompletableFuture<T>> cfList) {
         return cfList.toArray(new CompletableFuture[0]);
     }
 
@@ -101,7 +116,9 @@ public final class CffuFactory {
     /**
      * @see CompletableFuture#completedFuture(Object)
      */
-    public <T> Cffu<T> completedFuture(T value) {
+    @NonNull
+    @Contract(pure = true)
+    public <T> Cffu<T> completedFuture(@Nullable T value) {
         CompletableFuture<T> cf = CompletableFuture.completedFuture(value);
         return new0(cf);
     }
@@ -109,21 +126,27 @@ public final class CffuFactory {
     /**
      * @see CompletableFuture#completedStage(Object)
      */
-    public <U> CompletionStage<U> completedStage(U value) {
+    @NonNull
+    @Contract(pure = true)
+    public <U> CompletionStage<U> completedStage(@Nullable U value) {
         return completedFuture(value);
     }
 
     /**
      * @see CompletableFuture#failedFuture(Throwable)
      */
-    public <T> Cffu<T> failedFuture(Throwable ex) {
+    @NonNull
+    @Contract(pure = true)
+    public <T> Cffu<T> failedFuture(@NonNull Throwable ex) {
         // FIXME CompletableFuture.failedFuture is since java 9
         //       need compatibility logic
         CompletableFuture<T> cf = CompletableFuture.failedFuture(ex);
         return new0(cf);
     }
 
-    public <U> CompletionStage<U> failedStage(Throwable ex) {
+    @NonNull
+    @Contract(pure = true)
+    public <U> CompletionStage<U> failedStage(@NonNull Throwable ex) {
         return failedFuture(ex);
     }
 
@@ -135,6 +158,8 @@ public final class CffuFactory {
     //   - supplyAsync*
     ////////////////////////////////////////////////////////////////////////////////
 
+    @NonNull
+    @Contract(pure = true)
     private <T> Cffu<T> dummy() {
         return completedFuture(null);
     }
@@ -142,30 +167,34 @@ public final class CffuFactory {
     /**
      * @see CompletableFuture#runAsync(Runnable)
      */
-    public Cffu<Void> runAsync(Runnable action) {
+    @NonNull
+    public Cffu<Void> runAsync(@NonNull Runnable action) {
         return dummy().thenRunAsync(action);
     }
 
     /**
      * @see CompletableFuture#runAsync(Runnable, Executor)
      */
-    public Cffu<Void> runAsync(Runnable action, Executor executor) {
+    @NonNull
+    public Cffu<Void> runAsync(@NonNull Runnable action, @NonNull Executor executor) {
         return dummy().thenRunAsync(action, executor);
     }
 
     /**
      * @see CompletableFuture#supplyAsync(Supplier)
      */
+    @NonNull
     @SuppressWarnings("BoundedWildcard")
-    public <T> Cffu<T> supplyAsync(Supplier<T> supplier) {
+    public <T> Cffu<T> supplyAsync(@NonNull Supplier<T> supplier) {
         return dummy().thenApplyAsync(unused -> supplier.get());
     }
 
     /**
      * @see CompletableFuture#supplyAsync(Supplier, Executor)
      */
+    @NonNull
     @SuppressWarnings("BoundedWildcard")
-    public <T> Cffu<T> supplyAsync(Supplier<T> supplier, Executor executor) {
+    public <T> Cffu<T> supplyAsync(@NonNull Supplier<T> supplier, @NonNull Executor executor) {
         return dummy().thenApplyAsync(unused -> supplier.get(), executor);
     }
 
@@ -176,7 +205,9 @@ public final class CffuFactory {
     /**
      * overloaded method of {@link #allOf(CompletableFuture[])} with argument type {@link Cffu}.
      */
-    public Cffu<Void> allOf(Cffu<?>... cfs) {
+    @NonNull
+    @Contract(pure = true)
+    public Cffu<Void> allOf(@NonNull Cffu<?>... cfs) {
         @SuppressWarnings("unchecked")
         CompletableFuture<Object>[] args = toCompletableFuture((Cffu<Object>[]) cfs);
         return new0(CompletableFuture.allOf(args));
@@ -185,14 +216,18 @@ public final class CffuFactory {
     /**
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
-    public Cffu<Void> allOf(CompletableFuture<?>... cfs) {
+    @NonNull
+    @Contract(pure = true)
+    public Cffu<Void> allOf(@NonNull CompletableFuture<?>... cfs) {
         return new0(CompletableFuture.allOf(cfs));
     }
 
     /**
      * overloaded method of {@link #anyOf(CompletableFuture[])} with argument type {@link Cffu}.
      */
-    public Cffu<Object> anyOf(Cffu<?>... cfs) {
+    @NonNull
+    @Contract(pure = true)
+    public Cffu<Object> anyOf(@NonNull Cffu<?>... cfs) {
         @SuppressWarnings("unchecked")
         CompletableFuture<Object>[] args = toCompletableFuture((Cffu<Object>[]) cfs);
         return new0(CompletableFuture.anyOf(args));
@@ -201,7 +236,9 @@ public final class CffuFactory {
     /**
      * @see CompletableFuture#anyOf(CompletableFuture[])
      */
-    public Cffu<Object> anyOf(CompletableFuture<?>... cfs) {
+    @NonNull
+    @Contract(pure = true)
+    public Cffu<Object> anyOf(@NonNull CompletableFuture<?>... cfs) {
         return new0(CompletableFuture.anyOf(cfs));
     }
 
@@ -213,16 +250,20 @@ public final class CffuFactory {
     /**
      * overloaded method of {@link #cffuAllOfWithResults(CompletableFuture[])} with argument type {@link Cffu}.
      */
+    @NonNull
+    @Contract(pure = true)
     @SafeVarargs
-    public final <T> Cffu<List<T>> cffuAllOfWithResults(Cffu<T>... cfs) {
+    public final <T> Cffu<List<T>> cffuAllOfWithResults(@NonNull Cffu<T>... cfs) {
         return cffuAllOfWithResults(toCompletableFuture(cfs));
     }
 
     /**
      * same to {@link #allOf(CompletableFuture[])}, but return results of input {@link CompletableFuture}.
      */
+    @NonNull
+    @Contract(pure = true)
     @SafeVarargs
-    public final <T> Cffu<List<T>> cffuAllOfWithResults(CompletableFuture<T>... cfs) {
+    public final <T> Cffu<List<T>> cffuAllOfWithResults(@NonNull CompletableFuture<T>... cfs) {
         final int size = cfs.length;
         final Object[] result = new Object[size];
 
@@ -246,17 +287,21 @@ public final class CffuFactory {
     /**
      * same as {@link #cffuAnyOf(CompletableFuture[])}, but argument type is {@link Cffu}.
      */
+    @NonNull
+    @Contract(pure = true)
     @SafeVarargs
-    public final <T> Cffu<T> cffuAnyOf(Cffu<T>... cfs) {
+    public final <T> Cffu<T> cffuAnyOf(@NonNull Cffu<T>... cfs) {
         return cffuAnyOf(toCompletableFuture(cfs));
     }
 
     /**
      * similar to {@link #anyOf(CompletableFuture[])}, but return type {@code T} instead of {@code Object}.
      */
-    @SuppressWarnings("unchecked")
+    @NonNull
+    @Contract(pure = true)
     @SafeVarargs
-    public final <T> Cffu<T> cffuAnyOf(CompletableFuture<T>... cfs) {
+    @SuppressWarnings("unchecked")
+    public final <T> Cffu<T> cffuAnyOf(@NonNull CompletableFuture<T>... cfs) {
         CompletableFuture<T> ret = (CompletableFuture<T>) CompletableFuture.anyOf(cfs);
         return new0(ret);
     }
@@ -268,12 +313,16 @@ public final class CffuFactory {
     /**
      * overloaded method of {@link #cffuOf2(CompletableFuture, CompletableFuture)} with argument type {@link Cffu}.
      */
-    public <T1, T2> Cffu<Pair<T1, T2>> cffuOf2(Cffu<T1> cf1, Cffu<T2> cf2) {
+    @NonNull
+    @Contract(pure = true)
+    public <T1, T2> Cffu<Pair<T1, T2>> cffuOf2(@NonNull Cffu<T1> cf1, @NonNull Cffu<T2> cf2) {
         return cffuOf2(cf1.toCompletableFuture(), cf2.toCompletableFuture());
     }
 
+    @NonNull
+    @Contract(pure = true)
     @SuppressWarnings("unchecked")
-    public <T1, T2> Cffu<Pair<T1, T2>> cffuOf2(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
+    public <T1, T2> Cffu<Pair<T1, T2>> cffuOf2(@NonNull CompletableFuture<T1> cf1, @NonNull CompletableFuture<T2> cf2) {
         final Object[] result = new Object[2];
 
         CompletableFuture<Pair<T1, T2>> ret = CompletableFuture.allOf(
@@ -287,15 +336,21 @@ public final class CffuFactory {
     }
 
     /**
-     * overloaded method of {@link #cffuOf3(CompletableFuture, CompletableFuture, CompletableFuture)} with argument type {@link Cffu}.
+     * overloaded method of {@link #cffuOf3(CompletableFuture, CompletableFuture, CompletableFuture)}
+     * with argument type {@link Cffu}.
      */
-    public <T1, T2, T3> Cffu<Triple<T1, T2, T3>> cffuOf3(Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3) {
+    @NonNull
+    @Contract(pure = true)
+    public <T1, T2, T3> Cffu<Triple<T1, T2, T3>> cffuOf3(@NonNull Cffu<T1> cf1, Cffu<T2> cf2, @NonNull Cffu<T3> cf3) {
         return cffuOf3(cf1.toCompletableFuture(), cf2.toCompletableFuture(), cf3.toCompletableFuture());
     }
 
     @SuppressWarnings("unchecked")
-    public <T1, T2, T3> Cffu<Triple<T1, T2, T3>> cffuOf3(
-            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
+    @NonNull
+    @Contract(pure = true)
+    public <T1, T2, T3> Cffu<Triple<T1, T2, T3>> cffuOf3(@NonNull CompletableFuture<T1> cf1,
+                                                         @NonNull CompletableFuture<T2> cf2,
+                                                         @NonNull CompletableFuture<T3> cf3) {
         final Object[] result = new Object[3];
 
         CompletableFuture<Triple<T1, T2, T3>> ret = CompletableFuture.allOf(
@@ -328,9 +383,11 @@ public final class CffuFactory {
      *                 {@code delay} parameter
      * @param executor the base executor
      * @return the new delayed executor
-     * @since 9
      */
-    public static Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
+    @NonNull
+    @Contract(pure = true)
+    @SuppressWarnings("ConstantValue")
+    public static Executor delayedExecutor(long delay, @NonNull TimeUnit unit, @NonNull Executor executor) {
         if (unit == null || executor == null) throw new NullPointerException();
         return new DelayedExecutor(delay, unit, executor);
     }
@@ -345,9 +402,11 @@ public final class CffuFactory {
      * @param unit  a {@code TimeUnit} determining how to interpret the
      *              {@code delay} parameter
      * @return the new delayed executor
-     * @since 9
      */
-    public static Executor delayedExecutor(long delay, TimeUnit unit) {
+    @NonNull
+    @Contract(pure = true)
+    @SuppressWarnings("ConstantValue")
+    public static Executor delayedExecutor(long delay, @NonNull TimeUnit unit) {
         if (unit == null) throw new NullPointerException();
         return new DelayedExecutor(delay, unit, AsyncPoolHolder.ASYNC_POOL);
     }
