@@ -350,6 +350,24 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
+     * Returns a new Executor that submits a task to the default
+     * executor after the given delay (or no delay if non-positive).
+     * Each delay commences upon invocation of the returned executor's
+     * {@code execute} method.
+     *
+     * @param delay how long to delay, in units of {@code unit}
+     * @param unit  a {@code TimeUnit} determining how to interpret the
+     *              {@code delay} parameter
+     * @return the new delayed executor
+     */
+    @Contract(pure = true)
+    @SuppressWarnings("ConstantValue")
+    public Executor delayedExecutor(long delay, TimeUnit unit) {
+        if (unit == null) throw new NullPointerException();
+        return new DelayedExecutor(delay, unit, defaultExecutor);
+    }
+
+    /**
      * Returns a new Executor that submits a task to the given base
      * executor after the given delay (or no delay if non-positive).
      * Each delay commences upon invocation of the returned executor's
@@ -363,27 +381,9 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     @SuppressWarnings("ConstantValue")
-    public static Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
+    public Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
         if (unit == null || executor == null) throw new NullPointerException();
         return new DelayedExecutor(delay, unit, executor);
-    }
-
-    /**
-     * Returns a new Executor that submits a task to the default
-     * executor after the given delay (or no delay if non-positive).
-     * Each delay commences upon invocation of the returned executor's
-     * {@code execute} method.
-     *
-     * @param delay how long to delay, in units of {@code unit}
-     * @param unit  a {@code TimeUnit} determining how to interpret the
-     *              {@code delay} parameter
-     * @return the new delayed executor
-     */
-    @Contract(pure = true)
-    @SuppressWarnings("ConstantValue")
-    public static Executor delayedExecutor(long delay, TimeUnit unit) {
-        if (unit == null) throw new NullPointerException();
-        return new DelayedExecutor(delay, unit, AsyncPoolHolder.ASYNC_POOL);
     }
 
     ////////////////////////////////////////
