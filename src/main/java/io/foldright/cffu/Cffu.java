@@ -150,7 +150,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public <U, V> Cffu<V> thenCombineAsync(@NonNull CompletionStage<? extends U> other,
                                            @NonNull BiFunction<? super T, ? super U, ? extends V> fn,
                                            @NonNull Executor executor) {
-        return fac.new0(cf.thenCombineAsync(other, fn, fac.defaultExecutor));
+        return fac.new0(cf.thenCombineAsync(other, fn, executor));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
