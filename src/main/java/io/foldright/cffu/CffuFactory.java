@@ -134,9 +134,14 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public <T> Cffu<T> failedFuture(Throwable ex) {
-        // FIXME CompletableFuture.failedFuture is since java 9
-        //       need compatibility logic
-        CompletableFuture<T> cf = CompletableFuture.failedFuture(ex);
+        final CompletableFuture<T> cf;
+        if (IS_JAVA9_PLUS) {
+            cf = CompletableFuture.failedFuture(ex);
+        } else {
+            cf = new CompletableFuture<>();
+            cf.completeExceptionally(ex);
+        }
+
         return new0(cf);
     }
 
@@ -361,10 +366,8 @@ public final class CffuFactory {
      * @return the new delayed executor
      */
     @Contract(pure = true)
-    @SuppressWarnings("ConstantValue")
     public Executor delayedExecutor(long delay, TimeUnit unit) {
-        if (unit == null) throw new NullPointerException();
-        return new DelayedExecutor(delay, unit, defaultExecutor);
+        return delayedExecutor(delay, unit, defaultExecutor);
     }
 
     /**
@@ -382,6 +385,10 @@ public final class CffuFactory {
     @Contract(pure = true)
     @SuppressWarnings("ConstantValue")
     public Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
+        if (IS_JAVA9_PLUS) {
+            return CompletableFuture.delayedExecutor(delay, unit, executor);
+        }
+
         if (unit == null || executor == null) throw new NullPointerException();
         return new DelayedExecutor(delay, unit, executor);
     }
@@ -426,5 +433,33 @@ public final class CffuFactory {
             return AsyncPoolHolder.ASYNC_POOL;
         if (e == null) throw new NullPointerException();
         return e;
+    }
+
+    ////////////////////////////////////////
+    //# version checker for compatibility logic
+    ////////////////////////////////////////
+
+    static final boolean IS_JAVA9_PLUS;
+
+    static final boolean IS_JAVA12_PLUS;
+
+    static {
+        boolean b;
+        try {
+            CompletableFuture.completedStage(null);
+            b = true;
+        } catch (NoSuchMethodError e) {
+            b = false;
+        }
+        IS_JAVA9_PLUS = b;
+
+        try {
+            CompletableFuture.completedFuture(42)
+                    .exceptionallyCompose(e -> CompletableFuture.completedFuture(42));
+            b = true;
+        } catch (NoSuchMethodError e) {
+            b = false;
+        }
+        IS_JAVA12_PLUS = b;
     }
 }

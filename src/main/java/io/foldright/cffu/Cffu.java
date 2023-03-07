@@ -11,6 +11,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.concurrent.*;
 import java.util.function.*;
 
+import static io.foldright.cffu.CffuFactory.IS_JAVA12_PLUS;
+import static io.foldright.cffu.CffuFactory.IS_JAVA9_PLUS;
+
 @ParametersAreNonnullByDefault
 @ReturnValuesAreNonnullByDefault
 public final class Cffu<T> implements Future<T>, CompletionStage<T> {
@@ -274,7 +277,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Contract(pure = true)
     @SuppressWarnings("ConstantValue")
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
-    public Cffu<T> timeout(long timeout, TimeUnit unit) {
+    public Cffu<T> orTimeout(long timeout, TimeUnit unit) {
+        if (IS_JAVA9_PLUS) {
+            cf.orTimeout(timeout, unit);
+            return this;
+        }
+
         if (unit == null) throw new NullPointerException();
         if (!cf.isDone()) {
             whenComplete(new Canceller(Delayer.delay(new Timeout(cf), timeout, unit)));
@@ -297,6 +305,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @SuppressWarnings("ConstantValue")
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
     public Cffu<T> completeOnTimeout(@Nullable T value, long timeout, TimeUnit unit) {
+        if (IS_JAVA9_PLUS) {
+            cf.completeOnTimeout(value, timeout, unit);
+            return this;
+        }
+
         if (unit == null) throw new NullPointerException();
         if (!isDone()) {
             whenComplete(new Canceller(Delayer.delay(new DelayedCompleter<>(cf, value), timeout, unit)));
@@ -374,11 +387,66 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////
 
     public Cffu<T> completeAsync(Supplier<? extends T> supplier) {
-        return fac.new0(cf.completeAsync(supplier, fac.defaultExecutor));
+        return completeAsync(supplier, fac.defaultExecutor);
     }
 
+    @SuppressWarnings("ConstantValue")
     public Cffu<T> completeAsync(Supplier<? extends T> supplier, Executor executor) {
-        return fac.new0(cf.completeAsync(supplier, executor));
+        if (IS_JAVA9_PLUS) {
+            cf.completeAsync(supplier, executor);
+        } else {
+            if (supplier == null || executor == null) throw new NullPointerException();
+            executor.execute(new AsyncSupply<>(cf, supplier));
+        }
+        return this;
+    }
+
+    /**
+     * code is copied from {@code CompletableFuture.AsyncSupply} with small adoption.
+     */
+    @SuppressWarnings({"NonSerializableFieldInSerializableClass", "serial"})
+    @SuppressFBWarnings("SE_BAD_FIELD")
+    private static final class AsyncSupply<T> extends ForkJoinTask<Void>
+            implements Runnable, CompletableFuture.AsynchronousCompletionTask {
+        CompletableFuture<T> dep;
+        Supplier<? extends T> fn;
+
+        AsyncSupply(CompletableFuture<T> dep, Supplier<? extends T> fn) {
+            this.dep = dep;
+            this.fn = fn;
+        }
+
+        @Override
+        public Void getRawResult() {
+            return null;
+        }
+
+        @Override
+        public void setRawResult(Void v) {
+        }
+
+        @Override
+        public boolean exec() {
+            run();
+            return false;
+        }
+
+        @Override
+        public void run() {
+            CompletableFuture<T> d;
+            Supplier<? extends T> f;
+            if ((d = dep) != null && (f = fn) != null) {
+                dep = null;
+                fn = null;
+                if (!d.isDone()) {
+                    try {
+                        d.complete(f.get());
+                    } catch (Throwable ex) {
+                        d.completeExceptionally(ex);
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -388,28 +456,56 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     @Override
     public Cffu<T> exceptionallyAsync(Function<Throwable, ? extends T> fn) {
-        return fac.new0(cf.exceptionallyAsync(fn, fac.defaultExecutor));
+        return exceptionallyAsync(fn, fac.defaultExecutor);
     }
 
     @Override
     public Cffu<T> exceptionallyAsync(Function<Throwable, ? extends T> fn, Executor executor) {
-        return fac.new0(cf.exceptionallyAsync(fn, executor));
+        if (IS_JAVA12_PLUS) {
+            return fac.new0(cf.exceptionallyAsync(fn, executor));
+        }
+
+        return handleAsync((x, throwable) -> {
+            if (throwable == null) return x;
+            else return fn.apply(throwable);
+        }, executor);
     }
 
     @Override
     public Cffu<T> exceptionallyCompose(Function<Throwable, ? extends CompletionStage<T>> fn) {
-        return fac.new0(cf.exceptionallyCompose(fn));
+        if (IS_JAVA12_PLUS) {
+            return fac.new0(cf.exceptionallyCompose(fn));
+        }
+
+        return handle((r, ex) -> (ex == null)
+                ? this
+                : fn.apply(ex)).thenCompose(Function.identity()
+        );
     }
 
     @Override
     public Cffu<T> exceptionallyComposeAsync(Function<Throwable, ? extends CompletionStage<T>> fn) {
-        return fac.new0(cf.exceptionallyComposeAsync(fn, fac.defaultExecutor));
+        if (IS_JAVA12_PLUS) {
+            return fac.new0(cf.exceptionallyComposeAsync(fn, fac.defaultExecutor));
+        }
+
+        return handle((r, ex) -> (ex == null)
+                ? this
+                : this.handleAsync((r1, ex1) -> fn.apply(ex1)).thenCompose(Function.identity())
+        ).thenCompose(Function.identity());
     }
 
     @Override
     public Cffu<T> exceptionallyComposeAsync(
             Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
-        return fac.new0(cf.exceptionallyComposeAsync(fn, executor));
+        if (IS_JAVA12_PLUS) {
+            return fac.new0(cf.exceptionallyComposeAsync(fn, executor));
+        }
+
+        return handle((r, ex) -> (ex == null)
+                ? this
+                : this.handleAsync((r1, ex1) -> fn.apply(ex1), executor).thenCompose(Function.identity())
+        ).thenCompose(Function.identity());
     }
 
     ////////////////////////////////////////
@@ -448,7 +544,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     @Contract(pure = true)
     public Cffu<T> copy() {
-        return fac.new0(cf.copy());
+        if (IS_JAVA9_PLUS) {
+            return fac.new0(cf.copy());
+        }
+        return thenApply(Function.identity());
     }
 
     public void obtrudeValue(@Nullable T value) {
@@ -474,10 +573,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         return cf.getNumberOfDependents();
     }
 
-    // FIXME public CompletionStage<T> minimalCompletionStage() {
+    // FIXME add methods, need compatibility logic for java 9
+    //      public CompletionStage<T> minimalCompletionStage() {
 
     @Contract(pure = true)
     public <U> Cffu<U> newIncompleteFuture() {
+        if (IS_JAVA9_PLUS) {
+            return fac.new0(cf.newIncompleteFuture());
+        }
         return fac.new0(new CompletableFuture<>());
     }
 
