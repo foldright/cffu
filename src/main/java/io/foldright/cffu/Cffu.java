@@ -7,7 +7,7 @@ import java.util.concurrent.*;
 import java.util.function.*;
 
 
-public class Cffu<T> implements Future<T>, CompletionStage<T> {
+public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     private final CffuFactory fac;
 
     private final CompletableFuture<T> cf;
@@ -314,7 +314,7 @@ public class Cffu<T> implements Future<T>, CompletionStage<T> {
     public Cffu<T> completeOnTimeout(T value, long timeout, TimeUnit unit) {
         if (unit == null) throw new NullPointerException();
         if (!isDone()) {
-            whenComplete(new Canceller(Delayer.delay(new DelayedCompleter<T>(cf, value), timeout, unit)));
+            whenComplete(new Canceller(Delayer.delay(new DelayedCompleter<>(cf, value), timeout, unit)));
         }
         return this;
     }
@@ -495,6 +495,6 @@ public class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     @Override
     public String toString() {
-        return "Cffu: " + cf.toString();
+        return "Cffu: " + cf;
     }
 }

@@ -4,7 +4,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.Executor;
 
 @ThreadSafe
-public class CffuFactoryBuilder {
+public final class CffuFactoryBuilder {
     // FIXME make defaultExecutor field compulsory??
     private volatile Executor defaultExecutor;
 

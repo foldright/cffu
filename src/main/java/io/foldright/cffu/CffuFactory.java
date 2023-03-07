@@ -56,7 +56,8 @@ public final class CffuFactory {
      * @see Cffu#toCompletableFuture()
      * @see CffuFactory#toCffu(CompletionStage)
      */
-    public <T> Cffu<T>[] toCffu(CompletableFuture<T>... cfs) {
+    @SafeVarargs
+    public final <T> Cffu<T>[] toCffu(CompletableFuture<T>... cfs) {
         @SuppressWarnings("unchecked")
         Cffu<T>[] ret = new Cffu[cfs.length];
         for (int i = 0; i < cfs.length; i++) {
@@ -155,6 +156,7 @@ public final class CffuFactory {
     /**
      * @see CompletableFuture#supplyAsync(Supplier)
      */
+    @SuppressWarnings("BoundedWildcard")
     public <T> Cffu<T> supplyAsync(Supplier<T> supplier) {
         return dummy().thenApplyAsync(unused -> supplier.get());
     }
@@ -162,6 +164,7 @@ public final class CffuFactory {
     /**
      * @see CompletableFuture#supplyAsync(Supplier, Executor)
      */
+    @SuppressWarnings("BoundedWildcard")
     public <T> Cffu<T> supplyAsync(Supplier<T> supplier, Executor executor) {
         return dummy().thenApplyAsync(unused -> supplier.get(), executor);
     }
@@ -360,6 +363,7 @@ public final class CffuFactory {
      * Fallback if ForkJoinPool.commonPool() cannot support parallelism
      */
     private static final class ThreadPerTaskExecutor implements Executor {
+        @Override
         public void execute(Runnable r) {
             Objects.requireNonNull(r);
             new Thread(r).start();

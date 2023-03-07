@@ -12,15 +12,15 @@ import java.util.function.BiConsumer;
 
 
 /**
- * Singleton delay scheduler, used only for starting and
- * cancelling tasks.
+ * Singleton delay scheduler, used only for starting and cancelling tasks.
  */
 final class Delayer {
     static ScheduledFuture<?> delay(Runnable command, long delay, TimeUnit unit) {
         return delayer.schedule(command, delay, unit);
     }
 
-    static final class DaemonThreadFactory implements ThreadFactory {
+    private static final class DaemonThreadFactory implements ThreadFactory {
+        @Override
         public Thread newThread(Runnable r) {
             Thread t = new Thread(r);
             t.setDaemon(true);
@@ -29,21 +29,20 @@ final class Delayer {
         }
     }
 
-    static final ScheduledThreadPoolExecutor delayer;
+    private static final ScheduledThreadPoolExecutor delayer;
 
     static {
-        (delayer = new ScheduledThreadPoolExecutor(
-                1, new Delayer.DaemonThreadFactory())).
-                setRemoveOnCancelPolicy(true);
+        (delayer = new ScheduledThreadPoolExecutor(1, new Delayer.DaemonThreadFactory()))
+                .setRemoveOnCancelPolicy(true);
     }
 }
 
 // Little class-ified lambdas to better support monitoring
 
 final class DelayedExecutor implements Executor {
-    final long delay;
-    final TimeUnit unit;
-    final Executor executor;
+    private final long delay;
+    private final TimeUnit unit;
+    private final Executor executor;
 
     DelayedExecutor(long delay, TimeUnit unit, Executor executor) {
         this.delay = delay;
@@ -51,6 +50,7 @@ final class DelayedExecutor implements Executor {
         this.executor = executor;
     }
 
+    @Override
     public void execute(Runnable r) {
         Delayer.delay(new TaskSubmitter(executor, r), delay, unit);
     }
@@ -60,14 +60,15 @@ final class DelayedExecutor implements Executor {
  * Action to submit user task
  */
 final class TaskSubmitter implements Runnable {
-    final Executor executor;
-    final Runnable action;
+    private final Executor executor;
+    private final Runnable action;
 
     TaskSubmitter(Executor executor, Runnable action) {
         this.executor = executor;
         this.action = action;
     }
 
+    @Override
     public void run() {
         executor.execute(action);
     }
@@ -77,12 +78,13 @@ final class TaskSubmitter implements Runnable {
  * Action to completeExceptionally on timeout
  */
 final class Timeout implements Runnable {
-    final CompletableFuture<?> f;
+    private final CompletableFuture<?> f;
 
     Timeout(CompletableFuture<?> f) {
         this.f = f;
     }
 
+    @Override
     public void run() {
         if (f != null && !f.isDone())
             f.completeExceptionally(new TimeoutException());
@@ -93,17 +95,18 @@ final class Timeout implements Runnable {
  * Action to complete on timeout
  */
 final class DelayedCompleter<U> implements Runnable {
-    final CompletableFuture<U> f;
-    final U u;
+    private final CompletableFuture<U> f;
+    private final U u;
 
+    @SuppressWarnings("BoundedWildcard")
     DelayedCompleter(CompletableFuture<U> f, U u) {
         this.f = f;
         this.u = u;
     }
 
+    @Override
     public void run() {
-        if (f != null)
-            f.complete(u);
+        if (f != null) f.complete(u);
     }
 }
 
@@ -111,12 +114,13 @@ final class DelayedCompleter<U> implements Runnable {
  * Action to cancel unneeded timeouts
  */
 final class Canceller implements BiConsumer<Object, Throwable> {
-    final Future<?> f;
+    private final Future<?> f;
 
     Canceller(Future<?> f) {
         this.f = f;
     }
 
+    @Override
     public void accept(Object ignore, Throwable ex) {
         if (ex == null && f != null && !f.isDone())
             f.cancel(false);
