@@ -485,14 +485,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     @Override
     public Cffu<T> exceptionallyComposeAsync(Function<Throwable, ? extends CompletionStage<T>> fn) {
-        if (IS_JAVA12_PLUS) {
-            return fac.new0(cf.exceptionallyComposeAsync(fn, fac.defaultExecutor));
-        }
-
-        return handle((r, ex) -> (ex == null)
-                ? this
-                : this.handleAsync((r1, ex1) -> fn.apply(ex1)).thenCompose(Function.identity())
-        ).thenCompose(Function.identity());
+        return exceptionallyComposeAsync(fn, fac.defaultExecutor);
     }
 
     @Override
