@@ -225,10 +225,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             return fac.new0(cf.exceptionallyAsync(fn, executor));
         }
 
-        return handleAsync((x, throwable) -> {
-            if (throwable == null) return x;
-            else return fn.apply(throwable);
-        }, executor);
+        return handle((r, ex) -> (ex == null)
+                ? this
+                : this.<T>handleAsync((r1, ex1) -> fn.apply(ex1), executor)
+        ).thenCompose(Function.identity());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
