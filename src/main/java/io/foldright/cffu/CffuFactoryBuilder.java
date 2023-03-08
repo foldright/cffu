@@ -11,12 +11,12 @@ import java.util.concurrent.Executor;
 @ParametersAreNonnullByDefault
 @ReturnValuesAreNonnullByDefault
 public final class CffuFactoryBuilder {
-    // FIXME make defaultExecutor field compulsory??
-    private volatile Executor defaultExecutor;
+    private final Executor defaultExecutor;
 
     private volatile boolean forbidObtrudeMethods = false;
 
-    private CffuFactoryBuilder() {
+    private CffuFactoryBuilder(Executor defaultExecutor) {
+        this.defaultExecutor = defaultExecutor;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -24,15 +24,10 @@ public final class CffuFactoryBuilder {
     ////////////////////////////////////////////////////////////////////////////////
 
     @Contract(pure = true)
-    public static CffuFactoryBuilder newCffuFactoryBuilder() {
-        return new CffuFactoryBuilder();
-    }
-
     @SuppressWarnings("ConstantValue")
-    public CffuFactoryBuilder defaultExecutor(Executor defaultExecutor) {
+    public static CffuFactoryBuilder newCffuFactoryBuilder(Executor defaultExecutor) {
         if (defaultExecutor == null) throw new NullPointerException("defaultExecutor is null");
-        this.defaultExecutor = defaultExecutor;
-        return this;
+        return new CffuFactoryBuilder(defaultExecutor);
     }
 
     public CffuFactoryBuilder forbidObtrudeMethods(boolean forbid) {

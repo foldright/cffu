@@ -13,7 +13,7 @@ import static java.util.concurrent.ForkJoinPool.commonPool;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CffuUserApiTest {
-    private static final CffuFactory cffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder().defaultExecutor(commonPool()).forbidObtrudeMethods(true).build();
+    private static final CffuFactory cffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder(commonPool()).forbidObtrudeMethods(true).build();
 
     private static final String hello = "CffuUserApiTest-Hello";
     private static final RuntimeException rte = new RuntimeException("Bang");

@@ -1,6 +1,5 @@
 package io.foldright.cffu;
 
-import io.foldright.testutils.TestThreadPoolManager;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.junit.jupiter.api.Test;
@@ -9,6 +8,7 @@ import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import static io.foldright.testutils.TestThreadPoolManager.getTestThreadPoolExecutor;
 import static io.foldright.testutils.TestUtils.createExceptionallyCompletedFutureWithSleep;
 import static io.foldright.testutils.TestUtils.createNormallyCompletedFutureWithSleep;
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,10 +33,8 @@ public class CffuTest {
 
     private static final RuntimeException rte = new RuntimeException("Bang");
 
-    private static final CffuFactory cffuFactory = CffuFactoryBuilder
-            .newCffuFactoryBuilder()
-            .defaultExecutor(TestThreadPoolManager.getTestThreadPoolExecutor())
-            .build();
+    private static final CffuFactory cffuFactory =
+            CffuFactoryBuilder.newCffuFactoryBuilder(getTestThreadPoolExecutor()).build();
 
     ////////////////////////////////////////////////////////////////////////////////
     // new methods of CompletableFuture missing functions

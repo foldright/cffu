@@ -10,7 +10,7 @@ sed -r '
 
   /import java.util.concurrent.CompletableFuture;/d
 
-  s/public class CompletableFutureUserApiTest \{/public class CffuUserApiTest \{\n    private static final CffuFactory cffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder\(\).defaultExecutor\(commonPool\(\)\).forbidObtrudeMethods\(true\).build\(\);\n/
+  s/public class CompletableFutureUserApiTest \{/public class CffuUserApiTest \{\n    private static final CffuFactory cffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder\(commonPool\(\)\).forbidObtrudeMethods\(true\).build\(\);\n/
 
   s/CompletableFuture\./cffuFactory\./g
   s/CompletableFuture/Cffu/g
