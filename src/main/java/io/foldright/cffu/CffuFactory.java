@@ -20,10 +20,10 @@ import java.util.function.Supplier;
 /**
  * About factory methods conventions of {@link CffuFactory}:
  * <ul>
- *      <li>all methods return {@link Cffu}.
- *      <li>only provide varargs methods for multiply inputs;
- *          if you have {@code List} input, use static util methods
- *          {@link #cffuListToArray(List)} and {@link #completableFutureListToArray(List)} to convert it first.
+ *   <li>all factory methods return {@link Cffu}.
+ *   <li>only provide varargs methods for multiply inputs;
+ *     if you have {@code List} input, use static util methods
+ *     {@link #cffuListToArray(List)} and {@link #completableFutureListToArray(List)}to convert it first.
  * </ul>
  */
 @Immutable
@@ -35,7 +35,6 @@ public final class CffuFactory {
     final Executor defaultExecutor;
 
     final boolean forbidObtrudeMethods;
-
     CffuFactory(Executor defaultExecutor, boolean forbidObtrudeMethods) {
         this.defaultExecutor = screenExecutor(defaultExecutor);
         this.forbidObtrudeMethods = forbidObtrudeMethods;
@@ -298,7 +297,8 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * overloaded method of {@link #cffuOf2(CompletableFuture, CompletableFuture)} with argument type {@link Cffu}.
+     * overloaded method of {@link #cffuOf2(CompletableFuture, CompletableFuture)}
+     * with argument type {@link Cffu}.
      */
     @Contract(pure = true)
     public <T1, T2> Cffu<Pair<T1, T2>> cffuOf2(Cffu<T1> cf1, Cffu<T2> cf2) {
@@ -345,10 +345,6 @@ public final class CffuFactory {
                 );
         return new0(ret);
     }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    //#  backport codes from CompletableFuture
-    ////////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////////
     //# delay execution, similar to CompletableFuture static methods

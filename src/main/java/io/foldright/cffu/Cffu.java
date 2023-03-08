@@ -28,7 +28,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# CompletionStage methods simple then* methods:
+    //# Simple `then*` methods of `CompletionStage`:
     //
     //   thenRun*(Runnable): Void -> Void
     //   thenAccept*(Consumer): T -> Void
@@ -81,7 +81,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# CompletionStage methods `then both(binary input)` methods:
+    //# `then both(binary input)` methods of CompletionStage:
     //
     //   runAfterBoth*(Runnable): Void, Void -> Void
     //   thenAcceptBoth*(BiConsumer): T1, T2 -> Void
@@ -142,7 +142,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# CompletionStage methods `then either(binary input)` methods:
+    //# `then either(binary input)` methods of CompletionStage:
     //
     //   runAfterEither*(Runnable): Void, Void -> Void
     //   acceptEither*(BiConsumer): T1, T2 -> Void
@@ -204,63 +204,38 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# CompletionStage methods advanced methods:
+    //# Error Handling methods of CompletionStage:
     //
-    //   thenCompose*
-    //   handle*
-    //   whenComplete*
+    //   exceptionally*
     ////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public <U> Cffu<U> thenCompose(Function<? super T, ? extends CompletionStage<U>> fn) {
-        return fac.new0(cf.thenCompose(fn));
+    public Cffu<T> exceptionally(Function<Throwable, ? extends T> fn) {
+        return fac.new0(cf.exceptionally(fn));
     }
 
     @Override
-    public <U> Cffu<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>> fn) {
-        return fac.new0(cf.thenComposeAsync(fn, fac.defaultExecutor));
+    public Cffu<T> exceptionallyAsync(Function<Throwable, ? extends T> fn) {
+        return exceptionallyAsync(fn, fac.defaultExecutor);
     }
 
     @Override
-    public <U> Cffu<U> thenComposeAsync(
-            Function<? super T, ? extends CompletionStage<U>> fn, Executor executor) {
-        return fac.new0(cf.thenComposeAsync(fn, executor));
-    }
+    public Cffu<T> exceptionallyAsync(Function<Throwable, ? extends T> fn, Executor executor) {
+        if (IS_JAVA12_PLUS) {
+            return fac.new0(cf.exceptionallyAsync(fn, executor));
+        }
 
-    @Override
-    public <U> Cffu<U> handle(BiFunction<? super T, Throwable, ? extends U> fn) {
-        return fac.new0(cf.handle(fn));
-    }
-
-    @Override
-    public <U> Cffu<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn) {
-        return fac.new0(cf.handleAsync(fn, fac.defaultExecutor));
-    }
-
-    @Override
-    public <U> Cffu<U> handleAsync(
-            BiFunction<? super T, Throwable, ? extends U> fn, Executor executor) {
-        return fac.new0(cf.handleAsync(fn, executor));
-    }
-
-    @Override
-    public Cffu<T> whenComplete(BiConsumer<? super T, ? super Throwable> action) {
-        return fac.new0(cf.whenComplete(action));
-    }
-
-    @Override
-    public Cffu<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action) {
-        return fac.new0(cf.whenCompleteAsync(action, fac.defaultExecutor));
-    }
-
-    @Override
-    public Cffu<T> whenCompleteAsync(
-            BiConsumer<? super T, ? super Throwable> action, Executor executor) {
-        return fac.new0(cf.whenCompleteAsync(action, executor));
+        return handleAsync((x, throwable) -> {
+            if (throwable == null) return x;
+            else return fn.apply(throwable);
+        }, executor);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# timeout control
+    //# Timeout Control methods:
+    //
+    //   orTimeout
+    //   completeOnTimeout
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -318,7 +293,98 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# read(explicitly) methods
+    //# Advanced methods of CompletionStage:
+    //
+    //   thenCompose*
+    //   exceptionallyCompose*
+    //   handle*
+    //   whenComplete*
+    //
+    //   NOTE, advanced means:
+    //      - `compose` methods, input function argument return CompletionStage
+    //      - process succeed and failed result at one time(handle*/whenComplete*)
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public <U> Cffu<U> thenCompose(Function<? super T, ? extends CompletionStage<U>> fn) {
+        return fac.new0(cf.thenCompose(fn));
+    }
+
+    @Override
+    public <U> Cffu<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>> fn) {
+        return fac.new0(cf.thenComposeAsync(fn, fac.defaultExecutor));
+    }
+
+    @Override
+    public <U> Cffu<U> thenComposeAsync(
+            Function<? super T, ? extends CompletionStage<U>> fn, Executor executor) {
+        return fac.new0(cf.thenComposeAsync(fn, executor));
+    }
+
+    @Override
+    public Cffu<T> exceptionallyCompose(Function<Throwable, ? extends CompletionStage<T>> fn) {
+        if (IS_JAVA12_PLUS) {
+            return fac.new0(cf.exceptionallyCompose(fn));
+        }
+
+        return handle((r, ex) -> (ex == null)
+                ? this
+                : fn.apply(ex)).thenCompose(Function.identity()
+        );
+    }
+
+    @Override
+    public Cffu<T> exceptionallyComposeAsync(Function<Throwable, ? extends CompletionStage<T>> fn) {
+        return exceptionallyComposeAsync(fn, fac.defaultExecutor);
+    }
+
+    @Override
+    public Cffu<T> exceptionallyComposeAsync(
+            Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
+        if (IS_JAVA12_PLUS) {
+            return fac.new0(cf.exceptionallyComposeAsync(fn, executor));
+        }
+
+        return handle((r, ex) -> (ex == null)
+                ? this
+                : this.handleAsync((r1, ex1) -> fn.apply(ex1), executor).thenCompose(Function.identity())
+        ).thenCompose(Function.identity());
+    }
+
+    @Override
+    public <U> Cffu<U> handle(BiFunction<? super T, Throwable, ? extends U> fn) {
+        return fac.new0(cf.handle(fn));
+    }
+
+    @Override
+    public <U> Cffu<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn) {
+        return fac.new0(cf.handleAsync(fn, fac.defaultExecutor));
+    }
+
+    @Override
+    public <U> Cffu<U> handleAsync(
+            BiFunction<? super T, Throwable, ? extends U> fn, Executor executor) {
+        return fac.new0(cf.handleAsync(fn, executor));
+    }
+
+    @Override
+    public Cffu<T> whenComplete(BiConsumer<? super T, ? super Throwable> action) {
+        return fac.new0(cf.whenComplete(action));
+    }
+
+    @Override
+    public Cffu<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action) {
+        return fac.new0(cf.whenCompleteAsync(action, fac.defaultExecutor));
+    }
+
+    @Override
+    public Cffu<T> whenCompleteAsync(
+            BiConsumer<? super T, ? super Throwable> action, Executor executor) {
+        return fac.new0(cf.whenCompleteAsync(action, executor));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Read(explicitly) methods
     ////////////////////////////////////////////////////////////////////////////////
 
     @Nullable
@@ -379,7 +445,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# write methods
+    //# Write methods
     ////////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////
@@ -447,58 +513,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
                 }
             }
         }
-    }
-
-    @Override
-    public Cffu<T> exceptionally(Function<Throwable, ? extends T> fn) {
-        return fac.new0(cf.exceptionally(fn));
-    }
-
-    @Override
-    public Cffu<T> exceptionallyAsync(Function<Throwable, ? extends T> fn) {
-        return exceptionallyAsync(fn, fac.defaultExecutor);
-    }
-
-    @Override
-    public Cffu<T> exceptionallyAsync(Function<Throwable, ? extends T> fn, Executor executor) {
-        if (IS_JAVA12_PLUS) {
-            return fac.new0(cf.exceptionallyAsync(fn, executor));
-        }
-
-        return handleAsync((x, throwable) -> {
-            if (throwable == null) return x;
-            else return fn.apply(throwable);
-        }, executor);
-    }
-
-    @Override
-    public Cffu<T> exceptionallyCompose(Function<Throwable, ? extends CompletionStage<T>> fn) {
-        if (IS_JAVA12_PLUS) {
-            return fac.new0(cf.exceptionallyCompose(fn));
-        }
-
-        return handle((r, ex) -> (ex == null)
-                ? this
-                : fn.apply(ex)).thenCompose(Function.identity()
-        );
-    }
-
-    @Override
-    public Cffu<T> exceptionallyComposeAsync(Function<Throwable, ? extends CompletionStage<T>> fn) {
-        return exceptionallyComposeAsync(fn, fac.defaultExecutor);
-    }
-
-    @Override
-    public Cffu<T> exceptionallyComposeAsync(
-            Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
-        if (IS_JAVA12_PLUS) {
-            return fac.new0(cf.exceptionallyComposeAsync(fn, executor));
-        }
-
-        return handle((r, ex) -> (ex == null)
-                ? this
-                : this.handleAsync((r1, ex1) -> fn.apply(ex1), executor).thenCompose(Function.identity())
-        ).thenCompose(Function.identity());
     }
 
     ////////////////////////////////////////
