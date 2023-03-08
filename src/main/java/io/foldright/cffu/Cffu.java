@@ -249,7 +249,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *                {@code timeout} parameter
      * @return this Cffu
      */
-    @Contract(pure = true)
     @SuppressWarnings("ConstantValue")
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
     public Cffu<T> orTimeout(long timeout, TimeUnit unit) {
@@ -276,7 +275,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *                {@code timeout} parameter
      * @return this Cffu
      */
-    @Contract(pure = true)
     @SuppressWarnings("ConstantValue")
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
     public Cffu<T> completeOnTimeout(@Nullable T value, long timeout, TimeUnit unit) {

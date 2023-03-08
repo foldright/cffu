@@ -28,7 +28,6 @@ public final class CffuFactoryBuilder {
         return new CffuFactoryBuilder();
     }
 
-    @Contract(pure = true)
     @SuppressWarnings("ConstantValue")
     public CffuFactoryBuilder defaultExecutor(Executor defaultExecutor) {
         if (defaultExecutor == null) throw new NullPointerException("defaultExecutor is null");
@@ -36,7 +35,6 @@ public final class CffuFactoryBuilder {
         return this;
     }
 
-    @Contract(pure = true)
     public CffuFactoryBuilder forbidObtrudeMethods(boolean forbid) {
         this.forbidObtrudeMethods = forbid;
         return this;
