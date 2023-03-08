@@ -239,7 +239,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Exceptionally completes this CompletableFuture with
+     * Exceptionally completes this Cffu with
      * a {@link TimeoutException} if not otherwise completed
      * before the given timeout.
      *
@@ -247,7 +247,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *                with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the
      *                {@code timeout} parameter
-     * @return this CompletableFuture
+     * @return this Cffu
      */
     @Contract(pure = true)
     @SuppressWarnings("ConstantValue")
@@ -260,13 +260,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
         if (unit == null) throw new NullPointerException();
         if (!cf.isDone()) {
-            whenComplete(new Canceller(Delayer.delay(new Timeout(cf), timeout, unit)));
+            cf.whenComplete(new Canceller(Delayer.delay(new Timeout(cf), timeout, unit)));
         }
         return this;
     }
 
     /**
-     * Completes this CompletableFuture with the given value if not
+     * Completes this Cffu with the given value if not
      * otherwise completed before the given timeout.
      *
      * @param value   the value to use upon timeout
@@ -274,7 +274,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *                with the given value, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the
      *                {@code timeout} parameter
-     * @return this CompletableFuture
+     * @return this Cffu
      */
     @Contract(pure = true)
     @SuppressWarnings("ConstantValue")
@@ -286,8 +286,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         }
 
         if (unit == null) throw new NullPointerException();
-        if (!isDone()) {
-            whenComplete(new Canceller(Delayer.delay(new DelayedCompleter<>(cf, value), timeout, unit)));
+        if (!cf.isDone()) {
+            cf.whenComplete(new Canceller(Delayer.delay(new DelayedCompleter<>(cf, value), timeout, unit)));
         }
         return this;
     }
@@ -329,8 +329,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
         return handle((r, ex) -> (ex == null)
                 ? this
-                : fn.apply(ex)).thenCompose(Function.identity()
-        );
+                : fn.apply(ex)
+        ).thenCompose(Function.identity());
     }
 
     @Override
