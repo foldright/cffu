@@ -64,10 +64,16 @@ public class CffuUserApiTest {
     @Test
     void factoryMethods_allOf_anyOf() throws Exception {
         Cffu<Integer> f1 = cffuFactory.completedFuture(42);
-        Cffu<Integer> f2 = cffuFactory.completedFuture(4224);
+        Cffu<Integer> f2 = cffuFactory.completedFuture(4242);
+        Cffu<Integer> f3 = cffuFactory.completedFuture(424242);
 
+        cffuFactory.allOf().get();
         cffuFactory.allOf(f1, f2).get();
+        cffuFactory.allOf(f1, f2, f3).get();
+
+        assertFalse(cffuFactory.anyOf().toCompletableFuture().isDone());
         cffuFactory.anyOf(f1, f2).get();
+        cffuFactory.anyOf(f1, f2, f3).get();
     }
 
     @Test

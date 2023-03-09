@@ -60,10 +60,16 @@ public class CompletableFutureUserApiTest {
     @Test
     void factoryMethods_allOf_anyOf() throws Exception {
         CompletableFuture<Integer> f1 = CompletableFuture.completedFuture(42);
-        CompletableFuture<Integer> f2 = CompletableFuture.completedFuture(4224);
+        CompletableFuture<Integer> f2 = CompletableFuture.completedFuture(4242);
+        CompletableFuture<Integer> f3 = CompletableFuture.completedFuture(424242);
 
+        CompletableFuture.allOf().get();
         CompletableFuture.allOf(f1, f2).get();
+        CompletableFuture.allOf(f1, f2, f3).get();
+
+        assertFalse(CompletableFuture.anyOf().toCompletableFuture().isDone());
         CompletableFuture.anyOf(f1, f2).get();
+        CompletableFuture.anyOf(f1, f2, f3).get();
     }
 
     @Test
