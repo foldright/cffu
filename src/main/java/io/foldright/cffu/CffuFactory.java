@@ -322,6 +322,15 @@ public final class CffuFactory {
     }
 
     /**
+     * Provided this overloaded method just for resolving "allOf is ambiguous" problem
+     * when call {@code allOf} with empty arguments: {@code cffuFactory.allOf()}.
+     */
+    @Contract(pure = true)
+    public Cffu<Void> allOf() {
+        return dummy();
+    }
+
+    /**
      * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.
      * Otherwise, if it completed exceptionally, the returned Cffu also does so,
      * with a CompletionException holding this exception as its cause.
@@ -354,6 +363,15 @@ public final class CffuFactory {
     @Contract(pure = true)
     public Cffu<Object> anyOf(CompletableFuture<?>... cfs) {
         return new0(CompletableFuture.anyOf(cfs));
+    }
+
+    /**
+     * Provided this overloaded method just for resolving "anyOf is ambiguous" problem
+     * when call {@code anyOf} with empty arguments: {@code cffuFactory.anyOf()}.
+     */
+    @Contract(pure = true)
+    public Cffu<Object> anyOf() {
+        return new0(new CompletableFuture<>());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
