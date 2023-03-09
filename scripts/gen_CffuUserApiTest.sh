@@ -12,7 +12,7 @@ sed -r '
 
   s/public class CompletableFutureUserApiTest \{/public class CffuUserApiTest \{\n    private static final CffuFactory cffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder\(commonPool\(\)\).forbidObtrudeMethods\(true\).build\(\);\n/
 
-  s/CompletableFuture\./cffuFactory\./g
-  s/CompletableFuture/Cffu/g
+  s/\bCompletableFuture\./cffuFactory\./g
+  s/\bCompletableFuture\b/Cffu/g
 
 ' "$TEST_FILE_DIR/CompletableFutureUserApiTest.java" >"$TEST_FILE_DIR/CffuUserApiTest.java"

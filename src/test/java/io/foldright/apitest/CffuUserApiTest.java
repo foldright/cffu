@@ -8,15 +8,22 @@ import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static org.junit.jupiter.api.Assertions.*;
 
+
 public class CffuUserApiTest {
     private static final CffuFactory cffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder(commonPool()).forbidObtrudeMethods(true).build();
 
-    private static final String hello = "CffuUserApiTest-Hello";
+    private static final String hello = "Cffu User API test - Hello";
     private static final RuntimeException rte = new RuntimeException("Bang");
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Factory Methods of Cffu
+    ////////////////////////////////////////////////////////////////////////////////
 
     @Test
     void factoryMethods() throws Exception {
@@ -38,8 +45,16 @@ public class CffuUserApiTest {
     @Test
     @EnabledForJreRange(min = JRE.JAVA_9)
     void factoryMethodsOfJ9() throws Exception {
+        assertEquals(hello, cffuFactory.completedStage(hello).toCompletableFuture().get());
+
         try {
             cffuFactory.failedFuture(rte).get();
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            cffuFactory.failedStage(rte).toCompletableFuture().get();
             fail();
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
@@ -53,5 +68,15 @@ public class CffuUserApiTest {
 
         cffuFactory.allOf(f1, f2).get();
         cffuFactory.anyOf(f1, f2).get();
+    }
+
+    @Test
+    @EnabledForJreRange(min = JRE.JAVA_9)
+    void delayedExecutor() {
+        Executor delayer = cffuFactory.delayedExecutor(1, TimeUnit.MILLISECONDS);
+        cffuFactory.runAsync(System::currentTimeMillis, delayer);
+
+        delayer = cffuFactory.delayedExecutor(1, TimeUnit.MILLISECONDS, commonPool());
+        cffuFactory.runAsync(System::currentTimeMillis, delayer);
     }
 }
