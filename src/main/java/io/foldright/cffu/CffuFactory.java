@@ -79,7 +79,7 @@ public final class CffuFactory {
      * this {@link CffuFactory} from {@link CffuFactoryBuilder}.
      *
      * @see Cffu#toCompletableFuture()
-     * @see #toCffu(CompletableFuture[])
+     * @see #toCffuArray(CompletableFuture[])
      */
     @Contract(pure = true)
     public <T> Cffu<T> toCffu(CompletionStage<T> cf) {
@@ -94,7 +94,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     @SafeVarargs
-    public final <T> Cffu<T>[] toCffu(CompletableFuture<T>... cfs) {
+    public final <T> Cffu<T>[] toCffuArray(CompletableFuture<T>... cfs) {
         @SuppressWarnings("unchecked")
         Cffu<T>[] ret = new Cffu[cfs.length];
         for (int i = 0; i < cfs.length; i++) {
@@ -107,7 +107,7 @@ public final class CffuFactory {
      * Convert Cffu array to CompletableFuture array.
      *
      * @see Cffu#toCompletableFuture()
-     * @see #toCffu(CompletableFuture[])
+     * @see #toCffuArray(CompletableFuture[])
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -394,6 +394,15 @@ public final class CffuFactory {
     }
 
     /**
+     * Provided this overloaded method just for resolving "cffuAllOfWithResults is ambiguous" problem
+     * when call {@code cffuAllOfWithResults} with empty arguments: {@code cffuFactory.cffuAllOfWithResults()}.
+     */
+    @Contract(pure = true)
+    public final <T> Cffu<List<T>> cffuAllOfWithResults() {
+        return dummy();
+    }
+
+    /**
      * Same as {@link #cffuAllOfWithResults(Cffu[])} with overloaded argument type {@link CompletableFuture}.
      *
      * @param cfs the CompletableFutures
@@ -460,6 +469,14 @@ public final class CffuFactory {
         return new0(ret);
     }
 
+    /**
+     * Provided this overloaded method just for resolving "cffuAnyOf is ambiguous" problem
+     * when call {@code cffuAnyOf} with empty arguments: {@code cffuFactory.cffuAnyOf()}.
+     */
+    @Contract(pure = true)
+    public <T> Cffu<T> cffuAnyOf() {
+        return new0(new CompletableFuture<>());
+    }
     ////////////////////////////////////////////////////////////////////////////////
     //# type-safe of2/of3 methods
     ////////////////////////////////////////////////////////////////////////////////
