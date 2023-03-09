@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 
 /**
  * This class {@link CffuFactory} is equivalent to {@link CompletableFuture},
- * contains the static factory methods of {@link CompletableFuture}
+ * contains the static factory methods of {@link CompletableFuture}.
  * <p>
  * The methods that equivalent to the instance methods of {@link CompletableFuture}
  * is in {@link Cffu} class.
@@ -388,7 +388,7 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# type-safe allOf / anyOf methods
+    //# new type-safe allOf / anyOf factory methods
     //  method name prefix with `cffu`
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -491,7 +491,8 @@ public final class CffuFactory {
         return incomplete();
     }
     ////////////////////////////////////////////////////////////////////////////////
-    //# type-safe of2/of3 methods
+    //# new type-safe of2/of3 factory methods
+    //  method name prefix with `cffu`
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
