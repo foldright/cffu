@@ -218,9 +218,22 @@ public final class CffuFactory {
     //   - supplyAsync*
     ////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * a completed Cffu with the value {@code null}
+     */
     @Contract(pure = true)
+    @NonNull
     private <T> Cffu<T> dummy() {
         return completedFuture(null);
+    }
+
+    /**
+     * an incomplete Cffu.
+     */
+    @Contract(pure = true)
+    @NonNull
+    <T> Cffu<T> incomplete() {
+        return new0(new CompletableFuture<>());
     }
 
     /**
@@ -371,7 +384,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public Cffu<Object> anyOf() {
-        return new0(new CompletableFuture<>());
+        return incomplete();
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -475,7 +488,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public <T> Cffu<T> cffuAnyOf() {
-        return new0(new CompletableFuture<>());
+        return incomplete();
     }
     ////////////////////////////////////////////////////////////////////////////////
     //# type-safe of2/of3 methods

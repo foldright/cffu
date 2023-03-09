@@ -586,7 +586,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         if (IS_JAVA9_PLUS) {
             return fac.new0(cf.newIncompleteFuture());
         }
-        return fac.new0(new CompletableFuture<>());
+        return fac.incomplete();
     }
 
     @Contract(pure = true)
