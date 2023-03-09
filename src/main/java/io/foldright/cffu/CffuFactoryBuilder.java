@@ -7,6 +7,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.Executor;
 
+/**
+ * {@link CffuFactoryBuilder} is the builder of {@link CffuFactory}.
+ *
+ * @author Jerry Lee (oldratlee at gmail dot com)
+ * @see CffuFactory
+ * @see Cffu
+ */
 @ThreadSafe
 @ParametersAreNonnullByDefault
 @ReturnValuesAreNonnullByDefault

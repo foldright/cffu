@@ -18,13 +18,26 @@ import java.util.function.Supplier;
 
 
 /**
+ * This class {@link CffuFactory} is equivalent to {@link CompletableFuture},
+ * contains the static factory methods of {@link CompletableFuture}
+ * <p>
+ * The methods that equivalent to the instance methods of {@link CompletableFuture}
+ * is in {@link Cffu} class.
+ * <p>
+ * Use {@link CffuFactoryBuilder} to config and build {@link CffuFactory}.
+ * <p>
  * About factory methods conventions of {@link CffuFactory}:
  * <ul>
  *   <li>all factory methods return {@link Cffu}.
  *   <li>only provide varargs methods for multiply inputs;
- *     if you have {@code List} input, use static util methods
- *     {@link #cffuListToArray(List)} and {@link #completableFutureListToArray(List)}to convert it first.
+ *     if you have {@code List} input, use static util methods {@link #cffuListToArray(List)}
+ *     and {@link #completableFutureListToArray(List)} to convert it to array first.
  * </ul>
+ *
+ * @author Jerry Lee (oldratlee at gmail dot com)
+ * @see CffuFactoryBuilder
+ * @see Cffu
+ * @see CompletableFuture
  */
 @Immutable
 @ThreadSafe
@@ -35,24 +48,38 @@ public final class CffuFactory {
     final Executor defaultExecutor;
 
     final boolean forbidObtrudeMethods;
+
     CffuFactory(Executor defaultExecutor, boolean forbidObtrudeMethods) {
         this.defaultExecutor = screenExecutor(defaultExecutor);
         this.forbidObtrudeMethods = forbidObtrudeMethods;
     }
 
     @Contract(pure = true)
+    @SuppressWarnings("ConstantValue")
     <T> Cffu<T> new0(CompletableFuture<T> cf) {
+        if (cf == null) throw new NullPointerException();
         return new Cffu<>(this, cf);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Conversation Methods
+    //
+    //   toCffu: CF -> Cffu
+    //   toCompletableFuture: Cffu -> CF
+    //
+    //   cffuListToArray: List<Cffu> -> Cffu[]
+    //   completableFutureListToArray: List<CompletableFuture> -> CompletableFuture[]
+    ////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Convert {@link CompletionStage} to {@link Cffu}.
      * <p>
      * <b><i>NOTE:<br></i></b>
-     * if input is a {@link Cffu}, re-wrapped with the config of this {@link CffuFactory} from {@link CffuFactoryBuilder}.
+     * if input is a {@link Cffu}, re-wrapped with the config of
+     * this {@link CffuFactory} from {@link CffuFactoryBuilder}.
      *
      * @see Cffu#toCompletableFuture()
-     * @see CffuFactory#toCffu(CompletableFuture[])
+     * @see #toCffu(CompletableFuture[])
      */
     @Contract(pure = true)
     public <T> Cffu<T> toCffu(CompletionStage<T> cf) {
@@ -63,7 +90,7 @@ public final class CffuFactory {
      * Convert {@link CompletableFuture} array to {@link Cffu} array.
      *
      * @see Cffu#toCompletableFuture()
-     * @see CffuFactory#toCffu(CompletionStage)
+     * @see #toCffu(CompletionStage)
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -77,8 +104,10 @@ public final class CffuFactory {
     }
 
     /**
+     * Convert Cffu array to CompletableFuture array.
+     *
      * @see Cffu#toCompletableFuture()
-     * @see CffuFactory#toCffu(CompletableFuture[])
+     * @see #toCffu(CompletableFuture[])
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -91,12 +120,18 @@ public final class CffuFactory {
         return ret;
     }
 
+    /**
+     * Convert Cffu list to Cffu array.
+     */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
     public static <T> Cffu<T>[] cffuListToArray(List<Cffu<T>> cffuList) {
         return cffuList.toArray(new Cffu[0]);
     }
 
+    /**
+     * Convert CompletableFuture list to CompletableFuture array.
+     */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
     public static <T> CompletableFuture<T>[] completableFutureListToArray(List<CompletableFuture<T>> cfList) {
@@ -112,6 +147,11 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
+     * Returns a new Cffu that is already completed with the given value.
+     *
+     * @param value the value
+     * @param <T>   the type of the value
+     * @return the completed Cffu
      * @see CompletableFuture#completedFuture(Object)
      */
     @Contract(pure = true)
@@ -121,14 +161,26 @@ public final class CffuFactory {
     }
 
     /**
+     * Returns a new CompletionStage that is already completed with
+     * the given value and supports only those methods in
+     * interface {@link CompletionStage}.
+     *
+     * @param value the value
+     * @param <T>   the type of the value
+     * @return the completed CompletionStage
      * @see CompletableFuture#completedStage(Object)
      */
     @Contract(pure = true)
-    public <U> CompletionStage<U> completedStage(@Nullable U value) {
+    public <T> CompletionStage<T> completedStage(@Nullable T value) {
         return completedFuture(value);
     }
 
     /**
+     * Returns a new Cffu that is already completed exceptionally with the given exception.
+     *
+     * @param ex  the exception
+     * @param <T> the type of the value
+     * @return the exceptionally completed Cffu
      * @see CompletableFuture#failedFuture(Throwable)
      */
     @Contract(pure = true)
@@ -144,6 +196,15 @@ public final class CffuFactory {
         return new0(cf);
     }
 
+    /**
+     * Returns a new CompletionStage that is already completed exceptionally
+     * with the given exception and supports only those methods in interface {@link CompletionStage}.
+     *
+     * @param ex  the exception
+     * @param <U> the type of the value
+     * @return the exceptionally completed CompletionStage
+     * @see CompletableFuture#failedStage(Throwable)
+     */
     @Contract(pure = true)
     public <U> CompletionStage<U> failedStage(Throwable ex) {
         return failedFuture(ex);
@@ -163,6 +224,11 @@ public final class CffuFactory {
     }
 
     /**
+     * Returns a new Cffu that is asynchronously completed by a task running
+     * in the {@link ForkJoinPool#commonPool()} after it runs the given action.
+     *
+     * @param action the action to run before completing the returned Cffu
+     * @return the new Cffu
      * @see CompletableFuture#runAsync(Runnable)
      */
     public Cffu<Void> runAsync(Runnable action) {
@@ -170,6 +236,12 @@ public final class CffuFactory {
     }
 
     /**
+     * Returns a new Cffu that is asynchronously completed
+     * by a task running in the given executor after it runs the given action.
+     *
+     * @param action   the action to run before completing the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @return the new Cffu
      * @see CompletableFuture#runAsync(Runnable, Executor)
      */
     public Cffu<Void> runAsync(Runnable action, Executor executor) {
@@ -177,6 +249,13 @@ public final class CffuFactory {
     }
 
     /**
+     * Returns a new Cffu that is asynchronously completed
+     * by a task running in the {@link ForkJoinPool#commonPool()} with
+     * the value obtained by calling the given Supplier.
+     *
+     * @param supplier a function returning the value to be used to complete the returned Cffu
+     * @param <T>      the function's return type
+     * @return the new Cffu
      * @see CompletableFuture#supplyAsync(Supplier)
      */
     @SuppressWarnings("BoundedWildcard")
@@ -185,6 +264,13 @@ public final class CffuFactory {
     }
 
     /**
+     * Returns a new Cffu that is asynchronously completed by a task running
+     * in the given executor with the value obtained by calling the given Supplier.
+     *
+     * @param supplier a function returning the value to be used to complete the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @param <T>      the function's return type
+     * @return the new Cffu
      * @see CompletableFuture#supplyAsync(Supplier, Executor)
      */
     @SuppressWarnings("BoundedWildcard")
@@ -197,7 +283,22 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * overloaded method of {@link #allOf(CompletableFuture[])} with argument type {@link Cffu}.
+     * Returns a new Cffu that is completed when all of the given Cffus complete.
+     * If any of the given Cffu complete exceptionally, then the returned
+     * Cffu also does so, with a CompletionException holding this exception as its cause.
+     * Otherwise, the results, if any, of the given Cffus are not reflected in
+     * the returned Cffu, but may be obtained by inspecting them individually.
+     * <p>
+     * If no Cffus are provided, returns a Cffu completed with the value {@code null}.
+     * <p>
+     * Among the applications of this method is to await completion of a set of
+     * independent Cffus before continuing a program,
+     * as in: {@code Cffu.allOf(c1, c2, c3).join();}.
+     *
+     * @param cfs the Cffus
+     * @return a new Cffu that is completed when all of the given Cffus complete
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
     public Cffu<Void> allOf(Cffu<?>... cfs) {
@@ -207,6 +308,12 @@ public final class CffuFactory {
     }
 
     /**
+     * Same as {@link #allOf(Cffu[])} with overloaded argument type {@link CompletableFuture}.
+     *
+     * @param cfs the CompletableFutures
+     * @return a new Cffu that is completed when all of the given CompletableFutures complete
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #allOf(Cffu[])
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
@@ -215,7 +322,17 @@ public final class CffuFactory {
     }
 
     /**
-     * overloaded method of {@link #anyOf(CompletableFuture[])} with argument type {@link Cffu}.
+     * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.
+     * Otherwise, if it completed exceptionally, the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * If no Cffus are provided, returns an incomplete Cffu.
+     *
+     * @param cfs the Cffus
+     * @return a new Cffu that is completed with the result or exception of
+     * any of the given Cffus when one completes
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see CompletableFuture#anyOf(CompletableFuture[])
      */
     @Contract(pure = true)
     public Cffu<Object> anyOf(Cffu<?>... cfs) {
@@ -225,6 +342,13 @@ public final class CffuFactory {
     }
 
     /**
+     * Same as {@link #anyOf(Cffu[])} with overloaded argument type {@link CompletableFuture}.
+     *
+     * @param cfs the CompletableFutures
+     * @return a new Cffu that is completed with the result or exception of
+     * any of the given CompletableFutures when one completes
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #anyOf(Cffu[])
      * @see CompletableFuture#anyOf(CompletableFuture[])
      */
     @Contract(pure = true)
@@ -238,7 +362,12 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * overloaded method of {@link #cffuAllOfWithResults(CompletableFuture[])} with argument type {@link Cffu}.
+     * Same to {@link #allOf(Cffu[])}, but return the results of input {@link Cffu}.
+     *
+     * @param cfs the Cffus
+     * @return a new Cffu that is completed when all of the given Cffus complete
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #allOf(Cffu[])
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -247,11 +376,20 @@ public final class CffuFactory {
     }
 
     /**
-     * same to {@link #allOf(CompletableFuture[])}, but return results of input {@link CompletableFuture}.
+     * Same as {@link #cffuAllOfWithResults(Cffu[])} with overloaded argument type {@link CompletableFuture}.
+     *
+     * @param cfs the CompletableFutures
+     * @return a new Cffu that is completed when all of the given CompletableFutures complete
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #cffuAllOfWithResults(Cffu[])
      */
     @Contract(pure = true)
     @SafeVarargs
     public final <T> Cffu<List<T>> cffuAllOfWithResults(CompletableFuture<T>... cfs) {
+        for (CompletableFuture<T> cf : cfs) {
+            if (cf == null) throw new NullPointerException();
+        }
+
         final int size = cfs.length;
         final Object[] result = new Object[size];
 
@@ -261,7 +399,7 @@ public final class CffuFactory {
 
             CompletableFuture<T> cf = cfs[index];
 
-            CompletableFuture<Void> wrapped = cf.thenAccept(u -> result[index] = u);
+            CompletableFuture<Void> wrapped = cf.thenAccept(x -> result[index] = x);
             wrappedCfs[index] = wrapped;
         }
 
@@ -273,7 +411,13 @@ public final class CffuFactory {
     }
 
     /**
-     * same as {@link #cffuAnyOf(CompletableFuture[])}, but argument type is {@link Cffu}.
+     * Same as {@link #anyOf(Cffu[])}, but return result type is specified type instead of {@code Object}.
+     *
+     * @param cfs the Cffus
+     * @return a new Cffu that is completed with the result or exception of
+     * any of the given Cffus when one completes
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #anyOf(Cffu[])
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -282,7 +426,13 @@ public final class CffuFactory {
     }
 
     /**
-     * similar to {@link #anyOf(CompletableFuture[])}, but return type {@code T} instead of {@code Object}.
+     * Same as {@link #cffuAllOfWithResults(Cffu[])} with overloaded argument type {@link CompletableFuture}.
+     *
+     * @param cfs the CompletableFutures
+     * @return a new Cffu that is completed with the result or exception of
+     * any of the given CompletableFutures when one completes
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #cffuAnyOf(Cffu[])
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -297,17 +447,39 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * overloaded method of {@link #cffuOf2(CompletableFuture, CompletableFuture)}
-     * with argument type {@link Cffu}.
+     * Returns a new Cffu that is completed when the given two Cffus complete.
+     * If any of the given Cffu complete exceptionally, then the returned
+     * Cffu also does so, with a CompletionException holding this exception as its cause.
+     * <p>
+     * Same as {@link #cffuAllOfWithResults(Cffu[])} but with two inputs
+     * and return results as {@code Pair}.
+     *
+     * @return a new Cffu that is completed when the given two Cffus complete
+     * @throws NullPointerException if any input Cffus are {@code null}
+     * @see #cffuAllOfWithResults(Cffu[])
      */
     @Contract(pure = true)
     public <T1, T2> Cffu<Pair<T1, T2>> cffuOf2(Cffu<T1> cf1, Cffu<T2> cf2) {
         return cffuOf2(cf1.toCompletableFuture(), cf2.toCompletableFuture());
     }
 
+    /**
+     * Returns a new Cffu that is completed when the given two CompletableFutures complete.
+     * If any of the given CompletableFutures complete exceptionally, then the returned
+     * Cffu also does so, with a CompletionException holding this exception as its cause.
+     * <p>
+     * Same as {@link #cffuOf2(Cffu, Cffu)} with overloaded argument type {@link CompletableFuture}.
+     *
+     * @return a new Cffu that is completed when the given 2 CompletableFutures complete
+     * @throws NullPointerException if any input CompletableFutures are {@code null}
+     * @see #cffuOf2(Cffu, Cffu)
+     * @see #cffuAllOfWithResults(CompletableFuture[])
+     */
     @Contract(pure = true)
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "ConstantValue"})
     public <T1, T2> Cffu<Pair<T1, T2>> cffuOf2(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
+        if (cf1 == null || cf2 == null) throw new NullPointerException("input cf argument is null!");
+
         final Object[] result = new Object[2];
 
         CompletableFuture<Pair<T1, T2>> ret = CompletableFuture.allOf(
@@ -321,18 +493,40 @@ public final class CffuFactory {
     }
 
     /**
-     * overloaded method of {@link #cffuOf3(CompletableFuture, CompletableFuture, CompletableFuture)}
-     * with argument type {@link Cffu}.
+     * Returns a new Cffu that is completed when the given three Cffus complete.
+     * If any of the given Cffu complete exceptionally, then the returned
+     * Cffu also does so, with a CompletionException holding this exception as its cause.
+     * <p>
+     * Same as {@link #cffuAllOfWithResults(Cffu[])} but with three inputs
+     * and return results as {@code Triple}.
+     *
+     * @return a new Cffu that is completed when the given three Cffus complete
+     * @throws NullPointerException if any input Cffus are {@code null}
+     * @see #cffuAllOfWithResults(Cffu[])
      */
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Triple<T1, T2, T3>> cffuOf3(Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3) {
         return cffuOf3(cf1.toCompletableFuture(), cf2.toCompletableFuture(), cf3.toCompletableFuture());
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * Returns a new Cffu that is completed when the given three CompletableFutures complete.
+     * If any of the given CompletableFutures complete exceptionally, then the returned
+     * Cffu also does so, with a CompletionException holding this exception as its cause.
+     * <p>
+     * Same as {@link #cffuOf3(Cffu, Cffu, Cffu)} with overloaded argument type {@link CompletableFuture}.
+     *
+     * @return a new Cffu that is completed when the given 2 CompletableFutures complete
+     * @throws NullPointerException if any input CompletableFutures are {@code null}
+     * @see #cffuOf3(Cffu, Cffu, Cffu)
+     * @see #cffuAllOfWithResults(CompletableFuture[])
+     */
+    @SuppressWarnings({"unchecked", "ConstantValue"})
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Triple<T1, T2, T3>> cffuOf3(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
+        if (cf1 == null || cf2 == null || cf3 == null) throw new NullPointerException("input cf argument is null!");
+
         final Object[] result = new Object[3];
 
         CompletableFuture<Triple<T1, T2, T3>> ret = CompletableFuture.allOf(
@@ -351,10 +545,9 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Executor that submits a task to the default
-     * executor after the given delay (or no delay if non-positive).
-     * Each delay commences upon invocation of the returned executor's
-     * {@code execute} method.
+     * Returns a new Executor that submits a task to the default executor
+     * after the given delay (or no delay if non-positive).
+     * Each delay commences upon invocation of the returned executor's {@code execute} method.
      *
      * @param delay how long to delay, in units of {@code unit}
      * @param unit  a {@code TimeUnit} determining how to interpret the
@@ -367,10 +560,9 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Executor that submits a task to the given base
-     * executor after the given delay (or no delay if non-positive).
-     * Each delay commences upon invocation of the returned executor's
-     * {@code execute} method.
+     * Returns a new Executor that submits a task to the given base executor
+     * after the given delay (or no delay if non-positive).
+     * Each delay commences upon invocation of the returned executor's {@code execute} method.
      *
      * @param delay    how long to delay, in units of {@code unit}
      * @param unit     a {@code TimeUnit} determining how to interpret the
@@ -442,6 +634,7 @@ public final class CffuFactory {
     static {
         boolean b;
         try {
+            // `completedStage` is the new method of CompletableFuture since java 9
             CompletableFuture.completedStage(null);
             b = true;
         } catch (NoSuchMethodError e) {
@@ -450,8 +643,9 @@ public final class CffuFactory {
         IS_JAVA9_PLUS = b;
 
         try {
+            // `exceptionallyCompose` is the new method of CompletableFuture since java 12
             CompletableFuture.completedFuture(42)
-                    .exceptionallyCompose(e -> CompletableFuture.completedFuture(42));
+                    .exceptionallyCompose(x -> CompletableFuture.completedFuture(42));
             b = true;
         } catch (NoSuchMethodError e) {
             b = false;
