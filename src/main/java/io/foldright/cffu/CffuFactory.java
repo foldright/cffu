@@ -660,10 +660,10 @@ public final class CffuFactory {
         }
         IS_JAVA9_PLUS = b;
 
+        CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
         try {
             // `exceptionallyCompose` is the new method of CompletableFuture since java 12
-            CompletableFuture.completedFuture(42)
-                    .exceptionallyCompose(x -> CompletableFuture.completedFuture(42));
+            cf.exceptionallyCompose(x -> cf);
             b = true;
         } catch (NoSuchMethodError e) {
             b = false;
