@@ -7,7 +7,7 @@
 
 <p align="center">
 <a href="https://github.com/foldright/cffu/actions/workflows/ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/ci.yaml?branch=main&logo=github&logoColor=white" alt="Github Workflow Build Status"></a>
-<a href="https://codecov.io/gh/foldright/cffu/branch/main"><img src="https://img.shields.io/codecov/c/github/foldright/cffu/main?logo=codecov&logoColor=white" alt="Codecov"></a>
+<a href="https://app.codecov.io/gh/foldright/cffu/tree/main"><img src="https://img.shields.io/codecov/c/github/foldright/cffu/main?logo=codecov&logoColor=white" alt="Codecov"></a>
 <a href="https://openjdk.java.net/"><img src="https://img.shields.io/badge/Java-8+-green?logo=openjdk&logoColor=white" alt="Java support"></a>
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/foldright/cffu?color=4D7A97&logo=apache" alt="License"></a>
 <a href="https://github.com/foldright/cffu/stargazers"><img src="https://img.shields.io/github/stars/foldright/cffu" alt="GitHub Stars"></a>
@@ -237,10 +237,10 @@
 | `failedFuture(Throwable ex)`<sup><b><i>J9</i></b></sup>          | 🅵    | `U`    | 无需               | 用入参`ex`直接创建一个已完成的`CF`，无需`Executor`来运行      |
 | `failedStage(Throwable ex)`<sup><b><i>J9</i></b></sup>           | 🅵    | `U`    | 无需               | 与上一方法一样，只是返回的类型是`CompletionStage<U>`而不`CF` |
 |                                                                  |       |        |                  |                                            |
-| `supplyAsync(Supplier<U> supplier)`                              | 🅵    | `U`    | `CF`缺省`Executor` |                                            |
-| `supplyAsync(Supplier<U> supplier, Executor executor)`           | 🅵    | `U`    | `executor`入参     |                                            |
 | `runAsync(Runnable runnable)`                                    | 🅵    | `Void` | `CF`缺省`Executor` |                                            |
 | `runAsync(Runnable runnable, Executor executor)`                 | 🅵    | `Void` | `executor`入参     |                                            |
+| `supplyAsync(Supplier<U> supplier)`                              | 🅵    | `U`    | `CF`缺省`Executor` |                                            |
+| `supplyAsync(Supplier<U> supplier, Executor executor)`           | 🅵    | `U`    | `executor`入参     |                                            |
 |                                                                  |       |        |                  |                                            |
 | `allOf(CompletableFuture<?>... cfs)`<sup><b><i>〚1〛</i></b></sup> | 🅵    | `Void` | 无需               | 组合输入的多个`CF`，本身无执行逻辑，所以无需`Executor`         |
 | `anyOf(CompletableFuture<?>... cfs)`<sup><b><i>〚1〛</i></b></sup> | 🅵    | `Void` | 无需               | 同上                                         |
