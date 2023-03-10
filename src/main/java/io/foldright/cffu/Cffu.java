@@ -5,7 +5,6 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.concurrent.*;
@@ -933,7 +932,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Nullable
     @Override
-    public T get(long timeout, @NotNull TimeUnit unit)
+    public T get(long timeout, TimeUnit unit)
             throws InterruptedException, ExecutionException, TimeoutException {
         return cf.get(timeout, unit);
     }

@@ -490,6 +490,7 @@ public final class CffuFactory {
     public <T> Cffu<T> cffuAnyOf() {
         return incomplete();
     }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# new type-safe of2/of3 factory methods
     //  method name prefix with `cffu`
