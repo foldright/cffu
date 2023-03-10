@@ -10,8 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.concurrent.*;
 import java.util.function.*;
 
-import static io.foldright.cffu.CffuFactory.IS_JAVA12_PLUS;
-import static io.foldright.cffu.CffuFactory.IS_JAVA9_PLUS;
+import static io.foldright.cffu.CffuFactory.*;
 
 /**
  * This class {@link Cffu} is the equivalent class to {@link CompletableFuture},
@@ -907,10 +906,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @return the computed result
      * @throws CancellationException if the computation was cancelled
-     * @throws ExecutionException    if the computation threw an
-     *                               exception
-     * @throws InterruptedException  if the current thread was interrupted
-     *                               while waiting
+     * @throws ExecutionException    if the computation threw an exception
+     * @throws InterruptedException  if the current thread was interrupted while waiting
      */
     @Nullable
     @Override
@@ -938,12 +935,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns the result value when complete, or throws an
-     * (unchecked) exception if completed exceptionally. To better
-     * conform with the use of common functional forms, if a
-     * computation involved in the completion of this * Cffu threw an exception, this method throws an
-     * (unchecked) {@link CompletionException} with the underlying
-     * exception as its cause.
+     * Returns the result value when complete, or throws an (unchecked) exception if completed exceptionally.
+     * To better conform with the use of common functional forms, if a computation involved in the completion
+     * of this Cffu threw an exception, this method throws an (unchecked) {@link CompletionException}
+     * with the underlying exception as its cause.
      *
      * @return the result value
      * @throws CancellationException if the computation was cancelled
@@ -985,7 +980,29 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Nullable
     @Override
     public T resultNow() {
-        return cf.resultNow();
+        if (IS_JAVA19_PLUS) {
+            return cf.resultNow();
+        }
+
+        // below code is copied from java.util.concurrent.Future.resultNow
+
+        if (!isDone()) throw new IllegalStateException("Task has not completed");
+        boolean interrupted = false;
+        try {
+            while (true) {
+                try {
+                    return get();
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                } catch (ExecutionException e) {
+                    throw new IllegalStateException("Task completed with exception");
+                } catch (CancellationException e) {
+                    throw new IllegalStateException("Task was cancelled");
+                }
+            }
+        } finally {
+            if (interrupted) Thread.currentThread().interrupt();
+        }
     }
 
     /**
@@ -999,7 +1016,30 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Throwable exceptionNow() {
-        return cf.exceptionNow();
+        if (IS_JAVA19_PLUS) {
+            return cf.exceptionNow();
+        }
+
+        // below code is copied from java.util.concurrent.Future.exceptionNow
+
+        if (!isDone()) throw new IllegalStateException("Task has not completed");
+        if (isCancelled()) throw new IllegalStateException("Task was cancelled");
+
+        boolean interrupted = false;
+        try {
+            while (true) {
+                try {
+                    get();
+                    throw new IllegalStateException("Task completed with a result");
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                } catch (ExecutionException e) {
+                    return e.getCause();
+                }
+            }
+        } finally {
+            if (interrupted) Thread.currentThread().interrupt();
+        }
     }
 
     /**
@@ -1046,7 +1086,29 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Contract(pure = true)
     @Override
     public State state() {
-        return cf.state();
+        if (IS_JAVA19_PLUS)
+            return cf.state();
+
+        // below code is copied from java.util.concurrent.Future.state
+
+        if (!isDone()) return State.RUNNING;
+        if (isCancelled()) return State.CANCELLED;
+
+        boolean interrupted = false;
+        try {
+            while (true) {
+                try {
+                    get();  // may throw InterruptedException when done
+                    return State.SUCCESS;
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                } catch (ExecutionException e) {
+                    return State.FAILED;
+                }
+            }
+        } finally {
+            if (interrupted) Thread.currentThread().interrupt();
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////

@@ -681,8 +681,12 @@ public final class CffuFactory {
 
     static final boolean IS_JAVA12_PLUS;
 
+    static final boolean IS_JAVA19_PLUS;
+
     static {
+        CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
         boolean b;
+
         try {
             // `completedStage` is the new method of CompletableFuture since java 9
             CompletableFuture.completedStage(null);
@@ -692,7 +696,6 @@ public final class CffuFactory {
         }
         IS_JAVA9_PLUS = b;
 
-        CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
         try {
             // `exceptionallyCompose` is the new method of CompletableFuture since java 12
             cf.exceptionallyCompose(x -> cf);
@@ -701,5 +704,13 @@ public final class CffuFactory {
             b = false;
         }
         IS_JAVA12_PLUS = b;
+
+        try {
+            cf.resultNow();
+            b = true;
+        } catch (NoSuchMethodError e) {
+            b = false;
+        }
+        IS_JAVA19_PLUS = b;
     }
 }
