@@ -1311,6 +1311,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the number of dependent Cffus
      * @see CompletableFuture#getNumberOfDependents()
      */
+    @Contract(pure = true)
     public int getNumberOfDependents() {
         return cf.getNumberOfDependents();
     }
@@ -1321,6 +1322,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @see CompletableFuture#minimalCompletionStage()
      */
+    @Contract(pure = true)
     public CompletionStage<T> minimalCompletionStage() {
         if (IS_JAVA9_PLUS) {
             return fac.new0((CompletableFuture<T>) cf.minimalCompletionStage());
