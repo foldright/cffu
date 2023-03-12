@@ -1356,6 +1356,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Contract(pure = true)
     @Override
     public String toString() {
-        return "Cffu: " + cf;
+        return this.getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this))
+                + "(" + cf + ")";
     }
 }
