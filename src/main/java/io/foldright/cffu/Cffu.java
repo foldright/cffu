@@ -41,9 +41,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     //# Simple `then*` methods of `CompletionStage`:
     //
-    //   thenRun*(Runnable): Void -> Void
-    //   thenAccept*(Consumer): T -> Void
-    //   thenApply*(Function): T -> U
+    //    - thenRun*(Runnable):    Void -> Void
+    //    - thenAccept*(Consumer): T -> Void
+    //    - thenApply*(Function):  T -> U
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -195,9 +195,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     //# `then both(binary input)` methods of CompletionStage:
     //
-    //   runAfterBoth*(Runnable): Void, Void -> Void
-    //   thenAcceptBoth*(BiConsumer): T1, T2 -> Void
-    //   thenCombine*(BiFunction): T1, T2 -> U
+    //    - runAfterBoth*(Runnable):     Void, Void -> Void
+    //    - thenAcceptBoth*(BiConsumer): T1, T2 -> Void
+    //    - thenCombine*(BiFunction):    T1, T2 -> U
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -362,9 +362,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     //# `then either(binary input)` methods of CompletionStage:
     //
-    //   runAfterEither*(Runnable): Void, Void -> Void
-    //   acceptEither*(BiConsumer): T1, T2 -> Void
-    //   applyToEither*(BiFunction): T1, T2 -> U
+    //    - runAfterEither*(Runnable):  Void, Void -> Void
+    //    - acceptEither*(BiConsumer):  T1, T2 -> Void
+    //    - applyToEither*(BiFunction): T1, T2 -> U
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -522,7 +522,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     //# Error Handling methods of CompletionStage:
     //
-    //   exceptionally*
+    //    - exceptionally*
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -581,8 +581,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     //# Timeout Control methods:
     //
-    //   orTimeout
-    //   completeOnTimeout
+    //    - orTimeout
+    //    - completeOnTimeout
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -635,14 +635,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     //# Advanced methods of CompletionStage:
     //
-    //   thenCompose*
-    //   exceptionallyCompose*
-    //   handle*
-    //   whenComplete*
+    //    - thenCompose*
+    //    - exceptionallyCompose*
+    //    - handle*
+    //    - whenComplete*
     //
-    //   NOTE, advanced means:
-    //      - `compose` methods, input function argument return CompletionStage
-    //      - process succeed and failed result at one time(handle*/whenComplete*)
+    // NOTE about advanced meaning:
+    //   - `compose` methods, input function argument return CompletionStage
+    //   - handle succeed and failed result together(handle*/whenComplete*)
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -899,6 +899,18 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     ////////////////////////////////////////////////////////////////////////////////
     //# Read(explicitly) methods
+    //
+    //    - get()
+    //    - get(timeout, unit)
+    //    - join()
+    //    - getNow(T valueIfAbsent)
+    //    - resultNow()
+    //    - exceptionNow()
+    //
+    //    - isDone()
+    //    - isCompletedExceptionally()
+    //    - isCancelled()
+    //    - state()
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -1113,6 +1125,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     ////////////////////////////////////////////////////////////////////////////////
     //# Write methods
+    //
+    //    - complete*()
+    //    - completeExceptionally(ex)
+    //    - cancel()
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -1229,7 +1245,19 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     ////////////////////////////////////////////////////////////////////////////////
     //# nonfunctional methods
-    //   vs. user functional API
+    //    vs. user functional API
+    //
+    //    - toCompletableFuture()
+    //    - copy()
+    //
+    //    - obtrudeValue(value)
+    //    - obtrudeException(ex)
+    //
+    //    - defaultExecutor()
+    //    - getNumberOfDependents()
+    //
+    //    - minimalCompletionStage()
+    //    - newIncompleteFuture()
     ////////////////////////////////////////////////////////////////////////////////
 
     /**

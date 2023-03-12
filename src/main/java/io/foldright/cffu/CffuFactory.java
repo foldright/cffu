@@ -62,13 +62,14 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# Conversation Methods
+    //# Conversion Methods
     //
-    //   toCffu: CF -> Cffu
-    //   toCompletableFuture: Cffu -> CF
+    //    - toCffu: CF -> Cffu
+    //    - toCffuArray: CF[] -> Cffu[]
+    //    - toCompletableFutureArray: Cffu -> CF
     //
-    //   cffuListToArray: List<Cffu> -> Cffu[]
-    //   completableFutureListToArray: List<CompletableFuture> -> CompletableFuture[]
+    //    - cffuListToArray: List<Cffu> -> Cffu[]
+    //    - completableFutureListToArray: List<CF> -> CF[]
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -111,7 +112,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     @SafeVarargs
-    public static <T> CompletableFuture<T>[] toCompletableFuture(Cffu<T>... cfs) {
+    public static <T> CompletableFuture<T>[] toCompletableFutureArray(Cffu<T>... cfs) {
         @SuppressWarnings("unchecked")
         CompletableFuture<T>[] ret = new CompletableFuture[cfs.length];
         for (int i = 0; i < cfs.length; i++) {
@@ -141,9 +142,9 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
     //# Factory Methods, similar to CompletableFuture static methods
     //
-    //  create by immediate value
-    //   - completedFuture/completedStage
-    //   - failedFuture/failedStage
+    //  Create by immediate value
+    //    - completedFuture/completedStage
+    //    - failedFuture/failedStage
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -214,8 +215,8 @@ public final class CffuFactory {
     //# Factory Methods, similar to CompletableFuture static methods
     //
     //  create by logic/lambda
-    //   - runAsync*
-    //   - supplyAsync*
+    //    - runAsync*
+    //    - supplyAsync*
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -316,7 +317,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public Cffu<Void> allOf(Cffu<?>... cfs) {
         @SuppressWarnings("unchecked")
-        CompletableFuture<Object>[] args = toCompletableFuture((Cffu<Object>[]) cfs);
+        CompletableFuture<Object>[] args = toCompletableFutureArray((Cffu<Object>[]) cfs);
         return new0(CompletableFuture.allOf(args));
     }
 
@@ -359,7 +360,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public Cffu<Object> anyOf(Cffu<?>... cfs) {
         @SuppressWarnings("unchecked")
-        CompletableFuture<Object>[] args = toCompletableFuture((Cffu<Object>[]) cfs);
+        CompletableFuture<Object>[] args = toCompletableFutureArray((Cffu<Object>[]) cfs);
         return new0(CompletableFuture.anyOf(args));
     }
 
@@ -389,7 +390,10 @@ public final class CffuFactory {
 
     ////////////////////////////////////////////////////////////////////////////////
     //# new type-safe allOf / anyOf factory methods
-    //  method name prefix with `cffu`
+    //    method name prefix with `cffu`
+    //
+    //    - cffuAllOfWithResults
+    //    - cffuAnyOf
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -403,7 +407,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     @SafeVarargs
     public final <T> Cffu<List<T>> cffuAllOfWithResults(Cffu<T>... cfs) {
-        return cffuAllOfWithResults(toCompletableFuture(cfs));
+        return cffuAllOfWithResults(toCompletableFutureArray(cfs));
     }
 
     /**
@@ -462,7 +466,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     @SafeVarargs
     public final <T> Cffu<T> cffuAnyOf(Cffu<T>... cfs) {
-        return cffuAnyOf(toCompletableFuture(cfs));
+        return cffuAnyOf(toCompletableFutureArray(cfs));
     }
 
     /**
@@ -493,7 +497,10 @@ public final class CffuFactory {
 
     ////////////////////////////////////////////////////////////////////////////////
     //# new type-safe of2/of3 factory methods
-    //  method name prefix with `cffu`
+    //    method name prefix with `cffu`
+    //
+    //    - cffuOf2
+    //    - cffuOf3
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -592,6 +599,8 @@ public final class CffuFactory {
 
     ////////////////////////////////////////////////////////////////////////////////
     //# delay execution, similar to CompletableFuture static methods
+    //
+    //    - delayedExecutor
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -674,7 +683,7 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////
-    //# version checker for compatibility logic
+    //# java version check logic for compatibility
     ////////////////////////////////////////
 
     static final boolean IS_JAVA9_PLUS;
@@ -706,6 +715,7 @@ public final class CffuFactory {
         IS_JAVA12_PLUS = b;
 
         try {
+            // `resultNow` is the new method of CompletableFuture since java 19
             cf.resultNow();
             b = true;
         } catch (NoSuchMethodError e) {
