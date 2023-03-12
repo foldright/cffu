@@ -1098,29 +1098,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Contract(pure = true)
     @Override
     public State state() {
-        if (IS_JAVA19_PLUS)
-            return cf.state();
-
-        // below code is copied from java.util.concurrent.Future.state
-
-        if (!isDone()) return State.RUNNING;
-        if (isCancelled()) return State.CANCELLED;
-
-        boolean interrupted = false;
-        try {
-            while (true) {
-                try {
-                    get();  // may throw InterruptedException when done
-                    return State.SUCCESS;
-                } catch (InterruptedException e) {
-                    interrupted = true;
-                } catch (ExecutionException e) {
-                    return State.FAILED;
-                }
-            }
-        } finally {
-            if (interrupted) Thread.currentThread().interrupt();
-        }
+        // CompletableFuture.state is new method since Java 19,
+        // should need compatibility logic of Java version.
+        // But the return type `State` is also added since Java 19,
+        // so it's IMPOSSIBLE to work by compatibility logic of wrapped class(`Cffu`).
+        //
+        // just invoke without compatibility logic~
+        return cf.state();
     }
 
     ////////////////////////////////////////////////////////////////////////////////
