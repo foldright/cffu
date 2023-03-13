@@ -63,7 +63,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when this stage completes normally,
-     * executes the given action using this stage's default asynchronous execution facility.
+     * executes the given action using {@link #defaultExecutor()}.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
@@ -78,7 +78,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when this stage completes normally,
-     * executes the given action using this stage's default asynchronous execution facility.
+     * executes the given action using {@link #defaultExecutor()}.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
@@ -108,7 +108,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when this stage completes normally,
-     * is executed using this stage's default asynchronous execution facility,
+     * is executed using {@link #defaultExecutor()},
      * with this stage's result as the argument to the supplied action.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
@@ -160,7 +160,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when this stage completes normally,
-     * is executed using this stage's default asynchronous execution facility,
+     * is executed using {@link #defaultExecutor()},
      * with this stage's result as the argument to the supplied function.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
@@ -218,7 +218,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when this and the other given stage both complete normally,
-     * executes the given action using this stage's default asynchronous execution facility.
+     * executes the given action using {@link #defaultExecutor()}.
      * <p>
      * See the {@link CompletionStage} documentation for rules
      * covering exceptional completion.
@@ -267,7 +267,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when this and the other given stage both complete normally,
-     * is executed using this stage's default asynchronous execution facility,
+     * is executed using {@link #defaultExecutor()},
      * with the two results as arguments to the supplied action.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
@@ -323,7 +323,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when this and the other given stage both complete normally,
-     * is executed using this stage's default asynchronous execution facility,
+     * is executed using {@link #defaultExecutor()},
      * with the two results as arguments to the supplied function.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
@@ -385,7 +385,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
-     * executes the given action using this stage's default asynchronous execution facility.
+     * executes the given action using {@link #defaultExecutor()}.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
@@ -433,7 +433,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
-     * is executed using this stage's default asynchronous execution facility,
+     * is executed using {@link #defaultExecutor()},
      * with the corresponding result as argument to the supplied action.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
@@ -485,7 +485,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
-     * is executed using this stage's default asynchronous execution facility,
+     * is executed using {@link #defaultExecutor()},
      * with the corresponding result as argument to the supplied function.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
@@ -544,7 +544,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that, when this stage completes exceptionally,
      * is executed with this stage's exception as the argument to the supplied function,
-     * using this stage's default asynchronous execution facility.
+     * using {@link #defaultExecutor()}.
      * Otherwise, if this stage completes normally,
      * then the returned stage also completes normally with the same value.
      *
@@ -672,7 +672,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that is completed with the same value as the CompletionStage
-     * returned by the given function, executed using this stage's default asynchronous execution facility.
+     * returned by the given function, executed using {@link #defaultExecutor()}.
      * <p>
      * When this stage completes normally, the given function is invoked with this stage's result as the argument,
      * returning another CompletionStage.  When that stage completes normally,
@@ -735,7 +735,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that, when this stage completes exceptionally,
      * is composed using the results of the supplied function applied to this stage's exception,
-     * using this stage's default asynchronous execution facility.
+     * using {@link #defaultExecutor()}.
      *
      * @param fn the function to use to compute the returned CompletionStage
      *           if this Cffu completed exceptionally
@@ -793,7 +793,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu with the same result or exception as this stage,
-     * that executes the given action using this stage's default asynchronous execution facility
+     * that executes the given action using {@link #defaultExecutor()}
      * when this stage completes.
      * <p>
      * When this stage is complete, the given action is invoked with the result (or {@code null} if none)
@@ -861,7 +861,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when this stage completes either normally or exceptionally,
-     * is executed using this stage's default asynchronous execution facility,
+     * is executed using {@link #defaultExecutor()},
      * with this stage's result and exception as arguments to the supplied function.
      * <p>
      * When this stage is complete, the given function is invoked with the result (or {@code null} if none)
@@ -1286,6 +1286,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * and even in such situations may result in ongoing dependent completions using established versus overwritten outcomes.
      *
      * @param value the completion value
+     * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
+     * @see CffuFactory#isForbidObtrudeMethods()
      */
     public void obtrudeValue(@Nullable T value) {
         if (fac.forbidObtrudeMethods) {
@@ -1301,6 +1303,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @param ex the exception
      * @throws NullPointerException if the exception is null
+     * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
+     * @see CffuFactory#isForbidObtrudeMethods()
      */
     public void obtrudeException(Throwable ex) {
         if (fac.forbidObtrudeMethods) {
@@ -1316,6 +1320,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @return the executor
      * @see CffuFactoryBuilder#newCffuFactoryBuilder(Executor)
+     * @see CffuFactory#getDefaultExecutor()
      */
     @Contract(pure = true)
     public Executor defaultExecutor() {

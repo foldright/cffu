@@ -238,7 +238,7 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is asynchronously completed by a task running
-     * in the {@code CffuFactory.defaultExecutor} after it runs the given action.
+     * in the {@link  CffuFactory#getDefaultExecutor()} after it runs the given action.
      *
      * @param action the action to run before completing the returned Cffu
      * @return the new Cffu
@@ -263,7 +263,7 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is asynchronously completed
-     * by a task running in the {@code CffuFactory.defaultExecutor} with
+     * by a task running in the {@link  CffuFactory#getDefaultExecutor()} with
      * the value obtained by calling the given Supplier.
      *
      * @param supplier a function returning the value to be used to complete the returned Cffu
@@ -642,9 +642,31 @@ public final class CffuFactory {
         return new DelayedExecutor(delay, unit, executor);
     }
 
-    ////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // getter/setter
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @see CffuFactoryBuilder#newCffuFactoryBuilder(Executor)
+     * @see Cffu#defaultExecutor()
+     */
+    public Executor getDefaultExecutor() {
+        return defaultExecutor;
+    }
+
+    /**
+     * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
+     * @see Cffu#obtrudeValue(Object)
+     * @see Cffu#obtrudeException(Throwable)
+     */
+    public boolean isForbidObtrudeMethods() {
+        return forbidObtrudeMethods;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
     //# Executors
-    ////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
 
     private static final boolean USE_COMMON_POOL =
             (ForkJoinPool.getCommonPoolParallelism() > 1);
@@ -683,9 +705,9 @@ public final class CffuFactory {
         return requireNonNull(e, "e is null");
     }
 
-    ////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     //# java version check logic for compatibility
-    ////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
 
     static final boolean IS_JAVA9_PLUS;
 

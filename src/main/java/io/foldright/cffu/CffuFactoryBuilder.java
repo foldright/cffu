@@ -32,11 +32,20 @@ public final class CffuFactoryBuilder {
     // Builder Methods
     ////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * @see CffuFactory#getDefaultExecutor()
+     * @see Cffu#defaultExecutor()
+     */
     @Contract(pure = true)
     public static CffuFactoryBuilder newCffuFactoryBuilder(Executor defaultExecutor) {
         return new CffuFactoryBuilder(requireNonNull(defaultExecutor, "defaultExecutor is null"));
     }
 
+    /**
+     * @see CffuFactory#isForbidObtrudeMethods()
+     * @see Cffu#obtrudeValue(Object)
+     * @see Cffu#obtrudeException(Throwable)
+     */
     public CffuFactoryBuilder forbidObtrudeMethods(boolean forbid) {
         this.forbidObtrudeMethods = forbid;
         return this;
