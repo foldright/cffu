@@ -7,6 +7,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.Executor;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * {@link CffuFactoryBuilder} is the builder of {@link CffuFactory}.
  *
@@ -31,10 +33,8 @@ public final class CffuFactoryBuilder {
     ////////////////////////////////////////////////////////////////////////////////
 
     @Contract(pure = true)
-    @SuppressWarnings("ConstantValue")
     public static CffuFactoryBuilder newCffuFactoryBuilder(Executor defaultExecutor) {
-        if (defaultExecutor == null) throw new NullPointerException("defaultExecutor is null");
-        return new CffuFactoryBuilder(defaultExecutor);
+        return new CffuFactoryBuilder(requireNonNull(defaultExecutor, "defaultExecutor is null"));
     }
 
     public CffuFactoryBuilder forbidObtrudeMethods(boolean forbid) {

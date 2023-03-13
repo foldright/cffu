@@ -12,9 +12,10 @@ import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
+
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -57,10 +58,8 @@ public final class CffuFactory {
     }
 
     @Contract(pure = true)
-    @SuppressWarnings("ConstantValue")
     <T> Cffu<T> new0(CompletableFuture<T> cf) {
-        if (cf == null) throw new NullPointerException();
-        return new Cffu<>(this, cf);
+        return new Cffu<>(this, requireNonNull(cf, "cf is null"));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -225,7 +224,6 @@ public final class CffuFactory {
      * a completed Cffu with the value {@code null}
      */
     @Contract(pure = true)
-    @NonNull
     private <T> Cffu<T> dummy() {
         return completedFuture(null);
     }
@@ -234,7 +232,6 @@ public final class CffuFactory {
      * an incomplete Cffu.
      */
     @Contract(pure = true)
-    @NonNull
     <T> Cffu<T> incomplete() {
         return new0(new CompletableFuture<>());
     }
@@ -424,7 +421,7 @@ public final class CffuFactory {
     @SafeVarargs
     public final <T> Cffu<List<T>> cffuAllOfWithResults(CompletableFuture<T>... cfs) {
         for (CompletableFuture<T> cf : cfs) {
-            if (cf == null) throw new NullPointerException();
+            requireNonNull(cf, "cf is null");
         }
 
         final int size = cfs.length;
@@ -535,9 +532,10 @@ public final class CffuFactory {
      * @see #cffuAllOfWithResults(CompletableFuture[])
      */
     @Contract(pure = true)
-    @SuppressWarnings({"unchecked", "ConstantValue"})
+    @SuppressWarnings("unchecked")
     public <T1, T2> Cffu<Pair<T1, T2>> cffuOf2(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
-        if (cf1 == null || cf2 == null) throw new NullPointerException("input cf argument is null!");
+        requireNonNull(cf1, "cf1 is null");
+        requireNonNull(cf2, "cf2 is null");
 
         final Object[] result = new Object[2];
 
@@ -580,11 +578,13 @@ public final class CffuFactory {
      * @see #cffuOf3(Cffu, Cffu, Cffu)
      * @see #cffuAllOfWithResults(CompletableFuture[])
      */
-    @SuppressWarnings({"unchecked", "ConstantValue"})
+    @SuppressWarnings("unchecked")
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Triple<T1, T2, T3>> cffuOf3(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
-        if (cf1 == null || cf2 == null || cf3 == null) throw new NullPointerException("input cf argument is null!");
+        requireNonNull(cf1, "cf1 is null");
+        requireNonNull(cf2, "cf2 is null");
+        requireNonNull(cf3, "cf3 is null");
 
         final Object[] result = new Object[3];
 
@@ -632,13 +632,13 @@ public final class CffuFactory {
      * @return the new delayed executor
      */
     @Contract(pure = true)
-    @SuppressWarnings("ConstantValue")
     public Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
         if (IS_JAVA9_PLUS) {
             return CompletableFuture.delayedExecutor(delay, unit, executor);
         }
 
-        if (unit == null || executor == null) throw new NullPointerException();
+        requireNonNull(unit, "unit is null");
+        requireNonNull(executor, "executor is null");
         return new DelayedExecutor(delay, unit, executor);
     }
 
@@ -655,7 +655,7 @@ public final class CffuFactory {
     private static final class ThreadPerTaskExecutor implements Executor {
         @Override
         public void execute(Runnable r) {
-            Objects.requireNonNull(r);
+            requireNonNull(r);
             new Thread(r).start();
         }
     }
@@ -676,12 +676,11 @@ public final class CffuFactory {
      * Null-checks user executor argument, and translates uses of
      * commonPool to ASYNC_POOL in case parallelism disabled.
      */
-    @SuppressWarnings({"resource", "ConstantValue"})
+    @SuppressWarnings("resource")
     private static Executor screenExecutor(Executor e) {
         if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool())
             return AsyncPoolHolder.ASYNC_POOL;
-        if (e == null) throw new NullPointerException();
-        return e;
+        return requireNonNull(e, "e is null");
     }
 
     ////////////////////////////////////////

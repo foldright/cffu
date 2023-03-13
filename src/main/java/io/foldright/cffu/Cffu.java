@@ -11,6 +11,7 @@ import java.util.concurrent.*;
 import java.util.function.*;
 
 import static io.foldright.cffu.CffuFactory.*;
+import static java.util.Objects.requireNonNull;
 
 /**
  * This class {@link Cffu} is the equivalent class to {@link CompletableFuture},
@@ -594,7 +595,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return this Cffu
      */
-    @SuppressWarnings("ConstantValue")
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
     public Cffu<T> orTimeout(long timeout, TimeUnit unit) {
         if (IS_JAVA9_PLUS) {
@@ -602,7 +602,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             return this;
         }
 
-        if (unit == null) throw new NullPointerException();
+        requireNonNull(unit, "unit is null");
         if (!cf.isDone()) {
             cf.whenComplete(new Canceller(Delayer.delay(new Timeout(cf), timeout, unit)));
         }
@@ -617,7 +617,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return this Cffu
      */
-    @SuppressWarnings("ConstantValue")
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
     public Cffu<T> completeOnTimeout(@Nullable T value, long timeout, TimeUnit unit) {
         if (IS_JAVA9_PLUS) {
@@ -625,7 +624,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             return this;
         }
 
-        if (unit == null) throw new NullPointerException();
+        requireNonNull(unit, "unit is null");
         if (!cf.isDone()) {
             cf.whenComplete(new Canceller(Delayer.delay(new DelayedCompleter<>(cf, value), timeout, unit)));
         }
@@ -1152,12 +1151,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param executor the executor to use for asynchronous execution
      * @return this Cffu
      */
-    @SuppressWarnings("ConstantValue")
     public Cffu<T> completeAsync(Supplier<? extends T> supplier, Executor executor) {
         if (IS_JAVA9_PLUS) {
             cf.completeAsync(supplier, executor);
         } else {
-            if (supplier == null || executor == null) throw new NullPointerException();
+            requireNonNull(supplier, "supplier is null");
+            requireNonNull(executor, "executor is null");
             executor.execute(new AsyncSupply<>(cf, supplier));
         }
         return this;
