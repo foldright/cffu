@@ -157,5 +157,7 @@ public class CffuTest {
 
     @Test
     void name() {
+        Cffu<Object> incomplete = cffuFactory.incomplete();
+        System.out.println(incomplete);
     }
 }
