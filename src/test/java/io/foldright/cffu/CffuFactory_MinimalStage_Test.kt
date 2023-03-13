@@ -1,6 +1,6 @@
 package io.foldright.cffu
 
-import io.foldright.testutils.testThreadPoolExecutor
+import io.foldright.test_utils.testThreadPoolExecutor
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe

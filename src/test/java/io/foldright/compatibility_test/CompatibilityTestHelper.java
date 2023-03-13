@@ -1,4 +1,4 @@
-package io.foldright.apitest;
+package io.foldright.compatibility_test;
 
 import io.foldright.cffu.Cffu;
 import io.foldright.cffu.CffuFactoryBuilder;
@@ -8,11 +8,10 @@ import java.util.concurrent.CompletableFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 
 
-public class ApiTestHelper {
+class CompatibilityTestHelper {
     public static <T> CompletableFuture<T> newFailedCompletableFuture(Throwable t) {
         CompletableFuture<T> failed = new CompletableFuture<>();
         failed.completeExceptionally(t);
-
         return failed;
     }
 

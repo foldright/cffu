@@ -8,9 +8,9 @@ import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static io.foldright.testutils.TestThreadPoolManager.getTestThreadPoolExecutor;
-import static io.foldright.testutils.TestUtils.createExceptionallyCompletedFutureWithSleep;
-import static io.foldright.testutils.TestUtils.createNormallyCompletedFutureWithSleep;
+import static io.foldright.test_utils.TestThreadPoolManager.getTestThreadPoolExecutor;
+import static io.foldright.test_utils.TestUtils.createExceptionallyCompletedFutureWithSleep;
+import static io.foldright.test_utils.TestUtils.createNormallyCompletedFutureWithSleep;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -158,5 +158,7 @@ public class CffuTest {
 
     @Test
     void name() {
+        Cffu<Object> incomplete = cffuFactory.newIncompleteCffu();
+        System.out.println(incomplete);
     }
 }
