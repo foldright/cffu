@@ -140,11 +140,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that, when this stage completes normally,
      * is executed with this stage's result as the argument to the supplied function.
-     *
-     * <p>This method is analogous to {@link java.util.Optional#map Optional.map} and
+     * <p>
+     * This method is analogous to {@link java.util.Optional#map Optional.map} and
      * {@link java.util.stream.Stream#map Stream.map}.
-     *
-     * <p>See the {@link CompletionStage} documentation for rules
+     * <p>
+     * See the {@link CompletionStage} documentation for rules
      * covering exceptional completion.
      *
      * @param fn  the function to use to compute the value of the returned Cffu
@@ -196,8 +196,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //# `then both(binary input)` methods of CompletionStage:
     //
     //    - runAfterBoth*(Runnable):     Void, Void -> Void
-    //    - thenAcceptBoth*(BiConsumer): T1, T2 -> Void
-    //    - thenCombine*(BiFunction):    T1, T2 -> U
+    //    - thenAcceptBoth*(BiConsumer): (T1, T2) -> Void
+    //    - thenCombine*(BiFunction):    (T1, T2) -> U
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -363,8 +363,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //# `then either(binary input)` methods of CompletionStage:
     //
     //    - runAfterEither*(Runnable):  Void, Void -> Void
-    //    - acceptEither*(BiConsumer):  T1, T2 -> Void
-    //    - applyToEither*(BiFunction): T1, T2 -> U
+    //    - acceptEither*(BiConsumer):  (T1, T2) -> Void
+    //    - applyToEither*(BiFunction): (T1, T2) -> U
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -522,7 +522,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     //# Error Handling methods of CompletionStage:
     //
-    //    - exceptionally*
+    //    - exceptionally*: throwable -> T
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -581,8 +581,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     //# Timeout Control methods:
     //
-    //    - orTimeout
-    //    - completeOnTimeout
+    //    - orTimeout:         timeout event -> given value
+    //    - completeOnTimeout: timeout event -> TimeoutException
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -635,10 +635,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     //# Advanced methods of CompletionStage:
     //
-    //    - thenCompose*
-    //    - exceptionallyCompose*
-    //    - handle*
-    //    - whenComplete*
+    //    - thenCompose*:          T -> CompletionStage<T>
+    //    - exceptionallyCompose*: throwable -> CompletionStage<T>
+    //
+    //    - whenComplete*:         (T, throwable) -> Void
+    //    - handle*:               (T, throwable) -> T
     //
     // NOTE about advanced meaning:
     //   - `compose` methods, input function argument return CompletionStage
@@ -648,18 +649,18 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that is completed with the same value
      * as the CompletionStage returned by the given function.
-     *
-     * <p>When this stage completes normally, the given function is invoked
+     * <p>
+     * When this stage completes normally, the given function is invoked
      * with this stage's result as the argument, returning another CompletionStage.
      * When that stage completes normally, the Cffu returned by this method
      * is completed with the same value.
-     *
-     * <p>To ensure progress, the supplied function must arrange eventual completion of its result.
-     *
-     * <p>This method is analogous to {@link java.util.Optional#flatMap Optional.flatMap} and
+     * <p>
+     * To ensure progress, the supplied function must arrange eventual completion of its result.
+     * <p>
+     * This method is analogous to {@link java.util.Optional#flatMap Optional.flatMap} and
      * {@link java.util.stream.Stream#flatMap Stream.flatMap}.
-     *
-     * <p>See the {@link CompletionStage} documentation for rules covering exceptional completion.
+     * <p>
+     * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
      * @param fn  the function to use to compute another CompletionStage
      * @param <U> the type of the returned Cffu's result
@@ -673,14 +674,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that is completed with the same value as the CompletionStage
      * returned by the given function, executed using this stage's default asynchronous execution facility.
-     *
-     * <p>When this stage completes normally, the given function is invoked with this stage's result as the argument,
+     * <p>
+     * When this stage completes normally, the given function is invoked with this stage's result as the argument,
      * returning another CompletionStage.  When that stage completes normally,
      * the Cffu returned by this method is completed with the same value.
-     *
-     * <p>To ensure progress, the supplied function must arrange eventual completion of its result.
-     *
-     * <p>See the {@link CompletionStage} documentation for rules covering exceptional completion.
+     * <p>
+     * To ensure progress, the supplied function must arrange eventual completion of its result.
+     * <p>
+     * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
      * @param fn  the function to use to compute another CompletionStage
      * @param <U> the type of the returned Cffu's result
@@ -694,14 +695,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that is completed with the same value as the CompletionStage
      * returned by the given function, executed using the supplied Executor.
-     *
-     * <p>When this stage completes normally, the given function is invoked with this stage's result as the argument,
+     * <p>
+     * When this stage completes normally, the given function is invoked with this stage's result as the argument,
      * returning another CompletionStage.  When that stage completes normally,
      * the Cffu returned by this method is completed with the same value.
-     *
-     * <p>To ensure progress, the supplied function must arrange eventual completion of its result.
-     *
-     * <p>See the {@link CompletionStage} documentation for rules covering exceptional completion.
+     * <p>
+     * To ensure progress, the supplied function must arrange eventual completion of its result.
+     * <p>
+     * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
      * @param fn       the function to use to compute another CompletionStage
      * @param executor the executor to use for asynchronous execution
@@ -769,10 +770,84 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
+     * Returns a new Cffu with the same result or exception as this stage,
+     * that executes the given action when this stage completes.
+     * <p>
+     * When this stage is complete, the given action is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of this stage as arguments.
+     * The returned stage is completed when the action returns.
+     * <p>
+     * Unlike method {@link #handle handle}, this method is not designed to translate completion outcomes,
+     * so the supplied action should not throw an exception. However, if it does, the following rules apply:
+     * if this stage completed normally but the supplied action throws an exception,
+     * then the returned stage completes exceptionally with the supplied action's exception.
+     * Or, if this stage completed exceptionally and the supplied action throws an exception,
+     * then the returned stage completes exceptionally with this stage's exception.
+     *
+     * @param action the action to perform
+     * @return the new Cffu
+     */
+    @Override
+    public Cffu<T> whenComplete(BiConsumer<? super T, ? super Throwable> action) {
+        return fac.new0(cf.whenComplete(action));
+    }
+
+    /**
+     * Returns a new Cffu with the same result or exception as this stage,
+     * that executes the given action using this stage's default asynchronous execution facility
+     * when this stage completes.
+     * <p>
+     * When this stage is complete, the given action is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of this stage as arguments.
+     * The returned stage is completed when the action returns.
+     * <p>
+     * Unlike method {@link #handleAsync(BiFunction) handleAsync}, this method is not designed to
+     * translate completion outcomes, so the supplied action should not throw an exception.
+     * However, if it does, the following rules apply:
+     * If this stage completed normally but the supplied action throws an exception,
+     * then the returned stage completes exceptionally with the supplied action's exception.
+     * Or, if this stage completed exceptionally and the supplied action throws an exception,
+     * then the returned stage completes exceptionally with this stage's exception.
+     *
+     * @param action the action to perform
+     * @return the new Cffu
+     */
+    @Override
+    public Cffu<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action) {
+        return fac.new0(cf.whenCompleteAsync(action, fac.defaultExecutor));
+    }
+
+    /**
+     * Returns a new Cffu with the same result or exception as this stage,
+     * that executes the given action using the supplied Executor when this stage completes.
+     * <p>
+     * When this stage is complete, the given action is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of this stage as arguments.
+     * The returned stage is completed when the action returns.
+     * <p>
+     * Unlike method {@link #handleAsync(BiFunction, Executor) handleAsync}, this method is not designed to
+     * translate completion outcomes, so the supplied action should not throw an exception.
+     * However, if it does, the following rules apply:
+     * If this stage completed normally but the supplied action throws an exception,
+     * then the returned stage completes exceptionally with the supplied action's exception.
+     * Or, if this stage completed exceptionally and the supplied action throws an exception,
+     * then the returned stage completes exceptionally with this stage's exception.
+     *
+     * @param action   the action to perform
+     * @param executor the executor to use for asynchronous execution
+     * @return the new Cffu
+     */
+    @Override
+    public Cffu<T> whenCompleteAsync(
+            BiConsumer<? super T, ? super Throwable> action, Executor executor) {
+        return fac.new0(cf.whenCompleteAsync(action, executor));
+    }
+
+    /**
      * Returns a new Cffu that, when this stage completes either normally or exceptionally,
      * is executed with this stage's result and exception as arguments to the supplied function.
-     *
-     * <p>When this stage is complete, the given function is invoked with the result (or {@code null} if none)
+     * <p>
+     * When this stage is complete, the given function is invoked with the result (or {@code null} if none)
      * and the exception (or {@code null} if none) of this stage as arguments,
      * and the function's result is used to complete the returned stage.
      *
@@ -789,8 +864,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Returns a new Cffu that, when this stage completes either normally or exceptionally,
      * is executed using this stage's default asynchronous execution facility,
      * with this stage's result and exception as arguments to the supplied function.
-     *
-     * <p>When this stage is complete, the given function is invoked with the result (or {@code null} if none)
+     * <p>
+     * When this stage is complete, the given function is invoked with the result (or {@code null} if none)
      * and the exception (or {@code null} if none) of this stage as arguments,
      * and the function's result is used to complete the returned stage.
      *
@@ -823,80 +898,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         return fac.new0(cf.handleAsync(fn, executor));
     }
 
-    /**
-     * Returns a new Cffu with the same result or exception as this stage,
-     * that executes the given action when this stage completes.
-     * <p>
-     * When this stage is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this stage as arguments.
-     * The returned stage is completed when the action returns.
-     * <p>
-     * Unlike method {@link #handle handle}, this method is not designed to translate completion outcomes,
-     * so the supplied action should not throw an exception. However, if it does, the following rules apply:
-     * if this stage completed normally but the supplied action throws an exception,
-     * then the returned stage completes exceptionally with the supplied action's exception.
-     * Or, if this stage completed exceptionally and the supplied action throws an exception,
-     * then the returned stage completes exceptionally with this stage's exception.
-     *
-     * @param action the action to perform
-     * @return the new Cffu
-     */
-    @Override
-    public Cffu<T> whenComplete(BiConsumer<? super T, ? super Throwable> action) {
-        return fac.new0(cf.whenComplete(action));
-    }
-
-    /**
-     * Returns a new Cffu with the same result or exception as this stage,
-     * that executes the given action using this stage's default asynchronous execution facility
-     * when this stage completes.
-     * <p>
-     * When this stage is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this stage as arguments.
-     * The returned stage is completed when the action returns.
-     *
-     * <p>Unlike method {@link #handleAsync(BiFunction) handleAsync}, this method is not designed to
-     * translate completion outcomes, so the supplied action should not throw an exception.
-     * However, if it does, the following rules apply:
-     * If this stage completed normally but the supplied action throws an exception,
-     * then the returned stage completes exceptionally with the supplied action's exception.
-     * Or, if this stage completed exceptionally and the supplied action throws an exception,
-     * then the returned stage completes exceptionally with this stage's exception.
-     *
-     * @param action the action to perform
-     * @return the new Cffu
-     */
-    @Override
-    public Cffu<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action) {
-        return fac.new0(cf.whenCompleteAsync(action, fac.defaultExecutor));
-    }
-
-    /**
-     * Returns a new Cffu with the same result or exception as this stage,
-     * that executes the given action using the supplied Executor when this stage completes.
-     *
-     * <p>When this stage is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this stage as arguments.
-     * The returned stage is completed when the action returns.
-     *
-     * <p>Unlike method {@link #handleAsync(BiFunction, Executor) handleAsync}, this method is not designed to
-     * translate completion outcomes, so the supplied action should not throw an exception.
-     * However, if it does, the following rules apply:
-     * If this stage completed normally but the supplied action throws an exception,
-     * then the returned stage completes exceptionally with the supplied action's exception.
-     * Or, if this stage completed exceptionally and the supplied action throws an exception,
-     * then the returned stage completes exceptionally with this stage's exception.
-     *
-     * @param action   the action to perform
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
-     */
-    @Override
-    public Cffu<T> whenCompleteAsync(
-            BiConsumer<? super T, ? super Throwable> action, Executor executor) {
-        return fac.new0(cf.whenCompleteAsync(action, executor));
-    }
-
     ////////////////////////////////////////////////////////////////////////////////
     //# Read(explicitly) methods
     //
@@ -911,6 +912,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //    - isCompletedExceptionally()
     //    - isCancelled()
     //    - state()
+    //
+    // NOTE:
+    //   - about ExecutionException or CompletionException when the computation threw an exception:
+    //     - get methods throw ExecutionException(checked exception)
+    //       these old methods existed in `Future` interface since Java 5
+    //     - getNow/join throw CompletionException(unchecked exception),
+    //       these new methods existed in `CompletableFuture` since Java 8
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -979,15 +987,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns the computed result, without waiting.
-     *
-     * <p> This method is for cases where the caller knows that the task has already completed successfully,
+     * <p>
+     * This method is for cases where the caller knows that the task has already completed successfully,
      * for example when filtering a stream of Future objects for the successful tasks
      * and using a mapping operation to obtain a stream of results.
-     * {@code results = futures.stream()
-     * .filter(f -> f.state() == Future.State.SUCCESS)
-     * .map(Future::resultNow)
-     * .toList();
-     * }
+     * <pre>{@code results = futures.stream()
+     *     .filter(f -> f.state() == Future.State.SUCCESS)
+     *     .map(Future::resultNow)
+     *     .toList();
+     * }</pre>
      */
     @Nullable
     @Override
@@ -1019,8 +1027,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns the exception thrown by the task, without waiting.
-     *
-     * <p> This method is for cases where the caller knows that the task has already completed with an exception.
+     * <p>
+     * This method is for cases where the caller knows that the task has already completed with an exception.
      *
      * @return the exception thrown by the task
      * @throws IllegalStateException if the task has not completed, the task completed normally,
@@ -1304,12 +1312,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns the default Executor used for async methods that do not specify an Executor.
-     * This class uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread,
-     * or else an Executor using one thread per async task. This method may be overridden in subclasses
-     * to return an Executor that provides at least one independent thread.
+     * This class uses the {@code CffuFactory.defaultExecutor}
+     * config by {@link CffuFactoryBuilder#newCffuFactoryBuilder(Executor)}.
      *
      * @return the executor
-     * @see CompletableFuture#defaultExecutor()
+     * @see CffuFactoryBuilder#newCffuFactoryBuilder(Executor)
      */
     @Contract(pure = true)
     public Executor defaultExecutor() {

@@ -29,7 +29,9 @@ import java.util.function.Supplier;
  * About factory methods conventions of {@link CffuFactory}:
  * <ul>
  *   <li>all factory methods return {@link Cffu}.
- *   <li>only provide varargs methods for multiply inputs;
+ *   <li>new factory methods, aka. no equivalent method in {@link CompletableFuture},
+ *     prefix method name with `cffu`.
+ *   <li>only provide varargs methods for multiply Cffu/CF input arguments;
  *     if you have {@code List} input, use static util methods {@link #cffuListToArray(List)}
  *     and {@link #completableFutureListToArray(List)} to convert it to array first.
  * </ul>
@@ -239,7 +241,7 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is asynchronously completed by a task running
-     * in the {@link ForkJoinPool#commonPool()} after it runs the given action.
+     * in the {@code CffuFactory.defaultExecutor} after it runs the given action.
      *
      * @param action the action to run before completing the returned Cffu
      * @return the new Cffu
@@ -264,7 +266,7 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is asynchronously completed
-     * by a task running in the {@link ForkJoinPool#commonPool()} with
+     * by a task running in the {@code CffuFactory.defaultExecutor} with
      * the value obtained by calling the given Supplier.
      *
      * @param supplier a function returning the value to be used to complete the returned Cffu
@@ -411,15 +413,6 @@ public final class CffuFactory {
     }
 
     /**
-     * Provided this overloaded method just for resolving "cffuAllOfWithResults is ambiguous" problem
-     * when call {@code cffuAllOfWithResults} with empty arguments: {@code cffuFactory.cffuAllOfWithResults()}.
-     */
-    @Contract(pure = true)
-    public final <T> Cffu<List<T>> cffuAllOfWithResults() {
-        return dummy();
-    }
-
-    /**
      * Same as {@link #cffuAllOfWithResults(Cffu[])} with overloaded argument type {@link CompletableFuture}.
      *
      * @param cfs the CompletableFutures
@@ -452,6 +445,15 @@ public final class CffuFactory {
                 .thenApply(unused -> (List<T>) Arrays.asList(result));
 
         return new0(ret);
+    }
+
+    /**
+     * Provided this overloaded method just for resolving "cffuAllOfWithResults is ambiguous" problem
+     * when call {@code cffuAllOfWithResults} with empty arguments: {@code cffuFactory.cffuAllOfWithResults()}.
+     */
+    @Contract(pure = true)
+    public <T> Cffu<List<T>> cffuAllOfWithResults() {
+        return dummy();
     }
 
     /**
