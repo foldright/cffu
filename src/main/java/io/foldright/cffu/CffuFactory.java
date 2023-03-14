@@ -65,84 +65,6 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# Conversion Methods
-    //
-    //    - toCffu: CF -> Cffu
-    //    - toCffuArray: CF[] -> Cffu[]
-    //    - toCompletableFutureArray: Cffu -> CF
-    //
-    //    - cffuListToArray: List<Cffu> -> Cffu[]
-    //    - completableFutureListToArray: List<CF> -> CF[]
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Convert {@link CompletionStage} to {@link Cffu}.
-     * <p>
-     * <b><i>NOTE:<br></i></b>
-     * if input is a {@link Cffu}, re-wrapped with the config of
-     * this {@link CffuFactory} from {@link CffuFactoryBuilder}.
-     *
-     * @see Cffu#toCompletableFuture()
-     * @see #toCffuArray(CompletableFuture[])
-     */
-    @Contract(pure = true)
-    public <T> Cffu<T> toCffu(CompletionStage<T> cf) {
-        return new0(cf.toCompletableFuture());
-    }
-
-    /**
-     * Convert {@link CompletableFuture} array to {@link Cffu} array.
-     *
-     * @see Cffu#toCompletableFuture()
-     * @see #toCffu(CompletionStage)
-     */
-    @Contract(pure = true)
-    @SafeVarargs
-    public final <T> Cffu<T>[] toCffuArray(CompletableFuture<T>... cfs) {
-        @SuppressWarnings("unchecked")
-        Cffu<T>[] ret = new Cffu[cfs.length];
-        for (int i = 0; i < cfs.length; i++) {
-            ret[i] = new0(cfs[i]);
-        }
-        return ret;
-    }
-
-    /**
-     * Convert Cffu array to CompletableFuture array.
-     *
-     * @see Cffu#toCompletableFuture()
-     * @see #toCffuArray(CompletableFuture[])
-     */
-    @Contract(pure = true)
-    @SafeVarargs
-    public static <T> CompletableFuture<T>[] toCompletableFutureArray(Cffu<T>... cfs) {
-        @SuppressWarnings("unchecked")
-        CompletableFuture<T>[] ret = new CompletableFuture[cfs.length];
-        for (int i = 0; i < cfs.length; i++) {
-            ret[i] = cfs[i].toCompletableFuture();
-        }
-        return ret;
-    }
-
-    /**
-     * Convert Cffu list to Cffu array.
-     */
-    @Contract(pure = true)
-    @SuppressWarnings("unchecked")
-    public static <T> Cffu<T>[] cffuListToArray(List<Cffu<T>> cffuList) {
-        return cffuList.toArray(new Cffu[0]);
-    }
-
-    /**
-     * Convert CompletableFuture list to CompletableFuture array.
-     */
-    @Contract(pure = true)
-    @SuppressWarnings("unchecked")
-    public static <T> CompletableFuture<T>[] completableFutureListToArray(List<CompletableFuture<T>> cfList) {
-        return cfList.toArray(new CompletableFuture[0]);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
     //# Factory Methods, similar to CompletableFuture static methods
     //
     //  Create by immediate value
@@ -286,6 +208,31 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
+    //# Constructor of Cffu
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Return an incomplete Cffu, equivalent to {@link CompletableFuture#CompletableFuture()}.
+     * <p>
+     * In general, should not use this method in biz code, prefer below factory methods of Cffu:
+     *
+     * <ol>
+     *     <li>{@link #runAsync(Runnable)}
+     *     <li>{@link #supplyAsync(Supplier, Executor)}
+     * </ol>
+     *
+     * @see #runAsync(Runnable)
+     * @see #runAsync(Runnable, Executor)
+     * @see #supplyAsync(Supplier)
+     * @see #supplyAsync(Supplier, Executor)
+     * @see CompletableFuture#CompletableFuture()
+     */
+    @Contract(pure = true)
+    public <T> Cffu<T> newIncompleteCffu() {
+        return new0(new CompletableFuture<>());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
     //# allOf / anyOf methods, similar to CompletableFuture static methods
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -379,6 +326,49 @@ public final class CffuFactory {
     @Contract(pure = true)
     public Cffu<Object> anyOf() {
         return newIncompleteCffu();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# delay execution, similar to CompletableFuture static methods
+    //
+    //    - delayedExecutor
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new Executor that submits a task to the default executor
+     * after the given delay (or no delay if non-positive).
+     * Each delay commences upon invocation of the returned executor's {@code execute} method.
+     *
+     * @param delay how long to delay, in units of {@code unit}
+     * @param unit  a {@code TimeUnit} determining how to interpret the
+     *              {@code delay} parameter
+     * @return the new delayed executor
+     */
+    @Contract(pure = true)
+    public Executor delayedExecutor(long delay, TimeUnit unit) {
+        return delayedExecutor(delay, unit, defaultExecutor);
+    }
+
+    /**
+     * Returns a new Executor that submits a task to the given base executor
+     * after the given delay (or no delay if non-positive).
+     * Each delay commences upon invocation of the returned executor's {@code execute} method.
+     *
+     * @param delay    how long to delay, in units of {@code unit}
+     * @param unit     a {@code TimeUnit} determining how to interpret the
+     *                 {@code delay} parameter
+     * @param executor the base executor
+     * @return the new delayed executor
+     */
+    @Contract(pure = true)
+    public Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
+        if (IS_JAVA9_PLUS) {
+            return CompletableFuture.delayedExecutor(delay, unit, executor);
+        }
+
+        requireNonNull(unit, "unit is null");
+        requireNonNull(executor, "executor is null");
+        return new DelayedExecutor(delay, unit, executor);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -707,46 +697,81 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# delay execution, similar to CompletableFuture static methods
+    //# Conversion Methods
     //
-    //    - delayedExecutor
+    //    - toCffu: CF -> Cffu
+    //    - toCffuArray: CF[] -> Cffu[]
+    //    - toCompletableFutureArray: Cffu -> CF
+    //
+    //    - cffuListToArray: List<Cffu> -> Cffu[]
+    //    - completableFutureListToArray: List<CF> -> CF[]
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Executor that submits a task to the default executor
-     * after the given delay (or no delay if non-positive).
-     * Each delay commences upon invocation of the returned executor's {@code execute} method.
+     * Convert {@link CompletionStage} to {@link Cffu}.
+     * <p>
+     * <b><i>NOTE:<br></i></b>
+     * if input is a {@link Cffu}, re-wrapped with the config of
+     * this {@link CffuFactory} from {@link CffuFactoryBuilder}.
      *
-     * @param delay how long to delay, in units of {@code unit}
-     * @param unit  a {@code TimeUnit} determining how to interpret the
-     *              {@code delay} parameter
-     * @return the new delayed executor
+     * @see Cffu#toCompletableFuture()
+     * @see #toCffuArray(CompletableFuture[])
      */
     @Contract(pure = true)
-    public Executor delayedExecutor(long delay, TimeUnit unit) {
-        return delayedExecutor(delay, unit, defaultExecutor);
+    public <T> Cffu<T> toCffu(CompletionStage<T> cf) {
+        return new0(cf.toCompletableFuture());
     }
 
     /**
-     * Returns a new Executor that submits a task to the given base executor
-     * after the given delay (or no delay if non-positive).
-     * Each delay commences upon invocation of the returned executor's {@code execute} method.
+     * Convert {@link CompletableFuture} array to {@link Cffu} array.
      *
-     * @param delay    how long to delay, in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the
-     *                 {@code delay} parameter
-     * @param executor the base executor
-     * @return the new delayed executor
+     * @see Cffu#toCompletableFuture()
+     * @see #toCffu(CompletionStage)
      */
     @Contract(pure = true)
-    public Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
-        if (IS_JAVA9_PLUS) {
-            return CompletableFuture.delayedExecutor(delay, unit, executor);
+    @SafeVarargs
+    public final <T> Cffu<T>[] toCffuArray(CompletableFuture<T>... cfs) {
+        @SuppressWarnings("unchecked")
+        Cffu<T>[] ret = new Cffu[cfs.length];
+        for (int i = 0; i < cfs.length; i++) {
+            ret[i] = new0(cfs[i]);
         }
+        return ret;
+    }
 
-        requireNonNull(unit, "unit is null");
-        requireNonNull(executor, "executor is null");
-        return new DelayedExecutor(delay, unit, executor);
+    /**
+     * Convert Cffu array to CompletableFuture array.
+     *
+     * @see Cffu#toCompletableFuture()
+     * @see #toCffuArray(CompletableFuture[])
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    public static <T> CompletableFuture<T>[] toCompletableFutureArray(Cffu<T>... cfs) {
+        @SuppressWarnings("unchecked")
+        CompletableFuture<T>[] ret = new CompletableFuture[cfs.length];
+        for (int i = 0; i < cfs.length; i++) {
+            ret[i] = cfs[i].toCompletableFuture();
+        }
+        return ret;
+    }
+
+    /**
+     * Convert Cffu list to Cffu array.
+     */
+    @Contract(pure = true)
+    @SuppressWarnings("unchecked")
+    public static <T> Cffu<T>[] cffuListToArray(List<Cffu<T>> cffuList) {
+        return cffuList.toArray(new Cffu[0]);
+    }
+
+    /**
+     * Convert CompletableFuture list to CompletableFuture array.
+     */
+    @Contract(pure = true)
+    @SuppressWarnings("unchecked")
+    public static <T> CompletableFuture<T>[] completableFutureListToArray(List<CompletableFuture<T>> cfList) {
+        return cfList.toArray(new CompletableFuture[0]);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -809,31 +834,6 @@ public final class CffuFactory {
         if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool())
             return AsyncPoolHolder.ASYNC_POOL;
         return requireNonNull(e, "e is null");
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    //# Constructor of Cffu
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Return an incomplete Cffu, equivalent to {@link CompletableFuture#CompletableFuture()}.
-     * <p>
-     * In general, should not use this method in biz code, prefer below factory methods of Cffu:
-     *
-     * <ol>
-     *     <li>{@link #runAsync(Runnable)}
-     *     <li>{@link #supplyAsync(Supplier, Executor)}
-     * </ol>
-     *
-     * @see #runAsync(Runnable)
-     * @see #runAsync(Runnable, Executor)
-     * @see #supplyAsync(Supplier)
-     * @see #supplyAsync(Supplier, Executor)
-     * @see CompletableFuture#CompletableFuture()
-     */
-    @Contract(pure = true)
-    public <T> Cffu<T> newIncompleteCffu() {
-        return new0(new CompletableFuture<>());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
