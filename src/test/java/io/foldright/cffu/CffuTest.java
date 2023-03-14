@@ -1,7 +1,7 @@
 package io.foldright.cffu;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
+import io.foldright.cffu.tuple.Tuple2;
+import io.foldright.cffu.tuple.Tuple3;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -66,12 +66,12 @@ public class CffuTest {
 
     @Test
     public void test_cffuOf_2_or_3() throws Exception {
-        assertEquals(Pair.of(n, s), cffuFactory.cffuOf2(
+        assertEquals(Tuple2.of(n, s), cffuFactory.cffuOf2(
                 CompletableFuture.completedFuture(n),
                 CompletableFuture.completedFuture(s)
         ).get());
 
-        assertEquals(Triple.of(n, s, d), cffuFactory.cffuOf3(
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.cffuOf3(
                 CompletableFuture.completedFuture(n),
                 CompletableFuture.completedFuture(s),
                 CompletableFuture.completedFuture(d)

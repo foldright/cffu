@@ -3,8 +3,10 @@ package io.foldright.cffu;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
+import io.foldright.cffu.tuple.Tuple2;
+import io.foldright.cffu.tuple.Tuple3;
+import io.foldright.cffu.tuple.Tuple4;
+import io.foldright.cffu.tuple.Tuple5;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -487,11 +489,13 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# new type-safe of2/of3 factory methods
+    //# new type-safe of<N> factory methods
     //    method name prefix with `cffu`
     //
     //    - cffuOf2
     //    - cffuOf3
+    //    - cffuOf4
+    //    - cffuOf5
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -500,14 +504,14 @@ public final class CffuFactory {
      * Cffu also does so, with a CompletionException holding this exception as its cause.
      * <p>
      * Same as {@link #cffuAllOfWithResults(Cffu[])} but with two inputs
-     * and return results as {@code Pair}.
+     * and return results as {@code Tuple2}.
      *
      * @return a new Cffu that is completed when the given two Cffus complete
      * @throws NullPointerException if any input Cffus are {@code null}
      * @see #cffuAllOfWithResults(Cffu[])
      */
     @Contract(pure = true)
-    public <T1, T2> Cffu<Pair<T1, T2>> cffuOf2(Cffu<T1> cf1, Cffu<T2> cf2) {
+    public <T1, T2> Cffu<Tuple2<T1, T2>> cffuOf2(Cffu<T1> cf1, Cffu<T2> cf2) {
         return cffuOf2(cf1.toCompletableFuture(), cf2.toCompletableFuture());
     }
 
@@ -525,18 +529,18 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
-    public <T1, T2> Cffu<Pair<T1, T2>> cffuOf2(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
+    public <T1, T2> Cffu<Tuple2<T1, T2>> cffuOf2(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
         requireNonNull(cf1, "cf1 is null");
         requireNonNull(cf2, "cf2 is null");
 
         final Object[] result = new Object[2];
 
-        CompletableFuture<Pair<T1, T2>> ret = CompletableFuture.allOf(
+        CompletableFuture<Tuple2<T1, T2>> ret = CompletableFuture.allOf(
                         cf1.thenAccept(t1 -> result[0] = t1),
                         cf2.thenAccept(t2 -> result[1] = t2)
                 )
                 .thenApply(unused ->
-                        Pair.of((T1) result[0], (T2) result[1])
+                        Tuple2.of((T1) result[0], (T2) result[1])
                 );
         return new0(ret);
     }
@@ -547,14 +551,14 @@ public final class CffuFactory {
      * Cffu also does so, with a CompletionException holding this exception as its cause.
      * <p>
      * Same as {@link #cffuAllOfWithResults(Cffu[])} but with three inputs
-     * and return results as {@code Triple}.
+     * and return results as {@code Tuple3}.
      *
      * @return a new Cffu that is completed when the given three Cffus complete
      * @throws NullPointerException if any input Cffus are {@code null}
      * @see #cffuAllOfWithResults(Cffu[])
      */
     @Contract(pure = true)
-    public <T1, T2, T3> Cffu<Triple<T1, T2, T3>> cffuOf3(Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3) {
+    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> cffuOf3(Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3) {
         return cffuOf3(cf1.toCompletableFuture(), cf2.toCompletableFuture(), cf3.toCompletableFuture());
     }
 
@@ -572,7 +576,7 @@ public final class CffuFactory {
      */
     @SuppressWarnings("unchecked")
     @Contract(pure = true)
-    public <T1, T2, T3> Cffu<Triple<T1, T2, T3>> cffuOf3(
+    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> cffuOf3(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
         requireNonNull(cf1, "cf1 is null");
         requireNonNull(cf2, "cf2 is null");
@@ -580,13 +584,124 @@ public final class CffuFactory {
 
         final Object[] result = new Object[3];
 
-        CompletableFuture<Triple<T1, T2, T3>> ret = CompletableFuture.allOf(
+        CompletableFuture<Tuple3<T1, T2, T3>> ret = CompletableFuture.allOf(
                         cf1.thenAccept(t1 -> result[0] = t1),
                         cf2.thenAccept(t2 -> result[1] = t2),
                         cf3.thenAccept(t3 -> result[2] = t3)
                 )
                 .thenApply(unused ->
-                        Triple.of((T1) result[0], (T2) result[1], (T3) result[2])
+                        Tuple3.of((T1) result[0], (T2) result[1], (T3) result[2])
+                );
+        return new0(ret);
+    }
+
+    /**
+     * Returns a new Cffu that is completed when the given 4 Cffus complete.
+     * If any of the given Cffu complete exceptionally, then the returned
+     * Cffu also does so, with a CompletionException holding this exception as its cause.
+     * <p>
+     * Same as {@link #cffuAllOfWithResults(Cffu[])} but with 4 inputs
+     * and return results as {@code Tuple4}.
+     *
+     * @return a new Cffu that is completed when the given 4 Cffus complete
+     * @throws NullPointerException if any input Cffus are {@code null}
+     * @see #cffuAllOfWithResults(Cffu[])
+     */
+    @Contract(pure = true)
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> cffuOf4(Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4) {
+        return cffuOf4(cf1.toCompletableFuture(), cf2.toCompletableFuture(),
+                cf3.toCompletableFuture(), cf4.toCompletableFuture());
+    }
+
+    /**
+     * Returns a new Cffu that is completed when the given 4 CompletableFutures complete.
+     * If any of the given CompletableFutures complete exceptionally, then the returned
+     * Cffu also does so, with a CompletionException holding this exception as its cause.
+     * <p>
+     * Same as {@link #cffuOf4(Cffu, Cffu, Cffu, Cffu)} with overloaded argument type {@link CompletableFuture}.
+     *
+     * @return a new Cffu that is completed when the given 2 CompletableFutures complete
+     * @throws NullPointerException if any input CompletableFutures are {@code null}
+     * @see #cffuOf4(Cffu, Cffu, Cffu, Cffu)
+     * @see #cffuAllOfWithResults(CompletableFuture[])
+     */
+    @SuppressWarnings("unchecked")
+    @Contract(pure = true)
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> cffuOf4(
+            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
+            CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
+        requireNonNull(cf1, "cf1 is null");
+        requireNonNull(cf2, "cf2 is null");
+        requireNonNull(cf3, "cf3 is null");
+        requireNonNull(cf4, "cf4 is null");
+
+        final Object[] result = new Object[4];
+
+        CompletableFuture<Tuple4<T1, T2, T3, T4>> ret = CompletableFuture.allOf(
+                        cf1.thenAccept(t1 -> result[0] = t1),
+                        cf2.thenAccept(t2 -> result[1] = t2),
+                        cf3.thenAccept(t3 -> result[2] = t3),
+                        cf4.thenAccept(t4 -> result[3] = t4)
+                )
+                .thenApply(unused ->
+                        Tuple4.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3])
+                );
+        return new0(ret);
+    }
+
+    /**
+     * Returns a new Cffu that is completed when the given 5 Cffus complete.
+     * If any of the given Cffu complete exceptionally, then the returned
+     * Cffu also does so, with a CompletionException holding this exception as its cause.
+     * <p>
+     * Same as {@link #cffuAllOfWithResults(Cffu[])} but with 5 inputs
+     * and return results as {@code Tuple3}.
+     *
+     * @return a new Cffu that is completed when the given 5 Cffus complete
+     * @throws NullPointerException if any input Cffus are {@code null}
+     * @see #cffuAllOfWithResults(Cffu[])
+     */
+    @Contract(pure = true)
+    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> cffuOf5(
+            Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4, Cffu<T5> cf5) {
+        return cffuOf5(cf1.toCompletableFuture(), cf2.toCompletableFuture(), cf3.toCompletableFuture(),
+                cf4.toCompletableFuture(), cf5.toCompletableFuture());
+    }
+
+    /**
+     * Returns a new Cffu that is completed when the given 5 CompletableFutures complete.
+     * If any of the given CompletableFutures complete exceptionally, then the returned
+     * Cffu also does so, with a CompletionException holding this exception as its cause.
+     * <p>
+     * Same as {@link #cffuOf5(Cffu, Cffu, Cffu, Cffu, Cffu)} with overloaded argument type {@link CompletableFuture}.
+     *
+     * @return a new Cffu that is completed when the given 2 CompletableFutures complete
+     * @throws NullPointerException if any input CompletableFutures are {@code null}
+     * @see #cffuOf5(Cffu, Cffu, Cffu, Cffu, Cffu)
+     * @see #cffuAllOfWithResults(CompletableFuture[])
+     */
+    @SuppressWarnings("unchecked")
+    @Contract(pure = true)
+    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> cffuOf5(
+            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
+            CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
+        requireNonNull(cf1, "cf1 is null");
+        requireNonNull(cf2, "cf2 is null");
+        requireNonNull(cf3, "cf3 is null");
+        requireNonNull(cf4, "cf4 is null");
+        requireNonNull(cf5, "cf5 is null");
+
+        final Object[] result = new Object[5];
+
+        CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> ret = CompletableFuture.allOf(
+                        cf1.thenAccept(t1 -> result[0] = t1),
+                        cf2.thenAccept(t2 -> result[1] = t2),
+                        cf3.thenAccept(t3 -> result[2] = t3),
+                        cf4.thenAccept(t4 -> result[3] = t4),
+                        cf5.thenAccept(t5 -> result[4] = t5)
+                )
+                .thenApply(unused ->
+                        Tuple5.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3], (T5) result[4])
                 );
         return new0(ret);
     }
@@ -633,7 +748,6 @@ public final class CffuFactory {
         requireNonNull(executor, "executor is null");
         return new DelayedExecutor(delay, unit, executor);
     }
-
 
     ////////////////////////////////////////////////////////////////////////////////
     // getter/setter
