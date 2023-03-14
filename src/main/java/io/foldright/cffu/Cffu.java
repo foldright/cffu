@@ -574,6 +574,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             return fac.new0(cf.exceptionallyAsync(fn, executor));
         }
 
+        // below code is copied from java.util.concurrent.CompletionStage#exceptionallyAsync
+
         return handle((r, ex) -> (ex == null) ? this :
                 this.<T>handleAsync((r1, ex1) -> fn.apply(ex1), executor)
         ).thenCompose(Function.identity());
@@ -603,6 +605,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             return this;
         }
 
+        // below code is copied from java.util.concurrent.CompletableFuture.orTimeout
+
         requireNonNull(unit, "unit is null");
         if (!cf.isDone()) {
             cf.whenComplete(new Canceller(Delayer.delay(new Timeout(cf), timeout, unit)));
@@ -625,6 +629,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             cf.completeOnTimeout(value, timeout, unit);
             return this;
         }
+
+        // below code is copied from java.util.concurrent.CompletableFuture.completeOnTimeout
 
         requireNonNull(unit, "unit is null");
         if (!cf.isDone()) {
@@ -730,6 +736,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             return fac.new0(cf.exceptionallyCompose(fn));
         }
 
+        // below code is copied from java.util.concurrent.CompletionStage.exceptionallyCompose
+
         return handle((r, ex) -> (ex == null) ? this : fn.apply(ex))
                 .thenCompose(Function.identity());
     }
@@ -764,6 +772,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         if (IS_JAVA12_PLUS) {
             return fac.new0(cf.exceptionallyComposeAsync(fn, executor));
         }
+
+        // below code is copied from java.util.concurrent.CompletionStage.exceptionallyComposeAsync
 
         return handle((r, ex) -> (ex == null) ? this :
                 this.handleAsync((r1, ex1) -> fn.apply(ex1), executor).thenCompose(Function.identity())
@@ -1157,6 +1167,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         if (IS_JAVA9_PLUS) {
             cf.completeAsync(supplier, executor);
         } else {
+            // below code is copied from java.util.concurrent.CompletableFuture.completeAsync
+
             requireNonNull(supplier, "supplier is null");
             requireNonNull(executor, "executor is null");
             executor.execute(new AsyncSupply<>(cf, supplier));
@@ -1342,8 +1354,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Just return a normal CompletableFuture for API compatibility,
-     * NOT a *minimal* CompletionStage.
+     * Returns a new CompletionStage that is completed normally with the same value
+     * as this CompletableFuture when it completes normally, and cannot be independently completed
+     * or otherwise used in ways not defined by the methods of interface {@link CompletionStage}.
+     * If this CompletableFuture completes exceptionally, then the returned CompletionStage completes
+     * exceptionally with a CompletionException with this exception as cause.
+     * <p>
+     * <b><i>CAUTION:<br></i></b>
+     * if run on old Java 8, just return a Cffu with a normal CompletableFuture for API compatibility,
+     * NOT with a *minimal* CompletionStage.
      *
      * @see CompletableFuture#minimalCompletionStage()
      */
@@ -1356,7 +1375,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Just return a normal CompletableFuture for API compatibility.
+     * Returns a new incomplete Cffu with CompletableFuture of the type to be returned by a CompletionStage method.
+     * Subclasses of CompletableFuture should normally override this method to return an instance of the same class
+     * as this CompletableFuture. The default implementation returns an instance of class CompletableFuture.
+     * <p>
+     * <b><i>CAUTION:<br></i></b>
+     * if run on old Java 8, just return a Cffu with a normal CompletableFuture for API compatibility.
      *
      * @see CompletableFuture#newIncompleteFuture()
      */

@@ -733,7 +733,6 @@ public final class CffuFactory {
     static final boolean IS_JAVA19_PLUS;
 
     static {
-        CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
         boolean b;
 
         try {
@@ -745,6 +744,7 @@ public final class CffuFactory {
         }
         IS_JAVA9_PLUS = b;
 
+        CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
         try {
             // `exceptionallyCompose` is the new method of CompletableFuture since java 12
             cf.exceptionallyCompose(x -> cf);
