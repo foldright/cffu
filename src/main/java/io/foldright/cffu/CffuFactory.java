@@ -166,7 +166,7 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is asynchronously completed by a task running
-     * in the {@link  CffuFactory#getDefaultExecutor()} after it runs the given action.
+     * in the {@link #getDefaultExecutor()} after it runs the given action.
      *
      * @param action the action to run before completing the returned Cffu
      * @return the new Cffu
@@ -191,7 +191,7 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is asynchronously completed
-     * by a task running in the {@link  CffuFactory#getDefaultExecutor()} with
+     * by a task running in the {@link #getDefaultExecutor()} with
      * the value obtained by calling the given Supplier.
      *
      * @param supplier a function returning the value to be used to complete the returned Cffu
@@ -726,7 +726,7 @@ public final class CffuFactory {
      * this {@link CffuFactory} from {@link CffuFactoryBuilder}.
      *
      * @see Cffu#toCompletableFuture()
-     * @see #toCffuArray(CompletableFuture[])
+     * @see #toCffuArray(CompletionStage[])
      */
     @Contract(pure = true)
     public <T> Cffu<T> toCffu(CompletionStage<T> cf) {
@@ -735,17 +735,21 @@ public final class CffuFactory {
 
     /**
      * Convert {@link CompletableFuture} array to {@link Cffu} array.
+     * <p>
+     * <b><i>NOTE:<br></i></b>
+     * if input is a {@link Cffu}, re-wrapped with the config of
+     * this {@link CffuFactory} from {@link CffuFactoryBuilder}.
      *
      * @see Cffu#toCompletableFuture()
      * @see #toCffu(CompletionStage)
      */
     @Contract(pure = true)
     @SafeVarargs
-    public final <T> Cffu<T>[] toCffuArray(CompletableFuture<T>... cfs) {
+    public final <T> Cffu<T>[] toCffuArray(CompletionStage<T>... cfs) {
         @SuppressWarnings("unchecked")
         Cffu<T>[] ret = new Cffu[cfs.length];
         for (int i = 0; i < cfs.length; i++) {
-            ret[i] = new0(cfs[i]);
+            ret[i] = new0(cfs[i].toCompletableFuture());
         }
         return ret;
     }
@@ -754,7 +758,7 @@ public final class CffuFactory {
      * Convert Cffu array to CompletableFuture array.
      *
      * @see Cffu#toCompletableFuture()
-     * @see #toCffuArray(CompletableFuture[])
+     * @see #toCffuArray(CompletionStage[])
      */
     @Contract(pure = true)
     @SafeVarargs
