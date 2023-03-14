@@ -1274,7 +1274,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     @SuppressFBWarnings("EI_EXPOSE_REP")
     public CompletableFuture<T> toCompletableFuture() {
-        return cf;
+        return cf.toCompletableFuture();
     }
 
     /**
