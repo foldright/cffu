@@ -1352,7 +1352,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         if (IS_JAVA9_PLUS) {
             return fac.new0((CompletableFuture<T>) cf.minimalCompletionStage());
         }
-        return fac.newIncompleteCffu();
+        return copy();
     }
 
     /**
