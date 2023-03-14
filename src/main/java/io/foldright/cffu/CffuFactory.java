@@ -229,14 +229,6 @@ public final class CffuFactory {
     }
 
     /**
-     * an incomplete Cffu.
-     */
-    @Contract(pure = true)
-    <T> Cffu<T> incomplete() {
-        return new0(new CompletableFuture<>());
-    }
-
-    /**
      * Returns a new Cffu that is asynchronously completed by a task running
      * in the {@link  CffuFactory#getDefaultExecutor()} after it runs the given action.
      *
@@ -384,7 +376,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public Cffu<Object> anyOf() {
-        return incomplete();
+        return newIncompleteCffu();
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -491,7 +483,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public <T> Cffu<T> cffuAnyOf() {
-        return incomplete();
+        return newIncompleteCffu();
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -703,6 +695,31 @@ public final class CffuFactory {
         if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool())
             return AsyncPoolHolder.ASYNC_POOL;
         return requireNonNull(e, "e is null");
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Constructor of Cffu
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Return an incomplete Cffu, equivalent to {@link CompletableFuture#CompletableFuture()}.
+     * <p>
+     * In general, should not use this method in biz code, prefer below factory methods of Cffu:
+     *
+     * <ol>
+     *     <li>{@link #runAsync(Runnable)}
+     *     <li>{@link #supplyAsync(Supplier, Executor)}
+     * </ol>
+     *
+     * @see #runAsync(Runnable)
+     * @see #runAsync(Runnable, Executor)
+     * @see #supplyAsync(Supplier)
+     * @see #supplyAsync(Supplier, Executor)
+     * @see CompletableFuture#CompletableFuture()
+     */
+    @Contract(pure = true)
+    public <T> Cffu<T> newIncompleteCffu() {
+        return new0(new CompletableFuture<>());
     }
 
     ////////////////////////////////////////////////////////////////////////////////

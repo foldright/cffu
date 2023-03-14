@@ -594,6 +594,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *                with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return this Cffu
+     * @see CffuFactory#delayedExecutor(long, TimeUnit)
      */
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
     public Cffu<T> orTimeout(long timeout, TimeUnit unit) {
@@ -616,6 +617,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return this Cffu
+     * @see CffuFactory#delayedExecutor(long, TimeUnit)
      */
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
     public Cffu<T> completeOnTimeout(@Nullable T value, long timeout, TimeUnit unit) {
@@ -1350,7 +1352,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         if (IS_JAVA9_PLUS) {
             return fac.new0((CompletableFuture<T>) cf.minimalCompletionStage());
         }
-        return fac.incomplete();
+        return fac.newIncompleteCffu();
     }
 
     /**
@@ -1363,7 +1365,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         if (IS_JAVA9_PLUS) {
             return fac.new0(cf.newIncompleteFuture());
         }
-        return fac.incomplete();
+        return fac.newIncompleteCffu();
     }
 
     /**
