@@ -82,14 +82,17 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public <T> Cffu<T> completedFuture(@Nullable T value) {
-        CompletableFuture<T> cf = CompletableFuture.completedFuture(value);
-        return new0(cf);
+        return new0(CompletableFuture.completedFuture(value));
     }
 
     /**
      * Returns a new CompletionStage that is already completed with
      * the given value and supports only those methods in
      * interface {@link CompletionStage}.
+     * <p>
+     * <b><i>CAUTION:<br></i></b>
+     * if run on old Java 8, just return a Cffu with a normal CompletableFuture for API compatibility,
+     * NOT with a *minimal* CompletionStage.
      *
      * @param value the value
      * @param <T>   the type of the value
@@ -98,6 +101,9 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public <T> CompletionStage<T> completedStage(@Nullable T value) {
+        if (IS_JAVA9_PLUS) {
+            return new0((CompletableFuture<T>) CompletableFuture.completedStage(value));
+        }
         return completedFuture(value);
     }
 
@@ -118,21 +124,27 @@ public final class CffuFactory {
             cf = new CompletableFuture<>();
             cf.completeExceptionally(ex);
         }
-
         return new0(cf);
     }
 
     /**
      * Returns a new CompletionStage that is already completed exceptionally
      * with the given exception and supports only those methods in interface {@link CompletionStage}.
+     * <p>
+     * <b><i>CAUTION:<br></i></b>
+     * if run on old Java 8, just return a Cffu with a normal CompletableFuture for API compatibility,
+     * NOT with a *minimal* CompletionStage.
      *
      * @param ex  the exception
-     * @param <U> the type of the value
+     * @param <T> the type of the value
      * @return the exceptionally completed CompletionStage
      * @see CompletableFuture#failedStage(Throwable)
      */
     @Contract(pure = true)
-    public <U> CompletionStage<U> failedStage(Throwable ex) {
+    public <T> CompletionStage<T> failedStage(Throwable ex) {
+        if (IS_JAVA9_PLUS) {
+            return new0((CompletableFuture<T>) CompletableFuture.failedStage(ex));
+        }
         return failedFuture(ex);
     }
 
@@ -465,8 +477,7 @@ public final class CffuFactory {
     @SafeVarargs
     @SuppressWarnings("unchecked")
     public final <T> Cffu<T> cffuAnyOf(CompletableFuture<T>... cfs) {
-        CompletableFuture<T> ret = (CompletableFuture<T>) CompletableFuture.anyOf(cfs);
-        return new0(ret);
+        return new0((CompletableFuture<T>) CompletableFuture.anyOf(cfs));
     }
 
     /**
