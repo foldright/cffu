@@ -13,6 +13,7 @@ import java.util.function.*;
 import static io.foldright.cffu.CffuFactory.*;
 import static java.util.Objects.requireNonNull;
 
+
 /**
  * This class {@link Cffu} is the equivalent class to {@link CompletableFuture},
  * contains the equivalent instance methods of {@link CompletionStage} and {@link CompletableFuture}.

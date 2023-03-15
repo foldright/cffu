@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static java.util.concurrent.ForkJoinPool.commonPool;
 
+
 public class ApiTestHelper {
     public static <T> CompletableFuture<T> newFailedCompletableFuture(Throwable t) {
         CompletableFuture<T> failed = new CompletableFuture<>();

@@ -10,6 +10,10 @@ ij_continuation_indent_size = 4
 indent_style = space
 trim_trailing_whitespace = true
 
+ij_any_blank_lines_after_imports = 2
+ij_markdown_wrap_text_if_long = false
+
+
 [*.{java,kt}]
 indent_size = 4
 ij_continuation_indent_size = 8
@@ -19,4 +23,3 @@ indent_style = tab
 
 [*.{md,mkd,markdown}]
 trim_trailing_whitespace = false
-ij_markdown_wrap_text_if_long = false
