@@ -60,8 +60,13 @@ public final class CffuFactory {
     }
 
     @Contract(pure = true)
-    <T> Cffu<T> new0(CompletableFuture<T> cf) {
-        return new Cffu<>(this, requireNonNull(cf, "cf is null"));
+    private <T> Cffu<T> new0(CompletableFuture<T> cf) {
+        return new Cffu<>(this, false, requireNonNull(cf, "cf is null"));
+    }
+
+    @Contract(pure = true)
+    private <T> Cffu<T> newMin(CompletableFuture<T> cf) {
+        return new Cffu<>(this, true, requireNonNull(cf, "cf is null"));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -86,25 +91,25 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new CompletionStage that is already completed with
-     * the given value and supports only those methods in
-     * interface {@link CompletionStage}.
+     * Returns a new CompletionStage that is already completed with the given value
+     * and supports only those methods in interface {@link CompletionStage}.
      * <p>
      * <b><i>CAUTION:<br></i></b>
-     * if run on old Java 8, just return a Cffu with a normal CompletableFuture for API compatibility,
-     * NOT with a *minimal* CompletionStage.
+     * if run on old Java 8, just return a Cffu with
+     * a *normal* underneath CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @param value the value
      * @param <T>   the type of the value
      * @return the completed CompletionStage
      * @see CompletableFuture#completedStage(Object)
+     * @see CompletableFuture#minimalCompletionStage()
      */
     @Contract(pure = true)
     public <T> CompletionStage<T> completedStage(@Nullable T value) {
         if (IS_JAVA9_PLUS) {
-            return new0((CompletableFuture<T>) CompletableFuture.completedStage(value));
+            return newMin((CompletableFuture<T>) CompletableFuture.completedStage(value));
         }
-        return completedFuture(value);
+        return newMin(CompletableFuture.completedFuture(value));
     }
 
     /**
@@ -132,20 +137,23 @@ public final class CffuFactory {
      * with the given exception and supports only those methods in interface {@link CompletionStage}.
      * <p>
      * <b><i>CAUTION:<br></i></b>
-     * if run on old Java 8, just return a Cffu with a normal CompletableFuture for API compatibility,
-     * NOT with a *minimal* CompletionStage.
+     * if run on old Java 8, just return a Cffu with
+     * a *normal* underneath CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @param ex  the exception
      * @param <T> the type of the value
      * @return the exceptionally completed CompletionStage
      * @see CompletableFuture#failedStage(Throwable)
+     * @see CompletableFuture#minimalCompletionStage()
      */
     @Contract(pure = true)
     public <T> CompletionStage<T> failedStage(Throwable ex) {
         if (IS_JAVA9_PLUS) {
-            return new0((CompletableFuture<T>) CompletableFuture.failedStage(ex));
+            return newMin((CompletableFuture<T>) CompletableFuture.failedStage(ex));
         }
-        return failedFuture(ex);
+        CompletableFuture<T> cf = new CompletableFuture<>();
+        cf.completeExceptionally(ex);
+        return newMin(cf);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -811,7 +819,7 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# Executors
+    //# Helper fields and classes
     ////////////////////////////////////////////////////////////////////////////////
 
     private static final boolean USE_COMMON_POOL =
