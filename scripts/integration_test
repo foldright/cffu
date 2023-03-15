@@ -64,7 +64,7 @@ for jdk_version in "${JDK_VERSIONS[@]}"; do
 
   # just test without build
   cu::head_line_echo "test with Java $jdk_version: $JAVA_HOME"
-  if [ ${CI:-} = true ]; then
+  if [ "${CI:-}" = true ]; then
     jvb::mvn_cmd jacoco:prepare-agent surefire:test jacoco:report
   else
     jvb::mvn_cmd surefire:test
