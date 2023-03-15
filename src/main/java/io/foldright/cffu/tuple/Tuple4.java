@@ -4,6 +4,8 @@ import java.util.Objects;
 
 /**
  * Tuple4, contains 4 elements.
+ *
+ * @author Jerry Lee (oldratlee at gmail dot com)
  */
 public final class Tuple4<T1, T2, T3, T4> {
     public final T1 _1;

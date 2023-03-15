@@ -1,5 +1,6 @@
 package io.foldright.cffu;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
 import org.jetbrains.annotations.Contract;
 
@@ -20,6 +21,7 @@ import static java.util.Objects.requireNonNull;
 @ParametersAreNonnullByDefault
 @ReturnValuesAreNonnullByDefault
 public final class CffuFactoryBuilder {
+    @NonNull
     private final Executor defaultExecutor;
 
     private volatile boolean forbidObtrudeMethods = false;

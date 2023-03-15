@@ -41,18 +41,18 @@ public class CffuTest {
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
-    public void test_cffuAllOfWithResults() throws Exception {
+    public void test_cffuAllOf() throws Exception {
         final CompletableFuture<Integer> f1 = CompletableFuture.completedFuture(n);
         final CompletableFuture<Integer> f2 = CompletableFuture.completedFuture(n + 1);
         final CompletableFuture<Integer> f3 = CompletableFuture.completedFuture(n + 2);
 
-        assertEquals(Arrays.asList(n, n + 1, n + 2), cffuFactory.cffuAllOfWithResults(f1, f2, f3).get());
+        assertEquals(Arrays.asList(n, n + 1, n + 2), cffuFactory.cffuAllOf(f1, f2, f3).get());
     }
 
     @Test
-    void test_cffuAllOfWithResults_exceptionally() throws Exception {
+    void test_cffuAllOf_exceptionally() throws Exception {
         try {
-            cffuFactory.cffuAllOfWithResults(
+            cffuFactory.cffuAllOf(
                     CompletableFuture.completedFuture(n),
                     failedCf(),
                     CompletableFuture.completedFuture(s)
@@ -65,13 +65,13 @@ public class CffuTest {
     }
 
     @Test
-    public void test_cffuOf_2_or_3() throws Exception {
-        assertEquals(Tuple2.of(n, s), cffuFactory.cffuOf2(
+    public void test_cffuCombine() throws Exception {
+        assertEquals(Tuple2.of(n, s), cffuFactory.cffuCombine(
                 CompletableFuture.completedFuture(n),
                 CompletableFuture.completedFuture(s)
         ).get());
 
-        assertEquals(Tuple3.of(n, s, d), cffuFactory.cffuOf3(
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.cffuCombine(
                 CompletableFuture.completedFuture(n),
                 CompletableFuture.completedFuture(s),
                 CompletableFuture.completedFuture(d)
@@ -79,9 +79,9 @@ public class CffuTest {
     }
 
     @Test
-    void test_resultOf_2_or_3_exceptionally() throws Exception {
+    void test_cffuCombine_exceptionally() throws Exception {
         try {
-            cffuFactory.cffuOf2(
+            cffuFactory.cffuCombine(
                     CompletableFuture.completedFuture(n),
                     failedCf()
             ).get();
@@ -92,7 +92,7 @@ public class CffuTest {
         }
 
         try {
-            cffuFactory.cffuOf3(
+            cffuFactory.cffuCombine(
                     CompletableFuture.completedFuture(n),
                     failedCf(),
                     CompletableFuture.completedFuture(s)

@@ -4,12 +4,14 @@ import java.util.Objects;
 
 /**
  * Tuple2, aka Pair.
+ *
+ * @author Jerry Lee (oldratlee at gmail dot com)
  */
 public final class Tuple2<T1, T2> {
     public final T1 _1;
     public final T2 _2;
 
-    public static <T, U> Tuple2<T, U> of(T _1, U _2) {
+    public static <T1, T2> Tuple2<T1, T2> of(T1 _1, T2 _2) {
         return new Tuple2<>(_1, _2);
     }
 

@@ -4,6 +4,8 @@ import java.util.Objects;
 
 /**
  * Tuple3, aka Triple.
+ *
+ * @author Jerry Lee (oldratlee at gmail dot com)
  */
 public final class Tuple3<T1, T2, T3> {
     public final T1 _1;
