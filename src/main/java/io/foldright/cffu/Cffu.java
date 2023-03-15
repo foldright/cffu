@@ -1313,9 +1313,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns underneath wrapped CompletableFuture.
+     * Returns a {@link CompletableFuture} maintaining the same completion properties as this stage,
+     * call underneath wrapped CompletableFuture, {@code wrappedCf.toCompletableFuture()}.
      *
-     * @return underneath wrapped CompletableFuture
+     * @return the CompletableFuture
+     * @see CompletionStage#toCompletableFuture()
      */
     @Contract(pure = true)
     @Override
