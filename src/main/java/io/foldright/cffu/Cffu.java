@@ -4,6 +4,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -958,6 +959,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws ExecutionException    if the computation threw an exception
      * @throws InterruptedException  if the current thread was interrupted while waiting
      */
+    @Blocking
     @Nullable
     @Override
     public T get() throws InterruptedException, ExecutionException {
@@ -978,6 +980,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws InterruptedException  if the current thread was interrupted while waiting
      * @throws TimeoutException      if the wait timed out
      */
+    @Blocking
     @Nullable
     @Override
     public T get(long timeout, TimeUnit unit)
@@ -998,6 +1001,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws CompletionException   if this future completed exceptionally
      *                               or a completion computation threw an exception
      */
+    @Blocking
     @Nullable
     public T join() {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");

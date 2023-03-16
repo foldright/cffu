@@ -53,8 +53,8 @@ class CffuFactory_MinimalStage_Test : FunSpec({
         val stage: CompletionStage<Int> = cffuFactory.failedStage(rte)
 
         testMinimalStage(stage).let { cf ->
-            @Suppress("BlockingMethodInNonBlockingContext")
             shouldThrow<CompletionException> {
+                @Suppress("BlockingMethodInNonBlockingContext")
                 cf.join()
             }.cause shouldBeSameInstanceAs rte
         }
