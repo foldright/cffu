@@ -4,7 +4,7 @@ import java.util.Objects;
 
 
 /**
- * Tuple3, aka Triple.
+ * Tuple3(aka Triple).
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  */

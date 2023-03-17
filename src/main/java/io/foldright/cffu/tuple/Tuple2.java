@@ -4,7 +4,7 @@ import java.util.Objects;
 
 
 /**
- * Tuple2, aka Pair.
+ * Tuple2(aka Pair).
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  */

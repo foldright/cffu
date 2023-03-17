@@ -589,7 +589,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             return reset(cf.exceptionallyAsync(fn, executor));
         }
 
-        // below code is copied from java.util.concurrent.CompletionStage#exceptionallyAsync
+        // below code is copied from CompletionStage#exceptionallyAsync
 
         return handle((r, ex) -> (ex == null) ? this :
                 this.<T>handleAsync((r1, ex1) -> fn.apply(ex1), executor)
@@ -622,11 +622,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             return this;
         }
 
-        // below code is copied from java.util.concurrent.CompletableFuture.orTimeout
+        // below code is copied from CompletableFuture#orTimeout with small adoption
 
         requireNonNull(unit, "unit is null");
         if (!cf.isDone()) {
-            cf.whenComplete(new Canceller(Delayer.delay(new Timeout(cf), timeout, unit)));
+            ScheduledFuture<?> f = Delayer.delayToTimoutCf(cf, timeout, unit);
+            cf.whenComplete(new FutureCanceller(f));
         }
         return this;
     }
@@ -649,11 +650,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             return this;
         }
 
-        // below code is copied from java.util.concurrent.CompletableFuture.completeOnTimeout
+        // below code is copied from CompletableFuture#completeOnTimeout with small adoption
 
         requireNonNull(unit, "unit is null");
         if (!cf.isDone()) {
-            cf.whenComplete(new Canceller(Delayer.delay(new DelayedCompleter<>(cf, value), timeout, unit)));
+            ScheduledFuture<?> f = Delayer.delayToCompleteCf(cf, value, timeout, unit);
+            cf.whenComplete(new FutureCanceller(f));
         }
         return this;
     }
@@ -755,7 +757,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             return reset(cf.exceptionallyCompose(fn));
         }
 
-        // below code is copied from java.util.concurrent.CompletionStage.exceptionallyCompose
+        // below code is copied from CompletionStage.exceptionallyCompose
 
         return handle((r, ex) -> (ex == null) ? this : fn.apply(ex))
                 .thenCompose(Function.identity());
@@ -792,7 +794,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             return reset(cf.exceptionallyComposeAsync(fn, executor));
         }
 
-        // below code is copied from java.util.concurrent.CompletionStage.exceptionallyComposeAsync
+        // below code is copied from CompletionStage.exceptionallyComposeAsync
 
         return handle((r, ex) -> (ex == null) ? this :
                 this.handleAsync((r1, ex1) -> fn.apply(ex1), executor).thenCompose(Function.identity())
@@ -1047,7 +1049,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             return cf.resultNow();
         }
 
-        // below code is copied from java.util.concurrent.Future.resultNow
+        // below code is copied from Future.resultNow
 
         if (!isDone()) throw new IllegalStateException("Task has not completed");
         boolean interrupted = false;
@@ -1085,7 +1087,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             return cf.exceptionNow();
         }
 
-        // below code is copied from java.util.concurrent.Future.exceptionNow
+        // below code is copied from Future.exceptionNow
 
         if (!isDone()) throw new IllegalStateException("Task has not completed");
         if (isCancelled()) throw new IllegalStateException("Task was cancelled");
@@ -1159,7 +1161,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public State state() {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
 
-        // CompletableFuture.state is new method since Java 19,
+        // CompletableFuture#state is new method since Java 19,
         // should need compatibility logic of Java version.
         // But the return type `State` is also added since Java 19,
         // so it's IMPOSSIBLE to work by compatibility logic of wrapped class(`Cffu`).
@@ -1217,7 +1219,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             return this;
         }
 
-        // below code is copied from java.util.concurrent.CompletableFuture.completeAsync
+        // below code is copied from CompletableFuture#completeAsync with small adoption
 
         requireNonNull(supplier, "supplier is null");
         requireNonNull(executor, "executor is null");
@@ -1226,7 +1228,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * code is copied from {@code CompletableFuture.AsyncSupply} with small adoption.
+     * code is copied from {@code CompletableFuture#AsyncSupply} with small adoption.
      */
     @SuppressWarnings({"NonSerializableFieldInSerializableClass", "serial"})
     @SuppressFBWarnings("SE_BAD_FIELD")
