@@ -1240,7 +1240,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         // But the return type `State` is also added since Java 19,
         // so it's IMPOSSIBLE to work by compatibility logic of wrapped class(`Cffu`).
         //
-        // just invoke without compatibility logic~
+        // just invoke without java version compatibility logic~
         return cf.state();
     }
 
@@ -1378,6 +1378,64 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
+    //# re-config methods
+    //
+    //    - minimalCompletionStage()
+    //    - resetCffuFactory()
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new CompletionStage that is completed normally with the same value
+     * as this CompletableFuture when it completes normally, and cannot be independently completed
+     * or otherwise used in ways not defined by the methods of interface {@link CompletionStage}.
+     * If this CompletableFuture completes exceptionally, then the returned CompletionStage completes
+     * exceptionally with a CompletionException with this exception as cause.
+     * <p>
+     * <b><i>CAUTION:<br></i></b>
+     * if run on old Java 8, just return a Cffu with
+     * a *normal* underneath CompletableFuture which is NOT with a *minimal* CompletionStage.
+     * <p>
+     * demo code about re-config methods of Cffu:
+     * <p>
+     * <pre>{@code cffu2 = cffu
+     *     .resetCffuFactory(cffuFactory2) // reset to use config from cffuFactory2
+     *     .minimalCompletionStage();      // restrict to methods of CompletionStage
+     * }</pre>
+     *
+     * @see #resetCffuFactory(CffuFactory)
+     * @see CompletableFuture#minimalCompletionStage()
+     */
+    @Contract(pure = true)
+    public CompletionStage<T> minimalCompletionStage() {
+        if (IS_JAVA9_PLUS) {
+            return resetToMin((CompletableFuture<T>) cf.minimalCompletionStage());
+        }
+        return resetToMin(cf.thenApply(Function.identity()));
+    }
+
+    /**
+     * Returns a new Cffu with given CffuFactory(contained configuration)
+     * that is completed normally with the same value as this Cffu when it completes normally.
+     * If this Cffu completes exceptionally, then the returned Cffu completes exceptionally
+     * with a CompletionException with this exception as cause.
+     * <p>
+     * demo code about re-config methods of Cffu:
+     * <p>
+     * <pre>{@code cffu2 = cffu
+     *     .resetCffuFactory(cffuFactory2) // reset to use config from cffuFactory2
+     *     .minimalCompletionStage();      // restrict to methods of CompletionStage
+     * }</pre>
+     *
+     * @param cffuFactory cffuFactory contained configuration
+     * @return the new Cffu
+     * @see #minimalCompletionStage()
+     */
+    @Contract(pure = true)
+    public Cffu<T> resetCffuFactory(CffuFactory cffuFactory) {
+        return new Cffu<>(cffuFactory, this.isMinimalStage, this.cf);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
     //# nonfunctional methods
     //    vs. user functional API
     //
@@ -1390,7 +1448,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //    - defaultExecutor()
     //    - getNumberOfDependents()
     //
-    //    - minimalCompletionStage()
     //    - newIncompleteFuture()
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -1492,37 +1549,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new CompletionStage that is completed normally with the same value
-     * as this CompletableFuture when it completes normally, and cannot be independently completed
-     * or otherwise used in ways not defined by the methods of interface {@link CompletionStage}.
-     * If this CompletableFuture completes exceptionally, then the returned CompletionStage completes
-     * exceptionally with a CompletionException with this exception as cause.
-     * <p>
-     * <b><i>CAUTION:<br></i></b>
-     * if run on old Java 8, just return a Cffu with
-     * a *normal* underneath CompletableFuture which is NOT with a *minimal* CompletionStage.
-     * <p>
-     * <b><i>NOTE:<br></i></b>
-     * this method existed just for API compatibility.
-     *
-     * @see CompletableFuture#minimalCompletionStage()
-     */
-    @Contract(pure = true)
-    public CompletionStage<T> minimalCompletionStage() {
-        if (IS_JAVA9_PLUS) {
-            return resetToMin((CompletableFuture<T>) cf.minimalCompletionStage());
-        }
-        return resetToMin(cf.thenApply(Function.identity()));
-    }
-
-    /**
      * Returns a new incomplete Cffu with CompletableFuture of the type to be returned by a CompletionStage method.
      * Subclasses of CompletableFuture should normally override this method to return an instance of the same class
      * as this CompletableFuture. The default implementation returns an instance of class CompletableFuture.
      * <p>
      * <b><i>NOTE:<br></i></b>
-     * this method existed just for API compatibility.
+     * this method existed mainly for API compatibility to {@code CompletableFuture},
+     * prefer {@link CffuFactory#newIncompleteCffu()}.
      *
+     * @see CffuFactory#newIncompleteCffu()
      * @see CompletableFuture#newIncompleteFuture()
      */
     @Contract(pure = true)
