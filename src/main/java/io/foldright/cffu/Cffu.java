@@ -617,9 +617,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public Cffu<T> orTimeout(long timeout, TimeUnit unit) {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
 
+        orTimeoutCf0(cf, timeout, unit);
+        return this;
+    }
+
+    private static <U> void orTimeoutCf0(CompletableFuture<U> cf, long timeout, TimeUnit unit) {
         if (IS_JAVA9_PLUS) {
             cf.orTimeout(timeout, unit);
-            return this;
+            return;
         }
 
         // below code is copied from CompletableFuture#orTimeout with small adoption
@@ -629,7 +634,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             ScheduledFuture<?> f = Delayer.delayToTimoutCf(cf, timeout, unit);
             cf.whenComplete(new FutureCanceller(f));
         }
-        return this;
     }
 
     /**
@@ -933,9 +937,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     //# Read(explicitly) methods
     //
-    //    - get()
-    //    - get(timeout, unit)
-    //    - join()
+    //    - get()               // BLOCKING
+    //    - get(timeout, unit)  // BLOCKING
+    //    - join()              // BLOCKING
+    //    - cffuJoin()          // BLOCKING
     //    - getNow(T valueIfAbsent)
     //    - resultNow()
     //    - exceptionNow()
@@ -959,6 +964,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws CancellationException if the computation was cancelled
      * @throws ExecutionException    if the computation threw an exception
      * @throws InterruptedException  if the current thread was interrupted while waiting
+     * @see #join()
+     * @see #cffuJoin(long, TimeUnit)
+     * @see #getNow(Object)
+     * @see #resultNow()
+     * @see #get(long, TimeUnit)
      */
     @Blocking
     @Nullable
@@ -980,6 +990,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws ExecutionException    if the computation threw an exception
      * @throws InterruptedException  if the current thread was interrupted while waiting
      * @throws TimeoutException      if the wait timed out
+     * @see #cffuJoin(long, TimeUnit)
+     * @see #getNow(Object)
+     * @see #resultNow()
+     * @see #join()
+     * @see #get()
      */
     @Blocking
     @Nullable
@@ -993,6 +1008,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns the result value when complete, or throws an (unchecked) exception if completed exceptionally.
+     * <p>
      * To better conform with the use of common functional forms, if a computation involved in the completion
      * of this Cffu threw an exception, this method throws an (unchecked) {@link CompletionException}
      * with the underlying exception as its cause.
@@ -1001,6 +1017,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws CancellationException if the computation was cancelled
      * @throws CompletionException   if this future completed exceptionally
      *                               or a completion computation threw an exception
+     * @see #cffuJoin(long, TimeUnit)
+     * @see #getNow(Object)
+     * @see #resultNow()
+     * @see #get(long, TimeUnit)
+     * @see #get()
      */
     @Blocking
     @Nullable
@@ -1008,6 +1029,52 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
 
         return cf.join();
+    }
+
+    /**
+     * Waits if necessary for at most the given time for the computation to complete,
+     * and then retrieves its result value when complete, or throws an (unchecked) exception if completed exceptionally.
+     * <p>
+     * <b><i>NOTE:<br></i></b>
+     * call this method
+     * <p>
+     * {@code result = cffu.cffuJoin(timeout, unit);}
+     * <p>
+     * is same as:
+     * <pre>{@code result = cffu.copy() // defensive copy to avoid write this cffu unexpectedly
+     *     .orTimeout(timeout, unit)
+     *     .join();
+     * }</pre>
+     *
+     * <b><i>CAUTION:<br></i></b>
+     * if the wait timed out, this method throws an (unchecked) {@link CompletionException}
+     * with the {@link TimeoutException} as its cause;
+     * NOT throws a (checked) {@link TimeoutException} like {@link #get(long, TimeUnit)}.
+     *
+     * @param timeout the maximum time to wait
+     * @param unit    the time unit of the timeout argument
+     * @return the result value
+     * @throws CancellationException if the computation was cancelled
+     * @throws CompletionException   if this future completed exceptionally
+     *                               or a completion computation threw an exception
+     *                               or the wait timed out(with the {@code TimeoutException} as its cause)
+     * @see #join()
+     * @see #getNow(Object)
+     * @see #resultNow()
+     * @see #get(long, TimeUnit)
+     * @see #get()
+     * @see #orTimeout(long, TimeUnit)
+     */
+    @Blocking
+    @Nullable
+    public T cffuJoin(long timeout, TimeUnit unit) {
+        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+
+        if (cf.isDone()) return cf.join();
+
+        CompletableFuture<T> f = copyCf0(cf);
+        orTimeoutCf0(f, timeout, unit);
+        return f.join();
     }
 
     /**
@@ -1019,6 +1086,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws CancellationException if the computation was cancelled
      * @throws CompletionException   if this future completed exceptionally
      *                               or a completion computation threw an exception
+     * @see #resultNow()
+     * @see #cffuJoin(long, TimeUnit)
+     * @see #join()
+     * @see #get(long, TimeUnit)
+     * @see #get()
      */
     @Nullable
     public T getNow(T valueIfAbsent) {
@@ -1038,6 +1110,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *     .map(Future::resultNow)
      *     .toList();
      * }</pre>
+     *
+     * @see #getNow(Object)
      */
     @Nullable
     @Override
@@ -1077,6 +1151,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the exception thrown by the task
      * @throws IllegalStateException if the task has not completed, the task completed normally,
      *                               or the task was cancelled
+     * @see #resultNow()
      */
     @Override
     public Throwable exceptionNow() {
@@ -1344,10 +1419,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Contract(pure = true)
     public Cffu<T> copy() {
+        return reset(copyCf0(cf));
+    }
+
+    @Contract(pure = true)
+    private static <U> CompletableFuture<U> copyCf0(CompletableFuture<U> cf) {
         if (IS_JAVA9_PLUS) {
-            return reset(cf.copy());
+            return cf.copy();
         }
-        return thenApply(Function.identity());
+        return cf.thenApply(Function.identity());
     }
 
     /**
