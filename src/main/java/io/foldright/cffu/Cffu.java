@@ -1124,12 +1124,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
         // below code is copied from Future.resultNow
 
-        if (!isDone()) throw new IllegalStateException("Task has not completed");
+        if (!cf.isDone()) throw new IllegalStateException("Task has not completed");
         boolean interrupted = false;
         try {
             while (true) {
                 try {
-                    return get();
+                    return cf.get();
                 } catch (InterruptedException e) {
                     interrupted = true;
                 } catch (ExecutionException e) {
@@ -1163,14 +1163,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
         // below code is copied from Future.exceptionNow
 
-        if (!isDone()) throw new IllegalStateException("Task has not completed");
-        if (isCancelled()) throw new IllegalStateException("Task was cancelled");
+        if (!cf.isDone()) throw new IllegalStateException("Task has not completed");
+        if (cf.isCancelled()) throw new IllegalStateException("Task was cancelled");
 
         boolean interrupted = false;
         try {
             while (true) {
                 try {
-                    get();
+                    cf.get();
                     throw new IllegalStateException("Task completed with a result");
                 } catch (InterruptedException e) {
                     interrupted = true;
