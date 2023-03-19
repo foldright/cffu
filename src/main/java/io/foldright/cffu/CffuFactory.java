@@ -255,19 +255,30 @@ public final class CffuFactory {
     /**
      * Returns a new Cffu that is completed when all of the given Cffus complete.
      * If any of the given Cffu complete exceptionally, then the returned
-     * Cffu also does so, with a CompletionException holding this exception as its cause.
+     * Cffu also does so, with a CompletionException holding this exception as its cause.<br>
      * Otherwise, the results, if any, of the given Cffus are not reflected in
-     * the returned Cffu, but may be obtained by inspecting them individually.
-     * <p>
+     * the returned Cffu({@code Cffu<Void>}), but may be obtained by inspecting them individually.<br>
      * If no Cffus are provided, returns a Cffu completed with the value {@code null}.
+     * <p>
+     * if you need the results of given Cffus, prefer below methods:
+     * <ol>
+     *   <li>{{@link #cffuAllOf(Cffu[])}}
+     *   <li>{@link #cffuCombine(Cffu, Cffu)}/{@link #cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)}
+     *       (provided overloaded methods with 2~5 input)
+     * </ol>
      * <p>
      * Among the applications of this method is to await completion of a set of
      * independent Cffus before continuing a program,
-     * as in: {@code Cffu.allOf(c1, c2, c3).join();}.
+     * as in: {@code CffuFactory.allOf(c1, c2, c3).join();}.
      *
      * @param cfs the Cffus
      * @return a new Cffu that is completed when all of the given Cffus complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #cffuAllOf(Cffu[])
+     * @see #cffuCombine(Cffu, Cffu)
+     * @see #cffuCombine(Cffu, Cffu, Cffu)
+     * @see #cffuCombine(Cffu, Cffu, Cffu, Cffu)
+     * @see #cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
@@ -279,11 +290,23 @@ public final class CffuFactory {
 
     /**
      * Same as {@link #allOf(Cffu[])} with overloaded argument type {@link CompletableFuture}.
+     * <p>
+     * if you need the results of given Cffus, prefer below methods:
+     * <ol>
+     *   <li>{{@link #cffuAllOf(CompletableFuture[])}}
+     *   <li>{@link #cffuCombine(CompletableFuture, CompletableFuture)}/{@link #cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
+     *       (provided overloaded methods with 2~5 input)
+     * </ol>
      *
      * @param cfs the CompletableFutures
      * @return a new Cffu that is completed when all of the given CompletableFutures complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #allOf(Cffu[])
+     * @see #cffuAllOf(CompletableFuture[])
+     * @see #cffuCombine(CompletableFuture, CompletableFuture)
+     * @see #cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see #cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see #cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
@@ -301,16 +324,19 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.
+     * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.<br>
      * Otherwise, if it completed exceptionally, the returned Cffu also does so,
-     * with a CompletionException holding this exception as its cause.
-     * <p>
+     * with a CompletionException holding this exception as its cause.<br>
      * If no Cffus are provided, returns an incomplete Cffu.
+     * <p>
+     * prefer {@link #cffuAnyOf(Cffu[])} method if the given Cffus have same result type,
+     * because @link #cffuAnyOf(Cffu[]) return type {@code T} instead of {@code Object}, more type safe.
      *
      * @param cfs the Cffus
      * @return a new Cffu that is completed with the result or exception of
      * any of the given Cffus when one completes
      * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #cffuAnyOf(Cffu[])
      * @see CompletableFuture#anyOf(CompletableFuture[])
      */
     @Contract(pure = true)
@@ -322,11 +348,15 @@ public final class CffuFactory {
 
     /**
      * Same as {@link #anyOf(Cffu[])} with overloaded argument type {@link CompletableFuture}.
+     * <p>
+     * prefer {@link #cffuAnyOf(CompletableFuture[])} method if the given Cffus have same result type,
+     * because @link #cffuAnyOf(CompletableFuture[]) return type {@code T} instead of {@code Object}, more type safe.
      *
      * @param cfs the CompletableFutures
      * @return a new Cffu that is completed with the result or exception of
      * any of the given CompletableFutures when one completes
      * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #cffuAnyOf(CompletableFuture[])
      * @see #anyOf(Cffu[])
      * @see CompletableFuture#anyOf(CompletableFuture[])
      */
@@ -605,7 +635,8 @@ public final class CffuFactory {
      * @see #cffuAllOf(Cffu[])
      */
     @Contract(pure = true)
-    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> cffuCombine(Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4) {
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> cffuCombine(
+            Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4) {
         return cffuCombine(cf1.toCompletableFuture(), cf2.toCompletableFuture(),
                 cf3.toCompletableFuture(), cf4.toCompletableFuture());
     }

@@ -599,8 +599,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     //# Timeout Control methods:
     //
-    //    - orTimeout:         timeout event -> given value
-    //    - completeOnTimeout: timeout event -> TimeoutException
+    //    - orTimeout:         timeout event -> complete with the given value
+    //    - completeOnTimeout: timeout event -> complete with TimeoutException
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -667,7 +667,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //    - exceptionallyCompose*: throwable -> CompletionStage<T>
     //
     //    - whenComplete*:         (T, throwable) -> Void
-    //    - handle*:               (T, throwable) -> T
+    //    - handle*:               (T, throwable) -> U
     //
     // NOTE about advanced meaning:
     //   - `compose` methods, input function argument return CompletionStage
@@ -945,12 +945,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //    - isCancelled()
     //    - state()
     //
-    // NOTE:
-    //   - about ExecutionException or CompletionException when the computation threw an exception:
-    //     - get methods throw ExecutionException(checked exception)
-    //       these old methods existed in `Future` interface since Java 5
-    //     - getNow/join throw CompletionException(unchecked exception),
-    //       these new methods existed in `CompletableFuture` since Java 8
+    // NOTE about ExecutionException or CompletionException when the computation threw an exception:
+    //   - get methods throw ExecutionException(checked exception)
+    //     these old methods existed in `Future` interface since Java 5
+    //   - getNow/join throw CompletionException(unchecked exception),
+    //     these new methods existed in `CompletableFuture` since Java 8
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
