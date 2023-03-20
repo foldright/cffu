@@ -1442,6 +1442,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //    vs. user functional API
     //
     //    - toCompletableFuture()
+    //    - cffuUnwrap()
     //    - copy()
     //
     //    - obtrudeValue(value)
@@ -1459,12 +1460,25 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @return the CompletableFuture
      * @see CompletionStage#toCompletableFuture()
+     * @see #cffuUnwrap()
      */
     @Contract(pure = true)
     @Override
-    @SuppressFBWarnings("EI_EXPOSE_REP")
     public CompletableFuture<T> toCompletableFuture() {
         return cf.toCompletableFuture();
+    }
+
+    /**
+     * Returns the underneath wrapped CompletableFuture.
+     *
+     * @return the underneath wrapped CompletableFuture
+     * @see CffuFactory#asCffu(CompletionStage)
+     * @see #toCompletableFuture()
+     */
+    @Contract(pure = true)
+    @SuppressFBWarnings("EI_EXPOSE_REP")
+    public CompletableFuture<T> cffuUnwrap() {
+        return cf;
     }
 
     /**

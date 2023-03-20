@@ -737,8 +737,8 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
     //# Conversion Methods
     //
-    //    - toCffu: CF -> Cffu
-    //    - toCffuArray: CF[] -> Cffu[]
+    //    - asCffu: CF -> Cffu
+    //    - asCffuArray: CF[] -> Cffu[]
     //    - toCompletableFutureArray: Cffu -> CF
     //
     //    - cffuListToArray: List<Cffu> -> Cffu[]
@@ -746,37 +746,49 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Convert {@link CompletionStage} to {@link Cffu}.
+     * Wrap {@link CompletionStage} to {@link Cffu}.
      * <p>
-     * <b><i>NOTE:<br></i></b>
-     * if input is a {@link Cffu}, re-wrapped with the config of
-     * this {@link CffuFactory} from {@link CffuFactoryBuilder}.
+     * <b><i>NOTE</i></b>, keep input stage unchanged if possible when wrap:<br>
+     * <ol>
+     * <li>if input stage is a {@link Cffu}, re-wrapped with the config of
+     *     this {@link CffuFactory} from {@link CffuFactoryBuilder}.
+     * <li>if input stage is a CompletableFuture, set it as the underneath cf of returned cffu.
+     * <li>otherwise use input {@code stage.toCompletableFuture} as the underneath cf of returned cffu.
+     * </ol>
      *
-     * @see Cffu#toCompletableFuture()
-     * @see #toCffuArray(CompletionStage[])
+     * @see #asCffuArray(CompletionStage[])
+     * @see CompletionStage#toCompletableFuture()
+     * @see Cffu#cffuUnwrap()
      */
     @Contract(pure = true)
-    public <T> Cffu<T> toCffu(CompletionStage<T> cf) {
-        return new0(cf.toCompletableFuture());
+    public <T> Cffu<T> asCffu(CompletionStage<T> stage) {
+        if ("java.util.concurrent.CompletableFuture$MinimalStage".equals(stage.getClass().getName())) {
+            return newMin((CompletableFuture<T>) stage);
+        } else if (stage instanceof CompletableFuture) {
+            return new0((CompletableFuture<T>) stage);
+        } else if (stage instanceof Cffu) {
+            return ((Cffu<T>) stage).resetCffuFactory(this);
+        }
+        return new0(stage.toCompletableFuture());
     }
 
     /**
-     * Convert {@link CompletableFuture} array to {@link Cffu} array.
+     * Wrap input array {@link CompletionStage} elements to {@link Cffu}.
      * <p>
      * <b><i>NOTE:<br></i></b>
      * if input is a {@link Cffu}, re-wrapped with the config of
      * this {@link CffuFactory} from {@link CffuFactoryBuilder}.
      *
+     * @see #asCffu(CompletionStage)
      * @see Cffu#toCompletableFuture()
-     * @see #toCffu(CompletionStage)
      */
     @Contract(pure = true)
     @SafeVarargs
-    public final <T> Cffu<T>[] toCffuArray(CompletionStage<T>... cfs) {
+    public final <T> Cffu<T>[] asCffuArray(CompletionStage<T>... stages) {
         @SuppressWarnings("unchecked")
-        Cffu<T>[] ret = new Cffu[cfs.length];
-        for (int i = 0; i < cfs.length; i++) {
-            ret[i] = new0(cfs[i].toCompletableFuture());
+        Cffu<T>[] ret = new Cffu[stages.length];
+        for (int i = 0; i < stages.length; i++) {
+            ret[i] = asCffu(stages[i]);
         }
         return ret;
     }
@@ -785,7 +797,7 @@ public final class CffuFactory {
      * Convert Cffu array to CompletableFuture array.
      *
      * @see Cffu#toCompletableFuture()
-     * @see #toCffuArray(CompletionStage[])
+     * @see #asCffuArray(CompletionStage[])
      */
     @Contract(pure = true)
     @SafeVarargs
