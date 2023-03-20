@@ -261,7 +261,7 @@ public class CffuUserApiTest {
         // - completeAsync
         // methods is tested in below method
 
-        cf.completeExceptionally(rte);
+        assertFalse(cf.completeExceptionally(rte));
 
         cf.cancel(true);
     }

@@ -1041,6 +1041,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * {@code result = cffu.cffuJoin(timeout, unit);}
      * <p>
      * is same as:
+     *
      * <pre>{@code result = cffu.copy() // defensive copy to avoid write this cffu unexpectedly
      *     .orTimeout(timeout, unit)
      *     .join();
@@ -1105,6 +1106,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * This method is for cases where the caller knows that the task has already completed successfully,
      * for example when filtering a stream of Future objects for the successful tasks
      * and using a mapping operation to obtain a stream of results.
+     *
      * <pre>{@code results = futures.stream()
      *     .filter(f -> f.state() == Future.State.SUCCESS)
      *     .map(Future::resultNow)
@@ -1304,7 +1306,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * code is copied from {@code CompletableFuture#AsyncSupply} with small adoption.
      */
-    @SuppressWarnings({"NonSerializableFieldInSerializableClass", "serial"})
+    @SuppressWarnings("serial")
     @SuppressFBWarnings("SE_BAD_FIELD")
     private static final class AsyncSupply<T> extends ForkJoinTask<Void>
             implements Runnable, CompletableFuture.AsynchronousCompletionTask {
@@ -1396,7 +1398,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * a *normal* underneath CompletableFuture which is NOT with a *minimal* CompletionStage.
      * <p>
      * demo code about re-config methods of Cffu:
-     * <p>
+     *
      * <pre>{@code cffu2 = cffu
      *     .resetCffuFactory(cffuFactory2) // reset to use config from cffuFactory2
      *     .minimalCompletionStage();      // restrict to methods of CompletionStage
@@ -1420,7 +1422,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with a CompletionException with this exception as cause.
      * <p>
      * demo code about re-config methods of Cffu:
-     * <p>
+     *
      * <pre>{@code cffu2 = cffu
      *     .resetCffuFactory(cffuFactory2) // reset to use config from cffuFactory2
      *     .minimalCompletionStage();      // restrict to methods of CompletionStage

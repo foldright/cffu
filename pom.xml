@@ -289,6 +289,7 @@
 				https://stackoverflow.com/a/18420462/922688
 			-->
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
 				<executions>
 					<execution>
@@ -313,10 +314,12 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
 					<version>3.2.0</version>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
 					<version>3.3.0</version>
 				</plugin>
@@ -326,18 +329,29 @@
 					<version>${kotlin.version}</version>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.11.0</version>
+					<configuration>
+						<!-- https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#compilerArgs -->
+						<compilerArgs>
+							<arg>-Xlint:unchecked</arg>
+							<arg>-J-Duser.language=en_us</arg>
+						</compilerArgs>
+					</configuration>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>3.0.0</version>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
 					<version>3.3.0</version>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
 					<version>3.4.1</version>
 					<configuration>
@@ -348,30 +362,37 @@
 					</configuration>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
 					<version>3.2.1</version>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>3.5.0</version>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
 					<version>3.0.1</version>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
 					<version>3.12.1</version>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-install-plugin</artifactId>
 					<version>3.1.0</version>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
 					<version>3.1.0</version>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
 					<version>3.2.1</version>
 				</plugin>
@@ -687,11 +708,11 @@
 						<version>1.6.13</version>
 						<extensions>true</extensions>
 						<!--
-							In multi-module builds using the deploy-at-end feature,
+							In multiply module builds using the deploy-at-end feature,
 							the deployment of all components is performed in the last module based on the reactor order.
 							If this property is set to true in the last module,
 							all staging deployment for all modules will be skipped.
-							so, we'll config nexus deploy after every moudle's deploy phase
+							so, we'll config nexus deploy after every moudle's `deploy` phase
 
 							see: https://github.com/sonatype/nexus-maven-plugins/tree/master/staging/maven-plugin#configuring-the-plugin
 						-->
@@ -701,8 +722,8 @@
 							<autoReleaseAfterClose>true</autoReleaseAfterClose>
 							<!--
 								If you are deploying to Maven Central, it is the Nexus Staging Plugin that is
-								doing the deployment instead of the Deploy plugin,
-								so the configuration of the deploy plugin has no effect.
+								doing the deployment instead of the `deploy` plugin,
+								so the configuration of the `deploy` plugin has no effect.
 								To make the Nexus deploy plugin skip, set skipNexusStagingDeployMojo
 								in its configuration to true.
 

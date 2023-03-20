@@ -59,7 +59,7 @@ class CffuFactory_MinimalStage_Test : FunSpec({
             }.cause shouldBeSameInstanceAs rte
         }
 
-        testMinimalStage(stage.exceptionally { ex -> 42 }).let { cf ->
+        testMinimalStage(stage.exceptionally { _ -> 42 }).let { cf ->
             @Suppress("BlockingMethodInNonBlockingContext")
             cf.get() shouldBe 42
         }

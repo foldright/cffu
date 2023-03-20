@@ -145,7 +145,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public <T> CompletionStage<T> failedStage(Throwable ex) {
         if (IS_JAVA9_PLUS) {
-            return newMin((CompletableFuture<T>) CompletableFuture.failedStage(ex));
+            return newMin((CompletableFuture<T>) CompletableFuture.<T>failedStage(ex));
         }
         CompletableFuture<T> cf = new CompletableFuture<>();
         cf.completeExceptionally(ex);
