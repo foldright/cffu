@@ -39,9 +39,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     final CompletableFuture<T> cf; // use default(`package-private`) access modifier for testing
 
     Cffu(CffuFactory cffuFactory, boolean isMinimalStage, CompletableFuture<T> cf) {
-        this.fac = cffuFactory;
+        this.fac = requireNonNull(cffuFactory, "cffuFactory is null");
         this.isMinimalStage = isMinimalStage;
-        this.cf = cf;
+        this.cf = requireNonNull(cf, "cf is null");
     }
 
     @Contract(pure = true)

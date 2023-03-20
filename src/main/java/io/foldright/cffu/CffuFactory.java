@@ -53,18 +53,18 @@ public final class CffuFactory {
     final boolean forbidObtrudeMethods;
 
     CffuFactory(Executor defaultExecutor, boolean forbidObtrudeMethods) {
-        this.defaultExecutor = screenExecutor(defaultExecutor);
+        this.defaultExecutor = screenExecutor(requireNonNull(defaultExecutor, "defaultExecutor is null"));
         this.forbidObtrudeMethods = forbidObtrudeMethods;
     }
 
     @Contract(pure = true)
     private <T> Cffu<T> new0(CompletableFuture<T> cf) {
-        return new Cffu<>(this, false, requireNonNull(cf, "cf is null"));
+        return new Cffu<>(this, false, cf);
     }
 
     @Contract(pure = true)
     private <T> Cffu<T> newMin(CompletableFuture<T> cf) {
-        return new Cffu<>(this, true, requireNonNull(cf, "cf is null"));
+        return new Cffu<>(this, true, cf);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -881,8 +881,7 @@ public final class CffuFactory {
     private static final class ThreadPerTaskExecutor implements Executor {
         @Override
         public void execute(Runnable r) {
-            requireNonNull(r);
-            new Thread(r).start();
+            new Thread(requireNonNull(r)).start();
         }
     }
 
@@ -906,7 +905,7 @@ public final class CffuFactory {
     private static Executor screenExecutor(Executor e) {
         if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool())
             return AsyncPoolHolder.ASYNC_POOL;
-        return requireNonNull(e, "e is null");
+        return e;
     }
 
     ////////////////////////////////////////////////////////////////////////////////

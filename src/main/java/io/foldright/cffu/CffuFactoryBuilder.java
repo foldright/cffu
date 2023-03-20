@@ -28,7 +28,7 @@ public final class CffuFactoryBuilder {
     private volatile boolean forbidObtrudeMethods = false;
 
     private CffuFactoryBuilder(Executor defaultExecutor) {
-        this.defaultExecutor = defaultExecutor;
+        this.defaultExecutor = requireNonNull(defaultExecutor, "defaultExecutor is null");
     }
 
     ////////////////////////////////////////////////////////////////////////////////
