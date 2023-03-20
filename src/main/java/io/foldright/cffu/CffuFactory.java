@@ -746,7 +746,9 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Wrap {@link CompletionStage} to {@link Cffu}.
+     * Wrap an existed {@link CompletionStage} to {@link Cffu}.
+     * for {@link CompletableFuture} instances,
+     * {@link Cffu#cffuUnwrap()} is inverse operation to this method.
      * <p>
      * <b><i>NOTE</i></b>, keep input stage unchanged if possible when wrap:<br>
      * <ol>
@@ -756,9 +758,10 @@ public final class CffuFactory {
      * <li>otherwise use input {@code stage.toCompletableFuture} as the underneath cf of returned cffu.
      * </ol>
      *
+     * @see Cffu#cffuUnwrap()
+     * @see Cffu#resetCffuFactory(CffuFactory)
      * @see #asCffuArray(CompletionStage[])
      * @see CompletionStage#toCompletableFuture()
-     * @see Cffu#cffuUnwrap()
      */
     @Contract(pure = true)
     public <T> Cffu<T> asCffu(CompletionStage<T> stage) {
@@ -773,14 +776,10 @@ public final class CffuFactory {
     }
 
     /**
-     * Wrap input array {@link CompletionStage} elements to {@link Cffu}.
-     * <p>
-     * <b><i>NOTE:<br></i></b>
-     * if input is a {@link Cffu}, re-wrapped with the config of
-     * this {@link CffuFactory} from {@link CffuFactoryBuilder}.
+     * A convenient util method for wrap input {@link CompletionStage} array element
+     * using {@link #asCffu(CompletionStage)}.
      *
      * @see #asCffu(CompletionStage)
-     * @see Cffu#toCompletableFuture()
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -794,7 +793,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Convert Cffu array to CompletableFuture array.
+     * A convenient util method for unwrap input {@link Cffu} array elements using {@link Cffu#toCompletableFuture()}.
      *
      * @see Cffu#toCompletableFuture()
      * @see #asCffuArray(CompletionStage[])
@@ -806,6 +805,23 @@ public final class CffuFactory {
         CompletableFuture<T>[] ret = new CompletableFuture[cfs.length];
         for (int i = 0; i < cfs.length; i++) {
             ret[i] = cfs[i].toCompletableFuture();
+        }
+        return ret;
+    }
+
+    /**
+     * A convenient util method for unwrap input {@link Cffu} array elements using {@link Cffu#cffuUnwrap()}.
+     *
+     * @param cfs the Cffus
+     * @see Cffu#cffuUnwrap()
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    public static <T> CompletableFuture<T>[] cffuArrayUnwrap(Cffu<T>... cfs) {
+        @SuppressWarnings("unchecked")
+        CompletableFuture<T>[] ret = new CompletableFuture[cfs.length];
+        for (int i = 0; i < cfs.length; i++) {
+            ret[i] = cfs[i].cffuUnwrap();
         }
         return ret;
     }

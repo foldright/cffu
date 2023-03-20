@@ -613,7 +613,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return this Cffu
      * @see CffuFactory#delayedExecutor(long, TimeUnit)
      */
-    @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
     public Cffu<T> orTimeout(long timeout, TimeUnit unit) {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
 
@@ -645,7 +644,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return this Cffu
      * @see CffuFactory#delayedExecutor(long, TimeUnit)
      */
-    @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
     public Cffu<T> completeOnTimeout(@Nullable T value, long timeout, TimeUnit unit) {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
 
@@ -1455,12 +1453,18 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a {@link CompletableFuture} maintaining the same completion properties as this stage,
-     * call underneath wrapped CompletableFuture, {@code wrappedCf.toCompletableFuture()}.
+     * Returns a {@link CompletableFuture} maintaining the same completion properties as this stage.
+     * <p>
+     * call {@link CompletableFuture#toCompletableFuture()} method of the underneath wrapped CompletableFuture:
+     * {@code wrappedCf.toCompletableFuture()}; if you need the underneath wrapped CompletableFuture instance,
+     * call method {@link #cffuUnwrap()}.
+     * <p>
+     * {@link CffuFactory#toCompletableFutureArray(Cffu[])} is the batch operation to this method.
      *
      * @return the CompletableFuture
      * @see CompletionStage#toCompletableFuture()
      * @see #cffuUnwrap()
+     * @see CffuFactory#toCompletableFutureArray(Cffu[])
      */
     @Contract(pure = true)
     @Override
@@ -1470,9 +1474,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns the underneath wrapped CompletableFuture.
+     * <p>
+     * {@link CffuFactory#asCffu(CompletionStage)} is inverse operation to this method.
+     * {@link CffuFactory#cffuArrayUnwrap(Cffu[])} is the batch operation to this method.
      *
      * @return the underneath wrapped CompletableFuture
      * @see CffuFactory#asCffu(CompletionStage)
+     * @see CffuFactory#cffuArrayUnwrap(Cffu[])
      * @see #toCompletableFuture()
      */
     @Contract(pure = true)
