@@ -25,26 +25,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class CffuApiCompatibilityTest {
+class CffuApiCompatibilityTest {
     private static final String hello = "Cffu API Compatibility Test - Hello";
 
     private static final RuntimeException rte = new RuntimeException("Bang");
-
-    private static ExecutorService executorService;
-
-    private static CffuFactory cffuFactory;
-
-    @BeforeAll
-    static void beforeAll() {
-        executorService = TestThreadPoolManager.createThreadPool(hello);
-        cffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder(executorService).build();
-    }
-
-    @AfterAll
-    static void afterAll() throws Exception {
-        executorService.shutdown();
-        assertTrue(executorService.awaitTermination(3, TimeUnit.SECONDS));
-    }
 
     ////////////////////////////////////////////////////////////////////////////////
     //# Factory Methods of Cffu
@@ -275,7 +259,7 @@ public class CffuApiCompatibilityTest {
 
         assertEquals(43, cf.thenCompose(x -> cffuFactory.completedFuture(43)).get());
         assertEquals(44, cf.thenComposeAsync(x -> cffuFactory.completedFuture(44)).get());
-        assertEquals(45, cf.thenComposeAsync(x -> cffuFactory.completedFuture(45)).get());
+        assertEquals(45, cf.thenComposeAsync(x -> cffuFactory.completedFuture(45), executorService).get());
     }
 
     @Test
@@ -504,5 +488,20 @@ public class CffuApiCompatibilityTest {
 
         // newIncompleteFuture
         assertFalse(cf.newIncompleteFuture().isDone());
+    }
+
+    private static ExecutorService executorService;
+
+    private static CffuFactory cffuFactory;
+
+    @BeforeAll
+    static void beforeAll() {
+        executorService = TestThreadPoolManager.createThreadPool(hello);
+        cffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder(executorService).build();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        TestThreadPoolManager.shutdownExecutorService(executorService);
     }
 }

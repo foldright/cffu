@@ -22,26 +22,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class CompletableFutureApiCompatibilityTest {
+class CompletableFutureApiCompatibilityTest {
     private static final String hello = "CompletableFuture API Compatibility Test - Hello";
 
     private static final RuntimeException rte = new RuntimeException("Bang");
-
-    private static ExecutorService executorService;
-
-    /* GEN_MARK_FACTORY_FIELD */
-
-    @BeforeAll
-    static void beforeAll() {
-        executorService = TestThreadPoolManager.createThreadPool(hello);
-        /* GEN_MARK_FACTORY_INIT */
-    }
-
-    @AfterAll
-    static void afterAll() throws Exception {
-        executorService.shutdown();
-        assertTrue(executorService.awaitTermination(3, TimeUnit.SECONDS));
-    }
 
     ////////////////////////////////////////////////////////////////////////////////
     //# Factory Methods of CompletableFuture
@@ -276,7 +260,7 @@ public class CompletableFutureApiCompatibilityTest {
 
         assertEquals(43, cf.thenCompose(x -> CompletableFuture.completedFuture(43)).get());
         assertEquals(44, cf.thenComposeAsync(x -> CompletableFuture.completedFuture(44)).get());
-        assertEquals(45, cf.thenComposeAsync(x -> CompletableFuture.completedFuture(45)).get());
+        assertEquals(45, cf.thenComposeAsync(x -> CompletableFuture.completedFuture(45), executorService).get());
     }
 
     @Test
@@ -509,5 +493,20 @@ public class CompletableFutureApiCompatibilityTest {
 
         // newIncompleteFuture
         assertFalse(cf.newIncompleteFuture().isDone());
+    }
+
+    private static ExecutorService executorService;
+
+    /* GEN_MARK_FACTORY_FIELD */
+
+    @BeforeAll
+    static void beforeAll() {
+        executorService = TestThreadPoolManager.createThreadPool(hello);
+        /* GEN_MARK_FACTORY_INIT */
+    }
+
+    @AfterAll
+    static void afterAll() {
+        TestThreadPoolManager.shutdownExecutorService(executorService);
     }
 }
