@@ -4,7 +4,7 @@
 
 	<groupId>io.foldright</groupId>
 	<artifactId>cffu</artifactId>
-	<version>0.9.0-SNAPSHOT</version>
+	<version>0.1.0</version>
 	<name>CompletableFuture-Fu(cffu)</name>
 	<description>${project.name}</description>
 	<url>https://github.com/foldright/cffu</url>
