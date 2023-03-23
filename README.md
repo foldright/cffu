@@ -1,6 +1,6 @@
 # <div align="center"><a href="#dummy"><img src="docs/logo.png" alt="🦝 CompletableFuture Fu (CF-Fu)"></a></div>
 
-> 🚧 项目还在开发中没有发布。  
+> 🚧 项目还在开发中没有发布稳定正式版本。  
 > 工作项列表及其进展，参见 [issue 6](https://github.com/foldright/cffu/issues/6)。
 
 ----------------------------------------
@@ -8,8 +8,10 @@
 <p align="center">
 <a href="https://github.com/foldright/cffu/actions/workflows/ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/ci.yaml?branch=main&logo=github&logoColor=white" alt="Github Workflow Build Status"></a>
 <a href="https://app.codecov.io/gh/foldright/cffu/tree/main"><img src="https://img.shields.io/codecov/c/github/foldright/cffu/main?logo=codecov&logoColor=white" alt="Codecov"></a>
-<a href="https://openjdk.java.net/"><img src="https://img.shields.io/badge/Java-8+-green?logo=openjdk&logoColor=white" alt="Java support"></a>
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/foldright/cffu?color=4D7A97&logo=apache" alt="License"></a>
+<a href="https://foldright.io/cffu/apidocs/"><img src="https://img.shields.io/github/release/foldright/cffu?label=javadoc&color=3d7c47&logo=microsoft-academic&logoColor=white" alt="Javadocs"></a>
+<a href="https://central.sonatype.com/artifact/io.foldright/cffu/0.1.0/versions"><img src="https://img.shields.io/maven-central/v/com.foldright/cffu?color=2d545e&logo=apache-maven&logoColor=white" alt="Maven Central"></a>
+<a href="https://openjdk.java.net/"><img src="https://img.shields.io/badge/Java-8+-green?logo=openjdk&logoColor=white" alt="Java support"></a>
 <a href="https://github.com/foldright/cffu/stargazers"><img src="https://img.shields.io/github/stars/foldright/cffu" alt="GitHub Stars"></a>
 <a href="https://github.com/foldright/cffu/fork"><img src="https://img.shields.io/github/forks/foldright/cffu" alt="GitHub Forks"></a>
 <a href="https://github.com/foldright/cffu/issues"><img src="https://img.shields.io/github/issues/foldright/cffu" alt="GitHub issues"></a>
@@ -73,6 +75,8 @@
     - [`CF`创建子`CF`（两个`CF`使用同一线程池），且阻塞等待子`CF`结果](#cf%E5%88%9B%E5%BB%BA%E5%AD%90cf%E4%B8%A4%E4%B8%AAcf%E4%BD%BF%E7%94%A8%E5%90%8C%E4%B8%80%E7%BA%BF%E7%A8%8B%E6%B1%A0%E4%B8%94%E9%98%BB%E5%A1%9E%E7%AD%89%E5%BE%85%E5%AD%90cf%E7%BB%93%E6%9E%9C)
 - [📦 二、库功能](#-%E4%BA%8C%E5%BA%93%E5%8A%9F%E8%83%BD)
   - [`Cffu.java`](#cffujava)
+  - [🔌 Java API Docs](#-java-api-docs)
+  - [🍪依赖](#%E4%BE%9D%E8%B5%96)
 - [👋 ∞、关于库名](#-%E2%88%9E%E5%85%B3%E4%BA%8E%E5%BA%93%E5%90%8D)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -375,6 +379,34 @@
     - `CompletableFuture<T> anyOf(List<? extends CompletableFuture<T>> cfs)`
   - `CF`返回的类型是`Object`，丢失具体类型：
     - `CompletableFuture<Object> anyOf(CompletableFuture<?>... cfs)`
+
+## 🔌 Java API Docs
+
+当前版本的Java API文档地址： <https://foldright.io/cffu/apidocs/>
+
+## 🍪依赖
+
+For `Maven` projects:
+
+```xml
+<dependency>
+    <groupId>io.foldright</groupId>
+    <artifactId>cffu</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
+For `Gradle` projects:
+
+```groovy
+// Gradle Kotlin DSL
+implementation("io.foldright:cffu:0.1.0")
+
+// Gradle Groovy DSL
+implementation 'io.foldright:cffu:0.1.0'
+```
+
+可以在 [search.maven.org](https://central.sonatype.com/artifact/io.foldright/cffu/0.1.0/versions) 查看可用的版本。
 
 # 👋 ∞、关于库名
 
