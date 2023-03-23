@@ -1,16 +1,16 @@
 package io.foldright.cffu;
 
-import io.foldright.cffu.tuple.Tuple2;
-import io.foldright.cffu.tuple.Tuple3;
+import io.foldright.test_utils.TestThreadPoolManager;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 
-import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 
-import static io.foldright.testutils.TestThreadPoolManager.getTestThreadPoolExecutor;
-import static io.foldright.testutils.TestUtils.createExceptionallyCompletedFutureWithSleep;
-import static io.foldright.testutils.TestUtils.createNormallyCompletedFutureWithSleep;
+import static io.foldright.cffu.CffuFactoryTest.n;
+import static io.foldright.cffu.CffuFactoryTest.rte;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -20,143 +20,114 @@ import static org.junit.jupiter.api.Assertions.*;
  * Use {@code java} code to test the api usage problem of {@link Cffu};
  * Do NOT rewrite to {@code kotlin}.
  */
-public class CffuTest {
-    ////////////////////////////////////////////////////////////////////////////////
-    // test constants
-    ////////////////////////////////////////////////////////////////////////////////
-
-    private static final int n = 42;
-    private static final int another_n = 424242;
-
-    private static final String s = "S42";
-
-    private static final double d = 42.1;
-
-    private static final RuntimeException rte = new RuntimeException("Bang");
-
-    private static final CffuFactory cffuFactory =
-            CffuFactoryBuilder.newCffuFactoryBuilder(getTestThreadPoolExecutor()).build();
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // new methods of CompletableFuture missing functions
-    ////////////////////////////////////////////////////////////////////////////////
-
-    @Test
-    public void test_cffuAllOf() throws Exception {
-        final CompletableFuture<Integer> f1 = CompletableFuture.completedFuture(n);
-        final CompletableFuture<Integer> f2 = CompletableFuture.completedFuture(n + 1);
-        final CompletableFuture<Integer> f3 = CompletableFuture.completedFuture(n + 2);
-
-        assertEquals(Arrays.asList(n, n + 1, n + 2), cffuFactory.cffuAllOf(f1, f2, f3).get());
-    }
-
-    @Test
-    void test_cffuAllOf_exceptionally() throws Exception {
-        try {
-            cffuFactory.cffuAllOf(
-                    CompletableFuture.completedFuture(n),
-                    failedCf(),
-                    CompletableFuture.completedFuture(s)
-            ).get();
-
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-    }
-
-    @Test
-    public void test_cffuCombine() throws Exception {
-        assertEquals(Tuple2.of(n, s), cffuFactory.cffuCombine(
-                CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(s)
-        ).get());
-
-        assertEquals(Tuple3.of(n, s, d), cffuFactory.cffuCombine(
-                CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(s),
-                CompletableFuture.completedFuture(d)
-        ).get());
-    }
-
-    @Test
-    void test_cffuCombine_exceptionally() throws Exception {
-        try {
-            cffuFactory.cffuCombine(
-                    CompletableFuture.completedFuture(n),
-                    failedCf()
-            ).get();
-
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-
-        try {
-            cffuFactory.cffuCombine(
-                    CompletableFuture.completedFuture(n),
-                    failedCf(),
-                    CompletableFuture.completedFuture(s)
-            ).get();
-
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-    }
-
-    @Test
-    public void test_cffuAnyOf() throws Exception {
-        assertEquals(n, cffuFactory.cffuAnyOf(
-                createNormallyCompletedFutureWithSleep(another_n),
-                CompletableFuture.completedFuture(n),
-                createNormallyCompletedFutureWithSleep(another_n)
-        ).get());
-    }
-
-    @Test
-    public void test_cffuAnyOf_exceptionally() throws Exception {
-        // first exceptionally completed cffuAnyOf cf win,
-        // even later cfs normally completed!
-
-        try {
-            cffuFactory.cffuAnyOf(
-                    createNormallyCompletedFutureWithSleep(another_n),
-                    failedCf(),
-                    createNormallyCompletedFutureWithSleep(another_n)
-            ).get();
-
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-
-        // first normally completed cffuAnyOf cf win,
-        // even later cfs exceptionally completed!
-
-        assertEquals(n, cffuFactory.cffuAnyOf(
-                createExceptionallyCompletedFutureWithSleep(rte),
-                CompletableFuture.completedFuture(n),
-                createExceptionallyCompletedFutureWithSleep(rte)
-        ).get());
-    }
-
-    private static <T> CompletableFuture<T> failedCf() {
-        CompletableFuture<T> cf = new CompletableFuture<>();
-        cf.completeExceptionally(rte);
-        return cf;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // backport codes from CompletableFuture
-    ////////////////////////////////////////////////////////////////////////////////
+class CffuTest {
+    private static CffuFactory cffuFactory;
 
     ////////////////////////////////////////
     // timeout control
     ////////////////////////////////////////
 
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Read(explicitly) methods
+    //
+    //    - get()               // BLOCKING
+    //    - get(timeout, unit)  // BLOCKING
+    //    - join()              // BLOCKING
+    //    - cffuJoin()          // BLOCKING
+    //    - getNow(T valueIfAbsent)
+    //    - resultNow()
+    //    - exceptionNow()
+    //
+    //    - isDone()
+    //    - isCompletedExceptionally()
+    //    - isCancelled()
+    //    - state()
+    //
+    // NOTE about ExecutionException or CompletionException when the computation threw an exception:
+    //   - get methods throw ExecutionException(checked exception)
+    //     these old methods existed in `Future` interface since Java 5
+    //   - getNow/join throw CompletionException(unchecked exception),
+    //     these new methods existed in `CompletableFuture` since Java 8
+    ////////////////////////////////////////////////////////////////////////////////
 
     @Test
-    void name() {
+    void test_cffuJoin() {
+        assertEquals(n, cffuFactory.completedFuture(n).cffuJoin(1, TimeUnit.MILLISECONDS));
+
+        Cffu<Object> incomplete = cffuFactory.newIncompleteCffu();
+        try {
+            incomplete.cffuJoin(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (CompletionException expected) {
+            assertEquals(TimeoutException.class, expected.getCause().getClass());
+        }
+
+        Cffu<Object> failed = cffuFactory.failedFuture(rte);
+        try {
+            failed.cffuJoin(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (CompletionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# nonfunctional methods
+    //    vs. user functional API
+    //
+    //    - toCompletableFuture()
+    //    - cffuUnwrap()
+    //    - copy()
+    //
+    //    - obtrudeValue(value)
+    //    - obtrudeException(ex)
+    //
+    //    - defaultExecutor()
+    //    - getNumberOfDependents()
+    //
+    //    - newIncompleteFuture()
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void test_cffuUnwrap() {
+        CompletableFuture<Integer> cf = CompletableFuture.completedFuture(n);
+        Cffu<Integer> cffu = cffuFactory.asCffu(cf);
+
+        assertSame(cf, cffu.cffuUnwrap());
+    }
+
+    @EnabledForJreRange(min = JRE.JAVA_9)
+    @Test
+    void test_cffuUnwrap_9_completedStage() {
+        CompletionStage<Integer> stage = CompletableFuture.completedStage(n);
+        Cffu<Integer> cffu = cffuFactory.asCffu(stage);
+
+        assertSame(stage, cffu.cffuUnwrap());
+    }
+
+    @Test
+    void test_toString() {
+        CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
+        Cffu<Integer> cffu = cffuFactory.asCffu(cf);
+
+        assertTrue(cffu.toString().contains(cf.toString()));
+        assertTrue(cffu.toString().startsWith("Cffu@"));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Test helper methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    private static ExecutorService executorService;
+
+    @BeforeAll
+    static void beforeAll() {
+        executorService = TestThreadPoolManager.createThreadPool("CffuTest");
+        cffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder(executorService).build();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        TestThreadPoolManager.shutdownExecutorService(executorService);
     }
 }

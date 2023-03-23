@@ -1,7 +1,7 @@
 package io.foldright.showcases
 
 import io.foldright.cffu.*
-import io.foldright.testutils.*
+import io.foldright.test_utils.*
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.collections.shouldHaveSize
@@ -72,7 +72,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
             sequenceChecker.assertSeq("supplyAsync completed CF", seq++)
 
             currentThread() shouldNotBe mainThread
-            assertRunInTestThreadPoolExecutor()
+            assertRunInExecutor(testThreadPoolExecutor)
 
             n
         }, testThreadPoolExecutor)
@@ -127,12 +127,12 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
                 cfChainBuildFinishedLatch.await()
 
                 currentThread() shouldNotBe mainThread
-                assertRunNotInTestThreadPoolExecutor()
+                assertNotRunInExecutor(testThreadPoolExecutor)
             }
             .thenRunAsync({
                 thenNonAsyncOpThread = currentThread()
 
-                assertRunInTestThreadPoolExecutor()
+                assertRunInExecutor(testThreadPoolExecutor)
             }, testThreadPoolExecutor) // !! switch executor !!
             .thenApply {
                 // when NOT async,
@@ -156,7 +156,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
                 //
                 // - executor is NOT inherited after switch!!
                 // - use the DEFAULT EXECUTOR of CompletableFuture, if no executor specified.
-                assertRunNotInExecutor(testThreadPoolExecutor)
+                assertNotRunInExecutor(testThreadPoolExecutor)
             }
 
         cfChainBuildFinishedLatch.countDown()
@@ -252,7 +252,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
                 sequenceChecker.assertSeq("create exceptionallyAsync", 1)
 
                 currentThread() shouldNotBe mainThread
-                assertRunInTestThreadPoolExecutor()
+                assertRunInExecutor(testThreadPoolExecutor)
 
                 it.shouldBeTypeOf<CompletionException>()
                 it.cause shouldBeSameInstanceAs rte
@@ -320,7 +320,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
         f0.completeAsync({
             sequenceChecker.assertSeq("in completeAsync", 2)
 
-            assertRunInTestThreadPoolExecutor()
+            assertRunInExecutor(testThreadPoolExecutor)
 
             "done"
         }, testThreadPoolExecutor)
@@ -392,5 +392,25 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
             "%s tasks: build time: %5sms, run time: %4sms",
             times, buildTime, runTime
         ).run(::println)
+    }
+
+
+    @Suppress("BlockingMethodInNonBlockingContext")
+    test("ex").config(enabledIf = java9Plus) {
+        val cf = CompletableFuture.failedFuture<Int>(rte)
+
+        cf.minimalCompletionStage().handle { _, t ->
+            t.shouldBeTypeOf<CompletionException>()
+            t.cause shouldBeSameInstanceAs rte
+            42
+        }.toCompletableFuture().get() shouldBe 42
+
+
+        cf.thenApply { it }.handle { _, t ->
+            t.shouldBeTypeOf<CompletionException>()
+            t.cause shouldBeSameInstanceAs rte
+            42
+        }.toCompletableFuture().get() shouldBe 42
+
     }
 })

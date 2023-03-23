@@ -45,7 +45,7 @@ cd ..
 [ -d "${!default_jh_var_name:-}" ] || cu::die "\$${default_jh_var_name}(${!default_jh_var_name:-}) dir is not existed!"
 export JAVA_HOME="${!default_jh_var_name}"
 
-cu::log_then_run scripts/gen_CffuUserApiTest.sh
+cu::log_then_run scripts/gen_CffuApiCompatibilityTest.sh
 
 cu::head_line_echo "build and test with Java $default_build_jdk_version: $JAVA_HOME"
 jvb::mvn_cmd clean install

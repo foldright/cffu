@@ -1,4 +1,4 @@
-package io.foldright.testutils
+package io.foldright.test_utils
 
 import io.kotest.matchers.shouldBe
 import java.util.concurrent.atomic.AtomicInteger

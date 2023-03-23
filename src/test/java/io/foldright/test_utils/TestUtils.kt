@@ -1,6 +1,6 @@
 @file:JvmName("TestUtils")
 
-package io.foldright.testutils
+package io.foldright.test_utils
 
 import io.kotest.core.test.TestCase
 import org.apache.commons.lang3.JavaVersion
