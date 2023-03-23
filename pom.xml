@@ -27,6 +27,22 @@
 		<url>https://github.com/foldright/cffu/issues</url>
 		<system>GitHub Issues</system>
 	</issueManagement>
+	<organization>
+		<name>FoldRight</name>
+		<url>https://foldright.io</url>
+	</organization>
+	<developers>
+		<developer>
+			<name>Jerry Lee</name>
+			<id>oldratlee</id>
+			<email>oldratlee(AT)gmail(DOT)com</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+8</timezone>
+			<url>https://github.com/oldratlee</url>
+		</developer>
+	</developers>
 
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -202,7 +218,7 @@
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -243,6 +259,7 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<executions>
 					<!-- Replacing default-compile as it is treated specially by maven -->
@@ -427,6 +444,7 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
 					</plugin>
 				</plugins>
@@ -474,6 +492,7 @@
 
 							https://docs.oracle.com/en/java/javase/11/javadoc/javadoc-command.html
 						-->
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<configuration>
 							<source>8</source>
@@ -493,22 +512,22 @@
 							<detectOfflineLinks>false</detectOfflineLinks>
 							<offlineLinks>
 								<offlineLink>
-									<url>https://docs.oracle.com/javase/10/docs/api/</url>
-									<location>${javadoc.package.list.dir}/java/</location>
-								</offlineLink>
-								<offlineLink>
 									<url>
 										https://www.javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/${spotbugs.annotations.version}/
 									</url>
 									<location>${javadoc.package.list.dir}/spotbugs-annotations/</location>
 								</offlineLink>
 								<offlineLink>
+									<url>https://www.javadoc.io/doc/org.jetbrains/annotations/${jetbrains.annotations.version}/</url>
+									<location>${javadoc.package.list.dir}/jetbrains-annotations/</location>
+								</offlineLink>
+								<offlineLink>
 									<url>https://www.javadoc.io/doc/com.google.code.findbugs/jsr305/${jsr305.version}/</url>
 									<location>${javadoc.package.list.dir}/jsr305/</location>
 								</offlineLink>
 								<offlineLink>
-									<url>https://www.javadoc.io/doc/org.jetbrains/annotations/${jetbrains.annotations.version}/</url>
-									<location>${javadoc.package.list.dir}/jetbrains-annotations/</location>
+									<url>https://docs.oracle.com/en/java/javase/19/docs/api/java.base/</url>
+									<location>${javadoc.package.list.dir}/java/</location>
 								</offlineLink>
 							</offlineLinks>
 							<additionalOptions>
@@ -538,6 +557,7 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
 						<executions>
 							<execution>
@@ -707,7 +727,7 @@
 						-->
 						<configuration>
 							<serverId>ossrh</serverId>
-							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
 							<autoReleaseAfterClose>true</autoReleaseAfterClose>
 							<!--
 								If you are deploying to Maven Central, it is the Nexus Staging Plugin that is
