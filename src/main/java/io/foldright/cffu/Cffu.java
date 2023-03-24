@@ -1228,19 +1228,62 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
+     * Returns the computation state({@link CffuState}).
+     *
      * @return the computation state
+     * @see CffuState
+     * @see Future.State
+     * @see Future#state()
+     * @see #state()
+     */
+    @Contract(pure = true)
+    public CffuState cffuState() {
+        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+
+        if (IS_JAVA19_PLUS)
+            return CffuState.toCffuState(cf.state());
+
+        // below code is copied from Future#state() with small adoption
+
+        if (!isDone()) return CffuState.RUNNING;
+        if (isCancelled()) return CffuState.CANCELLED;
+
+        boolean interrupted = false;
+        try {
+            while (true) {
+                try {
+                    get();  // may throw InterruptedException when done
+                    return CffuState.SUCCESS;
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                } catch (ExecutionException e) {
+                    return CffuState.FAILED;
+                }
+            }
+        } finally {
+            if (interrupted) Thread.currentThread().interrupt();
+        }
+    }
+
+    /**
+     * Returns the computation state, this method just invoke without java version compatibility logic,
+     * if you need this function in {@code java 18-}, use {@link #cffuState()} instead.
+     * <p>
+     * {@link CompletableFuture#state} is new method since Java 19,
+     * this method should have compatibility logic for Java version;
+     * But the return type {@link Future.State} is also added since Java 19,
+     * so it's IMPOSSIBLE to work by compatibility logic of wrapper class(`Cffu`).
+     *
+     * @return the computation state
+     * @see #cffuState()
+     * @see Future.State
+     * @see CompletableFuture#state()
      */
     @Contract(pure = true)
     @Override
-    public State state() {
+    public Future.State state() {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
 
-        // CompletableFuture#state is new method since Java 19,
-        // should need compatibility logic of Java version.
-        // But the return type `State` is also added since Java 19,
-        // so it's IMPOSSIBLE to work by compatibility logic of wrapped class(`Cffu`).
-        //
-        // just invoke without java version compatibility logic~
         return cf.state();
     }
 

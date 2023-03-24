@@ -253,8 +253,8 @@ public final class CffuFactory {
 
     /**
      * Wrap an existed {@link CompletionStage} to {@link Cffu}.
-     * for {@link CompletableFuture} instances,
-     * {@link Cffu#cffuUnwrap()} is inverse operation to this method.
+     * for {@link CompletableFuture} class instances,
+     * {@link Cffu#cffuUnwrap()} is the inverse operation to this method.
      * <p>
      * <b><i>NOTE</i></b>, keep input stage unchanged if possible when wrap:<br>
      * <ol>

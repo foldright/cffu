@@ -73,6 +73,18 @@ class CffuTest {
         }
     }
 
+    @Test
+    void test_cffuState() {
+        Cffu<Object> incomplete = cffuFactory.newIncompleteCffu();
+
+        assertEquals(CffuState.RUNNING, incomplete.cffuState());
+        assertEquals(CffuState.SUCCESS, cffuFactory.completedFuture(42).cffuState());
+        assertEquals(CffuState.FAILED, cffuFactory.failedFuture(rte).cffuState());
+
+        incomplete.cancel(false);
+        assertEquals(CffuState.CANCELLED, incomplete.cffuState());
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# nonfunctional methods
     //    vs. user functional API
@@ -98,8 +110,8 @@ class CffuTest {
         assertSame(cf, cffu.cffuUnwrap());
     }
 
-    @EnabledForJreRange(min = JRE.JAVA_9)
     @Test
+    @EnabledForJreRange(min = JRE.JAVA_9)
     void test_cffuUnwrap_9_completedStage() {
         CompletionStage<Integer> stage = CompletableFuture.completedStage(n);
         Cffu<Integer> cffu = cffuFactory.asCffu(stage);
@@ -128,8 +140,8 @@ class CffuTest {
         assertTrue(((Cffu<Object>) forbidObtrudeMethodsCffuFactory.failedStage(rte)).isMinimalStage());
     }
 
-    @EnabledForJreRange(min = JRE.JAVA_9)
     @Test
+    @EnabledForJreRange(min = JRE.JAVA_9)
     void test_Java9_CompletableFuture_failedStage_asCffu() {
         assertFalse(cffuFactory.asCffu(CompletableFuture.failedFuture(rte)).isMinimalStage());
 
