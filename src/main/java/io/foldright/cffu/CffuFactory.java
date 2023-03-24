@@ -170,7 +170,7 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is asynchronously completed by a task running
-     * in the {@link #getDefaultExecutor()} after it runs the given action.
+     * in the {@link #defaultExecutor()} after it runs the given action.
      *
      * @param action the action to run before completing the returned Cffu
      * @return the new Cffu
@@ -195,7 +195,7 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is asynchronously completed
-     * by a task running in the {@link #getDefaultExecutor()} with
+     * by a task running in the {@link #defaultExecutor()} with
      * the value obtained by calling the given Supplier.
      *
      * @param supplier a function returning the value to be used to complete the returned Cffu
@@ -848,23 +848,28 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# getter/setter
+    //# Getter
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * @see CffuFactoryBuilder#newCffuFactoryBuilder(Executor)
+     * Returns {@code defaultExecutor}.
+     *
+     * @return the default executor
      * @see Cffu#defaultExecutor()
+     * @see CffuFactoryBuilder#newCffuFactoryBuilder(Executor)
      */
-    public Executor getDefaultExecutor() {
+    public Executor defaultExecutor() {
         return defaultExecutor;
     }
 
     /**
-     * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
+     * Returns {@code forbidObtrudeMethods} or not.
+     *
      * @see Cffu#obtrudeValue(Object)
      * @see Cffu#obtrudeException(Throwable)
+     * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
      */
-    public boolean isForbidObtrudeMethods() {
+    public boolean forbidObtrudeMethods() {
         return forbidObtrudeMethods;
     }
 

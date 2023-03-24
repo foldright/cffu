@@ -36,7 +36,9 @@ public final class CffuFactoryBuilder {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * @see CffuFactory#getDefaultExecutor()
+     * Returns a {@link CffuFactoryBuilder} with {@code defaultExecutor} setting.
+     *
+     * @see CffuFactory#defaultExecutor()
      * @see Cffu#defaultExecutor()
      */
     @Contract(pure = true)
@@ -45,7 +47,9 @@ public final class CffuFactoryBuilder {
     }
 
     /**
-     * @see CffuFactory#isForbidObtrudeMethods()
+     * Set {@code forbidObtrudeMethods} or not.
+     *
+     * @see CffuFactory#forbidObtrudeMethods()
      * @see Cffu#obtrudeValue(Object)
      * @see Cffu#obtrudeException(Throwable)
      */

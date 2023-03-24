@@ -23,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class CffuTest {
     private static CffuFactory cffuFactory;
 
+    private static CffuFactory forbidObtrudeMethodsCffuFactory;
+
     ////////////////////////////////////////
     // timeout control
     ////////////////////////////////////////
@@ -106,6 +108,36 @@ class CffuTest {
     }
 
     @Test
+    void test_forbidObtrudeMethods() {
+        assertFalse(cffuFactory.completedFuture(42).forbidObtrudeMethods());
+        assertTrue(forbidObtrudeMethodsCffuFactory.completedFuture(42).forbidObtrudeMethods());
+    }
+
+    @Test
+    void test_isMinimalStage() {
+        Cffu<Integer> cf = cffuFactory.completedFuture(42);
+        assertFalse(cf.isMinimalStage());
+
+        assertTrue(((Cffu<Integer>) cffuFactory.completedStage(42)).isMinimalStage());
+        assertTrue(((Cffu<Object>) cffuFactory.failedStage(rte)).isMinimalStage());
+
+        assertTrue(((Cffu<Integer>) cf.minimalCompletionStage()).isMinimalStage());
+
+        assertFalse(forbidObtrudeMethodsCffuFactory.completedFuture(42).isMinimalStage());
+        assertTrue(((Cffu<Integer>) forbidObtrudeMethodsCffuFactory.completedStage(42)).isMinimalStage());
+        assertTrue(((Cffu<Object>) forbidObtrudeMethodsCffuFactory.failedStage(rte)).isMinimalStage());
+    }
+
+    @EnabledForJreRange(min = JRE.JAVA_9)
+    @Test
+    void test_Java9_CompletableFuture_failedStage_asCffu() {
+        assertFalse(cffuFactory.asCffu(CompletableFuture.failedFuture(rte)).isMinimalStage());
+
+        assertTrue(cffuFactory.asCffu(CompletableFuture.completedStage(42)).isMinimalStage());
+        assertTrue(cffuFactory.asCffu(CompletableFuture.failedStage(rte)).isMinimalStage());
+    }
+
+    @Test
     void test_toString() {
         CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
         Cffu<Integer> cffu = cffuFactory.asCffu(cf);
@@ -123,7 +155,10 @@ class CffuTest {
     @BeforeAll
     static void beforeAll() {
         executorService = TestThreadPoolManager.createThreadPool("CffuTest");
+
         cffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder(executorService).build();
+        forbidObtrudeMethodsCffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder(executorService)
+                .forbidObtrudeMethods(true).build();
     }
 
     @AfterAll

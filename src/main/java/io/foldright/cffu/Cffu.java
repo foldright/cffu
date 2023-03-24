@@ -1518,7 +1518,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @param value the completion value
      * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
-     * @see CffuFactory#isForbidObtrudeMethods()
+     * @see CffuFactory#forbidObtrudeMethods()
      */
     public void obtrudeValue(@Nullable T value) {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
@@ -1535,7 +1535,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param ex the exception
      * @throws NullPointerException if the exception is null
      * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
-     * @see CffuFactory#isForbidObtrudeMethods()
+     * @see CffuFactory#forbidObtrudeMethods()
      */
     public void obtrudeException(Throwable ex) {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
@@ -1549,13 +1549,41 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * This class uses the {@code CffuFactory.defaultExecutor}
      * config by {@link CffuFactoryBuilder#newCffuFactoryBuilder(Executor)}.
      *
-     * @return the executor
+     * @return the default executor
+     * @see CffuFactory#defaultExecutor()
      * @see CffuFactoryBuilder#newCffuFactoryBuilder(Executor)
-     * @see CffuFactory#getDefaultExecutor()
      */
     @Contract(pure = true)
     public Executor defaultExecutor() {
         return fac.defaultExecutor;
+    }
+
+    /**
+     * Returns {@code forbidObtrudeMethods} or not.
+     *
+     * @see Cffu#obtrudeValue(Object)
+     * @see Cffu#obtrudeException(Throwable)
+     * @see CffuFactory#forbidObtrudeMethods()
+     * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
+     */
+    public boolean forbidObtrudeMethods() {
+        return fac.forbidObtrudeMethods();
+    }
+
+    /**
+     * Returns whether is a {@code minimal stage} or not.
+     * <p>
+     * create a {@code minimal stage} by below methods:
+     * <ul>
+     *   <li>{@link CffuFactory#completedStage(Object)}
+     *   <li>{@link CffuFactory#failedStage(Throwable)}
+     *   <li>{@link #minimalCompletionStage()}
+     *   <li>{@link CffuFactory#asCffu(CompletionStage)}, this method return a {@code minimal stage}
+     *     when input a{@code minimal stage}, otherwise return a normal stage.
+     * </ul>
+     */
+    public boolean isMinimalStage() {
+        return isMinimalStage;
     }
 
     /**
