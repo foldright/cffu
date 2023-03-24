@@ -266,7 +266,7 @@ class CompletableFutureApiCompatibilityTest {
     @Test
     @EnabledForJreRange(min = JRE.JAVA_12)
     void advancedMethods__exceptionallyCompose() throws Exception {
-        // for succeed
+        // for success
         CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
 
         assertEquals(42, cf.exceptionallyCompose(x -> CompletableFuture.completedFuture(43)).get());

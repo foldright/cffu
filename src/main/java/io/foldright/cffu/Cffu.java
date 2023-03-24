@@ -673,7 +673,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //
     // NOTE about advanced meaning:
     //   - `compose` methods, input function argument return CompletionStage
-    //   - handle succeed and failed result together(handle*/whenComplete*)
+    //   - handle successful and failed result together(handle*/whenComplete*)
     ////////////////////////////////////////////////////////////////////////////////
 
     /**

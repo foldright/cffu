@@ -116,7 +116,7 @@
   - 运行中（`Running`）
   - 取消（`Cancelled`）
   - 完成（`Completed`/`Done`）
-    - 成功（`Successed`/`Success`）/正常完成（`Completed Normally`）/成功完成（`Completed Successfully`）
+    - 成功（`Success`/`Successful`）/正常完成（`Completed Normally`）/成功完成（`Completed Successfully`）
     - 失败（`Failed`/`Fail`）/异常完成（`Completed Exceptionally`）
 - 业务流程（`Biz Flow`）、`CF`链（`Chain`）
   - 流程图（`Flow Graph`）、有向无环图/`DAG`

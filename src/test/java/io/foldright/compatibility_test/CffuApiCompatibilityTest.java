@@ -264,7 +264,7 @@ class CffuApiCompatibilityTest {
 
     @Test
     void advancedMethods__exceptionallyCompose() throws Exception {
-        // for succeed
+        // for success
         Cffu<Integer> cf = cffuFactory.completedFuture(42);
 
         assertEquals(42, cf.exceptionallyCompose(x -> cffuFactory.completedFuture(43)).get());
