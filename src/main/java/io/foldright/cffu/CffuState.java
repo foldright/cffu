@@ -1,6 +1,12 @@
 package io.foldright.cffu;
 
+import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
+import org.jetbrains.annotations.Contract;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.concurrent.Future;
+
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -10,42 +16,73 @@ import java.util.concurrent.Future;
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @see Future.State
  */
+@ParametersAreNonnullByDefault
+@ReturnValuesAreNonnullByDefault
 public enum CffuState {
     /**
      * The task has not completed.
      */
-    RUNNING,
+    RUNNING {
+        @Override
+        public Future.State toFutureState() {
+            return Future.State.RUNNING;
+        }
+    },
     /**
      * The task completed with a result.
      *
      * @see Cffu#resultNow()
      * @see Future#resultNow()
      */
-    SUCCESS,
+    SUCCESS {
+        @Override
+        public Future.State toFutureState() {
+            return Future.State.SUCCESS;
+        }
+    },
     /**
      * The task completed with an exception.
      *
      * @see Cffu#exceptionNow()
      * @see Future#exceptionNow()
      */
-    FAILED,
+    FAILED {
+        @Override
+        public Future.State toFutureState() {
+            return Future.State.FAILED;
+        }
+    },
     /**
      * The task was cancelled.
      *
      * @see Cffu#cancel(boolean)
      * @see Future#cancel(boolean)
      */
-    CANCELLED,
+    CANCELLED {
+        @Override
+        public Future.State toFutureState() {
+            return Future.State.CANCELLED;
+        }
+    },
 
     ;
 
     /**
+     * Convert {@link CffuState} to {@link Future.State}.
+     *
+     * @see #toCffuState(Future.State)
+     */
+    @Contract(pure = true)
+    public abstract Future.State toFutureState();
+
+    /**
      * Convert {@link Future.State} to {@link CffuState}.
      *
-     * @see #toFutureState(CffuState)
+     * @see #toFutureState()
      */
+    @Contract(pure = true)
     public static CffuState toCffuState(Future.State state) {
-        switch (state) {
+        switch (requireNonNull(state, "state argument is null")) {
             case RUNNING:
                 return CffuState.RUNNING;
             case SUCCESS:
@@ -55,27 +92,7 @@ public enum CffuState {
             case CANCELLED:
                 return CffuState.CANCELLED;
             default:
-                throw new IllegalStateException();
-        }
-    }
-
-    /**
-     * Convert {@link CffuState} to {@link Future.State}.
-     *
-     * @see #toCffuState(Future.State)
-     */
-    public static Future.State toFutureState(CffuState state) {
-        switch (state) {
-            case RUNNING:
-                return Future.State.RUNNING;
-            case SUCCESS:
-                return Future.State.SUCCESS;
-            case FAILED:
-                return Future.State.FAILED;
-            case CANCELLED:
-                return Future.State.CANCELLED;
-            default:
-                throw new IllegalStateException();
+                throw new IllegalStateException("unknown Future.State: " + state);
         }
     }
 }

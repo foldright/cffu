@@ -21,9 +21,9 @@ class CffuStateTest {
     @Test
     @EnabledForJreRange(min = JRE.JAVA_19)
     void toFutureState() {
-        assertEquals(Future.State.RUNNING, CffuState.toFutureState(CffuState.RUNNING));
-        assertEquals(Future.State.SUCCESS, CffuState.toFutureState(CffuState.SUCCESS));
-        assertEquals(Future.State.FAILED, CffuState.toFutureState(CffuState.FAILED));
-        assertEquals(Future.State.CANCELLED, CffuState.toFutureState(CffuState.CANCELLED));
+        assertEquals(Future.State.RUNNING, CffuState.RUNNING.toFutureState());
+        assertEquals(Future.State.SUCCESS, CffuState.SUCCESS.toFutureState());
+        assertEquals(Future.State.FAILED, CffuState.FAILED.toFutureState());
+        assertEquals(Future.State.CANCELLED, CffuState.CANCELLED.toFutureState());
     }
 }
