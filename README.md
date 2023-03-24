@@ -8,16 +8,17 @@
 <p align="center">
 <a href="https://github.com/foldright/cffu/actions/workflows/ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/ci.yaml?branch=main&logo=github&logoColor=white" alt="Github Workflow Build Status"></a>
 <a href="https://app.codecov.io/gh/foldright/cffu/tree/main"><img src="https://img.shields.io/codecov/c/github/foldright/cffu/main?logo=codecov&logoColor=white" alt="Codecov"></a>
+<a href="https://openjdk.java.net/"><img src="https://img.shields.io/badge/Java-8+-green?logo=openjdk&logoColor=white" alt="Java support"></a>
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/foldright/cffu?color=4D7A97&logo=apache" alt="License"></a>
 <a href="https://foldright.io/cffu/apidocs/"><img src="https://img.shields.io/github/release/foldright/cffu?label=javadoc&color=3d7c47&logo=microsoft-academic&logoColor=white" alt="Javadocs"></a>
-<a href="https://central.sonatype.com/artifact/io.foldright/cffu/0.1.0/versions"><img src="https://img.shields.io/maven-central/v/com.foldright/cffu?color=2d545e&logo=apache-maven&logoColor=white" alt="Maven Central"></a>
-<a href="https://openjdk.java.net/"><img src="https://img.shields.io/badge/Java-8+-green?logo=openjdk&logoColor=white" alt="Java support"></a>
+<a href="https://central.sonatype.com/artifact/io.foldright/cffu/0.1.0/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
+<a href="https://github.com/foldright/cffu/releases"><img src="https://img.shields.io/github/release/foldright/cffu.svg" alt="GitHub release"></a>
 <a href="https://github.com/foldright/cffu/stargazers"><img src="https://img.shields.io/github/stars/foldright/cffu" alt="GitHub Stars"></a>
 <a href="https://github.com/foldright/cffu/fork"><img src="https://img.shields.io/github/forks/foldright/cffu" alt="GitHub Forks"></a>
 <a href="https://github.com/foldright/cffu/issues"><img src="https://img.shields.io/github/issues/foldright/cffu" alt="GitHub issues"></a>
 <a href="https://github.com/foldright/cffu/graphs/contributors"><img src="https://img.shields.io/github/contributors/foldright/cffu" alt="GitHub Contributors"></a>
-<a href="https://gitpod.io/#https://github.com/foldright/cffu"><img src="https://img.shields.io/badge/Gitpod-ready--to--code-green?label=gitpod&logo=gitpod&logoColor=white" alt="gitpod: Ready to Code"></a>
 <a href="https://github.com/foldright/cffu"><img src="https://img.shields.io/github/repo-size/foldright/cffu" alt="GitHub repo size"></a>
+<a href="https://gitpod.io/#https://github.com/foldright/cffu"><img src="https://img.shields.io/badge/Gitpod-ready--to--code-green?label=gitpod&logo=gitpod&logoColor=white" alt="gitpod: Ready to Code"></a>
 </p>
 
 <a href="#dummy"><img src="docs/shifu1.png" width="20%" align="right" alt="shifu" /></a>
@@ -115,7 +116,7 @@
   - 运行中（`Running`）
   - 取消（`Cancelled`）
   - 完成（`Completed`/`Done`）
-    - 成功（`Successed`/`Success`）/正常完成（`Completed Normally`）/成功完成（`Completed Successfully`）
+    - 成功（`Success`/`Successful`）/正常完成（`Completed Normally`）/成功完成（`Completed Successfully`）
     - 失败（`Failed`/`Fail`）/异常完成（`Completed Exceptionally`）
 - 业务流程（`Biz Flow`）、`CF`链（`Chain`）
   - 流程图（`Flow Graph`）、有向无环图/`DAG`
@@ -406,7 +407,7 @@ implementation("io.foldright:cffu:0.1.0")
 implementation 'io.foldright:cffu:0.1.0'
 ```
 
-可以在 [search.maven.org](https://central.sonatype.com/artifact/io.foldright/cffu/0.1.0/versions) 查看可用的版本。
+可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/0.1.0/versions) 查看可用的最新版本。
 
 # 👋 ∞、关于库名
 

@@ -351,6 +351,7 @@ class CffuFactoryTest {
 
     @Test
     void test_cffuArrayUnwrap() {
+        @SuppressWarnings("unchecked")
         CompletableFuture<Integer>[] cfs = new CompletableFuture[]{
                 CompletableFuture.completedFuture(n),
                 CompletableFuture.completedFuture(another_n)
@@ -392,8 +393,12 @@ class CffuFactoryTest {
 
     @Test
     void test_getter() {
-        assertSame(executorService, cffuFactory.getDefaultExecutor());
-        assertFalse(cffuFactory.isForbidObtrudeMethods());
+        assertSame(executorService, cffuFactory.defaultExecutor());
+        assertFalse(cffuFactory.forbidObtrudeMethods());
+
+        CffuFactory fac = CffuFactoryBuilder.newCffuFactoryBuilder(anotherExecutorService).forbidObtrudeMethods(true).build();
+        assertSame(anotherExecutorService, fac.defaultExecutor());
+        assertTrue(fac.forbidObtrudeMethods());
     }
 
     ////////////////////////////////////////////////////////////////////////////////

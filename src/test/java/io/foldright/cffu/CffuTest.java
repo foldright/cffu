@@ -23,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class CffuTest {
     private static CffuFactory cffuFactory;
 
+    private static CffuFactory forbidObtrudeMethodsCffuFactory;
+
     ////////////////////////////////////////
     // timeout control
     ////////////////////////////////////////
@@ -71,6 +73,18 @@ class CffuTest {
         }
     }
 
+    @Test
+    void test_cffuState() {
+        Cffu<Object> incomplete = cffuFactory.newIncompleteCffu();
+
+        assertEquals(CffuState.RUNNING, incomplete.cffuState());
+        assertEquals(CffuState.SUCCESS, cffuFactory.completedFuture(42).cffuState());
+        assertEquals(CffuState.FAILED, cffuFactory.failedFuture(rte).cffuState());
+
+        incomplete.cancel(false);
+        assertEquals(CffuState.CANCELLED, incomplete.cffuState());
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# nonfunctional methods
     //    vs. user functional API
@@ -96,13 +110,43 @@ class CffuTest {
         assertSame(cf, cffu.cffuUnwrap());
     }
 
-    @EnabledForJreRange(min = JRE.JAVA_9)
     @Test
+    @EnabledForJreRange(min = JRE.JAVA_9)
     void test_cffuUnwrap_9_completedStage() {
         CompletionStage<Integer> stage = CompletableFuture.completedStage(n);
         Cffu<Integer> cffu = cffuFactory.asCffu(stage);
 
         assertSame(stage, cffu.cffuUnwrap());
+    }
+
+    @Test
+    void test_forbidObtrudeMethods() {
+        assertFalse(cffuFactory.completedFuture(42).forbidObtrudeMethods());
+        assertTrue(forbidObtrudeMethodsCffuFactory.completedFuture(42).forbidObtrudeMethods());
+    }
+
+    @Test
+    void test_isMinimalStage() {
+        Cffu<Integer> cf = cffuFactory.completedFuture(42);
+        assertFalse(cf.isMinimalStage());
+
+        assertTrue(((Cffu<Integer>) cffuFactory.completedStage(42)).isMinimalStage());
+        assertTrue(((Cffu<Object>) cffuFactory.failedStage(rte)).isMinimalStage());
+
+        assertTrue(((Cffu<Integer>) cf.minimalCompletionStage()).isMinimalStage());
+
+        assertFalse(forbidObtrudeMethodsCffuFactory.completedFuture(42).isMinimalStage());
+        assertTrue(((Cffu<Integer>) forbidObtrudeMethodsCffuFactory.completedStage(42)).isMinimalStage());
+        assertTrue(((Cffu<Object>) forbidObtrudeMethodsCffuFactory.failedStage(rte)).isMinimalStage());
+    }
+
+    @Test
+    @EnabledForJreRange(min = JRE.JAVA_9)
+    void test_Java9_CompletableFuture_failedStage_asCffu() {
+        assertFalse(cffuFactory.asCffu(CompletableFuture.failedFuture(rte)).isMinimalStage());
+
+        assertTrue(cffuFactory.asCffu(CompletableFuture.completedStage(42)).isMinimalStage());
+        assertTrue(cffuFactory.asCffu(CompletableFuture.failedStage(rte)).isMinimalStage());
     }
 
     @Test
@@ -123,7 +167,10 @@ class CffuTest {
     @BeforeAll
     static void beforeAll() {
         executorService = TestThreadPoolManager.createThreadPool("CffuTest");
+
         cffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder(executorService).build();
+        forbidObtrudeMethodsCffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder(executorService)
+                .forbidObtrudeMethods(true).build();
     }
 
     @AfterAll
