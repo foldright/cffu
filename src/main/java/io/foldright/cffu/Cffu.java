@@ -933,12 +933,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# Read(explicitly) methods
+    //# Read(explicitly) methods of CompletableFuture
     //
-    //    - get()               // BLOCKING
-    //    - get(timeout, unit)  // BLOCKING
-    //    - join()              // BLOCKING
-    //    - cffuJoin()          // BLOCKING
+    //    - get()               // BLOCKING!
+    //    - get(timeout, unit)  // BLOCKING!
+    //    - join()              // BLOCKING!
+    //    - cffuJoin()          // BLOCKING!
     //    - getNow(T valueIfAbsent)
     //    - resultNow()
     //    - exceptionNow()
@@ -947,6 +947,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //    - isCompletedExceptionally()
     //    - isCancelled()
     //    - state()
+    //    - cffuState()
     //
     // NOTE about ExecutionException or CompletionException when the computation threw an exception:
     //   - get methods throw ExecutionException(checked exception)
@@ -1228,6 +1229,28 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
+     * Returns the computation state, this method just invoke without java version compatibility logic,
+     * if you need this function in {@code java 18-}, use {@link #cffuState()} instead.
+     * <p>
+     * {@link CompletableFuture#state} is new method since Java 19,
+     * this method should have compatibility logic for Java version;
+     * But the return type {@link Future.State} is also added since Java 19,
+     * so it's IMPOSSIBLE to work by compatibility logic of wrapper class(`Cffu`).
+     *
+     * @return the computation state
+     * @see #cffuState()
+     * @see Future.State
+     * @see CompletableFuture#state()
+     */
+    @Contract(pure = true)
+    @Override
+    public Future.State state() {
+        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+
+        return cf.state();
+    }
+
+    /**
      * Returns the computation state({@link CffuState}).
      *
      * @return the computation state
@@ -1265,30 +1288,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         }
     }
 
-    /**
-     * Returns the computation state, this method just invoke without java version compatibility logic,
-     * if you need this function in {@code java 18-}, use {@link #cffuState()} instead.
-     * <p>
-     * {@link CompletableFuture#state} is new method since Java 19,
-     * this method should have compatibility logic for Java version;
-     * But the return type {@link Future.State} is also added since Java 19,
-     * so it's IMPOSSIBLE to work by compatibility logic of wrapper class(`Cffu`).
-     *
-     * @return the computation state
-     * @see #cffuState()
-     * @see Future.State
-     * @see CompletableFuture#state()
-     */
-    @Contract(pure = true)
-    @Override
-    public Future.State state() {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
-
-        return cf.state();
-    }
-
     ////////////////////////////////////////////////////////////////////////////////
-    //# Write methods
+    //# Write methods of CompletableFuture
     //
     //    - complete*()
     //    - completeExceptionally(ex)
@@ -1421,10 +1422,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# re-config methods
+    //# Cffu Re-Config methods
     //
     //    - minimalCompletionStage()
     //    - resetCffuFactory()
+    //
+    //    - toCompletableFuture()
+    //    - copy()
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -1478,23 +1482,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         return new Cffu<>(cffuFactory, this.isMinimalStage, this.cf);
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
-    //# nonfunctional methods
-    //    vs. user functional API
-    //
-    //    - toCompletableFuture()
-    //    - cffuUnwrap()
-    //    - copy()
-    //
-    //    - obtrudeValue(value)
-    //    - obtrudeException(ex)
-    //
-    //    - defaultExecutor()
-    //    - getNumberOfDependents()
-    //
-    //    - newIncompleteFuture()
-    ////////////////////////////////////////////////////////////////////////////////
-
     /**
      * Returns a {@link CompletableFuture} maintaining the same completion properties as this stage.
      * <p>
@@ -1513,23 +1500,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public CompletableFuture<T> toCompletableFuture() {
         return cf.toCompletableFuture();
-    }
-
-    /**
-     * Returns the underneath wrapped CompletableFuture.
-     * <p>
-     * {@link CffuFactory#asCffu(CompletionStage)} is inverse operation to this method.
-     * {@link CffuFactory#cffuArrayUnwrap(Cffu[])} is the batch operation to this method.
-     *
-     * @return the underneath wrapped CompletableFuture
-     * @see CffuFactory#asCffu(CompletionStage)
-     * @see CffuFactory#cffuArrayUnwrap(Cffu[])
-     * @see #toCompletableFuture()
-     */
-    @Contract(pure = true)
-    @SuppressFBWarnings("EI_EXPOSE_REP")
-    public CompletableFuture<T> cffuUnwrap() {
-        return cf;
     }
 
     /**
@@ -1554,38 +1524,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         return cf.thenApply(Function.identity());
     }
 
-    /**
-     * Forcibly sets or resets the value subsequently returned by method {@link #get()} and related methods,
-     * whether or not already completed. This method is designed for use only in error recovery actions,
-     * and even in such situations may result in ongoing dependent completions using established versus overwritten outcomes.
-     *
-     * @param value the completion value
-     * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
-     * @see CffuFactory#forbidObtrudeMethods()
-     */
-    public void obtrudeValue(@Nullable T value) {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
-        if (fac.forbidObtrudeMethods) throw new UnsupportedOperationException("obtrudeValue is forbidden by cffu");
-
-        cf.obtrudeValue(value);
-    }
-
-    /**
-     * Forcibly causes subsequent invocations of method {@link #get()} and related methods to throw the given exception,
-     * whether or not already completed. This method is designed for use only in error recovery actions,
-     * and even in such situations may result in ongoing dependent completions using established versus overwritten outcomes.
-     *
-     * @param ex the exception
-     * @throws NullPointerException if the exception is null
-     * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
-     * @see CffuFactory#forbidObtrudeMethods()
-     */
-    public void obtrudeException(Throwable ex) {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
-        if (fac.forbidObtrudeMethods) throw new UnsupportedOperationException("obtrudeException is forbidden by cffu");
-
-        cf.obtrudeException(ex);
-    }
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Getter methods of Cffu properties
+    //
+    //    - defaultExecutor()
+    //    - forbidObtrudeMethods()
+    //    - isMinimalStage()
+    ////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Returns the default Executor used for async methods that do not specify an Executor.
@@ -1629,6 +1574,30 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         return isMinimalStage;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Inspection methods of Cffu
+    //
+    //    - cffuUnwrap()
+    //    - getNumberOfDependents()
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns the underneath wrapped CompletableFuture.
+     * <p>
+     * {@link CffuFactory#asCffu(CompletionStage)} is inverse operation to this method.
+     * {@link CffuFactory#cffuArrayUnwrap(Cffu[])} is the batch operation to this method.
+     *
+     * @return the underneath wrapped CompletableFuture
+     * @see CffuFactory#asCffu(CompletionStage)
+     * @see CffuFactory#cffuArrayUnwrap(Cffu[])
+     * @see #toCompletableFuture()
+     */
+    @Contract(pure = true)
+    @SuppressFBWarnings("EI_EXPOSE_REP")
+    public CompletableFuture<T> cffuUnwrap() {
+        return cf;
+    }
+
     /**
      * Returns the estimated number of Cffus whose completions are awaiting completion of this Cffu.
      * This method is designed for use in monitoring system state, not for synchronization control.
@@ -1641,6 +1610,50 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
 
         return cf.getNumberOfDependents();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Other dangerous methods of CompletableFuture
+    //
+    //    - obtrudeValue(value)
+    //    - obtrudeException(ex)
+    //
+    //# methods of CompletableFuture for API compatibility
+    //
+    //    - newIncompleteFuture()
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Forcibly sets or resets the value subsequently returned by method {@link #get()} and related methods,
+     * whether or not already completed. This method is designed for use only in error recovery actions,
+     * and even in such situations may result in ongoing dependent completions using established versus overwritten outcomes.
+     *
+     * @param value the completion value
+     * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
+     * @see CffuFactory#forbidObtrudeMethods()
+     */
+    public void obtrudeValue(@Nullable T value) {
+        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        if (fac.forbidObtrudeMethods) throw new UnsupportedOperationException("obtrudeValue is forbidden by cffu");
+
+        cf.obtrudeValue(value);
+    }
+
+    /**
+     * Forcibly causes subsequent invocations of method {@link #get()} and related methods to throw the given exception,
+     * whether or not already completed. This method is designed for use only in error recovery actions,
+     * and even in such situations may result in ongoing dependent completions using established versus overwritten outcomes.
+     *
+     * @param ex the exception
+     * @throws NullPointerException if the exception is null
+     * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
+     * @see CffuFactory#forbidObtrudeMethods()
+     */
+    public void obtrudeException(Throwable ex) {
+        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        if (fac.forbidObtrudeMethods) throw new UnsupportedOperationException("obtrudeException is forbidden by cffu");
+
+        cf.obtrudeException(ex);
     }
 
     /**
