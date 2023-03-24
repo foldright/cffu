@@ -20,6 +20,7 @@ readonly JDK_VERSIONS=(
   17
   "$default_build_jdk_version"
   20
+  21
 )
 readonly default_jh_var_name="JAVA${default_build_jdk_version}_HOME"
 
