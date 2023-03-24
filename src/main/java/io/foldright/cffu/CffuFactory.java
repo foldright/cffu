@@ -271,6 +271,8 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public <T> Cffu<T> asCffu(CompletionStage<T> stage) {
+        requireNonNull(stage, "stage is null");
+
         if ("java.util.concurrent.CompletableFuture$MinimalStage".equals(stage.getClass().getName())) {
             return newMin((CompletableFuture<T>) stage);
         } else if (stage instanceof CompletableFuture) {
