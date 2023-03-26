@@ -1041,7 +1041,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * is same as:
      *
-     * <pre>{@code result = cffu.copy() // defensive copy to avoid write this cffu unexpectedly
+     * <pre>{@code result = cffu.copy() // defensive copy to avoid writing this cffu unexpectedly
      *     .orTimeout(timeout, unit)
      *     .join();
      * }</pre>
