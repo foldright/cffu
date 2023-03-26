@@ -100,6 +100,14 @@ val testForkJoinPoolExecutor: ExecutorService =
 @AutoScan
 object InitTestThreadPoolsProjectListener : BeforeProjectListener, AfterProjectListener {
     override suspend fun beforeProject() {
+        println("============================================================")
+        println("Env Infos:")
+        println("Parallelism of ForkJoinPool:     ${ForkJoinPool.getCommonPoolParallelism()}")
+        println("Available Processors of Runtime: ${Runtime.getRuntime().availableProcessors()}")
+        println("Java Home:                       ${System.getProperty("java.home")}")
+        println("Java Version:                    ${System.getProperty("java.version")}")
+        println("============================================================")
+
         warmupExecutorService(testThreadPoolExecutor, testForkJoinPoolExecutor)
     }
 
