@@ -14,7 +14,7 @@ import kotlin.random.Random
 import kotlin.random.nextULong
 
 
-const val THREAD_COUNT_OF_POOL = 10
+const val THREAD_COUNT_OF_POOL = 5
 
 @JvmOverloads
 fun createThreadPool(threadNamePrefix: String, isForkJoin: Boolean = false): ExecutorService {
