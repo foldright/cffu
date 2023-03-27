@@ -31,7 +31,7 @@ import static java.util.Objects.requireNonNull;
  * About factory methods conventions of {@link CffuFactory}:
  * <ul>
  *   <li>factory methods return {@link Cffu} instead of {@link CompletableFuture}.
- *   <li>new methods, aka. no equivalent method in {@link CompletableFuture}, prefix method name with `cffu`.
+ *   <li>new methods, aka. no equivalent method in {@link CompletableFuture}, prefix method name with {@code cffu}.
  *   <li>only provide varargs methods for multiply Cffu/CF input arguments;
  *     if you have {@code List} input, use static util methods {@link #cffuListToArray(List)}
  *     or {@link #completableFutureListToArray(List)} to convert it to array first.
@@ -238,7 +238,9 @@ public final class CffuFactory {
     //# Factory Methods
     //
     //    - newIncompleteCffu: equivalent to CompletableFuture constructor
-    //    - asCffu: wrap an existed CompletableFuture/CompletionStage to Cffu
+    //
+    //    - asCffu:      CF/CompletionStage -> Cffu
+    //    - asCffuArray: CF/CompletionStage[] -> Cffu[]
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -263,7 +265,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Wrap an existed {@link CompletionStage} to {@link Cffu}.
+     * Wrap an existed {@link CompletableFuture}/{@link CompletionStage} to {@link Cffu}.
      * for {@link CompletableFuture} class instances,
      * {@link Cffu#cffuUnwrap()} is the inverse operation to this method.
      * <p>
@@ -295,7 +297,7 @@ public final class CffuFactory {
     }
 
     /**
-     * A convenient util method for wrap input {@link CompletionStage} array element
+     * A convenient util method for wrap input {@link CompletableFuture}/{@link CompletionStage} array element
      * using {@link #asCffu(CompletionStage)}.
      *
      * @see #asCffu(CompletionStage)
@@ -380,6 +382,9 @@ public final class CffuFactory {
     /**
      * Provided this overloaded method just for resolving "allOf is ambiguous" problem
      * when call {@code allOf} with empty arguments: {@code cffuFactory.allOf()}.
+     *
+     * @see #allOf(Cffu[])
+     * @see #allOf(CompletableFuture[])
      */
     @Contract(pure = true)
     public Cffu<Void> allOf() {
@@ -431,6 +436,9 @@ public final class CffuFactory {
     /**
      * Provided this overloaded method just for resolving "anyOf is ambiguous" problem
      * when call {@code anyOf} with empty arguments: {@code cffuFactory.anyOf()}.
+     *
+     * @see #anyOf(Cffu[])
+     * @see #anyOf(CompletableFuture[])
      */
     @Contract(pure = true)
     public Cffu<Object> anyOf() {
@@ -540,6 +548,9 @@ public final class CffuFactory {
     /**
      * Provided this overloaded method just for resolving "cffuAllOf is ambiguous" problem
      * when call {@code cffuAllOf} with empty arguments: {@code cffuFactory.cffuAllOf()}.
+     *
+     * @see #cffuAllOf(Cffu[])
+     * @see #cffuAllOf(Cffu[])
      */
     @Contract(pure = true)
     public <T> Cffu<List<T>> cffuAllOf() {
@@ -580,6 +591,9 @@ public final class CffuFactory {
     /**
      * Provided this overloaded method just for resolving "cffuAnyOf is ambiguous" problem
      * when call {@code cffuAnyOf} with empty arguments: {@code cffuFactory.cffuAnyOf()}.
+     *
+     * @see #cffuAnyOf(Cffu[])
+     * @see #cffuAnyOf(CompletableFuture[])
      */
     @Contract(pure = true)
     public <T> Cffu<T> cffuAnyOf() {
@@ -800,11 +814,9 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
     //# Conversion Methods
     //
-    //    - asCffu: CF -> Cffu
-    //    - asCffuArray: CF[] -> Cffu[]
-    //    - toCompletableFutureArray: Cffu -> CF
+    //    - toCompletableFutureArray:     Cffu -> CF
     //
-    //    - cffuListToArray: List<Cffu> -> Cffu[]
+    //    - cffuListToArray:              List<Cffu> -> Cffu[]
     //    - completableFutureListToArray: List<CF> -> CF[]
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -904,12 +916,11 @@ public final class CffuFactory {
     }
 
     /**
-     * hold {@link #ASYNC_POOL} as static field to lazy load.
+     * hold {@link #ASYNC_POOL} as field of static inner class for lazy loading(init only when needed).
      */
     private static class AsyncPoolHolder {
         /**
-         * Default executor -- ForkJoinPool.commonPool()
-         * unless it cannot support parallelism.
+         * Default executor -- ForkJoinPool.commonPool() unless it cannot support parallelism.
          */
         private static final Executor ASYNC_POOL = USE_COMMON_POOL ?
                 ForkJoinPool.commonPool() : new ThreadPerTaskExecutor();
@@ -937,7 +948,7 @@ public final class CffuFactory {
         }
         IS_JAVA9_PLUS = b;
 
-        CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
+        final CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
         try {
             // `exceptionallyCompose` is the new method of CompletableFuture since java 12
             cf.exceptionallyCompose(x -> cf);

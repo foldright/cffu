@@ -1396,12 +1396,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns the computation state, this method just invoke without java version compatibility logic,
-     * if you need this function in {@code java 18-}, use {@link #cffuState()} instead.
+     * if you need this function backport into old {@code java 18-}, use {@link #cffuState()} instead.
      * <p>
+     * <b><i>NOTE:<br></i></b>
      * {@link CompletableFuture#state} is new method since Java 19,
-     * this method should have compatibility logic for Java version;
+     * this method should have compatibility logic for old Java version;
      * But the return type {@link Future.State} is also added since Java 19,
-     * so it's IMPOSSIBLE to work by compatibility logic of wrapper class(`Cffu`).
+     * so it's IMPOSSIBLE to backport by compatibility logic of wrapper class({@code Cffu}).
      *
      * @return the computation state
      * @see #cffuState()
