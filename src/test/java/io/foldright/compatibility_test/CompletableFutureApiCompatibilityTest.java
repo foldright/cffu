@@ -10,6 +10,7 @@ package io.foldright.compatibility_test;
 ////////////////////////////////////////////////////////////////////////////////
 
 import io.foldright.test_utils.TestThreadPoolManager;
+import io.foldright.test_utils.TestUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -206,7 +207,7 @@ class CompletableFutureApiCompatibilityTest {
     @Test
     void errorHandling_methods() throws Exception {
         CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
-        CompletableFuture<Object> failed = CompatibilityTestHelper.newFailedCompletableFuture(rte);
+        CompletableFuture<Object> failed = TestUtils.safeNewFailedCompletableFuture(rte);
 
         // exceptionally
         assertEquals(42, cf.exceptionally(t -> 43).get());
@@ -221,7 +222,7 @@ class CompletableFutureApiCompatibilityTest {
     @EnabledForJreRange(min = JRE.JAVA_12)
     void errorHandling_methods_Java9() throws Exception {
         CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
-        CompletableFuture<Object> failed = CompatibilityTestHelper.newFailedCompletableFuture(rte);
+        CompletableFuture<Object> failed = TestUtils.safeNewFailedCompletableFuture(rte);
 
         assertEquals(42, cf.exceptionallyAsync(t -> 43).get());
         assertEquals(43, failed.exceptionallyAsync(t -> 43).get());
@@ -274,7 +275,7 @@ class CompletableFutureApiCompatibilityTest {
         assertEquals(42, cf.exceptionallyComposeAsync(x -> CompletableFuture.completedFuture(45)).get());
 
         // for failed
-        CompletableFuture<Integer> failed = CompatibilityTestHelper.newFailedCompletableFuture(rte);
+        CompletableFuture<Integer> failed = TestUtils.safeNewFailedCompletableFuture(rte);
 
         assertEquals(43, failed.exceptionallyCompose(x -> CompletableFuture.completedFuture(43)).get());
         assertEquals(44, failed.exceptionallyComposeAsync(x -> CompletableFuture.completedFuture(44)).get());
@@ -304,7 +305,7 @@ class CompletableFutureApiCompatibilityTest {
     @Test
     void readExplicitlyMethods() throws Exception {
         CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
-        CompletableFuture<Object> failed = CompatibilityTestHelper.newFailedCompletableFuture(rte);
+        CompletableFuture<Object> failed = TestUtils.safeNewFailedCompletableFuture(rte);
 
         Integer r = cf.get();
         assertEquals(42, r);
@@ -359,7 +360,7 @@ class CompletableFutureApiCompatibilityTest {
     @EnabledForJreRange(min = JRE.JAVA_19)
     void readExplicitlyMethods_Java19() throws Exception {
         CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
-        CompletableFuture<Object> failed = CompatibilityTestHelper.newFailedCompletableFuture(rte);
+        CompletableFuture<Object> failed = TestUtils.safeNewFailedCompletableFuture(rte);
         Integer r = cf.get();
         assertEquals(42, r);
 
@@ -386,7 +387,7 @@ class CompletableFutureApiCompatibilityTest {
     @EnabledForJreRange(min = JRE.JAVA_19) /* GEN_MARK_KEEP */
     void readExplicitlyMethods_Java19_CanNotCompatible() {
         CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
-        CompletableFuture<Object> failed = CompatibilityTestHelper.newFailedCompletableFuture(rte);
+        CompletableFuture<Object> failed = TestUtils.safeNewFailedCompletableFuture(rte);
         CompletableFuture<Integer> incomplete = new CompletableFuture<>();
 
         // state

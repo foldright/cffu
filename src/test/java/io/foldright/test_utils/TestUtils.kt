@@ -32,6 +32,23 @@ fun <T, E : Throwable> createExceptionallyCompletedFutureWithSleep(ex: E): Compl
         throw ex
     }
 
+/**
+ * safe means works under java 8
+ */
+fun <T> safeNewFailedCompletableFuture(t: Throwable): CompletableFuture<T> {
+    val failed: CompletableFuture<T> = CompletableFuture<T>()
+    failed.completeExceptionally(t)
+    return failed
+}
+
+/**
+ * safe means works under java 8
+ */
+fun <T> safeNewFailedCffu(t: Throwable): Cffu<T>? {
+    return newCffuFactoryBuilder(commonPool()).build().failedFuture(t)
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Simple util functions
 ////////////////////////////////////////////////////////////////////////////////

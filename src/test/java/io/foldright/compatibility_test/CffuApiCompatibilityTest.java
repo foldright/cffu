@@ -13,6 +13,7 @@ import io.foldright.cffu.Cffu;
 import io.foldright.cffu.CffuFactory;
 import io.foldright.cffu.CffuFactoryBuilder;
 import io.foldright.test_utils.TestThreadPoolManager;
+import io.foldright.test_utils.TestUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -207,7 +208,7 @@ class CffuApiCompatibilityTest {
     @Test
     void errorHandling_methods() throws Exception {
         Cffu<Integer> cf = cffuFactory.completedFuture(42);
-        Cffu<Object> failed = CompatibilityTestHelper.newFailedCffu(rte);
+        Cffu<Object> failed = TestUtils.safeNewFailedCffu(rte);
 
         // exceptionally
         assertEquals(42, cf.exceptionally(t -> 43).get());
@@ -221,7 +222,7 @@ class CffuApiCompatibilityTest {
     @Test
     void errorHandling_methods_Java9() throws Exception {
         Cffu<Integer> cf = cffuFactory.completedFuture(42);
-        Cffu<Object> failed = CompatibilityTestHelper.newFailedCffu(rte);
+        Cffu<Object> failed = TestUtils.safeNewFailedCffu(rte);
 
         assertEquals(42, cf.exceptionallyAsync(t -> 43).get());
         assertEquals(43, failed.exceptionallyAsync(t -> 43).get());
@@ -272,7 +273,7 @@ class CffuApiCompatibilityTest {
         assertEquals(42, cf.exceptionallyComposeAsync(x -> cffuFactory.completedFuture(45)).get());
 
         // for failed
-        Cffu<Integer> failed = CompatibilityTestHelper.newFailedCffu(rte);
+        Cffu<Integer> failed = TestUtils.safeNewFailedCffu(rte);
 
         assertEquals(43, failed.exceptionallyCompose(x -> cffuFactory.completedFuture(43)).get());
         assertEquals(44, failed.exceptionallyComposeAsync(x -> cffuFactory.completedFuture(44)).get());
@@ -302,7 +303,7 @@ class CffuApiCompatibilityTest {
     @Test
     void readExplicitlyMethods() throws Exception {
         Cffu<Integer> cf = cffuFactory.completedFuture(42);
-        Cffu<Object> failed = CompatibilityTestHelper.newFailedCffu(rte);
+        Cffu<Object> failed = TestUtils.safeNewFailedCffu(rte);
 
         Integer r = cf.get();
         assertEquals(42, r);
@@ -356,7 +357,7 @@ class CffuApiCompatibilityTest {
     @Test
     void readExplicitlyMethods_Java19() throws Exception {
         Cffu<Integer> cf = cffuFactory.completedFuture(42);
-        Cffu<Object> failed = CompatibilityTestHelper.newFailedCffu(rte);
+        Cffu<Object> failed = TestUtils.safeNewFailedCffu(rte);
         Integer r = cf.get();
         assertEquals(42, r);
 
@@ -383,7 +384,7 @@ class CffuApiCompatibilityTest {
     @EnabledForJreRange(min = JRE.JAVA_19) /* GEN_MARK_KEEP */
     void readExplicitlyMethods_Java19_CanNotCompatible() {
         Cffu<Integer> cf = cffuFactory.completedFuture(42);
-        Cffu<Object> failed = CompatibilityTestHelper.newFailedCffu(rte);
+        Cffu<Object> failed = TestUtils.safeNewFailedCffu(rte);
         Cffu<Integer> incomplete = cffuFactory.newIncompleteCffu();
 
         // state
