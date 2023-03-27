@@ -4,6 +4,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.foldright.cffu.tuple.Tuple2;
+import io.foldright.cffu.tuple.Tuple3;
+import io.foldright.cffu.tuple.Tuple4;
+import io.foldright.cffu.tuple.Tuple5;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.Contract;
 
@@ -373,6 +377,168 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
                                            BiFunction<? super T, ? super U, ? extends V> fn,
                                            Executor executor) {
         return reset0(cf.thenCombineAsync(other, fn, executor));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# convenient `cffuCombine` methods:
+    //  providing these method is convenient for method chaining
+    //
+    //    - cffuCombine(Cffu...)
+    //    - cffuCombine(CompletableFuture...)
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Same as {@link CffuFactory#cffuCombine(Cffu, Cffu)}, providing this method is convenient for method chaining.
+     * <p>
+     * call this method
+     * <p>
+     * {@code combinedCffu = cffu.cffuCombine(cffu2);}
+     * <p>
+     * is same as:
+     * <p>
+     * {@code combinedCffu = cffu.cffuFactory().cffuCombine(cffu, cffu2);}
+     *
+     * @return the new Cffu
+     * @see CffuFactory#cffuCombine(Cffu, Cffu)
+     */
+    public <T2> Cffu<Tuple2<T, T2>> cffuCombine(Cffu<T2> cf2) {
+        return fac.cffuCombine(this, cf2);
+    }
+
+    /**
+     * Same as {@link CffuFactory#cffuCombine(CompletableFuture, CompletableFuture)},
+     * providing this method is convenient for method chaining.
+     * <p>
+     * call this method
+     * <p>
+     * {@code combinedCffu = cffu.cffuCombine(cf2);}
+     * <p>
+     * is same as:
+     * <p>
+     * {@code combinedCffu = cffu.cffuFactory().cffuCombine(cffu.toCompletableFuture(), cf2);}
+     *
+     * @return the new Cffu
+     * @see CffuFactory#cffuCombine(CompletableFuture, CompletableFuture)
+     */
+    public <T2> Cffu<Tuple2<T, T2>> cffuCombine(CompletableFuture<T2> cf2) {
+        return fac.cffuCombine(toCompletableFuture(), cf2);
+    }
+
+    /**
+     * Same as {@link CffuFactory#cffuCombine(Cffu, Cffu, Cffu)},
+     * providing this method is convenient for method chaining.
+     * <p>
+     * call this method
+     * <p>
+     * {@code combinedCffu = cffu.cffuCombine(cffu2, cffu3);}
+     * <p>
+     * is same as:
+     * <p>
+     * {@code combinedCffu = cffu.cffuFactory().cffuCombine(cffu, cffu2, cffu3);}
+     *
+     * @return the new Cffu
+     * @see CffuFactory#cffuCombine(Cffu, Cffu, Cffu)
+     */
+    public <T2, T3> Cffu<Tuple3<T, T2, T3>> cffuCombine(Cffu<T2> cf2, Cffu<T3> cf3) {
+        return fac.cffuCombine(this, cf2, cf3);
+    }
+
+    /**
+     * Same as {@link CffuFactory#cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture)},
+     * providing this method is convenient for method chaining.
+     * <p>
+     * call this method
+     * <p>
+     * {@code combinedCffu = cffu.cffuCombine(cf2, cf3);}
+     * <p>
+     * is same as:
+     * <p>
+     * {@code combinedCffu = cffu.cffuFactory().cffuCombine(cffu.toCompletableFuture(), cf2, cf3);}
+     *
+     * @return the new Cffu
+     * @see CffuFactory#cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture)
+     */
+    public <T2, T3> Cffu<Tuple3<T, T2, T3>> cffuCombine(CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
+        return fac.cffuCombine(toCompletableFuture(), cf2, cf3);
+    }
+
+    /**
+     * Same as {@link CffuFactory#cffuCombine(Cffu, Cffu, Cffu, Cffu)},
+     * providing this method is convenient for method chaining.
+     * <p>
+     * call this method
+     * <p>
+     * {@code combinedCffu = cffu.cffuCombine(cffu2, cffu3, cffu4);}
+     * <p>
+     * is same as:
+     * <p>
+     * {@code combinedCffu = cffu.cffuFactory().cffuCombine(cffu, cffu2, cffu3, cffu4);}
+     *
+     * @return the new Cffu
+     * @see CffuFactory#cffuCombine(Cffu, Cffu, Cffu, Cffu)
+     */
+    public <T2, T3, T4> Cffu<Tuple4<T, T2, T3, T4>> cffuCombine(Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4) {
+        return fac.cffuCombine(this, cf2, cf3, cf4);
+    }
+
+    /**
+     * Same as {@link CffuFactory#cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)},
+     * providing this method is convenient for method chaining.
+     * <p>
+     * call this method
+     * <p>
+     * {@code combinedCffu = cffu.cffuCombine(cf2, cf3, cf4);}
+     * <p>
+     * is same as:
+     * <p>
+     * {@code combinedCffu = cffu.cffuFactory().cffuCombine(cffu.toCompletableFuture(), cf2, cf3, cf4);}
+     *
+     * @return the new Cffu
+     * @see CffuFactory#cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
+     */
+    public <T2, T3, T4> Cffu<Tuple4<T, T2, T3, T4>> cffuCombine(
+            CompletableFuture<T2> cf2, CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
+        return fac.cffuCombine(toCompletableFuture(), cf2, cf3, cf4);
+    }
+
+    /**
+     * Same as {@link CffuFactory#cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)},
+     * providing this method is convenient for method chaining.
+     * <p>
+     * call this method
+     * <p>
+     * {@code combinedCffu = cffu.cffuCombine(cffu2, cffu3, cffu4, cffu5);}
+     * <p>
+     * is same as:
+     * <p>
+     * {@code combinedCffu = cffu.cffuFactory().cffuCombine(cffu, cffu2, cffu3, cffu4, cffu5);}
+     *
+     * @return the new Cffu
+     * @see CffuFactory#cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)
+     */
+    public <T2, T3, T4, T5> Cffu<Tuple5<T, T2, T3, T4, T5>> cffuCombine(
+            Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4, Cffu<T5> cf5) {
+        return fac.cffuCombine(this, cf2, cf3, cf4, cf5);
+    }
+
+    /**
+     * Same as {@link CffuFactory#cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)},
+     * providing this method is convenient for method chaining.
+     * <p>
+     * call this method
+     * <p>
+     * {@code combinedCffu = cffu.cffuCombine(cf2, cf3, cf4, cf5);}
+     * <p>
+     * is same as:
+     * <p>
+     * {@code combinedCffu = cffu.cffuFactory().cffuCombine(cffu.toCompletableFuture(), cf2, cf3, cf4, cf5);}
+     *
+     * @return the new Cffu
+     * @see CffuFactory#cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
+     */
+    public <T2, T3, T4, T5> Cffu<Tuple5<T, T2, T3, T4, T5>> cffuCombine(
+            CompletableFuture<T2> cf2, CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
+        return fac.cffuCombine(toCompletableFuture(), cf2, cf3, cf4, cf5);
     }
 
     ////////////////////////////////////////////////////////////////////////////////

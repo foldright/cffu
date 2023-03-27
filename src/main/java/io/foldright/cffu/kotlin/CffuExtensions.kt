@@ -7,7 +7,8 @@ import java.util.concurrent.CompletionStage
 /**
  * Wrap this [CompletionStage] to [Cffu].
  *
- * reimplement [CffuFactory.asCffu] method as extension of [CompletionStage], it's convenient for method chaining.
+ * reimplement [CffuFactory.asCffu] method as extension of [CompletionStage],
+ * providing this method convenient for method chaining.
  *
  * @see CffuFactory.asCffu
  */

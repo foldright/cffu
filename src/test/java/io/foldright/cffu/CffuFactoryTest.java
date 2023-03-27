@@ -311,6 +311,54 @@ class CffuFactoryTest {
                 cffuFactory.completedFuture(another_n),
                 cffuFactory.completedFuture(n + n)
         ).get());
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        assertEquals(Tuple2.of(n, s), cffuFactory.completedFuture(n).cffuCombine(
+                CompletableFuture.completedFuture(s)
+        ).get());
+
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.completedFuture(n).cffuCombine(
+                CompletableFuture.completedFuture(s),
+                CompletableFuture.completedFuture(d)
+        ).get());
+
+        assertEquals(Tuple4.of(n, s, d, another_n), cffuFactory.completedFuture(n).cffuCombine(
+                CompletableFuture.completedFuture(s),
+                CompletableFuture.completedFuture(d),
+                CompletableFuture.completedFuture(another_n)
+        ).get());
+
+        assertEquals(Tuple5.of(n, s, d, another_n, n + n), cffuFactory.completedFuture(n).cffuCombine(
+                CompletableFuture.completedFuture(s),
+                CompletableFuture.completedFuture(d),
+                CompletableFuture.completedFuture(another_n),
+                CompletableFuture.completedFuture(n + n)
+        ).get());
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        assertEquals(Tuple2.of(n, s), cffuFactory.completedFuture(n).cffuCombine(
+                cffuFactory.completedFuture(s)
+        ).get());
+
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.completedFuture(n).cffuCombine(
+                cffuFactory.completedFuture(s),
+                cffuFactory.completedFuture(d)
+        ).get());
+
+        assertEquals(Tuple4.of(n, s, d, another_n), cffuFactory.completedFuture(n).cffuCombine(
+                cffuFactory.completedFuture(s),
+                cffuFactory.completedFuture(d),
+                cffuFactory.completedFuture(another_n)
+        ).get());
+
+        assertEquals(Tuple5.of(n, s, d, another_n, n + n), cffuFactory.completedFuture(n).cffuCombine(
+                cffuFactory.completedFuture(s),
+                cffuFactory.completedFuture(d),
+                cffuFactory.completedFuture(another_n),
+                cffuFactory.completedFuture(n + n)
+        ).get());
     }
 
     @Test
