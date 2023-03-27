@@ -56,18 +56,17 @@ class CffuFactoryTest {
         CompletionStage<Integer> stage = cffuFactory.completedStage(n);
         CompletionStage<Integer> sa = stage.thenApply(Function.identity());
 
-        shouldBeMinimalStage((Cffu<?>) stage);
-        shouldBeMinimalStage((Cffu<?>) sa);
-
         assertEquals(n, stage.toCompletableFuture().get());
         assertEquals(n, sa.toCompletableFuture().get());
+
+        // CAUTION: Last check minimal stage, may rewrite the CF by obtrude* methods
+        shouldBeMinimalStage((Cffu<?>) stage);
+        shouldBeMinimalStage((Cffu<?>) sa);
     }
 
     @Test
     void test_failedFuture() throws Exception {
         Cffu<Integer> cf = cffuFactory.failedFuture(rte);
-
-        shouldNotBeMinimalStage(cf);
 
         try {
             cf.join();
@@ -75,8 +74,9 @@ class CffuFactoryTest {
         } catch (CompletionException expected) {
             assertSame(rte, expected.getCause());
         }
-
         assertEquals(n, cf.exceptionally(throwable -> n).get());
+
+        shouldNotBeMinimalStage(cf);
     }
 
     @Test
@@ -85,10 +85,6 @@ class CffuFactoryTest {
         CompletionStage<Integer> sa = stage.thenApply(Function.identity());
         CompletionStage<Integer> se = stage.exceptionally(throwable -> n);
 
-        shouldBeMinimalStage((Cffu<Integer>) stage);
-        shouldBeMinimalStage((Cffu<Integer>) sa);
-        shouldBeMinimalStage((Cffu<Integer>) se);
-
         try {
             failedCf().toCompletableFuture().join();
             fail();
@@ -96,8 +92,12 @@ class CffuFactoryTest {
             assertSame(rte, expected.getCause());
 
         }
-
         assertEquals(n, se.toCompletableFuture().get());
+
+        // CAUTION: Last check minimal stage, may rewrite the CF by obtrude* methods
+        shouldBeMinimalStage((Cffu<Integer>) stage);
+        shouldBeMinimalStage((Cffu<Integer>) sa);
+        shouldBeMinimalStage((Cffu<Integer>) se);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -125,8 +125,8 @@ class CffuFactoryTest {
     void test_asCffu() throws Exception {
         Cffu<Integer> cf = cffuFactory.asCffu(CompletableFuture.completedFuture(n));
 
-        shouldNotBeMinimalStage(cf);
         assertEquals(n, cf.get());
+        shouldNotBeMinimalStage(cf);
 
         CffuFactory fac = CffuFactoryBuilder.newCffuFactoryBuilder(anotherExecutorService).forbidObtrudeMethods(true).build();
         Cffu<Integer> cffu = fac.asCffu(cffuFactory.completedFuture(42));
@@ -153,11 +153,10 @@ class CffuFactoryTest {
     @EnabledForJreRange(min = JRE.JAVA_9)
     void test_asCffuArray() throws Exception {
         Cffu<Integer>[] cffus = cffuFactory.asCffuArray(CompletableFuture.completedStage(n), CompletableFuture.completedFuture(n));
+        assertEquals(n, cffus[1].get());
 
         shouldBeMinimalStage(cffus[0]);
         shouldNotBeMinimalStage(cffus[1]);
-
-        assertEquals(n, cffus[1].get());
     }
 
     ////////////////////////////////////////////////////////////////////////////////

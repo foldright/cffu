@@ -38,7 +38,9 @@ class CffuApiCompatibilityTest {
     @Test
     void factoryMethods() throws Exception {
         // completedFuture
-        assertEquals(hello, cffuFactory.completedFuture(hello).get());
+        Cffu<String> f0 = cffuFactory.completedFuture(hello);
+        assertEquals(hello, f0.get());
+        TestUtils.shouldNotBeMinimalStage(f0);
         // below methods is tested in below test method
         // - completedStage
         // - failedFuture
@@ -47,39 +49,52 @@ class CffuApiCompatibilityTest {
         final AtomicReference<String> holder = new AtomicReference<>();
 
         // runAsync
-        assertNull(cffuFactory.runAsync(() -> holder.set(hello)).get());
+        Cffu<Void> cf = cffuFactory.runAsync(() -> holder.set(hello));
+        assertNull(cf.get());
         assertEquals(hello, holder.get());
+        TestUtils.shouldNotBeMinimalStage(cf);
 
         holder.set(null);
-        assertNull(cffuFactory.runAsync(() -> holder.set(hello), executorService).get());
+        cf = cffuFactory.runAsync(() -> holder.set(hello), executorService);
+        assertNull(cf.get());
         assertEquals(hello, holder.get());
+        TestUtils.shouldNotBeMinimalStage(cf);
 
         // supplyAsync
-        assertEquals(hello, cffuFactory.supplyAsync(() -> hello).get());
-        assertEquals(hello, cffuFactory.supplyAsync(() -> hello, executorService).get());
-
+        Cffu<String> s_cf = cffuFactory.supplyAsync(() -> hello);
+        assertEquals(hello, s_cf.get());
+        TestUtils.shouldNotBeMinimalStage(s_cf);
+        s_cf = cffuFactory.supplyAsync(() -> hello, executorService);
+        assertEquals(hello, s_cf.get());
+        TestUtils.shouldNotBeMinimalStage(s_cf);
     }
 
     @Test
     void factoryMethods_Java9() throws Exception {
         // completedStage
-        assertEquals(hello, cffuFactory.completedStage(hello).toCompletableFuture().get());
+        Cffu<String> cf = (Cffu<String>) cffuFactory.completedStage(hello);
+        assertEquals(hello, cf.toCompletableFuture().get());
+        TestUtils.shouldBeMinimalStage(cf);
 
         // failedFuture
+        cf = cffuFactory.failedFuture(rte);
         try {
-            cffuFactory.failedFuture(rte).get();
+            cf.get();
             fail();
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
+        TestUtils.shouldNotBeMinimalStage(cf);
 
         // failedStage
+        cf = (Cffu<String>) cffuFactory.<String>failedStage(rte);
         try {
-            cffuFactory.failedStage(rte).toCompletableFuture().get();
+            cf.toCompletableFuture().get();
             fail();
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
+        TestUtils.shouldBeMinimalStage(cf);
     }
 
     @Test
@@ -485,11 +500,12 @@ class CffuApiCompatibilityTest {
         assertNotNull(cf.defaultExecutor());
 
         // minimalCompletionStage
-        assertNotNull(cf.minimalCompletionStage());
+        TestUtils.shouldBeMinimalStage((Cffu<Integer>) cf.minimalCompletionStage());
 
         // newIncompleteFuture
         assertFalse(cf.newIncompleteFuture().isDone());
     }
+
 
     private static ExecutorService executorService;
 

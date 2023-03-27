@@ -35,7 +35,9 @@ class CompletableFutureApiCompatibilityTest {
     @Test
     void factoryMethods() throws Exception {
         // completedFuture
-        assertEquals(hello, CompletableFuture.completedFuture(hello).get());
+        CompletableFuture<String> f0 = CompletableFuture.completedFuture(hello);
+        assertEquals(hello, f0.get());
+        TestUtils.shouldNotBeMinimalStage(f0);
         // below methods is tested in below test method
         // - completedStage
         // - failedFuture
@@ -44,40 +46,53 @@ class CompletableFutureApiCompatibilityTest {
         final AtomicReference<String> holder = new AtomicReference<>();
 
         // runAsync
-        assertNull(CompletableFuture.runAsync(() -> holder.set(hello)).get());
+        CompletableFuture<Void> cf = CompletableFuture.runAsync(() -> holder.set(hello));
+        assertNull(cf.get());
         assertEquals(hello, holder.get());
+        TestUtils.shouldNotBeMinimalStage(cf);
 
         holder.set(null);
-        assertNull(CompletableFuture.runAsync(() -> holder.set(hello), executorService).get());
+        cf = CompletableFuture.runAsync(() -> holder.set(hello), executorService);
+        assertNull(cf.get());
         assertEquals(hello, holder.get());
+        TestUtils.shouldNotBeMinimalStage(cf);
 
         // supplyAsync
-        assertEquals(hello, CompletableFuture.supplyAsync(() -> hello).get());
-        assertEquals(hello, CompletableFuture.supplyAsync(() -> hello, executorService).get());
-
+        CompletableFuture<String> s_cf = CompletableFuture.supplyAsync(() -> hello);
+        assertEquals(hello, s_cf.get());
+        TestUtils.shouldNotBeMinimalStage(s_cf);
+        s_cf = CompletableFuture.supplyAsync(() -> hello, executorService);
+        assertEquals(hello, s_cf.get());
+        TestUtils.shouldNotBeMinimalStage(s_cf);
     }
 
     @Test
     @EnabledForJreRange(min = JRE.JAVA_9)
     void factoryMethods_Java9() throws Exception {
         // completedStage
-        assertEquals(hello, CompletableFuture.completedStage(hello).toCompletableFuture().get());
+        CompletableFuture<String> cf = (CompletableFuture<String>) CompletableFuture.completedStage(hello);
+        assertEquals(hello, cf.toCompletableFuture().get());
+        TestUtils.shouldBeMinimalStage(cf);
 
         // failedFuture
+        cf = CompletableFuture.failedFuture(rte);
         try {
-            CompletableFuture.failedFuture(rte).get();
+            cf.get();
             fail();
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
+        TestUtils.shouldNotBeMinimalStage(cf);
 
         // failedStage
+        cf = (CompletableFuture<String>) CompletableFuture.<String>failedStage(rte);
         try {
-            CompletableFuture.failedStage(rte).toCompletableFuture().get();
+            cf.toCompletableFuture().get();
             fail();
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
+        TestUtils.shouldBeMinimalStage(cf);
     }
 
     @Test
@@ -490,11 +505,12 @@ class CompletableFutureApiCompatibilityTest {
         assertNotNull(cf.defaultExecutor());
 
         // minimalCompletionStage
-        assertNotNull(cf.minimalCompletionStage());
+        TestUtils.shouldBeMinimalStage((CompletableFuture<Integer>) cf.minimalCompletionStage());
 
         // newIncompleteFuture
         assertFalse(cf.newIncompleteFuture().isDone());
     }
+
 
     private static ExecutorService executorService;
 

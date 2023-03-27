@@ -7,6 +7,7 @@ import io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.test.TestCase
+import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import org.apache.commons.lang3.JavaVersion
 import org.apache.commons.lang3.SystemUtils.isJavaVersionAtLeast
@@ -75,38 +76,14 @@ fun addCurrentThreadName(names: List<String>) = names + Thread.currentThread().n
 // Assertion functions for CF/Cffu
 ////////////////////////////////////////////////////////////////////////////////
 
-fun <T> CompletableFuture<T>.shouldBeMinimalStage(disableRecursive: Boolean = false) {
-    shouldMinCf(false)
+fun <T> CompletableFuture<T>.shouldBeMinimalStage() {
+    shouldMinCf(true)
 }
 
-fun <T> CompletableFuture<T>.shouldNotBeMinimalStage() {
-    shouldCompletionStageMethodsAllowed()
-
-    // FIXME  check more methods
-
-    this.complete(null)
-
-    try {
-        this.get()
-    } catch (_: ExecutionException) {
-    }
-    this.isDone
-    try {
-        this.join()
-    } catch (_: CompletionException) {
-    }
-
-    if (isJavaVersion9Plus()) {
-        this.orTimeout(1, TimeUnit.MILLISECONDS)
-    }
-}
-
-private fun <T> CompletableFuture<T>.shouldMinCf(disableRecursive: Boolean) {
-    shouldCompletionStageMethodsAllowed()
+private fun <T> CompletableFuture<T>.shouldMinCf(recursive: Boolean = false) {
+    shouldCompletionStageMethodsAllowed(recursive)
 
     // unsupported because this a minimal stage
-
-    //# Read(explicitly) methods of CompletableFuture
 
     if (isJavaVersion9Plus()) shouldThrow<UnsupportedOperationException> {
         orTimeout(1, TimeUnit.MILLISECONDS)
@@ -114,6 +91,8 @@ private fun <T> CompletableFuture<T>.shouldMinCf(disableRecursive: Boolean) {
     if (isJavaVersion9Plus()) shouldThrow<UnsupportedOperationException> {
         completeOnTimeout(null, 1, TimeUnit.MILLISECONDS)
     }
+
+    //# Read(explicitly) methods of CompletableFuture
 
     shouldThrow<UnsupportedOperationException> {
         get()
@@ -123,9 +102,6 @@ private fun <T> CompletableFuture<T>.shouldMinCf(disableRecursive: Boolean) {
     }
     shouldThrow<UnsupportedOperationException> {
         join()
-    }
-    shouldThrow<UnsupportedOperationException> {
-        get()
     }
     shouldThrow<UnsupportedOperationException> {
         getNow(null)
@@ -164,24 +140,18 @@ private fun <T> CompletableFuture<T>.shouldMinCf(disableRecursive: Boolean) {
         completeExceptionally(null)
     }
     shouldThrow<UnsupportedOperationException> {
-        completeExceptionally(null)
-    }
-    if (isJavaVersion9Plus()) {
-        shouldThrow<UnsupportedOperationException> {
-            cancel(false)
-        }
+        cancel(false)
     }
 
     //# Re-Config methods
 
-    if (isJavaVersion9Plus()) minimalCompletionStage().let {
-        if (!disableRecursive) (it as CompletableFuture<T>).shouldMinCf(true)
-    }
+    if (recursive) {
+        if (isJavaVersion9Plus())
+            (minimalCompletionStage() as CompletableFuture<T>).shouldMinCf()
 
-    toCompletableFuture().shouldNotBeMinimalStage()
+        toCompletableFuture().shouldNotMinCf()
 
-    if (isJavaVersion9Plus()) copy().let {
-        if (!disableRecursive) it.shouldMinCf(true)
+        if (isJavaVersion9Plus()) copy().shouldMinCf()
     }
 
     //# Getter methods of properties
@@ -201,39 +171,94 @@ private fun <T> CompletableFuture<T>.shouldMinCf(disableRecursive: Boolean) {
         obtrudeException(null)
     }
 
-    newIncompleteFuture<T>().let {
-        if (!disableRecursive)
-            if (isJavaVersion9Plus()) it.shouldMinCf(true)
-            else it.shouldNotBeMinimalStage()
+    if (recursive) newIncompleteFuture<T>().let {
+        if (isJavaVersion9Plus()) it.shouldMinCf()
+        else it.shouldNotMinCf()
     }
+}
+
+fun <T> CompletableFuture<T>.shouldNotBeMinimalStage() {
+    shouldNotMinCf(true)
+}
+
+private fun <T> CompletableFuture<T>.shouldNotMinCf(recursive: Boolean = false) {
+    shouldCompletionStageMethodsAllowed(recursive)
+
+    this.complete(null) // avoid running CF blocking
+
+    if (recursive && isJavaVersion9Plus()) {
+        orTimeout(1, TimeUnit.MILLISECONDS).shouldNotMinCf()
+        completeOnTimeout(null, 1, TimeUnit.MILLISECONDS).shouldNotMinCf()
+    }
+
+    //# Read(explicitly) methods of CompletableFuture
+
+    if (isCompletedExceptionally) shouldThrow<ExecutionException> { get() }
+    else get()
+
+    if (isCompletedExceptionally) shouldThrow<ExecutionException> { get(1, TimeUnit.MILLISECONDS) }
+    else get(1, TimeUnit.MILLISECONDS)
+
+    if (isCompletedExceptionally) shouldThrow<CompletionException> {
+        join()
+    } else join()
+
+    if (isCompletedExceptionally) shouldThrow<CompletionException> {
+        getNow(null)
+    } else getNow((null))
+
+    if (isJavaVersion19Plus())
+        if (isCompletedExceptionally) shouldThrow<IllegalStateException> { resultNow() }
+        else resultNow()
+
+    if (isJavaVersion19Plus())
+        if (isCompletedExceptionally) exceptionNow()
+        else shouldThrow<IllegalStateException> { exceptionNow() }
+
+    this.isDone
+    // this.isCompletedExceptionally // used above
+    this.isCancelled
+    if (isJavaVersion19Plus()) state()
+
+    //# Write methods of CompletableFuture
+
+    // complete(null) // used above
+    if (recursive) {
+        if (isJavaVersion9Plus()) {
+            completeAsync { null }.shouldNotMinCf()
+            completeAsync({ null }, commonPool()).shouldNotMinCf()
+        }
+        completeExceptionally(RuntimeException())
+        cancel(false)
+    }
+
+    //# Re-Config methods
+
+    if (recursive) {
+        if (isJavaVersion9Plus()) (minimalCompletionStage() as CompletableFuture<T>).shouldMinCf()
+        toCompletableFuture().shouldNotMinCf()
+    }
+
+    //# Getter methods of properties
+    if (isJavaVersion9Plus()) defaultExecutor()
+
+    //# Inspection methods of Cffu
+    numberOfDependents
+
+    //# Other dangerous methods of CompletableFuture
+
+    obtrudeException(RuntimeException())
+    obtrudeValue(null)
+
+    if (recursive && isJavaVersion9Plus()) newIncompleteFuture<T>().shouldNotMinCf()
 }
 
 fun <T> Cffu<T>.shouldBeMinimalStage() {
-    shouldMinCffu(false)
+    shouldMinCffu(true)
 }
 
-fun <T> Cffu<T>.shouldNotBeMinimalStage() {
-    shouldCompletionStageMethodsAllowed()
-
-    // FIXME  check more methods
-
-    this.complete(null)
-
-    try {
-        this.get()
-    } catch (_: ExecutionException) {
-    }
-    this.isDone
-    try {
-        this.join()
-    } catch (_: CompletionException) {
-    }
-
-    this.orTimeout(1, TimeUnit.MILLISECONDS)
-}
-
-private fun <T> Cffu<T>.shouldMinCffu(disableRecursive: Boolean) {
-    shouldCompletionStageMethodsAllowed()
+private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
+    shouldCompletionStageMethodsAllowed(recursive)
 
     // unsupported because this a minimal stage
 
@@ -277,7 +302,7 @@ private fun <T> Cffu<T>.shouldMinCffu(disableRecursive: Boolean) {
     shouldThrow<UnsupportedOperationException> {
         isCancelled
     }
-    shouldThrow<UnsupportedOperationException> {
+    if (isJavaVersion19Plus()) shouldThrow<UnsupportedOperationException> {
         state()
     }
 
@@ -308,10 +333,10 @@ private fun <T> Cffu<T>.shouldMinCffu(disableRecursive: Boolean) {
 
     //# Re-Config methods
 
-    if (!disableRecursive) (minimalCompletionStage() as Cffu<T>).shouldMinCffu(true)
-    toCompletableFuture().shouldNotBeMinimalStage()
-    copy().let {
-        if (!disableRecursive) (it as Cffu<T>).shouldMinCffu(true)
+    if (recursive) {
+        (minimalCompletionStage() as Cffu<T>).shouldMinCffu()
+        toCompletableFuture().shouldNotMinCf()
+        (copy() as Cffu<T>).shouldMinCffu()
     }
 
     //# Getter methods of properties
@@ -331,11 +356,9 @@ private fun <T> Cffu<T>.shouldMinCffu(disableRecursive: Boolean) {
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         obtrudeException(null)
     }
-    newIncompleteFuture<T>().let {
-        if (!disableRecursive)
-            if (isJavaVersion9Plus()) it.shouldMinCffu(true)
-            else it.shouldNotBeMinimalStage()
-    }
+    if (recursive)
+        if (isJavaVersion9Plus()) newIncompleteFuture<T>().shouldMinCffu()
+        else newIncompleteFuture<T>().shouldNotBeMinimalStage()
 
     ////////////////////////////////////////////////////////////
     // Cffu specified methods
@@ -349,10 +372,8 @@ private fun <T> Cffu<T>.shouldMinCffu(disableRecursive: Boolean) {
     }
 
     //# Cffu Re-Config methods
-
-    resetCffuFactory(newCffuFactoryBuilder(commonPool()).build()).let {
-        if (!disableRecursive) (it as Cffu<T>).shouldMinCffu(true)
-    }
+    if (recursive)
+        resetCffuFactory(newCffuFactoryBuilder(commonPool()).build()).shouldMinCffu()
 
     //# Getter methods of properties
     cffuFactory()
@@ -360,227 +381,323 @@ private fun <T> Cffu<T>.shouldMinCffu(disableRecursive: Boolean) {
     isMinimalStage.shouldBeTrue()
 
     //# Inspection methods of Cffu
-    val unwrap: CompletableFuture<T> = cffuUnwrap()
-    if (isJavaVersion9Plus()) unwrap.shouldMinCf(true)
-    else unwrap.shouldNotBeMinimalStage()
+    if (recursive)
+        if (isJavaVersion9Plus()) cffuUnwrap().shouldMinCf()
+        else cffuUnwrap().shouldNotMinCf()
 }
 
-private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(disableRecursive: Boolean = false) {
+fun <T> Cffu<T>.shouldNotBeMinimalStage() {
+    shouldNotMinCffu(true)
+}
+
+private fun <T> Cffu<T>.shouldNotMinCffu(recursive: Boolean = false) {
+    shouldCompletionStageMethodsAllowed(recursive)
+
+    this.complete(null) // avoid running CF blocking
+
+    if (recursive) {
+        orTimeout(1, TimeUnit.MILLISECONDS).shouldNotMinCffu()
+        completeOnTimeout(null, 1, TimeUnit.MILLISECONDS).shouldNotMinCffu()
+    }
+
+    //# Read(explicitly) methods of CompletableFuture
+
+    if (isCompletedExceptionally) shouldThrow<ExecutionException> { get() }
+    else get()
+
+    if (isCompletedExceptionally) shouldThrow<ExecutionException> { get(1, TimeUnit.MILLISECONDS) }
+    else get(1, TimeUnit.MILLISECONDS)
+
+    if (isCompletedExceptionally) shouldThrow<CompletionException> {
+        join()
+    } else join()
+
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+    if (isCompletedExceptionally) shouldThrow<CompletionException> {
+        getNow(null)
+    } else getNow((null))
+
+    if (isCompletedExceptionally) shouldThrow<IllegalStateException> { resultNow() }
+    else resultNow()
+
+    if (isCompletedExceptionally) exceptionNow()
+    else shouldThrow<IllegalStateException> { exceptionNow() }
+
+    this.isDone
+    // this.isCompletedExceptionally // used above
+    this.isCancelled
+    if (isJavaVersion19Plus()) state()
+
+    //# Write methods of CompletableFuture
+
+    // complete(null) // used above
+    if (recursive) {
+        completeAsync { null }.shouldNotMinCffu()
+        completeAsync({ null }, commonPool()).shouldNotMinCffu()
+        completeExceptionally(RuntimeException())
+        cancel(false)
+    }
+
+    //# Re-Config methods
+
+    if (recursive) {
+        (minimalCompletionStage() as Cffu<T>).shouldMinCffu()
+        toCompletableFuture().shouldNotMinCf()
+    }
+
+    //# Getter methods of properties
+    defaultExecutor()
+
+    //# Inspection methods of Cffu
+    numberOfDependents
+
+    //# Other dangerous methods of CompletableFuture
+
+    obtrudeException(RuntimeException())
+    obtrudeValue(null)
+
+    if (recursive) newIncompleteFuture<T>().shouldNotMinCffu()
+
+
+    ////////////////////////////////////////////////////////////
+    // Cffu specified methods
+    ////////////////////////////////////////////////////////////
+
+
+    shouldCompletionStageMethodsAllowed(recursive)
+
+    cffuJoin(1, TimeUnit.MILLISECONDS)
+    cffuState()
+
+    //# Cffu Re-Config methods
+    if (recursive)
+        resetCffuFactory(newCffuFactoryBuilder(commonPool()).build()).shouldNotMinCffu()
+
+    //# Getter methods of properties
+    cffuFactory()
+    forbidObtrudeMethods()
+    isMinimalStage.shouldBeFalse()
+
+    //# Inspection methods of Cffu
+    if (recursive) cffuUnwrap().shouldNotMinCf()
+}
+
+private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive: Boolean = false) {
     val cf: CompletableFuture<T> = CompletableFuture.completedFuture(null)
 
     shouldNotThrow<UnsupportedOperationException> {
         thenRun {}.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         thenRunAsync {}.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         thenRunAsync({}, commonPool()).let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         thenAccept {}.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         thenAcceptAsync {}.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         thenAcceptAsync({}, commonPool()).let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         thenApply {}.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         thenApplyAsync {}.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         thenApplyAsync({}, commonPool()).let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
 
     shouldNotThrow<UnsupportedOperationException> {
         runAfterBoth(cf) {}.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         runAfterBothAsync(cf) {}.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         runAfterBothAsync(cf, {}, commonPool()).let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         thenAcceptBoth(cf) { _, _ -> }.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         thenAcceptBothAsync(cf) { _, _ -> }.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         thenAcceptBothAsync(cf, { _, _ -> }, commonPool()).let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         thenCombine(cf) { _, _ -> }.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         thenCombineAsync(cf) { _, _ -> }.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         thenCombineAsync(cf, { _, _ -> }, commonPool()).let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
 
     shouldNotThrow<UnsupportedOperationException> {
         runAfterEither(cf) {}.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         runAfterEitherAsync(cf) {}.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         runAfterEitherAsync(cf, {}, commonPool()).let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         acceptEither(cf) {}.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         acceptEitherAsync(cf) {}.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         acceptEitherAsync(cf, {}, commonPool()).let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         applyToEither(cf) {}.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         applyToEitherAsync(cf) {}.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         applyToEitherAsync(cf, {}, commonPool()).let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
 
     shouldNotThrow<UnsupportedOperationException> {
         exceptionally { null }.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     if (isJavaVersion12Plus() && this !is Cffu<*>) shouldNotThrow<UnsupportedOperationException> {
         exceptionallyAsync { null }.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     if (isJavaVersion12Plus() && this !is Cffu<*>) shouldNotThrow<UnsupportedOperationException> {
         exceptionallyAsync({ null }, commonPool()).let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
 
     shouldNotThrow<UnsupportedOperationException> {
         thenCompose { cf }.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         thenComposeAsync { cf }.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         thenComposeAsync({ cf }, commonPool()).let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     if (isJavaVersion12Plus() && this !is Cffu<*>) shouldNotThrow<UnsupportedOperationException> {
         exceptionallyCompose { cf }.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     if (isJavaVersion12Plus() && this !is Cffu<*>) shouldNotThrow<UnsupportedOperationException> {
         exceptionallyComposeAsync { cf }.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     if (isJavaVersion12Plus() && this !is Cffu<*>) shouldNotThrow<UnsupportedOperationException> {
         exceptionallyComposeAsync({ cf }, commonPool()).let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
 
     shouldNotThrow<UnsupportedOperationException> {
         whenComplete { _, _ -> }.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         whenCompleteAsync { _, _ -> }.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         whenCompleteAsync({ _, _ -> }, commonPool()).let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         handle { _, _ -> }.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         handleAsync { _, _ -> }.let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
         handleAsync({ _, _ -> }, commonPool()).let {
-            if (!disableRecursive) it.shouldCompletionStageMethodsAllowed(true)
+            if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
 

@@ -24,7 +24,7 @@ fun createThreadPool(threadNamePrefix: String, isForkJoin: Boolean = false): Exe
     val executorService = if (!isForkJoin)
         ThreadPoolExecutor(
             THREAD_COUNT_OF_POOL, THREAD_COUNT_OF_POOL, 1, TimeUnit.DAYS,
-            ArrayBlockingQueue(THREAD_COUNT_OF_POOL * 2)
+            ArrayBlockingQueue(500)
         ) { r ->
             Thread(r).apply {
                 name = "$prefix${counter.getAndIncrement()}"
@@ -41,16 +41,20 @@ fun createThreadPool(threadNamePrefix: String, isForkJoin: Boolean = false): Exe
             null, false
         )
 
-    return object : ExecutorService by executorService, ThreadAcquaintance {
+    return object : ExecutorService by executorService, ThreadPoolAcquaintance {
         override fun isMyThread(thread: Thread): Boolean = thread.name.startsWith(prefix)
+
+        override fun wrappedThreadPool(): ExecutorService = executorService
     }
 }
 
 @JvmName("isExecutorOwnThread")
-fun Executor.doesOwnThread(thread: Thread): Boolean = (this as ThreadAcquaintance).isMyThread(thread)
+fun Executor.doesOwnThread(thread: Thread): Boolean = (this as ThreadPoolAcquaintance).isMyThread(thread)
 
-private interface ThreadAcquaintance {
+private interface ThreadPoolAcquaintance {
     fun isMyThread(thread: Thread): Boolean
+
+    fun wrappedThreadPool(): ExecutorService
 }
 
 fun assertRunInExecutor(executor: Executor) {
@@ -74,6 +78,9 @@ fun shutdownExecutorService(vararg executors: ExecutorService) {
         it.shutdown()
     }
     executors.forEach {
+        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+        println((it as ThreadPoolAcquaintance).wrappedThreadPool())
+        println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
         it.awaitTermination(3, TimeUnit.SECONDS).shouldBeTrue()
     }
 }
@@ -100,13 +107,13 @@ val testForkJoinPoolExecutor: ExecutorService =
 @AutoScan
 object InitTestThreadPoolsProjectListener : BeforeProjectListener, AfterProjectListener {
     override suspend fun beforeProject() {
-        println("============================================================")
+        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
         println("Env Infos:")
         println("Parallelism of ForkJoinPool:     ${ForkJoinPool.getCommonPoolParallelism()}")
         println("Available Processors of Runtime: ${Runtime.getRuntime().availableProcessors()}")
         println("Java Home:                       ${System.getProperty("java.home")}")
         println("Java Version:                    ${System.getProperty("java.version")}")
-        println("============================================================")
+        println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 
         warmupExecutorService(testThreadPoolExecutor, testForkJoinPoolExecutor)
     }
