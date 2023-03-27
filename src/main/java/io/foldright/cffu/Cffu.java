@@ -36,7 +36,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     private final boolean isMinimalStage;
     @NonNull
-    final CompletableFuture<T> cf; // use default(`package-private`) access modifier for testing
+    private final CompletableFuture<T> cf;
 
     Cffu(CffuFactory cffuFactory, boolean isMinimalStage, CompletableFuture<T> cf) {
         this.fac = requireNonNull(cffuFactory, "cffuFactory is null");
@@ -1540,10 +1540,22 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the default executor
      * @see CffuFactory#defaultExecutor()
      * @see CffuFactoryBuilder#newCffuFactoryBuilder(Executor)
+     * @see #cffuFactory()
      */
     @Contract(pure = true)
     public Executor defaultExecutor() {
         return fac.defaultExecutor;
+    }
+
+    /**
+     * Returns the {@link CffuFactory} of this Cffu.
+     *
+     * @return the CffuFactory
+     * @see #defaultExecutor()
+     */
+    @Contract(pure = true)
+    public CffuFactory cffuFactory() {
+        return fac;
     }
 
     /**

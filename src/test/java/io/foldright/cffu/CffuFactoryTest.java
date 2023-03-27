@@ -123,6 +123,7 @@ class CffuFactoryTest {
         CffuFactory fac = CffuFactoryBuilder.newCffuFactoryBuilder(anotherExecutorService).forbidObtrudeMethods(true).build();
         Cffu<Integer> cffu = fac.asCffu(cffuFactory.completedFuture(42));
         assertSame(anotherExecutorService, cffu.defaultExecutor());
+        assertSame(fac, cffu.cffuFactory());
 
         try {
             cffu.obtrudeValue(44);
