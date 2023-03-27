@@ -1101,10 +1101,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     //# Read(explicitly) methods of CompletableFuture
     //
-    //    - get()               // BLOCKING!
-    //    - get(timeout, unit)  // BLOCKING!
-    //    - join()              // BLOCKING!
-    //    - cffuJoin()          // BLOCKING!
+    //    - get()                   // BLOCKING!
+    //    - get(timeout, unit)      // BLOCKING!
+    //    - join()                  // BLOCKING!
+    //    - cffuJoin(timeout, unit) // BLOCKING!
     //    - getNow(T valueIfAbsent)
     //    - resultNow()
     //    - exceptionNow()
@@ -1458,9 +1458,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     //# Write methods of CompletableFuture
     //
-    //    - complete*()
-    //    - completeExceptionally(ex)
-    //    - cancel()
+    //    - complete(value): boolean
+    //    - completeAsync*: -> Cffu
+    //
+    //    - completeExceptionally(ex): boolean
+    //    - cancel(boolean): boolean
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -1592,7 +1594,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //# Cffu Re-Config methods
     //
     //    - minimalCompletionStage()
-    //    - resetCffuFactory()
+    //    - resetCffuFactory(cffuFactory)
     //
     //    - toCompletableFuture()
     //    - copy()
