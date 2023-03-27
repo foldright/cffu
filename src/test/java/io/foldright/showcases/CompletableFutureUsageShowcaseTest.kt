@@ -14,6 +14,7 @@ import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import io.kotest.matchers.types.shouldBeTypeOf
+import kotlinx.coroutines.future.await
 import java.lang.System.currentTimeMillis
 import java.lang.Thread.currentThread
 import java.util.concurrent.*
@@ -57,8 +58,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
         }
         sequenceChecker.assertSeq("after thenRun", seq++)
 
-        @Suppress("BlockingMethodInNonBlockingContext")
-        f3.get().shouldBeNull()
+        f3.await().shouldBeNull()
         sequenceChecker.assertSeq("after f3 get", seq++)
     }
 
@@ -80,8 +80,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
             n
         }, testThreadPoolExecutor)
         // ensure f0 is already COMPLETED
-        @Suppress("BlockingMethodInNonBlockingContext")
-        f0.get() shouldBe n // wait f0 COMPLETED
+        f0.await() shouldBe n // wait f0 COMPLETED
         sequenceChecker.assertSeq("after f0 get", seq++)
 
         val f1 = f0.thenApply {
@@ -103,8 +102,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
         }
         sequenceChecker.assertSeq("after thenRun", seq++)
 
-        @Suppress("BlockingMethodInNonBlockingContext")
-        f3.get().shouldBeNull()
+        f3.await().shouldBeNull()
         sequenceChecker.assertSeq("after f3 get", seq++)
     }
 
@@ -226,9 +224,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
             }
         sequenceChecker.assertSeq("after exceptionally", 2)
 
-
-        @Suppress("BlockingMethodInNonBlockingContext")
-        f1.get().also {
+        f1.await().also {
             mark.get().shouldBeFalse()
             it shouldEndWith "HERE"
         }
@@ -293,8 +289,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
         f0.complete("done")
         sequenceChecker.assertSeq("after complete", 3)
 
-        @Suppress("BlockingMethodInNonBlockingContext")
-        f1.get() shouldBe n
+        f1.await() shouldBe n
         sequenceChecker.assertSeq("after get", 4)
     }
 
@@ -328,8 +323,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
             "done"
         }, testThreadPoolExecutor)
 
-        @Suppress("BlockingMethodInNonBlockingContext")
-        f1.get() shouldBe n
+        f1.await() shouldBe n
         sequenceChecker.assertSeq("in completeAsync", 4)
     }
 
@@ -339,8 +333,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
             n
         }.completeOnTimeout(anotherN, 1, TimeUnit.MILLISECONDS)
 
-        @Suppress("BlockingMethodInNonBlockingContext")
-        f.get() shouldBe anotherN
+        f.await() shouldBe anotherN
     }
 
     test("timeout control: exceptionally completed with java.util.concurrent.TimeoutException").config(enabledIf = java9Plus) {
@@ -355,8 +348,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
                 anotherN
             }
 
-        @Suppress("BlockingMethodInNonBlockingContext")
-        f.get() shouldBe anotherN
+        f.await() shouldBe anotherN
     }
 
     test("delay execution").config(enabledIf = java9Plus) {
@@ -365,10 +357,9 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
 
         val delayer = CompletableFuture.delayedExecutor(delay, TimeUnit.MILLISECONDS)
 
-        @Suppress("BlockingMethodInNonBlockingContext")
         val duration = CompletableFuture.supplyAsync({
             currentTimeMillis() - tick
-        }, delayer).get()
+        }, delayer).await()
 
         duration.shouldBeBetween(delay, delay + 10)
     }
@@ -388,8 +379,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
 
         val buildTime = currentTimeMillis() - tick
 
-        @Suppress("BlockingMethodInNonBlockingContext")
-        val runTime = f.thenApply { currentTimeMillis() - it }.get()
+        val runTime = f.thenApply { currentTimeMillis() - it }.await()
 
         String.format(
             "%s tasks: build time: %5sms, run time: %4sms",
@@ -397,8 +387,6 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
         ).run(::println)
     }
 
-
-    @Suppress("BlockingMethodInNonBlockingContext")
     test("ex").config(enabledIf = java9Plus) {
         val cf = CompletableFuture.failedFuture<Int>(rte)
 
@@ -406,14 +394,13 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
             t.shouldBeTypeOf<CompletionException>()
             t.cause shouldBeSameInstanceAs rte
             42
-        }.toCompletableFuture().get() shouldBe 42
+        }.toCompletableFuture().await() shouldBe 42
 
 
         cf.thenApply { it }.handle { _, t ->
             t.shouldBeTypeOf<CompletionException>()
             t.cause shouldBeSameInstanceAs rte
             42
-        }.toCompletableFuture().get() shouldBe 42
-
+        }.toCompletableFuture().await() shouldBe 42
     }
 })
