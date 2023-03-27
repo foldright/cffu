@@ -56,15 +56,16 @@ fun testMinimalStage(cffuMin: CompletionStage<Int>): CompletableFuture<Int> {
     shouldBeMinStage(cffuMin)
     shouldBeMinStage(cffuMin.copy())
 
-    cffuMin.cf.shouldBeInstanceOf<CompletableFuture<Int>>()
+    val unwrap = cffuMin.cffuUnwrap()
+    unwrap.shouldBeInstanceOf<CompletableFuture<Int>>()
     if (isJavaVersionAtLeast(JavaVersion.JAVA_9)) {
-        shouldBeMinStage(cffuMin.cf)
+        shouldBeMinStage(unwrap)
     } else {
-        shouldNotBeMinStage(cffuMin.cf)
+        shouldNotBeMinStage(unwrap)
     }
 
     // `toCompletableFuture` convert to a normal CF
-    val cf = cffuMin.cf.toCompletableFuture()
+    val cf = unwrap.toCompletableFuture()
     shouldNotBeMinStage(cf)
     return cf
 }

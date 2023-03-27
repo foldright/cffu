@@ -53,8 +53,19 @@ public final class CffuFactory {
     final boolean forbidObtrudeMethods;
 
     CffuFactory(Executor defaultExecutor, boolean forbidObtrudeMethods) {
-        this.defaultExecutor = screenExecutor(requireNonNull(defaultExecutor, "defaultExecutor is null"));
+        this.defaultExecutor = screenExecutor(defaultExecutor);
         this.forbidObtrudeMethods = forbidObtrudeMethods;
+    }
+
+    /**
+     * Null-checks user executor argument, and translates uses of
+     * commonPool to ASYNC_POOL in case parallelism disabled.
+     */
+    @SuppressWarnings("resource")
+    private static Executor screenExecutor(Executor e) {
+        if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool())
+            return AsyncPoolHolder.ASYNC_POOL;
+        return requireNonNull(e, "defaultExecutor is null");
     }
 
     @Contract(pure = true)
@@ -902,17 +913,6 @@ public final class CffuFactory {
          */
         private static final Executor ASYNC_POOL = USE_COMMON_POOL ?
                 ForkJoinPool.commonPool() : new ThreadPerTaskExecutor();
-    }
-
-    /**
-     * Null-checks user executor argument, and translates uses of
-     * commonPool to ASYNC_POOL in case parallelism disabled.
-     */
-    @SuppressWarnings("resource")
-    private static Executor screenExecutor(Executor e) {
-        if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool())
-            return AsyncPoolHolder.ASYNC_POOL;
-        return e;
     }
 
     ////////////////////////////////////////////////////////////////////////////////

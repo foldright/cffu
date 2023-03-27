@@ -16,11 +16,15 @@ class CffuExtensionsTest : FunSpec({
         val factory = newCffuFactoryBuilder(testThreadPoolExecutor).build()
         CompletableFuture.completedFuture(n).asCffu(factory).await() shouldBe n
 
+        CompletableFuture.completedFuture(n).asCffu(factory).let {
+            it.defaultExecutor() shouldBeSameInstanceAs testThreadPoolExecutor
+            it.cffuFactory() shouldBeSameInstanceAs factory
+        }
+        val fac2 = newCffuFactoryBuilder(testForkJoinPoolExecutor).build()
         CompletableFuture.completedFuture(n).asCffu(factory)
-            .defaultExecutor() shouldBeSameInstanceAs testThreadPoolExecutor
-
-        CompletableFuture.completedFuture(n).asCffu(factory)
-            .resetCffuFactory(newCffuFactoryBuilder(testForkJoinPoolExecutor).build())
-            .defaultExecutor() shouldBeSameInstanceAs testForkJoinPoolExecutor
+            .resetCffuFactory(fac2).let {
+                it.defaultExecutor() shouldBeSameInstanceAs testForkJoinPoolExecutor
+                it.cffuFactory() shouldBeSameInstanceAs fac2
+            }
     }
 })
