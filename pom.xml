@@ -501,7 +501,7 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<configuration>
-							<source>8</source>
+							<source>19</source>
 							<show>protected</show>
 							<charset>UTF-8</charset>
 							<encoding>UTF-8</encoding>
