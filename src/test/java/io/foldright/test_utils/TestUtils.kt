@@ -33,10 +33,17 @@ fun <T, E : Throwable> createExceptionallyCompletedFutureWithSleep(ex: E): Compl
         throw ex
     }
 
+////////////////////////////////////////////////////////////////////////////////
+// Helper functions for ApiCompatibilityTest
+//    - CompletableFutureApiCompatibilityTest
+//    - CffuApiCompatibilityTest
+////////////////////////////////////////////////////////////////////////////////
+
 /**
  * safe means works under java 8
  */
-fun <T> safeNewFailedCompletableFuture(t: Throwable): CompletableFuture<T> {
+@Suppress("UNUSED_PARAMETER")
+fun <T> safeNewFailedCompletableFuture(executorService: ExecutorService, t: Throwable): CompletableFuture<T> {
     val failed: CompletableFuture<T> = CompletableFuture<T>()
     failed.completeExceptionally(t)
     return failed
@@ -45,10 +52,26 @@ fun <T> safeNewFailedCompletableFuture(t: Throwable): CompletableFuture<T> {
 /**
  * safe means works under java 8
  */
-fun <T> safeNewFailedCffu(t: Throwable): Cffu<T>? {
-    return newCffuFactoryBuilder(commonPool()).build().failedFuture(t)
+fun <T> safeNewFailedCffu(executorService: ExecutorService, t: Throwable): Cffu<T>? {
+    return newCffuFactoryBuilder(executorService).build().failedFuture(t)
 }
 
+@Suppress("UNUSED_PARAMETER")
+fun assertDefaultRunThreadOfCompletableFuture(executorService: ExecutorService) {
+    // do nothing
+}
+
+fun assertRunThreadOfCompletableFuture(executorService: ExecutorService) {
+    assertRunInExecutor(executorService)
+}
+
+fun assertDefaultRunThreadOfCffu(executorService: ExecutorService) {
+    assertRunInExecutor(executorService)
+}
+
+fun assertRunThreadOfCffu(executorService: ExecutorService) {
+    assertRunInExecutor(executorService)
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Simple util functions
