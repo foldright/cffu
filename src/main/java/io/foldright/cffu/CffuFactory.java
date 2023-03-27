@@ -679,8 +679,8 @@ public final class CffuFactory {
      * @see #cffuCombine(Cffu, Cffu, Cffu)
      * @see #cffuAllOf(CompletableFuture[])
      */
-    @SuppressWarnings("unchecked")
     @Contract(pure = true)
+    @SuppressWarnings("unchecked")
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> cffuCombine(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
         requireNonNull(cf1, "cf1 is null");
@@ -730,8 +730,8 @@ public final class CffuFactory {
      * @see #cffuCombine(Cffu, Cffu, Cffu, Cffu)
      * @see #cffuAllOf(CompletableFuture[])
      */
-    @SuppressWarnings("unchecked")
     @Contract(pure = true)
+    @SuppressWarnings("unchecked")
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> cffuCombine(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
             CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
@@ -785,8 +785,8 @@ public final class CffuFactory {
      * @see #cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)
      * @see #cffuAllOf(CompletableFuture[])
      */
-    @SuppressWarnings("unchecked")
     @Contract(pure = true)
+    @SuppressWarnings("unchecked")
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> cffuCombine(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
             CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
