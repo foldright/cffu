@@ -12,7 +12,6 @@ import io.kotest.matchers.booleans.shouldBeTrue
 import org.apache.commons.lang3.JavaVersion
 import org.apache.commons.lang3.SystemUtils.isJavaVersionAtLeast
 import java.util.concurrent.*
-import java.util.concurrent.ForkJoinPool.commonPool
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -99,6 +98,8 @@ fun addCurrentThreadName(names: List<String>) = names + Thread.currentThread().n
 fun <T> CompletableFuture<T>.shouldBeMinimalStage() {
     shouldMinCf(true)
 }
+
+private val blackHoleExecutor = Executor { /* do nothing */ }
 
 private fun <T> CompletableFuture<T>.shouldMinCf(recursive: Boolean = false) {
     shouldCompletionStageMethodsAllowed(recursive)
@@ -204,7 +205,7 @@ fun <T> CompletableFuture<T>.shouldNotBeMinimalStage() {
 private fun <T> CompletableFuture<T>.shouldNotMinCf(recursive: Boolean = false) {
     shouldCompletionStageMethodsAllowed(recursive)
 
-    this.complete(null) // avoid running CF blocking
+    this.complete(null) // make sure completed, avoid running CF blocking
 
     if (recursive && isJavaVersion9Plus()) {
         orTimeout(1, TimeUnit.MILLISECONDS).shouldNotMinCf()
@@ -246,7 +247,7 @@ private fun <T> CompletableFuture<T>.shouldNotMinCf(recursive: Boolean = false) 
     if (recursive) {
         if (isJavaVersion9Plus()) {
             completeAsync { null }.shouldNotMinCf()
-            completeAsync({ null }, commonPool()).shouldNotMinCf()
+            completeAsync({ null }, blackHoleExecutor).shouldNotMinCf()
         }
         completeExceptionally(RuntimeException())
         cancel(false)
@@ -256,6 +257,7 @@ private fun <T> CompletableFuture<T>.shouldNotMinCf(recursive: Boolean = false) 
 
     if (recursive) {
         if (isJavaVersion9Plus()) (minimalCompletionStage() as CompletableFuture<T>).shouldMinCf()
+
         toCompletableFuture().shouldNotMinCf()
     }
 
@@ -391,7 +393,7 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
 
     //# Cffu Re-Config methods
     if (recursive)
-        resetCffuFactory(newCffuFactoryBuilder(commonPool()).build()).shouldMinCffu()
+        resetCffuFactory(newCffuFactoryBuilder(blackHoleExecutor).build()).shouldMinCffu()
 
     //# Getter methods of properties
     cffuFactory()
@@ -411,7 +413,7 @@ fun <T> Cffu<T>.shouldNotBeMinimalStage() {
 private fun <T> Cffu<T>.shouldNotMinCffu(recursive: Boolean = false) {
     shouldCompletionStageMethodsAllowed(recursive)
 
-    this.complete(null) // avoid running CF blocking
+    this.complete(null) // make sure completed, avoid running CF blocking
 
     if (recursive) {
         orTimeout(1, TimeUnit.MILLISECONDS).shouldNotMinCffu()
@@ -451,7 +453,7 @@ private fun <T> Cffu<T>.shouldNotMinCffu(recursive: Boolean = false) {
     // complete(null) // used above
     if (recursive) {
         completeAsync { null }.shouldNotMinCffu()
-        completeAsync({ null }, commonPool()).shouldNotMinCffu()
+        completeAsync({ null }, blackHoleExecutor).shouldNotMinCffu()
         completeExceptionally(RuntimeException())
         cancel(false)
     }
@@ -460,6 +462,7 @@ private fun <T> Cffu<T>.shouldNotMinCffu(recursive: Boolean = false) {
 
     if (recursive) {
         (minimalCompletionStage() as Cffu<T>).shouldMinCffu()
+
         toCompletableFuture().shouldNotMinCf()
     }
 
@@ -481,15 +484,12 @@ private fun <T> Cffu<T>.shouldNotMinCffu(recursive: Boolean = false) {
     // Cffu specified methods
     ////////////////////////////////////////////////////////////
 
-
-    shouldCompletionStageMethodsAllowed(recursive)
-
     cffuJoin(1, TimeUnit.MILLISECONDS)
     cffuState()
 
     //# Cffu Re-Config methods
     if (recursive)
-        resetCffuFactory(newCffuFactoryBuilder(commonPool()).build()).shouldNotMinCffu()
+        resetCffuFactory(newCffuFactoryBuilder(blackHoleExecutor).build()).shouldNotMinCffu()
 
     //# Getter methods of properties
     cffuFactory()
@@ -514,7 +514,7 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
-        thenRunAsync({}, commonPool()).let {
+        thenRunAsync({}, blackHoleExecutor).let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
@@ -529,7 +529,7 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
-        thenAcceptAsync({}, commonPool()).let {
+        thenAcceptAsync({}, blackHoleExecutor).let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
@@ -544,7 +544,7 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
-        thenApplyAsync({}, commonPool()).let {
+        thenApplyAsync({}, blackHoleExecutor).let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
@@ -560,7 +560,7 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
-        runAfterBothAsync(cf, {}, commonPool()).let {
+        runAfterBothAsync(cf, {}, blackHoleExecutor).let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
@@ -575,7 +575,7 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
-        thenAcceptBothAsync(cf, { _, _ -> }, commonPool()).let {
+        thenAcceptBothAsync(cf, { _, _ -> }, blackHoleExecutor).let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
@@ -590,7 +590,7 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
-        thenCombineAsync(cf, { _, _ -> }, commonPool()).let {
+        thenCombineAsync(cf, { _, _ -> }, blackHoleExecutor).let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
@@ -606,7 +606,7 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
-        runAfterEitherAsync(cf, {}, commonPool()).let {
+        runAfterEitherAsync(cf, {}, blackHoleExecutor).let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
@@ -621,7 +621,7 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
-        acceptEitherAsync(cf, {}, commonPool()).let {
+        acceptEitherAsync(cf, {}, blackHoleExecutor).let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
@@ -636,7 +636,7 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
-        applyToEitherAsync(cf, {}, commonPool()).let {
+        applyToEitherAsync(cf, {}, blackHoleExecutor).let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
@@ -652,7 +652,7 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
         }
     }
     if (isJavaVersion12Plus() && this !is Cffu<*>) shouldNotThrow<UnsupportedOperationException> {
-        exceptionallyAsync({ null }, commonPool()).let {
+        exceptionallyAsync({ null }, blackHoleExecutor).let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
@@ -668,7 +668,7 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
-        thenComposeAsync({ cf }, commonPool()).let {
+        thenComposeAsync({ cf }, blackHoleExecutor).let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
@@ -683,7 +683,7 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
         }
     }
     if (isJavaVersion12Plus() && this !is Cffu<*>) shouldNotThrow<UnsupportedOperationException> {
-        exceptionallyComposeAsync({ cf }, commonPool()).let {
+        exceptionallyComposeAsync({ cf }, blackHoleExecutor).let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
@@ -699,7 +699,7 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
-        whenCompleteAsync({ _, _ -> }, commonPool()).let {
+        whenCompleteAsync({ _, _ -> }, blackHoleExecutor).let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
@@ -714,7 +714,7 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
         }
     }
     shouldNotThrow<UnsupportedOperationException> {
-        handleAsync({ _, _ -> }, commonPool()).let {
+        handleAsync({ _, _ -> }, blackHoleExecutor).let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
@@ -735,7 +735,7 @@ fun isJavaVersion19Plus(): Boolean = try {
     // `resultNow` is the new method of CompletableFuture since java 19
     cf.resultNow()
     true
-} catch (e: NoSuchMethodError) {
+} catch (_: NoSuchMethodError) {
     false
 }
 

@@ -48,8 +48,7 @@ fun createThreadPool(threadNamePrefix: String, isForkJoin: Boolean = false): Exe
     }
 }
 
-@JvmName("isExecutorOwnThread")
-fun Executor.doesOwnThread(thread: Thread): Boolean = (this as ThreadPoolAcquaintance).isMyThread(thread)
+private fun Executor.doesOwnThread(thread: Thread): Boolean = (this as ThreadPoolAcquaintance).isMyThread(thread)
 
 private interface ThreadPoolAcquaintance {
     fun isMyThread(thread: Thread): Boolean
