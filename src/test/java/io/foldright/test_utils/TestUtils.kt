@@ -22,21 +22,18 @@ import java.util.concurrent.ForkJoinPool.commonPool
 //   - compatibility logic of Java version
 ////////////////////////////////////////////////////////////////////////////////
 
-fun <T> createNormallyCompletedFutureWithSleep(value: T): CompletableFuture<T> = CompletableFuture.supplyAsync {
-    sleep(10)
-    value
+fun <T> createIncompleteFuture(): CompletableFuture<T> = CompletableFuture()
+
+fun <T> createFailedFuture(ex: Throwable): CompletableFuture<T> {
+    val cf = CompletableFuture<T>()
+    cf.completeExceptionally(ex)
+    return cf
 }
 
-fun <T, E : Throwable> createExceptionallyCompletedFutureWithSleep(ex: E): CompletableFuture<T> =
-    CompletableFuture.supplyAsync {
-        sleep(10)
-        throw ex
-    }
-
 ////////////////////////////////////////////////////////////////////////////////
-// Helper functions for ApiCompatibilityTest
-//    - CompletableFutureApiCompatibilityTest
-//    - CffuApiCompatibilityTest
+// Helper functions for api compatibility test:
+//  - CompletableFutureApiCompatibilityTest
+//  - CffuApiCompatibilityTest
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -81,7 +78,7 @@ fun assertRunThreadOfCffu(executorService: ExecutorService) {
  * sleep without throwing checked exception
  */
 @JvmOverloads
-fun sleep(millis: Long = 2) {
+fun sleep(millis: Long = 10) {
     Thread.sleep(millis)
 }
 
@@ -743,6 +740,10 @@ fun isJavaVersion19Plus(): Boolean = try {
 } catch (e: NoSuchMethodError) {
     false
 }
+
+// about CI env var
+// https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
+fun isCiEnv(): Boolean = System.getenv("CI")?.lowercase() == "true"
 
 val java9Plus: (TestCase) -> Boolean = { isJavaVersion9Plus() }
 

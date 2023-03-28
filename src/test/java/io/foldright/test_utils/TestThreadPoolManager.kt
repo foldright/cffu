@@ -24,7 +24,7 @@ fun createThreadPool(threadNamePrefix: String, isForkJoin: Boolean = false): Exe
     val executorService = if (!isForkJoin)
         ThreadPoolExecutor(
             THREAD_COUNT_OF_POOL, THREAD_COUNT_OF_POOL, 1, TimeUnit.DAYS,
-            ArrayBlockingQueue(500)
+            ArrayBlockingQueue(5000)
         ) { r ->
             Thread(r).apply {
                 name = "$prefix${counter.getAndIncrement()}"
@@ -113,6 +113,7 @@ object InitTestThreadPoolsProjectListener : BeforeProjectListener, AfterProjectL
         println("Available Processors of Runtime: ${Runtime.getRuntime().availableProcessors()}")
         println("Java Home:                       ${System.getProperty("java.home")}")
         println("Java Version:                    ${System.getProperty("java.version")}")
+        println("CI env var:                      ${System.getenv("CI")} (${isCiEnv()})")
         println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 
         warmupExecutorService(testThreadPoolExecutor, testForkJoinPoolExecutor)

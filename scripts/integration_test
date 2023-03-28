@@ -65,6 +65,9 @@ for jdk_version in "${JDK_VERSIONS[@]}"; do
 
   # just test without build
   cu::head_line_echo "test with Java $jdk_version: $JAVA_HOME"
+
+  # about CI env var
+  #   https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
   if [ "${CI:-}" = true ]; then
     jvb::mvn_cmd jacoco:prepare-agent surefire:test jacoco:report
   else

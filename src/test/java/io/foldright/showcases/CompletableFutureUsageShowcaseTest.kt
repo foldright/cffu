@@ -329,7 +329,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
 
     test("timeout control: normally completed with replacement value").config(enabledIf = java9Plus) {
         val f = CompletableFuture.supplyAsync {
-            sleep(10)
+            sleep(1000)
             n
         }.completeOnTimeout(anotherN, 1, TimeUnit.MILLISECONDS)
 
@@ -339,7 +339,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
     test("timeout control: exceptionally completed with java.util.concurrent.TimeoutException").config(enabledIf = java9Plus) {
         val f = CompletableFuture
             .supplyAsync {
-                sleep(10)
+                sleep(1000)
                 n
             }
             .orTimeout(1, TimeUnit.MILLISECONDS)
@@ -353,7 +353,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
 
     test("delay execution").config(enabledIf = java9Plus) {
         val tick = currentTimeMillis()
-        val delay = 20L
+        val delay = 100L
 
         val delayer = CompletableFuture.delayedExecutor(delay, TimeUnit.MILLISECONDS)
 
@@ -361,14 +361,16 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
             currentTimeMillis() - tick
         }, delayer).await()
 
-        duration.shouldBeBetween(delay, delay + 10)
+        // if run in CI environment, use large tolerance 50ms, because CI environment is more unstable.
+        val tolerance = if (isCiEnv()) 50 else 10
+        duration.shouldBeBetween(delay, delay + tolerance)
     }
 
     xtest("performance CF then*").config(invocations = 10) {
         val times = 1_000_000
 
         var f = CompletableFuture.supplyAsync(
-            { sleep(100); currentTimeMillis() },
+            { sleep(); currentTimeMillis() },
             testThreadPoolExecutor
         )
 
