@@ -376,9 +376,7 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         obtrudeException(null)
     }
-    if (recursive)
-        if (isJavaVersion9Plus()) newIncompleteFuture<T>().shouldMinCffu()
-        else newIncompleteFuture<T>().shouldNotBeMinimalStage()
+    if (recursive) newIncompleteFuture<T>().shouldMinCffu()
 
     ////////////////////////////////////////////////////////////
     // Cffu specified methods

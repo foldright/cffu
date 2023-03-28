@@ -1845,6 +1845,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <b><i>NOTE:<br></i></b>
      * this method existed mainly for API compatibility to {@code CompletableFuture},
      * prefer {@link CffuFactory#newIncompleteCffu()}.
+     * <p>
+     * <b><i>CAUTION:<br></i></b>
+     * for minimal stage instance({@link #isMinimalStage()}), if run on old Java 8,
+     * just return a Cffu with a *normal* underneath CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @see CffuFactory#newIncompleteCffu()
      * @see CompletableFuture#newIncompleteFuture()
@@ -1854,7 +1858,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         if (IS_JAVA9_PLUS) {
             return reset0(cf.newIncompleteFuture());
         }
-        return fac.newIncompleteCffu();
+        return reset0(new CompletableFuture<>());
     }
 
     /**
