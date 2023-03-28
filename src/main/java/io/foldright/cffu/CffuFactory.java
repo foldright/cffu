@@ -528,20 +528,18 @@ public final class CffuFactory {
         final int size = cfs.length;
         final Object[] result = new Object[size];
 
-        final CompletableFuture<?>[] wrappedCfs = new CompletableFuture[size];
+        final CompletableFuture<?>[] thenCfs = new CompletableFuture[size];
         for (int i = 0; i < size; i++) {
             final int index = i;
+            final CompletableFuture<T> cf = cfs[index];
 
-            CompletableFuture<T> cf = cfs[index];
-
-            CompletableFuture<Void> wrapped = cf.thenAccept(x -> result[index] = x);
-            wrappedCfs[index] = wrapped;
+            CompletableFuture<Void> thenCf = cf.thenAccept(x -> result[index] = x);
+            thenCfs[index] = thenCf;
         }
 
         @SuppressWarnings("unchecked")
-        CompletableFuture<List<T>> ret = CompletableFuture.allOf(wrappedCfs)
+        CompletableFuture<List<T>> ret = CompletableFuture.allOf(thenCfs)
                 .thenApply(unused -> (List<T>) Arrays.asList(result));
-
         return new0(ret);
     }
 
