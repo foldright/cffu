@@ -9,6 +9,7 @@ import org.junit.jupiter.api.condition.JRE;
 
 import java.util.concurrent.*;
 
+import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
 import static io.foldright.cffu.CffuFactoryTest.n;
 import static io.foldright.cffu.CffuFactoryTest.rte;
 import static org.junit.jupiter.api.Assertions.*;
@@ -168,8 +169,8 @@ class CffuTest {
     static void beforeAll() {
         executorService = TestThreadPoolManager.createThreadPool("CffuTest");
 
-        cffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder(executorService).build();
-        forbidObtrudeMethodsCffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder(executorService)
+        cffuFactory = newCffuFactoryBuilder(executorService).build();
+        forbidObtrudeMethodsCffuFactory = newCffuFactoryBuilder(executorService)
                 .forbidObtrudeMethods(true).build();
     }
 

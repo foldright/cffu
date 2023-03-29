@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.concurrent.*;
 import java.util.function.Function;
 
+import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
 import static io.foldright.test_utils.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -132,7 +133,7 @@ class CffuFactoryTest {
         assertEquals(n, cf.get());
         shouldNotBeMinimalStage(cf);
 
-        CffuFactory fac = CffuFactoryBuilder.newCffuFactoryBuilder(anotherExecutorService).forbidObtrudeMethods(true).build();
+        CffuFactory fac = newCffuFactoryBuilder(anotherExecutorService).forbidObtrudeMethods(true).build();
         Cffu<Integer> cffu = fac.asCffu(cffuFactory.completedFuture(42));
         assertSame(anotherExecutorService, cffu.defaultExecutor());
         assertSame(fac, cffu.cffuFactory());
@@ -511,7 +512,7 @@ class CffuFactoryTest {
         assertSame(executorService, cffuFactory.defaultExecutor());
         assertFalse(cffuFactory.forbidObtrudeMethods());
 
-        CffuFactory fac = CffuFactoryBuilder.newCffuFactoryBuilder(anotherExecutorService).forbidObtrudeMethods(true).build();
+        CffuFactory fac = newCffuFactoryBuilder(anotherExecutorService).forbidObtrudeMethods(true).build();
         assertSame(anotherExecutorService, fac.defaultExecutor());
         assertTrue(fac.forbidObtrudeMethods());
     }
@@ -529,7 +530,7 @@ class CffuFactoryTest {
         executorService = TestThreadPoolManager.createThreadPool("CffuFactoryTest");
         anotherExecutorService = TestThreadPoolManager.createThreadPool("CffuFactoryTest-Another", true);
 
-        cffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder(executorService).build();
+        cffuFactory = newCffuFactoryBuilder(executorService).build();
     }
 
     @AfterAll
