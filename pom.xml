@@ -601,6 +601,8 @@
 
 							Spotbugs support @SuppressWarnings
 							https://github.com/spotbugs/spotbugs/issues/737#issuecomment-416118033
+							Is it possible for spotbugs to skip kotlin files from pure maven configuration?
+							https://stackoverflow.com/questions/55060459
 						-->
 						<groupId>com.github.spotbugs</groupId>
 						<artifactId>spotbugs-maven-plugin</artifactId>
@@ -612,6 +614,9 @@
 								</goals>
 							</execution>
 						</executions>
+						<configuration>
+							<excludeFilterFile>${project.basedir}/src/spotbugs-exclude-filter-file.xml</excludeFilterFile>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
