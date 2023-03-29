@@ -14,7 +14,7 @@ import java.util.concurrent.CompletionStage
  * @see CompletableFuture.allOf
  * @see CffuFactory.allOf
  */
-fun Collection<CompletableFuture<*>>.allOf(): CompletableFuture<Void> =
+fun Collection<CompletableFuture<*>>.allCompletableFuture(): CompletableFuture<Void> =
     CompletableFuture.allOf(*this.toTypedArray())
 
 /**
@@ -25,7 +25,7 @@ fun Collection<CompletableFuture<*>>.allOf(): CompletableFuture<Void> =
  * @see CompletableFuture.allOf
  * @see CffuFactory.allOf
  */
-fun Array<CompletableFuture<*>>.allOf(): CompletableFuture<Void> =
+fun Array<CompletableFuture<*>>.allCompletableFuture(): CompletableFuture<Void> =
     CompletableFuture.allOf(*this)
 
 /**
@@ -37,7 +37,7 @@ fun Array<CompletableFuture<*>>.allOf(): CompletableFuture<Void> =
  * @see CompletableFuture.anyOf
  * @see CffuFactory.anyOf
  */
-fun Collection<CompletableFuture<*>>.anyOf(): CompletableFuture<Any> =
+fun Collection<CompletableFuture<*>>.anyCompletableFuture(): CompletableFuture<Any> =
     CompletableFuture.anyOf(*this.toTypedArray())
 
 /**
@@ -49,7 +49,7 @@ fun Collection<CompletableFuture<*>>.anyOf(): CompletableFuture<Any> =
  * @see CompletableFuture.anyOf
  * @see CffuFactory.anyOf
  */
-fun Array<CompletableFuture<*>>.anyOf(): CompletableFuture<Any> =
+fun Array<CompletableFuture<*>>.anyCompletableFuture(): CompletableFuture<Any> =
     CompletableFuture.anyOf(*this)
 
 /**
@@ -65,6 +65,8 @@ fun <T> CompletionStage<T>.asCffu(cffuFactory: CffuFactory): Cffu<T> =
 /**
  * Wrap input [CompletableFuture]/[CompletionStage] collection element to [Cffu] by [CffuFactory.asCffu].
  *
+ * Same as [CffuFactory.asCffu], providing this method is convenient for method chaining.
+ *
  * @see CffuFactory.asCffu
  */
 fun <T> Collection<CompletionStage<T>>.asCffu(cffuFactory: CffuFactory): List<Cffu<T>> =
@@ -72,6 +74,8 @@ fun <T> Collection<CompletionStage<T>>.asCffu(cffuFactory: CffuFactory): List<Cf
 
 /**
  * Wrap input [CompletableFuture]/[CompletionStage] array element to [Cffu] by [CffuFactory.asCffu].
+ *
+ * Same as [CffuFactory.asCffu], providing this method is convenient for method chaining.
  *
  * @see CffuFactory.asCffu
  * @see CffuFactory.asCffuArray
@@ -87,7 +91,7 @@ fun <T, CS : CompletionStage<T>> Array<CS>.asCffu(cffuFactory: CffuFactory): Arr
  *
  * @see CffuFactory.cffuAllOf
  */
-fun <T> Collection<Cffu<T>>.cffuAllOf(cffuFactory: CffuFactory): Cffu<List<T>> =
+fun <T> Collection<Cffu<T>>.allCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
     cffuFactory.cffuAllOf(*this.toTypedArray())
 
 /**
@@ -99,7 +103,7 @@ fun <T> Collection<Cffu<T>>.cffuAllOf(cffuFactory: CffuFactory): Cffu<List<T>> =
  * @see CffuFactory.cffuAllOf
  */
 
-fun <T> Array<Cffu<T>>.cffuAllOf(cffuFactory: CffuFactory): Cffu<List<T>> =
+fun <T> Array<Cffu<T>>.allCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
     cffuFactory.cffuAllOf(*this)
 
 /**
@@ -111,7 +115,7 @@ fun <T> Array<Cffu<T>>.cffuAllOf(cffuFactory: CffuFactory): Cffu<List<T>> =
  * @see CffuFactory.cffuAllOf
  */
 @JvmName("cffuAllOfCf")
-fun <T> Collection<CompletableFuture<T>>.cffuAllOf(cffuFactory: CffuFactory): Cffu<List<T>> =
+fun <T> Collection<CompletableFuture<T>>.allCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
     cffuFactory.cffuAllOf(*this.toTypedArray())
 
 /**
@@ -122,7 +126,7 @@ fun <T> Collection<CompletableFuture<T>>.cffuAllOf(cffuFactory: CffuFactory): Cf
  *
  * @see CffuFactory.cffuAllOf
  */
-fun <T> Array<CompletableFuture<T>>.cffuAllOf(cffuFactory: CffuFactory): Cffu<List<T>> =
+fun <T> Array<CompletableFuture<T>>.allCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
     cffuFactory.cffuAllOf(*this)
 
 /**
@@ -132,7 +136,7 @@ fun <T> Array<CompletableFuture<T>>.cffuAllOf(cffuFactory: CffuFactory): Cffu<Li
  *
  * @see CffuFactory.cffuAnyOf
  */
-fun <T> Collection<Cffu<T>>.cffuAnyOf(cffuFactory: CffuFactory): Cffu<T> =
+fun <T> Collection<Cffu<T>>.anyCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.cffuAnyOf(*this.toTypedArray())
 
 /**
@@ -142,7 +146,7 @@ fun <T> Collection<Cffu<T>>.cffuAnyOf(cffuFactory: CffuFactory): Cffu<T> =
  *
  * @see CffuFactory.cffuAnyOf
  */
-fun <T> Array<Cffu<T>>.cffuAnyOf(cffuFactory: CffuFactory): Cffu<T> =
+fun <T> Array<Cffu<T>>.anyCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.cffuAnyOf(*this)
 
 /**
@@ -153,7 +157,7 @@ fun <T> Array<Cffu<T>>.cffuAnyOf(cffuFactory: CffuFactory): Cffu<T> =
  * @see CffuFactory.cffuAnyOf
  */
 @JvmName("cffuAnyOfCf")
-fun <T> Collection<CompletableFuture<T>>.cffuAnyOf(cffuFactory: CffuFactory): Cffu<T> =
+fun <T> Collection<CompletableFuture<T>>.anyCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.cffuAnyOf(*this.toTypedArray())
 
 /**
@@ -163,11 +167,13 @@ fun <T> Collection<CompletableFuture<T>>.cffuAnyOf(cffuFactory: CffuFactory): Cf
  *
  * @see CffuFactory.cffuAnyOf
  */
-fun <T> Array<CompletableFuture<T>>.cffuAnyOf(cffuFactory: CffuFactory): Cffu<T> =
+fun <T> Array<CompletableFuture<T>>.anyCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.cffuAnyOf(*this)
 
 /**
  * Convert [Cffu] collection elements to [CompletableFuture] by [Cffu.toCompletableFuture].
+ *
+ * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
  *
  * @see CffuFactory.toCompletableFutureArray
  */
@@ -177,6 +183,8 @@ fun <T> Collection<CompletionStage<T>>.toCompletableFuture(): List<CompletableFu
 /**
  * Convert [Cffu] array elements to [CompletableFuture] by [Cffu.toCompletableFuture].
  *
+ * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
+ *
  * @see CffuFactory.toCompletableFutureArray
  */
 fun <T, CS : CompletionStage<T>> Array<CS>.toCompletableFuture(): Array<CompletableFuture<T>> =
@@ -185,6 +193,8 @@ fun <T, CS : CompletionStage<T>> Array<CS>.toCompletableFuture(): Array<Completa
 /**
  * Unwrap input [Cffu] collection elements by [Cffu.cffuUnwrap].
  *
+ * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
+ *
  * @see CffuFactory.cffuArrayUnwrap
  */
 fun <T> Collection<Cffu<T>>.cffuUnwrap(): List<CompletableFuture<T>> =
@@ -192,6 +202,8 @@ fun <T> Collection<Cffu<T>>.cffuUnwrap(): List<CompletableFuture<T>> =
 
 /**
  * Unwrap input [Cffu] array elements by [Cffu.cffuUnwrap].
+ *
+ * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
  *
  * @see CffuFactory.cffuArrayUnwrap
  */
