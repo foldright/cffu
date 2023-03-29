@@ -1658,12 +1658,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * {@code wrappedCf.toCompletableFuture()}; if you need the underneath wrapped CompletableFuture instance,
      * call method {@link #cffuUnwrap()}.
      * <p>
-     * {@link CffuFactory#toCompletableFutureArray(Cffu[])} is the batch operation to this method.
+     * {@link CffuFactory#toCompletableFutureArray(CompletionStage[])} is the batch operation to this method.
      *
      * @return the CompletableFuture
      * @see CompletionStage#toCompletableFuture()
      * @see #cffuUnwrap()
-     * @see CffuFactory#toCompletableFutureArray(Cffu[])
+     * @see CffuFactory#toCompletableFutureArray(CompletionStage[])
      */
     @Contract(pure = true)
     @Override

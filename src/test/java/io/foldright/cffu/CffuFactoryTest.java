@@ -108,11 +108,15 @@ class CffuFactoryTest {
     //    - supplyAsync*
     ////////////////////////////////////////////////////////////////////////////////
 
+    // ...
+
     ////////////////////////////////////////////////////////////////////////////////
     //# Factory Methods
     //
     //    - newIncompleteCffu: equivalent to CompletableFuture constructor
-    //    - asCffu: wrap an existed CompletableFuture/CompletionStage to Cffu
+    //
+    //    - asCffu:      CF/CompletionStage -> Cffu
+    //    - asCffuArray: CF/CompletionStage[] -> Cffu[]
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
@@ -258,6 +262,24 @@ class CffuFactoryTest {
                 createIncompleteFuture()
         ).get());
     }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Delay Execution, equivalent to same name static methods of CompletableFuture
+    //
+    //    - delayedExecutor
+    ////////////////////////////////////////////////////////////////////////////////
+
+    // ...
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# New type-safe allOf/anyOf Factory Methods
+    //    method name prefix with `cffu`
+    //
+    //    - cffuAllOf
+    //    - cffuAnyOf
+    ////////////////////////////////////////////////////////////////////////////////
+
+    // ...
 
     ////////////////////////////////////////////////////////////////////////////////
     //# New type-safe cffuCombine Factory Methods
@@ -410,29 +432,51 @@ class CffuFactoryTest {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# Conversion Methods
+    //# Conversion (Static) Methods
     //
-    //    - asCffu: CF -> Cffu
-    //    - asCffuArray: CF[] -> Cffu[]
-    //    - toCompletableFutureArray: Cffu -> CF
+    //    - toCompletableFutureArray:     Cffu -> CF
+    //    - cffuArrayUnwrap:              Cffu -> CF
     //
-    //    - cffuListToArray: List<Cffu> -> Cffu[]
+    //    - cffuListToArray:              List<Cffu> -> Cffu[]
     //    - completableFutureListToArray: List<CF> -> CF[]
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
+    void test_toCompletableFutureArray() {
+        @SuppressWarnings("unchecked")
+        CompletableFuture<Integer>[] cfArray = new CompletableFuture[]{
+                CompletableFuture.completedFuture(n),
+                CompletableFuture.completedFuture(another_n)
+        };
+        @SuppressWarnings("unchecked")
+        CompletionStage<Integer>[] csArray = new CompletableFuture[]{
+                cfArray[0],
+                cfArray[1],
+        };
+        @SuppressWarnings("unchecked")
+        Cffu<Integer>[] cffuArray = new Cffu[]{
+                cffuFactory.asCffu(cfArray[0]),
+                cffuFactory.asCffu(cfArray[1]),
+        };
+
+        assertArrayEquals(cfArray, CffuFactory.toCompletableFutureArray(cfArray));
+        assertArrayEquals(cfArray, CffuFactory.toCompletableFutureArray(csArray));
+        assertArrayEquals(cfArray, CffuFactory.toCompletableFutureArray(cffuArray));
+    }
+
+    @Test
     void test_cffuArrayUnwrap() {
         @SuppressWarnings("unchecked")
-        CompletableFuture<Integer>[] cfs = new CompletableFuture[]{
+        CompletableFuture<Integer>[] cfArray = new CompletableFuture[]{
                 CompletableFuture.completedFuture(n),
                 CompletableFuture.completedFuture(another_n)
         };
         @SuppressWarnings("unchecked")
         Cffu<Integer>[] input = new Cffu[]{
-                cffuFactory.asCffu(cfs[0]),
-                cffuFactory.asCffu(cfs[1]),
+                cffuFactory.asCffu(cfArray[0]),
+                cffuFactory.asCffu(cfArray[1]),
         };
-        assertArrayEquals(cfs, CffuFactory.cffuArrayUnwrap(input));
+        assertArrayEquals(cfArray, CffuFactory.cffuArrayUnwrap(input));
     }
 
     @Test
@@ -459,7 +503,7 @@ class CffuFactoryTest {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# getter/setter
+    //# Getter methods of CffuFactory properties
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test

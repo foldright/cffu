@@ -810,23 +810,26 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# Conversion Methods
+    //# Conversion (Static) Methods
     //
     //    - toCompletableFutureArray:     Cffu -> CF
+    //    - cffuArrayUnwrap:              Cffu -> CF
     //
     //    - cffuListToArray:              List<Cffu> -> Cffu[]
     //    - completableFutureListToArray: List<CF> -> CF[]
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * A convenient util method for unwrap input {@link Cffu} array elements using {@link Cffu#toCompletableFuture()}.
+     * A convenient util method for converting input {@link Cffu}/{@link CompletionStage} array element
+     * by {@link Cffu#toCompletableFuture()}/{@link CompletableFuture#toCompletableFuture()}.
      *
      * @see Cffu#toCompletableFuture()
+     * @see CompletionStage#toCompletableFuture()
      * @see #asCffuArray(CompletionStage[])
      */
     @Contract(pure = true)
     @SafeVarargs
-    public static <T> CompletableFuture<T>[] toCompletableFutureArray(Cffu<T>... cfs) {
+    public static <T> CompletableFuture<T>[] toCompletableFutureArray(CompletionStage<T>... cfs) {
         @SuppressWarnings("unchecked")
         CompletableFuture<T>[] ret = new CompletableFuture[cfs.length];
         for (int i = 0; i < cfs.length; i++) {
