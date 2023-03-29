@@ -318,7 +318,7 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu that is completed when all of the given Cffus complete.
+     * Returns a new Cffu that is completed when all the given Cffus complete.
      * If any of the given Cffu complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.<br>
      * Otherwise, the results, if any, of the given Cffus are not reflected in
@@ -337,7 +337,7 @@ public final class CffuFactory {
      * as in: {@code CffuFactory.allOf(c1, c2, c3).join();}.
      *
      * @param cfs the Cffus
-     * @return a new Cffu that is completed when all of the given Cffus complete
+     * @return a new Cffu that is completed when all the given Cffus complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #cffuAllOf(Cffu[])
      * @see #cffuCombine(Cffu, Cffu)
@@ -364,7 +364,7 @@ public final class CffuFactory {
      * </ol>
      *
      * @param cfs the CompletableFutures
-     * @return a new Cffu that is completed when all of the given CompletableFutures complete
+     * @return a new Cffu that is completed when all the given CompletableFutures complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #allOf(Cffu[])
      * @see #cffuAllOf(CompletableFuture[])
@@ -401,8 +401,8 @@ public final class CffuFactory {
      * because {@link #cffuAnyOf(Cffu[])} return type {@code T} instead of {@code Object}, more type safe.
      *
      * @param cfs the Cffus
-     * @return a new Cffu that is completed with the result or exception of
-     * any of the given Cffus when one completes
+     * @return a new Cffu that is completed with the result
+     * or exception of any of the given Cffus when one completes
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #cffuAnyOf(Cffu[])
      * @see CompletableFuture#anyOf(CompletableFuture[])
@@ -421,8 +421,8 @@ public final class CffuFactory {
      * because {@link #cffuAnyOf(CompletableFuture[])} return type {@code T} instead of {@code Object}, more type safe.
      *
      * @param cfs the CompletableFutures
-     * @return a new Cffu that is completed with the result or exception of
-     * any of the given CompletableFutures when one completes
+     * @return a new Cffu that is completed with the result
+     * or exception of any of the given CompletableFutures when one completes
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #cffuAnyOf(CompletableFuture[])
      * @see #anyOf(Cffu[])
@@ -497,10 +497,13 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Same to {@link #allOf(Cffu[])}, but return the results of input {@link Cffu}.
+     * Returns a new Cffu with the result of all the given Cffus,
+     * the new Cffu is completed when all the given Cffus complete.
+     * <p>
+     * Same to {@link #allOf(Cffu[])}, but return the results of input Cffus.
      *
      * @param cfs the Cffus
-     * @return a new Cffu that is completed when all of the given Cffus complete
+     * @return a new Cffu that is completed when all the given Cffus complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #allOf(Cffu[])
      */
@@ -511,10 +514,13 @@ public final class CffuFactory {
     }
 
     /**
+     * Returns a new Cffu with the result of all the given CompletableFutures,
+     * the new Cffu is completed when all the given CompletableFutures complete.
+     * <p>
      * Same as {@link #cffuAllOf(Cffu[])} with overloaded argument type {@link CompletableFuture}.
      *
      * @param cfs the CompletableFutures
-     * @return a new Cffu that is completed when all of the given CompletableFutures complete
+     * @return a new Cffu that is completed when all the given CompletableFutures complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #cffuAllOf(Cffu[])
      */
@@ -556,11 +562,13 @@ public final class CffuFactory {
     }
 
     /**
+     * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.
+     * <p>
      * Same as {@link #anyOf(Cffu[])}, but return result type is specified type instead of {@code Object}.
      *
      * @param cfs the Cffus
-     * @return a new Cffu that is completed with the result or exception of
-     * any of the given Cffus when one completes
+     * @return a new Cffu that is completed with the result
+     * or exception of any of the given Cffus when one completes
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #anyOf(Cffu[])
      */
@@ -571,11 +579,13 @@ public final class CffuFactory {
     }
 
     /**
+     * Returns a new Cffu that is completed when any of the given CompletableFutures complete, with the same result.
+     * <p>
      * Same as {@link #cffuAllOf(Cffu[])} with overloaded argument type {@link CompletableFuture}.
      *
      * @param cfs the CompletableFutures
-     * @return a new Cffu that is completed with the result or exception of
-     * any of the given CompletableFutures when one completes
+     * @return a new Cffu that is completed with the result
+     * or exception of any of the given CompletableFutures when one completes
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #cffuAnyOf(Cffu[])
      */
