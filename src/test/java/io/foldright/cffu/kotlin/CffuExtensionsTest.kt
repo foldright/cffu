@@ -27,4 +27,44 @@ class CffuExtensionsTest : FunSpec({
                 it.cffuFactory() shouldBeSameInstanceAs fac2
             }
     }
+
+    test("allOf/AnyOf - collection") {
+        listOf(
+            CompletableFuture.completedFuture(42),
+            CompletableFuture.completedFuture("42"),
+            CompletableFuture.completedFuture(42.0),
+        ).allOf().await()
+
+        setOf(
+            CompletableFuture.completedFuture(42),
+            CompletableFuture.completedFuture("42"),
+            CompletableFuture.completedFuture(42.0),
+        ).allOf().await()
+
+        listOf(
+            CompletableFuture<String>(),
+            CompletableFuture<Double>(),
+            CompletableFuture.completedFuture(42),
+        ).anyOf().await() shouldBe 42
+
+        setOf(
+            CompletableFuture<String>(),
+            CompletableFuture<Double>(),
+            CompletableFuture.completedFuture(42),
+        ).anyOf().await() shouldBe 42
+    }
+
+    test("allOf/AnyOf - array") {
+        arrayOf<CompletableFuture<*>>(
+            CompletableFuture.completedFuture(42),
+            CompletableFuture.completedFuture("42"),
+            CompletableFuture.completedFuture(42.0),
+        ).allOf().await()
+
+        arrayOf<CompletableFuture<*>>(
+            CompletableFuture<String>(),
+            CompletableFuture<Double>(),
+            CompletableFuture.completedFuture(42),
+        ).anyOf().await() shouldBe 42
+    }
 })
