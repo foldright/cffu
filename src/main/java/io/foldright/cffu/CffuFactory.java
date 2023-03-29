@@ -298,7 +298,7 @@ public final class CffuFactory {
 
     /**
      * A convenient util method for wrap input {@link CompletableFuture}/{@link CompletionStage} array element
-     * using {@link #asCffu(CompletionStage)}.
+     * by {@link #asCffu(CompletionStage)}.
      *
      * @see #asCffu(CompletionStage)
      */
@@ -849,7 +849,7 @@ public final class CffuFactory {
     }
 
     /**
-     * A convenient util method for unwrap input {@link Cffu} array elements using {@link Cffu#cffuUnwrap()}.
+     * A convenient util method for unwrap input {@link Cffu} array elements by {@link Cffu#cffuUnwrap()}.
      *
      * @param cfs the Cffus
      * @see Cffu#cffuUnwrap()

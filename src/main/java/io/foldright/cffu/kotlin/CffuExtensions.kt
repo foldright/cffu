@@ -63,6 +63,23 @@ fun <T> CompletionStage<T>.asCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.asCffu(this)
 
 /**
+ * Wrap input [CompletableFuture]/[CompletionStage] collection element to [Cffu] by [CffuFactory.asCffu].
+ *
+ * @see CffuFactory.asCffu
+ */
+fun <T> Collection<CompletionStage<T>>.asCffu(cffuFactory: CffuFactory): List<Cffu<T>> =
+    map { it.asCffu(cffuFactory) }
+
+/**
+ * Wrap input [CompletableFuture]/[CompletionStage] array element to [Cffu] by [CffuFactory.asCffu].
+ *
+ * @see CffuFactory.asCffu
+ * @see CffuFactory.asCffuArray
+ */
+fun <T, CS : CompletionStage<T>> Array<CS>.asCffu(cffuFactory: CffuFactory): Array<Cffu<T>> =
+    cffuFactory.asCffuArray(*this)
+
+/**
  * Returns a new Cffu with the result of all the given Cffus,
  * the new Cffu is completed when all the given Cffus complete.
  *
@@ -148,3 +165,35 @@ fun <T> Collection<CompletableFuture<T>>.cffuAnyOf(cffuFactory: CffuFactory): Cf
  */
 fun <T> Array<CompletableFuture<T>>.cffuAnyOf(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.cffuAnyOf(*this)
+
+/**
+ * Convert [Cffu] collection elements to [CompletableFuture] by [Cffu.toCompletableFuture].
+ *
+ * @see CffuFactory.toCompletableFutureArray
+ */
+fun <T> Collection<CompletionStage<T>>.toCompletableFuture(): List<CompletableFuture<T>> =
+    map { it.toCompletableFuture() }
+
+/**
+ * Convert [Cffu] array elements to [CompletableFuture] by [Cffu.toCompletableFuture].
+ *
+ * @see CffuFactory.toCompletableFutureArray
+ */
+fun <T, CS : CompletionStage<T>> Array<CS>.toCompletableFuture(): Array<CompletableFuture<T>> =
+    CffuFactory.toCompletableFutureArray(*this)
+
+/**
+ * Unwrap input [Cffu] collection elements by [Cffu.cffuUnwrap].
+ *
+ * @see CffuFactory.cffuArrayUnwrap
+ */
+fun <T> Collection<Cffu<T>>.cffuUnwrap(): List<CompletableFuture<T>> =
+    map { it.cffuUnwrap() }
+
+/**
+ * Unwrap input [Cffu] array elements by [Cffu.cffuUnwrap].
+ *
+ * @see CffuFactory.cffuArrayUnwrap
+ */
+fun <T> Array<Cffu<T>>.cffuUnwrap(): Array<CompletableFuture<T>> =
+    CffuFactory.cffuArrayUnwrap(*this)
