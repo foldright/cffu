@@ -23,10 +23,8 @@ import java.util.concurrent.*
 
 fun <T> createIncompleteFuture(): CompletableFuture<T> = CompletableFuture()
 
-fun <T> createFailedFuture(ex: Throwable): CompletableFuture<T> {
-    val cf = CompletableFuture<T>()
-    cf.completeExceptionally(ex)
-    return cf
+fun <T> createFailedFuture(ex: Throwable) = CompletableFuture<T>().apply {
+    completeExceptionally(ex)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

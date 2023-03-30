@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Contract;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
@@ -327,7 +326,7 @@ public final class CffuFactory {
      * <p>
      * if you need the results of given Cffus, prefer below methods:
      * <ol>
-     *   <li>{{@link #cffuAllOf(Cffu[])}}
+     *   <li>{@link #cffuAllOf(Cffu[])}
      *   <li>{@link #cffuCombine(Cffu, Cffu)}/{@link #cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)}
      *       (provided overloaded methods with 2~5 input)
      * </ol>
@@ -349,7 +348,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public Cffu<Void> allOf(Cffu<?>... cfs) {
         @SuppressWarnings("unchecked")
-        CompletableFuture<Object>[] args = toCompletableFutureArray((Cffu<Object>[]) cfs);
+        CompletableFuture<?>[] args = toCompletableFutureArray((Cffu<Object>[]) cfs);
         return new0(CompletableFuture.allOf(args));
     }
 
@@ -358,7 +357,7 @@ public final class CffuFactory {
      * <p>
      * if you need the results of given Cffus, prefer below methods:
      * <ol>
-     *   <li>{{@link #cffuAllOf(CompletableFuture[])}}
+     *   <li>{@link #cffuAllOf(CompletableFuture[])}
      *   <li>{@link #cffuCombine(CompletableFuture, CompletableFuture)}/{@link #cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
      *       (provided overloaded methods with 2~5 input)
      * </ol>
@@ -500,7 +499,8 @@ public final class CffuFactory {
      * Returns a new Cffu with the result of all the given Cffus,
      * the new Cffu is completed when all the given Cffus complete.
      * <p>
-     * Same to {@link #allOf(Cffu[])}, but return the results of input Cffus.
+     * Same to {@link #allOf(Cffu[])}, but the returned CompletableFuture
+     * contains the results of input CompletableFutures.
      *
      * @param cfs the Cffus
      * @return a new Cffu that is completed when all the given Cffus complete
@@ -527,26 +527,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     @SafeVarargs
     public final <T> Cffu<List<T>> cffuAllOf(CompletableFuture<T>... cfs) {
-        for (CompletableFuture<T> cf : cfs) {
-            requireNonNull(cf, "cf is null");
-        }
-
-        final int size = cfs.length;
-        final Object[] result = new Object[size];
-
-        final CompletableFuture<?>[] thenCfs = new CompletableFuture[size];
-        for (int i = 0; i < size; i++) {
-            final int index = i;
-            final CompletableFuture<T> cf = cfs[index];
-
-            CompletableFuture<Void> thenCf = cf.thenAccept(x -> result[index] = x);
-            thenCfs[index] = thenCf;
-        }
-
-        @SuppressWarnings("unchecked")
-        CompletableFuture<List<T>> ret = CompletableFuture.allOf(thenCfs)
-                .thenApply(unused -> (List<T>) Arrays.asList(result));
-        return new0(ret);
+        return new0(CompletableFutureUtils.allOfWithResult(cfs));
     }
 
     /**
@@ -642,21 +623,8 @@ public final class CffuFactory {
      * @see #cffuAllOf(CompletableFuture[])
      */
     @Contract(pure = true)
-    @SuppressWarnings("unchecked")
     public <T1, T2> Cffu<Tuple2<T1, T2>> cffuCombine(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
-        requireNonNull(cf1, "cf1 is null");
-        requireNonNull(cf2, "cf2 is null");
-
-        final Object[] result = new Object[2];
-
-        CompletableFuture<Tuple2<T1, T2>> ret = CompletableFuture.allOf(
-                        cf1.thenAccept(t1 -> result[0] = t1),
-                        cf2.thenAccept(t2 -> result[1] = t2)
-                )
-                .thenApply(unused ->
-                        Tuple2.of((T1) result[0], (T2) result[1])
-                );
-        return new0(ret);
+        return new0(CompletableFutureUtils.combine(cf1, cf2));
     }
 
     /**
@@ -688,24 +656,9 @@ public final class CffuFactory {
      * @see #cffuAllOf(CompletableFuture[])
      */
     @Contract(pure = true)
-    @SuppressWarnings("unchecked")
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> cffuCombine(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
-        requireNonNull(cf1, "cf1 is null");
-        requireNonNull(cf2, "cf2 is null");
-        requireNonNull(cf3, "cf3 is null");
-
-        final Object[] result = new Object[3];
-
-        CompletableFuture<Tuple3<T1, T2, T3>> ret = CompletableFuture.allOf(
-                        cf1.thenAccept(t1 -> result[0] = t1),
-                        cf2.thenAccept(t2 -> result[1] = t2),
-                        cf3.thenAccept(t3 -> result[2] = t3)
-                )
-                .thenApply(unused ->
-                        Tuple3.of((T1) result[0], (T2) result[1], (T3) result[2])
-                );
-        return new0(ret);
+        return new0(CompletableFutureUtils.combine(cf1, cf2, cf3));
     }
 
     /**
@@ -739,27 +692,10 @@ public final class CffuFactory {
      * @see #cffuAllOf(CompletableFuture[])
      */
     @Contract(pure = true)
-    @SuppressWarnings("unchecked")
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> cffuCombine(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
             CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
-        requireNonNull(cf1, "cf1 is null");
-        requireNonNull(cf2, "cf2 is null");
-        requireNonNull(cf3, "cf3 is null");
-        requireNonNull(cf4, "cf4 is null");
-
-        final Object[] result = new Object[4];
-
-        CompletableFuture<Tuple4<T1, T2, T3, T4>> ret = CompletableFuture.allOf(
-                        cf1.thenAccept(t1 -> result[0] = t1),
-                        cf2.thenAccept(t2 -> result[1] = t2),
-                        cf3.thenAccept(t3 -> result[2] = t3),
-                        cf4.thenAccept(t4 -> result[3] = t4)
-                )
-                .thenApply(unused ->
-                        Tuple4.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3])
-                );
-        return new0(ret);
+        return new0(CompletableFutureUtils.combine(cf1, cf2, cf3, cf4));
     }
 
     /**
@@ -794,29 +730,10 @@ public final class CffuFactory {
      * @see #cffuAllOf(CompletableFuture[])
      */
     @Contract(pure = true)
-    @SuppressWarnings("unchecked")
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> cffuCombine(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
             CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
-        requireNonNull(cf1, "cf1 is null");
-        requireNonNull(cf2, "cf2 is null");
-        requireNonNull(cf3, "cf3 is null");
-        requireNonNull(cf4, "cf4 is null");
-        requireNonNull(cf5, "cf5 is null");
-
-        final Object[] result = new Object[5];
-
-        CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> ret = CompletableFuture.allOf(
-                        cf1.thenAccept(t1 -> result[0] = t1),
-                        cf2.thenAccept(t2 -> result[1] = t2),
-                        cf3.thenAccept(t3 -> result[2] = t3),
-                        cf4.thenAccept(t4 -> result[3] = t4),
-                        cf5.thenAccept(t5 -> result[4] = t5)
-                )
-                .thenApply(unused ->
-                        Tuple5.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3], (T5) result[4])
-                );
-        return new0(ret);
+        return new0(CompletableFutureUtils.combine(cf1, cf2, cf3, cf4, cf5));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
