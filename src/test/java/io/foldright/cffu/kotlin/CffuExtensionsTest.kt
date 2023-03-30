@@ -24,25 +24,25 @@ class CffuExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture("42"),
             CompletableFuture.completedFuture(42.0),
-        ).allCompletableFuture().await()
+        ).allOfCompletableFuture().await()
 
         setOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture("42"),
             CompletableFuture.completedFuture(42.0),
-        ).allCompletableFuture().await()
+        ).allOfCompletableFuture().await()
 
         listOf(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
             CompletableFuture.completedFuture(42),
-        ).anyCompletableFuture().await() shouldBe 42
+        ).anyOfCompletableFuture().await() shouldBe 42
 
         setOf(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
             CompletableFuture.completedFuture(42),
-        ).anyCompletableFuture().await() shouldBe 42
+        ).anyOfCompletableFuture().await() shouldBe 42
     }
 
     test("allOf/anyOf - array") {
@@ -50,13 +50,13 @@ class CffuExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture("42"),
             CompletableFuture.completedFuture(42.0),
-        ).allCompletableFuture().await()
+        ).allOfCompletableFuture().await()
 
         arrayOf<CompletableFuture<*>>(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
             CompletableFuture.completedFuture(42),
-        ).anyCompletableFuture().await() shouldBe 42
+        ).anyOfCompletableFuture().await() shouldBe 42
     }
 
     suspend fun checkAsCffu(cffu: Cffu<Int>, n: Int) {
@@ -108,49 +108,49 @@ class CffuExtensionsTest : FunSpec({
             testCffuFactory.completedFuture(42),
             testCffuFactory.completedFuture(43),
             testCffuFactory.completedFuture(44),
-        ).allCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+        ).allOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
 
         setOf(
             testCffuFactory.completedFuture(42),
             testCffuFactory.completedFuture(43),
             testCffuFactory.completedFuture(44),
-        ).allCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+        ).allOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
 
         listOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture(43),
             CompletableFuture.completedFuture(44),
-        ).allCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+        ).allOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
 
         setOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture(43),
             CompletableFuture.completedFuture(44),
-        ).allCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+        ).allOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
 
         listOf(
             testCffuFactory.newIncompleteCffu(),
             testCffuFactory.newIncompleteCffu(),
             testCffuFactory.completedFuture(42),
-        ).anyCffu(testCffuFactory).await() shouldBe 42
+        ).anyOfCffu(testCffuFactory).await() shouldBe 42
 
         setOf(
             testCffuFactory.newIncompleteCffu(),
             testCffuFactory.completedFuture(42),
             testCffuFactory.newIncompleteCffu(),
-        ).anyCffu(testCffuFactory).await() shouldBe 42
+        ).anyOfCffu(testCffuFactory).await() shouldBe 42
 
         listOf(
             CompletableFuture(),
             CompletableFuture(),
             CompletableFuture.completedFuture(42),
-        ).anyCffu(testCffuFactory).await() shouldBe 42
+        ).anyOfCffu(testCffuFactory).await() shouldBe 42
 
         setOf(
             CompletableFuture(),
             CompletableFuture.completedFuture(42),
             CompletableFuture(),
-        ).anyCffu(testCffuFactory).await() shouldBe 42
+        ).anyOfCffu(testCffuFactory).await() shouldBe 42
     }
 
     test("cffuAllOf/cffuAnyOf for array") {
@@ -158,25 +158,25 @@ class CffuExtensionsTest : FunSpec({
             testCffuFactory.completedFuture(42),
             testCffuFactory.completedFuture(43),
             testCffuFactory.completedFuture(44),
-        ).allCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+        ).allOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
 
         arrayOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture(43),
             CompletableFuture.completedFuture(44),
-        ).allCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+        ).allOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
 
         arrayOf(
             testCffuFactory.newIncompleteCffu(),
             testCffuFactory.newIncompleteCffu(),
             testCffuFactory.completedFuture(42),
-        ).anyCffu(testCffuFactory).await() shouldBe 42
+        ).anyOfCffu(testCffuFactory).await() shouldBe 42
 
         arrayOf(
             CompletableFuture(),
             CompletableFuture(),
             CompletableFuture.completedFuture(42),
-        ).anyCffu(testCffuFactory).await() shouldBe 42
+        ).anyOfCffu(testCffuFactory).await() shouldBe 42
     }
 
     test("toCompletableFuture for Cffu collection/array") {
