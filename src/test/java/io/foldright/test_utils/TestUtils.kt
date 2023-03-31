@@ -104,10 +104,10 @@ private fun <T> CompletableFuture<T>.shouldMinCf(recursive: Boolean = false) {
 
     // unsupported because this a minimal stage
 
-    if (isJavaVersion9Plus()) shouldThrow<UnsupportedOperationException> {
+    if (isJava9Plus()) shouldThrow<UnsupportedOperationException> {
         orTimeout(1, TimeUnit.MILLISECONDS)
     }
-    if (isJavaVersion9Plus()) shouldThrow<UnsupportedOperationException> {
+    if (isJava9Plus()) shouldThrow<UnsupportedOperationException> {
         completeOnTimeout(null, 1, TimeUnit.MILLISECONDS)
     }
 
@@ -125,10 +125,10 @@ private fun <T> CompletableFuture<T>.shouldMinCf(recursive: Boolean = false) {
     shouldThrow<UnsupportedOperationException> {
         getNow(null)
     }
-    if (isJavaVersion19Plus()) shouldThrow<UnsupportedOperationException> {
+    if (isJava19Plus()) shouldThrow<UnsupportedOperationException> {
         resultNow()
     }
-    if (isJavaVersion19Plus()) shouldThrow<UnsupportedOperationException> {
+    if (isJava19Plus()) shouldThrow<UnsupportedOperationException> {
         exceptionNow()
     }
     shouldThrow<UnsupportedOperationException> {
@@ -140,7 +140,7 @@ private fun <T> CompletableFuture<T>.shouldMinCf(recursive: Boolean = false) {
     shouldThrow<UnsupportedOperationException> {
         isCancelled
     }
-    if (isJavaVersion19Plus()) shouldThrow<UnsupportedOperationException> {
+    if (isJava19Plus()) shouldThrow<UnsupportedOperationException> {
         state()
     }
 
@@ -149,10 +149,10 @@ private fun <T> CompletableFuture<T>.shouldMinCf(recursive: Boolean = false) {
     shouldThrow<UnsupportedOperationException> {
         complete(null)
     }
-    if (isJavaVersion9Plus()) shouldThrow<UnsupportedOperationException> {
+    if (isJava9Plus()) shouldThrow<UnsupportedOperationException> {
         completeAsync(null)
     }
-    if (isJavaVersion9Plus()) shouldThrow<UnsupportedOperationException> {
+    if (isJava9Plus()) shouldThrow<UnsupportedOperationException> {
         completeAsync(null, null)
     }
     shouldThrow<UnsupportedOperationException> {
@@ -165,12 +165,12 @@ private fun <T> CompletableFuture<T>.shouldMinCf(recursive: Boolean = false) {
     //# Re-Config methods
 
     if (recursive) {
-        if (isJavaVersion9Plus())
+        if (isJava9Plus())
             (minimalCompletionStage() as CompletableFuture<T>).shouldMinCf()
 
         toCompletableFuture().shouldNotMinCf()
 
-        if (isJavaVersion9Plus()) copy().shouldMinCf()
+        if (isJava9Plus()) copy().shouldMinCf()
     }
 
     //# Getter methods of properties
@@ -191,7 +191,7 @@ private fun <T> CompletableFuture<T>.shouldMinCf(recursive: Boolean = false) {
     }
 
     if (recursive) newIncompleteFuture<T>().let {
-        if (isJavaVersion9Plus()) it.shouldMinCf()
+        if (isJava9Plus()) it.shouldMinCf()
         else it.shouldNotMinCf()
     }
 }
@@ -205,7 +205,7 @@ private fun <T> CompletableFuture<T>.shouldNotMinCf(recursive: Boolean = false) 
 
     this.complete(null) // make sure completed, avoid running CF blocking
 
-    if (recursive && isJavaVersion9Plus()) {
+    if (recursive && isJava9Plus()) {
         orTimeout(1, TimeUnit.MILLISECONDS).shouldNotMinCf()
         completeOnTimeout(null, 1, TimeUnit.MILLISECONDS).shouldNotMinCf()
     }
@@ -226,24 +226,24 @@ private fun <T> CompletableFuture<T>.shouldNotMinCf(recursive: Boolean = false) 
         getNow(null)
     } else getNow((null))
 
-    if (isJavaVersion19Plus())
+    if (isJava19Plus())
         if (isCompletedExceptionally) shouldThrow<IllegalStateException> { resultNow() }
         else resultNow()
 
-    if (isJavaVersion19Plus())
+    if (isJava19Plus())
         if (isCompletedExceptionally) exceptionNow()
         else shouldThrow<IllegalStateException> { exceptionNow() }
 
     this.isDone
     // this.isCompletedExceptionally // used above
     this.isCancelled
-    if (isJavaVersion19Plus()) state()
+    if (isJava19Plus()) state()
 
     //# Write methods of CompletableFuture
 
     // complete(null) // used above
     if (recursive) {
-        if (isJavaVersion9Plus()) {
+        if (isJava9Plus()) {
             completeAsync { null }.shouldNotMinCf()
             completeAsync({ null }, blackHoleExecutor).shouldNotMinCf()
         }
@@ -254,13 +254,13 @@ private fun <T> CompletableFuture<T>.shouldNotMinCf(recursive: Boolean = false) 
     //# Re-Config methods
 
     if (recursive) {
-        if (isJavaVersion9Plus()) (minimalCompletionStage() as CompletableFuture<T>).shouldMinCf()
+        if (isJava9Plus()) (minimalCompletionStage() as CompletableFuture<T>).shouldMinCf()
 
         toCompletableFuture().shouldNotMinCf()
     }
 
     //# Getter methods of properties
-    if (isJavaVersion9Plus()) defaultExecutor()
+    if (isJava9Plus()) defaultExecutor()
 
     //# Inspection methods of Cffu
     numberOfDependents
@@ -270,7 +270,7 @@ private fun <T> CompletableFuture<T>.shouldNotMinCf(recursive: Boolean = false) 
     obtrudeException(RuntimeException())
     obtrudeValue(null)
 
-    if (recursive && isJavaVersion9Plus()) newIncompleteFuture<T>().shouldNotMinCf()
+    if (recursive && isJava9Plus()) newIncompleteFuture<T>().shouldNotMinCf()
 }
 
 fun <T> Cffu<T>.shouldBeMinimalStage() {
@@ -322,7 +322,7 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
     shouldThrow<UnsupportedOperationException> {
         isCancelled
     }
-    if (isJavaVersion19Plus()) shouldThrow<UnsupportedOperationException> {
+    if (isJava19Plus()) shouldThrow<UnsupportedOperationException> {
         state()
     }
 
@@ -400,7 +400,7 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
 
     //# Inspection methods of Cffu
     if (recursive)
-        if (isJavaVersion9Plus()) cffuUnwrap().shouldMinCf()
+        if (isJava9Plus()) cffuUnwrap().shouldMinCf()
         else cffuUnwrap().shouldNotMinCf()
 }
 
@@ -444,7 +444,7 @@ private fun <T> Cffu<T>.shouldNotMinCffu(recursive: Boolean = false) {
     this.isDone
     // this.isCompletedExceptionally // used above
     this.isCancelled
-    if (isJavaVersion19Plus()) state()
+    if (isJava19Plus()) state()
 
     //# Write methods of CompletableFuture
 
@@ -644,12 +644,12 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
-    if (isJavaVersion12Plus() && this !is Cffu<*>) shouldNotThrow<UnsupportedOperationException> {
+    if (isJava12Plus() && this !is Cffu<*>) shouldNotThrow<UnsupportedOperationException> {
         exceptionallyAsync { null }.let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
-    if (isJavaVersion12Plus() && this !is Cffu<*>) shouldNotThrow<UnsupportedOperationException> {
+    if (isJava12Plus() && this !is Cffu<*>) shouldNotThrow<UnsupportedOperationException> {
         exceptionallyAsync({ null }, blackHoleExecutor).let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
@@ -670,17 +670,17 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
-    if (isJavaVersion12Plus() && this !is Cffu<*>) shouldNotThrow<UnsupportedOperationException> {
+    if (isJava12Plus() && this !is Cffu<*>) shouldNotThrow<UnsupportedOperationException> {
         exceptionallyCompose { cf }.let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
-    if (isJavaVersion12Plus() && this !is Cffu<*>) shouldNotThrow<UnsupportedOperationException> {
+    if (isJava12Plus() && this !is Cffu<*>) shouldNotThrow<UnsupportedOperationException> {
         exceptionallyComposeAsync { cf }.let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
     }
-    if (isJavaVersion12Plus() && this !is Cffu<*>) shouldNotThrow<UnsupportedOperationException> {
+    if (isJava12Plus() && this !is Cffu<*>) shouldNotThrow<UnsupportedOperationException> {
         exceptionallyComposeAsync({ cf }, blackHoleExecutor).let {
             if (recursive) it.shouldCompletionStageMethodsAllowed()
         }
@@ -721,14 +721,14 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Java Version Checker & Kotest conditions
+// Java Version Checker
 ////////////////////////////////////////////////////////////////////////////////
 
-fun isJavaVersion9Plus() = isJavaVersionAtLeast(JavaVersion.JAVA_9)
+fun isJava9Plus() = isJavaVersionAtLeast(JavaVersion.JAVA_9)
 
-fun isJavaVersion12Plus() = isJavaVersionAtLeast(JavaVersion.JAVA_12)
+fun isJava12Plus() = isJavaVersionAtLeast(JavaVersion.JAVA_12)
 
-fun isJavaVersion19Plus(): Boolean = try {
+fun isJava19Plus(): Boolean = try {
     val cf = CompletableFuture.completedFuture(42)
     // `resultNow` is the new method of CompletableFuture since java 19
     cf.resultNow()
@@ -741,6 +741,10 @@ fun isJavaVersion19Plus(): Boolean = try {
 // https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
 fun isCiEnv(): Boolean = System.getenv("CI")?.lowercase() == "true"
 
-val java9Plus: (TestCase) -> Boolean = { isJavaVersion9Plus() }
+////////////////////////////////////////////////////////////////////////////////
+// Kotest conditions
+////////////////////////////////////////////////////////////////////////////////
 
-val java12Plus: (TestCase) -> Boolean = { isJavaVersion12Plus() }
+val java9Plus: (TestCase) -> Boolean = { isJava9Plus() }
+
+val java12Plus: (TestCase) -> Boolean = { isJava12Plus() }
