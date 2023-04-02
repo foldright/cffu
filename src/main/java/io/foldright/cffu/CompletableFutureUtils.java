@@ -39,11 +39,11 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     @SuppressWarnings("unchecked")
     public static <T> CompletableFuture<List<T>> allOfWithResult(CompletableFuture<T>... cfs) {
-        for (CompletableFuture<T> cf : cfs) {
-            requireNonNull(cf, "cf is null");
+        final int size = cfs.length;
+        for (int i = 0; i < cfs.length; i++) {
+            requireNonNull(cfs[i], "cf[" + i + "] is null");
         }
 
-        final int size = cfs.length;
         final Object[] result = new Object[size];
 
         final CompletableFuture<?>[] thenCfs = new CompletableFuture[size];

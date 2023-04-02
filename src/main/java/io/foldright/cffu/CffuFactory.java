@@ -264,15 +264,15 @@ public final class CffuFactory {
     }
 
     /**
-     * Wrap an existed {@link CompletableFuture}/{@link CompletionStage} to {@link Cffu}.
+     * Wrap an existed {@link CompletableFuture}/{@link CompletionStage}/{@link Cffu} to {@link Cffu}.
      * for {@link CompletableFuture} class instances,
      * {@link Cffu#cffuUnwrap()} is the inverse operation to this method.
      * <p>
      * <b><i>NOTE</i></b>, keep input stage unchanged if possible when wrap:<br>
      * <ol>
      * <li>if input stage is a {@link Cffu}, re-wrapped with the config of
-     *     this {@link CffuFactory} from {@link CffuFactoryBuilder}.
-     * <li>if input stage is a CompletableFuture, set it as the underneath cf of returned cffu.
+     *     this {@link CffuFactory} from {@link CffuFactoryBuilder} by {@link Cffu#resetCffuFactory(CffuFactory)}.
+     * <li>if input stage is a CompletableFuture, wrap it by setting it as the underneath cf of returned cffu.
      * <li>otherwise use input {@code stage.toCompletableFuture} as the underneath cf of returned cffu.
      * </ol>
      *
@@ -296,7 +296,8 @@ public final class CffuFactory {
     }
 
     /**
-     * A convenient util method for wrap input {@link CompletableFuture}/{@link CompletionStage} array element
+     * A convenient util method for wrap
+     * input {@link CompletableFuture}/{@link CompletionStage}/{@link Cffu} array element
      * by {@link #asCffu(CompletionStage)}.
      *
      * @see #asCffu(CompletionStage)
@@ -307,7 +308,7 @@ public final class CffuFactory {
         @SuppressWarnings("unchecked")
         Cffu<T>[] ret = new Cffu[stages.length];
         for (int i = 0; i < stages.length; i++) {
-            ret[i] = asCffu(stages[i]);
+            ret[i] = asCffu(requireNonNull(stages[i], "stages[" + i + "] is null"));
         }
         return ret;
     }
@@ -747,20 +748,22 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * A convenient util method for converting input {@link Cffu}/{@link CompletionStage} array element
-     * by {@link Cffu#toCompletableFuture()}/{@link CompletableFuture#toCompletableFuture()}.
+     * A convenient util method for converting
+     * input {@link Cffu}/{@link CompletableFuture}/{@link CompletionStage} array element
+     * by {@link Cffu#toCompletableFuture()}/{@link CompletableFuture#toCompletableFuture()}/{@link CompletionStage#toCompletableFuture()}.
      *
      * @see Cffu#toCompletableFuture()
+     * @see CompletableFuture#toCompletableFuture()
      * @see CompletionStage#toCompletableFuture()
      * @see #asCffuArray(CompletionStage[])
      */
     @Contract(pure = true)
     @SafeVarargs
-    public static <T> CompletableFuture<T>[] toCompletableFutureArray(CompletionStage<T>... cfs) {
+    public static <T> CompletableFuture<T>[] toCompletableFutureArray(CompletionStage<T>... stages) {
         @SuppressWarnings("unchecked")
-        CompletableFuture<T>[] ret = new CompletableFuture[cfs.length];
-        for (int i = 0; i < cfs.length; i++) {
-            ret[i] = cfs[i].toCompletableFuture();
+        CompletableFuture<T>[] ret = new CompletableFuture[stages.length];
+        for (int i = 0; i < stages.length; i++) {
+            ret[i] = requireNonNull(stages[i], "stages[" + i + "] is null").toCompletableFuture();
         }
         return ret;
     }
@@ -777,7 +780,7 @@ public final class CffuFactory {
         @SuppressWarnings("unchecked")
         CompletableFuture<T>[] ret = new CompletableFuture[cfs.length];
         for (int i = 0; i < cfs.length; i++) {
-            ret[i] = cfs[i].cffuUnwrap();
+            ret[i] = requireNonNull(cfs[i], "cfs[" + i + "] is null").cffuUnwrap();
         }
         return ret;
     }
