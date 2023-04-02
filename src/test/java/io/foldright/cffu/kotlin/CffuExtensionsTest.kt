@@ -6,6 +6,7 @@ import io.foldright.test_utils.testCffuFactory
 import io.foldright.test_utils.testForkJoinPoolExecutor
 import io.foldright.test_utils.testThreadPoolExecutor
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeSameInstanceAs
@@ -19,45 +20,109 @@ import java.util.concurrent.CompletionStage
 class CffuExtensionsTest : FunSpec({
     val n = 42
 
-    test("allOf/anyOf - collection") {
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Extension methods for CompletableFuture
+    ////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////
+    // - allOfCompletableFuture
+    // - anyOfCompletableFuture
+    ////////////////////////////////////////
+
+    test("allOfCompletableFuture / anyOfCompletableFuture - collection") {
+        listOf(
+            CompletableFuture.completedFuture(42),
+            CompletableFuture.completedFuture(43),
+            CompletableFuture.completedFuture(44),
+        ).allOfCompletableFuture().await() shouldBe listOf(42, 43, 44)
+
+        setOf(
+            CompletableFuture.completedFuture(42),
+            CompletableFuture.completedFuture(43),
+            CompletableFuture.completedFuture(44),
+        ).allOfCompletableFuture().await() shouldBe listOf(42, 43, 44)
+
+        listOf(
+            CompletableFuture(),
+            CompletableFuture(),
+            CompletableFuture.completedFuture(42),
+        ).anyOfCompletableFuture().await() shouldBe 42
+
+        setOf(
+            CompletableFuture(),
+            CompletableFuture.completedFuture(42),
+            CompletableFuture(),
+        ).anyOfCompletableFutureAny().await() shouldBe 42
+    }
+
+    test("allOfCompletableFuture / anyOfCompletableFuture - array") {
+        arrayOf(
+            CompletableFuture.completedFuture(42),
+            CompletableFuture.completedFuture(43),
+            CompletableFuture.completedFuture(44),
+        ).allOfCompletableFuture().await() shouldBe listOf(42, 43, 44)
+
+        arrayOf(
+            CompletableFuture(),
+            CompletableFuture(),
+            CompletableFuture.completedFuture(42),
+        ).anyOfCompletableFuture().await() shouldBe 42
+    }
+
+    ////////////////////////////////////////
+    // - allOfCompletableFutureVoid
+    // - anyOfCompletableFutureAny
+    ////////////////////////////////////////
+
+    test("allOfCompletableFutureVoid / anyOfCompletableFutureAny - collection") {
         listOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture("42"),
             CompletableFuture.completedFuture(42.0),
-        ).allOfCompletableFuture().await()
+        ).allOfCompletableFutureVoid().await().shouldBeNull()
 
         setOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture("42"),
             CompletableFuture.completedFuture(42.0),
-        ).allOfCompletableFuture().await()
+        ).allOfCompletableFutureVoid().await().shouldBeNull()
 
         listOf(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
             CompletableFuture.completedFuture(42),
-        ).anyOfCompletableFuture().await() shouldBe 42
+        ).anyOfCompletableFutureAny().await() shouldBe 42
 
         setOf(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
             CompletableFuture.completedFuture(42),
-        ).anyOfCompletableFuture().await() shouldBe 42
+        ).anyOfCompletableFutureAny().await() shouldBe 42
     }
 
-    test("allOf/anyOf - array") {
+    test("allOfCompletableFutureVoid / anyOfCompletableFutureAny - array") {
+        // FIXME: Need Type arguments for array...
+
         arrayOf<CompletableFuture<*>>(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture("42"),
             CompletableFuture.completedFuture(42.0),
-        ).allOfCompletableFuture().await()
+        ).allOfCompletableFutureVoid().await().shouldBeNull()
 
         arrayOf<CompletableFuture<*>>(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
             CompletableFuture.completedFuture(42),
-        ).anyOfCompletableFuture().await() shouldBe 42
+        ).anyOfCompletableFutureAny().await() shouldBe 42
     }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Extension methods for Cffu
+    ////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////
+    // asCffu
+    ////////////////////////////////////////
 
     suspend fun checkAsCffu(cffu: Cffu<Int>, n: Int) {
         cffu.await() shouldBe n
@@ -103,7 +168,12 @@ class CffuExtensionsTest : FunSpec({
         }
     }
 
-    test("cffuAllOf/cffuAnyOf for collection") {
+    ////////////////////////////////////////
+    // - allOfCffu
+    // - anyOfCffu
+    ////////////////////////////////////////
+
+    test("allOfCffu/anyOfCffu for collection") {
         listOf(
             testCffuFactory.completedFuture(42),
             testCffuFactory.completedFuture(43),
@@ -153,7 +223,7 @@ class CffuExtensionsTest : FunSpec({
         ).anyOfCffu(testCffuFactory).await() shouldBe 42
     }
 
-    test("cffuAllOf/cffuAnyOf for array") {
+    test("allOfCffu/anyOfCffu for array") {
         arrayOf(
             testCffuFactory.completedFuture(42),
             testCffuFactory.completedFuture(43),
@@ -178,6 +248,93 @@ class CffuExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(42),
         ).anyOfCffu(testCffuFactory).await() shouldBe 42
     }
+
+    ////////////////////////////////////////
+    // - allOfCffu
+    // - anyOfCffu
+    ////////////////////////////////////////
+
+    test("allOfCffuVoid/anyOfCffuAny for collection") {
+        listOf(
+            testCffuFactory.completedFuture(42),
+            testCffuFactory.completedFuture(43),
+            testCffuFactory.completedFuture(44),
+        ).allOfCffuVoid(testCffuFactory).await().shouldBeNull()
+
+        setOf(
+            testCffuFactory.completedFuture(42),
+            testCffuFactory.completedFuture(43),
+            testCffuFactory.completedFuture(44),
+        ).allOfCffuVoid(testCffuFactory).await().shouldBeNull()
+
+        listOf(
+            CompletableFuture.completedFuture(42),
+            CompletableFuture.completedFuture(43),
+            CompletableFuture.completedFuture(44),
+        ).allOfCffuVoid(testCffuFactory).await().shouldBeNull()
+
+        setOf(
+            CompletableFuture.completedFuture(42),
+            CompletableFuture.completedFuture(43),
+            CompletableFuture.completedFuture(44),
+        ).allOfCffuVoid(testCffuFactory).await().shouldBeNull()
+
+        listOf(
+            testCffuFactory.newIncompleteCffu(),
+            testCffuFactory.newIncompleteCffu(),
+            testCffuFactory.completedFuture(42),
+        ).anyOfCffuAny(testCffuFactory).await() shouldBe 42
+
+        setOf(
+            testCffuFactory.newIncompleteCffu(),
+            testCffuFactory.completedFuture(42),
+            testCffuFactory.newIncompleteCffu(),
+        ).anyOfCffuAny(testCffuFactory).await() shouldBe 42
+
+        listOf(
+            CompletableFuture(),
+            CompletableFuture(),
+            CompletableFuture.completedFuture(42),
+        ).anyOfCffuAny(testCffuFactory).await() shouldBe 42
+
+        setOf(
+            CompletableFuture(),
+            CompletableFuture.completedFuture(42),
+            CompletableFuture(),
+        ).anyOfCffuAny(testCffuFactory).await() shouldBe 42
+    }
+
+    test("allOfCffuVoid/anyOfCffuAny for array") {
+        // FIXME: Need Type arguments for array...
+
+        arrayOf<Cffu<*>>(
+            testCffuFactory.completedFuture(42),
+            testCffuFactory.completedFuture(43),
+            testCffuFactory.completedFuture(44),
+        ).allOfCffuVoid(testCffuFactory).await().shouldBeNull()
+
+        arrayOf<CompletableFuture<*>>(
+            CompletableFuture.completedFuture(42),
+            CompletableFuture.completedFuture(43),
+            CompletableFuture.completedFuture(44),
+        ).allOfCffuVoid(testCffuFactory).await().shouldBeNull()
+
+        arrayOf<Cffu<*>>(
+            testCffuFactory.newIncompleteCffu<String>(),
+            testCffuFactory.newIncompleteCffu<Double>(),
+            testCffuFactory.completedFuture(42),
+        ).anyOfCffuAny(testCffuFactory).await() shouldBe 42
+
+        arrayOf<CompletableFuture<*>>(
+            CompletableFuture<String>(),
+            CompletableFuture<Double>(),
+            CompletableFuture.completedFuture(42),
+        ).anyOfCffuAny(testCffuFactory).await() shouldBe 42
+    }
+
+    ////////////////////////////////////////
+    // - toCompletableFuture
+    ////////////////////////////////////////
 
     test("toCompletableFuture for Cffu collection/array") {
         val range = 0 until 10
@@ -211,6 +368,10 @@ class CffuExtensionsTest : FunSpec({
             it.shouldNotBeTypeOf<Array<CompletionStage<*>>>()
         }
     }
+
+    ////////////////////////////////////////
+    // cffuUnwrap
+    ////////////////////////////////////////
 
     test("cffuUnwrap for Cffu collection/array") {
         val range = 0 until 10
