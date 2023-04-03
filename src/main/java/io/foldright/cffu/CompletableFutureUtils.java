@@ -60,9 +60,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is completed when any of the given CompletableFutures complete, with the same result.
+     * Returns a new CompletableFuture that is completed
+     * when any of the given CompletableFutures complete, with the same result.
      * <p>
-     * Same as {@link CompletableFuture#anyOf(CompletableFuture[])}, but return result type is specified type instead of {@code Object}.
+     * Same as {@link CompletableFuture#anyOf(CompletableFuture[])},
+     * but return result type is specified type instead of {@code Object}.
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that is completed with the result
@@ -88,7 +90,8 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> combine(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> combine(
+            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
         requireNonNull(cf1, "cf1 is null");
         requireNonNull(cf2, "cf2 is null");
 

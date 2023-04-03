@@ -3,6 +3,10 @@ package io.foldright.cffu.kotlin
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
 import io.foldright.cffu.CompletableFutureUtils
+import io.foldright.cffu.tuple.Tuple2
+import io.foldright.cffu.tuple.Tuple3
+import io.foldright.cffu.tuple.Tuple4
+import io.foldright.cffu.tuple.Tuple5
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
@@ -77,7 +81,7 @@ fun Array<CompletableFuture<*>>.allOfCompletableFutureVoid(): CompletableFuture<
  * Returns a new CompletableFuture that is completed
  * when any of the given CompletableFutures complete, with the same result.
  *
- * Same as [anyOfCompletableFutureAny], but return result type is specified type instead of {@code Object}.
+ * Same as [anyOfCompletableFutureAny], but return result type is specified type instead of type `Any`.
  *
  * @see anyOfCffu
  * @see anyOfCompletableFutureAny
@@ -89,7 +93,7 @@ fun <T> Collection<CompletableFuture<T>>.anyOfCompletableFuture(): CompletableFu
  * Returns a new CompletableFuture that is completed
  * when any of the given CompletableFutures complete, with the same result.
  *
- * Same as [anyOfCompletableFutureAny], but return result type is specified type instead of {@code Object}.
+ * Same as [anyOfCompletableFutureAny], but return result type is specified type instead of type `Any`.
  *
  * @see anyOfCffu
  * @see anyOfCompletableFutureAny
@@ -124,6 +128,69 @@ fun Collection<CompletableFuture<*>>.anyOfCompletableFutureAny(): CompletableFut
  */
 fun Array<CompletableFuture<*>>.anyOfCompletableFutureAny(): CompletableFuture<Any> =
     CompletableFuture.anyOf(*this)
+
+////////////////////////////////////////
+// combine
+////////////////////////////////////////
+
+/**
+ * Returns a new CompletableFuture that is completed when the given two CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned
+ * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
+ *
+ * @return a new CompletableFuture that is completed when the given 2 CompletableFutures complete
+ * @throws NullPointerException if any input CompletableFutures are `null`
+ * @see allOfCompletableFuture
+ * @see CompletableFuture.allOf
+ */
+fun <T1, T2> CompletableFuture<T1>.combine(cf2: CompletableFuture<T2>): CompletableFuture<Tuple2<T1, T2>> =
+    CompletableFutureUtils.combine(this, cf2)
+
+/**
+ * Returns a new CompletableFuture that is completed when the given three CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned
+ * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
+ *
+ * @return a new CompletableFuture that is completed when the given 3 CompletableFutures complete
+ * @throws NullPointerException if any input CompletableFutures are `null`
+ * @see allOfCompletableFuture
+ * @see CompletableFuture.allOf
+ */
+fun <T1, T2, T3> CompletableFuture<T1>.combine(
+    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>
+): CompletableFuture<Tuple3<T1, T2, T3>> =
+    CompletableFutureUtils.combine(this, cf2, cf3)
+
+/**
+ * Returns a new CompletableFuture that is completed when the given 4 CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned
+ * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
+ *
+ * @return a new CompletableFuture that is completed when the given 4 CompletableFutures complete
+ * @throws NullPointerException if any input CompletableFutures are `null`
+ * @see allOfCompletableFuture
+ * @see CompletableFuture.allOf
+ */
+fun <T1, T2, T3, T4> CompletableFuture<T1>.combine(
+    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>, cf4: CompletableFuture<T4>
+): CompletableFuture<Tuple4<T1, T2, T3, T4>> =
+    CompletableFutureUtils.combine(this, cf2, cf3, cf4)
+
+/**
+ * Returns a new CompletableFuture that is completed when the given 5 CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned
+ * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
+ *
+ * @return a new CompletableFuture that is completed when the given 5 CompletableFutures complete
+ * @throws NullPointerException if any input CompletableFutures are `null`
+ * @see allOfCompletableFuture
+ * @see CompletableFuture.allOf
+ */
+fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.combine(
+    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>,
+    cf4: CompletableFuture<T4>, cf5: CompletableFuture<T5>
+): CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> =
+    CompletableFutureUtils.combine(this, cf2, cf3, cf4, cf5)
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -282,7 +349,7 @@ fun Array<CompletableFuture<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cffu<Vo
 /**
  * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.
  *
- * Same as [anyOfCffuAny], but return result type is specified type instead of {@code Object}.
+ * Same as [anyOfCffuAny], but return result type is specified type instead of type `Any`.
  * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
  *
  * @see anyOfCffuAny
@@ -294,7 +361,7 @@ fun <T> Collection<Cffu<T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T> =
 /**
  * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.
  *
- * Same as [anyOfCffuAny], but return result type is specified type instead of {@code Object}.
+ * Same as [anyOfCffuAny], but return result type is specified type instead of type `Any`.
  * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
  *
  * @see anyOfCffuAny
@@ -306,7 +373,7 @@ fun <T> Array<Cffu<T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T> =
 /**
  * Returns a new Cffu that is completed when any of the given CompletableFutures complete, with the same result.
  *
- * Same as [anyOfCffuAny], but return result type is specified type instead of {@code Object}.
+ * Same as [anyOfCffuAny], but return result type is specified type instead of type `Any`.
  * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
  *
  * @see anyOfCffuAny
@@ -319,7 +386,7 @@ fun <T> Collection<CompletableFuture<T>>.anyOfCffu(cffuFactory: CffuFactory): Cf
 /**
  * Returns a new Cffu that is completed when any of the given CompletableFutures complete, with the same result.
  *
- * Same as [anyOfCffuAny], but return result type is specified type instead of {@code Object}.
+ * Same as [anyOfCffuAny], but return result type is specified type instead of type `Any`.
  * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
  *
  * @see anyOfCffuAny

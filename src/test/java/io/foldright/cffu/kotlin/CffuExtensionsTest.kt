@@ -2,6 +2,10 @@ package io.foldright.cffu.kotlin
 
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder
+import io.foldright.cffu.tuple.Tuple2
+import io.foldright.cffu.tuple.Tuple3
+import io.foldright.cffu.tuple.Tuple4
+import io.foldright.cffu.tuple.Tuple5
 import io.foldright.test_utils.testCffuFactory
 import io.foldright.test_utils.testForkJoinPoolExecutor
 import io.foldright.test_utils.testThreadPoolExecutor
@@ -19,6 +23,9 @@ import java.util.concurrent.CompletionStage
 
 class CffuExtensionsTest : FunSpec({
     val n = 42
+    val anotherN = 4242
+    val s = "43"
+    val d = 44.0
 
     ////////////////////////////////////////////////////////////////////////////////
     //# Extension methods for CompletableFuture
@@ -114,6 +121,34 @@ class CffuExtensionsTest : FunSpec({
             CompletableFuture<Double>(),
             CompletableFuture.completedFuture(42),
         ).anyOfCompletableFutureAny().await() shouldBe 42
+    }
+
+    ////////////////////////////////////////
+    // combine
+    ////////////////////////////////////////
+
+    test("combine - CompletableFuture") {
+        CompletableFuture.completedFuture(n).combine(
+            CompletableFuture.completedFuture(s)
+        ).get() shouldBe Tuple2.of(n, s)
+
+        CompletableFuture.completedFuture(n).combine(
+            CompletableFuture.completedFuture(s),
+            CompletableFuture.completedFuture(d)
+        ).get() shouldBe Tuple3.of(n, s, d)
+
+        CompletableFuture.completedFuture(n).combine(
+            CompletableFuture.completedFuture(s),
+            CompletableFuture.completedFuture(d),
+            CompletableFuture.completedFuture(anotherN)
+        ).get() shouldBe Tuple4.of(n, s, d, anotherN)
+
+        CompletableFuture.completedFuture(n).combine(
+            CompletableFuture.completedFuture(s),
+            CompletableFuture.completedFuture(d),
+            CompletableFuture.completedFuture(anotherN),
+            CompletableFuture.completedFuture(n + n)
+        ).get() shouldBe Tuple5.of(n, s, d, anotherN, n + n)
     }
 
     ////////////////////////////////////////////////////////////////////////////////

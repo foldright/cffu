@@ -398,7 +398,7 @@ public final class CffuFactory {
      * If no Cffus are provided, returns an incomplete Cffu.
      * <p>
      * prefer {@link #cffuAnyOf(Cffu[])} method if the given Cffus have same result type,
-     * because {@link #cffuAnyOf(Cffu[])} return type {@code T} instead of {@code Object}, more type safe.
+     * because {@link #cffuAnyOf(Cffu[])} return type {@code T} instead of type {@code Object}, more type safe.
      *
      * @param cfs the Cffus
      * @return a new Cffu that is completed with the result
@@ -418,7 +418,8 @@ public final class CffuFactory {
      * Same as {@link #anyOf(Cffu[])} with overloaded argument type {@link CompletableFuture}.
      * <p>
      * prefer {@link #cffuAnyOf(CompletableFuture[])} method if the given Cffus have same result type,
-     * because {@link #cffuAnyOf(CompletableFuture[])} return type {@code T} instead of {@code Object}, more type safe.
+     * because {@link #cffuAnyOf(CompletableFuture[])} return type {@code T}
+     * instead of type {@code Object}, more type safe.
      *
      * @param cfs the CompletableFutures
      * @return a new Cffu that is completed with the result
@@ -546,7 +547,7 @@ public final class CffuFactory {
     /**
      * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.
      * <p>
-     * Same as {@link #anyOf(Cffu[])}, but return result type is specified type instead of {@code Object}.
+     * Same as {@link #anyOf(Cffu[])}, but return result type is specified type instead of type {@code Object}.
      *
      * @param cfs the Cffus
      * @return a new Cffu that is completed with the result

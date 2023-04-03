@@ -20,13 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class CompletableFutureUtilsTest {
     @Test
     void test_allOfWithResult() throws Exception {
-        assertEquals(Arrays.asList(n, n + 1, n + 2),
-                CompletableFutureUtils.allOfWithResult(
-                                CompletableFuture.completedFuture(n),
-                                CompletableFuture.completedFuture(n + 1),
-                                CompletableFuture.completedFuture(n + 2))
-                        .get()
-        );
+        assertEquals(Arrays.asList(n, n + 1, n + 2), CompletableFutureUtils.allOfWithResult(
+                CompletableFuture.completedFuture(n),
+                CompletableFuture.completedFuture(n + 1),
+                CompletableFuture.completedFuture(n + 2)
+        ).get());
 
         assertTrue(CompletableFutureUtils.allOfWithResult().isDone());
     }
@@ -83,6 +81,7 @@ class CompletableFutureUtilsTest {
                 createIncompleteFuture()
         ).get());
     }
+
     @Test
     void test_combine() throws Exception {
         assertEquals(Tuple2.of(n, s), CompletableFutureUtils.combine(
