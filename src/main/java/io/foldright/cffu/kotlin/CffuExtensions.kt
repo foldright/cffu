@@ -23,21 +23,21 @@ import java.util.concurrent.CompletionStage
  * Same as [allOfCompletableFutureVoid],
  * but the returned CompletableFuture contains the results of input CompletableFutures.
  *
- *
- * @see CompletableFuture.allOf
- * @see CffuFactory.allOf
+ * @see allOfCffu
+ * @see allOfCompletableFutureVoid
  */
 fun <T> Collection<CompletableFuture<T>>.allOfCompletableFuture(): CompletableFuture<List<T>> =
     CompletableFutureUtils.allOfWithResult(*this.toTypedArray())
 
 /**
- * Returns a new CompletableFuture that is completed when any of the given CompletableFutures complete, with the same result.
+ * Returns a new CompletableFuture with the result of all the given CompletableFutures,
+ * the new CompletableFuture is completed when all the given CompletableFutures complete.
  *
  * Same as [allOfCompletableFutureVoid],
  * but the returned CompletableFuture contains the results of input CompletableFutures.
  *
- * @see CompletableFuture.allOf
- * @see CffuFactory.allOf
+ * @see allOfCffu
+ * @see allOfCompletableFutureVoid
  */
 fun <T> Array<CompletableFuture<T>>.allOfCompletableFuture(): CompletableFuture<List<T>> =
     CompletableFutureUtils.allOfWithResult(*this)
@@ -47,8 +47,10 @@ fun <T> Array<CompletableFuture<T>>.allOfCompletableFuture(): CompletableFuture<
  *
  * Same as [CompletableFuture.allOf], providing this method is convenient for method chaining.
  *
+ * @see allOfCffu
+ * @see allOfCffuVoid
+ * @see allOfCompletableFuture
  * @see CompletableFuture.allOf
- * @see CffuFactory.allOf
  */
 fun Collection<CompletableFuture<*>>.allOfCompletableFutureVoid(): CompletableFuture<Void> =
     CompletableFuture.allOf(*this.toTypedArray())
@@ -58,8 +60,10 @@ fun Collection<CompletableFuture<*>>.allOfCompletableFutureVoid(): CompletableFu
  *
  * Same as [CompletableFuture.allOf], providing this method is convenient for method chaining.
  *
+ * @see allOfCffu
+ * @see allOfCffuVoid
+ * @see allOfCompletableFuture
  * @see CompletableFuture.allOf
- * @see CffuFactory.allOf
  */
 fun Array<CompletableFuture<*>>.allOfCompletableFutureVoid(): CompletableFuture<Void> =
     CompletableFuture.allOf(*this)
@@ -70,21 +74,25 @@ fun Array<CompletableFuture<*>>.allOfCompletableFutureVoid(): CompletableFuture<
 ////////////////////////////////////////
 
 /**
- * Returns a new CompletableFuture that is completed when any of the given CompletableFutures complete, with the same result.
+ * Returns a new CompletableFuture that is completed
+ * when any of the given CompletableFutures complete, with the same result.
  *
  * Same as [anyOfCompletableFutureAny], but return result type is specified type instead of {@code Object}.
  *
- * @see [anyOfCffu]
+ * @see anyOfCffu
+ * @see anyOfCompletableFutureAny
  */
 fun <T> Collection<CompletableFuture<T>>.anyOfCompletableFuture(): CompletableFuture<T> =
     CompletableFutureUtils.anyOfWithType(*this.toTypedArray())
 
 /**
- * Returns a new CompletableFuture that is completed when any of the given CompletableFutures complete, with the same result.
+ * Returns a new CompletableFuture that is completed
+ * when any of the given CompletableFutures complete, with the same result.
  *
  * Same as [anyOfCompletableFutureAny], but return result type is specified type instead of {@code Object}.
  *
- * @see [anyOfCffu]
+ * @see anyOfCffu
+ * @see anyOfCompletableFutureAny
  */
 fun <T> Array<CompletableFuture<T>>.anyOfCompletableFuture(): CompletableFuture<T> =
     CompletableFutureUtils.anyOfWithType(*this)
@@ -95,8 +103,10 @@ fun <T> Array<CompletableFuture<T>>.anyOfCompletableFuture(): CompletableFuture<
  *
  * Same as [CompletableFuture.anyOf], providing this method is convenient for method chaining.
  *
+ * @see anyOfCffu
+ * @see anyOfCffuAny
+ * @see anyOfCompletableFuture
  * @see CompletableFuture.anyOf
- * @see CffuFactory.anyOf
  */
 fun Collection<CompletableFuture<*>>.anyOfCompletableFutureAny(): CompletableFuture<Any> =
     CompletableFuture.anyOf(*this.toTypedArray())
@@ -107,8 +117,10 @@ fun Collection<CompletableFuture<*>>.anyOfCompletableFutureAny(): CompletableFut
  *
  * Same as [CompletableFuture.anyOf], providing this method is convenient for method chaining.
  *
+ * @see anyOfCffu
+ * @see anyOfCffuAny
+ * @see anyOfCompletableFuture
  * @see CompletableFuture.anyOf
- * @see CffuFactory.anyOf
  */
 fun Array<CompletableFuture<*>>.anyOfCompletableFutureAny(): CompletableFuture<Any> =
     CompletableFuture.anyOf(*this)
@@ -145,10 +157,10 @@ fun <T> Collection<CompletionStage<T>>.asCffu(cffuFactory: CffuFactory): List<Cf
 /**
  * Wrap input [CompletableFuture]/[CompletionStage] array element to [Cffu] by [CffuFactory.asCffu].
  *
- * Same as [CffuFactory.asCffu], providing this method is convenient for method chaining.
+ * Same as [CffuFactory.asCffuArray], providing this method is convenient for method chaining.
  *
- * @see CffuFactory.asCffu
  * @see CffuFactory.asCffuArray
+ * @see CffuFactory.asCffu
  */
 fun <T, CS : CompletionStage<T>> Array<CS>.asCffu(cffuFactory: CffuFactory): Array<Cffu<T>> =
     cffuFactory.asCffuArray(*this)
@@ -162,8 +174,10 @@ fun <T, CS : CompletionStage<T>> Array<CS>.asCffu(cffuFactory: CffuFactory): Arr
  * Returns a new Cffu with the result of all the given Cffus,
  * the new Cffu is completed when all the given Cffus complete.
  *
- * Same as [allOfCffuVoid], providing this method is convenient for method chaining.
+ * Same as [allOfCffuVoid], but the returned Cffu contains the results of input Cffus.
+ * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
  *
+ * @see allOfCffuVoid
  * @see CffuFactory.cffuAllOf
  */
 fun <T> Collection<Cffu<T>>.allOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
@@ -173,9 +187,10 @@ fun <T> Collection<Cffu<T>>.allOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
  * Returns a new Cffu with the result of all the given Cffus,
  * the new Cffu is completed when all the given Cffus complete.
  *
- * Same as [allOfCffuVoid], but the returned CompletableFuture contains the results of input CompletableFutures.
+ * Same as [allOfCffuVoid], but the returned Cffu contains the results of input Cffus.
  * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
  *
+ * @see allOfCffuVoid
  * @see CffuFactory.cffuAllOf
  */
 
@@ -186,9 +201,10 @@ fun <T> Array<Cffu<T>>.allOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
  * Returns a new Cffu with the result of all the given CompletableFutures,
  * the new Cffu is completed when all the given CompletableFutures complete.
  *
- * Same as [allOfCffuVoid], but the returned CompletableFuture contains the results of input CompletableFutures.
+ * Same as [allOfCffuVoid], but the returned Cffu contains the results of input CompletableFutures.
  * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
  *
+ * @see allOfCffuVoid
  * @see CffuFactory.cffuAllOf
  */
 @JvmName("allOfCffuCf")
@@ -199,9 +215,10 @@ fun <T> Collection<CompletableFuture<T>>.allOfCffu(cffuFactory: CffuFactory): Cf
  * Returns a new Cffu with the result of all the given CompletableFutures,
  * the new Cffu is completed when all the given CompletableFutures complete.
  *
- * Same as [allOfCffuVoid], but the returned CompletableFuture contains the results of input CompletableFutures.
+ * Same as [allOfCffuVoid], but the returned Cffu contains the results of input CompletableFutures.
  * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
  *
+ * @see allOfCffuVoid
  * @see CffuFactory.cffuAllOf
  */
 fun <T> Array<CompletableFuture<T>>.allOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
@@ -213,6 +230,7 @@ fun <T> Array<CompletableFuture<T>>.allOfCffu(cffuFactory: CffuFactory): Cffu<Li
  *
  * Same as [CffuFactory.allOf], providing this method is convenient for method chaining.
  *
+ * @see allOfCffu
  * @see CffuFactory.allOf
  */
 fun Collection<Cffu<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
@@ -224,6 +242,7 @@ fun Collection<Cffu<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
  *
  * Same as [CffuFactory.allOf], providing this method is convenient for method chaining.
  *
+ * @see allOfCffu
  * @see CffuFactory.allOf
  */
 
@@ -236,6 +255,7 @@ fun Array<Cffu<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
  *
  * Same as [CffuFactory.allOf], providing this method is convenient for method chaining.
  *
+ * @see allOfCffu
  * @see CffuFactory.allOf
  */
 @JvmName("allOfCffuVoidCf")
@@ -248,14 +268,15 @@ fun Collection<CompletableFuture<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cf
  *
  * Same as [CffuFactory.allOf], providing this method is convenient for method chaining.
  *
+ * @see allOfCffu
  * @see CffuFactory.allOf
  */
 fun Array<CompletableFuture<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
     cffuFactory.allOf(*this)
 
 ////////////////////////////////////////
-// - allOfCffu
-// - allOfCffuAny
+// - anyOfCffu
+// - anyOfCffuAny
 ////////////////////////////////////////
 
 /**
@@ -264,6 +285,7 @@ fun Array<CompletableFuture<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cffu<Vo
  * Same as [anyOfCffuAny], but return result type is specified type instead of {@code Object}.
  * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
  *
+ * @see anyOfCffuAny
  * @see CffuFactory.cffuAnyOf
  */
 fun <T> Collection<Cffu<T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T> =
@@ -275,6 +297,7 @@ fun <T> Collection<Cffu<T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T> =
  * Same as [anyOfCffuAny], but return result type is specified type instead of {@code Object}.
  * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
  *
+ * @see anyOfCffuAny
  * @see CffuFactory.cffuAnyOf
  */
 fun <T> Array<Cffu<T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T> =
@@ -286,6 +309,7 @@ fun <T> Array<Cffu<T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T> =
  * Same as [anyOfCffuAny], but return result type is specified type instead of {@code Object}.
  * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
  *
+ * @see anyOfCffuAny
  * @see CffuFactory.cffuAnyOf
  */
 @JvmName("anyOfCffuCf")
@@ -298,6 +322,7 @@ fun <T> Collection<CompletableFuture<T>>.anyOfCffu(cffuFactory: CffuFactory): Cf
  * Same as [anyOfCffuAny], but return result type is specified type instead of {@code Object}.
  * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
  *
+ * @see anyOfCffuAny
  * @see CffuFactory.cffuAnyOf
  */
 fun <T> Array<CompletableFuture<T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T> =
@@ -308,6 +333,7 @@ fun <T> Array<CompletableFuture<T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T>
  *
  * Same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
  *
+ * @see anyOfCffu
  * @see CffuFactory.anyOf
  */
 fun Collection<Cffu<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
@@ -318,6 +344,7 @@ fun Collection<Cffu<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
  *
  * Same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
  *
+ * @see anyOfCffu
  * @see CffuFactory.anyOf
  */
 fun Array<Cffu<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
@@ -328,6 +355,7 @@ fun Array<Cffu<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
  *
  * Same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
  *
+ * @see anyOfCffu
  * @see CffuFactory.anyOf
  */
 @JvmName("anyOfCffuAnyCf")
@@ -339,6 +367,7 @@ fun Collection<CompletableFuture<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cff
  *
  * Same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
  *
+ * @see anyOfCffu
  * @see CffuFactory.anyOf
  */
 fun Array<CompletableFuture<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
