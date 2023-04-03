@@ -47,9 +47,9 @@ import static java.util.Objects.requireNonNull;
 @ReturnValuesAreNonnullByDefault
 public final class CffuFactory {
     @NonNull
-    final Executor defaultExecutor;
+    private final Executor defaultExecutor;
 
-    final boolean forbidObtrudeMethods;
+    private final boolean forbidObtrudeMethods;
 
     CffuFactory(Executor defaultExecutor, boolean forbidObtrudeMethods) {
         this.defaultExecutor = screenExecutor(defaultExecutor);
@@ -834,8 +834,7 @@ public final class CffuFactory {
     //# Helper fields and classes
     ////////////////////////////////////////////////////////////////////////////////
 
-    private static final boolean USE_COMMON_POOL =
-            (ForkJoinPool.getCommonPoolParallelism() > 1);
+    private static final boolean USE_COMMON_POOL = (ForkJoinPool.getCommonPoolParallelism() > 1);
 
     /**
      * Fallback if ForkJoinPool.commonPool() cannot support parallelism

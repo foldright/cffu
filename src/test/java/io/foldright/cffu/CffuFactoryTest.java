@@ -17,6 +17,7 @@ import java.util.function.Function;
 
 import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
 import static io.foldright.test_utils.TestUtils.*;
+import static java.util.concurrent.ForkJoinPool.commonPool;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -533,6 +534,19 @@ class CffuFactoryTest {
             fail();
         } catch (UnsupportedOperationException expected) {
             assertEquals("obtrudeException is forbidden by cffu", expected.getMessage());
+        }
+    }
+
+    @Test
+    void test_executorSetting_MayBe_ThreadPerTaskExecutor() {
+        final boolean USE_COMMON_POOL = (ForkJoinPool.getCommonPoolParallelism() > 1);
+
+        CffuFactory fac = newCffuFactoryBuilder(commonPool()).build();
+        if (USE_COMMON_POOL) {
+            assertSame(commonPool(), fac.defaultExecutor());
+        } else {
+            String executorClassName = fac.defaultExecutor().getClass().getName();
+            assertTrue(executorClassName.endsWith("$ThreadPerTaskExecutor"));
         }
     }
 
