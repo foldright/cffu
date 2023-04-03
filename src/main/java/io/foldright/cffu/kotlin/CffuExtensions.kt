@@ -212,9 +212,9 @@ fun <T> CompletionStage<T>.asCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.asCffu(this)
 
 /**
- * Wrap input [CompletableFuture]/[CompletionStage] collection element to [Cffu] by [CffuFactory.asCffu].
+ * Wrap input [CompletableFuture]/[CompletionStage] collection elements to [Cffu] by [CffuFactory.asCffu].
  *
- * Same as [CffuFactory.asCffu], providing this method is convenient for method chaining.
+ * Same as [CffuFactory.asCffuArray], providing this method is convenient for method chaining.
  *
  * @see CffuFactory.asCffu
  */
@@ -222,7 +222,7 @@ fun <T> Collection<CompletionStage<T>>.asCffu(cffuFactory: CffuFactory): List<Cf
     map { it.asCffu(cffuFactory) }
 
 /**
- * Wrap input [CompletableFuture]/[CompletionStage] array element to [Cffu] by [CffuFactory.asCffu].
+ * Wrap input [CompletableFuture]/[CompletionStage] array elements to [Cffu] by [CffuFactory.asCffu].
  *
  * Same as [CffuFactory.asCffuArray], providing this method is convenient for method chaining.
  *
@@ -471,7 +471,7 @@ fun <T, CS : CompletionStage<T>> Array<CS>.toCompletableFuture(): Array<Completa
 /**
  * Unwrap input [Cffu] collection elements by [Cffu.cffuUnwrap].
  *
- * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
+ * Same as [CffuFactory.cffuArrayUnwrap], providing this method is convenient for method chaining.
  *
  * @see CffuFactory.cffuArrayUnwrap
  */
@@ -481,7 +481,7 @@ fun <T> Collection<Cffu<T>>.cffuUnwrap(): List<CompletableFuture<T>> =
 /**
  * Unwrap input [Cffu] array elements by [Cffu.cffuUnwrap].
  *
- * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
+ * Same as [CffuFactory.cffuArrayUnwrap], providing this method is convenient for method chaining.
  *
  * @see CffuFactory.cffuArrayUnwrap
  */
