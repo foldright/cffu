@@ -9,6 +9,8 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.test.TestCase
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
 import org.apache.commons.lang3.JavaVersion
 import org.apache.commons.lang3.SystemUtils.isJavaVersionAtLeast
 import java.util.concurrent.*
@@ -106,61 +108,61 @@ private fun <T> CompletableFuture<T>.shouldMinCf(recursive: Boolean = false) {
 
     if (isJava9Plus()) shouldThrow<UnsupportedOperationException> {
         orTimeout(1, TimeUnit.MILLISECONDS)
-    }
+    }.message.shouldBeNull()
     if (isJava9Plus()) shouldThrow<UnsupportedOperationException> {
         completeOnTimeout(null, 1, TimeUnit.MILLISECONDS)
-    }
+    }.message.shouldBeNull()
 
     //# Read(explicitly) methods of CompletableFuture
 
     shouldThrow<UnsupportedOperationException> {
         get()
-    }
+    }.message.shouldBeNull()
     shouldThrow<UnsupportedOperationException> {
         get(1, TimeUnit.MILLISECONDS)
-    }
+    }.message.shouldBeNull()
     shouldThrow<UnsupportedOperationException> {
         join()
-    }
+    }.message.shouldBeNull()
     shouldThrow<UnsupportedOperationException> {
         getNow(null)
-    }
+    }.message.shouldBeNull()
     if (isJava19Plus()) shouldThrow<UnsupportedOperationException> {
         resultNow()
-    }
+    }.message.shouldBeNull()
     if (isJava19Plus()) shouldThrow<UnsupportedOperationException> {
         exceptionNow()
-    }
+    }.message.shouldBeNull()
     shouldThrow<UnsupportedOperationException> {
         isDone
-    }
+    }.message.shouldBeNull()
     shouldThrow<UnsupportedOperationException> {
         isCompletedExceptionally
-    }
+    }.message.shouldBeNull()
     shouldThrow<UnsupportedOperationException> {
         isCancelled
-    }
+    }.message.shouldBeNull()
     if (isJava19Plus()) shouldThrow<UnsupportedOperationException> {
         state()
-    }
+    }.message.shouldBeNull()
 
     //# Write methods of CompletableFuture
 
     shouldThrow<UnsupportedOperationException> {
         complete(null)
-    }
+    }.message.shouldBeNull()
     if (isJava9Plus()) shouldThrow<UnsupportedOperationException> {
         completeAsync(null)
-    }
+    }.message.shouldBeNull()
     if (isJava9Plus()) shouldThrow<UnsupportedOperationException> {
         completeAsync(null, null)
-    }
+    }.message.shouldBeNull()
     shouldThrow<UnsupportedOperationException> {
         completeExceptionally(null)
-    }
+    }.message.shouldBeNull()
     shouldThrow<UnsupportedOperationException> {
         cancel(false)
-    }
+    }.message.shouldBeNull()
 
     //# Re-Config methods
 
@@ -179,16 +181,16 @@ private fun <T> CompletableFuture<T>.shouldMinCf(recursive: Boolean = false) {
     //# Inspection methods of Cffu
     shouldThrow<UnsupportedOperationException> {
         numberOfDependents
-    }
+    }.message.shouldBeNull()
 
     //# Other dangerous methods of CompletableFuture
 
     shouldThrow<UnsupportedOperationException> {
         obtrudeValue(null)
-    }
+    }.message.shouldBeNull()
     shouldThrow<UnsupportedOperationException> {
         obtrudeException(null)
-    }
+    }.message.shouldBeNull()
 
     if (recursive) newIncompleteFuture<T>().let {
         if (isJava9Plus()) it.shouldMinCf()
@@ -286,70 +288,70 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
 
     shouldThrow<UnsupportedOperationException> {
         orTimeout(1, TimeUnit.MILLISECONDS)
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         completeOnTimeout(null, 1, TimeUnit.MILLISECONDS)
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
 
     shouldThrow<UnsupportedOperationException> {
         get()
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         get(1, TimeUnit.MILLISECONDS)
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         join()
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         get()
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         getNow(null)
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         resultNow()
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         exceptionNow()
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         isDone
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         isCompletedExceptionally
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         isCancelled
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     if (isJava19Plus()) shouldThrow<UnsupportedOperationException> {
         state()
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
 
     //# Write methods of CompletableFuture
 
     shouldThrow<UnsupportedOperationException> {
         complete(null)
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeAsync(null)
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeAsync(null, null)
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeExceptionally(null)
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeExceptionally(null)
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         cancel(false)
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
 
     //# Re-Config methods
 
@@ -365,17 +367,17 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
     //# Inspection methods of Cffu
     shouldThrow<UnsupportedOperationException> {
         numberOfDependents
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
 
     //# Other dangerous methods of CompletableFuture
 
     shouldThrow<UnsupportedOperationException> {
         obtrudeValue(null)
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         obtrudeException(null)
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     if (recursive) newIncompleteFuture<T>().shouldMinCffu()
 
     ////////////////////////////////////////////////////////////
@@ -384,10 +386,10 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
 
     shouldThrow<UnsupportedOperationException> {
         cffuJoin(1, TimeUnit.MILLISECONDS)
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         cffuState()
-    }
+    }.message shouldBe "unsupported because this a minimal stage"
 
     //# Cffu Re-Config methods
     if (recursive)

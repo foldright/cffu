@@ -517,6 +517,25 @@ class CffuFactoryTest {
         assertTrue(fac.forbidObtrudeMethods());
     }
 
+    @Test
+    void test_forbidObtrudeMethods_property() {
+        CffuFactory fac2 = newCffuFactoryBuilder(executorService).forbidObtrudeMethods(true).build();
+
+        Cffu<Object> cf = fac2.newIncompleteCffu();
+        try {
+            cf.obtrudeValue(42);
+            fail();
+        } catch (UnsupportedOperationException expected) {
+            assertEquals("obtrudeValue is forbidden by cffu", expected.getMessage());
+        }
+        try {
+            cf.obtrudeException(rte);
+            fail();
+        } catch (UnsupportedOperationException expected) {
+            assertEquals("obtrudeException is forbidden by cffu", expected.getMessage());
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# Test helper methods
     ////////////////////////////////////////////////////////////////////////////////
