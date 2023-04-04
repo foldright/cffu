@@ -2,7 +2,6 @@
 
 package io.foldright.showcases
 
-import io.foldright.cffu.*
 import io.foldright.test_utils.*
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeFalse
@@ -117,50 +116,48 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
         invocations = 100
     ) {
         val mainThread = currentThread()
-
         lateinit var thenNonAsyncOpThread: Thread
-        val cfChainBuildFinishedLatch = CountDownLatch(1)
 
-        val f = CompletableFuture
-            .runAsync {
-                // make sure build CF chain is finished before this `runAsync`
-                // aka. this CF is not completed
-                cfChainBuildFinishedLatch.await()
+        val f = Blocker().use { blocker: Blocker ->
+            CompletableFuture
+                .runAsync {
+                    // make sure build CF chain is finished before this `runAsync`
+                    // aka. this CF is not completed
+                    blocker.block()
 
-                currentThread() shouldNotBe mainThread
-                assertNotRunInExecutor(testThreadPoolExecutor)
-            }
-            .thenRunAsync({
-                thenNonAsyncOpThread = currentThread()
+                    currentThread() shouldNotBe mainThread
+                    assertNotRunInExecutor(testThreadPoolExecutor)
+                }
+                .thenRunAsync({
+                    thenNonAsyncOpThread = currentThread()
 
-                assertRunInExecutor(testThreadPoolExecutor)
-            }, testThreadPoolExecutor) // !! switch executor !!
-            .thenApply {
-                // when NOT async,
-                // use same thread of single previous CF
-                currentThread() shouldBe thenNonAsyncOpThread
+                    assertRunInExecutor(testThreadPoolExecutor)
+                }, testThreadPoolExecutor) // !! switch executor !!
+                .thenApply {
+                    // when NOT async,
+                    // use same thread of single previous CF
+                    currentThread() shouldBe thenNonAsyncOpThread
 
-                "apply"
-            }
-            .thenAccept {
-                // when NOT async,
-                // use same thread of single previous CF
-                currentThread() shouldBe thenNonAsyncOpThread
-            }
-            .thenRun {
-                // when NOT async,
-                // use same thread of single previous CF
-                currentThread() shouldBe thenNonAsyncOpThread
-            }
-            .thenRunAsync {
-                // when run ASYNC,
-                //
-                // - executor is NOT inherited after switch!!
-                // - use the DEFAULT EXECUTOR of CompletableFuture, if no executor specified.
-                assertNotRunInExecutor(testThreadPoolExecutor)
-            }
-
-        cfChainBuildFinishedLatch.countDown()
+                    "apply"
+                }
+                .thenAccept {
+                    // when NOT async,
+                    // use same thread of single previous CF
+                    currentThread() shouldBe thenNonAsyncOpThread
+                }
+                .thenRun {
+                    // when NOT async,
+                    // use same thread of single previous CF
+                    currentThread() shouldBe thenNonAsyncOpThread
+                }
+                .thenRunAsync {
+                    // when run ASYNC,
+                    //
+                    // - executor is NOT inherited after switch!!
+                    // - use the DEFAULT EXECUTOR of CompletableFuture, if no executor specified.
+                    assertNotRunInExecutor(testThreadPoolExecutor)
+                }
+        }
         f.join()
     }
 
