@@ -97,7 +97,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when this stage completes normally,
-     * executes the given action using {@link #defaultExecutor()}.
+     * executes the given action using the supplied Executor.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
@@ -1479,7 +1479,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Completes this Cffu with the result of the given Supplier function invoked
-     * from an asynchronous task using the default executor.
+     * from an asynchronous task using {@link #defaultExecutor()}.
      *
      * @param supplier a function returning the value to be used to complete this Cffu
      * @return this Cffu
