@@ -1,7 +1,7 @@
 # Quickstart for GitHub Actions
 # https://docs.github.com/en/actions/quickstart
 
-name: CI
+name: Strong CI
 on: [ push, pull_request, workflow_dispatch ]
 jobs:
   test:
@@ -15,34 +15,34 @@ jobs:
         with:
           submodules: recursive
 
-      - name: setup java8
+      - name: setup Java 8
         uses: actions/setup-java@v3
         with:
           java-version: 8
           distribution: zulu
           # only first java setup need enable cache
           cache: maven
-      - name: setup java11
+      - name: setup Java 11
         uses: actions/setup-java@v3
         with:
           java-version: 11
           distribution: microsoft
-      - name: setup java17
+      - name: setup Java 17
         uses: actions/setup-java@v3
         with:
           java-version: 17
           distribution: microsoft
-      - name: setup java19
+      - name: setup Java 19
         uses: actions/setup-java@v3
         with:
           java-version: 19
           distribution: temurin
-      - name: setup java20
+      - name: setup Java 20
         uses: actions/setup-java@v3
         with:
           java-version: 20
           distribution: zulu
-      - name: setup java21
+      - name: setup Java 21
         uses: actions/setup-java@v3
         with:
           java-version: 21-ea
