@@ -48,7 +48,7 @@ fun <T> safeNewFailedCompletableFuture(executorService: ExecutorService, t: Thro
 /**
  * safe means works under java 8
  */
-fun <T> safeNewFailedCffu(executorService: ExecutorService, t: Throwable): Cffu<T>? {
+fun <T> safeNewFailedCffu(executorService: ExecutorService, t: Throwable): Cffu<T> {
     return newCffuFactoryBuilder(executorService).build().failedFuture(t)
 }
 

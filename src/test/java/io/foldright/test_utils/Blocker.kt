@@ -7,6 +7,7 @@ class Blocker : AutoCloseable {
 
     fun block(): Unit = latch.await()
 
+    @Suppress("MemberVisibilityCanBePrivate")
     fun unblock(): Unit = latch.countDown()
 
     override fun close() = unblock()

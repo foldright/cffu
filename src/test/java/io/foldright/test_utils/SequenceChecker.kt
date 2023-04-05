@@ -15,6 +15,7 @@ class SequenceChecker(private val logSequenceInfo: Boolean = false) {
     }
 
     @JvmOverloads
+    @Suppress("unused")
     fun logSeq(message: String, forceLog: Boolean = false, increaseSeq: Boolean = false) {
         val s = if (increaseSeq) sequencer.getAndIncrement() else sequencer.get()
 
