@@ -7,9 +7,11 @@ package io.foldright.cffu;
 ////////////////////////////////////////////////////////////////////////////////
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.util.concurrent.*;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 
 /**
@@ -163,5 +165,53 @@ final class FutureCanceller implements BiConsumer<Object, Throwable> {
     public void accept(Object ignore, Throwable ex) {
         if (ex == null && f != null && !f.isDone())
             f.cancel(false);
+    }
+}
+
+/**
+ * code is copied from {@code CompletableFuture#AsyncSupply} with small adoption.
+ */
+@SuppressWarnings("serial")
+@SuppressFBWarnings("SE_BAD_FIELD")
+final class CfCompleterBySupplier<T> extends ForkJoinTask<Void>
+        implements Runnable, CompletableFuture.AsynchronousCompletionTask {
+    CompletableFuture<T> dep;
+    Supplier<? extends T> fn;
+
+    CfCompleterBySupplier(CompletableFuture<T> dep, Supplier<? extends T> fn) {
+        this.dep = dep;
+        this.fn = fn;
+    }
+
+    @Override
+    public Void getRawResult() {
+        return null;
+    }
+
+    @Override
+    public void setRawResult(Void v) {
+    }
+
+    @Override
+    public boolean exec() {
+        run();
+        return false;
+    }
+
+    @Override
+    public void run() {
+        CompletableFuture<T> d;
+        Supplier<? extends T> f;
+        if ((d = dep) != null && (f = fn) != null) {
+            dep = null;
+            fn = null;
+            if (!d.isDone()) {
+                try {
+                    d.complete(f.get());
+                } catch (Throwable ex) {
+                    d.completeExceptionally(ex);
+                }
+            }
+        }
     }
 }

@@ -1510,56 +1510,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
         requireNonNull(supplier, "supplier is null");
         requireNonNull(executor, "executor is null");
-        executor.execute(new AsyncSupply<>(cf, supplier));
+        executor.execute(new CfCompleterBySupplier<>(cf, supplier));
         return this;
-    }
-
-    /**
-     * code is copied from {@code CompletableFuture#AsyncSupply} with small adoption.
-     */
-    @SuppressWarnings("serial")
-    @SuppressFBWarnings("SE_BAD_FIELD")
-    private static final class AsyncSupply<T> extends ForkJoinTask<Void>
-            implements Runnable, CompletableFuture.AsynchronousCompletionTask {
-        CompletableFuture<T> dep;
-        Supplier<? extends T> fn;
-
-        AsyncSupply(CompletableFuture<T> dep, Supplier<? extends T> fn) {
-            this.dep = dep;
-            this.fn = fn;
-        }
-
-        @Override
-        public Void getRawResult() {
-            return null;
-        }
-
-        @Override
-        public void setRawResult(Void v) {
-        }
-
-        @Override
-        public boolean exec() {
-            run();
-            return false;
-        }
-
-        @Override
-        public void run() {
-            CompletableFuture<T> d;
-            Supplier<? extends T> f;
-            if ((d = dep) != null && (f = fn) != null) {
-                dep = null;
-                fn = null;
-                if (!d.isDone()) {
-                    try {
-                        d.complete(f.get());
-                    } catch (Throwable ex) {
-                        d.completeExceptionally(ex);
-                    }
-                }
-            }
-        }
     }
 
     /**
