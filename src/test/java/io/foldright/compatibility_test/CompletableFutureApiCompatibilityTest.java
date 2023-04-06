@@ -29,11 +29,15 @@ class CompletableFutureApiCompatibilityTest {
     private static final RuntimeException rte = new RuntimeException("Bang");
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# Factory Methods of CompletableFuture
+    // Static Methods
     ////////////////////////////////////////////////////////////////////////////////
 
+    ////////////////////////////////////////
+    //# Factory Methods of CompletableFuture
+    ////////////////////////////////////////
+
     @Test
-    void factoryMethods() throws Exception {
+    void factoryMethods_byImmediateValue() throws Exception {
         // completedFuture
         CompletableFuture<String> f0 = CompletableFuture.completedFuture(hello);
         assertEquals(hello, f0.get());
@@ -42,45 +46,11 @@ class CompletableFutureApiCompatibilityTest {
         // - completedStage
         // - failedFuture
         // - failedStage
-
-        final AtomicReference<String> holder = new AtomicReference<>();
-
-        // runAsync
-        CompletableFuture<Void> cf = CompletableFuture.runAsync(() -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
-            holder.set(hello);
-        });
-        assertNull(cf.get());
-        assertEquals(hello, holder.get());
-        TestUtils.shouldNotBeMinimalStage(cf);
-
-        holder.set(null);
-        cf = CompletableFuture.runAsync(() -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
-            holder.set(hello);
-        }, anotherExecutorService);
-        assertNull(cf.get());
-        assertEquals(hello, holder.get());
-        TestUtils.shouldNotBeMinimalStage(cf);
-
-        // supplyAsync
-        CompletableFuture<String> s_cf = CompletableFuture.supplyAsync(() -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
-            return hello;
-        });
-        assertEquals(hello, s_cf.get());
-        TestUtils.shouldNotBeMinimalStage(s_cf);
-        s_cf = CompletableFuture.supplyAsync(() -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
-            return hello;
-        }, anotherExecutorService);
-        assertEquals(hello, s_cf.get());
-        TestUtils.shouldNotBeMinimalStage(s_cf);
     }
 
     @Test
     @EnabledForJreRange(min = JRE.JAVA_9)
-    void factoryMethods_Java9() throws Exception {
+    void factoryMethods_byImmediateValue__Java9() throws Exception {
         // completedStage
         CompletableFuture<String> cf = (CompletableFuture<String>) CompletableFuture.completedStage(hello);
         assertEquals(hello, cf.toCompletableFuture().get());
@@ -108,23 +78,77 @@ class CompletableFutureApiCompatibilityTest {
     }
 
     @Test
-    void staticMethods__allOf_anyOf() throws Exception {
+    void factoryMethods_byLambda() throws Exception {
+        final AtomicReference<String> holder = new AtomicReference<>();
+
+        // runAsync
+        CompletableFuture<Void> cf = CompletableFuture.runAsync(() -> {
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
+            holder.set(hello);
+        });
+        assertNull(cf.get());
+        assertEquals(hello, holder.get());
+        TestUtils.shouldNotBeMinimalStage(cf);
+
+        holder.set(null);
+        cf = CompletableFuture.runAsync(() -> {
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
+            holder.set(hello);
+        }, anotherExecutorService);
+        assertNull(cf.get());
+        assertEquals(hello, holder.get());
+        TestUtils.shouldNotBeMinimalStage(cf);
+
+        // supplyAsync
+        CompletableFuture<String> s_cf = CompletableFuture.supplyAsync(() -> {
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
+            return hello;
+        });
+        assertEquals(hello, s_cf.get());
+        TestUtils.shouldNotBeMinimalStage(s_cf);
+        s_cf = CompletableFuture.supplyAsync(() -> {
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
+            return hello;
+        }, anotherExecutorService);
+        assertEquals(hello, s_cf.get());
+        TestUtils.shouldNotBeMinimalStage(s_cf);
+    }
+
+    @Test
+    void constructor() throws Exception {
+        CompletableFuture<Integer> cf = new CompletableFuture<>();
+        assertFalse(cf.isDone());
+
+        cf.complete(42);
+        assertEquals(42, cf.get());
+    }
+
+    ////////////////////////////////////////
+    //# allOf / anyOf methods
+    ////////////////////////////////////////
+
+    @Test
+    void staticMethods_allOf_anyOf() throws Exception {
         CompletableFuture<Integer> f1 = CompletableFuture.completedFuture(42);
         CompletableFuture<Integer> f2 = CompletableFuture.completedFuture(4242);
         CompletableFuture<Integer> f3 = CompletableFuture.completedFuture(424242);
 
         assertNull(CompletableFuture.allOf().get());
-        CompletableFuture.allOf(f1, f2).get();
-        CompletableFuture.allOf(f1, f2, f3).get();
+        assertNull(CompletableFuture.allOf(f1, f2).get());
+        assertNull(CompletableFuture.allOf(f1, f2, f3).get());
 
         assertFalse(CompletableFuture.anyOf().toCompletableFuture().isDone());
-        CompletableFuture.anyOf(f1, f2).get();
-        CompletableFuture.anyOf(f1, f2, f3).get();
+        assertNotNull(CompletableFuture.anyOf(f1, f2).get());
+        assertNotNull(CompletableFuture.anyOf(f1, f2, f3).get());
     }
+
+    ////////////////////////////////////////
+    //# Delay Execution
+    ////////////////////////////////////////
 
     @Test
     @EnabledForJreRange(min = JRE.JAVA_9)
-    void staticMethods__delayedExecutor() throws Exception {
+    void staticMethods_delayedExecutor() throws Exception {
         final AtomicReference<String> holder = new AtomicReference<>();
 
         Executor delayer = CompletableFuture.delayedExecutor(1, TimeUnit.MILLISECONDS);
@@ -138,11 +162,11 @@ class CompletableFutureApiCompatibilityTest {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# Instance Methods of Cffu
+    //# Instance Methods
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
-    void simple_Then_Methods() throws Exception {
+    void simpleThenMethods() throws Exception {
         final AtomicReference<String> holder = new AtomicReference<>();
 
         final CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
@@ -151,13 +175,13 @@ class CompletableFutureApiCompatibilityTest {
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.thenRunAsync(() -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             holder.set(hello);
         }).get();
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.thenRunAsync(() -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             holder.set(hello);
         }, anotherExecutorService).get();
         assertEquals(hello, holder.get());
@@ -167,24 +191,24 @@ class CompletableFutureApiCompatibilityTest {
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.thenAcceptAsync(x -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             holder.set(hello);
         }).get();
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.thenAcceptAsync(x -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             holder.set(hello);
         }, anotherExecutorService).get();
         assertEquals(hello, holder.get());
 
         assertEquals(43, cf.thenApply(x -> x + 1).get());
         assertEquals(44, cf.thenApplyAsync(x -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             return x + 2;
         }).get());
         assertEquals(45, cf.thenApplyAsync(x -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             return x + 3;
         }, anotherExecutorService).get());
     }
@@ -199,13 +223,13 @@ class CompletableFutureApiCompatibilityTest {
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.runAfterBothAsync(cf, () -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             holder.set(hello);
         }).get();
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.runAfterBothAsync(cf, () -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             holder.set(hello);
         }, anotherExecutorService).get();
         assertEquals(hello, holder.get());
@@ -215,24 +239,24 @@ class CompletableFutureApiCompatibilityTest {
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.thenAcceptBothAsync(cf, (x, y) -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             holder.set(hello);
         }).get();
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.thenAcceptBothAsync(cf, (x, y) -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             holder.set(hello);
         }, anotherExecutorService).get();
         assertEquals(hello, holder.get());
 
         assertEquals(84, cf.thenCombine(cf, Integer::sum).get());
         assertEquals(84, cf.thenCombineAsync(cf, (a, b) -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             return Integer.sum(a, b);
         }).get());
         assertEquals(84, cf.thenCombineAsync(cf, (a, b) -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             return Integer.sum(a, b);
         }, anotherExecutorService).get());
     }
@@ -247,13 +271,13 @@ class CompletableFutureApiCompatibilityTest {
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.runAfterEitherAsync(cf, () -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             holder.set(hello);
         }).get();
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.runAfterEitherAsync(cf, () -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             holder.set(hello);
         }, anotherExecutorService).get();
         assertEquals(hello, holder.get());
@@ -263,24 +287,24 @@ class CompletableFutureApiCompatibilityTest {
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.acceptEitherAsync(cf, x -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             holder.set(hello);
         }).get();
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.acceptEitherAsync(cf, x -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             holder.set(hello);
         }, anotherExecutorService).get();
         assertEquals(hello, holder.get());
 
         assertEquals(43, cf.applyToEither(cf, x -> x + 1).get());
         assertEquals(44, cf.applyToEitherAsync(cf, x -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             return x + 2;
         }).get());
         assertEquals(45, cf.applyToEitherAsync(cf, x -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             return x + 3;
         }, anotherExecutorService).get());
     }
@@ -300,25 +324,25 @@ class CompletableFutureApiCompatibilityTest {
 
     @Test
     @EnabledForJreRange(min = JRE.JAVA_12)
-    void errorHandling_methods_Java9() throws Exception {
+    void errorHandling_methods__Java9() throws Exception {
         CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
         CompletableFuture<Object> failed = TestUtils.safeNewFailedCompletableFuture(executorService, rte);
 
         assertEquals(42, cf.exceptionallyAsync(t -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             return 43;
         }).get());
         assertEquals(43, failed.exceptionallyAsync(t -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             return 43;
         }).get());
 
         assertEquals(42, cf.exceptionallyAsync(t -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             return 44;
         }, anotherExecutorService).get());
         assertEquals(44, failed.exceptionallyAsync(t -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             return 44;
         }, anotherExecutorService).get());
     }
@@ -353,11 +377,11 @@ class CompletableFutureApiCompatibilityTest {
 
         assertEquals(43, cf.thenCompose(x -> CompletableFuture.completedFuture(43)).get());
         assertEquals(44, cf.thenComposeAsync(x -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             return CompletableFuture.completedFuture(44);
         }).get());
         assertEquals(45, cf.thenComposeAsync(x -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             return CompletableFuture.completedFuture(45);
         }, anotherExecutorService).get());
     }
@@ -370,11 +394,11 @@ class CompletableFutureApiCompatibilityTest {
 
         assertEquals(42, cf.exceptionallyCompose(x -> CompletableFuture.completedFuture(43)).get());
         assertEquals(42, cf.exceptionallyComposeAsync(x -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             return CompletableFuture.completedFuture(44);
         }).get());
         assertEquals(42, cf.exceptionallyComposeAsync(x -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             return CompletableFuture.completedFuture(45);
         }, anotherExecutorService).get());
 
@@ -383,26 +407,26 @@ class CompletableFutureApiCompatibilityTest {
 
         assertEquals(43, failed.exceptionallyCompose(x -> CompletableFuture.completedFuture(43)).get());
         assertEquals(44, failed.exceptionallyComposeAsync(x -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             return CompletableFuture.completedFuture(44);
         }).get());
         assertEquals(45, failed.exceptionallyComposeAsync(x -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             return CompletableFuture.completedFuture(45);
         }, anotherExecutorService).get());
     }
 
     @Test
-    void advancedMethods__handle() throws Exception {
+    void advancedMethods__handle_whenComplete() throws Exception {
         CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
 
         assertEquals(43, cf.handle((x, e) -> 43).get());
         assertEquals(44, cf.handleAsync((x, e) -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             return 44;
         }).get());
         assertEquals(45, cf.handleAsync((x, e) -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             return 45;
         }, anotherExecutorService).get());
 
@@ -412,13 +436,13 @@ class CompletableFutureApiCompatibilityTest {
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.whenCompleteAsync((x, e) -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             holder.set(hello);
         }).get();
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.whenCompleteAsync((x, e) -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             holder.set(hello);
         }, anotherExecutorService).get();
         assertEquals(hello, holder.get());
@@ -431,7 +455,6 @@ class CompletableFutureApiCompatibilityTest {
 
         Integer r = cf.get();
         assertEquals(42, r);
-
         try {
             failed.get();
             fail();
@@ -454,6 +477,7 @@ class CompletableFutureApiCompatibilityTest {
         } catch (CompletionException expected) {
             assertSame(rte, expected.getCause());
         }
+
         assertEquals(r, cf.getNow(0));
         try {
             failed.getNow(0);
@@ -461,6 +485,7 @@ class CompletableFutureApiCompatibilityTest {
         } catch (CompletionException expected) {
             assertSame(rte, expected.getCause());
         }
+
         // below methods is tested in below test method
         // - resultNow
         // - exceptionNow
@@ -561,27 +586,65 @@ class CompletableFutureApiCompatibilityTest {
 
         CompletableFuture<Integer> incomplete = new CompletableFuture<>();
         assertEquals(4343, incomplete.completeAsync(() -> {
-            TestUtils.assertDefaultRunThreadOfCompletableFuture(executorService);
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             return 4343;
         }).get());
+
         incomplete = new CompletableFuture<>();
         assertEquals(4343, incomplete.completeAsync(() -> {
-            TestUtils.assertRunThreadOfCompletableFuture(anotherExecutorService);
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             return 4343;
         }, anotherExecutorService).get());
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
-    //# nonfunctional methods
-    //   vs. user functional API
-    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////
+    //# Re-Config methods
+    ////////////////////////////////////////
 
     @Test
-    void nonfunctionalMethods() throws Exception {
+    void reConfigMethods() throws Exception {
+        // below methods is tested in below test method
+        // - minimalCompletionStage
+        // - copy
+
         CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
 
         // toCompletableFuture
         assertEquals(42, cf.toCompletableFuture().get());
+    }
+
+    @Test
+    @EnabledForJreRange(min = JRE.JAVA_9)
+    void reConfigMethods_Java9() throws Exception {
+        CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
+
+        // minimalCompletionStage
+        TestUtils.shouldBeMinimalStage((CompletableFuture<Integer>) cf.minimalCompletionStage());
+
+        // copy
+        assertEquals(42, cf.copy().get());
+    }
+
+    @Test
+    @EnabledForJreRange(min = JRE.JAVA_9)
+    void test_getterMethods() {
+        CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
+
+        // defaultExecutor
+        assertNotNull(cf.defaultExecutor());
+    }
+
+    @Test
+    void test_inspectionMethods() {
+        CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
+
+        // getNumberOfDependents
+        assertNotEquals(-1, cf.getNumberOfDependents());
+    }
+
+    @Test
+    void test_dangerousMethods() throws Exception {
+        CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
 
         // obtrudeValue
         cf.obtrudeValue(44);
@@ -595,35 +658,20 @@ class CompletableFutureApiCompatibilityTest {
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
-
-        // getNumberOfDependents
-        assertNotEquals(-1, cf.getNumberOfDependents());
-
-        // below methods is tested in below test method
-        // - copy
-        // - defaultExecutor
-        // - minimalCompletionStage
-        // - newIncompleteFuture
     }
 
     @Test
     @EnabledForJreRange(min = JRE.JAVA_9)
-    void nonfunctionalMethods_Java9() throws Exception {
+    void test_forApiCompatibility() {
         CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
-
-        // copy
-        assertEquals(42, cf.copy().get());
-
-        // defaultExecutor
-        assertNotNull(cf.defaultExecutor());
-
-        // minimalCompletionStage
-        TestUtils.shouldBeMinimalStage((CompletableFuture<Integer>) cf.minimalCompletionStage());
 
         // newIncompleteFuture
         assertFalse(cf.newIncompleteFuture().isDone());
     }
 
+    ////////////////////////////////////////////////////////////////////////////////
+    //# test helper fields
+    ////////////////////////////////////////////////////////////////////////////////
 
     private static ExecutorService executorService;
 

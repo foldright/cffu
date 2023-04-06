@@ -53,19 +53,19 @@ fun <T> safeNewFailedCffu(executorService: ExecutorService, t: Throwable): Cffu<
 }
 
 @Suppress("UNUSED_PARAMETER")
-fun assertDefaultRunThreadOfCompletableFuture(executorService: ExecutorService) {
+fun assertCompletableFutureRunInDefaultThread(executorService: ExecutorService) {
     // do nothing
 }
 
-fun assertRunThreadOfCompletableFuture(executorService: ExecutorService) {
+fun assertCompletableFutureRunInThreadOf(executorService: ExecutorService) {
     assertRunInExecutor(executorService)
 }
 
-fun assertDefaultRunThreadOfCffu(executorService: ExecutorService) {
+fun assertCffuRunInDefaultThread(executorService: ExecutorService) {
     assertRunInExecutor(executorService)
 }
 
-fun assertRunThreadOfCffu(executorService: ExecutorService) {
+fun assertCffuRunInThreadOf(executorService: ExecutorService) {
     assertRunInExecutor(executorService)
 }
 
