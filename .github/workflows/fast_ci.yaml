@@ -6,9 +6,14 @@ on: [push, pull_request, workflow_dispatch]
 jobs:
   test:
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#choosing-github-hosted-runners
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 5
-    name: fast test
+    name: fast test on OS ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+      fail-fast: false
+      max-parallel: 64
 
     steps:
       - uses: actions/checkout@v3
