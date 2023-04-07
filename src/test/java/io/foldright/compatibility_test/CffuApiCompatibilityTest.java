@@ -786,6 +786,65 @@ class CffuApiCompatibilityTest {
         }
     }
 
+    @Test
+    void nested_exception() throws Exception {
+        Cffu<Integer> cf = cffuFactory.newIncompleteCffu();
+        cf.completeExceptionally(new CompletionException(rte));
+        // auto unwrap first level CompletionException
+        checkNo1MoreLevelForCompletionException(cf);
+
+        cf = cffuFactory.completedFuture(42);
+        // auto unwrap first level CompletionException
+        checkNo1MoreLevelForCompletionException(cf.thenRun(() -> {
+            throw new CompletionException(rte);
+        }));
+
+        cf = cffuFactory.newIncompleteCffu();
+        cf.completeExceptionally(new ExecutionException(rte));
+        // auto unwrap first level ExecutionException
+        check1MoreLevelForExecutionException(cf);
+
+        cf = cffuFactory.completedFuture(42);
+        // auto unwrap first level ExecutionException
+        check1MoreLevelForExecutionException(cf.thenRun(() -> {
+            TestUtils.sneakyThrow(new ExecutionException(rte));
+        }));
+    }
+
+    private <T> void checkNo1MoreLevelForCompletionException(Cffu<T> cf) throws Exception {
+        try {
+            cf.get();
+            fail();
+        } catch (ExecutionException e) {
+            assertSame(rte, e.getCause());
+        }
+        try {
+            cf.join();
+            fail();
+        } catch (CompletionException e) {
+            assertSame(rte, e.getCause());
+        }
+    }
+
+    private <T> void check1MoreLevelForExecutionException(Cffu<T> cf) throws Exception {
+        try {
+            cf.get();
+            fail();
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            assertInstanceOf(ExecutionException.class, cause);
+            assertSame(rte, cause.getCause());
+        }
+        try {
+            cf.join();
+            fail();
+        } catch (CompletionException e) {
+            Throwable cause = e.getCause();
+            assertInstanceOf(ExecutionException.class, cause);
+            assertSame(rte, cause.getCause());
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# test helper fields
     ////////////////////////////////////////////////////////////////////////////////

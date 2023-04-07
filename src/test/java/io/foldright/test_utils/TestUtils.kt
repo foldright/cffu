@@ -91,6 +91,8 @@ infix fun <T> List<T>.merge(other: List<T>): List<T> = mutableListOf<T>().apply 
 
 fun addCurrentThreadName(names: List<String>) = names + Thread.currentThread().name
 
+fun sneakyThrow(ex: Throwable): Unit = throw ex
+
 ////////////////////////////////////////////////////////////////////////////////
 // Assertion functions for CF/Cffu
 ////////////////////////////////////////////////////////////////////////////////
