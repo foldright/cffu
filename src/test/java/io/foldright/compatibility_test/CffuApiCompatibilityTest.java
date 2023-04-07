@@ -502,7 +502,7 @@ class CffuApiCompatibilityTest {
     }
 
     @Test
-    void readExplicitlyMethods_Java19() throws Exception {
+    void readExplicitlyMethods__Java19() throws Exception {
         Cffu<Integer> cf = cffuFactory.completedFuture(42);
         Cffu<Object> failed = TestUtils.safeNewFailedCffu(executorService, rte);
         Integer r = cf.get();
@@ -529,7 +529,7 @@ class CffuApiCompatibilityTest {
 
     @Test
     @EnabledForJreRange(min = JRE.JAVA_19) /* GEN_MARK_KEEP */
-    void readExplicitlyMethods_Java19_CanNotCompatible() {
+    void readExplicitlyMethods__Java19_CanNotCompatible() {
         Cffu<Integer> cf = cffuFactory.completedFuture(42);
         Cffu<Object> failed = TestUtils.safeNewFailedCffu(executorService, rte);
         Cffu<Integer> incomplete = cffuFactory.newIncompleteCffu();
@@ -573,7 +573,7 @@ class CffuApiCompatibilityTest {
     }
 
     @Test
-    void writeMethods_Java9() throws Exception {
+    void writeMethods__Java9() throws Exception {
         Cffu<Integer> cf = cffuFactory.completedFuture(42);
 
         // completeAsync
@@ -610,7 +610,7 @@ class CffuApiCompatibilityTest {
     }
 
     @Test
-    void reConfigMethods_Java9() throws Exception {
+    void reConfigMethods__Java9() throws Exception {
         Cffu<Integer> cf = cffuFactory.completedFuture(42);
 
         // minimalCompletionStage
@@ -660,6 +660,130 @@ class CffuApiCompatibilityTest {
 
         // newIncompleteFuture
         assertFalse(cf.newIncompleteFuture().isDone());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# the behavior that is easy to misunderstand
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void test_similarities_and_differences_between_cancelled_and_exceptionally() throws Exception {
+        final Cffu<Integer> cancelledCf = cffuFactory.newIncompleteCffu();
+        cancelledCf.cancel(false);
+
+        final Cffu<Integer> exceptionallyCf =
+                TestUtils.safeNewFailedCffu(executorService, rte);
+
+        ////////////////////////////////////////
+        // different behavior
+        ////////////////////////////////////////
+
+        try {
+            cancelledCf.get();
+            fail();
+        } catch (CancellationException expected) {
+        }
+        try {
+            exceptionallyCf.get();
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+
+        try {
+            cancelledCf.get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (CancellationException expected) {
+        }
+        try {
+            exceptionallyCf.get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+
+        try {
+            cancelledCf.join();
+            fail();
+        } catch (CancellationException expected) {
+        }
+        try {
+            exceptionallyCf.join();
+            fail();
+        } catch (CompletionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+
+        try {
+            cancelledCf.getNow(42);
+            fail();
+        } catch (CancellationException expected) {
+        }
+        try {
+            exceptionallyCf.getNow(42);
+            fail();
+        } catch (CompletionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+
+        assertTrue(cancelledCf.isCancelled());
+        assertFalse(exceptionallyCf.isCancelled());
+
+        ////////////////////////////////////////
+        // same behavior
+        ////////////////////////////////////////
+
+        assertTrue(cancelledCf.isCompletedExceptionally());
+        assertTrue(exceptionallyCf.isCompletedExceptionally());
+
+        assertTrue(cancelledCf.isDone());
+        assertTrue(exceptionallyCf.isDone());
+
+        assertEquals(42, cancelledCf.exceptionally(throwable -> {
+            assertInstanceOf(CancellationException.class, throwable);
+            assertNull(throwable.getCause());
+            return 42;
+        }).get());
+        assertEquals(42, exceptionallyCf.exceptionally(throwable -> {
+            assertSame(rte, throwable);
+            return 42;
+        }).get());
+    }
+
+    @Test
+    void test_similarities_and_differences_between_cancelled_and_exceptionally__Java19() throws Exception {
+        final Cffu<Integer> cancelledCf = cffuFactory.newIncompleteCffu();
+        cancelledCf.cancel(false);
+
+        final Cffu<Integer> exceptionallyCf =
+                TestUtils.safeNewFailedCffu(executorService, rte);
+
+        ////////////////////////////////////////
+        // different behavior
+        ////////////////////////////////////////
+
+        try {
+            //noinspection ThrowableNotThrown
+            cancelledCf.exceptionNow();
+            fail();
+        } catch (IllegalStateException expected) {
+        }
+        assertSame(rte, exceptionallyCf.exceptionNow());
+
+        ////////////////////////////////////////
+        // same behavior
+        ////////////////////////////////////////
+
+        try {
+            cancelledCf.resultNow();
+            fail();
+        } catch (IllegalStateException expected) {
+        }
+        try {
+            exceptionallyCf.resultNow();
+            fail();
+        } catch (IllegalStateException expected) {
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////
