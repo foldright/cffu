@@ -129,6 +129,7 @@ class CompletableFutureUtilsTest {
                     createFailedFuture(new RuntimeException()),
                     createFailedFuture(new RuntimeException()),
                     CompletableFuture.supplyAsync(() -> {
+                        // sleep, so this cf is the latest failed cf
                         sleep(100);
                         throw rte;
                     }),
@@ -137,9 +138,7 @@ class CompletableFutureUtilsTest {
 
             fail();
         } catch (ExecutionException expected) {
-            // TODO: get rte is more reasonable?
-            //       current implementation return ex last cf argument
-            assertSame(another_rte, expected.getCause());
+            assertSame(rte, expected.getCause());
         }
     }
 

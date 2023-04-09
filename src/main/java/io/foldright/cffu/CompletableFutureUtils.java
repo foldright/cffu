@@ -11,6 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.Objects.requireNonNull;
 
@@ -79,6 +80,20 @@ public final class CompletableFutureUtils {
         return (CompletableFuture<T>) CompletableFuture.anyOf(cfs);
     }
 
+    /**
+     * Returns a new CompletableFuture that is success
+     * when any of the given CompletableFutures success, with the same result.
+     * Otherwise, all the given CompletableFutures failed, the returned CompletableFuture failed,
+     * with a CompletionException holding the latest exception as its cause.
+     * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
+     *
+     * @param cfs the CompletableFutures
+     * @return a new CompletableFuture that is success
+     * when any of the given CompletableFutures success, with the same result
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see CompletableFuture#anyOf(CompletableFuture[])
+     * @see #allOfWithResult(CompletableFuture[])
+     */
     @SafeVarargs
     public static <T> CompletableFuture<T> anyOfSuccess(CompletableFuture<T>... cfs) {
         if (cfs.length == 0) return new CompletableFuture<>();
@@ -87,21 +102,26 @@ public final class CompletableFutureUtils {
             requireNonNull(cfs[i], "cf" + i + " is null");
         }
 
-        CompletableFuture<T> ret = new CompletableFuture<>();
-        CompletableFuture<Throwable> lastAllFailedExCf = null;
+        final CompletableFuture<T> ret = new CompletableFuture<>();
+        final AtomicReference<Throwable> latestEx = new AtomicReference<>();
+        CompletableFuture<Boolean> cfAllIsFailed = null;
 
         for (final CompletableFuture<T> cf : cfs) {
-            // success path: if any input cf success, complete returned cf
+            // success path: if any input cf success, `complete` the returned cf
             cf.thenAccept(ret::complete);
 
-            CompletableFuture<Throwable> exCf = cf.handle((v, ex) -> ex);
-            if (lastAllFailedExCf == null) lastAllFailedExCf = exCf;
-            else lastAllFailedExCf = lastAllFailedExCf.thenCombine(exCf,
-                    (prevEx, combinedEx) -> prevEx != null && combinedEx != null ? combinedEx : null);
+            CompletableFuture<Boolean> cfIsFailed = cf.handle((v, ex) -> {
+                boolean failed = ex != null;
+                if (failed) latestEx.set(ex);
+                return failed;
+            });
+            if (cfAllIsFailed == null) cfAllIsFailed = cfIsFailed;
+            else cfAllIsFailed = cfAllIsFailed.thenCombine(cfIsFailed,
+                    (allFailed, failed) -> allFailed && failed);
         }
-        // failed path: if all input cfs failed, completeExceptionally returned cf with last exception
-        lastAllFailedExCf.thenAccept(ex -> {
-            if (ex != null) ret.completeExceptionally(ex);
+        // failed path: if all input cfs failed, `completeExceptionally` returned cf with the latest exception
+        cfAllIsFailed.thenAccept(allFailed -> {
+            if (allFailed) ret.completeExceptionally(latestEx.get());
         });
 
         return ret;
