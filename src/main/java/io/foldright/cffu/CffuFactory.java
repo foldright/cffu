@@ -594,6 +594,52 @@ public final class CffuFactory {
         return newIncompleteCffu();
     }
 
+    /**
+     * Returns a new Cffu that is success when any of the given Cffus success, with the same result.
+     * Otherwise, all the given Cffus failed, the returned Cffu failed,
+     * with a CompletionException holding the latest exception as its cause.
+     * If no Cffus are provided, returns an incomplete Cffu.
+     *
+     * @param cfs the Cffus
+     * @return a new Cffu that is success
+     * when any of the given Cffus success, with the same result
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #cffuAnyOf(Cffu[])
+     */
+    @SafeVarargs
+    public final <T> Cffu<T> cffuAnyOfSuccess(Cffu<T>... cfs) {
+        return new0(CompletableFutureUtils.anyOfSuccess(toCompletableFutureArray(cfs)));
+    }
+
+    /**
+     * Returns a new Cffu that is success when any of the given CompletableFutures success, with the same result.
+     * Otherwise, all the given CompletableFutures failed, the returned Cffu failed,
+     * with a CompletionException holding the latest exception as its cause.
+     * If no CompletableFutures are provided, returns an incomplete Cffu.
+     *
+     * @param cfs the CompletableFutures
+     * @return a new Cffu that is success
+     * when any of the given CompletableFutures success, with the same result
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #cffuAnyOfSuccess(Cffu[])
+     * @see #cffuAnyOf(Cffu[])
+     */
+    @SafeVarargs
+    public final <T> Cffu<T> cffuAnyOfSuccess(CompletableFuture<T>... cfs) {
+        return new0(CompletableFutureUtils.anyOfSuccess(cfs));
+    }
+
+    /**
+     * Provided this overloaded method just for resolving "cffuAnyOfSuccess is ambiguous" problem
+     * when call {@code cffuAnyOfSuccess} with empty arguments: {@code cffuFactory.cffuAnyOfSuccess()}.
+     *
+     * @see #cffuAnyOfSuccess(Cffu[])
+     * @see #cffuAnyOfSuccess(CompletableFuture[])
+     */
+    public <T> Cffu<T> cffuAnyOfSuccess() {
+        return newIncompleteCffu();
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# New type-safe cffuCombine Factory Methods
     //  support 2~5 input arguments, method name prefix with `cffu`

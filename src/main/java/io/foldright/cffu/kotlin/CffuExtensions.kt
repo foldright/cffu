@@ -129,6 +129,36 @@ fun Collection<CompletableFuture<*>>.anyOfCompletableFutureAny(): CompletableFut
 fun Array<CompletableFuture<*>>.anyOfCompletableFutureAny(): CompletableFuture<Any> =
     CompletableFuture.anyOf(*this)
 
+/**
+ * Returns a new CompletableFuture that is success
+ * when any of the given CompletableFutures success, with the same result.
+ * Otherwise, all the given CompletableFutures failed, the returned CompletableFuture failed,
+ * with a CompletionException holding the latest exception as its cause.
+ * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
+ *
+ * Same as [CompletableFutureUtils.anyOfSuccess], providing this method is convenient for method chaining.
+ *
+ * @see anyOfCompletableFuture
+ * @see CompletableFutureUtils.anyOfSuccess
+ */
+fun <T> Collection<CompletableFuture<T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
+    CompletableFutureUtils.anyOfSuccess(*this.toTypedArray())
+
+/**
+ * Returns a new CompletableFuture that is success
+ * when any of the given CompletableFutures success, with the same result.
+ * Otherwise, all the given CompletableFutures failed, the returned CompletableFuture failed,
+ * with a CompletionException holding the latest exception as its cause.
+ * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
+ *
+ * Same as [CompletableFutureUtils.anyOfSuccess], providing this method is convenient for method chaining.
+ *
+ * @see anyOfCompletableFuture
+ * @see CompletableFutureUtils.anyOfSuccess
+ */
+fun <T> Array<CompletableFuture<T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
+    CompletableFutureUtils.anyOfSuccess(*this)
+
 ////////////////////////////////////////
 // combine
 ////////////////////////////////////////
@@ -439,6 +469,59 @@ fun Collection<CompletableFuture<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cff
  */
 fun Array<CompletableFuture<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
     cffuFactory.anyOf(*this)
+
+/**
+ * Returns a new Cffu that is success when any of the given Cffus success, with the same result.
+ * Otherwise, all the given Cffus failed, the returned Cffu failed,
+ * with a CompletionException holding the latest exception as its cause.
+ * If no Cffus are provided, returns an incomplete Cffu.
+ *
+ * Same as [CffuFactory.cffuAnyOfSuccess], providing this method is convenient for method chaining.
+ *
+ * @see anyOfCffu
+ */
+fun <T> Collection<Cffu<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
+    cffuFactory.cffuAnyOfSuccess(*this.toTypedArray())
+
+/**
+ * Returns a new Cffu that is success when any of the given Cffus success, with the same result.
+ * Otherwise, all the given Cffus failed, the returned Cffu failed,
+ * with a CompletionException holding the latest exception as its cause.
+ * If no Cffus are provided, returns an incomplete Cffu.
+ *
+ * Same as [CffuFactory.cffuAnyOfSuccess], providing this method is convenient for method chaining.
+ *
+ * @see anyOfCffu
+ */
+fun <T> Array<Cffu<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
+    cffuFactory.cffuAnyOfSuccess(*this)
+
+/**
+ * Returns a new Cffu that is success when any of the given Cffus success, with the same result.
+ * Otherwise, all the given Cffus failed, the returned Cffu failed,
+ * with a CompletionException holding the latest exception as its cause.
+ * If no Cffus are provided, returns an incomplete Cffu.
+ *
+ * Same as [CffuFactory.cffuAnyOfSuccess], providing this method is convenient for method chaining.
+ *
+ * @see anyOfCffu
+ */
+@JvmName("anyOfSuccessCffuCf")
+fun <T> Collection<CompletableFuture<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
+    cffuFactory.cffuAnyOfSuccess(*this.toTypedArray())
+
+/**
+ * Returns a new Cffu that is success when any of the given Cffus success, with the same result.
+ * Otherwise, all the given Cffus failed, the returned Cffu failed,
+ * with a CompletionException holding the latest exception as its cause.
+ * If no Cffus are provided, returns an incomplete Cffu.
+ *
+ * Same as [CffuFactory.cffuAnyOfSuccess], providing this method is convenient for method chaining.
+ *
+ * @see anyOfCffu
+ */
+fun <T> Array<CompletableFuture<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
+    cffuFactory.cffuAnyOfSuccess(*this)
 
 ////////////////////////////////////////
 // toCompletableFuture

@@ -124,6 +124,32 @@ class CffuExtensionsTest : FunSpec({
     }
 
     ////////////////////////////////////////
+    // - anyOfSuccessCompletableFuture
+    ////////////////////////////////////////
+
+    test("anyOfSuccessCompletableFuture - collection") {
+        listOf(
+            CompletableFuture(),
+            CompletableFuture(),
+            CompletableFuture.completedFuture(42),
+        ).anyOfSuccessCompletableFuture().await() shouldBe 42
+
+        setOf(
+            CompletableFuture(),
+            CompletableFuture.completedFuture(42),
+            CompletableFuture(),
+        ).anyOfSuccessCompletableFuture().await() shouldBe 42
+    }
+
+    test("anyOfSuccessCompletableFuture - array") {
+        arrayOf(
+            CompletableFuture(),
+            CompletableFuture.completedFuture(42),
+            CompletableFuture(),
+        ).anyOfSuccessCompletableFuture().await() shouldBe 42
+    }
+
+    ////////////////////////////////////////
     // combine
     ////////////////////////////////////////
 
@@ -285,8 +311,8 @@ class CffuExtensionsTest : FunSpec({
     }
 
     ////////////////////////////////////////
-    // - allOfCffu
-    // - anyOfCffu
+    // - allOfCffuVoid
+    // - anyOfCffuAny
     ////////////////////////////////////////
 
     test("allOfCffuVoid/anyOfCffuAny for collection") {
@@ -365,6 +391,50 @@ class CffuExtensionsTest : FunSpec({
             CompletableFuture<Double>(),
             CompletableFuture.completedFuture(42),
         ).anyOfCffuAny(testCffuFactory).await() shouldBe 42
+    }
+
+    ////////////////////////////////////////
+    // -anyOfSuccessCffu
+    ////////////////////////////////////////
+
+    test("anyOfSuccessCffu for collection") {
+        listOf(
+            testCffuFactory.newIncompleteCffu(),
+            testCffuFactory.newIncompleteCffu(),
+            testCffuFactory.completedFuture(42),
+        ).anyOfSuccessCffu(testCffuFactory).await() shouldBe 42
+
+        setOf(
+            testCffuFactory.newIncompleteCffu(),
+            testCffuFactory.completedFuture(42),
+            testCffuFactory.newIncompleteCffu(),
+        ).anyOfSuccessCffu(testCffuFactory).await() shouldBe 42
+
+        listOf(
+            CompletableFuture(),
+            CompletableFuture(),
+            CompletableFuture.completedFuture(42),
+        ).anyOfSuccessCffu(testCffuFactory).await() shouldBe 42
+
+        setOf(
+            CompletableFuture(),
+            CompletableFuture.completedFuture(42),
+            CompletableFuture(),
+        ).anyOfSuccessCffu(testCffuFactory).await() shouldBe 42
+    }
+
+    test("anyOfSuccessCffu for array") {
+        arrayOf(
+            testCffuFactory.newIncompleteCffu(),
+            testCffuFactory.newIncompleteCffu(),
+            testCffuFactory.completedFuture(42),
+        ).anyOfSuccessCffu(testCffuFactory).await() shouldBe 42
+
+        arrayOf(
+            CompletableFuture(),
+            CompletableFuture(),
+            CompletableFuture.completedFuture(42),
+        ).anyOfSuccessCffu(testCffuFactory).await() shouldBe 42
     }
 
     ////////////////////////////////////////

@@ -266,6 +266,53 @@ class CffuFactoryTest {
         ).get());
     }
 
+    @Test
+    void test_cffuAnyOfSuccess__trivial_case() throws Exception {
+        // success then success
+        assertEquals(n, cffuFactory.cffuAnyOfSuccess(
+                cffuFactory.newIncompleteCffu(),
+                cffuFactory.newIncompleteCffu(),
+                cffuFactory.supplyAsync(() -> {
+                    sleep(300);
+                    return another_n;
+                }),
+                cffuFactory.completedFuture(n)
+        ).get());
+        // success then failed
+        assertEquals(n, cffuFactory.cffuAnyOfSuccess(
+                cffuFactory.newIncompleteCffu(),
+                cffuFactory.newIncompleteCffu(),
+                cffuFactory.supplyAsync(() -> {
+                    sleep(300);
+                    throw rte;
+                }),
+                cffuFactory.completedFuture(n)
+        ).get());
+
+        // success then success
+        assertEquals(n, cffuFactory.cffuAnyOfSuccess(
+                createIncompleteFuture(),
+                createIncompleteFuture(),
+                CompletableFuture.supplyAsync(() -> {
+                    sleep(300);
+                    return another_n;
+                }),
+                CompletableFuture.completedFuture(n)
+        ).get());
+        // success then failed
+        assertEquals(n, cffuFactory.cffuAnyOfSuccess(
+                createIncompleteFuture(),
+                createIncompleteFuture(),
+                CompletableFuture.supplyAsync(() -> {
+                    sleep(300);
+                    throw rte;
+                }),
+                CompletableFuture.completedFuture(n)
+        ).get());
+
+        assertFalse(cffuFactory.cffuAnyOfSuccess().isDone());
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# Delay Execution, equivalent to same name static methods of CompletableFuture
     //
