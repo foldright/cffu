@@ -79,6 +79,34 @@ public final class CompletableFutureUtils {
         return (CompletableFuture<T>) CompletableFuture.anyOf(cfs);
     }
 
+    @SafeVarargs
+    public static <T> CompletableFuture<T> anyOfSuccess(CompletableFuture<T>... cfs) {
+        if (cfs.length == 0) return new CompletableFuture<>();
+
+        for (int i = 0; i < cfs.length; i++) {
+            requireNonNull(cfs[i], "cf" + i + " is null");
+        }
+
+        CompletableFuture<T> ret = new CompletableFuture<>();
+        CompletableFuture<Throwable> lastAllFailedExCf = null;
+
+        for (final CompletableFuture<T> cf : cfs) {
+            // success path: if any input cf success, complete returned cf
+            cf.thenAccept(ret::complete);
+
+            CompletableFuture<Throwable> exCf = cf.handle((v, ex) -> ex);
+            if (lastAllFailedExCf == null) lastAllFailedExCf = exCf;
+            else lastAllFailedExCf = lastAllFailedExCf.thenCombine(exCf,
+                    (prevEx, combinedEx) -> prevEx != null && combinedEx != null ? combinedEx : null);
+        }
+        // failed path: if all input cfs failed, completeExceptionally returned cf with last exception
+        lastAllFailedExCf.thenAccept(ex -> {
+            if (ex != null) ret.completeExceptionally(ex);
+        });
+
+        return ret;
+    }
+
     /**
      * Returns a new CompletableFuture that is completed when the given two CompletableFutures complete.
      * If any of the given CompletableFutures complete exceptionally, then the returned

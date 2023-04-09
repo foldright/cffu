@@ -11,9 +11,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static io.foldright.cffu.CffuFactoryTest.*;
+import static io.foldright.cffu.CompletableFutureUtils.anyOfSuccess;
 import static io.foldright.cffu.CompletableFutureUtils.anyOfWithType;
-import static io.foldright.test_utils.TestUtils.createFailedFuture;
-import static io.foldright.test_utils.TestUtils.createIncompleteFuture;
+import static io.foldright.test_utils.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -80,6 +80,67 @@ class CompletableFutureUtilsTest {
                 CompletableFuture.completedFuture(n),
                 createIncompleteFuture()
         ).get());
+    }
+
+    @Test
+    void test_anyOfSuccess__trivial_case() throws Exception {
+        // success then success
+        assertEquals(n, anyOfSuccess(
+                createIncompleteFuture(),
+                createIncompleteFuture(),
+                CompletableFuture.supplyAsync(() -> {
+                    sleep(300);
+                    return another_n;
+                }),
+                CompletableFuture.completedFuture(n)
+        ).get());
+
+        // success then failed
+        assertEquals(n, anyOfSuccess(
+                createIncompleteFuture(),
+                createIncompleteFuture(),
+                CompletableFuture.supplyAsync(() -> {
+                    sleep(300);
+                    throw rte;
+                }),
+                CompletableFuture.completedFuture(n)
+        ).get());
+
+        assertFalse(anyOfSuccess().isDone());
+    }
+
+    @Test
+    void test_anyOfSuccess__fastFailed_Then_success() throws Exception {
+        assertEquals(n, anyOfSuccess(
+                createFailedFuture(rte),
+                CompletableFuture.supplyAsync(() -> {
+                    sleep(100);
+                    return n;
+                }),
+                createIncompleteFuture()
+        ).get());
+    }
+
+    @Test
+    void test_anyOfSuccess__allFailed() throws Exception {
+        try {
+            assertSame(n, anyOfSuccess(
+                    createFailedFuture(rte),
+                    createFailedFuture(new RuntimeException()),
+                    createFailedFuture(new RuntimeException()),
+                    CompletableFuture.supplyAsync(() -> {
+                        sleep(100);
+                        throw rte;
+                    }),
+                    createFailedFuture(another_rte)
+            ).get());
+
+            fail();
+        } catch (ExecutionException expected) {
+            // TODO: get rte is more reasonable?
+            //       current implementation return ex last cf argument
+            assertSame(another_rte, expected.getCause());
+        }
     }
 
     @Test

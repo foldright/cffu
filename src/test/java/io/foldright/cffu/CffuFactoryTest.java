@@ -37,6 +37,7 @@ class CffuFactoryTest {
     static final double d = 42.1;
 
     static final RuntimeException rte = new RuntimeException("Bang");
+    static final RuntimeException another_rte = new RuntimeException("BangBang");
 
     private static CffuFactory cffuFactory;
 
