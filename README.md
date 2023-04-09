@@ -70,8 +70,12 @@
     - [4. 任务执行的超时控制](#4-%E4%BB%BB%E5%8A%A1%E6%89%A7%E8%A1%8C%E7%9A%84%E8%B6%85%E6%97%B6%E6%8E%A7%E5%88%B6)
   - [🔧 `CF`的功能介绍 | 💪 `CF`方法分类说明](#-cf%E7%9A%84%E5%8A%9F%E8%83%BD%E4%BB%8B%E7%BB%8D---cf%E6%96%B9%E6%B3%95%E5%88%86%E7%B1%BB%E8%AF%B4%E6%98%8E)
   - [📐 `CF`的设计模式 | 🐻 最佳实践与使用陷阱](#-cf%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F---%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E4%B8%8E%E4%BD%BF%E7%94%A8%E9%99%B7%E9%98%B1)
-- [📦 二、库功能](#-%E4%BA%8C%E5%BA%93%E5%8A%9F%E8%83%BD)
-  - [🌿 业务使用中`CompletableFuture`所缺失的功能](#-%E4%B8%9A%E5%8A%A1%E4%BD%BF%E7%94%A8%E4%B8%ADcompletablefuture%E6%89%80%E7%BC%BA%E5%A4%B1%E7%9A%84%E5%8A%9F%E8%83%BD)
+- [📦 二、`cffu`库](#-%E4%BA%8Ccffu%E5%BA%93)
+  - [🔧 功能](#-%E5%8A%9F%E8%83%BD)
+    - [新功能](#%E6%96%B0%E5%8A%9F%E8%83%BD)
+    - [Backport支持`Java 8`](#backport%E6%94%AF%E6%8C%81java-8)
+  - [🌿 业务使用中`CompletableFuture`所缺失的功能介绍](#-%E4%B8%9A%E5%8A%A1%E4%BD%BF%E7%94%A8%E4%B8%ADcompletablefuture%E6%89%80%E7%BC%BA%E5%A4%B1%E7%9A%84%E5%8A%9F%E8%83%BD%E4%BB%8B%E7%BB%8D)
+  - [🎪 使用示例](#-%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B)
   - [🔌 Java API Docs](#-java-api-docs)
   - [🍪依赖](#%E4%BE%9D%E8%B5%96)
 - [👋 ∞、关于库名](#-%E2%88%9E%E5%85%B3%E4%BA%8E%E5%BA%93%E5%90%8D)
@@ -82,15 +86,13 @@
 
 # 🎯 〇、目标
 
-- 作为文档库：
+- 作为文档库（即`CompletableFuture` Guide）：
   - 完备说明`CompletableFuture`的使用方式
   - 给出 最佳实践建议 与 使用陷阱注意
   - 期望在业务中，更有效安全地使用`CompletableFuture`
-  - 这部分是主要目标
-- 作为代码库：
+- 作为代码库（即`cffu`库）：
   - 补齐在业务使用中`CompletableFuture`所缺失的功能
   - 期望在业务中，更方便自然地使用`CompletableFuture`
-  - 这部分只是甜点目标
 
 # 🦮 一、`CompletableFuture` Guide
 
@@ -279,21 +281,49 @@
 
 ## 🔧 `CF`的功能介绍 | 💪 `CF`方法分类说明
 
-见子文档页  [`cf-functions-intro.md`](docs/cf-functions-intro.md)  
+见子文档页  [`cf-functions-intro.md`](docs/cf-functions-intro.md)
 
-`CF`的方法个数比较多，介绍的内容比较多；内容继续完善中… 💪 💕
+`CF`的方法个数比较多，所以介绍内容有些多，内容继续完善中… 💪 💕
 
 ## 📐 `CF`的设计模式 | 🐻 最佳实践与使用陷阱
 
 见子文档页 [`cf-design-patterns.md`](docs/cf-design-patterns.md)
 
-还没有什么内容，思考展开中… 💪 💕
+还没有什么内容，收集思考展开中… 💪 💕
 
-# 📦 二、库功能
+# 📦 二、`cffu`库
 
-**_WIP..._**
+## 🔧 功能
 
-## 🌿 业务使用中`CompletableFuture`所缺失的功能
+### 新功能
+
+- 支持设置缺省的业务线程池
+  - `CompletableFuture`的缺省线程池是`ForkJoinPool.commonPool()`，这个线程池差不多`CPU`个线程，合适执行`CPU`密集的任务。
+  - 对于业务逻辑往往有很多等待操作（如网络`IO`、阻塞等待），并不是`CPU`密集的；使用这个缺省线程池`ForkJoinPool.commonPool()`很危险❗️  
+    所以每次调用`CompletableFuture`的`*async`方法时，都传入业务线程池，很繁琐易错 🤯
+  - `Cffu`支持设置缺省的业务线程池，规避上面的繁琐与危险
+- 一等公民支持`Kotlin` 🍩
+- `cffuAllOf`方法
+  - 运行多个`CompletableFuture`并返回结果的`allOf`方法
+- `cffuAnyOf`方法
+  - 返回具体类型的`anyOf`方法
+- `cffuCombine(...)`方法
+  - 运行多个(2 ~ 5个)不同类型的`CompletableFuture`，返回结果元组
+- `cffuJoin(timeout, unit)`方法
+  - 支持超时的`join`的方法；就像`cf.get(timeout, unit)` 之于 `cf.get()`
+  - `CompletableFuture`缺少这个功能，`cf.join()`会「不超时永远等待」很危险❗️
+
+### Backport支持`Java 8`
+
+Backport`Java 9+`高版本的所有`CompletableFuture`新功能，在`Java 8`可以直接使用。
+
+其中重要的Backport功能有：
+
+- 超时控制：`orTimeout(...)`/`completeOnTimeout(...)`方法
+- 延迟执行：`defaultExecutor(...)`方法
+- 工厂方法：`failedFuture(...)`/`completedStage(...)`/`failedStage(...)`
+
+## 🌿 业务使用中`CompletableFuture`所缺失的功能介绍
 
 - 运行多个`CompletableFuture`并返回结果的`allOf`方法：
   - `resultAllOf`方法，运行多个**相同**结果类型的`CompletableFuture`
@@ -302,7 +332,7 @@
   - `resultOf`方法，运行多个**不同**结果类型的`CompletableFuture`
     - `CompletableFuture<Pair<T1, T2>> resultOf(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2)`
     - `CompletableFuture<Triple<T1, T2, T3>> resultOf(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3)`
-- 类型安全的`anyOf`方法：
+- 具体类型的`anyOf`方法：
   - 提供的方法：
     - `CompletableFuture<T> anyOf(CompletableFuture<T>... cfs)`
     - `CompletableFuture<T> anyOf(List<? extends CompletableFuture<T>> cfs)`
@@ -313,6 +343,65 @@
 
 - [`Cffu.java`](src/main/java/io/foldright/cffu/Cffu.java)
 - [`CffuFactory.java`](src/main/java/io/foldright/cffu/CffuFactory.java)
+
+## 🎪 使用示例
+
+```java
+import io.foldright.cffu.Cffu;
+import io.foldright.cffu.CffuFactory;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
+
+
+public class Demo {
+  private static final ExecutorService myBizThreadPool = Executors.newFixedThreadPool(42);
+
+  // Create a CffuFactory with configuration of the customized thread pool
+  private static final CffuFactory cffuFactory = newCffuFactoryBuilder(myBizThreadPool).build();
+
+  public static void main(String[] args) throws Exception {
+    // Run in myBizThreadPool
+    Cffu<Integer> cf0 = cffuFactory.supplyAsync(() -> 21);
+
+    Cffu<Integer> cf42 = cf0.thenApply(n -> n * 2);
+
+    // Run in myBizThreadPool
+    Cffu<Integer> longTaskA = cf42.thenApplyAsync(n -> {
+      sleep(1001);
+      return n / 2;
+    });
+
+    // Run in myBizThreadPool
+    Cffu<Integer> longTaskB = cf42.thenApplyAsync(n -> {
+      sleep(1002);
+      return n / 2;
+    });
+
+
+    Cffu<Integer> finalCf = longTaskA.thenCombine(longTaskB, Integer::sum);
+
+    Integer result = finalCf.get();
+    System.out.println(result);
+
+    ////////////////////////////////////////
+    // cleanup
+    myBizThreadPool.shutdown();
+  }
+
+  static void sleep(long ms) {
+    try {
+      Thread.sleep(ms);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+  }
+}
+```
+
+\# 完整可运行的Demo代码参见[`Demo.java`](src/test/java/io/foldright/demo/Demo.java)。
 
 ## 🔌 Java API Docs
 
