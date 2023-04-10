@@ -152,12 +152,18 @@ class CompletableFutureApiCompatibilityTest {
         final AtomicReference<String> holder = new AtomicReference<>();
 
         Executor delayer = CompletableFuture.delayedExecutor(1, TimeUnit.MILLISECONDS);
-        CompletableFuture.runAsync(() -> holder.set(hello), delayer).get();
+        CompletableFuture.runAsync(() -> {
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
+            holder.set(hello);
+        }, delayer).get();
         assertEquals(hello, holder.get());
 
         holder.set(null);
-        delayer = CompletableFuture.delayedExecutor(1, TimeUnit.MILLISECONDS, executorService);
-        CompletableFuture.runAsync(() -> holder.set(hello), delayer).get();
+        delayer = CompletableFuture.delayedExecutor(1, TimeUnit.MILLISECONDS, anotherExecutorService);
+        CompletableFuture.runAsync(() -> {
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
+            holder.set(hello);
+        }, delayer).get();
         assertEquals(hello, holder.get());
     }
 
@@ -581,19 +587,25 @@ class CompletableFutureApiCompatibilityTest {
         CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
 
         // completeAsync
-        assertEquals(42, cf.completeAsync(() -> 4343).get());
-        assertEquals(42, cf.completeAsync(() -> 4343, executorService).get());
+        assertEquals(42, cf.completeAsync(() -> {
+            TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
+            return 4242;
+        }).get());
+        assertEquals(42, cf.completeAsync(() -> {
+            TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
+            return 424242;
+        }, anotherExecutorService).get());
 
         CompletableFuture<Integer> incomplete = new CompletableFuture<>();
-        assertEquals(4343, incomplete.completeAsync(() -> {
+        assertEquals(4242, incomplete.completeAsync(() -> {
             TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
-            return 4343;
+            return 4242;
         }).get());
 
         incomplete = new CompletableFuture<>();
-        assertEquals(4343, incomplete.completeAsync(() -> {
+        assertEquals(424242, incomplete.completeAsync(() -> {
             TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
-            return 4343;
+            return 424242;
         }, anotherExecutorService).get());
     }
 
@@ -868,7 +880,7 @@ class CompletableFutureApiCompatibilityTest {
         executorService = TestThreadPoolManager.createThreadPool(hello);
         /* GEN_MARK_FACTORY_INIT */
 
-        anotherExecutorService = TestThreadPoolManager.createThreadPool(hello);
+        anotherExecutorService = TestThreadPoolManager.createThreadPool(hello, true);
     }
 
     @AfterAll

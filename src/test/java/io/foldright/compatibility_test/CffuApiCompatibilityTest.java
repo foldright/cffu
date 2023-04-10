@@ -153,12 +153,18 @@ class CffuApiCompatibilityTest {
         final AtomicReference<String> holder = new AtomicReference<>();
 
         Executor delayer = cffuFactory.delayedExecutor(1, TimeUnit.MILLISECONDS);
-        cffuFactory.runAsync(() -> holder.set(hello), delayer).get();
+        cffuFactory.runAsync(() -> {
+            TestUtils.assertCffuRunInDefaultThread(executorService);
+            holder.set(hello);
+        }, delayer).get();
         assertEquals(hello, holder.get());
 
         holder.set(null);
-        delayer = cffuFactory.delayedExecutor(1, TimeUnit.MILLISECONDS, executorService);
-        cffuFactory.runAsync(() -> holder.set(hello), delayer).get();
+        delayer = cffuFactory.delayedExecutor(1, TimeUnit.MILLISECONDS, anotherExecutorService);
+        cffuFactory.runAsync(() -> {
+            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            holder.set(hello);
+        }, delayer).get();
         assertEquals(hello, holder.get());
     }
 
@@ -577,19 +583,25 @@ class CffuApiCompatibilityTest {
         Cffu<Integer> cf = cffuFactory.completedFuture(42);
 
         // completeAsync
-        assertEquals(42, cf.completeAsync(() -> 4343).get());
-        assertEquals(42, cf.completeAsync(() -> 4343, executorService).get());
+        assertEquals(42, cf.completeAsync(() -> {
+            TestUtils.assertCffuRunInDefaultThread(executorService);
+            return 4242;
+        }).get());
+        assertEquals(42, cf.completeAsync(() -> {
+            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            return 424242;
+        }, anotherExecutorService).get());
 
         Cffu<Integer> incomplete = cffuFactory.newIncompleteCffu();
-        assertEquals(4343, incomplete.completeAsync(() -> {
+        assertEquals(4242, incomplete.completeAsync(() -> {
             TestUtils.assertCffuRunInDefaultThread(executorService);
-            return 4343;
+            return 4242;
         }).get());
 
         incomplete = cffuFactory.newIncompleteCffu();
-        assertEquals(4343, incomplete.completeAsync(() -> {
+        assertEquals(424242, incomplete.completeAsync(() -> {
             TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
-            return 4343;
+            return 424242;
         }, anotherExecutorService).get());
     }
 
@@ -860,7 +872,7 @@ class CffuApiCompatibilityTest {
         executorService = TestThreadPoolManager.createThreadPool(hello);
         cffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder(executorService).build();
 
-        anotherExecutorService = TestThreadPoolManager.createThreadPool(hello);
+        anotherExecutorService = TestThreadPoolManager.createThreadPool(hello, true);
     }
 
     @AfterAll

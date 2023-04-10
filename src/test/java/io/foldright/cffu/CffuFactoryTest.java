@@ -538,7 +538,7 @@ class CffuFactoryTest {
     }
 
     @Test
-    void test_executorSetting_MayBe_ThreadPerTaskExecutor() {
+    void test_executorSetting_MayBe_ThreadPerTaskExecutor() throws Exception {
         final boolean USE_COMMON_POOL = (ForkJoinPool.getCommonPoolParallelism() > 1);
 
         CffuFactory fac = newCffuFactoryBuilder(commonPool()).build();
@@ -548,6 +548,8 @@ class CffuFactoryTest {
             String executorClassName = fac.defaultExecutor().getClass().getName();
             assertTrue(executorClassName.endsWith("$ThreadPerTaskExecutor"));
         }
+
+        assertEquals(42, fac.supplyAsync(() -> 42).get());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
