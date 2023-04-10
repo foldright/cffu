@@ -40,8 +40,8 @@ public final class CompletableFutureUtils {
     @SuppressWarnings("unchecked")
     public static <T> CompletableFuture<List<T>> allOfWithResult(CompletableFuture<T>... cfs) {
         final int size = cfs.length;
-        for (int i = 0; i < cfs.length; i++) {
-            requireNonNull(cfs[i], "cf[" + i + "] is null");
+        for (int i = 0; i < size; i++) {
+            requireNonNull(cfs[i], "cf" + i + " is null");
         }
 
         final Object[] result = new Object[size];

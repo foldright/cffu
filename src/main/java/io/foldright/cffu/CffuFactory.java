@@ -308,7 +308,7 @@ public final class CffuFactory {
         @SuppressWarnings("unchecked")
         Cffu<T>[] ret = new Cffu[stages.length];
         for (int i = 0; i < stages.length; i++) {
-            ret[i] = asCffu(requireNonNull(stages[i], "stages[" + i + "] is null"));
+            ret[i] = asCffu(requireNonNull(stages[i], "stage" + i + " is null"));
         }
         return ret;
     }
@@ -764,7 +764,7 @@ public final class CffuFactory {
         @SuppressWarnings("unchecked")
         CompletableFuture<T>[] ret = new CompletableFuture[stages.length];
         for (int i = 0; i < stages.length; i++) {
-            ret[i] = requireNonNull(stages[i], "stages[" + i + "] is null").toCompletableFuture();
+            ret[i] = requireNonNull(stages[i], "stage" + i + " is null").toCompletableFuture();
         }
         return ret;
     }
@@ -781,7 +781,7 @@ public final class CffuFactory {
         @SuppressWarnings("unchecked")
         CompletableFuture<T>[] ret = new CompletableFuture[cfs.length];
         for (int i = 0; i < cfs.length; i++) {
-            ret[i] = requireNonNull(cfs[i], "cfs[" + i + "] is null").cffuUnwrap();
+            ret[i] = requireNonNull(cfs[i], "cf" + i + " is null").cffuUnwrap();
         }
         return ret;
     }
