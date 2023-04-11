@@ -1,9 +1,6 @@
 package io.foldright.cffu;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
-import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import edu.umd.cs.findbugs.annotations.*;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
 import io.foldright.cffu.tuple.Tuple4;
@@ -172,6 +169,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      * @see CompletionStage#thenApply(Function)
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenRun`")
     @Override
     public <U> Cffu<U> thenApply(Function<? super T, ? extends U> fn) {
         return reset0(cf.thenApply(fn));
@@ -189,6 +187,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      * @see CompletionStage#thenApplyAsync(Function)
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenRunAsync`")
     @Override
     public <U> Cffu<U> thenApplyAsync(Function<? super T, ? extends U> fn) {
         return reset0(cf.thenApplyAsync(fn, fac.defaultExecutor()));
@@ -207,6 +206,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      * @see CompletionStage#thenApplyAsync(Function, Executor)
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenRunAsync`")
     @Override
     public <U> Cffu<U> thenApplyAsync(Function<? super T, ? extends U> fn, Executor executor) {
         return reset0(cf.thenApplyAsync(fn, executor));
@@ -334,6 +334,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <V>   the function's return type
      * @return the new Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBoth`")
     @Override
     public <U, V> Cffu<V> thenCombine(
             CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
@@ -353,6 +354,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <V>   the function's return type
      * @return the new Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothAsync`")
     @Override
     public <U, V> Cffu<V> thenCombineAsync(
             CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
@@ -372,6 +374,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <V>      the function's return type
      * @return the new Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothAsync`")
     @Override
     public <U, V> Cffu<V> thenCombineAsync(CompletionStage<? extends U> other,
                                            BiFunction<? super T, ? super U, ? extends V> fn,
@@ -401,6 +404,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      * @see CffuFactory#cffuCombine(Cffu, Cffu)
      */
+    @Contract(pure = true)
     public <T2> Cffu<Tuple2<T, T2>> cffuCombine(Cffu<T2> cf2) {
         return fac.cffuCombine(this, cf2);
     }
@@ -420,6 +424,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      * @see CffuFactory#cffuCombine(CompletableFuture, CompletableFuture)
      */
+    @Contract(pure = true)
     public <T2> Cffu<Tuple2<T, T2>> cffuCombine(CompletableFuture<T2> cf2) {
         return fac.cffuCombine(toCompletableFuture(), cf2);
     }
@@ -439,6 +444,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      * @see CffuFactory#cffuCombine(Cffu, Cffu, Cffu)
      */
+    @Contract(pure = true)
     public <T2, T3> Cffu<Tuple3<T, T2, T3>> cffuCombine(Cffu<T2> cf2, Cffu<T3> cf3) {
         return fac.cffuCombine(this, cf2, cf3);
     }
@@ -458,6 +464,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      * @see CffuFactory#cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture)
      */
+    @Contract(pure = true)
     public <T2, T3> Cffu<Tuple3<T, T2, T3>> cffuCombine(CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
         return fac.cffuCombine(toCompletableFuture(), cf2, cf3);
     }
@@ -477,6 +484,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      * @see CffuFactory#cffuCombine(Cffu, Cffu, Cffu, Cffu)
      */
+    @Contract(pure = true)
     public <T2, T3, T4> Cffu<Tuple4<T, T2, T3, T4>> cffuCombine(Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4) {
         return fac.cffuCombine(this, cf2, cf3, cf4);
     }
@@ -496,6 +504,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      * @see CffuFactory#cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
      */
+    @Contract(pure = true)
     public <T2, T3, T4> Cffu<Tuple4<T, T2, T3, T4>> cffuCombine(
             CompletableFuture<T2> cf2, CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
         return fac.cffuCombine(toCompletableFuture(), cf2, cf3, cf4);
@@ -516,6 +525,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      * @see CffuFactory#cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)
      */
+    @Contract(pure = true)
     public <T2, T3, T4, T5> Cffu<Tuple5<T, T2, T3, T4, T5>> cffuCombine(
             Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4, Cffu<T5> cf5) {
         return fac.cffuCombine(this, cf2, cf3, cf4, cf5);
@@ -536,6 +546,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      * @see CffuFactory#cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
      */
+    @Contract(pure = true)
     public <T2, T3, T4, T5> Cffu<Tuple5<T, T2, T3, T4, T5>> cffuCombine(
             CompletableFuture<T2> cf2, CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
         return fac.cffuCombine(toCompletableFuture(), cf2, cf3, cf4, cf5);
@@ -658,6 +669,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <U>   the function's return type
      * @return the new Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEither`")
     @Override
     public <U> Cffu<U> applyToEither(
             CompletionStage<? extends T> other, Function<? super T, U> fn) {
@@ -676,6 +688,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <U>   the function's return type
      * @return the new Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherAsync`")
     @Override
     public <U> Cffu<U> applyToEitherAsync(
             CompletionStage<? extends T> other, Function<? super T, U> fn) {
@@ -694,6 +707,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <U>      the function's return type
      * @return the new Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherAsync`")
     @Override
     public <U> Cffu<U> applyToEitherAsync(CompletionStage<? extends T> other,
                                           Function<? super T, U> fn,
@@ -1055,6 +1069,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <U> the function's return type
      * @return the new Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `whenComplete`")
     @Override
     public <U> Cffu<U> handle(BiFunction<? super T, Throwable, ? extends U> fn) {
         return reset0(cf.handle(fn));
@@ -1073,6 +1088,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <U> the function's return type
      * @return the new Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `whenCompleteAsync`")
     @Override
     public <U> Cffu<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn) {
         return reset0(cf.handleAsync(fn, fac.defaultExecutor()));
@@ -1092,6 +1108,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <U>      the function's return type
      * @return the new Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `whenCompleteAsync`")
     @Override
     public <U> Cffu<U> handleAsync(
             BiFunction<? super T, Throwable, ? extends U> fn, Executor executor) {
@@ -1258,6 +1275,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @see #get(long, TimeUnit)
      * @see #get()
      */
+    @Contract(pure = true)
     @Nullable
     public T getNow(T valueIfAbsent) {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
@@ -1280,6 +1298,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @see #getNow(Object)
      */
+    @CheckReturnValue
     @Nullable
     @Override
     public T resultNow() {
@@ -1320,6 +1339,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *                               or the task was cancelled
      * @see #resultNow()
      */
+    @Contract(pure = true)
     @Override
     public Throwable exceptionNow() {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
@@ -1687,6 +1707,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @see CffuFactory#forbidObtrudeMethods()
      * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
      */
+    @Contract(pure = true)
     public boolean forbidObtrudeMethods() {
         return fac.forbidObtrudeMethods();
     }
@@ -1703,6 +1724,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *     when input a{@code minimal stage}, otherwise return a normal stage.
      * </ul>
      */
+    @Contract(pure = true)
     public boolean isMinimalStage() {
         return isMinimalStage;
     }

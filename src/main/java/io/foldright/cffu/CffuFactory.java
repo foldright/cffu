@@ -1,5 +1,6 @@
 package io.foldright.cffu;
 
+import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
@@ -213,6 +214,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see CompletableFuture#supplyAsync(Supplier)
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAsync`")
     @SuppressWarnings("BoundedWildcard")
     public <T> Cffu<T> supplyAsync(Supplier<T> supplier) {
         return dummy().thenApplyAsync(unused -> supplier.get());
@@ -228,6 +230,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see CompletableFuture#supplyAsync(Supplier, Executor)
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAsync`")
     @SuppressWarnings("BoundedWildcard")
     public <T> Cffu<T> supplyAsync(Supplier<T> supplier, Executor executor) {
         return dummy().thenApplyAsync(unused -> supplier.get(), executor);
@@ -815,6 +818,7 @@ public final class CffuFactory {
      * @see Cffu#defaultExecutor()
      * @see CffuFactoryBuilder#newCffuFactoryBuilder(Executor)
      */
+    @Contract(pure = true)
     public Executor defaultExecutor() {
         return defaultExecutor;
     }
@@ -826,6 +830,7 @@ public final class CffuFactory {
      * @see Cffu#obtrudeException(Throwable)
      * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
      */
+    @Contract(pure = true)
     public boolean forbidObtrudeMethods() {
         return forbidObtrudeMethods;
     }
