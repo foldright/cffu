@@ -106,7 +106,14 @@ class CompletableFutureUtilsTest {
                 CompletableFuture.completedFuture(n)
         ).get());
 
-        assertFalse(anyOfSuccess().isDone());
+        assertTrue(anyOfSuccess().isDone());
+        try {
+            anyOfSuccess().get();
+
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(CompletableFutureUtils.NO_CF_PROVIDED_EXCEPTION, expected.getCause());
+        }
     }
 
     @Test

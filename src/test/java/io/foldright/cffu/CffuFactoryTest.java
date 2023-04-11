@@ -150,10 +150,18 @@ class CffuFactoryTest {
 
     @Test
     @EnabledForJreRange(min = JRE.JAVA_9)
-    void test_asCffu__CompletableFuture_completedStage() {
-        Cffu<Integer> cf = cffuFactory.asCffu(CompletableFuture.completedStage(n));
+    void test_asCffu__for_factoryMethods_of_Java9() {
+        CompletableFuture<Object> cf1 = CompletableFuture.failedFuture(rte);
+        assertFalse(cffuFactory.asCffu(cf1).isMinimalStage());
+        shouldNotBeMinimalStage(cf1);
 
-        shouldBeMinimalStage(cf);
+        Cffu<Integer> cf2 = cffuFactory.asCffu(CompletableFuture.completedStage(n));
+        assertTrue(cf2.isMinimalStage());
+        shouldBeMinimalStage(cf2);
+
+        Cffu<Object> cf3 = cffuFactory.asCffu(CompletableFuture.failedStage(rte));
+        assertTrue(cf3.isMinimalStage());
+        shouldBeMinimalStage(cf3);
     }
 
     @Test

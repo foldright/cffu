@@ -131,12 +131,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public <T> Cffu<T> failedFuture(Throwable ex) {
-        if (IS_JAVA9_PLUS) {
-            return new0(CompletableFuture.failedFuture(ex));
-        }
-        final CompletableFuture<T> cf = new CompletableFuture<>();
-        cf.completeExceptionally(ex);
-        return new0(cf);
+        return new0(CompletableFutureUtils.failedFuture(ex));
     }
 
     /**

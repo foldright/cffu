@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static io.foldright.cffu.CffuFactory.IS_JAVA9_PLUS;
 import static java.util.Objects.requireNonNull;
 
 
@@ -85,7 +86,8 @@ public final class CompletableFutureUtils {
      * when any of the given CompletableFutures success, with the same result.
      * Otherwise, all the given CompletableFutures failed, the returned CompletableFuture failed,
      * with a CompletionException holding the latest exception as its cause.
-     * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
+     * If no CompletableFutures are provided, returns a completed failed CompletableFuture
+     * with the singleton exception instance {@link #NO_CF_PROVIDED_EXCEPTION}.
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that is success
@@ -96,7 +98,7 @@ public final class CompletableFutureUtils {
      */
     @SafeVarargs
     public static <T> CompletableFuture<T> anyOfSuccess(CompletableFuture<T>... cfs) {
-        if (cfs.length == 0) return new CompletableFuture<>();
+        if (cfs.length == 0) return failedFuture(NO_CF_PROVIDED_EXCEPTION);
 
         for (int i = 0; i < cfs.length; i++) {
             requireNonNull(cfs[i], "cf" + i + " is null");
@@ -126,6 +128,13 @@ public final class CompletableFutureUtils {
 
         return ret;
     }
+
+    /**
+     * Singleton exception instance because NO CompletableFutures are provided
+     * for {@link #anyOfSuccess(CompletableFuture[])}.
+     */
+    public static final RuntimeException NO_CF_PROVIDED_EXCEPTION =
+            new RuntimeException("NO CompletableFutures are provided");
 
     /**
      * Returns a new CompletableFuture that is completed when the given two CompletableFutures complete.
@@ -239,6 +248,20 @@ public final class CompletableFutureUtils {
         ).thenApply(unused ->
                 Tuple5.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3], (T5) result[4])
         );
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# helper methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Contract(pure = true)
+    static <T> CompletableFuture<T> failedFuture(Throwable ex) {
+        if (IS_JAVA9_PLUS) {
+            return CompletableFuture.failedFuture(ex);
+        }
+        final CompletableFuture<T> cf = new CompletableFuture<>();
+        cf.completeExceptionally(ex);
+        return cf;
     }
 
     private CompletableFutureUtils() {
