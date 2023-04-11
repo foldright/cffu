@@ -1,6 +1,6 @@
-# <div align="center"><a href="#dummy"><img src="docs/logo.png" alt="🦝 CompletableFuture Fu (CF-Fu)"></a></div>
+# <div align="center"><a href="#dummy"><img src="https://user-images.githubusercontent.com/1063891/230851256-ac495db4-e2cd-4dbe-b881-91a143c4b551.png" alt="🦝 CompletableFuture Fu (CF-Fu)"></a></div>
 
-> 🚧 项目还在开发中，发布了`v0.x`版本： [![Maven Central](https://img.shields.io/maven-central/v/io.foldright/cffu?logo=apache-maven&label=cffu&logoColor=white)](https://central.sonatype.com/artifact/io.foldright/cffu/0.9.0/versions)
+> 🚧 项目还在开发中，发布了`v0.x`版本： [![Maven Central](https://img.shields.io/maven-central/v/io.foldright/cffu?logo=apache-maven&label=cffu&logoColor=white)](https://central.sonatype.com/artifact/io.foldright/cffu/0.8.0/versions)
 >
 > 工作项列表及其进展，参见 [issue 6](https://github.com/foldright/cffu/issues/6)。
 
@@ -14,7 +14,7 @@
 <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-1.5+-7F52FF.svg?logo=kotlin&logoColor=white" alt="Kotlin"></a>
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/foldright/cffu?color=4D7A97&logo=apache" alt="License"></a>
 <a href="https://foldright.io/cffu/apidocs/"><img src="https://img.shields.io/github/release/foldright/cffu?label=javadoc&color=339933&logo=microsoft-academic&logoColor=white" alt="Javadocs"></a>
-<a href="https://central.sonatype.com/artifact/io.foldright/cffu/0.9.0/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
+<a href="https://central.sonatype.com/artifact/io.foldright/cffu/0.8.0/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
 <a href="https://github.com/foldright/cffu/releases"><img src="https://img.shields.io/github/release/foldright/cffu.svg" alt="GitHub Releases"></a>
 <a href="https://github.com/foldright/cffu/stargazers"><img src="https://img.shields.io/github/stars/foldright/cffu" alt="GitHub Stars"></a>
 <a href="https://github.com/foldright/cffu/fork"><img src="https://img.shields.io/github/forks/foldright/cffu" alt="GitHub Forks"></a>
@@ -24,7 +24,7 @@
 <a href="https://gitpod.io/#https://github.com/foldright/cffu"><img src="https://img.shields.io/badge/Gitpod-ready to code-339933?label=gitpod&logo=gitpod&logoColor=white" alt="gitpod: Ready to Code"></a>
 </p>
 
-<a href="#dummy"><img src="docs/shifu1.png" width="20%" align="right" alt="shifu" /></a>
+<a href="#dummy"><img src="https://user-images.githubusercontent.com/1063891/230850403-87ff74de-1acb-4aff-b9b4-632e4e51e225.png" width="20%" align="right" alt="shifu" /></a>
 
 如何管理并发执行是个复杂易错的问题，业界有大量的工具、框架可以采用。
 
@@ -100,7 +100,7 @@
 
 ## 🔠 `CF`并发执行的描述及其用语
 
-<a href="#dummy"><img src="https://user-images.githubusercontent.com/1063891/230757830-397055e9-b701-4074-bbb9-dc227fd0f8f2.png" width="200" align="right" alt="cf-graph" /></a>
+<a href="#dummy"><img src="https://user-images.githubusercontent.com/1063891/230757830-397055e9-b701-4074-bbb9-dc227fd0f8f2.png" width="22%" align="right" alt="cf-graph" /></a>
 
 基本概念与术语：
 
@@ -125,7 +125,7 @@
 
 > 注：上面用`/`隔开的多个词是，在表述`CF`同一个概念时，会碰到的多个术语；在不影响理解的情况下，后文会尽量统一用第一个词来表达。
 
-<a href="#dummy"><img src="https://user-images.githubusercontent.com/1063891/230757836-ea49a8cb-9e68-40c8-9efa-c3e880eecde4.png" width="250" align="right"  alt="task stauts transition"></a>
+<a href="#dummy"><img src="https://user-images.githubusercontent.com/1063891/230757836-ea49a8cb-9e68-40c8-9efa-c3e880eecde4.png" width="30%" align="right"  alt="task stauts transition"></a>
 
 更多说明：
 
@@ -416,7 +416,7 @@ For `Maven` projects:
 <dependency>
   <groupId>io.foldright</groupId>
   <artifactId>cffu</artifactId>
-  <version>0.9.0</version>
+  <version>0.9.1</version>
 </dependency>
 ```
 
@@ -424,13 +424,13 @@ For `Gradle` projects:
 
 ```groovy
 // Gradle Kotlin DSL
-implementation("io.foldright:cffu:0.9.0")
+implementation("io.foldright:cffu:0.9.1")
 
 // Gradle Groovy DSL
-implementation 'io.foldright:cffu:0.9.0'
+implementation 'io.foldright:cffu:0.9.1'
 ```
 
-可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/0.9.0/versions) 查看最新版本与可用版本列表。
+可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/0.9.1/versions) 查看最新版本与可用版本列表。
 
 # 👋 ∞、关于库名
 
@@ -438,4 +438,4 @@ implementation 'io.foldright:cffu:0.9.0'
 
 嗯嗯，想到了《功夫熊猫》里可爱的小浣熊师傅吧～ 🦝
 
-<a href="#dummy"><img src="docs/shifu1.png" width="250" alt="shifu" /></a>
+<a href="#dummy"><img src="https://user-images.githubusercontent.com/1063891/230850403-87ff74de-1acb-4aff-b9b4-632e4e51e225.png" width="35%" alt="shifu" /></a>
