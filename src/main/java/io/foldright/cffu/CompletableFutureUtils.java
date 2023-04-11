@@ -11,7 +11,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
@@ -98,101 +97,6 @@ public final class CompletableFutureUtils {
      * @see #allOfWithResult(CompletableFuture[])
      */
     @SafeVarargs
-    public static <T> CompletableFuture<T> anyOfSuccessV0(CompletableFuture<T>... cfs) {
-        if (cfs.length == 0) return failedFuture(NO_CF_PROVIDED_EXCEPTION);
-
-        for (int i = 0; i < cfs.length; i++) {
-            requireNonNull(cfs[i], "cf" + i + " is null");
-        }
-
-        final CompletableFuture<T> ret = new CompletableFuture<>();
-        final AtomicReference<Throwable> latestEx = new AtomicReference<>();
-        CompletableFuture<Boolean> cfAllIsFailed = null;
-
-        for (final CompletableFuture<T> cf : cfs) {
-            // success path: if any input cf success, `complete` the returned cf
-            cf.thenAccept(ret::complete);
-
-            CompletableFuture<Boolean> cfIsFailed = cf.handle((v, ex) -> {
-                boolean failed = ex != null;
-                if (failed) latestEx.set(ex);
-                return failed;
-            });
-            if (cfAllIsFailed == null) cfAllIsFailed = cfIsFailed;
-            else cfAllIsFailed = cfAllIsFailed.thenCombine(cfIsFailed,
-                    (allFailed, failed) -> allFailed && failed);
-        }
-        // failed path: if all input cfs failed, `completeExceptionally` returned cf with the latest exception
-        cfAllIsFailed.thenAccept(allFailed -> {
-            if (allFailed) ret.completeExceptionally(latestEx.get());
-        });
-
-        return ret;
-    }
-
-    // anyOfSuccessDeMorgansLaws
-    @SafeVarargs
-    public static <T> CompletableFuture<T> anyOfSuccessV1(CompletableFuture<T>... cfs) {
-        if (cfs.length == 0) return failedFuture(NO_CF_PROVIDED_EXCEPTION);
-
-        final AtomicReference<Throwable> latestEx = new AtomicReference<>();
-
-        @SuppressWarnings("unchecked")
-        final CompletableFuture<Void>[] swappedCfs = new CompletableFuture[cfs.length];
-        for (int i = 0; i < cfs.length; i++) {
-            // swap value and ex of CF:
-            //   - value -> throw exception(ValueHolderException)
-            //   - exception -> value(Void null), and record exception(to latestEx)
-            swappedCfs[i] = cfs[i].handle((v, ex) -> {
-                if (ex == null) throw new ValueHolderException(v);
-                else latestEx.set(ex);
-                return null;
-            });
-        }
-        return CompletableFuture.allOf(swappedCfs).handle((unused, ex) -> {
-            if (ex == null) return CompletableFutureUtils.<T>failedFuture(latestEx.get());
-            if (ex instanceof CompletionException && ex.getCause() instanceof ValueHolderException) {
-                @SuppressWarnings("unchecked")
-                T value = (T) ((ValueHolderException) ex.getCause()).value;
-                return CompletableFuture.completedFuture(value);
-            }
-            return CompletableFutureUtils.<T>failedFuture(ex);
-        }).thenCompose(Function.identity());
-    }
-
-    @SafeVarargs
-    @SuppressWarnings("unchecked")
-    public static <T> CompletableFuture<T> anyOfSuccessV2(CompletableFuture<T>... cfs) {
-        if (cfs.length == 0) return failedFuture(NO_CF_PROVIDED_EXCEPTION);
-
-        final AtomicReference<Throwable> latestEx = new AtomicReference<>();
-
-        @SuppressWarnings("unchecked")
-        final CompletableFuture<T>[] successOrBeIncompleteCfs = new CompletableFuture[cfs.length];
-        final CompletableFuture<T>[] failedOrBeIncompleteCfs = new CompletableFuture[cfs.length];
-        for (int i = 0; i < cfs.length; i++) {
-            final CompletableFuture<T> cf = cfs[i];
-
-            successOrBeIncompleteCfs[i] = cf.handle((v, ex) -> {
-                if (ex == null) return cf;
-                return new CompletableFuture<T>();
-            }).thenCompose(Function.identity());
-
-            failedOrBeIncompleteCfs[i] = cf.handle((v, ex) -> {
-                if (ex == null) return new CompletableFuture<T>();
-                latestEx.set(ex);
-                return cf;
-            }).thenCompose(Function.identity());
-        }
-
-        CompletableFuture<T> anySuccess = (CompletableFuture<T>) CompletableFuture.anyOf(successOrBeIncompleteCfs);
-        CompletableFuture<T> allFailed = CompletableFuture.allOf(failedOrBeIncompleteCfs)
-                .thenCompose(unused -> failedFuture(latestEx.get()));
-
-        return (CompletableFuture<T>) CompletableFuture.anyOf(anySuccess, allFailed);
-    }
-
-    @SafeVarargs
     @SuppressWarnings("unchecked")
     public static <T> CompletableFuture<T> anyOfSuccess(CompletableFuture<T>... cfs) {
         if (cfs.length == 0) return failedFuture(NO_CF_PROVIDED_EXCEPTION);
@@ -219,20 +123,6 @@ public final class CompletableFutureUtils {
 
         successOrBeIncompleteCfs[cfs.length] = allFailed;
         return (CompletableFuture<T>) CompletableFuture.anyOf(successOrBeIncompleteCfs);
-    }
-
-    @SuppressWarnings("serial")
-    private static class ValueHolderException extends RuntimeException {
-        final Object value;
-
-        ValueHolderException(Object value) {
-            this.value = value;
-        }
-
-        @Override
-        public synchronized Throwable fillInStackTrace() {
-            return this;
-        }
     }
 
     /**
