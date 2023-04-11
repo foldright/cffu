@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static io.foldright.cffu.CffuFactory.IS_JAVA9_PLUS;
 import static java.util.Objects.requireNonNull;
 
 
@@ -262,6 +261,48 @@ public final class CompletableFutureUtils {
         final CompletableFuture<T> cf = new CompletableFuture<>();
         cf.completeExceptionally(ex);
         return cf;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Java version check logic for compatibility
+    ////////////////////////////////////////////////////////////////////////////////
+
+    static final boolean IS_JAVA9_PLUS;
+
+    static final boolean IS_JAVA12_PLUS;
+
+    static final boolean IS_JAVA19_PLUS;
+
+    static {
+        boolean b;
+
+        try {
+            // `completedStage` is the new method of CompletableFuture since java 9
+            CompletableFuture.completedStage(null);
+            b = true;
+        } catch (NoSuchMethodError e) {
+            b = false;
+        }
+        IS_JAVA9_PLUS = b;
+
+        final CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
+        try {
+            // `exceptionallyCompose` is the new method of CompletableFuture since java 12
+            cf.exceptionallyCompose(x -> cf);
+            b = true;
+        } catch (NoSuchMethodError e) {
+            b = false;
+        }
+        IS_JAVA12_PLUS = b;
+
+        try {
+            // `resultNow` is the new method of CompletableFuture since java 19
+            cf.resultNow();
+            b = true;
+        } catch (NoSuchMethodError e) {
+            b = false;
+        }
+        IS_JAVA19_PLUS = b;
     }
 
     private CompletableFutureUtils() {

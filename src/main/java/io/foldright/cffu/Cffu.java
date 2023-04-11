@@ -12,7 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.concurrent.*;
 import java.util.function.*;
 
-import static io.foldright.cffu.CffuFactory.*;
+import static io.foldright.cffu.CompletableFutureUtils.*;
 import static java.util.Objects.requireNonNull;
 
 
