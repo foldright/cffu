@@ -594,7 +594,8 @@ public final class CffuFactory {
      * Returns a new Cffu that is success when any of the given Cffus success, with the same result.
      * Otherwise, all the given Cffus failed, the returned Cffu failed,
      * with a CompletionException holding the latest exception as its cause.
-     * If no Cffus are provided, returns an incomplete Cffu.
+     * If no Cffus are provided, returns a new Cffu that is already completed exceptionally
+     * with the singleton exception instance {@link #NO_CF_PROVIDED_EXCEPTION}.
      *
      * @param cfs the Cffus
      * @return a new Cffu that is success
@@ -611,7 +612,8 @@ public final class CffuFactory {
      * Returns a new Cffu that is success when any of the given CompletableFutures success, with the same result.
      * Otherwise, all the given CompletableFutures failed, the returned Cffu failed,
      * with a CompletionException holding the latest exception as its cause.
-     * If no CompletableFutures are provided, returns an incomplete Cffu.
+     * If no CompletableFutures are provided, returns a new Cffu that is already completed exceptionally
+     * with the singleton exception instance {@link #NO_CF_PROVIDED_EXCEPTION}.
      *
      * @param cfs the CompletableFutures
      * @return a new Cffu that is success
@@ -635,6 +637,14 @@ public final class CffuFactory {
     public <T> Cffu<T> cffuAnyOfSuccess() {
         return newIncompleteCffu();
     }
+
+    /**
+     * Singleton exception instance because NO cfs are provided
+     * for {@link #cffuAnyOfSuccess(Cffu[])}/{@link #cffuAnyOfSuccess(CompletableFuture[])}.
+     */
+    @SuppressWarnings("unused")
+    public static final RuntimeException NO_CF_PROVIDED_EXCEPTION = CompletableFutureUtils.NO_CF_PROVIDED_EXCEPTION;
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //# New type-safe cffuCombine Factory Methods
