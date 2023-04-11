@@ -11,6 +11,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 
@@ -78,6 +80,62 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<T> anyOfWithType(CompletableFuture<T>... cfs) {
         return (CompletableFuture<T>) CompletableFuture.anyOf(cfs);
     }
+
+    /**
+     * Returns a new CompletableFuture that is success
+     * when any of the given CompletableFutures success, with the same result.
+     * Otherwise, all the given CompletableFutures failed, the returned CompletableFuture failed,
+     * with a CompletionException holding the latest exception as its cause.
+     * If no CompletableFutures are provided, returns a new CompletableFuture that is already completed exceptionally
+     * with the singleton exception instance {@link #NO_CF_PROVIDED_EXCEPTION}.
+     *
+     * @param cfs the CompletableFutures
+     * @return a new CompletableFuture that is success
+     * when any of the given CompletableFutures success, with the same result
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see CompletableFuture#anyOf(CompletableFuture[])
+     * @see #allOfWithResult(CompletableFuture[])
+     */
+    @SafeVarargs
+    @SuppressWarnings("unchecked")
+    public static <T> CompletableFuture<T> anyOfSuccess(CompletableFuture<T>... cfs) {
+        final int size = cfs.length;
+        if (size == 0) return failedFuture(NO_CF_PROVIDED_EXCEPTION);
+        if (size == 1) return copy(cfs[0]).toCompletableFuture();
+
+        final CompletableFuture<T> incomplete = new CompletableFuture<>();
+        final AtomicReference<Throwable> latestEx = new AtomicReference<>();
+
+        // NOTE: use ONE MORE element of successOrBeIncompleteCfs LATER
+        final CompletableFuture<T>[] successOrBeIncompleteCfs = new CompletableFuture[size + 1];
+        final CompletableFuture<T>[] failedOrBeIncompleteCfs = new CompletableFuture[size];
+        for (int i = 0; i < size; i++) {
+            final CompletableFuture<T> cf = cfs[i];
+
+            successOrBeIncompleteCfs[i] = cf.handle((v, ex) -> ex == null ? cf : incomplete)
+                    .thenCompose(Function.identity());
+
+            failedOrBeIncompleteCfs[i] = cf.handle((v, ex) -> {
+                if (ex == null) return incomplete;
+                latestEx.set(ex);
+                return cf;
+            }).thenCompose(Function.identity());
+        }
+
+        CompletableFuture<T> allFailed = CompletableFuture.allOf(failedOrBeIncompleteCfs)
+                .thenCompose(unused -> failedFuture(latestEx.get()));
+        // NOTE: use the ONE MORE element of successOrBeIncompleteCfs HERE
+        successOrBeIncompleteCfs[size] = allFailed;
+
+        return (CompletableFuture<T>) CompletableFuture.anyOf(successOrBeIncompleteCfs);
+    }
+
+    /**
+     * Singleton exception instance because NO CompletableFutures are provided
+     * for {@link #anyOfSuccess(CompletableFuture[])}.
+     */
+    public static final RuntimeException NO_CF_PROVIDED_EXCEPTION =
+            new RuntimeException("NO CompletableFutures are provided");
 
     /**
      * Returns a new CompletableFuture that is completed when the given two CompletableFutures complete.
@@ -191,6 +249,70 @@ public final class CompletableFutureUtils {
         ).thenApply(unused ->
                 Tuple5.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3], (T5) result[4])
         );
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# helper methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Contract(pure = true)
+    static <T> CompletableFuture<T> failedFuture(Throwable ex) {
+        if (IS_JAVA9_PLUS) {
+            return CompletableFuture.failedFuture(ex);
+        }
+        final CompletableFuture<T> cf = new CompletableFuture<>();
+        cf.completeExceptionally(ex);
+        return cf;
+    }
+
+    @Contract(pure = true)
+    static <U> CompletableFuture<U> copy(CompletableFuture<U> cf) {
+        if (IS_JAVA9_PLUS) {
+            return cf.copy();
+        }
+        return cf.thenApply(Function.identity());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Java version check logic for compatibility
+    ////////////////////////////////////////////////////////////////////////////////
+
+    static final boolean IS_JAVA9_PLUS;
+
+    static final boolean IS_JAVA12_PLUS;
+
+    static final boolean IS_JAVA19_PLUS;
+
+    static {
+        boolean b;
+
+        try {
+            // `completedStage` is the new method of CompletableFuture since java 9
+            CompletableFuture.completedStage(null);
+            b = true;
+        } catch (NoSuchMethodError e) {
+            b = false;
+        }
+        IS_JAVA9_PLUS = b;
+
+        final CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
+        try {
+            // `exceptionallyCompose` is the new method of CompletableFuture since java 12
+            cf.exceptionallyCompose(x -> cf);
+            b = true;
+        } catch (NoSuchMethodError e) {
+            b = false;
+        }
+        IS_JAVA12_PLUS = b;
+
+        try {
+            // `resultNow` is the new method of CompletableFuture since java 19
+            cf.resultNow();
+            b = true;
+        } catch (NoSuchMethodError e) {
+            b = false;
+        }
+        IS_JAVA19_PLUS = b;
     }
 
     private CompletableFutureUtils() {

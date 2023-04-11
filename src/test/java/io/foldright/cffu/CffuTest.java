@@ -29,6 +29,8 @@ class CffuTest {
 
     ////////////////////////////////////////
     // timeout control
+    //
+    // tested in CffuApiCompatibilityTest
     ////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -46,12 +48,6 @@ class CffuTest {
     //    - isCompletedExceptionally()
     //    - isCancelled()
     //    - state()
-    //
-    // NOTE about ExecutionException or CompletionException when the computation threw an exception:
-    //   - get methods throw ExecutionException(checked exception)
-    //     these old methods existed in `Future` interface since Java 5
-    //   - getNow/join throw CompletionException(unchecked exception),
-    //     these new methods existed in `CompletableFuture` since Java 8
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
@@ -99,38 +95,31 @@ class CffuTest {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# nonfunctional methods
-    //    vs. user functional API
+    //# Cffu Re-Config methods
+    //
+    //    - minimalCompletionStage()
+    //    - resetCffuFactory(cffuFactory)
     //
     //    - toCompletableFuture()
-    //    - cffuUnwrap()
     //    - copy()
-    //
-    //    - obtrudeValue(value)
-    //    - obtrudeException(ex)
-    //
-    //    - defaultExecutor()
-    //    - getNumberOfDependents()
-    //
-    //    - newIncompleteFuture()
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
-    void test_cffuUnwrap() {
-        CompletableFuture<Integer> cf = CompletableFuture.completedFuture(n);
-        Cffu<Integer> cffu = cffuFactory.asCffu(cf);
+    void test_resetCffuFactory() {
+        Cffu<Integer> cf = cffuFactory.completedFuture(n);
+        assertSame(cffuFactory, cf.cffuFactory());
 
-        assertSame(cf, cffu.cffuUnwrap());
+        assertSame(forbidObtrudeMethodsCffuFactory, cf.resetCffuFactory(forbidObtrudeMethodsCffuFactory).cffuFactory());
     }
 
-    @Test
-    @EnabledForJreRange(min = JRE.JAVA_9)
-    void test_cffuUnwrap_9_completedStage() {
-        CompletionStage<Integer> stage = CompletableFuture.completedStage(n);
-        Cffu<Integer> cffu = cffuFactory.asCffu(stage);
 
-        assertSame(stage, cffu.cffuUnwrap());
-    }
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Getter methods of Cffu properties
+    //
+    //    - defaultExecutor()
+    //    - forbidObtrudeMethods()
+    //    - isMinimalStage()
+    ////////////////////////////////////////////////////////////////////////////////
 
     @Test
     void test_forbidObtrudeMethods() {
@@ -153,13 +142,28 @@ class CffuTest {
         assertTrue(((Cffu<Object>) forbidObtrudeMethodsCffuFactory.failedStage(rte)).isMinimalStage());
     }
 
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Inspection methods of Cffu
+    //
+    //    - cffuUnwrap()
+    //    - getNumberOfDependents()
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void test_cffuUnwrap() {
+        CompletableFuture<Integer> cf = CompletableFuture.completedFuture(n);
+        Cffu<Integer> cffu = cffuFactory.asCffu(cf);
+
+        assertSame(cf, cffu.cffuUnwrap());
+    }
+
     @Test
     @EnabledForJreRange(min = JRE.JAVA_9)
-    void test_Java9_CompletableFuture_failedStage_asCffu() {
-        assertFalse(cffuFactory.asCffu(CompletableFuture.failedFuture(rte)).isMinimalStage());
+    void test_cffuUnwrap_9_completedStage() {
+        CompletionStage<Integer> stage = CompletableFuture.completedStage(n);
+        Cffu<Integer> cffu = cffuFactory.asCffu(stage);
 
-        assertTrue(cffuFactory.asCffu(CompletableFuture.completedStage(42)).isMinimalStage());
-        assertTrue(cffuFactory.asCffu(CompletableFuture.failedStage(rte)).isMinimalStage());
+        assertSame(stage, cffu.cffuUnwrap());
     }
 
     @Test

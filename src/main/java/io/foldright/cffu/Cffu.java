@@ -12,7 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.concurrent.*;
 import java.util.function.*;
 
-import static io.foldright.cffu.CffuFactory.*;
+import static io.foldright.cffu.CompletableFutureUtils.*;
 import static java.util.Objects.requireNonNull;
 
 
@@ -1255,7 +1255,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
         if (cf.isDone()) return cf.join();
 
-        CompletableFuture<T> f = copyCf0(cf);
+        CompletableFuture<T> f = CompletableFutureUtils.copy(cf);
         orTimeoutCf0(f, timeout, unit);
         return f.join();
     }
@@ -1654,15 +1654,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Contract(pure = true)
     public Cffu<T> copy() {
-        return reset0(copyCf0(cf));
-    }
-
-    @Contract(pure = true)
-    private static <U> CompletableFuture<U> copyCf0(CompletableFuture<U> cf) {
-        if (IS_JAVA9_PLUS) {
-            return cf.copy();
-        }
-        return cf.thenApply(Function.identity());
+        return reset0(CompletableFutureUtils.copy(cf));
     }
 
     ////////////////////////////////////////////////////////////////////////////////

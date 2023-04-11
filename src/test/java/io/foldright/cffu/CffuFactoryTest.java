@@ -37,6 +37,7 @@ class CffuFactoryTest {
     static final double d = 42.1;
 
     static final RuntimeException rte = new RuntimeException("Bang");
+    static final RuntimeException another_rte = new RuntimeException("BangBang");
 
     private static CffuFactory cffuFactory;
 
@@ -149,10 +150,18 @@ class CffuFactoryTest {
 
     @Test
     @EnabledForJreRange(min = JRE.JAVA_9)
-    void test_asCffu__CompletableFuture_completedStage() {
-        Cffu<Integer> cf = cffuFactory.asCffu(CompletableFuture.completedStage(n));
+    void test_asCffu__for_factoryMethods_of_Java9() {
+        CompletableFuture<Object> cf1 = CompletableFuture.failedFuture(rte);
+        assertFalse(cffuFactory.asCffu(cf1).isMinimalStage());
+        shouldNotBeMinimalStage(cf1);
 
-        shouldBeMinimalStage(cf);
+        Cffu<Integer> cf2 = cffuFactory.asCffu(CompletableFuture.completedStage(n));
+        assertTrue(cf2.isMinimalStage());
+        shouldBeMinimalStage(cf2);
+
+        Cffu<Object> cf3 = cffuFactory.asCffu(CompletableFuture.failedStage(rte));
+        assertTrue(cf3.isMinimalStage());
+        shouldBeMinimalStage(cf3);
     }
 
     @Test
@@ -263,6 +272,53 @@ class CffuFactoryTest {
                 CompletableFuture.completedFuture(n),
                 createIncompleteFuture()
         ).get());
+    }
+
+    @Test
+    void test_cffuAnyOfSuccess__trivial_case() throws Exception {
+        // success then success
+        assertEquals(n, cffuFactory.cffuAnyOfSuccess(
+                cffuFactory.newIncompleteCffu(),
+                cffuFactory.newIncompleteCffu(),
+                cffuFactory.supplyAsync(() -> {
+                    sleep(300);
+                    return another_n;
+                }),
+                cffuFactory.completedFuture(n)
+        ).get());
+        // success then failed
+        assertEquals(n, cffuFactory.cffuAnyOfSuccess(
+                cffuFactory.newIncompleteCffu(),
+                cffuFactory.newIncompleteCffu(),
+                cffuFactory.supplyAsync(() -> {
+                    sleep(300);
+                    throw rte;
+                }),
+                cffuFactory.completedFuture(n)
+        ).get());
+
+        // success then success
+        assertEquals(n, cffuFactory.cffuAnyOfSuccess(
+                createIncompleteFuture(),
+                createIncompleteFuture(),
+                CompletableFuture.supplyAsync(() -> {
+                    sleep(300);
+                    return another_n;
+                }),
+                CompletableFuture.completedFuture(n)
+        ).get());
+        // success then failed
+        assertEquals(n, cffuFactory.cffuAnyOfSuccess(
+                createIncompleteFuture(),
+                createIncompleteFuture(),
+                CompletableFuture.supplyAsync(() -> {
+                    sleep(300);
+                    throw rte;
+                }),
+                CompletableFuture.completedFuture(n)
+        ).get());
+
+        assertFalse(cffuFactory.cffuAnyOfSuccess().isDone());
     }
 
     ////////////////////////////////////////////////////////////////////////////////

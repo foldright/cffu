@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 
+import static io.foldright.cffu.CompletableFutureUtils.IS_JAVA9_PLUS;
 import static java.util.Objects.requireNonNull;
 
 
@@ -131,12 +132,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public <T> Cffu<T> failedFuture(Throwable ex) {
-        if (IS_JAVA9_PLUS) {
-            return new0(CompletableFuture.failedFuture(ex));
-        }
-        final CompletableFuture<T> cf = new CompletableFuture<>();
-        cf.completeExceptionally(ex);
-        return new0(cf);
+        return new0(CompletableFutureUtils.failedFuture(ex));
     }
 
     /**
@@ -594,6 +590,52 @@ public final class CffuFactory {
         return newIncompleteCffu();
     }
 
+    /**
+     * Returns a new Cffu that is success when any of the given Cffus success, with the same result.
+     * Otherwise, all the given Cffus failed, the returned Cffu failed,
+     * with a CompletionException holding the latest exception as its cause.
+     * If no Cffus are provided, returns an incomplete Cffu.
+     *
+     * @param cfs the Cffus
+     * @return a new Cffu that is success
+     * when any of the given Cffus success, with the same result
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #cffuAnyOf(Cffu[])
+     */
+    @SafeVarargs
+    public final <T> Cffu<T> cffuAnyOfSuccess(Cffu<T>... cfs) {
+        return new0(CompletableFutureUtils.anyOfSuccess(toCompletableFutureArray(cfs)));
+    }
+
+    /**
+     * Returns a new Cffu that is success when any of the given CompletableFutures success, with the same result.
+     * Otherwise, all the given CompletableFutures failed, the returned Cffu failed,
+     * with a CompletionException holding the latest exception as its cause.
+     * If no CompletableFutures are provided, returns an incomplete Cffu.
+     *
+     * @param cfs the CompletableFutures
+     * @return a new Cffu that is success
+     * when any of the given CompletableFutures success, with the same result
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #cffuAnyOfSuccess(Cffu[])
+     * @see #cffuAnyOf(Cffu[])
+     */
+    @SafeVarargs
+    public final <T> Cffu<T> cffuAnyOfSuccess(CompletableFuture<T>... cfs) {
+        return new0(CompletableFutureUtils.anyOfSuccess(cfs));
+    }
+
+    /**
+     * Provided this overloaded method just for resolving "cffuAnyOfSuccess is ambiguous" problem
+     * when call {@code cffuAnyOfSuccess} with empty arguments: {@code cffuFactory.cffuAnyOfSuccess()}.
+     *
+     * @see #cffuAnyOfSuccess(Cffu[])
+     * @see #cffuAnyOfSuccess(CompletableFuture[])
+     */
+    public <T> Cffu<T> cffuAnyOfSuccess() {
+        return newIncompleteCffu();
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# New type-safe cffuCombine Factory Methods
     //  support 2~5 input arguments, method name prefix with `cffu`
@@ -860,47 +902,5 @@ public final class CffuFactory {
          */
         private static final Executor ASYNC_POOL = USE_COMMON_POOL ?
                 ForkJoinPool.commonPool() : new ThreadPerTaskExecutor();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    //# Java version check logic for compatibility
-    ////////////////////////////////////////////////////////////////////////////////
-
-    static final boolean IS_JAVA9_PLUS;
-
-    static final boolean IS_JAVA12_PLUS;
-
-    static final boolean IS_JAVA19_PLUS;
-
-    static {
-        boolean b;
-
-        try {
-            // `completedStage` is the new method of CompletableFuture since java 9
-            CompletableFuture.completedStage(null);
-            b = true;
-        } catch (NoSuchMethodError e) {
-            b = false;
-        }
-        IS_JAVA9_PLUS = b;
-
-        final CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
-        try {
-            // `exceptionallyCompose` is the new method of CompletableFuture since java 12
-            cf.exceptionallyCompose(x -> cf);
-            b = true;
-        } catch (NoSuchMethodError e) {
-            b = false;
-        }
-        IS_JAVA12_PLUS = b;
-
-        try {
-            // `resultNow` is the new method of CompletableFuture since java 19
-            cf.resultNow();
-            b = true;
-        } catch (NoSuchMethodError e) {
-            b = false;
-        }
-        IS_JAVA19_PLUS = b;
     }
 }
