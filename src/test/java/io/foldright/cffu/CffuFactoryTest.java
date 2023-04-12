@@ -318,7 +318,7 @@ class CffuFactoryTest {
                 CompletableFuture.completedFuture(n)
         ).get());
 
-        assertFalse(cffuFactory.cffuAnyOfSuccess().isDone());
+        assertSame(CffuFactory.NO_CF_PROVIDED_EXCEPTION, cffuFactory.cffuAnyOfSuccess().exceptionNow());
     }
 
     ////////////////////////////////////////////////////////////////////////////////

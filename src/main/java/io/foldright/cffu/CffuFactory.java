@@ -635,7 +635,7 @@ public final class CffuFactory {
      * @see #cffuAnyOfSuccess(CompletableFuture[])
      */
     public <T> Cffu<T> cffuAnyOfSuccess() {
-        return newIncompleteCffu();
+        return new0(CompletableFutureUtils.anyOfSuccess());
     }
 
     /**
