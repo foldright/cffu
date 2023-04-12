@@ -9,6 +9,7 @@ import io.foldright.cffu.tuple.Tuple5
 import io.foldright.test_utils.testCffuFactory
 import io.foldright.test_utils.testForkJoinPoolExecutor
 import io.foldright.test_utils.testThreadPoolExecutor
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
@@ -139,6 +140,10 @@ class CffuExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(42),
             CompletableFuture(),
         ).anyOfSuccessCompletableFuture().await() shouldBe 42
+
+        shouldThrow<RuntimeException> {
+            listOf<CompletableFuture<Int>>().anyOfSuccessCompletableFuture().await()
+        }.shouldBeSameInstanceAs(NO_CF_PROVIDED_EXCEPTION)
     }
 
     test("anyOfSuccessCompletableFuture - array") {
@@ -147,6 +152,10 @@ class CffuExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(42),
             CompletableFuture(),
         ).anyOfSuccessCompletableFuture().await() shouldBe 42
+
+        shouldThrow<RuntimeException> {
+            arrayOf<CompletableFuture<Int>>().anyOfSuccessCompletableFuture().await()
+        }.shouldBeSameInstanceAs(NO_CF_PROVIDED_EXCEPTION)
     }
 
     ////////////////////////////////////////
@@ -394,7 +403,7 @@ class CffuExtensionsTest : FunSpec({
     }
 
     ////////////////////////////////////////
-    // -anyOfSuccessCffu
+    // - anyOfSuccessCffu
     ////////////////////////////////////////
 
     test("anyOfSuccessCffu for collection") {
@@ -410,6 +419,12 @@ class CffuExtensionsTest : FunSpec({
             testCffuFactory.newIncompleteCffu(),
         ).anyOfSuccessCffu(testCffuFactory).await() shouldBe 42
 
+        shouldThrow<RuntimeException> {
+            listOf<Cffu<Int>>().anyOfSuccessCffu(testCffuFactory).await()
+        }.shouldBeSameInstanceAs(NO_CF_PROVIDED_EXCEPTION)
+
+        //////////////////////////////////////////////////////////////////////////////
+
         listOf(
             CompletableFuture(),
             CompletableFuture(),
@@ -421,6 +436,10 @@ class CffuExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(42),
             CompletableFuture(),
         ).anyOfSuccessCffu(testCffuFactory).await() shouldBe 42
+
+        shouldThrow<RuntimeException> {
+            listOf<CompletableFuture<Int>>().anyOfSuccessCffu(testCffuFactory).await()
+        }.shouldBeSameInstanceAs(NO_CF_PROVIDED_EXCEPTION)
     }
 
     test("anyOfSuccessCffu for array") {
@@ -430,11 +449,19 @@ class CffuExtensionsTest : FunSpec({
             testCffuFactory.completedFuture(42),
         ).anyOfSuccessCffu(testCffuFactory).await() shouldBe 42
 
+        shouldThrow<RuntimeException> {
+            arrayOf<Cffu<Int>>().anyOfSuccessCffu(testCffuFactory).await()
+        }.shouldBeSameInstanceAs(NO_CF_PROVIDED_EXCEPTION)
+
         arrayOf(
             CompletableFuture(),
             CompletableFuture(),
             CompletableFuture.completedFuture(42),
         ).anyOfSuccessCffu(testCffuFactory).await() shouldBe 42
+
+        shouldThrow<RuntimeException> {
+            arrayOf<CompletableFuture<Int>>().anyOfSuccessCffu(testCffuFactory).await()
+        }.shouldBeSameInstanceAs(NO_CF_PROVIDED_EXCEPTION)
     }
 
     ////////////////////////////////////////

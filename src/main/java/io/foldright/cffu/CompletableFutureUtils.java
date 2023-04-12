@@ -11,7 +11,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
@@ -82,19 +81,18 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is success
-     * when any of the given CompletableFutures success, with the same result.
-     * Otherwise, all the given CompletableFutures failed, the returned CompletableFuture failed,
-     * with a CompletionException holding the latest exception as its cause.
-     * If no CompletableFutures are provided, returns a new CompletableFuture that is already completed exceptionally
+     * Returns a new CompletableFuture that is success when any of the given CompletableFutures success,
+     * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
+     * the returned CompletableFuture also does so, with a CompletionException holding
+     * an exception from any given CompletableFutures as its cause. If no CompletableFutures are provided,
+     * returns a new CompletableFuture that is already completed exceptionally
      * with the singleton exception instance {@link #NO_CF_PROVIDED_EXCEPTION}.
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that is success
      * when any of the given CompletableFutures success, with the same result
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see CompletableFuture#anyOf(CompletableFuture[])
-     * @see #allOfWithResult(CompletableFuture[])
+     * @see #anyOfWithType(CompletableFuture[])
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -105,30 +103,25 @@ public final class CompletableFutureUtils {
         if (size == 1) return copy(cfs[0]).toCompletableFuture();
 
         final CompletableFuture<T> incomplete = new CompletableFuture<>();
-        final AtomicReference<Throwable> latestEx = new AtomicReference<>();
 
         // NOTE: use ONE MORE element of successOrBeIncompleteCfs LATER
-        final CompletableFuture<T>[] successOrBeIncompleteCfs = new CompletableFuture[size + 1];
-        final CompletableFuture<T>[] failedOrBeIncompleteCfs = new CompletableFuture[size];
+        final CompletableFuture<T>[] successOrBeIncomplete = new CompletableFuture[size + 1];
+        final CompletableFuture<T>[] failedOrBeIncomplete = new CompletableFuture[size];
         for (int i = 0; i < size; i++) {
             final CompletableFuture<T> cf = cfs[i];
 
-            successOrBeIncompleteCfs[i] = cf.handle((v, ex) -> ex == null ? cf : incomplete)
+            successOrBeIncomplete[i] = cf.handle((v, ex) -> ex == null ? cf : incomplete)
                     .thenCompose(Function.identity());
 
-            failedOrBeIncompleteCfs[i] = cf.handle((v, ex) -> {
-                if (ex == null) return incomplete;
-                latestEx.set(ex);
-                return cf;
-            }).thenCompose(Function.identity());
+            failedOrBeIncomplete[i] = cf.handle((v, ex) -> ex == null ? incomplete : cf)
+                    .thenCompose(Function.identity());
         }
 
-        CompletableFuture<T> allFailed = CompletableFuture.allOf(failedOrBeIncompleteCfs)
-                .thenCompose(unused -> failedFuture(latestEx.get()));
         // NOTE: use the ONE MORE element of successOrBeIncompleteCfs HERE
-        successOrBeIncompleteCfs[size] = allFailed;
+        //       store a cf which is failed when all given cfs failed, otherwise, be incomplete
+        successOrBeIncomplete[size] = (CompletableFuture<T>) CompletableFuture.allOf(failedOrBeIncomplete);
 
-        return anyOfWithType(successOrBeIncompleteCfs);
+        return anyOfWithType(successOrBeIncomplete);
     }
 
     /**

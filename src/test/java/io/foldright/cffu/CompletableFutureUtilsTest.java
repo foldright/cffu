@@ -105,6 +105,20 @@ class CompletableFutureUtilsTest {
                 CompletableFuture.completedFuture(n)
         ).get());
 
+        // all success
+        assertEquals(n, anyOfSuccess(
+                CompletableFuture.supplyAsync(() -> {
+                    sleep(300);
+                    return another_n;
+                }),
+                CompletableFuture.supplyAsync(() -> {
+                    sleep(300);
+                    return another_n;
+                }),
+                CompletableFuture.completedFuture(n)
+        ).get());
+
+
         assertTrue(anyOfSuccess().isDone());
         try {
             anyOfSuccess().get();
@@ -123,24 +137,24 @@ class CompletableFutureUtilsTest {
                     sleep(100);
                     return n;
                 }),
-                createIncompleteFuture()
+                createFailedFuture(rte)
         ).get());
     }
 
     @Test
     void test_anyOfSuccess__allFailed() throws Exception {
+        RuntimeException ex1 = new RuntimeException();
+        RuntimeException ex2 = new RuntimeException();
         try {
-            assertSame(n, anyOfSuccess(
-                    createFailedFuture(rte),
-                    createFailedFuture(new RuntimeException()),
-                    createFailedFuture(new RuntimeException()),
+            anyOfSuccess(
                     CompletableFuture.supplyAsync(() -> {
-                        // sleep, so this cf is the latest failed cf
                         sleep(100);
                         throw rte;
                     }),
+                    createFailedFuture(ex1),
+                    createFailedFuture(ex2),
                     createFailedFuture(another_rte)
-            ).get());
+            ).get();
 
             fail();
         } catch (ExecutionException expected) {

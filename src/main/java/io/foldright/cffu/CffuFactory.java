@@ -591,15 +591,15 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is success when any of the given Cffus success, with the same result.
-     * Otherwise, all the given Cffus failed, the returned Cffu failed,
-     * with a CompletionException holding the latest exception as its cause.
-     * If no Cffus are provided, returns a new Cffu that is already completed exceptionally
+     * Returns a new Cffu that is success when any of the given Cffus success,
+     * with the same result. Otherwise, all the given Cffus complete exceptionally,
+     * the returned Cffu also does so, with a CompletionException holding
+     * an exception from any given Cffu as its cause. If no Cffu are provided,
+     * returns a new Cffu that is already completed exceptionally
      * with the singleton exception instance {@link #NO_CF_PROVIDED_EXCEPTION}.
      *
      * @param cfs the Cffus
-     * @return a new Cffu that is success
-     * when any of the given Cffus success, with the same result
+     * @return a new Cffu
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #cffuAnyOf(Cffu[])
      */
@@ -609,15 +609,15 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is success when any of the given CompletableFutures success, with the same result.
-     * Otherwise, all the given CompletableFutures failed, the returned Cffu failed,
-     * with a CompletionException holding the latest exception as its cause.
-     * If no CompletableFutures are provided, returns a new Cffu that is already completed exceptionally
+     * Returns a new Cffu that is success when any of the given CompletableFutures success,
+     * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
+     * the returned Cffu also does so, with a CompletionException holding
+     * an exception from any given CompletableFutures as its cause. If no CompletableFutures are provided,
+     * returns a new Cffu that is already completed exceptionally
      * with the singleton exception instance {@link #NO_CF_PROVIDED_EXCEPTION}.
      *
      * @param cfs the CompletableFutures
-     * @return a new Cffu that is success
-     * when any of the given CompletableFutures success, with the same result
+     * @return a new Cffu
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #cffuAnyOfSuccess(Cffu[])
      * @see #cffuAnyOf(Cffu[])

@@ -297,6 +297,21 @@ class CffuFactoryTest {
                 cffuFactory.completedFuture(n)
         ).get());
 
+        // all success
+        assertEquals(n, cffuFactory.cffuAnyOfSuccess(
+                cffuFactory.supplyAsync(() -> {
+                    sleep(300);
+                    return another_n;
+                }),
+                cffuFactory.supplyAsync(() -> {
+                    sleep(300);
+                    return another_n;
+                }),
+                cffuFactory.completedFuture(n)
+        ).get());
+
+        //////////////////////////////////////////////////////////////////////////////
+
         // success then success
         assertEquals(n, cffuFactory.cffuAnyOfSuccess(
                 createIncompleteFuture(),
@@ -317,6 +332,21 @@ class CffuFactoryTest {
                 }),
                 CompletableFuture.completedFuture(n)
         ).get());
+
+        // all success
+        assertEquals(n, cffuFactory.cffuAnyOfSuccess(
+                CompletableFuture.supplyAsync(() -> {
+                    sleep(300);
+                    return another_n;
+                }),
+                CompletableFuture.supplyAsync(() -> {
+                    sleep(300);
+                    return another_n;
+                }),
+                CompletableFuture.completedFuture(n)
+        ).get());
+
+        //////////////////////////////////////////////////////////////////////////////
 
         assertSame(CffuFactory.NO_CF_PROVIDED_EXCEPTION, cffuFactory.cffuAnyOfSuccess().exceptionNow());
     }
