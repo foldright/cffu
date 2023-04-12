@@ -11,8 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static io.foldright.cffu.CffuFactoryTest.*;
-import static io.foldright.cffu.CompletableFutureUtils.anyOfSuccess;
-import static io.foldright.cffu.CompletableFutureUtils.anyOfWithType;
+import static io.foldright.cffu.CompletableFutureUtils.*;
 import static io.foldright.test_utils.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -112,7 +111,7 @@ class CompletableFutureUtilsTest {
 
             fail();
         } catch (ExecutionException expected) {
-            assertSame(CompletableFutureUtils.NO_CF_PROVIDED_EXCEPTION, expected.getCause());
+            assertSame(NO_CF_PROVIDED_EXCEPTION, expected.getCause());
         }
     }
 

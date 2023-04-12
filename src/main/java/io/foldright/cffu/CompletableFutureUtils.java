@@ -96,6 +96,7 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#anyOf(CompletableFuture[])
      * @see #allOfWithResult(CompletableFuture[])
      */
+    @Contract(pure = true)
     @SafeVarargs
     @SuppressWarnings("unchecked")
     public static <T> CompletableFuture<T> anyOfSuccess(CompletableFuture<T>... cfs) {
@@ -127,7 +128,7 @@ public final class CompletableFutureUtils {
         // NOTE: use the ONE MORE element of successOrBeIncompleteCfs HERE
         successOrBeIncompleteCfs[size] = allFailed;
 
-        return (CompletableFuture<T>) CompletableFuture.anyOf(successOrBeIncompleteCfs);
+        return anyOfWithType(successOrBeIncompleteCfs);
     }
 
     /**
@@ -135,7 +136,7 @@ public final class CompletableFutureUtils {
      * for {@link #anyOfSuccess(CompletableFuture[])}.
      */
     public static final RuntimeException NO_CF_PROVIDED_EXCEPTION =
-            new RuntimeException("NO CompletableFutures are provided");
+            new RuntimeException("NO cfs are provided");
 
     /**
      * Returns a new CompletableFuture that is completed when the given two CompletableFutures complete.
