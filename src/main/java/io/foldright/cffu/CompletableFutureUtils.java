@@ -87,7 +87,7 @@ public final class CompletableFutureUtils {
      * the returned CompletableFuture also does so, with a CompletionException holding
      * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
      * returns a new CompletableFuture that is already completed exceptionally
-     * with the singleton exception instance {@link #NO_CF_PROVIDED_EXCEPTION}.
+     * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that is success
@@ -99,7 +99,7 @@ public final class CompletableFutureUtils {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static CompletableFuture<Object> anyOfSuccess(CompletableFuture<?>... cfs) {
         final int size = cfs.length;
-        if (size == 0) return failedFuture(NO_CF_PROVIDED_EXCEPTION);
+        if (size == 0) return failedFuture(new NoCfsProvidedException());
         if (size == 1) return (CompletableFuture<Object>) copy(cfs[0]).toCompletableFuture();
 
         final CompletableFuture incomplete = new CompletableFuture();
@@ -130,7 +130,7 @@ public final class CompletableFutureUtils {
      * the returned CompletableFuture also does so, with a CompletionException holding
      * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
      * returns a new CompletableFuture that is already completed exceptionally
-     * with the singleton exception instance {@link #NO_CF_PROVIDED_EXCEPTION}.
+     * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
      * <p>
      * Same as {@link #anyOfSuccess(CompletableFuture[])},
      * but return result type is specified type instead of {@code Object}.
@@ -147,13 +147,6 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<T> anyOfSuccessWithType(CompletableFuture<T>... cfs) {
         return (CompletableFuture<T>) anyOfSuccess(cfs);
     }
-
-    /**
-     * Singleton exception instance because NO CompletableFutures are provided
-     * for {@link #anyOfSuccessWithType(CompletableFuture[])}.
-     */
-    public static final RuntimeException NO_CF_PROVIDED_EXCEPTION =
-            new RuntimeException("NO cfs are provided");
 
     /**
      * Returns a new CompletableFuture that is completed when the given two CompletableFutures complete.

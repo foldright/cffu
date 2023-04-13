@@ -2,6 +2,7 @@ package io.foldright.cffu.kotlin
 
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder
+import io.foldright.cffu.NoCfsProvidedException
 import io.foldright.cffu.tuple.Tuple2
 import io.foldright.cffu.tuple.Tuple3
 import io.foldright.cffu.tuple.Tuple4
@@ -143,7 +144,7 @@ class CffuExtensionsTest : FunSpec({
 
         shouldThrow<RuntimeException> {
             listOf<CompletableFuture<Int>>().anyOfSuccessCompletableFuture().await()
-        }.shouldBeSameInstanceAs(NO_CF_PROVIDED_EXCEPTION)
+        }.shouldBeTypeOf<NoCfsProvidedException>()
     }
 
     test("anyOfSuccessCompletableFuture - array") {
@@ -155,7 +156,7 @@ class CffuExtensionsTest : FunSpec({
 
         shouldThrow<RuntimeException> {
             arrayOf<CompletableFuture<Int>>().anyOfSuccessCompletableFuture().await()
-        }.shouldBeSameInstanceAs(NO_CF_PROVIDED_EXCEPTION)
+        }.shouldBeTypeOf<NoCfsProvidedException>()
     }
 
     ////////////////////////////////////////
@@ -421,7 +422,7 @@ class CffuExtensionsTest : FunSpec({
 
         shouldThrow<RuntimeException> {
             listOf<Cffu<Int>>().anyOfSuccessCffu(testCffuFactory).await()
-        }.shouldBeSameInstanceAs(NO_CF_PROVIDED_EXCEPTION)
+        }.shouldBeTypeOf<NoCfsProvidedException>()
 
         //////////////////////////////////////////////////////////////////////////////
 
@@ -439,7 +440,7 @@ class CffuExtensionsTest : FunSpec({
 
         shouldThrow<RuntimeException> {
             listOf<CompletableFuture<Int>>().anyOfSuccessCffu(testCffuFactory).await()
-        }.shouldBeSameInstanceAs(NO_CF_PROVIDED_EXCEPTION)
+        }.shouldBeTypeOf<NoCfsProvidedException>()
     }
 
     test("anyOfSuccessCffu for array") {
@@ -451,7 +452,7 @@ class CffuExtensionsTest : FunSpec({
 
         shouldThrow<RuntimeException> {
             arrayOf<Cffu<Int>>().anyOfSuccessCffu(testCffuFactory).await()
-        }.shouldBeSameInstanceAs(NO_CF_PROVIDED_EXCEPTION)
+        }.shouldBeTypeOf<NoCfsProvidedException>()
 
         arrayOf(
             CompletableFuture(),
@@ -461,7 +462,7 @@ class CffuExtensionsTest : FunSpec({
 
         shouldThrow<RuntimeException> {
             arrayOf<CompletableFuture<Int>>().anyOfSuccessCffu(testCffuFactory).await()
-        }.shouldBeSameInstanceAs(NO_CF_PROVIDED_EXCEPTION)
+        }.shouldBeTypeOf<NoCfsProvidedException>()
     }
 
     ////////////////////////////////////////

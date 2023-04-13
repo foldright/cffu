@@ -348,7 +348,7 @@ class CffuFactoryTest {
 
         //////////////////////////////////////////////////////////////////////////////
 
-        assertSame(CffuFactory.NO_CF_PROVIDED_EXCEPTION, cffuFactory.cffuAnyOfSuccess().exceptionNow());
+        assertSame(NoCfsProvidedException.class, cffuFactory.cffuAnyOfSuccess().exceptionNow().getClass());
     }
 
     ////////////////////////////////////////////////////////////////////////////////

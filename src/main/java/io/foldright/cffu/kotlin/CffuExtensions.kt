@@ -135,7 +135,7 @@ fun Array<CompletableFuture<*>>.anyOfCompletableFutureAny(): CompletableFuture<A
  * the returned CompletableFuture also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
  * returns a new CompletableFuture that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
+ * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
  *
  * Same as [CompletableFutureUtils.anyOfSuccessWithType], providing this method is convenient for method chaining.
  *
@@ -151,7 +151,7 @@ fun <T> Collection<CompletableFuture<T>>.anyOfSuccessCompletableFuture(): Comple
  * the returned CompletableFuture also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
  * returns a new CompletableFuture that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
+ * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
  *
  * Same as [CompletableFutureUtils.anyOfSuccess], providing this method is convenient for method chaining.
  *
@@ -167,7 +167,7 @@ fun <T> Array<CompletableFuture<T>>.anyOfSuccessCompletableFuture(): Completable
  * the returned CompletableFuture also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
  * returns a new CompletableFuture that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
+ * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
  *
  * Same as [CompletableFutureUtils.anyOfSuccess], providing this method is convenient for method chaining.
  *
@@ -184,7 +184,7 @@ fun Collection<CompletableFuture<*>>.anyOfSuccessCompletableFutureAny(): Complet
  * the returned CompletableFuture also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
  * returns a new CompletableFuture that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
+ * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
  *
  * Same as [CompletableFutureUtils.anyOfSuccessWithType], providing this method is convenient for method chaining.
  *
@@ -194,13 +194,6 @@ fun Collection<CompletableFuture<*>>.anyOfSuccessCompletableFutureAny(): Complet
  */
 fun Array<CompletableFuture<*>>.anyOfSuccessCompletableFutureAny(): CompletableFuture<Any> =
     CompletableFutureUtils.anyOfSuccess(*this)
-
-/**
- * Singleton exception instance because NO cfs are provided
- * for [anyOfSuccessCffu]/[anyOfSuccessCompletableFuture].
- */
-val NO_CF_PROVIDED_EXCEPTION: RuntimeException = CompletableFutureUtils.NO_CF_PROVIDED_EXCEPTION
-
 
 ////////////////////////////////////////
 // combine
@@ -519,7 +512,7 @@ fun Array<CompletableFuture<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cffu<Any
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given Cffus as its cause. If no Cffus are provided,
  * returns a new Cffu that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
+ * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
  *
  * Same as [CffuFactory.cffuAnyOfSuccess], providing this method is convenient for method chaining.
  *
@@ -535,7 +528,7 @@ fun <T> Collection<Cffu<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> 
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given Cffus as its cause. If no Cffus are provided,
  * returns a new Cffu that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
+ * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
  *
  * Same as [CffuFactory.cffuAnyOfSuccess], providing this method is convenient for method chaining.
  *
@@ -551,7 +544,7 @@ fun <T> Array<Cffu<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
  * returns a new Cffu that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
+ * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
  *
  * Same as [CffuFactory.cffuAnyOfSuccess], providing this method is convenient for method chaining.
  *
@@ -568,7 +561,7 @@ fun <T> Collection<CompletableFuture<T>>.anyOfSuccessCffu(cffuFactory: CffuFacto
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
  * returns a new Cffu that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
+ * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
  *
  * Same as [CffuFactory.cffuAnyOfSuccess], providing this method is convenient for method chaining.
  *
@@ -584,7 +577,7 @@ fun <T> Array<CompletableFuture<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): 
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
  * returns a new Cffu that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
+ * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
  *
  * Same as [CffuFactory.anyOfSuccess], providing this method is convenient for method chaining.
  *
@@ -600,7 +593,7 @@ fun Collection<Cffu<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory): Cffu<Any>
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
  * returns a new Cffu that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
+ * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
  *
  * Same as [CffuFactory.anyOfSuccess], providing this method is convenient for method chaining.
  *
@@ -616,7 +609,7 @@ fun Array<Cffu<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
  * returns a new Cffu that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
+ * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
  *
  * Same as [CffuFactory.anyOfSuccess], providing this method is convenient for method chaining.
  *
@@ -633,7 +626,7 @@ fun Collection<CompletableFuture<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactor
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
  * returns a new Cffu that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
+ * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
  *
  * Same as [CffuFactory.anyOfSuccess], providing this method is convenient for method chaining.
  *
