@@ -27,6 +27,8 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture with the result of all the given CompletableFutures,
      * the new CompletableFuture is completed when all the given CompletableFutures complete.
+     * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
+     * also does so, with a CompletionException holding this exception as its cause.
      * <p>
      * Same to {@link CompletableFuture#allOf(CompletableFuture[])},
      * but the returned CompletableFuture contains the results of input CompletableFutures.
@@ -58,6 +60,94 @@ public final class CompletableFutureUtils {
 
         return CompletableFuture.allOf(thenCfs)
                 .thenApply(unused -> (List<T>) Arrays.asList(result));
+    }
+
+    /**
+     * Returns a new CompletableFuture that success when all the given CompletableFutures success.
+     * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletableFutures,
+     * with a CompletionException holding this exception as its cause.
+     * Otherwise, the results, if any, of the given CompletableFutures are not reflected in
+     * the returned CompletableFuture, but may be obtained by inspecting them individually.
+     * If no CompletableFutures are provided, returns a CompletableFuture completed with the value {@code null}.
+     *
+     * @param cfs the CompletableFutures
+     * @return a new CompletableFuture that is completed when all the given CompletableFutures complete
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see CompletableFuture#allOf(CompletableFuture[])
+     */
+    @Contract(pure = true)
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static CompletableFuture<Void> allOfFastFail(CompletableFuture<?>... cfs) {
+        final int size = cfs.length;
+        if (size == 0) return CompletableFuture.completedFuture(null);
+        if (size == 1) return cfs[0].thenApply(v -> null);
+
+        final CompletableFuture[] successOrBeIncomplete = new CompletableFuture[size];
+        // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
+        final CompletableFuture[] failedOrBeIncomplete = new CompletableFuture[size + 1];
+        fill(cfs, successOrBeIncomplete, failedOrBeIncomplete);
+
+        // NOTE: fill the ONE MORE element of failedOrBeIncomplete HERE:
+        //       a cf which is success when all given cfs success, otherwise be incomplete
+        failedOrBeIncomplete[size] = CompletableFuture.allOf(successOrBeIncomplete);
+
+        return (CompletableFuture) CompletableFuture.anyOf(failedOrBeIncomplete);
+    }
+
+    /**
+     * Returns a new CompletableFuture with the result of all the given CompletableFutures,
+     * the new CompletableFuture is success when all the given CompletableFutures success.
+     * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletableFutures,
+     * with a CompletionException holding this exception as its cause.
+     * Otherwise, the results, if any, of the given CompletableFutures are not reflected in
+     * the returned CompletableFuture, but may be obtained by inspecting them individually.
+     * If no CompletableFutures are provided, returns a CompletableFuture completed with the value {@code null}.
+     * <p>
+     * Same to {@link CompletableFutureUtils#allOfFastFail(CompletableFuture[])},
+     * but the returned CompletableFuture contains the results of input CompletableFutures.
+     *
+     * @param cfs the CompletableFutures
+     * @return a new CompletableFuture that is completed when all the given CompletableFutures complete
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see CompletableFutureUtils#allOfFastFail(CompletableFuture[])
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T> CompletableFuture<List<T>> allOfFastFailWithResult(CompletableFuture<T>... cfs) {
+        final int size = cfs.length;
+        if (size == 0) return CompletableFuture.completedFuture(null);
+        if (size == 1) return cfs[0].thenApply(Arrays::asList);
+
+        final CompletableFuture[] successOrBeIncomplete = new CompletableFuture[size];
+        // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
+        final CompletableFuture[] failedOrBeIncomplete = new CompletableFuture[size + 1];
+        fill(cfs, successOrBeIncomplete, failedOrBeIncomplete);
+
+        // NOTE: fill the ONE MORE element of failedOrBeIncomplete HERE:
+        //       a cf which is success when all given cfs success, otherwise be incomplete
+        failedOrBeIncomplete[size] = allOfWithResult(successOrBeIncomplete);
+
+        return (CompletableFuture) CompletableFuture.anyOf(failedOrBeIncomplete);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void fill(CompletableFuture[] cfs,
+                             CompletableFuture[] successOrBeIncomplete,
+                             CompletableFuture[] failedOrBeIncomplete) {
+        final CompletableFuture incomplete = new CompletableFuture();
+
+        for (int i = 0; i < cfs.length; i++) {
+            final CompletableFuture cf = cfs[i];
+
+            successOrBeIncomplete[i] = cf.handle((v, ex) -> ex == null ? cf : incomplete)
+                    .thenCompose(Function.identity());
+
+            failedOrBeIncomplete[i] = cf.handle((v, ex) -> ex == null ? incomplete : cf)
+                    .thenCompose(Function.identity());
+        }
     }
 
     /**
@@ -102,23 +192,13 @@ public final class CompletableFutureUtils {
         if (size == 0) return failedFuture(new NoCfsProvidedException());
         if (size == 1) return (CompletableFuture<Object>) copy(cfs[0]).toCompletableFuture();
 
-        final CompletableFuture incomplete = new CompletableFuture();
-
-        // NOTE: use ONE MORE element of successOrBeIncompleteCfs LATER
+        // NOTE: fill ONE MORE element of successOrBeIncompleteCfs LATER
         final CompletableFuture[] successOrBeIncomplete = new CompletableFuture[size + 1];
         final CompletableFuture[] failedOrBeIncomplete = new CompletableFuture[size];
-        for (int i = 0; i < size; i++) {
-            final CompletableFuture cf = cfs[i];
+        fill(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
-            successOrBeIncomplete[i] = cf.handle((v, ex) -> ex == null ? cf : incomplete)
-                    .thenCompose(Function.identity());
-
-            failedOrBeIncomplete[i] = cf.handle((v, ex) -> ex == null ? incomplete : cf)
-                    .thenCompose(Function.identity());
-        }
-
-        // NOTE: use the ONE MORE element of successOrBeIncompleteCfs HERE
-        //       store a cf which is failed when all given cfs failed, otherwise be incomplete
+        // NOTE: fill the ONE MORE element of successOrBeIncompleteCfs HERE
+        //       a cf which is failed when all given cfs failed, otherwise be incomplete
         successOrBeIncomplete[size] = CompletableFuture.allOf(failedOrBeIncomplete);
 
         return CompletableFuture.anyOf(successOrBeIncomplete);
