@@ -45,10 +45,10 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     @SuppressWarnings("unchecked")
     public static <T> CompletableFuture<List<T>> allOfWithResult(CompletableFuture<T>... cfs) {
+        requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return CompletableFuture.completedFuture(Collections.emptyList());
         if (size == 1) return cfs[0].thenApply(Arrays::asList);
-        requireCfEleNonNull(cfs);
 
         final Object[] result = new Object[size];
 
@@ -82,10 +82,10 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static CompletableFuture<Void> allOfFastFail(CompletableFuture<?>... cfs) {
+        requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return CompletableFuture.completedFuture(null);
         if (size == 1) return cfs[0].thenApply(v -> null);
-        requireCfEleNonNull(cfs);
 
         final CompletableFuture[] successOrBeIncomplete = new CompletableFuture[size];
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
@@ -122,10 +122,10 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> CompletableFuture<List<T>> allOfFastFailWithResult(CompletableFuture<T>... cfs) {
+        requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return CompletableFuture.completedFuture(Collections.emptyList());
         if (size == 1) return cfs[0].thenApply(Arrays::asList);
-        requireCfEleNonNull(cfs);
 
         final CompletableFuture[] successOrBeIncomplete = new CompletableFuture[size];
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
@@ -139,7 +139,8 @@ public final class CompletableFutureUtils {
         return (CompletableFuture) CompletableFuture.anyOf(failedOrBeIncomplete);
     }
 
-    private static void requireCfEleNonNull(CompletableFuture<?>... cfs) {
+    private static void requireCfsAndEleNonNull(CompletableFuture<?>... cfs) {
+        requireNonNull(cfs, "cfs is null");
         for (int i = 0; i < cfs.length; i++) {
             requireNonNull(cfs[i], "cf" + i + " is null");
         }
@@ -200,10 +201,10 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static CompletableFuture<Object> anyOfSuccess(CompletableFuture<?>... cfs) {
+        requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return failedFuture(new NoCfsProvidedException());
         if (size == 1) return (CompletableFuture<Object>) copy(cfs[0]);
-        requireCfEleNonNull(cfs);
 
         // NOTE: fill ONE MORE element of successOrBeIncompleteCfs LATER
         final CompletableFuture[] successOrBeIncomplete = new CompletableFuture[size + 1];
@@ -254,8 +255,7 @@ public final class CompletableFutureUtils {
     @SuppressWarnings("unchecked")
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> combine(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
-        requireNonNull(cf1, "cf1 is null");
-        requireNonNull(cf2, "cf2 is null");
+        requireCfsAndEleNonNull(cf1, cf2);
 
         final Object[] result = new Object[2];
         return CompletableFuture.allOf(
@@ -279,9 +279,7 @@ public final class CompletableFutureUtils {
     @SuppressWarnings("unchecked")
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> combine(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
-        requireNonNull(cf1, "cf1 is null");
-        requireNonNull(cf2, "cf2 is null");
-        requireNonNull(cf3, "cf3 is null");
+        requireCfsAndEleNonNull(cf1, cf2, cf3);
 
         final Object[] result = new Object[3];
         return CompletableFuture.allOf(
@@ -307,10 +305,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> combine(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
             CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
-        requireNonNull(cf1, "cf1 is null");
-        requireNonNull(cf2, "cf2 is null");
-        requireNonNull(cf3, "cf3 is null");
-        requireNonNull(cf4, "cf4 is null");
+        requireCfsAndEleNonNull(cf1, cf2, cf3, cf4);
 
         final Object[] result = new Object[4];
         return CompletableFuture.allOf(
@@ -337,11 +332,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> combine(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
             CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
-        requireNonNull(cf1, "cf1 is null");
-        requireNonNull(cf2, "cf2 is null");
-        requireNonNull(cf3, "cf3 is null");
-        requireNonNull(cf4, "cf4 is null");
-        requireNonNull(cf5, "cf5 is null");
+        requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5);
 
         final Object[] result = new Object[5];
         return CompletableFuture.allOf(
