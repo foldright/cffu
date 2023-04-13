@@ -17,7 +17,7 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * This class contains some enhanced methods for {@link CompletableFuture}.
+ * This class contains the enhanced methods for {@link CompletableFuture}.
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  */
@@ -69,8 +69,9 @@ public final class CompletableFutureUtils {
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that is completed with the result
-     * or exception of any of the given CompletableFutures when one completes
+     * or exception from any of the given CompletableFutures when one completes
      * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #anyOfSuccessWithType(CompletableFuture[])
      * @see CompletableFuture#anyOf(CompletableFuture[])
      */
     @Contract(pure = true)
@@ -84,9 +85,55 @@ public final class CompletableFutureUtils {
      * Returns a new CompletableFuture that is success when any of the given CompletableFutures success,
      * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
      * the returned CompletableFuture also does so, with a CompletionException holding
-     * an exception from any given CompletableFutures as its cause. If no CompletableFutures are provided,
+     * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
      * returns a new CompletableFuture that is already completed exceptionally
      * with the singleton exception instance {@link #NO_CF_PROVIDED_EXCEPTION}.
+     *
+     * @param cfs the CompletableFutures
+     * @return a new CompletableFuture that is success
+     * when any of the given CompletableFutures success, with the same result
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #anyOfSuccessWithType(CompletableFuture[])
+     */
+    @Contract(pure = true)
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static CompletableFuture<Object> anyOfSuccess(CompletableFuture<?>... cfs) {
+        final int size = cfs.length;
+        if (size == 0) return failedFuture(NO_CF_PROVIDED_EXCEPTION);
+        if (size == 1) return (CompletableFuture<Object>) copy(cfs[0]).toCompletableFuture();
+
+        final CompletableFuture incomplete = new CompletableFuture();
+
+        // NOTE: use ONE MORE element of successOrBeIncompleteCfs LATER
+        final CompletableFuture[] successOrBeIncomplete = new CompletableFuture[size + 1];
+        final CompletableFuture[] failedOrBeIncomplete = new CompletableFuture[size];
+        for (int i = 0; i < size; i++) {
+            final CompletableFuture cf = cfs[i];
+
+            successOrBeIncomplete[i] = cf.handle((v, ex) -> ex == null ? cf : incomplete)
+                    .thenCompose(Function.identity());
+
+            failedOrBeIncomplete[i] = cf.handle((v, ex) -> ex == null ? incomplete : cf)
+                    .thenCompose(Function.identity());
+        }
+
+        // NOTE: use the ONE MORE element of successOrBeIncompleteCfs HERE
+        //       store a cf which is failed when all given cfs failed, otherwise be incomplete
+        successOrBeIncomplete[size] = CompletableFuture.allOf(failedOrBeIncomplete);
+
+        return CompletableFuture.anyOf(successOrBeIncomplete);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is success when any of the given CompletableFutures success,
+     * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
+     * the returned CompletableFuture also does so, with a CompletionException holding
+     * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
+     * returns a new CompletableFuture that is already completed exceptionally
+     * with the singleton exception instance {@link #NO_CF_PROVIDED_EXCEPTION}.
+     * <p>
+     * Same as {@link #anyOfSuccess(CompletableFuture[])},
+     * but return result type is specified type instead of {@code Object}.
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that is success
@@ -97,36 +144,13 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     @SafeVarargs
     @SuppressWarnings("unchecked")
-    public static <T> CompletableFuture<T> anyOfSuccess(CompletableFuture<T>... cfs) {
-        final int size = cfs.length;
-        if (size == 0) return failedFuture(NO_CF_PROVIDED_EXCEPTION);
-        if (size == 1) return copy(cfs[0]).toCompletableFuture();
-
-        final CompletableFuture<T> incomplete = new CompletableFuture<>();
-
-        // NOTE: use ONE MORE element of successOrBeIncompleteCfs LATER
-        final CompletableFuture<T>[] successOrBeIncomplete = new CompletableFuture[size + 1];
-        final CompletableFuture<T>[] failedOrBeIncomplete = new CompletableFuture[size];
-        for (int i = 0; i < size; i++) {
-            final CompletableFuture<T> cf = cfs[i];
-
-            successOrBeIncomplete[i] = cf.handle((v, ex) -> ex == null ? cf : incomplete)
-                    .thenCompose(Function.identity());
-
-            failedOrBeIncomplete[i] = cf.handle((v, ex) -> ex == null ? incomplete : cf)
-                    .thenCompose(Function.identity());
-        }
-
-        // NOTE: use the ONE MORE element of successOrBeIncompleteCfs HERE
-        //       store a cf which is failed when all given cfs failed, otherwise, be incomplete
-        successOrBeIncomplete[size] = (CompletableFuture<T>) CompletableFuture.allOf(failedOrBeIncomplete);
-
-        return anyOfWithType(successOrBeIncomplete);
+    public static <T> CompletableFuture<T> anyOfSuccessWithType(CompletableFuture<T>... cfs) {
+        return (CompletableFuture<T>) anyOfSuccess(cfs);
     }
 
     /**
      * Singleton exception instance because NO CompletableFutures are provided
-     * for {@link #anyOfSuccess(CompletableFuture[])}.
+     * for {@link #anyOfSuccessWithType(CompletableFuture[])}.
      */
     public static final RuntimeException NO_CF_PROVIDED_EXCEPTION =
             new RuntimeException("NO cfs are provided");

@@ -84,7 +84,7 @@ class CompletableFutureUtilsTest {
     @Test
     void test_anyOfSuccess__trivial_case() throws Exception {
         // success then success
-        assertEquals(n, anyOfSuccess(
+        assertEquals(n, anyOfSuccessWithType(
                 createIncompleteFuture(),
                 createIncompleteFuture(),
                 CompletableFuture.supplyAsync(() -> {
@@ -95,7 +95,7 @@ class CompletableFutureUtilsTest {
         ).get());
 
         // success then failed
-        assertEquals(n, anyOfSuccess(
+        assertEquals(n, anyOfSuccessWithType(
                 createIncompleteFuture(),
                 createIncompleteFuture(),
                 CompletableFuture.supplyAsync(() -> {
@@ -106,7 +106,7 @@ class CompletableFutureUtilsTest {
         ).get());
 
         // all success
-        assertEquals(n, anyOfSuccess(
+        assertEquals(n, anyOfSuccessWithType(
                 CompletableFuture.supplyAsync(() -> {
                     sleep(300);
                     return another_n;
@@ -119,9 +119,9 @@ class CompletableFutureUtilsTest {
         ).get());
 
 
-        assertTrue(anyOfSuccess().isDone());
+        assertTrue(anyOfSuccessWithType().isDone());
         try {
-            anyOfSuccess().get();
+            anyOfSuccessWithType().get();
 
             fail();
         } catch (ExecutionException expected) {
@@ -131,7 +131,7 @@ class CompletableFutureUtilsTest {
 
     @Test
     void test_anyOfSuccess__fastFailed_Then_success() throws Exception {
-        assertEquals(n, anyOfSuccess(
+        assertEquals(n, anyOfSuccessWithType(
                 createFailedFuture(rte),
                 CompletableFuture.supplyAsync(() -> {
                     sleep(100);
@@ -146,7 +146,7 @@ class CompletableFutureUtilsTest {
         RuntimeException ex1 = new RuntimeException();
         RuntimeException ex2 = new RuntimeException();
         try {
-            anyOfSuccess(
+            anyOfSuccessWithType(
                     CompletableFuture.supplyAsync(() -> {
                         sleep(100);
                         throw rte;
