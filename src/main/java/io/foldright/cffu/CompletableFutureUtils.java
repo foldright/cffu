@@ -56,16 +56,13 @@ public final class CompletableFutureUtils {
 
         final Object[] result = new Object[size];
 
-        final CompletableFuture<?>[] thenCfs = new CompletableFuture[size];
+        final CompletableFuture<?>[] collectResultCfs = new CompletableFuture[size];
         for (int i = 0; i < size; i++) {
             final int index = i;
-            final CompletableFuture<T> cf = cfs[index];
-
-            CompletableFuture<Void> thenCf = cf.thenAccept(x -> result[index] = x);
-            thenCfs[index] = thenCf;
+            collectResultCfs[index] = cfs[index].thenAccept(v -> result[index] = v);
         }
 
-        return CompletableFuture.allOf(thenCfs)
+        return CompletableFuture.allOf(collectResultCfs)
                 .thenApply(unused -> (List<T>) Arrays.asList(result));
     }
 
@@ -405,7 +402,7 @@ public final class CompletableFutureUtils {
         final CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
         try {
             // `exceptionallyCompose` is the new method of CompletableFuture since java 12
-            cf.exceptionallyCompose(x -> cf);
+            cf.exceptionallyCompose(v -> cf);
             b = true;
         } catch (NoSuchMethodError e) {
             b = false;
