@@ -449,7 +449,7 @@ public final class CffuFactory {
      * the returned Cffu also does so, with a CompletionException holding
      * an exception from any of the given Cffu as its cause. If no Cffu are provided,
      * returns a new Cffu that is already completed exceptionally
-     * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
+     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
      *
      * @param cfs the Cffus
      * @return a new Cffu
@@ -467,7 +467,7 @@ public final class CffuFactory {
      * the returned Cffu also does so, with a CompletionException holding
      * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
      * returns a new Cffu that is already completed exceptionally
-     * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
+     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
      *
      * @param cfs the CompletableFutures
      * @return a new Cffu
@@ -649,7 +649,7 @@ public final class CffuFactory {
      * the returned Cffu also does so, with a CompletionException holding
      * an exception from any of the given Cffu as its cause. If no Cffu are provided,
      * returns a new Cffu that is already completed exceptionally
-     * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
+     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
      *
      * @param cfs the Cffus
      * @return a new Cffu
@@ -667,7 +667,7 @@ public final class CffuFactory {
      * the returned Cffu also does so, with a CompletionException holding
      * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
      * returns a new Cffu that is already completed exceptionally
-     * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
+     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
      *
      * @param cfs the CompletableFutures
      * @return a new Cffu

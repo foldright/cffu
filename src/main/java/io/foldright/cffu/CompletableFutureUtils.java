@@ -25,6 +25,10 @@ import static java.util.Objects.requireNonNull;
 @ParametersAreNonnullByDefault
 @ReturnValuesAreNonnullByDefault
 public final class CompletableFutureUtils {
+    ////////////////////////////////////////////////////////////////////////////////
+    //# allOf* methods
+    ////////////////////////////////////////////////////////////////////////////////
+
     /**
      * Returns a new CompletableFuture with the result of all the given CompletableFutures,
      * the new CompletableFuture is completed when all the given CompletableFutures complete.
@@ -163,6 +167,10 @@ public final class CompletableFutureUtils {
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////////
+    //# anyOf* methods
+    ////////////////////////////////////////////////////////////////////////////////
+
     /**
      * Returns a new CompletableFuture that is completed
      * when any of the given CompletableFutures complete, with the same result.
@@ -190,7 +198,7 @@ public final class CompletableFutureUtils {
      * the returned CompletableFuture also does so, with a CompletionException holding
      * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
      * returns a new CompletableFuture that is already completed exceptionally
-     * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
+     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that success
@@ -224,7 +232,7 @@ public final class CompletableFutureUtils {
      * the returned CompletableFuture also does so, with a CompletionException holding
      * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
      * returns a new CompletableFuture that is already completed exceptionally
-     * with a CompletionException holding a {@link NoCfsProvidedException} exception as its cause.
+     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
      * <p>
      * Same as {@link #anyOfSuccess(CompletableFuture[])},
      * but return result type is specified type instead of {@code Object}.
@@ -241,6 +249,10 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<T> anyOfSuccessWithType(CompletableFuture<T>... cfs) {
         return (CompletableFuture<T>) anyOfSuccess(cfs);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# combine methods
+    ////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Returns a new CompletableFuture that is completed when the given two CompletableFutures complete.
