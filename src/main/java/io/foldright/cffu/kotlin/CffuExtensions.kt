@@ -22,7 +22,11 @@ import java.util.concurrent.CompletionStage
 
 /**
  * Returns a new CompletableFuture with the result of all the given CompletableFutures,
- * the new CompletableFuture is completed when all the given CompletableFutures complete.
+ * the returned new CompletableFuture is completed when all the given CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
+ * also does so, with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a CompletableFuture completed
+ * with the value [emptyList][java.util.Collections.emptyList].
  *
  * Same as [allOfCompletableFutureVoid],
  * but the returned CompletableFuture contains the results of input CompletableFutures.
@@ -35,7 +39,11 @@ fun <T> Collection<CompletableFuture<T>>.allOfCompletableFuture(): CompletableFu
 
 /**
  * Returns a new CompletableFuture with the result of all the given CompletableFutures,
- * the new CompletableFuture is completed when all the given CompletableFutures complete.
+ * the returned new CompletableFuture is completed when all the given CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
+ * also does so, with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a CompletableFuture completed
+ * with the value [emptyList][java.util.Collections.emptyList].
  *
  * Same as [allOfCompletableFutureVoid],
  * but the returned CompletableFuture contains the results of input CompletableFutures.
@@ -130,7 +138,7 @@ fun Array<CompletableFuture<*>>.anyOfCompletableFutureAny(): CompletableFuture<A
     CompletableFuture.anyOf(*this)
 
 /**
- * Returns a new CompletableFuture that is success when any of the given CompletableFutures success,
+ * Returns a new CompletableFuture that success when any of the given CompletableFutures success,
  * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
  * the returned CompletableFuture also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
@@ -146,7 +154,7 @@ fun <T> Collection<CompletableFuture<T>>.anyOfSuccessCompletableFuture(): Comple
     CompletableFutureUtils.anyOfSuccessWithType(*this.toTypedArray())
 
 /**
- * Returns a new CompletableFuture that is success when any of the given CompletableFutures success,
+ * Returns a new CompletableFuture that success when any of the given CompletableFutures success,
  * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
  * the returned CompletableFuture also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
@@ -162,7 +170,7 @@ fun <T> Array<CompletableFuture<T>>.anyOfSuccessCompletableFuture(): Completable
     CompletableFutureUtils.anyOfSuccessWithType(*this)
 
 /**
- * Returns a new CompletableFuture that is success when any of the given CompletableFutures success,
+ * Returns a new CompletableFuture that success when any of the given CompletableFutures success,
  * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
  * the returned CompletableFuture also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
@@ -179,7 +187,7 @@ fun Collection<CompletableFuture<*>>.anyOfSuccessCompletableFutureAny(): Complet
     CompletableFutureUtils.anyOfSuccess(*this.toTypedArray())
 
 /**
- * Returns a new CompletableFuture that is success when any of the given CompletableFutures success,
+ * Returns a new CompletableFuture that success when any of the given CompletableFutures success,
  * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
  * the returned CompletableFuture also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
@@ -306,6 +314,10 @@ fun <T, CS : CompletionStage<T>> Array<CS>.asCffu(cffuFactory: CffuFactory): Arr
 /**
  * Returns a new Cffu with the result of all the given Cffus,
  * the new Cffu is completed when all the given Cffus complete.
+ * If any of the given Cffus complete exceptionally, then the returned Cffu
+ * also does so, with a CompletionException holding this exception as its cause.
+ * If no Cffus are provided, returns a Cffu completed
+ * with the value [emptyList][java.util.Collections.emptyList].
  *
  * Same as [allOfCffuVoid], but the returned Cffu contains the results of input Cffus.
  * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
@@ -319,6 +331,10 @@ fun <T> Collection<Cffu<T>>.allOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
 /**
  * Returns a new Cffu with the result of all the given Cffus,
  * the new Cffu is completed when all the given Cffus complete.
+ * If any of the given Cffus complete exceptionally, then the returned Cffu
+ * also does so, with a CompletionException holding this exception as its cause.
+ * If no Cffus are provided, returns a Cffu completed
+ * with the value [emptyList][java.util.Collections.emptyList].
  *
  * Same as [allOfCffuVoid], but the returned Cffu contains the results of input Cffus.
  * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
@@ -333,6 +349,10 @@ fun <T> Array<Cffu<T>>.allOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
 /**
  * Returns a new Cffu with the result of all the given CompletableFutures,
  * the new Cffu is completed when all the given CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
+ * also does so, with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a Cffu completed
+ * with the value [emptyList][java.util.Collections.emptyList].
  *
  * Same as [allOfCffuVoid], but the returned Cffu contains the results of input CompletableFutures.
  * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
@@ -347,6 +367,10 @@ fun <T> Collection<CompletableFuture<T>>.allOfCffu(cffuFactory: CffuFactory): Cf
 /**
  * Returns a new Cffu with the result of all the given CompletableFutures,
  * the new Cffu is completed when all the given CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
+ * also does so, with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a Cffu completed
+ * with the value [emptyList][java.util.Collections.emptyList].
  *
  * Same as [allOfCffuVoid], but the returned Cffu contains the results of input CompletableFutures.
  * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
@@ -507,7 +531,7 @@ fun Array<CompletableFuture<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cffu<Any
     cffuFactory.anyOf(*this)
 
 /**
- * Returns a new Cffu that is success when any of the given Cffus success,
+ * Returns a new Cffu that success when any of the given Cffus success,
  * with the same result. Otherwise, all the given Cffus complete exceptionally,
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given Cffus as its cause. If no Cffus are provided,
@@ -523,7 +547,7 @@ fun <T> Collection<Cffu<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> 
     cffuFactory.cffuAnyOfSuccess(*this.toTypedArray())
 
 /**
- * Returns a new Cffu that is success when any of the given Cffus success,
+ * Returns a new Cffu that success when any of the given Cffus success,
  * with the same result. Otherwise, all the given Cffus complete exceptionally,
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given Cffus as its cause. If no Cffus are provided,
@@ -539,7 +563,7 @@ fun <T> Array<Cffu<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.cffuAnyOfSuccess(*this)
 
 /**
- * Returns a new Cffu that is success when any of the given CompletableFutures success,
+ * Returns a new Cffu that success when any of the given CompletableFutures success,
  * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
@@ -556,7 +580,7 @@ fun <T> Collection<CompletableFuture<T>>.anyOfSuccessCffu(cffuFactory: CffuFacto
     cffuFactory.cffuAnyOfSuccess(*this.toTypedArray())
 
 /**
- * Returns a new Cffu that is success when any of the given CompletableFutures success,
+ * Returns a new Cffu that success when any of the given CompletableFutures success,
  * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
@@ -572,7 +596,7 @@ fun <T> Array<CompletableFuture<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): 
     cffuFactory.cffuAnyOfSuccess(*this)
 
 /**
- * Returns a new Cffu that is success when any of the given CompletableFutures success,
+ * Returns a new Cffu that success when any of the given CompletableFutures success,
  * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
@@ -588,7 +612,7 @@ fun Collection<Cffu<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory): Cffu<Any>
     cffuFactory.anyOfSuccess(*this.toTypedArray())
 
 /**
- * Returns a new Cffu that is success when any of the given CompletableFutures success,
+ * Returns a new Cffu that success when any of the given CompletableFutures success,
  * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
@@ -604,7 +628,7 @@ fun Array<Cffu<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
     cffuFactory.anyOfSuccess(*this)
 
 /**
- * Returns a new Cffu that is success when any of the given CompletableFutures success,
+ * Returns a new Cffu that success when any of the given CompletableFutures success,
  * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
@@ -621,7 +645,7 @@ fun Collection<CompletableFuture<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactor
     cffuFactory.anyOfSuccess(*this.toTypedArray())
 
 /**
- * Returns a new Cffu that is success when any of the given CompletableFutures success,
+ * Returns a new Cffu that success when any of the given CompletableFutures success,
  * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,

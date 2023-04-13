@@ -444,7 +444,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is success when any of the given Cffus success,
+     * Returns a new Cffu that success when any of the given Cffus success,
      * with the same result. Otherwise, all the given Cffus complete exceptionally,
      * the returned Cffu also does so, with a CompletionException holding
      * an exception from any of the given Cffu as its cause. If no Cffu are provided,
@@ -462,7 +462,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is success when any of the given CompletableFutures success,
+     * Returns a new Cffu that success when any of the given CompletableFutures success,
      * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
      * the returned Cffu also does so, with a CompletionException holding
      * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
@@ -544,9 +544,14 @@ public final class CffuFactory {
     /**
      * Returns a new Cffu with the result of all the given Cffus,
      * the new Cffu is completed when all the given Cffus complete.
+     * Returns a new Cffu that is completed when all the given Cffus complete.
+     * If any of the given Cffus complete exceptionally, then the returned Cffu
+     * also does so, with a CompletionException holding this exception as its cause.
+     * If no Cffus are provided, returns a Cffu completed
+     * with the value {@link java.util.Collections#emptyList() emptyList}.
      * <p>
-     * Same to {@link #allOf(Cffu[])}, but the returned CompletableFuture
-     * contains the results of input CompletableFutures.
+     * Same to {@link #allOf(Cffu[])}, but the returned Cffu
+     * contains the results of input Cffus.
      *
      * @param cfs the Cffus
      * @return a new Cffu that is completed when all the given Cffus complete
@@ -562,6 +567,10 @@ public final class CffuFactory {
     /**
      * Returns a new Cffu with the result of all the given CompletableFutures,
      * the new Cffu is completed when all the given CompletableFutures complete.
+     * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
+     * also does so, with a CompletionException holding this exception as its cause.
+     * If no CompletableFutures are provided, returns a Cffu completed
+     * with the value {@link java.util.Collections#emptyList() emptyList}.
      * <p>
      * Same as {@link #cffuAllOf(Cffu[])} with overloaded argument type {@link CompletableFuture}.
      *
@@ -635,7 +644,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is success when any of the given Cffus success,
+     * Returns a new Cffu that success when any of the given Cffus success,
      * with the same result. Otherwise, all the given Cffus complete exceptionally,
      * the returned Cffu also does so, with a CompletionException holding
      * an exception from any of the given Cffu as its cause. If no Cffu are provided,
@@ -653,7 +662,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is success when any of the given CompletableFutures success,
+     * Returns a new Cffu that success when any of the given CompletableFutures success,
      * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
      * the returned Cffu also does so, with a CompletionException holding
      * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
@@ -711,7 +720,7 @@ public final class CffuFactory {
      * Same as {@link #cffuCombine(Cffu, Cffu)} with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 2 CompletableFutures complete
-     * @throws NullPointerException if any input CompletableFutures are {@code null}
+     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
      * @see #cffuCombine(Cffu, Cffu)
      * @see #cffuAllOf(CompletableFuture[])
      */
@@ -744,7 +753,7 @@ public final class CffuFactory {
      * Same as {@link #cffuCombine(Cffu, Cffu, Cffu)} with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 3 CompletableFutures complete
-     * @throws NullPointerException if any input CompletableFutures are {@code null}
+     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
      * @see #cffuCombine(Cffu, Cffu, Cffu)
      * @see #cffuAllOf(CompletableFuture[])
      */
@@ -780,7 +789,7 @@ public final class CffuFactory {
      * Same as {@link #cffuCombine(Cffu, Cffu, Cffu, Cffu)} with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 4 CompletableFutures complete
-     * @throws NullPointerException if any input CompletableFutures are {@code null}
+     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
      * @see #cffuCombine(Cffu, Cffu, Cffu, Cffu)
      * @see #cffuAllOf(CompletableFuture[])
      */
@@ -818,7 +827,7 @@ public final class CffuFactory {
      * with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 5 CompletableFutures complete
-     * @throws NullPointerException if any input CompletableFutures are {@code null}
+     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
      * @see #cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)
      * @see #cffuAllOf(CompletableFuture[])
      */
