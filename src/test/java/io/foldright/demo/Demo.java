@@ -5,6 +5,7 @@ import io.foldright.cffu.CffuFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
 
@@ -16,10 +17,9 @@ public class Demo {
     private static final CffuFactory cffuFactory = newCffuFactoryBuilder(myBizThreadPool).build();
 
     public static void main(String[] args) throws Exception {
-        // Run in myBizThreadPool
-        Cffu<Integer> cf0 = cffuFactory.supplyAsync(() -> 21);
-
-        Cffu<Integer> cf42 = cf0.thenApply(n -> n * 2);
+        Cffu<Integer> cf42 = cffuFactory
+                .supplyAsync(() -> 21) // Run in myBizThreadPool
+                .thenApply(n -> n * 2);
 
         // Run in myBizThreadPool
         Cffu<Integer> longTaskA = cf42.thenApplyAsync(n -> {
@@ -33,14 +33,15 @@ public class Demo {
             return n / 2;
         });
 
-
-        Cffu<Integer> finalCf = longTaskA.thenCombine(longTaskB, Integer::sum);
+        Cffu<Integer> finalCf = longTaskA.thenCombine(longTaskB, Integer::sum)
+                .orTimeout(2, TimeUnit.SECONDS);
 
         Integer result = finalCf.get();
         System.out.println(result);
 
         ////////////////////////////////////////
         // cleanup
+        ////////////////////////////////////////
         myBizThreadPool.shutdown();
     }
 
