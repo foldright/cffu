@@ -30,7 +30,7 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture with the result of all the given CompletableFutures,
+     * Returns a new CompletableFuture with the results of all the given CompletableFutures,
      * the new CompletableFuture is completed when all the given CompletableFutures complete.
      * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
      * also does so, with a CompletionException holding this exception as its cause.
@@ -67,12 +67,12 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that success when all the given CompletableFutures success.
+     * Returns a new CompletableFuture that success when all the given CompletableFutures success,
+     * the results({@code CompletableFuture<Void>}) of the given CompletableFutures are not reflected
+     * in the returned CompletableFuture, but may be obtained by inspecting them individually.
      * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
      * also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
-     * Otherwise, the results, if any, of the given CompletableFutures are not reflected in
-     * the returned CompletableFuture, but may be obtained by inspecting them individually.
      * If no CompletableFutures are provided, returns a CompletableFuture completed with the value {@code null}.
      *
      * @param cfs the CompletableFutures
@@ -101,13 +101,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture with the result of all the given CompletableFutures,
+     * Returns a new CompletableFuture with the results of all the given CompletableFutures,
      * the new CompletableFuture success when all the given CompletableFutures success.
      * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
      * also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
-     * Otherwise, the results, if any, of the given CompletableFutures are not reflected in
-     * the returned CompletableFuture, but may be obtained by inspecting them individually.
      * If no CompletableFutures are provided, returns a CompletableFuture completed
      * with the value {@link Collections#emptyList() emptyList}.
      * <p>
