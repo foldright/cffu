@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Contract;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
@@ -313,7 +314,13 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# allOf / anyOf methods, equivalent to same name static methods of CompletableFuture
+    //# allOf / anyOf methods, without return result type enhancement
+    //  - allOf*, return Cffu<Void>, equivalent to same name methods:
+    //    - CompletableFuture.allOf()
+    //    - CompletableFutureUtils.allOfFastFail()
+    //  - anyOf*, return Cffu<Object>, equivalent to same name methods:
+    //    - CompletableFuture.anyOf()
+    //    - CompletableFutureUtils.anyOfSuccess()
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -346,16 +353,22 @@ public final class CffuFactory {
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
+    @SuppressWarnings("unchecked")
     public Cffu<Void> allOf(Cffu<?>... cfs) {
-        @SuppressWarnings("unchecked")
-        CompletableFuture<?>[] args = toCompletableFutureArray((Cffu<Object>[]) cfs);
-        return new0(CompletableFuture.allOf(args));
+        return allOf(toCompletableFutureArray((Cffu<Object>[]) cfs));
     }
 
     /**
+     * Returns a new Cffu that is completed when all the given CompletableFutures complete.
+     * If any of the given CompletableFuture complete exceptionally, then the returned
+     * Cffu also does so, with a CompletionException holding this exception as its cause.<br>
+     * Otherwise, the results, if any, of the given CompletableFutures are not reflected in
+     * the returned Cffu({@code Cffu<Void>}), but may be obtained by inspecting them individually.<br>
+     * If no CompletableFutures are provided, returns a Cffu completed with the value {@code null}.
+     * <p>
      * Same as {@link #allOf(Cffu[])} with overloaded argument type {@link CompletableFuture}.
      * <p>
-     * if you need the results of given Cffus, prefer below methods:
+     * if you need the results of given CompletableFutures, prefer below methods:
      * <ol>
      *   <li>{@link #cffuAllOf(CompletableFuture[])}
      *   <li>{@link #cffuCombine(CompletableFuture, CompletableFuture)}/{@link #cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
@@ -391,6 +404,61 @@ public final class CffuFactory {
     }
 
     /**
+     * Returns a new Cffu that success when all the given Cffus success,
+     * the results({@code Cffu<Void>}) of the given Cffus are not reflected
+     * in the returned Cffu, but may be obtained by inspecting them individually.
+     * If any of the given Cffus complete exceptionally, then the returned Cffu
+     * also does so *without* waiting other incomplete given Cffus,
+     * with a CompletionException holding this exception as its cause.
+     * If no Cffus are provided, returns a Cffu completed with the value {@code null}.
+     *
+     * @param cfs the Cffus
+     * @return a new Cffu that success when all the given Cffus success
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see CompletableFutureUtils#allOfFastFail(CompletableFuture[])
+     */
+    @Contract(pure = true)
+    @SuppressWarnings("unchecked")
+    public Cffu<Void> allOfFastFail(Cffu<?>... cfs) {
+        return allOfFastFail(toCompletableFutureArray((Cffu<Object>[]) cfs));
+    }
+
+    /**
+     * Returns a new Cffu that success when all the given CompletableFutures success,
+     * the results({@code Cffu<Void>}) of the given CompletableFutures are not reflected
+     * in the returned Cffu, but may be obtained by inspecting them individually.
+     * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
+     * also does so *without* waiting other incomplete given CompletableFutures,
+     * with a CompletionException holding this exception as its cause.
+     * If no CompletableFutures are provided, returns a Cffu completed with the value {@code null}.
+     * <p>
+     * Same as {@link #allOfFastFail(Cffu[])} with overloaded argument type {@link CompletableFuture}.
+     *
+     * @param cfs the CompletableFutures
+     * @return a new Cffu that success when all the given CompletableFutures success
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #allOfFastFail(Cffu[])
+     * @see #cffuAllOfFastFail(CompletableFuture[])
+     * @see CompletableFutureUtils#allOfFastFail(CompletableFuture[])
+     */
+    @Contract(pure = true)
+    public Cffu<Void> allOfFastFail(CompletableFuture<?>... cfs) {
+        return new0(CompletableFutureUtils.allOfFastFail(cfs));
+    }
+
+    /**
+     * Provided this overloaded method just for resolving "allOfFastFail is ambiguous" problem
+     * when call {@code allOfFastFail} with empty arguments: {@code cffuFactory.allOfFastFail()}.
+     *
+     * @see #allOfFastFail(Cffu[])
+     * @see #allOfFastFail(CompletableFuture[])
+     */
+    @Contract(pure = true)
+    public Cffu<Void> allOfFastFail() {
+        return new0(CompletableFutureUtils.allOfFastFail());
+    }
+
+    /**
      * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.<br>
      * Otherwise, if it completed exceptionally, the returned Cffu also does so,
      * with a CompletionException holding this exception as its cause.<br>
@@ -401,16 +469,15 @@ public final class CffuFactory {
      *
      * @param cfs the Cffus
      * @return a new Cffu that is completed with the result
-     * or exception of any of the given Cffus when one completes
+     * or exception from any of the given Cffus when one completes
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #cffuAnyOf(Cffu[])
      * @see CompletableFuture#anyOf(CompletableFuture[])
      */
     @Contract(pure = true)
+    @SuppressWarnings("unchecked")
     public Cffu<Object> anyOf(Cffu<?>... cfs) {
-        @SuppressWarnings("unchecked")
-        CompletableFuture<Object>[] args = toCompletableFutureArray((Cffu<Object>[]) cfs);
-        return new0(CompletableFuture.anyOf(args));
+        return anyOf(toCompletableFutureArray((Cffu<Object>[]) cfs));
     }
 
     /**
@@ -422,7 +489,7 @@ public final class CffuFactory {
      *
      * @param cfs the CompletableFutures
      * @return a new Cffu that is completed with the result
-     * or exception of any of the given CompletableFutures when one completes
+     * or exception from any of the given CompletableFutures when one completes
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #cffuAnyOf(CompletableFuture[])
      * @see #anyOf(Cffu[])
@@ -443,6 +510,53 @@ public final class CffuFactory {
     @Contract(pure = true)
     public Cffu<Object> anyOf() {
         return newIncompleteCffu();
+    }
+
+    /**
+     * Returns a new Cffu that success when any of the given Cffus success,
+     * with the same result. Otherwise, all the given Cffus complete exceptionally,
+     * the returned Cffu also does so, with a CompletionException holding
+     * an exception from any of the given Cffu as its cause. If no Cffu are provided,
+     * returns a new Cffu that is already completed exceptionally
+     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
+     *
+     * @param cfs the Cffus
+     * @return a new Cffu
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #cffuAnyOf(Cffu[])
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public Cffu<Object> anyOfSuccess(Cffu<?>... cfs) {
+        return anyOfSuccess(toCompletableFutureArray((Cffu[]) cfs));
+    }
+
+    /**
+     * Returns a new Cffu that success when any of the given CompletableFutures success,
+     * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
+     * the returned Cffu also does so, with a CompletionException holding
+     * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
+     * returns a new Cffu that is already completed exceptionally
+     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
+     *
+     * @param cfs the CompletableFutures
+     * @return a new Cffu
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #cffuAnyOfSuccess(Cffu[])
+     * @see #cffuAnyOf(Cffu[])
+     */
+    public Cffu<Object> anyOfSuccess(CompletableFuture<?>... cfs) {
+        return new0(CompletableFutureUtils.anyOfSuccess(cfs));
+    }
+
+    /**
+     * Provided this overloaded method just for resolving "cffuAnyOfSuccess is ambiguous" problem
+     * when call {@code anyOfSuccess} with empty arguments: {@code cffuFactory.anyOfSuccess()}.
+     *
+     * @see #cffuAnyOfSuccess(Cffu[])
+     * @see #cffuAnyOfSuccess(CompletableFuture[])
+     */
+    public Cffu<Object> anyOfSuccess() {
+        return new0(CompletableFutureUtils.anyOfSuccess());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -497,11 +611,16 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu with the result of all the given Cffus,
+     * Returns a new Cffu with the results of all the given Cffus,
      * the new Cffu is completed when all the given Cffus complete.
+     * Returns a new Cffu that is completed when all the given Cffus complete.
+     * If any of the given Cffus complete exceptionally, then the returned Cffu
+     * also does so, with a CompletionException holding this exception as its cause.
+     * If no Cffus are provided, returns a Cffu completed
+     * with the value {@link java.util.Collections#emptyList() emptyList}.
      * <p>
-     * Same to {@link #allOf(Cffu[])}, but the returned CompletableFuture
-     * contains the results of input CompletableFutures.
+     * Same to {@link #allOf(Cffu[])}, but the returned Cffu
+     * contains the results of input Cffus.
      *
      * @param cfs the Cffus
      * @return a new Cffu that is completed when all the given Cffus complete
@@ -515,8 +634,12 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the result of all the given CompletableFutures,
+     * Returns a new Cffu with the results of all the given CompletableFutures,
      * the new Cffu is completed when all the given CompletableFutures complete.
+     * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
+     * also does so, with a CompletionException holding this exception as its cause.
+     * If no CompletableFutures are provided, returns a Cffu completed
+     * with the value {@link java.util.Collections#emptyList() emptyList}.
      * <p>
      * Same as {@link #cffuAllOf(Cffu[])} with overloaded argument type {@link CompletableFuture}.
      *
@@ -536,11 +659,69 @@ public final class CffuFactory {
      * when call {@code cffuAllOf} with empty arguments: {@code cffuFactory.cffuAllOf()}.
      *
      * @see #cffuAllOf(Cffu[])
-     * @see #cffuAllOf(Cffu[])
+     * @see #cffuAllOf(CompletableFuture[])
      */
     @Contract(pure = true)
     public <T> Cffu<List<T>> cffuAllOf() {
-        return dummy();
+        return new0(CompletableFutureUtils.allOfWithResult());
+    }
+
+    /**
+     * Returns a new Cffu with the result of all the given Cffus,
+     * the new Cffu success when all the given Cffus success.
+     * If any of the given Cffus complete exceptionally, then the returned Cffu
+     * also does so *without* waiting other incomplete given Cffus,
+     * with a CompletionException holding this exception as its cause.
+     * If no CompletableFutures are provided, returns a Cffu completed
+     * with the value {@link Collections#emptyList() emptyList}.
+     * <p>
+     * Same as {@link #cffuAllOfFastFail(Cffu[])} with overloaded argument type {@link CompletableFuture}.
+     *
+     * @param cfs the CompletableFutures
+     * @return a new CompletableFuture that success when all the given CompletableFutures success
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see CompletableFutureUtils#allOfFastFail(CompletableFuture[])
+     * @see #cffuAllOfFastFail(Cffu[])
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    public final <T> Cffu<List<T>> cffuAllOfFastFail(Cffu<T>... cfs) {
+        return cffuAllOfFastFail(toCompletableFutureArray(cfs));
+    }
+
+    /**
+     * Returns a new Cffu with the result of all the given CompletableFutures,
+     * the new Cffu success when all the given CompletableFutures success.
+     * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
+     * also does so *without* waiting other incomplete given CompletableFutures,
+     * with a CompletionException holding this exception as its cause.
+     * If no CompletableFutures are provided, returns a Cffu completed
+     * with the value {@link Collections#emptyList() emptyList}.
+     * <p>
+     * Same as {@link #cffuAllOfFastFail(Cffu[])} with overloaded argument type {@link CompletableFuture}.
+     *
+     * @param cfs the CompletableFutures
+     * @return a new CompletableFuture that success when all the given CompletableFutures success
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see CompletableFutureUtils#allOfFastFail(CompletableFuture[])
+     * @see #cffuAllOfFastFail(Cffu[])
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    public final <T> Cffu<List<T>> cffuAllOfFastFail(CompletableFuture<T>... cfs) {
+        return new0(CompletableFutureUtils.allOfFastFailWithResult(cfs));
+    }
+
+    /**
+     * Provided this overloaded method just for resolving "cffuAllOfFastFail is ambiguous" problem
+     * when call {@code cffuAllOfFastFail} with empty arguments: {@code cffuFactory.cffuAllOfFastFail()}.
+     *
+     * @see #cffuAllOfFastFail(Cffu[])
+     * @see #cffuAllOfFastFail(CompletableFuture[])
+     */
+    @Contract(pure = true)
+    public <T> Cffu<List<T>> cffuAllOfFastFail() {
+        return new0(CompletableFutureUtils.allOfFastFailWithResult());
     }
 
     /**
@@ -550,7 +731,7 @@ public final class CffuFactory {
      *
      * @param cfs the Cffus
      * @return a new Cffu that is completed with the result
-     * or exception of any of the given Cffus when one completes
+     * or exception from any of the given Cffus when one completes
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #anyOf(Cffu[])
      */
@@ -567,15 +748,14 @@ public final class CffuFactory {
      *
      * @param cfs the CompletableFutures
      * @return a new Cffu that is completed with the result
-     * or exception of any of the given CompletableFutures when one completes
+     * or exception from any of the given CompletableFutures when one completes
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #cffuAnyOf(Cffu[])
      */
     @Contract(pure = true)
     @SafeVarargs
-    @SuppressWarnings("unchecked")
     public final <T> Cffu<T> cffuAnyOf(CompletableFuture<T>... cfs) {
-        return new0((CompletableFuture<T>) CompletableFuture.anyOf(cfs));
+        return new0(CompletableFutureUtils.anyOfWithType(cfs));
     }
 
     /**
@@ -591,40 +771,42 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is success when any of the given Cffus success, with the same result.
-     * Otherwise, all the given Cffus failed, the returned Cffu failed,
-     * with a CompletionException holding the latest exception as its cause.
-     * If no Cffus are provided, returns a new Cffu that is already completed exceptionally
-     * with the singleton exception instance {@link #NO_CF_PROVIDED_EXCEPTION}.
+     * Returns a new Cffu that success when any of the given Cffus success,
+     * with the same result. Otherwise, all the given Cffus complete exceptionally,
+     * the returned Cffu also does so, with a CompletionException holding
+     * an exception from any of the given Cffu as its cause. If no Cffu are provided,
+     * returns a new Cffu that is already completed exceptionally
+     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
      *
      * @param cfs the Cffus
-     * @return a new Cffu that is success
-     * when any of the given Cffus success, with the same result
+     * @return a new Cffu
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #cffuAnyOf(Cffu[])
      */
     @SafeVarargs
     public final <T> Cffu<T> cffuAnyOfSuccess(Cffu<T>... cfs) {
-        return new0(CompletableFutureUtils.anyOfSuccess(toCompletableFutureArray(cfs)));
+        return cffuAnyOfSuccess(toCompletableFutureArray(cfs));
     }
 
     /**
-     * Returns a new Cffu that is success when any of the given CompletableFutures success, with the same result.
-     * Otherwise, all the given CompletableFutures failed, the returned Cffu failed,
-     * with a CompletionException holding the latest exception as its cause.
-     * If no CompletableFutures are provided, returns a new Cffu that is already completed exceptionally
-     * with the singleton exception instance {@link #NO_CF_PROVIDED_EXCEPTION}.
+     * Returns a new Cffu that success when any of the given CompletableFutures success,
+     * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
+     * the returned Cffu also does so, with a CompletionException holding
+     * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
+     * returns a new Cffu that is already completed exceptionally
+     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
+     * <p>
+     * Same as {@link #cffuAnyOfSuccess(Cffu[])} with overloaded argument type {@link CompletableFuture}.
      *
      * @param cfs the CompletableFutures
-     * @return a new Cffu that is success
-     * when any of the given CompletableFutures success, with the same result
+     * @return a new Cffu
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #cffuAnyOfSuccess(Cffu[])
      * @see #cffuAnyOf(Cffu[])
      */
     @SafeVarargs
     public final <T> Cffu<T> cffuAnyOfSuccess(CompletableFuture<T>... cfs) {
-        return new0(CompletableFutureUtils.anyOfSuccess(cfs));
+        return new0(CompletableFutureUtils.anyOfSuccessWithType(cfs));
     }
 
     /**
@@ -635,16 +817,8 @@ public final class CffuFactory {
      * @see #cffuAnyOfSuccess(CompletableFuture[])
      */
     public <T> Cffu<T> cffuAnyOfSuccess() {
-        return newIncompleteCffu();
+        return new0(CompletableFutureUtils.anyOfSuccessWithType());
     }
-
-    /**
-     * Singleton exception instance because NO cfs are provided
-     * for {@link #cffuAnyOfSuccess(Cffu[])}/{@link #cffuAnyOfSuccess(CompletableFuture[])}.
-     */
-    @SuppressWarnings("unused")
-    public static final RuntimeException NO_CF_PROVIDED_EXCEPTION = CompletableFutureUtils.NO_CF_PROVIDED_EXCEPTION;
-
 
     ////////////////////////////////////////////////////////////////////////////////
     //# New type-safe cffuCombine Factory Methods
@@ -675,7 +849,7 @@ public final class CffuFactory {
      * Same as {@link #cffuCombine(Cffu, Cffu)} with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 2 CompletableFutures complete
-     * @throws NullPointerException if any input CompletableFutures are {@code null}
+     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
      * @see #cffuCombine(Cffu, Cffu)
      * @see #cffuAllOf(CompletableFuture[])
      */
@@ -708,7 +882,7 @@ public final class CffuFactory {
      * Same as {@link #cffuCombine(Cffu, Cffu, Cffu)} with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 3 CompletableFutures complete
-     * @throws NullPointerException if any input CompletableFutures are {@code null}
+     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
      * @see #cffuCombine(Cffu, Cffu, Cffu)
      * @see #cffuAllOf(CompletableFuture[])
      */
@@ -744,7 +918,7 @@ public final class CffuFactory {
      * Same as {@link #cffuCombine(Cffu, Cffu, Cffu, Cffu)} with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 4 CompletableFutures complete
-     * @throws NullPointerException if any input CompletableFutures are {@code null}
+     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
      * @see #cffuCombine(Cffu, Cffu, Cffu, Cffu)
      * @see #cffuAllOf(CompletableFuture[])
      */
@@ -782,7 +956,7 @@ public final class CffuFactory {
      * with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 5 CompletableFutures complete
-     * @throws NullPointerException if any input CompletableFutures are {@code null}
+     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
      * @see #cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)
      * @see #cffuAllOf(CompletableFuture[])
      */

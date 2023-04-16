@@ -2,243 +2,17 @@ package io.foldright.cffu.kotlin
 
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
-import io.foldright.cffu.CompletableFutureUtils
-import io.foldright.cffu.tuple.Tuple2
-import io.foldright.cffu.tuple.Tuple3
-import io.foldright.cffu.tuple.Tuple4
-import io.foldright.cffu.tuple.Tuple5
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
 
 ////////////////////////////////////////////////////////////////////////////////
-//# Extension methods for CompletableFuture
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////
-// - allOfCompletableFuture
-// - allOfCompletableFutureVoid
-////////////////////////////////////////
-
-/**
- * Returns a new CompletableFuture with the result of all the given CompletableFutures,
- * the new CompletableFuture is completed when all the given CompletableFutures complete.
- *
- * Same as [allOfCompletableFutureVoid],
- * but the returned CompletableFuture contains the results of input CompletableFutures.
- *
- * @see allOfCffu
- * @see allOfCompletableFutureVoid
- */
-fun <T> Collection<CompletableFuture<T>>.allOfCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allOfWithResult(*this.toTypedArray())
-
-/**
- * Returns a new CompletableFuture with the result of all the given CompletableFutures,
- * the new CompletableFuture is completed when all the given CompletableFutures complete.
- *
- * Same as [allOfCompletableFutureVoid],
- * but the returned CompletableFuture contains the results of input CompletableFutures.
- *
- * @see allOfCffu
- * @see allOfCompletableFutureVoid
- */
-fun <T> Array<CompletableFuture<T>>.allOfCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allOfWithResult(*this)
-
-/**
- * Returns a new CompletableFuture that is completed when all the given CompletableFutures complete.
- *
- * Same as [CompletableFuture.allOf], providing this method is convenient for method chaining.
- *
- * @see allOfCffu
- * @see allOfCffuVoid
- * @see allOfCompletableFuture
- * @see CompletableFuture.allOf
- */
-fun Collection<CompletableFuture<*>>.allOfCompletableFutureVoid(): CompletableFuture<Void> =
-    CompletableFuture.allOf(*this.toTypedArray())
-
-/**
- * Returns a new CompletableFuture that is completed when all the given CompletableFutures complete.
- *
- * Same as [CompletableFuture.allOf], providing this method is convenient for method chaining.
- *
- * @see allOfCffu
- * @see allOfCffuVoid
- * @see allOfCompletableFuture
- * @see CompletableFuture.allOf
- */
-fun Array<CompletableFuture<*>>.allOfCompletableFutureVoid(): CompletableFuture<Void> =
-    CompletableFuture.allOf(*this)
-
-////////////////////////////////////////
-// - anyOfCompletableFuture
-// - anyOfCompletableFutureAny
-////////////////////////////////////////
-
-/**
- * Returns a new CompletableFuture that is completed
- * when any of the given CompletableFutures complete, with the same result.
- *
- * Same as [anyOfCompletableFutureAny], but return result type is specified type instead of type `Any`.
- *
- * @see anyOfCffu
- * @see anyOfCompletableFutureAny
- */
-fun <T> Collection<CompletableFuture<T>>.anyOfCompletableFuture(): CompletableFuture<T> =
-    CompletableFutureUtils.anyOfWithType(*this.toTypedArray())
-
-/**
- * Returns a new CompletableFuture that is completed
- * when any of the given CompletableFutures complete, with the same result.
- *
- * Same as [anyOfCompletableFutureAny], but return result type is specified type instead of type `Any`.
- *
- * @see anyOfCffu
- * @see anyOfCompletableFutureAny
- */
-fun <T> Array<CompletableFuture<T>>.anyOfCompletableFuture(): CompletableFuture<T> =
-    CompletableFutureUtils.anyOfWithType(*this)
-
-/**
- * Returns a new CompletableFuture that is completed
- * when any of the given CompletableFutures complete, with the same result.
- *
- * Same as [CompletableFuture.anyOf], providing this method is convenient for method chaining.
- *
- * @see anyOfCffu
- * @see anyOfCffuAny
- * @see anyOfCompletableFuture
- * @see CompletableFuture.anyOf
- */
-fun Collection<CompletableFuture<*>>.anyOfCompletableFutureAny(): CompletableFuture<Any> =
-    CompletableFuture.anyOf(*this.toTypedArray())
-
-/**
- * Returns a new CompletableFuture that is completed
- * when any of the given CompletableFutures complete, with the same result.
- *
- * Same as [CompletableFuture.anyOf], providing this method is convenient for method chaining.
- *
- * @see anyOfCffu
- * @see anyOfCffuAny
- * @see anyOfCompletableFuture
- * @see CompletableFuture.anyOf
- */
-fun Array<CompletableFuture<*>>.anyOfCompletableFutureAny(): CompletableFuture<Any> =
-    CompletableFuture.anyOf(*this)
-
-/**
- * Returns a new CompletableFuture that is success
- * when any of the given CompletableFutures success, with the same result.
- * Otherwise, all the given CompletableFutures failed, the returned CompletableFuture failed,
- * with a CompletionException holding the latest exception as its cause.
- * If no CompletableFutures are provided, returns a new CompletableFuture that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
- *
- * Same as [CompletableFutureUtils.anyOfSuccess], providing this method is convenient for method chaining.
- *
- * @see anyOfCompletableFuture
- * @see CompletableFutureUtils.anyOfSuccess
- */
-fun <T> Collection<CompletableFuture<T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
-    CompletableFutureUtils.anyOfSuccess(*this.toTypedArray())
-
-/**
- * Returns a new CompletableFuture that is success
- * when any of the given CompletableFutures success, with the same result.
- * Otherwise, all the given CompletableFutures failed, the returned CompletableFuture failed,
- * with a CompletionException holding the latest exception as its cause.
- * If no CompletableFutures are provided, returns a new CompletableFuture that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
- *
- * Same as [CompletableFutureUtils.anyOfSuccess], providing this method is convenient for method chaining.
- *
- * @see anyOfCompletableFuture
- * @see CompletableFutureUtils.anyOfSuccess
- */
-fun <T> Array<CompletableFuture<T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
-    CompletableFutureUtils.anyOfSuccess(*this)
-
-
-/**
- * Singleton exception instance because NO cfs are provided
- * for [anyOfSuccessCffu]/[anyOfSuccessCompletableFuture].
- */
-val NO_CF_PROVIDED_EXCEPTION: RuntimeException = CompletableFutureUtils.NO_CF_PROVIDED_EXCEPTION
-
-
-////////////////////////////////////////
-// combine
-////////////////////////////////////////
-
-/**
- * Returns a new CompletableFuture that is completed when the given two CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is completed when the given 2 CompletableFutures complete
- * @throws NullPointerException if any input CompletableFutures are `null`
- * @see allOfCompletableFuture
- * @see CompletableFuture.allOf
- */
-fun <T1, T2> CompletableFuture<T1>.combine(cf2: CompletableFuture<T2>): CompletableFuture<Tuple2<T1, T2>> =
-    CompletableFutureUtils.combine(this, cf2)
-
-/**
- * Returns a new CompletableFuture that is completed when the given three CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is completed when the given 3 CompletableFutures complete
- * @throws NullPointerException if any input CompletableFutures are `null`
- * @see allOfCompletableFuture
- * @see CompletableFuture.allOf
- */
-fun <T1, T2, T3> CompletableFuture<T1>.combine(
-    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>
-): CompletableFuture<Tuple3<T1, T2, T3>> =
-    CompletableFutureUtils.combine(this, cf2, cf3)
-
-/**
- * Returns a new CompletableFuture that is completed when the given 4 CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is completed when the given 4 CompletableFutures complete
- * @throws NullPointerException if any input CompletableFutures are `null`
- * @see allOfCompletableFuture
- * @see CompletableFuture.allOf
- */
-fun <T1, T2, T3, T4> CompletableFuture<T1>.combine(
-    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>, cf4: CompletableFuture<T4>
-): CompletableFuture<Tuple4<T1, T2, T3, T4>> =
-    CompletableFutureUtils.combine(this, cf2, cf3, cf4)
-
-/**
- * Returns a new CompletableFuture that is completed when the given 5 CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is completed when the given 5 CompletableFutures complete
- * @throws NullPointerException if any input CompletableFutures are `null`
- * @see allOfCompletableFuture
- * @see CompletableFuture.allOf
- */
-fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.combine(
-    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>,
-    cf4: CompletableFuture<T4>, cf5: CompletableFuture<T5>
-): CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> =
-    CompletableFutureUtils.combine(this, cf2, cf3, cf4, cf5)
-
-
-////////////////////////////////////////////////////////////////////////////////
 //# Extension methods for Cffu
+//  output(return type) is Cffu
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////
-// asCffu
+// asCffu methods
 ////////////////////////////////////////
 
 /**
@@ -273,13 +47,21 @@ fun <T, CS : CompletionStage<T>> Array<CS>.asCffu(cffuFactory: CffuFactory): Arr
     cffuFactory.asCffuArray(*this)
 
 ////////////////////////////////////////
-// - allOfCffu
-// - allOfCffuVoid
+// allOf* methods
+//
+//   - allOfCffu
+//   - allOfCffuVoid
+//   - allOfFastFailCffu
+//   - allOfFastFailCffuVoid
 ////////////////////////////////////////
 
 /**
  * Returns a new Cffu with the result of all the given Cffus,
  * the new Cffu is completed when all the given Cffus complete.
+ * If any of the given Cffus complete exceptionally, then the returned Cffu
+ * also does so, with a CompletionException holding this exception as its cause.
+ * If no Cffus are provided, returns a Cffu completed
+ * with the value [emptyList][java.util.Collections.emptyList].
  *
  * Same as [allOfCffuVoid], but the returned Cffu contains the results of input Cffus.
  * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
@@ -293,6 +75,10 @@ fun <T> Collection<Cffu<T>>.allOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
 /**
  * Returns a new Cffu with the result of all the given Cffus,
  * the new Cffu is completed when all the given Cffus complete.
+ * If any of the given Cffus complete exceptionally, then the returned Cffu
+ * also does so, with a CompletionException holding this exception as its cause.
+ * If no Cffus are provided, returns a Cffu completed
+ * with the value [emptyList][java.util.Collections.emptyList].
  *
  * Same as [allOfCffuVoid], but the returned Cffu contains the results of input Cffus.
  * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
@@ -300,13 +86,16 @@ fun <T> Collection<Cffu<T>>.allOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
  * @see allOfCffuVoid
  * @see CffuFactory.cffuAllOf
  */
-
 fun <T> Array<Cffu<T>>.allOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
     cffuFactory.cffuAllOf(*this)
 
 /**
  * Returns a new Cffu with the result of all the given CompletableFutures,
  * the new Cffu is completed when all the given CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
+ * also does so, with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a Cffu completed
+ * with the value [emptyList][java.util.Collections.emptyList].
  *
  * Same as [allOfCffuVoid], but the returned Cffu contains the results of input CompletableFutures.
  * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
@@ -321,6 +110,10 @@ fun <T> Collection<CompletableFuture<T>>.allOfCffu(cffuFactory: CffuFactory): Cf
 /**
  * Returns a new Cffu with the result of all the given CompletableFutures,
  * the new Cffu is completed when all the given CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
+ * also does so, with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a Cffu completed
+ * with the value [emptyList][java.util.Collections.emptyList].
  *
  * Same as [allOfCffuVoid], but the returned Cffu contains the results of input CompletableFutures.
  * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
@@ -332,8 +125,12 @@ fun <T> Array<CompletableFuture<T>>.allOfCffu(cffuFactory: CffuFactory): Cffu<Li
     cffuFactory.cffuAllOf(*this)
 
 /**
- * Returns a new Cffu with the result of all the given Cffus,
- * the new Cffu is completed when all the given Cffus complete.
+ * Returns a new Cffu that is completed when all the given Cffus complete.
+ * If any of the given Cffu complete exceptionally, then the returned
+ * Cffu also does so, with a CompletionException holding this exception as its cause.
+ * Otherwise, the results, if any, of the given Cffus are not reflected in
+ * the returned Cffu(`Cffu<Void>`), but may be obtained by inspecting them individually.
+ * If no Cffus are provided, returns a Cffu completed with the value `null`.
  *
  * Same as [CffuFactory.allOf], providing this method is convenient for method chaining.
  *
@@ -344,8 +141,12 @@ fun Collection<Cffu<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
     cffuFactory.allOf(*this.toTypedArray())
 
 /**
- * Returns a new Cffu with the result of all the given Cffus,
- * the new Cffu is completed when all the given Cffus complete.
+ * Returns a new Cffu that is completed when all the given Cffus complete.
+ * If any of the given Cffu complete exceptionally, then the returned
+ * Cffu also does so, with a CompletionException holding this exception as its cause.
+ * Otherwise, the results, if any, of the given Cffus are not reflected in
+ * the returned Cffu(`Cffu<Void>`), but may be obtained by inspecting them individually.
+ * If no Cffus are provided, returns a Cffu completed with the value `null`.
  *
  * Same as [CffuFactory.allOf], providing this method is convenient for method chaining.
  *
@@ -357,8 +158,12 @@ fun Array<Cffu<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
     cffuFactory.allOf(*this)
 
 /**
- * Returns a new Cffu with the result of all the given CompletableFutures,
- * the new Cffu is completed when all the given CompletableFutures complete.
+ * Returns a new Cffu that is completed when all the given CompletableFutures complete.
+ * If any of the given Cffu complete exceptionally, then the returned
+ * Cffu also does so, with a CompletionException holding this exception as its cause.
+ * Otherwise, the results, if any, of the given CompletableFutures are not reflected in
+ * the returned Cffu(`Cffu<Void>`), but may be obtained by inspecting them individually.
+ * If no CompletableFutures are provided, returns a Cffu completed with the value `null`.
  *
  * Same as [CffuFactory.allOf], providing this method is convenient for method chaining.
  *
@@ -370,8 +175,12 @@ fun Collection<CompletableFuture<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cf
     cffuFactory.allOf(*this.toTypedArray())
 
 /**
- * Returns a new Cffu with the result of all the given CompletableFutures,
- * the new Cffu is completed when all the given CompletableFutures complete.
+ * Returns a new Cffu that is completed when all the given CompletableFutures complete.
+ * If any of the given Cffu complete exceptionally, then the returned
+ * Cffu also does so, with a CompletionException holding this exception as its cause.
+ * Otherwise, the results, if any, of the given CompletableFutures are not reflected in
+ * the returned Cffu(`Cffu<Void>`), but may be obtained by inspecting them individually.
+ * If no CompletableFutures are provided, returns a Cffu completed with the value `null`.
  *
  * Same as [CffuFactory.allOf], providing this method is convenient for method chaining.
  *
@@ -381,9 +190,155 @@ fun Collection<CompletableFuture<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cf
 fun Array<CompletableFuture<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
     cffuFactory.allOf(*this)
 
+/**
+ * Returns a new Cffu with the result of all the given Cffus,
+ * the new Cffu success when all the given Cffus success.
+ * If any of the given Cffus complete exceptionally, then the returned Cffu
+ * also does so *without* waiting other incomplete given Cffus,
+ * with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a Cffu completed
+ * with the value [emptyList][java.util.Collections.emptyList].
+ *
+ * Same as [allOfFastFailCffuVoid], but the returned Cffu contains the results of input Cffus.
+ * Same as [CffuFactory.cffuAllOfFastFail], providing this method is convenient for method chaining.
+ *
+ * @see allOfFastFailCffuVoid
+ * @see CffuFactory.cffuAllOfFastFail
+ */
+fun <T> Collection<Cffu<T>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+    cffuFactory.cffuAllOfFastFail(*this.toTypedArray())
+
+/**
+ * Returns a new Cffu with the result of all the given Cffus,
+ * the new Cffu success when all the given Cffus success.
+ * If any of the given Cffus complete exceptionally, then the returned Cffu
+ * also does so *without* waiting other incomplete given Cffus,
+ * with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a Cffu completed
+ * with the value [emptyList][java.util.Collections.emptyList].
+ *
+ * Same as [allOfFastFailCffuVoid], but the returned Cffu contains the results of input Cffus.
+ * Same as [CffuFactory.cffuAllOfFastFail], providing this method is convenient for method chaining.
+ *
+ * @see allOfFastFailCffuVoid
+ * @see CffuFactory.cffuAllOfFastFail
+ */
+fun <T> Array<Cffu<T>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+    cffuFactory.cffuAllOfFastFail(*this)
+
+/**
+ * Returns a new Cffu with the result of all the given CompletableFutures,
+ * the new Cffu success when all the given CompletableFutures success.
+ * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
+ * also does so *without* waiting other incomplete given CompletableFutures,
+ * with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a Cffu completed
+ * with the value [emptyList][java.util.Collections.emptyList].
+ *
+ * Same as [allOfFastFailCffuVoid], but the returned Cffu contains the results of input Cffus.
+ * Same as [CffuFactory.cffuAllOfFastFail], providing this method is convenient for method chaining.
+ *
+ * @see allOfFastFailCffuVoid
+ * @see CffuFactory.cffuAllOfFastFail
+ */
+@JvmName("allOfFastFailCffuCf")
+fun <T> Collection<CompletableFuture<T>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+    cffuFactory.cffuAllOfFastFail(*this.toTypedArray())
+
+/**
+ * Returns a new Cffu with the result of all the given CompletableFutures,
+ * the new Cffu success when all the given CompletableFutures success.
+ * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
+ * also does so *without* waiting other incomplete given CompletableFutures,
+ * with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a Cffu completed
+ * with the value [emptyList][java.util.Collections.emptyList].
+ *
+ * Same as [allOfFastFailCffuVoid], but the returned Cffu contains the results of input Cffus.
+ * Same as [CffuFactory.cffuAllOfFastFail], providing this method is convenient for method chaining.
+ *
+ * @see allOfFastFailCffuVoid
+ * @see CffuFactory.cffuAllOfFastFail
+ */
+fun <T> Array<CompletableFuture<T>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+    cffuFactory.cffuAllOfFastFail(*this)
+
+/**
+ * Returns a new Cffu that success when all the given Cffus success,
+ * the results(`Cffu<Void>`) of the given Cffus are not reflected in the returned Cffu,
+ * but may be obtained by inspecting them individually.
+ * If any of the given Cffus complete exceptionally, then the returned Cffu
+ * also does so *without* waiting other incomplete given Cffus,
+ * with a CompletionException holding this exception as its cause.
+ * If no Cffus are provided, returns a Cffu completed with the value `null`.
+ *
+ * Same as [CffuFactory.allOfFastFail], providing this method is convenient for method chaining.
+ *
+ * @see allOfFastFailCffu
+ * @see CffuFactory.allOfFastFail
+ */
+fun Collection<Cffu<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
+    cffuFactory.allOfFastFail(*this.toTypedArray())
+
+/**
+ * Returns a new Cffu that success when all the given Cffus success,
+ * the results(`Cffu<Void>`) of the given Cffus are not reflected in the returned Cffu,
+ * but may be obtained by inspecting them individually.
+ * If any of the given Cffus complete exceptionally, then the returned Cffu
+ * also does so *without* waiting other incomplete given Cffus,
+ * with a CompletionException holding this exception as its cause.
+ * If no Cffus are provided, returns a Cffu completed with the value `null`.
+ *
+ * Same as [CffuFactory.allOfFastFail], providing this method is convenient for method chaining.
+ *
+ * @see allOfFastFailCffu
+ * @see CffuFactory.allOfFastFail
+ */
+fun Array<Cffu<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
+    cffuFactory.allOfFastFail(*this)
+
+/**
+ * Returns a new Cffu that success when all the given CompletableFutures success,
+ * the results(`Cffu<Void>`) of the given CompletableFutures are not reflected in the returned Cffu,
+ * but may be obtained by inspecting them individually.
+ * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
+ * also does so *without* waiting other incomplete given CompletableFutures,
+ * with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a Cffu completed with the value `null`.
+ *
+ * Same as [CffuFactory.allOfFastFail], providing this method is convenient for method chaining.
+ *
+ * @see allOfFastFailCffu
+ * @see CffuFactory.allOfFastFail
+ */
+@JvmName("allOfFastFailCffuVoidCf")
+fun Collection<CompletableFuture<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
+    cffuFactory.allOfFastFail(*this.toTypedArray())
+
+/**
+ * Returns a new Cffu that success when all the given CompletableFutures success,
+ * the results(`Cffu<Void>`) of the given CompletableFutures are not reflected in the returned Cffu,
+ * but may be obtained by inspecting them individually.
+ * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
+ * also does so *without* waiting other incomplete given CompletableFutures,
+ * with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a Cffu completed with the value `null`.
+ *
+ * Same as [CffuFactory.allOfFastFail], providing this method is convenient for method chaining.
+ *
+ * @see allOfFastFailCffu
+ * @see CffuFactory.allOfFastFail
+ */
+fun Array<CompletableFuture<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
+    cffuFactory.allOfFastFail(*this)
+
 ////////////////////////////////////////
-// - anyOfCffu
-// - anyOfCffuAny
+// anyOf* methods
+//
+//   - anyOfCffu
+//   - anyOfCffuAny
+//   - anyOfSuccessCffu
+//   - anyOfSuccessCffuAny
 ////////////////////////////////////////
 
 /**
@@ -481,64 +436,137 @@ fun Array<CompletableFuture<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cffu<Any
     cffuFactory.anyOf(*this)
 
 /**
- * Returns a new Cffu that is success when any of the given Cffus success, with the same result.
- * Otherwise, all the given Cffus failed, the returned Cffu failed,
- * with a CompletionException holding the latest exception as its cause.
- * If no Cffus are provided, returns a new Cffu that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
+ * Returns a new Cffu that success when any of the given Cffus success,
+ * with the same result. Otherwise, all the given Cffus complete exceptionally,
+ * the returned Cffu also does so, with a CompletionException holding
+ * an exception from any of the given Cffus as its cause. If no Cffus are provided,
+ * returns a new Cffu that is already completed exceptionally with a CompletionException
+ * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
  * Same as [CffuFactory.cffuAnyOfSuccess], providing this method is convenient for method chaining.
  *
  * @see anyOfCffu
+ * @see CffuFactory.cffuAnyOfSuccess
  */
 fun <T> Collection<Cffu<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.cffuAnyOfSuccess(*this.toTypedArray())
 
 /**
- * Returns a new Cffu that is success when any of the given Cffus success, with the same result.
- * Otherwise, all the given Cffus failed, the returned Cffu failed,
- * with a CompletionException holding the latest exception as its cause.
- * If no Cffus are provided, returns a new Cffu that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
+ * Returns a new Cffu that success when any of the given Cffus success,
+ * with the same result. Otherwise, all the given Cffus complete exceptionally,
+ * the returned Cffu also does so, with a CompletionException holding
+ * an exception from any of the given Cffus as its cause. If no Cffus are provided,
+ * returns a new Cffu that is already completed exceptionally with a CompletionException
+ * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
  * Same as [CffuFactory.cffuAnyOfSuccess], providing this method is convenient for method chaining.
  *
  * @see anyOfCffu
+ * @see CffuFactory.cffuAnyOfSuccess
  */
 fun <T> Array<Cffu<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.cffuAnyOfSuccess(*this)
 
 /**
- * Returns a new Cffu that is success when any of the given CompletableFutures success, with the same result.
- * Otherwise, all the given CompletableFutures failed, the returned Cffu failed,
- * with a CompletionException holding the latest exception as its cause.
- * If no CompletableFutures are provided, returns a new Cffu that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
+ * Returns a new Cffu that success when any of the given CompletableFutures success,
+ * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
+ * the returned Cffu also does so, with a CompletionException holding
+ * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
+ * returns a new Cffu that is already completed exceptionally with a CompletionException
+ * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
  * Same as [CffuFactory.cffuAnyOfSuccess], providing this method is convenient for method chaining.
  *
  * @see anyOfCffu
+ * @see CffuFactory.cffuAnyOfSuccess
  */
 @JvmName("anyOfSuccessCffuCf")
 fun <T> Collection<CompletableFuture<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.cffuAnyOfSuccess(*this.toTypedArray())
 
 /**
- * Returns a new Cffu that is success when any of the given CompletableFutures success, with the same result.
- * Otherwise, all the given CompletableFutures failed, the returned Cffu failed,
- * with a CompletionException holding the latest exception as its cause.
- * If no CompletableFutures are provided, returns a new Cffu that is already completed exceptionally
- * with the singleton exception instance [NO_CF_PROVIDED_EXCEPTION].
+ * Returns a new Cffu that success when any of the given CompletableFutures success,
+ * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
+ * the returned Cffu also does so, with a CompletionException holding
+ * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
+ * returns a new Cffu that is already completed exceptionally with a CompletionException
+ * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
  * Same as [CffuFactory.cffuAnyOfSuccess], providing this method is convenient for method chaining.
  *
  * @see anyOfCffu
+ * @see CffuFactory.cffuAnyOfSuccess
  */
 fun <T> Array<CompletableFuture<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.cffuAnyOfSuccess(*this)
 
+/**
+ * Returns a new Cffu that success when any of the given CompletableFutures success,
+ * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
+ * the returned Cffu also does so, with a CompletionException holding
+ * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
+ * returns a new Cffu that is already completed exceptionally with a CompletionException
+ * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
+ *
+ * Same as [CffuFactory.anyOfSuccess], providing this method is convenient for method chaining.
+ *
+ * @see anyOfSuccessCffu
+ * @see CffuFactory.anyOfSuccess
+ */
+fun Collection<Cffu<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
+    cffuFactory.anyOfSuccess(*this.toTypedArray())
+
+/**
+ * Returns a new Cffu that success when any of the given CompletableFutures success,
+ * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
+ * the returned Cffu also does so, with a CompletionException holding
+ * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
+ * returns a new Cffu that is already completed exceptionally with a CompletionException
+ * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
+ *
+ * Same as [CffuFactory.anyOfSuccess], providing this method is convenient for method chaining.
+ *
+ * @see anyOfSuccessCffu
+ * @see CffuFactory.anyOfSuccess
+ */
+fun Array<Cffu<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
+    cffuFactory.anyOfSuccess(*this)
+
+/**
+ * Returns a new Cffu that success when any of the given CompletableFutures success,
+ * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
+ * the returned Cffu also does so, with a CompletionException holding
+ * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
+ * returns a new Cffu that is already completed exceptionally with a CompletionException
+ * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
+ *
+ * Same as [CffuFactory.anyOfSuccess], providing this method is convenient for method chaining.
+ *
+ * @see anyOfSuccessCffu
+ * @see CffuFactory.anyOfSuccess
+ */
+@JvmName("anyOfSuccessCffuAnyCf")
+fun Collection<CompletableFuture<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
+    cffuFactory.anyOfSuccess(*this.toTypedArray())
+
+/**
+ * Returns a new Cffu that success when any of the given CompletableFutures success,
+ * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
+ * the returned Cffu also does so, with a CompletionException holding
+ * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
+ * returns a new Cffu that is already completed exceptionally with a CompletionException
+ * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
+ *
+ * Same as [CffuFactory.anyOfSuccess], providing this method is convenient for method chaining.
+ *
+ * @see anyOfSuccessCffu
+ * @see CffuFactory.anyOfSuccess
+ */
+fun Array<CompletableFuture<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
+    cffuFactory.anyOfSuccess(*this)
+
 ////////////////////////////////////////
-// toCompletableFuture
+// toCompletableFuture methods
 ////////////////////////////////////////
 
 /**
@@ -562,7 +590,7 @@ fun <T, CS : CompletionStage<T>> Array<CS>.toCompletableFuture(): Array<Completa
     CffuFactory.toCompletableFutureArray(*this)
 
 ////////////////////////////////////////
-// cffuUnwrap
+// cffuUnwrap methods
 ////////////////////////////////////////
 
 /**
