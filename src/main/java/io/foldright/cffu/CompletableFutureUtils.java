@@ -171,6 +171,9 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that is completed
      * when any of the given CompletableFutures complete, with the same result.
+     * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so,
+     * with a CompletionException holding this exception as its cause.
+     * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
      * <p>
      * Same as {@link CompletableFuture#anyOf(CompletableFuture[])},
      * but return result type is specified type instead of {@code Object}.
