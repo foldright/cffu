@@ -667,7 +667,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the result of all the given Cffus,
+     * Returns a new Cffu with the results of all the given Cffus,
      * the new Cffu success when all the given Cffus success.
      * If any of the given Cffus complete exceptionally, then the returned Cffu
      * also does so *without* waiting other incomplete given Cffus,
@@ -690,7 +690,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the result of all the given CompletableFutures,
+     * Returns a new Cffu with the results of all the given CompletableFutures,
      * the new Cffu success when all the given CompletableFutures success.
      * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
      * also does so *without* waiting other incomplete given CompletableFutures,

@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture
 ////////////////////////////////////////
 
 /**
- * Returns a new CompletableFuture with the result of all the given CompletableFutures,
+ * Returns a new CompletableFuture with the results of all the given CompletableFutures,
  * the returned new CompletableFuture is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so, with a CompletionException holding this exception as its cause.
@@ -41,7 +41,7 @@ fun <T> Collection<CompletableFuture<T>>.allOfCompletableFuture(): CompletableFu
     CompletableFutureUtils.allOfWithResult(*this.toTypedArray())
 
 /**
- * Returns a new CompletableFuture with the result of all the given CompletableFutures,
+ * Returns a new CompletableFuture with the results of all the given CompletableFutures,
  * the returned new CompletableFuture is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so, with a CompletionException holding this exception as its cause.

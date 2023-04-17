@@ -56,7 +56,7 @@ fun <T, CS : CompletionStage<T>> Array<CS>.asCffu(cffuFactory: CffuFactory): Arr
 ////////////////////////////////////////
 
 /**
- * Returns a new Cffu with the result of all the given Cffus,
+ * Returns a new Cffu with the results of all the given Cffus,
  * the new Cffu is completed when all the given Cffus complete.
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
@@ -73,7 +73,7 @@ fun <T> Collection<Cffu<T>>.allOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
     cffuFactory.cffuAllOf(*this.toTypedArray())
 
 /**
- * Returns a new Cffu with the result of all the given Cffus,
+ * Returns a new Cffu with the results of all the given Cffus,
  * the new Cffu is completed when all the given Cffus complete.
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
@@ -90,7 +90,7 @@ fun <T> Array<Cffu<T>>.allOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
     cffuFactory.cffuAllOf(*this)
 
 /**
- * Returns a new Cffu with the result of all the given CompletableFutures,
+ * Returns a new Cffu with the results of all the given CompletableFutures,
  * the new Cffu is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
@@ -108,7 +108,7 @@ fun <T> Collection<CompletableFuture<T>>.allOfCffu(cffuFactory: CffuFactory): Cf
     cffuFactory.cffuAllOf(*this.toTypedArray())
 
 /**
- * Returns a new Cffu with the result of all the given CompletableFutures,
+ * Returns a new Cffu with the results of all the given CompletableFutures,
  * the new Cffu is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
@@ -191,7 +191,7 @@ fun Array<CompletableFuture<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cffu<Vo
     cffuFactory.allOf(*this)
 
 /**
- * Returns a new Cffu with the result of all the given Cffus,
+ * Returns a new Cffu with the results of all the given Cffus,
  * the new Cffu success when all the given Cffus success.
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given Cffus,
@@ -209,7 +209,7 @@ fun <T> Collection<Cffu<T>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<Li
     cffuFactory.cffuAllOfFastFail(*this.toTypedArray())
 
 /**
- * Returns a new Cffu with the result of all the given Cffus,
+ * Returns a new Cffu with the results of all the given Cffus,
  * the new Cffu success when all the given Cffus success.
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given Cffus,
@@ -227,7 +227,7 @@ fun <T> Array<Cffu<T>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<List<T>
     cffuFactory.cffuAllOfFastFail(*this)
 
 /**
- * Returns a new Cffu with the result of all the given CompletableFutures,
+ * Returns a new Cffu with the results of all the given CompletableFutures,
  * the new Cffu success when all the given CompletableFutures success.
  * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given CompletableFutures,
@@ -246,7 +246,7 @@ fun <T> Collection<CompletableFuture<T>>.allOfFastFailCffu(cffuFactory: CffuFact
     cffuFactory.cffuAllOfFastFail(*this.toTypedArray())
 
 /**
- * Returns a new Cffu with the result of all the given CompletableFutures,
+ * Returns a new Cffu with the results of all the given CompletableFutures,
  * the new Cffu success when all the given CompletableFutures success.
  * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given CompletableFutures,
