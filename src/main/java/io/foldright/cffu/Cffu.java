@@ -12,7 +12,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.concurrent.*;
 import java.util.function.*;
 
-import static io.foldright.cffu.CompletableFutureUtils.*;
 import static java.util.Objects.requireNonNull;
 
 
@@ -135,7 +134,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Cffu<Void> thenAcceptAsync(Consumer<? super T> action) {
-        return reset0(cf.thenAcceptAsync(action, fac.defaultExecutor()));
+        return thenAcceptAsync(action, fac.defaultExecutor());
     }
 
     /**
@@ -190,7 +189,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenRunAsync`")
     @Override
     public <U> Cffu<U> thenApplyAsync(Function<? super T, ? extends U> fn) {
-        return reset0(cf.thenApplyAsync(fn, fac.defaultExecutor()));
+        return thenApplyAsync(fn, fac.defaultExecutor());
     }
 
     /**
@@ -248,7 +247,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Cffu<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action) {
-        return reset0(cf.runAfterBothAsync(other, action, fac.defaultExecutor()));
+        return runAfterBothAsync(other, action, fac.defaultExecutor());
     }
 
     /**
@@ -299,7 +298,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public <U> Cffu<Void> thenAcceptBothAsync(
             CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
-        return reset0(cf.thenAcceptBothAsync(other, action, fac.defaultExecutor()));
+        return thenAcceptBothAsync(other, action, fac.defaultExecutor());
     }
 
     /**
@@ -358,7 +357,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public <U, V> Cffu<V> thenCombineAsync(
             CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
-        return reset0(cf.thenCombineAsync(other, fn, fac.defaultExecutor()));
+        return thenCombineAsync(other, fn, fac.defaultExecutor());
     }
 
     /**
@@ -587,7 +586,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Cffu<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action) {
-        return reset0(cf.runAfterEitherAsync(other, action, fac.defaultExecutor()));
+        return runAfterEitherAsync(other, action, fac.defaultExecutor());
     }
 
     /**
@@ -637,7 +636,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public Cffu<Void> acceptEitherAsync(
             CompletionStage<? extends T> other, Consumer<? super T> action) {
-        return reset0(cf.acceptEitherAsync(other, action, fac.defaultExecutor()));
+        return acceptEitherAsync(other, action, fac.defaultExecutor());
     }
 
     /**
@@ -692,7 +691,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public <U> Cffu<U> applyToEitherAsync(
             CompletionStage<? extends T> other, Function<? super T, U> fn) {
-        return reset0(cf.applyToEitherAsync(other, fn, fac.defaultExecutor()));
+        return applyToEitherAsync(other, fn, fac.defaultExecutor());
     }
 
     /**
@@ -765,15 +764,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Cffu<T> exceptionallyAsync(Function<Throwable, ? extends T> fn, Executor executor) {
-        if (IS_JAVA12_PLUS) {
-            return reset0(cf.exceptionallyAsync(fn, executor));
-        }
-
-        // below code is copied from CompletionStage#exceptionallyAsync
-
-        return handle((r, ex) -> (ex == null) ? this :
-                this.<T>handleAsync((r1, ex1) -> fn.apply(ex1), executor)
-        ).thenCompose(Function.identity());
+        return reset0(CompletableFutureUtils.exceptionallyAsync(cf, fn, executor));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -796,23 +787,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public Cffu<T> orTimeout(long timeout, TimeUnit unit) {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
 
-        orTimeoutCf0(cf, timeout, unit);
+        CompletableFutureUtils.orTimeout(cf, timeout, unit);
         return this;
-    }
-
-    private static <U> void orTimeoutCf0(CompletableFuture<U> cf, long timeout, TimeUnit unit) {
-        if (IS_JAVA9_PLUS) {
-            cf.orTimeout(timeout, unit);
-            return;
-        }
-
-        // below code is copied from CompletableFuture#orTimeout with small adoption
-
-        requireNonNull(unit, "unit is null");
-        if (!cf.isDone()) {
-            ScheduledFuture<?> f = Delayer.delayToTimoutCf(cf, timeout, unit);
-            cf.whenComplete(new FutureCanceller(f));
-        }
     }
 
     /**
@@ -827,18 +803,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public Cffu<T> completeOnTimeout(@Nullable T value, long timeout, TimeUnit unit) {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
 
-        if (IS_JAVA9_PLUS) {
-            cf.completeOnTimeout(value, timeout, unit);
-            return this;
-        }
-
-        // below code is copied from CompletableFuture#completeOnTimeout with small adoption
-
-        requireNonNull(unit, "unit is null");
-        if (!cf.isDone()) {
-            ScheduledFuture<?> f = Delayer.delayToCompleteCf(cf, value, timeout, unit);
-            cf.whenComplete(new FutureCanceller(f));
-        }
+        CompletableFutureUtils.completeOnTimeout(cf, value, timeout, unit);
         return this;
     }
 
@@ -899,7 +864,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public <U> Cffu<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>> fn) {
-        return reset0(cf.thenComposeAsync(fn, fac.defaultExecutor()));
+        return thenComposeAsync(fn, fac.defaultExecutor());
     }
 
     /**
@@ -935,14 +900,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Cffu<T> exceptionallyCompose(Function<Throwable, ? extends CompletionStage<T>> fn) {
-        if (IS_JAVA12_PLUS) {
-            return reset0(cf.exceptionallyCompose(fn));
-        }
-
-        // below code is copied from CompletionStage.exceptionallyCompose
-
-        return handle((r, ex) -> (ex == null) ? this : fn.apply(ex))
-                .thenCompose(Function.identity());
+        return reset0(CompletableFutureUtils.exceptionallyCompose(cf, fn));
     }
 
     /**
@@ -972,15 +930,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public Cffu<T> exceptionallyComposeAsync(
             Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
-        if (IS_JAVA12_PLUS) {
-            return reset0(cf.exceptionallyComposeAsync(fn, executor));
-        }
-
-        // below code is copied from CompletionStage.exceptionallyComposeAsync
-
-        return handle((r, ex) -> (ex == null) ? this :
-                this.handleAsync((r1, ex1) -> fn.apply(ex1), executor).thenCompose(Function.identity())
-        ).thenCompose(Function.identity());
+        return reset0(CompletableFutureUtils.exceptionallyComposeAsync(cf, fn, executor));
     }
 
     /**
@@ -1028,7 +978,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Cffu<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action) {
-        return reset0(cf.whenCompleteAsync(action, fac.defaultExecutor()));
+        return whenCompleteAsync(action, fac.defaultExecutor());
     }
 
     /**
@@ -1091,7 +1041,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `whenCompleteAsync`")
     @Override
     public <U> Cffu<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn) {
-        return reset0(cf.handleAsync(fn, fac.defaultExecutor()));
+        return handleAsync(fn, fac.defaultExecutor());
     }
 
     /**
@@ -1181,8 +1131,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Blocking
     @Nullable
     @Override
-    public T get(long timeout, TimeUnit unit)
-            throws InterruptedException, ExecutionException, TimeoutException {
+    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
 
         return cf.get(timeout, unit);
@@ -1253,11 +1202,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public T cffuJoin(long timeout, TimeUnit unit) {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
 
-        if (cf.isDone()) return cf.join();
-
-        CompletableFuture<T> f = CompletableFutureUtils.copy(cf);
-        orTimeoutCf0(f, timeout, unit);
-        return f.join();
+        return CompletableFutureUtils.cffuJoin(cf, timeout, unit);
     }
 
     /**
@@ -1298,35 +1243,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @see #getNow(Object)
      */
-    @CheckReturnValue
+    @Contract(pure = true)
     @Nullable
     @Override
     public T resultNow() {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
 
-        if (IS_JAVA19_PLUS) {
-            return cf.resultNow();
-        }
-
-        // below code is copied from Future.resultNow
-
-        if (!cf.isDone()) throw new IllegalStateException("Task has not completed");
-        boolean interrupted = false;
-        try {
-            while (true) {
-                try {
-                    return cf.get();
-                } catch (InterruptedException e) {
-                    interrupted = true;
-                } catch (ExecutionException e) {
-                    throw new IllegalStateException("Task completed with exception");
-                } catch (CancellationException e) {
-                    throw new IllegalStateException("Task was cancelled");
-                }
-            }
-        } finally {
-            if (interrupted) Thread.currentThread().interrupt();
-        }
+        return CompletableFutureUtils.resultNow(cf);
     }
 
     /**
@@ -1344,30 +1267,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public Throwable exceptionNow() {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
 
-        if (IS_JAVA19_PLUS) {
-            return cf.exceptionNow();
-        }
-
-        // below code is copied from Future.exceptionNow
-
-        if (!cf.isDone()) throw new IllegalStateException("Task has not completed");
-        if (cf.isCancelled()) throw new IllegalStateException("Task was cancelled");
-
-        boolean interrupted = false;
-        try {
-            while (true) {
-                try {
-                    cf.get();
-                    throw new IllegalStateException("Task completed with a result");
-                } catch (InterruptedException e) {
-                    interrupted = true;
-                } catch (ExecutionException e) {
-                    return e.getCause();
-                }
-            }
-        } finally {
-            if (interrupted) Thread.currentThread().interrupt();
-        }
+        return CompletableFutureUtils.exceptionNow(cf);
     }
 
     /**
@@ -1450,29 +1350,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public CffuState cffuState() {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
 
-        if (IS_JAVA19_PLUS)
-            return CffuState.toCffuState(cf.state());
-
-        // below code is copied from Future#state() with small adoption
-
-        if (!isDone()) return CffuState.RUNNING;
-        if (isCancelled()) return CffuState.CANCELLED;
-
-        boolean interrupted = false;
-        try {
-            while (true) {
-                try {
-                    get();  // may throw InterruptedException when done
-                    return CffuState.SUCCESS;
-                } catch (InterruptedException e) {
-                    interrupted = true;
-                } catch (ExecutionException e) {
-                    return CffuState.FAILED;
-                }
-            }
-        } finally {
-            if (interrupted) Thread.currentThread().interrupt();
-        }
+        return CompletableFutureUtils.cffuState(cf);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -1505,8 +1383,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return this Cffu
      */
     public Cffu<T> completeAsync(Supplier<? extends T> supplier) {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
-
         return completeAsync(supplier, fac.defaultExecutor());
     }
 
@@ -1521,16 +1397,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public Cffu<T> completeAsync(Supplier<? extends T> supplier, Executor executor) {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
 
-        if (IS_JAVA9_PLUS) {
-            cf.completeAsync(supplier, executor);
-            return this;
-        }
-
-        // below code is copied from CompletableFuture#completeAsync with small adoption
-
-        requireNonNull(supplier, "supplier is null");
-        requireNonNull(executor, "executor is null");
-        executor.execute(new CfCompleterBySupplier<>(cf, supplier));
+        CompletableFutureUtils.completeAsync(cf, supplier, executor);
         return this;
     }
 
@@ -1595,10 +1462,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Contract(pure = true)
     public CompletionStage<T> minimalCompletionStage() {
-        if (IS_JAVA9_PLUS) {
-            return resetToMin((CompletableFuture<T>) cf.minimalCompletionStage());
-        }
-        return resetToMin(cf.thenApply(Function.identity()));
+        return resetToMin((CompletableFuture<T>) CompletableFutureUtils.minimalCompletionStage(cf));
     }
 
     /**
@@ -1821,10 +1685,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Contract(pure = true)
     public <U> Cffu<U> newIncompleteFuture() {
-        if (IS_JAVA9_PLUS) {
-            return reset0(cf.newIncompleteFuture());
-        }
-        return reset0(new CompletableFuture<>());
+        return reset0(CompletableFutureUtils.newIncompleteFuture(cf));
     }
 
     /**

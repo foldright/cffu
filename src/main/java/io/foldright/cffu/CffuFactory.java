@@ -15,10 +15,13 @@ import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-import static io.foldright.cffu.CompletableFutureUtils.IS_JAVA9_PLUS;
+import static io.foldright.cffu.CompletableFutureUtils.screenExecutor;
 import static java.util.Objects.requireNonNull;
 
 
@@ -57,17 +60,6 @@ public final class CffuFactory {
     CffuFactory(Executor defaultExecutor, boolean forbidObtrudeMethods) {
         this.defaultExecutor = screenExecutor(defaultExecutor);
         this.forbidObtrudeMethods = forbidObtrudeMethods;
-    }
-
-    /**
-     * Null-checks user executor argument, and translates uses of
-     * commonPool to ASYNC_POOL in case parallelism disabled.
-     */
-    @SuppressWarnings("resource")
-    private static Executor screenExecutor(Executor e) {
-        if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool())
-            return AsyncPoolHolder.ASYNC_POOL;
-        return requireNonNull(e, "defaultExecutor is null");
     }
 
     @Contract(pure = true)
@@ -117,10 +109,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public <T> CompletionStage<T> completedStage(@Nullable T value) {
-        if (IS_JAVA9_PLUS) {
-            return newMin((CompletableFuture<T>) CompletableFuture.completedStage(value));
-        }
-        return newMin(CompletableFuture.completedFuture(value));
+        return newMin((CompletableFuture<T>) CompletableFutureUtils.completedStage(value));
     }
 
     /**
@@ -152,12 +141,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public <T> CompletionStage<T> failedStage(Throwable ex) {
-        if (IS_JAVA9_PLUS) {
-            return newMin((CompletableFuture<T>) CompletableFuture.<T>failedStage(ex));
-        }
-        CompletableFuture<T> cf = new CompletableFuture<>();
-        cf.completeExceptionally(ex);
-        return newMin(cf);
+        return newMin((CompletableFuture<T>) CompletableFutureUtils.<T>failedStage(ex));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -577,7 +561,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public Executor delayedExecutor(long delay, TimeUnit unit) {
-        return delayedExecutor(delay, unit, defaultExecutor);
+        return CompletableFutureUtils.delayedExecutor(delay, unit, defaultExecutor);
     }
 
     /**
@@ -593,13 +577,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
-        if (IS_JAVA9_PLUS) {
-            return CompletableFuture.delayedExecutor(delay, unit, executor);
-        }
-
-        requireNonNull(unit, "unit is null");
-        requireNonNull(executor, "executor is null");
-        return new DelayedExecutor(delay, unit, executor);
+        return CompletableFutureUtils.delayedExecutor(delay, unit, executor);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -674,8 +652,6 @@ public final class CffuFactory {
      * with a CompletionException holding this exception as its cause.
      * If no CompletableFutures are provided, returns a Cffu completed
      * with the value {@link Collections#emptyList() emptyList}.
-     * <p>
-     * Same as {@link #cffuAllOfFastFail(Cffu[])} with overloaded argument type {@link CompletableFuture}.
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that success when all the given CompletableFutures success
@@ -1059,32 +1035,5 @@ public final class CffuFactory {
     @Contract(pure = true)
     public boolean forbidObtrudeMethods() {
         return forbidObtrudeMethods;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    //# Helper fields and classes
-    ////////////////////////////////////////////////////////////////////////////////
-
-    private static final boolean USE_COMMON_POOL = (ForkJoinPool.getCommonPoolParallelism() > 1);
-
-    /**
-     * Fallback if ForkJoinPool.commonPool() cannot support parallelism
-     */
-    private static final class ThreadPerTaskExecutor implements Executor {
-        @Override
-        public void execute(Runnable r) {
-            new Thread(requireNonNull(r)).start();
-        }
-    }
-
-    /**
-     * hold {@link #ASYNC_POOL} as field of static inner class for lazy loading(init only when needed).
-     */
-    private static class AsyncPoolHolder {
-        /**
-         * Default executor -- ForkJoinPool.commonPool() unless it cannot support parallelism.
-         */
-        private static final Executor ASYNC_POOL = USE_COMMON_POOL ?
-                ForkJoinPool.commonPool() : new ThreadPerTaskExecutor();
     }
 }
