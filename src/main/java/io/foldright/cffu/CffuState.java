@@ -91,8 +91,7 @@ public enum CffuState {
                 return CffuState.FAILED;
             case CANCELLED:
                 return CffuState.CANCELLED;
-            default:
-                throw new IllegalStateException("unknown Future.State: " + state);
         }
+        throw new IllegalStateException("unknown Future.State: " + state);
     }
 }
