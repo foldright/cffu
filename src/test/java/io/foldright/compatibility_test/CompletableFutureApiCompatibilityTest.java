@@ -601,12 +601,23 @@ class CompletableFutureApiCompatibilityTest {
             TestUtils.assertCompletableFutureRunInDefaultThread(executorService);
             return 4242;
         }).get());
-
         incomplete = new CompletableFuture<>();
         assertEquals(424242, incomplete.completeAsync(() -> {
             TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             return 424242;
         }, anotherExecutorService).get());
+
+        RuntimeException ex = new RuntimeException();
+        incomplete = new CompletableFuture<>();
+        incomplete.completeAsync(() -> {
+            throw ex;
+        });
+        try {
+            incomplete.get();
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(ex, expected.getCause());
+        }
     }
 
     ////////////////////////////////////////

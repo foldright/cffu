@@ -61,6 +61,9 @@ final class Delayer {
             return t;
         }
     }
+
+    private Delayer() {
+    }
 }
 
 /**

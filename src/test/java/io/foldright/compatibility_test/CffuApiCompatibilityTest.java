@@ -597,12 +597,23 @@ class CffuApiCompatibilityTest {
             TestUtils.assertCffuRunInDefaultThread(executorService);
             return 4242;
         }).get());
-
         incomplete = cffuFactory.newIncompleteCffu();
         assertEquals(424242, incomplete.completeAsync(() -> {
             TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             return 424242;
         }, anotherExecutorService).get());
+
+        RuntimeException ex = new RuntimeException();
+        incomplete = cffuFactory.newIncompleteCffu();
+        incomplete.completeAsync(() -> {
+            throw ex;
+        });
+        try {
+            incomplete.get();
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(ex, expected.getCause());
+        }
     }
 
     ////////////////////////////////////////
