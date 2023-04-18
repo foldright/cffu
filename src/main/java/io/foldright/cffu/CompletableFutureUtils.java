@@ -1,18 +1,21 @@
 package io.foldright.cffu;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
 import io.foldright.cffu.tuple.Tuple4;
 import io.foldright.cffu.tuple.Tuple5;
+import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
@@ -109,13 +112,13 @@ public final class CompletableFutureUtils {
      * If no CompletableFutures are provided, returns a CompletableFuture completed
      * with the value {@link Collections#emptyList() emptyList}.
      * <p>
-     * Same to {@link CompletableFutureUtils#allOfFastFail(CompletableFuture[])},
+     * Same to {@link #allOfFastFail(CompletableFuture[])},
      * but the returned CompletableFuture contains the results of the given CompletableFutures.
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that success when all the given CompletableFutures success
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see CompletableFutureUtils#allOfFastFail(CompletableFuture[])
+     * @see #allOfFastFail(CompletableFuture[])
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -357,11 +360,21 @@ public final class CompletableFutureUtils {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# helper methods
+    //# Backport CF methods
+    //  compatibility for low Java version
     ////////////////////////////////////////////////////////////////////////////////
 
+    //# Factory methods
+
+    /**
+     * Returns a new CompletableFuture that is already completed exceptionally with the given exception.
+     *
+     * @param ex  the exception
+     * @param <T> the type of the value
+     * @return the exceptionally completed CompletableFuture
+     */
     @Contract(pure = true)
-    static <T> CompletableFuture<T> failedFuture(Throwable ex) {
+    public static <T> CompletableFuture<T> failedFuture(Throwable ex) {
         if (IS_JAVA9_PLUS) {
             return CompletableFuture.failedFuture(ex);
         }
@@ -370,23 +383,541 @@ public final class CompletableFutureUtils {
         return cf;
     }
 
+    /**
+     * Returns a new CompletionStage that is already completed with the given value
+     * and supports only those methods in interface {@link CompletionStage}.
+     *
+     * @param value the value
+     * @param <T>   the type of the value
+     * @return the completed CompletionStage
+     */
     @Contract(pure = true)
-    static <U> CompletableFuture<U> copy(CompletableFuture<U> cf) {
+    public static <T> CompletionStage<T> completedStage(@Nullable T value) {
+        if (IS_JAVA9_PLUS) {
+            return CompletableFuture.completedStage(value);
+        }
+        return CompletableFuture.completedFuture(value);
+    }
+
+    /**
+     * Returns a new CompletionStage that is already completed exceptionally with
+     * the given exception and supports only those methods in interface {@link CompletionStage}.
+     *
+     * @param ex  the exception
+     * @param <T> the type of the value
+     * @return the exceptionally completed CompletionStage
+     */
+    @Contract(pure = true)
+    public static <T> CompletionStage<T> failedStage(Throwable ex) {
+        if (IS_JAVA9_PLUS) {
+            return CompletableFuture.failedStage(ex);
+        }
+        CompletableFuture<T> cf = new CompletableFuture<>();
+        cf.completeExceptionally(ex);
+        return cf;
+    }
+
+    //# Delay Execution
+
+    /**
+     * Returns a new Executor that submits a task to the default executor after the given delay (or no delay
+     * if non-positive). Each delay commences upon invocation of the returned executor's {@code execute} method.
+     *
+     * @param delay how long to delay, in units of {@code unit}
+     * @param unit  a {@code TimeUnit} determining how to interpret the
+     *              {@code delay} parameter
+     * @return the new delayed executor
+     */
+    @Contract(pure = true)
+    public static Executor delayedExecutor(long delay, TimeUnit unit) {
+        return delayedExecutor(delay, unit, AsyncPoolHolder.ASYNC_POOL);
+    }
+
+    /**
+     * Returns a new Executor that submits a task to the given base executor after the given delay (or no delay
+     * if non-positive). Each delay commences upon invocation of the returned executor's {@code execute} method.
+     *
+     * @param delay    how long to delay, in units of {@code unit}
+     * @param unit     a {@code TimeUnit} determining how to interpret the
+     *                 {@code delay} parameter
+     * @param executor the base executor
+     * @return the new delayed executor
+     */
+    @Contract(pure = true)
+    public static Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
+        if (IS_JAVA9_PLUS) {
+            return CompletableFuture.delayedExecutor(delay, unit, executor);
+        }
+
+        requireNonNull(unit, "unit is null");
+        requireNonNull(executor, "executor is null");
+        return new DelayedExecutor(delay, unit, executor);
+    }
+
+    ////////////////////////////////////////
+    //# backport instance methods
+    ////////////////////////////////////////
+
+    //# Error Handling methods of CompletionStage
+
+    /**
+     * Returns a new CompletionStage that, when given stage completes exceptionally, is executed with given
+     * stage's exception as the argument to the supplied function, using given stage's
+     * default asynchronous execution facility. Otherwise, if given stage completes normally,
+     * then the returned stage also completes normally with the same value.
+     *
+     * @param fn the function to use to compute the value of the
+     *           returned CompletionStage if given CompletionStage completed
+     *           exceptionally
+     * @return the new CompletionStage
+     */
+    public static <T> CompletableFuture<T> exceptionallyAsync(
+            CompletableFuture<T> cf, Function<Throwable, ? extends T> fn) {
+        return exceptionallyAsync(cf, fn, AsyncPoolHolder.ASYNC_POOL);
+    }
+
+    /**
+     * Returns a new CompletionStage that, when given stage completes exceptionally, is executed with given
+     * stage's exception as the argument to the supplied function, using the supplied Executor. Otherwise,
+     * if given stage completes normally, then the returned stage also completes normally with the same value.
+     *
+     * @param fn       the function to use to compute the value of the
+     *                 returned CompletionStage if given CompletionStage completed
+     *                 exceptionally
+     * @param executor the executor to use for asynchronous execution
+     * @return the new CompletionStage
+     */
+    public static <T> CompletableFuture<T> exceptionallyAsync(
+            CompletableFuture<T> cf, Function<Throwable, ? extends T> fn, Executor executor) {
+        if (IS_JAVA12_PLUS) {
+            return (cf.exceptionallyAsync(fn, executor));
+        }
+
+        // below code is copied from CompletionStage#exceptionallyAsync
+
+        return cf.handle((r, ex) -> (ex == null) ? cf :
+                cf.<T>handleAsync((r1, ex1) -> fn.apply(ex1), executor)
+        ).thenCompose(Function.identity());
+    }
+
+    //# Timeout Control methods
+
+    /**
+     * Exceptionally completes given CompletableFuture with a {@link TimeoutException}
+     * if not otherwise completed before the given timeout.
+     *
+     * @param timeout how long to wait before completing exceptionally
+     *                with a TimeoutException, in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the
+     *                {@code timeout} parameter
+     * @return given CompletableFuture
+     */
+    public static <T> CompletableFuture<T> orTimeout(CompletableFuture<T> cf, long timeout, TimeUnit unit) {
+        if (IS_JAVA9_PLUS) {
+            cf.orTimeout(timeout, unit);
+            return cf;
+        }
+
+        // below code is copied from CompletableFuture#orTimeout with small adoption
+
+        requireNonNull(unit, "unit is null");
+        if (!cf.isDone()) {
+            ScheduledFuture<?> f = Delayer.delayToTimoutCf(cf, timeout, unit);
+            cf.whenComplete(new FutureCanceller(f));
+        }
+        return cf;
+    }
+
+    /**
+     * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
+     *
+     * @param value   the value to use upon timeout
+     * @param timeout how long to wait before completing normally
+     *                with the given value, in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the
+     *                {@code timeout} parameter
+     * @return given CompletableFuture
+     */
+    public static <T> CompletableFuture<T> completeOnTimeout(
+            CompletableFuture<T> cf, @Nullable T value, long timeout, TimeUnit unit) {
+        if (IS_JAVA9_PLUS) {
+            cf.completeOnTimeout(value, timeout, unit);
+            return cf;
+        }
+
+        // below code is copied from CompletableFuture#completeOnTimeout with small adoption
+
+        requireNonNull(unit, "unit is null");
+        if (!cf.isDone()) {
+            ScheduledFuture<?> f = Delayer.delayToCompleteCf(cf, value, timeout, unit);
+            cf.whenComplete(new FutureCanceller(f));
+        }
+        return cf;
+    }
+
+    //# Advanced methods of CompletionStage
+
+    /**
+     * Returns a new CompletionStage that, when given stage completes exceptionally,
+     * is composed using the results of the supplied function applied to given stage's exception.
+     *
+     * @param fn the function to use to compute the returned
+     *           CompletionStage if given CompletionStage completed exceptionally
+     * @return the new CompletionStage
+     */
+    public static <T> CompletableFuture<T> exceptionallyCompose(
+            CompletableFuture<T> cf, Function<Throwable, ? extends CompletionStage<T>> fn) {
+        if (IS_JAVA12_PLUS) {
+            return (cf.exceptionallyCompose(fn));
+        }
+
+        // below code is copied from CompletionStage.exceptionallyCompose
+
+        return cf.handle((r, ex) -> (ex == null) ? cf : fn.apply(ex))
+                .thenCompose(Function.identity());
+    }
+
+    /**
+     * Returns a new CompletionStage that, when given stage completes exceptionally,
+     * is composed using the results of the supplied function applied to given stage's exception,
+     * using given stage's default asynchronous execution facility.
+     *
+     * @param fn the function to use to compute the returned
+     *           CompletionStage if given CompletionStage completed exceptionally
+     * @return the new CompletionStage
+     */
+    public static <T> CompletableFuture<T> exceptionallyComposeAsync(
+            CompletableFuture<T> cf, Function<Throwable, ? extends CompletionStage<T>> fn) {
+        return exceptionallyComposeAsync(cf, fn, AsyncPoolHolder.ASYNC_POOL);
+    }
+
+    /**
+     * Returns a new CompletionStage that, when given stage completes exceptionally, is composed using
+     * the results of the supplied function applied to given stage's exception, using the supplied Executor.
+     *
+     * @param fn       the function to use to compute the returned
+     *                 CompletionStage if given CompletionStage completed exceptionally
+     * @param executor the executor to use for asynchronous execution
+     * @return the new CompletionStage
+     */
+    public static <T> CompletableFuture<T> exceptionallyComposeAsync(
+            CompletableFuture<T> cf, Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
+        if (IS_JAVA12_PLUS) {
+            return cf.exceptionallyComposeAsync(fn, executor);
+        }
+
+        // below code is copied from CompletionStage.exceptionallyComposeAsync
+
+        return cf.handle((r, ex) -> (ex == null) ? cf :
+                cf.handleAsync((r1, ex1) -> fn.apply(ex1), executor).thenCompose(Function.identity())
+        ).thenCompose(Function.identity());
+    }
+
+    //# Read(explicitly) methods of CompletableFuture
+
+    /**
+     * Waits if necessary for at most the given time for the computation to complete,
+     * and then retrieves its result value when complete, or throws an (unchecked) exception if completed exceptionally.
+     * <p>
+     * <b><i>NOTE:<br></i></b>
+     * call this method
+     * <p>
+     * {@code result = CompletableFutureUtils.cffuJoin(cf, timeout, unit);}
+     * <p>
+     * is same as:
+     *
+     * <pre>{@code result = cf.copy() // defensive copy to avoid writing this cf unexpectedly
+     *     .orTimeout(timeout, unit)
+     *     .join();
+     * }</pre>
+     *
+     * <b><i>CAUTION:<br></i></b>
+     * if the wait timed out, this method throws an (unchecked) {@link CompletionException}
+     * with the {@link TimeoutException} as its cause;
+     * NOT throws a (checked) {@link TimeoutException} like {@link CompletableFuture#get(long, TimeUnit)}.
+     *
+     * @param timeout the maximum time to wait
+     * @param unit    the time unit of the timeout argument
+     * @return the result value
+     * @throws CancellationException if the computation was cancelled
+     * @throws CompletionException   if given future completed exceptionally
+     *                               or a completion computation threw an exception
+     *                               or the wait timed out(with the {@code TimeoutException} as its cause)
+     * @see CompletableFuture#join()
+     */
+    @Blocking
+    @Nullable
+    public static <T> T cffuJoin(CompletableFuture<T> cf, long timeout, TimeUnit unit) {
+        if (cf.isDone()) return cf.join();
+
+        CompletableFuture<T> f = copy(cf);
+        orTimeout(f, timeout, unit);
+        return f.join();
+    }
+
+    /**
+     * Returns the computed result, without waiting.
+     * <p>
+     * This method is for cases where the caller knows that the task has already completed successfully,
+     * for example when filtering a stream of Future objects for the successful tasks
+     * and using a mapping operation to obtain a stream of results.
+     *
+     * <pre>{@code results = futures.stream()
+     *     .filter(f -> f.state() == Future.State.SUCCESS)
+     *     .map(Future::resultNow)
+     *     .toList();
+     * }</pre>
+     */
+    @Contract(pure = true)
+    @Nullable
+    public static <T> T resultNow(CompletableFuture<T> cf) {
+        if (IS_JAVA19_PLUS) {
+            return cf.resultNow();
+        }
+
+        // below code is copied from Future.resultNow
+
+        if (!cf.isDone()) throw new IllegalStateException("Task has not completed");
+        boolean interrupted = false;
+        try {
+            while (true) {
+                try {
+                    return cf.get();
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                } catch (ExecutionException e) {
+                    throw new IllegalStateException("Task completed with exception");
+                } catch (CancellationException e) {
+                    throw new IllegalStateException("Task was cancelled");
+                }
+            }
+        } finally {
+            if (interrupted) Thread.currentThread().interrupt();
+        }
+    }
+
+    /**
+     * Returns the exception thrown by the task, without waiting.
+     * <p>
+     * This method is for cases where the caller knows that the task has already completed with an exception.
+     *
+     * @return the exception thrown by the task
+     * @throws IllegalStateException if the task has not completed, the task completed normally,
+     *                               or the task was cancelled
+     * @see CompletableFuture#resultNow()
+     */
+    @Contract(pure = true)
+    public static <T> Throwable exceptionNow(CompletableFuture<T> cf) {
+        if (IS_JAVA19_PLUS) {
+            return cf.exceptionNow();
+        }
+
+        // below code is copied from Future.exceptionNow
+
+        if (!cf.isDone()) throw new IllegalStateException("Task has not completed");
+        if (cf.isCancelled()) throw new IllegalStateException("Task was cancelled");
+
+        boolean interrupted = false;
+        try {
+            while (true) {
+                try {
+                    cf.get();
+                    throw new IllegalStateException("Task completed with a result");
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                } catch (ExecutionException e) {
+                    return e.getCause();
+                }
+            }
+        } finally {
+            if (interrupted) Thread.currentThread().interrupt();
+        }
+    }
+
+    /**
+     * Returns the computation state({@link CffuState}), this method has java version compatibility logic,
+     * so you can invoke in old {@code java 18-}.
+     *
+     * @return the computation state
+     * @see Future#state()
+     * @see CompletableFuture#state()
+     * @see CffuState
+     * @see Future.State
+     */
+    @Contract(pure = true)
+    public static <T> CffuState cffuState(CompletableFuture<T> cf) {
+        if (IS_JAVA19_PLUS)
+            return CffuState.toCffuState(cf.state());
+
+        // below code is copied from Future#state() with small adoption
+
+        if (!cf.isDone()) return CffuState.RUNNING;
+        if (cf.isCancelled()) return CffuState.CANCELLED;
+
+        boolean interrupted = false;
+        try {
+            while (true) {
+                try {
+                    cf.get();  // may throw InterruptedException when done
+                    return CffuState.SUCCESS;
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                } catch (ExecutionException e) {
+                    return CffuState.FAILED;
+                }
+            }
+        } finally {
+            if (interrupted) Thread.currentThread().interrupt();
+        }
+    }
+
+    //# Write methods of CompletableFuture
+
+    /**
+     * Completes given CompletableFuture with the result of the given Supplier function invoked
+     * from an asynchronous task using the default executor.
+     *
+     * @param supplier a function returning the value to be used
+     *                 to complete given CompletableFuture
+     * @return given CompletableFuture
+     */
+    public static <T> CompletableFuture<T> completeAsync(CompletableFuture<T> cf, Supplier<? extends T> supplier) {
+        return completeAsync(cf, supplier, AsyncPoolHolder.ASYNC_POOL);
+    }
+
+    /**
+     * Completes given CompletableFuture with the result of the given Supplier function invoked
+     * from an asynchronous task using the given executor.
+     *
+     * @param supplier a function returning the value to be used
+     *                 to complete given CompletableFuture
+     * @param executor the executor to use for asynchronous execution
+     * @return given CompletableFuture
+     */
+    public static <T> CompletableFuture<T> completeAsync(
+            CompletableFuture<T> cf, Supplier<? extends T> supplier, Executor executor) {
+        if (IS_JAVA9_PLUS) {
+            cf.completeAsync(supplier, executor);
+            return cf;
+        }
+
+        // below code is copied from CompletableFuture#completeAsync with small adoption
+
+        requireNonNull(supplier, "supplier is null");
+        requireNonNull(executor, "executor is null");
+        executor.execute(new CfCompleterBySupplier<>(cf, supplier));
+        return cf;
+    }
+
+    //# Re-Config methods
+
+    /**
+     * Returns a new CompletionStage that is completed normally with the same value as given CompletableFuture
+     * when it completes normally, and cannot be independently completed or otherwise used in ways
+     * not defined by the methods of interface {@link CompletionStage}.
+     * If given CompletableFuture completes exceptionally, then the returned CompletionStage completes exceptionally
+     * with a CompletionException with given exception as cause.
+     *
+     * <pre>{@code minimalStage.toCompletableFuture().join(); }</pre>
+     *
+     * @return the new CompletionStage
+     */
+    @Contract(pure = true)
+    public static <T> CompletionStage<T> minimalCompletionStage(CompletableFuture<T> cf) {
+        if (IS_JAVA9_PLUS) {
+            return cf.minimalCompletionStage();
+        }
+        return cf.thenApply(Function.identity());
+    }
+
+    @Contract(pure = true)
+    public static <U> CompletableFuture<U> copy(CompletableFuture<U> cf) {
         if (IS_JAVA9_PLUS) {
             return cf.copy();
         }
         return cf.thenApply(Function.identity());
     }
 
+    /**
+     * Returns a new incomplete CompletableFuture of the type to be returned by a CompletionStage method.
+     *
+     * @param <T> the type of the value
+     * @return a new CompletableFuture
+     */
+    @Contract(pure = true)
+    public static <T, U> CompletableFuture<U> newIncompleteFuture(CompletableFuture<T> cf) {
+        if (IS_JAVA9_PLUS) {
+            return (cf.newIncompleteFuture());
+        }
+        return (new CompletableFuture<>());
+    }
+
+    //# Getter methods
+
+    /**
+     * Returns the default Executor used for async methods that do not specify an Executor.
+     * This class uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread,
+     * or else an Executor using one thread per async task.
+     *
+     * @return the executor
+     */
+    @Contract(pure = true)
+    public static Executor defaultExecutor() {
+        return AsyncPoolHolder.ASYNC_POOL;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Helper fields and classes
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Null-checks user executor argument, and translates uses of
+     * commonPool to ASYNC_POOL in case parallelism disabled.
+     */
+    @SuppressWarnings("resource")
+    static Executor screenExecutor(Executor e) {
+        if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool())
+            return AsyncPoolHolder.ASYNC_POOL;
+        return requireNonNull(e, "defaultExecutor is null");
+    }
+
+    private static final boolean USE_COMMON_POOL = (ForkJoinPool.getCommonPoolParallelism() > 1);
+
+    /**
+     * Fallback if ForkJoinPool.commonPool() cannot support parallelism
+     */
+    private static final class ThreadPerTaskExecutor implements Executor {
+        @Override
+        public void execute(Runnable r) {
+            new Thread(requireNonNull(r)).start();
+        }
+    }
+
+    /**
+     * hold {@link #ASYNC_POOL} as field of static inner class for lazy loading(init only when needed).
+     */
+    private static class AsyncPoolHolder {
+        /**
+         * Default executor -- ForkJoinPool.commonPool() unless it cannot support parallelism.
+         */
+        private static final Executor ASYNC_POOL = _asyncPool0();
+
+        private static Executor _asyncPool0() {
+            if (IS_JAVA9_PLUS) return CompletableFuture.completedFuture(null).defaultExecutor();
+            if (USE_COMMON_POOL) return ForkJoinPool.commonPool();
+            return new ThreadPerTaskExecutor();
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# Java version check logic for compatibility
     ////////////////////////////////////////////////////////////////////////////////
 
-    static final boolean IS_JAVA9_PLUS;
+    private static final boolean IS_JAVA9_PLUS;
 
-    static final boolean IS_JAVA12_PLUS;
+    private static final boolean IS_JAVA12_PLUS;
 
-    static final boolean IS_JAVA19_PLUS;
+    private static final boolean IS_JAVA19_PLUS;
 
     static {
         boolean b;
