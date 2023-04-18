@@ -466,9 +466,8 @@ public final class CompletableFutureUtils {
      * default asynchronous execution facility. Otherwise, if given stage completes normally,
      * then the returned stage also completes normally with the same value.
      *
-     * @param fn the function to use to compute the value of the
-     *           returned CompletionStage if given CompletionStage completed
-     *           exceptionally
+     * @param fn the function to use to compute the value of the returned CompletionStage
+     *           if given CompletionStage completed exceptionally
      * @return the new CompletionStage
      */
     public static <T> CompletableFuture<T> exceptionallyAsync(
@@ -481,9 +480,8 @@ public final class CompletableFutureUtils {
      * stage's exception as the argument to the supplied function, using the supplied Executor. Otherwise,
      * if given stage completes normally, then the returned stage also completes normally with the same value.
      *
-     * @param fn       the function to use to compute the value of the
-     *                 returned CompletionStage if given CompletionStage completed
-     *                 exceptionally
+     * @param fn       the function to use to compute the value of the returned CompletionStage
+     *                 if given CompletionStage completed exceptionally
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletionStage
      */
@@ -506,10 +504,8 @@ public final class CompletableFutureUtils {
      * Exceptionally completes given CompletableFuture with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
      *
-     * @param timeout how long to wait before completing exceptionally
-     *                with a TimeoutException, in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the
-     *                {@code timeout} parameter
+     * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return given CompletableFuture
      */
     public static <T> CompletableFuture<T> orTimeout(CompletableFuture<T> cf, long timeout, TimeUnit unit) {
@@ -532,10 +528,8 @@ public final class CompletableFutureUtils {
      * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
      *
      * @param value   the value to use upon timeout
-     * @param timeout how long to wait before completing normally
-     *                with the given value, in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the
-     *                {@code timeout} parameter
+     * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return given CompletableFuture
      */
     public static <T> CompletableFuture<T> completeOnTimeout(
@@ -595,8 +589,8 @@ public final class CompletableFutureUtils {
      * Returns a new CompletionStage that, when given stage completes exceptionally, is composed using
      * the results of the supplied function applied to given stage's exception, using the supplied Executor.
      *
-     * @param fn       the function to use to compute the returned
-     *                 CompletionStage if given CompletionStage completed exceptionally
+     * @param fn       the function to use to compute the returned CompletionStage
+     *                 if given CompletionStage completed exceptionally
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletionStage
      */
@@ -777,8 +771,7 @@ public final class CompletableFutureUtils {
      * Completes given CompletableFuture with the result of the given Supplier function invoked
      * from an asynchronous task using the default executor.
      *
-     * @param supplier a function returning the value to be used
-     *                 to complete given CompletableFuture
+     * @param supplier a function returning the value to be used to complete given CompletableFuture
      * @return given CompletableFuture
      */
     public static <T> CompletableFuture<T> completeAsync(CompletableFuture<T> cf, Supplier<? extends T> supplier) {
@@ -789,8 +782,7 @@ public final class CompletableFutureUtils {
      * Completes given CompletableFuture with the result of the given Supplier function invoked
      * from an asynchronous task using the given executor.
      *
-     * @param supplier a function returning the value to be used
-     *                 to complete given CompletableFuture
+     * @param supplier a function returning the value to be used to complete given CompletableFuture
      * @param executor the executor to use for asynchronous execution
      * @return given CompletableFuture
      */
@@ -830,8 +822,17 @@ public final class CompletableFutureUtils {
         return cf.thenApply(Function.identity());
     }
 
+    /**
+     * Returns a new CompletableFuture that is completed normally with the same value as this CompletableFuture when
+     * it completes normally. If this CompletableFuture completes exceptionally, then the returned CompletableFuture
+     * completes exceptionally with a CompletionException with this exception as cause. The behavior is equivalent
+     * to {@code thenApply(x -> x)}. This method may be useful as a form of "defensive copying", to prevent clients
+     * from completing, while still being able to arrange dependent actions.
+     *
+     * @return the new CompletableFuture
+     */
     @Contract(pure = true)
-    public static <U> CompletableFuture<U> copy(CompletableFuture<U> cf) {
+    public static <T> CompletableFuture<T> copy(CompletableFuture<T> cf) {
         if (IS_JAVA9_PLUS) {
             return cf.copy();
         }

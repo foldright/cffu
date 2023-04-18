@@ -23,6 +23,7 @@ const val n = 42
 const val anotherN = 4242
 const val s = "43"
 const val d = 44.0
+val rte = RuntimeException("Bang")
 
 class CffuExtensionsTest : FunSpec({
     ////////////////////////////////////////

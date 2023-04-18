@@ -692,9 +692,7 @@ class CompletableFutureUtilsTest {
         final AtomicReference<String> holder = new AtomicReference<>();
 
         Executor delayer = CompletableFutureUtils.delayedExecutor(1, TimeUnit.MILLISECONDS);
-        CompletableFuture.runAsync(() -> {
-            holder.set(testName);
-        }, delayer).get();
+        CompletableFuture.runAsync(() -> holder.set(testName), delayer).get();
         assertEquals(testName, holder.get());
     }
 
@@ -745,7 +743,10 @@ class CompletableFutureUtilsTest {
     }
 
     @Test
-    void test_re_config() {
+    void test_re_config() throws Exception {
+        CompletionStage<Integer> mf = minimalCompletionStage(CompletableFuture.completedFuture(n));
+        assertEquals(n, mf.toCompletableFuture().get());
+
         CompletableFuture<Integer> cf = new CompletableFuture<>();
         CompletableFutureUtils.copy(cf).complete(n);
         assertFalse(cf.isDone());
