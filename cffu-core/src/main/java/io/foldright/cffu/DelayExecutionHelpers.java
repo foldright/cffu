@@ -211,3 +211,140 @@ final class CfCompleterBySupplier<T> extends ForkJoinTask<Void>
         }
     }
 }
+
+/**
+ * A subclass that just throws UOE for most non-CompletionStage methods.
+ */
+final class MinimalStage<T> extends CompletableFuture<T> {
+    MinimalStage() {
+    }
+
+    boolean innerComplete(T value) {
+        return super.complete(value);
+    }
+
+    boolean innerCompleteExceptionally(Throwable ex) {
+        return super.completeExceptionally(ex);
+    }
+
+    @Override
+    public <U> CompletableFuture<U> newIncompleteFuture() {
+        return new MinimalStage<U>();
+    }
+
+    @Override
+    public T get() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public T get(long timeout, TimeUnit unit) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public T getNow(T valueIfAbsent) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public T join() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public T resultNow() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Throwable exceptionNow() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean complete(T value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean completeExceptionally(Throwable ex) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void obtrudeValue(T value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void obtrudeException(Throwable ex) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isDone() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isCancelled() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isCompletedExceptionally() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public State state() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int getNumberOfDependents() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public CompletableFuture<T> completeAsync
+            (Supplier<? extends T> supplier, Executor executor) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public CompletableFuture<T> completeAsync
+            (Supplier<? extends T> supplier) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public CompletableFuture<T> orTimeout
+            (long timeout, TimeUnit unit) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public CompletableFuture<T> completeOnTimeout
+            (T value, long timeout, TimeUnit unit) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public CompletableFuture<T> toCompletableFuture() {
+        Object r;
+        if (super.isDone())
+            return new CompletableFuture<T>(encodeRelay(r));
+        else {
+            CompletableFuture<T> d = new CompletableFuture<>();
+            unipush(new UniRelay<T, T>(d, this));
+            return d;
+        }
+    }
+}
