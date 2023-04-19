@@ -386,6 +386,9 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletionStage that is already completed with the given value
      * and supports only those methods in interface {@link CompletionStage}.
+     * <p>
+     * <b><i>CAUTION:<br></i></b>
+     * if run on old Java 8, just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @param value the value
      * @param <T>   the type of the value
@@ -402,6 +405,9 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletionStage that is already completed exceptionally with
      * the given exception and supports only those methods in interface {@link CompletionStage}.
+     * <p>
+     * <b><i>CAUTION:<br></i></b>
+     * if run on old Java 8, just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @param ex  the exception
      * @param <T> the type of the value
@@ -809,8 +815,9 @@ public final class CompletableFutureUtils {
      * not defined by the methods of interface {@link CompletionStage}.
      * If given CompletableFuture completes exceptionally, then the returned CompletionStage completes exceptionally
      * with a CompletionException with given exception as cause.
-     *
-     * <pre>{@code minimalStage.toCompletableFuture().join(); }</pre>
+     * <p>
+     * <b><i>CAUTION:<br></i></b>
+     * if run on old Java 8, just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @return the new CompletionStage
      */

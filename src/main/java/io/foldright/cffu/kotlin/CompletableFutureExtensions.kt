@@ -598,7 +598,8 @@ fun <T> CompletableFuture<T>.cffuCompleteAsync(supplier: () -> T, executor: Exec
  * If given CompletableFuture completes exceptionally, then the returned CompletionStage completes exceptionally
  * with a CompletionException with given exception as cause.
  *
- * `minimalStage.toCompletableFuture().join();`
+ * ***CAUTION:*** if run on old Java 8, just return a ***normal*** CompletableFuture
+ * which is NOT with a ***minimal*** CompletionStage.
  *
  * @return the new CompletionStage
  */
