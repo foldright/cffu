@@ -145,7 +145,7 @@ class CffuFactoryTest {
             cffu.obtrudeValue(44);
             fail();
         } catch (UnsupportedOperationException expected) {
-            assertEquals("obtrudeValue is forbidden by cffu", expected.getMessage());
+            assertEquals("obtrude methods is forbidden by cffu", expected.getMessage(), expected.getMessage());
         }
     }
 
@@ -743,13 +743,13 @@ class CffuFactoryTest {
             cf.obtrudeValue(42);
             fail();
         } catch (UnsupportedOperationException expected) {
-            assertEquals("obtrudeValue is forbidden by cffu", expected.getMessage());
+            assertEquals("obtrude methods is forbidden by cffu", expected.getMessage());
         }
         try {
             cf.obtrudeException(rte);
             fail();
         } catch (UnsupportedOperationException expected) {
-            assertEquals("obtrudeException is forbidden by cffu", expected.getMessage());
+            assertEquals("obtrude methods is forbidden by cffu", expected.getMessage(), expected.getMessage());
         }
     }
 

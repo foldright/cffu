@@ -785,7 +785,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @see CffuFactory#delayedExecutor(long, TimeUnit)
      */
     public Cffu<T> orTimeout(long timeout, TimeUnit unit) {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         CompletableFutureUtils.orTimeout(cf, timeout, unit);
         return this;
@@ -801,7 +801,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @see CffuFactory#delayedExecutor(long, TimeUnit)
      */
     public Cffu<T> completeOnTimeout(@Nullable T value, long timeout, TimeUnit unit) {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         CompletableFutureUtils.completeOnTimeout(cf, value, timeout, unit);
         return this;
@@ -1106,7 +1106,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Nullable
     @Override
     public T get() throws InterruptedException, ExecutionException {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         return cf.get();
     }
@@ -1132,7 +1132,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Nullable
     @Override
     public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         return cf.get(timeout, unit);
     }
@@ -1157,7 +1157,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Blocking
     @Nullable
     public T join() {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         return cf.join();
     }
@@ -1200,7 +1200,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Blocking
     @Nullable
     public T cffuJoin(long timeout, TimeUnit unit) {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         return CompletableFutureUtils.cffuJoin(cf, timeout, unit);
     }
@@ -1223,7 +1223,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Contract(pure = true)
     @Nullable
     public T getNow(T valueIfAbsent) {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         return cf.getNow(valueIfAbsent);
     }
@@ -1247,7 +1247,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Nullable
     @Override
     public T resultNow() {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         return CompletableFutureUtils.resultNow(cf);
     }
@@ -1265,7 +1265,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Contract(pure = true)
     @Override
     public Throwable exceptionNow() {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         return CompletableFutureUtils.exceptionNow(cf);
     }
@@ -1281,7 +1281,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Contract(pure = true)
     @Override
     public boolean isDone() {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         return cf.isDone();
     }
@@ -1295,7 +1295,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Contract(pure = true)
     public boolean isCompletedExceptionally() {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         return cf.isCompletedExceptionally();
     }
@@ -1309,7 +1309,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Contract(pure = true)
     @Override
     public boolean isCancelled() {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         return cf.isCancelled();
     }
@@ -1332,7 +1332,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Contract(pure = true)
     @Override
     public Future.State state() {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         return cf.state();
     }
@@ -1348,7 +1348,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Contract(pure = true)
     public CffuState cffuState() {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         return CompletableFutureUtils.cffuState(cf);
     }
@@ -1370,7 +1370,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return {@code true} if this invocation caused this Cffu to transition to a completed state, else {@code false}
      */
     public boolean complete(@Nullable T value) {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         return cf.complete(value);
     }
@@ -1395,7 +1395,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return this Cffu
      */
     public Cffu<T> completeAsync(Supplier<? extends T> supplier, Executor executor) {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         CompletableFutureUtils.completeAsync(cf, supplier, executor);
         return this;
@@ -1408,7 +1408,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return {@code true} if this invocation caused this Cffu to transition to a completed state, else {@code false}
      */
     public boolean completeExceptionally(Throwable ex) {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         return cf.completeExceptionally(ex);
     }
@@ -1424,7 +1424,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         return cf.cancel(mayInterruptIfRunning);
     }
@@ -1618,7 +1618,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Contract(pure = true)
     public int getNumberOfDependents() {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
+        checkMinimalStage();
 
         return cf.getNumberOfDependents();
     }
@@ -1643,9 +1643,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
      * @see CffuFactory#forbidObtrudeMethods()
      */
+    @SuppressFBWarnings("NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE")
     public void obtrudeValue(@Nullable T value) {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
-        if (fac.forbidObtrudeMethods()) throw new UnsupportedOperationException("obtrudeValue is forbidden by cffu");
+        checkMinimalStage();
+        checkForbidObtrudeMethods();
 
         cf.obtrudeValue(value);
     }
@@ -1661,8 +1662,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @see CffuFactory#forbidObtrudeMethods()
      */
     public void obtrudeException(Throwable ex) {
-        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this a minimal stage");
-        if (fac.forbidObtrudeMethods()) throw new UnsupportedOperationException("obtrudeException is forbidden by cffu");
+        checkMinimalStage();
+        checkForbidObtrudeMethods();
 
         cf.obtrudeException(ex);
     }
@@ -1703,5 +1704,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public String toString() {
         return this.getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this))
                 + "(" + cf + ")";
+    }
+
+    private void checkMinimalStage() {
+        if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this is a minimal stage");
+    }
+
+    private void checkForbidObtrudeMethods() {
+        if (fac.forbidObtrudeMethods()) throw new UnsupportedOperationException("obtrude methods is forbidden by cffu");
     }
 }
