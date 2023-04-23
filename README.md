@@ -430,7 +430,7 @@ fun main() {
   val combined = longTaskA.thenCombine(longTaskB, Integer::sum)
     .orTimeout(1500, TimeUnit.MILLISECONDS)
   println("combined result: ${combined.get()}")
-  val anyOfSuccess: Cffu<Int> = cffuFactory.cffuAnyOfSuccess(longTaskC, longFailedTask)
+  val anyOfSuccess: Cffu<Int> = listOf(longTaskC, longFailedTask).anyOfSuccessCffu()
   println("anyOfSuccess result: ${anyOfSuccess.get()}")
 
   ////////////////////////////////////////
