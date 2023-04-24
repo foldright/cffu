@@ -2,11 +2,16 @@ package io.foldright.cffu;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
+import io.foldright.cffu.spi.ExecutorWrapper;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.ThreadSafe;
+import java.util.List;
+import java.util.ServiceLoader;
 import java.util.concurrent.Executor;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 
@@ -47,7 +52,7 @@ public final class CffuFactoryBuilder {
     }
 
     /**
-     * Set {@code forbidObtrudeMethods} or not.
+     * Sets {@code forbidObtrudeMethods} or not.
      *
      * @see CffuFactory#forbidObtrudeMethods()
      * @see Cffu#obtrudeValue(Object)
@@ -58,8 +63,28 @@ public final class CffuFactoryBuilder {
         return this;
     }
 
+    /**
+     * Builds the cffu factory.
+     *
+     * @return the built cffu factory
+     */
     @Contract(pure = true)
     public CffuFactory build() {
-        return new CffuFactory(defaultExecutor, forbidObtrudeMethods);
+        return new CffuFactory(wrapExecutor(), forbidObtrudeMethods);
+    }
+
+    private Executor wrapExecutor() {
+        Executor executor = defaultExecutor;
+        for (ExecutorWrapper wrapper : executorWrappers) {
+            executor = wrapper.wrap(executor);
+        }
+        return executor;
+    }
+
+    private static final List<ExecutorWrapper> executorWrappers = loadExecutorWrappers();
+
+    private static List<ExecutorWrapper> loadExecutorWrappers() {
+        final ServiceLoader<ExecutorWrapper> loader = ServiceLoader.load(ExecutorWrapper.class);
+        return StreamSupport.stream(loader.spliterator(), false).collect(Collectors.toList());
     }
 }
