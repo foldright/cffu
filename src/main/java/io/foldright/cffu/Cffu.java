@@ -1448,7 +1448,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * <b><i>CAUTION:<br></i></b>
      * if run on old Java 8, just return a Cffu with
-     * a *normal* underneath CompletableFuture which is NOT with a *minimal* CompletionStage.
+     * a *normal* underlying CompletableFuture which is NOT with a *minimal* CompletionStage.
      * <p>
      * demo code about re-config methods of Cffu:
      *
@@ -1490,8 +1490,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a {@link CompletableFuture} maintaining the same completion properties as this stage.
      * <p>
-     * call {@link CompletableFuture#toCompletableFuture()} method of the underneath wrapped CompletableFuture:
-     * {@code wrappedCf.toCompletableFuture()}; if you need the underneath wrapped CompletableFuture instance,
+     * call {@link CompletableFuture#toCompletableFuture()} method of the underlying CompletableFuture:
+     * {@code underlyingCf.toCompletableFuture()}; if you need the underlying CompletableFuture instance,
      * call method {@link #cffuUnwrap()}.
      * <p>
      * {@link CffuFactory#toCompletableFutureArray(CompletionStage[])} is the batch operation to this method.
@@ -1593,12 +1593,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns the underneath wrapped CompletableFuture.
+     * Returns the underlying CompletableFuture.
      * <p>
      * {@link CffuFactory#asCffu(CompletionStage)} is inverse operation to this method.
      * {@link CffuFactory#cffuArrayUnwrap(Cffu[])} is the batch operation to this method.
      *
-     * @return the underneath wrapped CompletableFuture
+     * @return the underlying CompletableFuture
      * @see CffuFactory#asCffu(CompletionStage)
      * @see CffuFactory#cffuArrayUnwrap(Cffu[])
      * @see #toCompletableFuture()
@@ -1679,7 +1679,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * <b><i>CAUTION:<br></i></b>
      * for minimal stage instance({@link #isMinimalStage()}), if run on old Java 8,
-     * just return a Cffu with a *normal* underneath CompletableFuture which is NOT with a *minimal* CompletionStage.
+     * just return a Cffu with a *normal* underlying CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @see CffuFactory#newIncompleteCffu()
      * @see CompletableFuture#newIncompleteFuture()

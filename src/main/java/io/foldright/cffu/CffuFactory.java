@@ -99,7 +99,7 @@ public final class CffuFactory {
      * <p>
      * <b><i>CAUTION:<br></i></b>
      * if run on old Java 8, just return a Cffu with
-     * a *normal* underneath CompletableFuture which is NOT with a *minimal* CompletionStage.
+     * a *normal* underlying CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @param value the value
      * @param <T>   the type of the value
@@ -131,7 +131,7 @@ public final class CffuFactory {
      * <p>
      * <b><i>CAUTION:<br></i></b>
      * if run on old Java 8, just return a Cffu with
-     * a *normal* underneath CompletableFuture which is NOT with a *minimal* CompletionStage.
+     * a *normal* underlying CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @param ex  the exception
      * @param <T> the type of the value
@@ -256,8 +256,8 @@ public final class CffuFactory {
      * <ol>
      * <li>if input stage is a {@link Cffu}, re-wrapped with the config of
      *     this {@link CffuFactory} from {@link CffuFactoryBuilder} by {@link Cffu#resetCffuFactory(CffuFactory)}.
-     * <li>if input stage is a CompletableFuture, wrap it by setting it as the underneath cf of returned cffu.
-     * <li>otherwise use input {@code stage.toCompletableFuture} as the underneath cf of returned cffu.
+     * <li>if input stage is a CompletableFuture, wrap it by setting it as the underlying cf of returned cffu.
+     * <li>otherwise use input {@code stage.toCompletableFuture} as the underlying cf of returned cffu.
      * </ol>
      *
      * @see Cffu#cffuUnwrap()

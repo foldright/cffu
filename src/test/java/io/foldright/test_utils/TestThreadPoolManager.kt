@@ -46,7 +46,7 @@ fun createThreadPool(threadNamePrefix: String, isForkJoin: Boolean = false): Exe
     return object : ExecutorService by executorService, ThreadPoolAcquaintance {
         override fun isMyThread(thread: Thread): Boolean = thread.name.startsWith(prefix)
 
-        override fun wrappedThreadPool(): ExecutorService = executorService
+        override fun unwrap(): ExecutorService = executorService
     }
 }
 
@@ -55,7 +55,7 @@ private fun Executor.doesOwnThread(thread: Thread): Boolean = (this as ThreadPoo
 private interface ThreadPoolAcquaintance {
     fun isMyThread(thread: Thread): Boolean
 
-    fun wrappedThreadPool(): ExecutorService
+    fun unwrap(): ExecutorService
 }
 
 fun assertRunInExecutor(executor: Executor) {
@@ -80,7 +80,7 @@ fun shutdownExecutorService(vararg executors: ExecutorService) {
     }
     executors.forEach {
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-        println((it as ThreadPoolAcquaintance).wrappedThreadPool())
+        println((it as ThreadPoolAcquaintance).unwrap())
         println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
         it.awaitTermination(3, TimeUnit.SECONDS).shouldBeTrue()
     }
