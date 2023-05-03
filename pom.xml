@@ -3,13 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>io.foldright</groupId>
-	<artifactId>cffu</artifactId>
+	<artifactId>cffu-parent</artifactId>
 	<version>0.9.x-SNAPSHOT</version>
-	<name>CompletableFuture-Fu(cffu)</name>
-	<description>
-		🦝 A tiny 0-dependency sidekick library for CompletableFuture
-		to improve user experience and reduce misuse.
-	</description>
+	<packaging>pom</packaging>
+	<name>${project.artifactId}</name>
+	<description>${parent.artifactId}</description>
 	<url>https://github.com/foldright/cffu</url>
 	<inceptionYear>2023</inceptionYear>
 
@@ -44,8 +42,14 @@
 			</roles>
 			<timezone>+8</timezone>
 			<url>https://github.com/oldratlee</url>
+			<organization>FoldRight</organization>
+			<organizationUrl>https://foldright.io</organizationUrl>
 		</developer>
 	</developers>
+
+	<modules>
+		<module>cffu-core</module>
+	</modules>
 
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -87,12 +91,6 @@
 			<optional>true</optional>
 		</dependency>
 
-		<dependency>
-			<groupId>org.jetbrains.kotlin</groupId>
-			<artifactId>kotlin-stdlib-jdk8</artifactId>
-			<optional>true</optional>
-		</dependency>
-
 		<!-- logging libs -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -119,12 +117,6 @@
 		<dependency>
 			<groupId>io.kotest</groupId>
 			<artifactId>kotest-property-jvm</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -423,18 +415,6 @@
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<version>0.8.10</version>
 				</plugin>
-				<plugin>
-					<!--
-						config example: https://github.com/mojohaus/versions-maven-plugin/issues/157#issuecomment-306041074
-					-->
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>versions-maven-plugin</artifactId>
-					<version>2.15.0</version>
-					<configuration>
-						<rulesUri>file://${project.basedir}/src/versions-rules.xml</rulesUri>
-						<generateBackupPoms>false</generateBackupPoms>
-					</configuration>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -484,7 +464,7 @@
 					Using the linkoffline Option
 						https://docs.oracle.com/en/java/javase/11/javadoc/javadoc-command.html#GUID-51213F2C-6E01-4A03-A82A-17428A258A0F
 				-->
-				<javadoc.package.list.dir>${project.basedir}/src/package-list</javadoc.package.list.dir>
+				<javadoc.package.list.dir>${maven.multiModuleProjectDirectory}/src/package-list</javadoc.package.list.dir>
 			</properties>
 			<build>
 				<plugins>
@@ -606,7 +586,7 @@
 							</execution>
 						</executions>
 						<configuration>
-							<excludeFilterFile>${project.basedir}/src/spotbugs-exclude-filter-file.xml</excludeFilterFile>
+							<excludeFilterFile>${maven.multiModuleProjectDirectory}/src/spotbugs-exclude-filter-file.xml</excludeFilterFile>
 						</configuration>
 					</plugin>
 				</plugins>

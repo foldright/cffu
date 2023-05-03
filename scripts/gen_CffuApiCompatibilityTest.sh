@@ -2,7 +2,7 @@
 set -eEuo pipefail
 cd "$(dirname "$(readlink -f "$0")")"
 
-readonly TEST_FILE_DIR="$PWD/../src/test/java/io/foldright/compatibility_test"
+readonly TEST_FILE_DIR="$PWD/../cffu-core/src/test/java/io/foldright/compatibility_test"
 readonly source_file="$TEST_FILE_DIR/CompletableFutureApiCompatibilityTest.java"
 readonly target_file="$TEST_FILE_DIR/CffuApiCompatibilityTest.java"
 
