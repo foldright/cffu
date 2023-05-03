@@ -602,40 +602,44 @@ class CompletableFutureUtilsTest {
 
     @Test
     void test_combine() throws Exception {
-        assertEquals(Tuple2.of(n, s), CompletableFutureUtils.combine(
-                CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(s)
-        ).get());
+        final CompletableFuture<Integer> cf_n = CompletableFuture.completedFuture(n);
+        final CompletableFuture<String> cf_s = CompletableFuture.completedFuture(s);
+        final CompletableFuture<Double> cf_d = CompletableFuture.completedFuture(d);
+        final CompletableFuture<Integer> cf_an = CompletableFuture.completedFuture(anotherN);
+        final CompletableFuture<Integer> cf_nn = CompletableFuture.completedFuture(n + n);
 
-        assertEquals(Tuple3.of(n, s, d), CompletableFutureUtils.combine(
-                CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(s),
-                CompletableFuture.completedFuture(d)
-        ).get());
+        assertEquals(Tuple2.of(n, s), CompletableFutureUtils.combine(cf_n, cf_s).get());
+        assertEquals(Tuple2.of(n, s), CompletableFutureUtils.combineFastFail(cf_n, cf_s).get());
 
-        assertEquals(Tuple4.of(n, s, d, anotherN), CompletableFutureUtils.combine(
-                CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(s),
-                CompletableFuture.completedFuture(d),
-                CompletableFuture.completedFuture(anotherN)
-        ).get());
+        assertEquals(Tuple3.of(n, s, d), CompletableFutureUtils.combine(cf_n, cf_s, cf_d).get());
+        assertEquals(Tuple3.of(n, s, d), CompletableFutureUtils.combineFastFail(cf_n, cf_s, cf_d).get());
 
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), CompletableFutureUtils.combine(
-                CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(s),
-                CompletableFuture.completedFuture(d),
-                CompletableFuture.completedFuture(anotherN),
-                CompletableFuture.completedFuture(n + n)
-        ).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), CompletableFutureUtils.combine(cf_n, cf_s, cf_d, cf_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), CompletableFutureUtils.combineFastFail(cf_n, cf_s, cf_d, cf_an).get());
+
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), CompletableFutureUtils.combine(cf_n, cf_s, cf_d, cf_an, cf_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), CompletableFutureUtils.combineFastFail(cf_n, cf_s, cf_d, cf_an, cf_nn).get());
     }
 
     @Test
     void test_combine_exceptionally() throws Exception {
+        final CompletableFuture<Object> incomplete = new CompletableFuture<>();
+        final CompletableFuture<Object> fail = CompletableFutureUtils.failedFuture(rte);
+
+        final CompletableFuture<Integer> cf_n = CompletableFuture.completedFuture(n);
+        final CompletableFuture<String> cf_s = CompletableFuture.completedFuture(s);
+        final CompletableFuture<Double> cf_d = CompletableFuture.completedFuture(d);
+        final CompletableFuture<Integer> cf_an = CompletableFuture.completedFuture(anotherN);
+
         try {
-            CompletableFutureUtils.combine(
-                    CompletableFuture.completedFuture(n),
-                    failedFuture(rte)
-            ).get();
+            CompletableFutureUtils.combine(cf_n, fail).get();
+
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            CompletableFutureUtils.combineFastFail(incomplete, fail).get();
 
             fail();
         } catch (ExecutionException expected) {
@@ -643,11 +647,14 @@ class CompletableFutureUtilsTest {
         }
 
         try {
-            CompletableFutureUtils.combine(
-                    CompletableFuture.completedFuture(n),
-                    failedFuture(rte),
-                    CompletableFuture.completedFuture(s)
-            ).get();
+            CompletableFutureUtils.combine(cf_n, fail, cf_s).get();
+
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            CompletableFutureUtils.combineFastFail(incomplete, fail, cf_s).get();
 
             fail();
         } catch (ExecutionException expected) {
@@ -655,13 +662,29 @@ class CompletableFutureUtilsTest {
         }
 
         try {
-            CompletableFutureUtils.combine(
-                    CompletableFuture.completedFuture(n),
-                    CompletableFuture.completedFuture(d),
-                    failedFuture(rte),
-                    CompletableFuture.completedFuture(s),
-                    CompletableFuture.completedFuture(anotherN)
-            ).get();
+            CompletableFutureUtils.combine(cf_n, fail, cf_d, cf_s).get();
+
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            CompletableFutureUtils.combineFastFail(incomplete, fail, cf_d, cf_s).get();
+
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+
+        try {
+            CompletableFutureUtils.combine(cf_n, cf_d, fail, cf_s, cf_an).get();
+
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            CompletableFutureUtils.combineFastFail(incomplete, cf_d, fail, cf_s, cf_an).get();
 
             fail();
         } catch (ExecutionException expected) {

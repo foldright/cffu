@@ -97,7 +97,7 @@ public final class CompletableFutureUtils {
         fill(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of failedOrBeIncomplete HERE:
-        //       a cf which success when all given cfs success, otherwise be incomplete
+        //       a cf that is successful when all given cfs success, otherwise be incomplete
         failedOrBeIncomplete[size] = CompletableFuture.allOf(successOrBeIncomplete);
 
         return (CompletableFuture) CompletableFuture.anyOf(failedOrBeIncomplete);
@@ -135,7 +135,7 @@ public final class CompletableFutureUtils {
         fill(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of failedOrBeIncomplete HERE:
-        //       a cf which success when all given cfs success, otherwise be incomplete
+        //       a cf that is successful when all given cfs success, otherwise be incomplete
         failedOrBeIncomplete[size] = allOfWithResult(successOrBeIncomplete);
 
         return (CompletableFuture) CompletableFuture.anyOf(failedOrBeIncomplete);
@@ -221,7 +221,7 @@ public final class CompletableFutureUtils {
         fill(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of successOrBeIncompleteCfs HERE
-        //       a cf which failed when all given cfs failed, otherwise be incomplete
+        //       a cf that is failed when all given cfs fail, otherwise be incomplete
         successOrBeIncomplete[size] = CompletableFuture.allOf(failedOrBeIncomplete);
 
         return CompletableFuture.anyOf(successOrBeIncomplete);
@@ -262,6 +262,7 @@ public final class CompletableFutureUtils {
      *
      * @return a new CompletableFuture that is completed when the given 2 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+     * @see #allOfWithResult(CompletableFuture[])
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
@@ -280,12 +281,39 @@ public final class CompletableFutureUtils {
     }
 
     /**
+     * Returns a new CompletableFuture that is successful when the given two CompletableFutures success.
+     * If any of the given CompletableFutures complete exceptionally, then the returned
+     * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
+     * with a CompletionException holding this exception as its cause.
+     *
+     * @return a new CompletableFuture that is successful when the given two CompletableFutures success
+     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+     * @see #allOfFastFailWithResult(CompletableFuture[])
+     * @see #allOfFastFail(CompletableFuture[])
+     */
+    @Contract(pure = true)
+    @SuppressWarnings("unchecked")
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> combineFastFail(
+            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
+        requireCfsAndEleNonNull(cf1, cf2);
+
+        final Object[] result = new Object[2];
+        return allOfFastFail(
+                cf1.thenAccept(t1 -> result[0] = t1),
+                cf2.thenAccept(t2 -> result[1] = t2)
+        ).thenApply(unused ->
+                Tuple2.of((T1) result[0], (T2) result[1])
+        );
+    }
+
+    /**
      * Returns a new CompletableFuture that is completed when the given three CompletableFutures complete.
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
      *
      * @return a new CompletableFuture that is completed when the given 3 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+     * @see #allOfWithResult(CompletableFuture[])
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
@@ -305,12 +333,40 @@ public final class CompletableFutureUtils {
     }
 
     /**
+     * Returns a new CompletableFuture that is successful when the given three CompletableFutures success.
+     * If any of the given CompletableFutures complete exceptionally, then the returned
+     * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
+     * with a CompletionException holding this exception as its cause.
+     *
+     * @return a new CompletableFuture that is successful when the given three CompletableFutures success
+     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+     * @see #allOfFastFailWithResult(CompletableFuture[])
+     * @see #allOfFastFail(CompletableFuture[])
+     */
+    @Contract(pure = true)
+    @SuppressWarnings("unchecked")
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> combineFastFail(
+            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
+        requireCfsAndEleNonNull(cf1, cf2, cf3);
+
+        final Object[] result = new Object[3];
+        return allOfFastFail(
+                cf1.thenAccept(t1 -> result[0] = t1),
+                cf2.thenAccept(t2 -> result[1] = t2),
+                cf3.thenAccept(t3 -> result[2] = t3)
+        ).thenApply(unused ->
+                Tuple3.of((T1) result[0], (T2) result[1], (T3) result[2])
+        );
+    }
+
+    /**
      * Returns a new CompletableFuture that is completed when the given 4 CompletableFutures complete.
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
      *
      * @return a new CompletableFuture that is completed when the given 4 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+     * @see #allOfWithResult(CompletableFuture[])
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
@@ -332,12 +388,42 @@ public final class CompletableFutureUtils {
     }
 
     /**
+     * Returns a new CompletableFuture that is successful when the given 4 CompletableFutures success.
+     * If any of the given CompletableFutures complete exceptionally, then the returned
+     * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
+     * with a CompletionException holding this exception as its cause.
+     *
+     * @return a new CompletableFuture that is successful when the given 4 CompletableFutures success
+     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+     * @see #allOfFastFailWithResult(CompletableFuture[])
+     * @see #allOfFastFail(CompletableFuture[])
+     */
+    @Contract(pure = true)
+    @SuppressWarnings("unchecked")
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> combineFastFail(
+            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
+            CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
+        requireCfsAndEleNonNull(cf1, cf2, cf3, cf4);
+
+        final Object[] result = new Object[4];
+        return allOfFastFail(
+                cf1.thenAccept(t1 -> result[0] = t1),
+                cf2.thenAccept(t2 -> result[1] = t2),
+                cf3.thenAccept(t3 -> result[2] = t3),
+                cf4.thenAccept(t4 -> result[3] = t4)
+        ).thenApply(unused ->
+                Tuple4.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3])
+        );
+    }
+
+    /**
      * Returns a new CompletableFuture that is completed when the given 5 CompletableFutures complete.
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
      *
      * @return a new CompletableFuture that is completed when the given 5 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+     * @see #allOfWithResult(CompletableFuture[])
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
@@ -349,6 +435,36 @@ public final class CompletableFutureUtils {
 
         final Object[] result = new Object[5];
         return CompletableFuture.allOf(
+                cf1.thenAccept(t1 -> result[0] = t1),
+                cf2.thenAccept(t2 -> result[1] = t2),
+                cf3.thenAccept(t3 -> result[2] = t3),
+                cf4.thenAccept(t4 -> result[3] = t4),
+                cf5.thenAccept(t5 -> result[4] = t5)
+        ).thenApply(unused ->
+                Tuple5.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3], (T5) result[4])
+        );
+    }
+
+    /**
+     * Returns a new CompletableFuture that is successful when the given 5 CompletableFutures success.
+     * If any of the given CompletableFutures complete exceptionally, then the returned
+     * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
+     * with a CompletionException holding this exception as its cause.
+     *
+     * @return a new CompletableFuture that is successful when the given 5 CompletableFutures success
+     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+     * @see #allOfFastFailWithResult(CompletableFuture[])
+     * @see #allOfFastFail(CompletableFuture[])
+     */
+    @Contract(pure = true)
+    @SuppressWarnings("unchecked")
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> combineFastFail(
+            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
+            CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
+        requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5);
+
+        final Object[] result = new Object[5];
+        return allOfFastFail(
                 cf1.thenAccept(t1 -> result[0] = t1),
                 cf2.thenAccept(t2 -> result[1] = t2),
                 cf3.thenAccept(t3 -> result[2] = t3),

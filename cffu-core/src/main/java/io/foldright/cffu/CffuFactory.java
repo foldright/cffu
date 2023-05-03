@@ -809,6 +809,7 @@ public final class CffuFactory {
      * @return a new Cffu that is completed when the given two Cffus complete
      * @throws NullPointerException if any input Cffus are {@code null}
      * @see #cffuAllOf(Cffu[])
+     * @see #allOf(Cffu[])
      */
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> cffuCombine(Cffu<T1> cf1, Cffu<T2> cf2) {
@@ -826,6 +827,7 @@ public final class CffuFactory {
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
      * @see #cffuCombine(Cffu, Cffu)
      * @see #cffuAllOf(CompletableFuture[])
+     * @see #allOf(CompletableFuture[])
      */
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> cffuCombine(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
@@ -842,6 +844,7 @@ public final class CffuFactory {
      * @return a new Cffu that is completed when the given three Cffus complete
      * @throws NullPointerException if any input Cffus are {@code null}
      * @see #cffuAllOf(Cffu[])
+     * @see #allOf(Cffu[])
      */
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> cffuCombine(Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3) {
@@ -859,6 +862,7 @@ public final class CffuFactory {
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
      * @see #cffuCombine(Cffu, Cffu, Cffu)
      * @see #cffuAllOf(CompletableFuture[])
+     * @see #allOf(CompletableFuture[])
      */
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> cffuCombine(
@@ -876,6 +880,7 @@ public final class CffuFactory {
      * @return a new Cffu that is completed when the given 4 Cffus complete
      * @throws NullPointerException if any input Cffus are {@code null}
      * @see #cffuAllOf(Cffu[])
+     * @see #allOf(Cffu[])
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> cffuCombine(
@@ -895,6 +900,7 @@ public final class CffuFactory {
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
      * @see #cffuCombine(Cffu, Cffu, Cffu, Cffu)
      * @see #cffuAllOf(CompletableFuture[])
+     * @see #allOf(CompletableFuture[])
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> cffuCombine(
@@ -913,6 +919,7 @@ public final class CffuFactory {
      * @return a new Cffu that is completed when the given 5 Cffus complete
      * @throws NullPointerException if any input Cffus are {@code null}
      * @see #cffuAllOf(Cffu[])
+     * @see #allOf(Cffu[])
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> cffuCombine(
@@ -933,6 +940,7 @@ public final class CffuFactory {
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
      * @see #cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)
      * @see #cffuAllOf(CompletableFuture[])
+     * @see #allOf(CompletableFuture[])
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> cffuCombine(
