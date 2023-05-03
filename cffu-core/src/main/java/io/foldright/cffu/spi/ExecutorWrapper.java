@@ -8,7 +8,7 @@ import java.util.concurrent.Executor;
 
 
 /**
- * A SPI for wrapping the executor when {@link CffuFactoryBuilder}
+ * An SPI for wrapping the executor when {@link CffuFactoryBuilder}
  * {@link CffuFactoryBuilder#build() build} {@link CffuFactory}.
  *
  * @see CffuFactoryBuilder#newCffuFactoryBuilder(Executor)
