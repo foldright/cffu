@@ -34,6 +34,7 @@ jobs:
       - name: build and test with Java 19
         run: ./mvnw -V --no-transfer-progress clean package
       - name: test with Java 8
-        run: ./mvnw -V --no-transfer-progress surefire:test
+        run: ../mvnw -V --no-transfer-progress surefire:test
+        working-directory: cffu-core
         env:
           JAVA_HOME: ${{ env.JAVA_HOME_8_X64 }}

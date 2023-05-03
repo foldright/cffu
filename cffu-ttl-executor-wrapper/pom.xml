@@ -1,0 +1,64 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>io.foldright</groupId>
+		<artifactId>cffu-parent</artifactId>
+		<version>0.9.x-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>cffu-ttl-executor-wrapper</artifactId>
+	<name>cffu executor wrapper SPI implementation for TTL</name>
+	<description>${project.name}</description>
+	<url>https://github.com/foldright/cffu</url>
+	<inceptionYear>2023</inceptionYear>
+
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:git:git@github.com:foldright/cffu.git</connection>
+		<developerConnection>scm:git:git@github.com:foldright/cffu.git</developerConnection>
+		<url>https://github.com/foldright/cffu</url>
+	</scm>
+	<issueManagement>
+		<url>https://github.com/foldright/cffu/issues</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
+	<organization>
+		<name>FoldRight</name>
+		<url>https://foldright.io</url>
+	</organization>
+	<developers>
+		<developer>
+			<name>Jerry Lee</name>
+			<id>oldratlee</id>
+			<email>oldratlee(AT)gmail(DOT)com</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+8</timezone>
+			<url>https://github.com/oldratlee</url>
+			<organization>FoldRight</organization>
+			<organizationUrl>https://foldright.io</organizationUrl>
+		</developer>
+	</developers>
+
+	<dependencies>
+		<dependency>
+			<groupId>io.foldright</groupId>
+			<artifactId>cffu</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>transmittable-thread-local</artifactId>
+		</dependency>
+	</dependencies>
+</project>
