@@ -70,7 +70,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that success when all the given CompletableFutures success,
+     * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
      * the results({@code CompletableFuture<Void>}) of the given CompletableFutures are not reflected
      * in the returned CompletableFuture, but may be obtained by inspecting them individually.
      * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
@@ -79,7 +79,7 @@ public final class CompletableFutureUtils {
      * If no CompletableFutures are provided, returns a CompletableFuture completed with the value {@code null}.
      *
      * @param cfs the CompletableFutures
-     * @return a new CompletableFuture that success when all the given CompletableFutures success
+     * @return a new CompletableFuture that is successful when all the given CompletableFutures success
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
@@ -116,7 +116,7 @@ public final class CompletableFutureUtils {
      * but the returned CompletableFuture contains the results of the given CompletableFutures.
      *
      * @param cfs the CompletableFutures
-     * @return a new CompletableFuture that success when all the given CompletableFutures success
+     * @return a new CompletableFuture that is successful when all the given CompletableFutures success
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #allOfFastFail(CompletableFuture[])
      */
@@ -194,7 +194,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that success when any of the given CompletableFutures success,
+     * Returns a new CompletableFuture that is successful when any of the given CompletableFutures success,
      * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
      * the returned CompletableFuture also does so, with a CompletionException holding
      * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
@@ -202,7 +202,7 @@ public final class CompletableFutureUtils {
      * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
      *
      * @param cfs the CompletableFutures
-     * @return a new CompletableFuture that success
+     * @return a new CompletableFuture that is successful
      * when any of the given CompletableFutures success, with the same result
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #anyOfSuccessWithType(CompletableFuture[])
@@ -228,7 +228,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that success when any of the given CompletableFutures success,
+     * Returns a new CompletableFuture that is successful when any of the given CompletableFutures success,
      * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
      * the returned CompletableFuture also does so, with a CompletionException holding
      * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
@@ -239,7 +239,7 @@ public final class CompletableFutureUtils {
      * but return result type is specified type instead of {@code Object}.
      *
      * @param cfs the CompletableFutures
-     * @return a new CompletableFuture that success
+     * @return a new CompletableFuture that is successful
      * when any of the given CompletableFutures success, with the same result
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #anyOfWithType(CompletableFuture[])

@@ -388,7 +388,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that success when all the given Cffus success,
+     * Returns a new Cffu that is successful when all the given Cffus success,
      * the results({@code Cffu<Void>}) of the given Cffus are not reflected
      * in the returned Cffu, but may be obtained by inspecting them individually.
      * If any of the given Cffus complete exceptionally, then the returned Cffu
@@ -397,7 +397,7 @@ public final class CffuFactory {
      * If no Cffus are provided, returns a Cffu completed with the value {@code null}.
      *
      * @param cfs the Cffus
-     * @return a new Cffu that success when all the given Cffus success
+     * @return a new Cffu that is successful when all the given Cffus success
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see CompletableFutureUtils#allOfFastFail(CompletableFuture[])
      */
@@ -408,7 +408,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that success when all the given CompletableFutures success,
+     * Returns a new Cffu that is successful when all the given CompletableFutures success,
      * the results({@code Cffu<Void>}) of the given CompletableFutures are not reflected
      * in the returned Cffu, but may be obtained by inspecting them individually.
      * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
@@ -419,7 +419,7 @@ public final class CffuFactory {
      * Same as {@link #allOfFastFail(Cffu[])} with overloaded argument type {@link CompletableFuture}.
      *
      * @param cfs the CompletableFutures
-     * @return a new Cffu that success when all the given CompletableFutures success
+     * @return a new Cffu that is successful when all the given CompletableFutures success
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #allOfFastFail(Cffu[])
      * @see #cffuAllOfFastFail(CompletableFuture[])
@@ -497,7 +497,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that success when any of the given Cffus success,
+     * Returns a new Cffu that is successful when any of the given Cffus success,
      * with the same result. Otherwise, all the given Cffus complete exceptionally,
      * the returned Cffu also does so, with a CompletionException holding
      * an exception from any of the given Cffu as its cause. If no Cffu are provided,
@@ -515,7 +515,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that success when any of the given CompletableFutures success,
+     * Returns a new Cffu that is successful when any of the given CompletableFutures success,
      * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
      * the returned Cffu also does so, with a CompletionException holding
      * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
@@ -654,7 +654,7 @@ public final class CffuFactory {
      * with the value {@link Collections#emptyList() emptyList}.
      *
      * @param cfs the CompletableFutures
-     * @return a new CompletableFuture that success when all the given CompletableFutures success
+     * @return a new CompletableFuture that is successful when all the given CompletableFutures success
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see CompletableFutureUtils#allOfFastFail(CompletableFuture[])
      * @see #cffuAllOfFastFail(Cffu[])
@@ -677,7 +677,7 @@ public final class CffuFactory {
      * Same as {@link #cffuAllOfFastFail(Cffu[])} with overloaded argument type {@link CompletableFuture}.
      *
      * @param cfs the CompletableFutures
-     * @return a new CompletableFuture that success when all the given CompletableFutures success
+     * @return a new CompletableFuture that is successful when all the given CompletableFutures success
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see CompletableFutureUtils#allOfFastFail(CompletableFuture[])
      * @see #cffuAllOfFastFail(Cffu[])
@@ -747,7 +747,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that success when any of the given Cffus success,
+     * Returns a new Cffu that is successful when any of the given Cffus success,
      * with the same result. Otherwise, all the given Cffus complete exceptionally,
      * the returned Cffu also does so, with a CompletionException holding
      * an exception from any of the given Cffu as its cause. If no Cffu are provided,
@@ -765,7 +765,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that success when any of the given CompletableFutures success,
+     * Returns a new Cffu that is successful when any of the given CompletableFutures success,
      * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
      * the returned Cffu also does so, with a CompletionException holding
      * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,

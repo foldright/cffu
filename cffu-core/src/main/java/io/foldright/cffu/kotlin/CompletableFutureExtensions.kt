@@ -145,7 +145,7 @@ fun <T> Array<CompletableFuture<T>>.allOfFastFailCompletableFuture(): Completabl
     CompletableFutureUtils.allOfFastFailWithResult(*this)
 
 /**
- * Returns a new CompletableFuture that success when all the given CompletableFutures success,
+ * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
  * the results(`CompletableFuture<Void>`) of the given CompletableFutures are not reflected in the returned CompletableFuture,
  * but may be obtained by inspecting them individually.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
@@ -164,7 +164,7 @@ fun Collection<CompletableFuture<*>>.allOfFastFailCompletableFutureVoid(): Compl
     CompletableFutureUtils.allOfFastFail(*this.toTypedArray())
 
 /**
- * Returns a new CompletableFuture that success when all the given CompletableFutures success,
+ * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
  * the results(`CompletableFuture<Void>`) of the given CompletableFutures are not reflected in the returned CompletableFuture,
  * but may be obtained by inspecting them individually.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
@@ -259,7 +259,7 @@ fun Array<CompletableFuture<*>>.anyOfCompletableFutureAny(): CompletableFuture<A
     CompletableFuture.anyOf(*this)
 
 /**
- * Returns a new CompletableFuture that success when any of the given CompletableFutures success,
+ * Returns a new CompletableFuture that is successful when any of the given CompletableFutures success,
  * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
  * the returned CompletableFuture also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
@@ -276,7 +276,7 @@ fun <T> Collection<CompletableFuture<T>>.anyOfSuccessCompletableFuture(): Comple
     CompletableFutureUtils.anyOfSuccessWithType(*this.toTypedArray())
 
 /**
- * Returns a new CompletableFuture that success when any of the given CompletableFutures success,
+ * Returns a new CompletableFuture that is successful when any of the given CompletableFutures success,
  * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
  * the returned CompletableFuture also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
@@ -293,7 +293,7 @@ fun <T> Array<CompletableFuture<T>>.anyOfSuccessCompletableFuture(): Completable
     CompletableFutureUtils.anyOfSuccessWithType(*this)
 
 /**
- * Returns a new CompletableFuture that success when any of the given CompletableFutures success,
+ * Returns a new CompletableFuture that is successful when any of the given CompletableFutures success,
  * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
  * the returned CompletableFuture also does so, with a CompletionException holding
  * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
@@ -310,7 +310,7 @@ fun Collection<CompletableFuture<*>>.anyOfSuccessCompletableFutureAny(): Complet
     CompletableFutureUtils.anyOfSuccess(*this.toTypedArray())
 
 /**
- * Returns a new CompletableFuture that success when any of the given CompletableFutures success,
+ * Returns a new CompletableFuture that is successful when any of the given CompletableFutures success,
  * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
  * the returned CompletableFuture also does so, with a CompletionException holding
  * an exception CompletableFuture any of the given CompletableFutures as its cause. If no CompletableFutures are provided,

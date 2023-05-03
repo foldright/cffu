@@ -343,8 +343,8 @@ Backport`Java 9+`高版本的所有`CompletableFuture`新功能，在`Java 8`可
 
 实现所在的类：
 
-- [`Cffu.java`](src/main/java/io/foldright/cffu/Cffu.java)
-- [`CffuFactory.java`](src/main/java/io/foldright/cffu/CffuFactory.java)
+- [`Cffu.java`](cffu-core/src/main/java/io/foldright/cffu/Cffu.java)
+- [`CffuFactory.java`](cffu-core/src/main/java/io/foldright/cffu/CffuFactory.java)
 
 ## 🎪 使用示例
 
@@ -405,7 +405,7 @@ public class Demo {
 }
 ```
 
-\# 完整可运行的Demo代码参见[`Demo.java`](src/test/java/io/foldright/demo/Demo.java)。
+\# 完整可运行的Demo代码参见[`Demo.java`](cffu-core/src/test/java/io/foldright/demo/Demo.java)。
 
 ### `Kotlin`
 
@@ -448,7 +448,7 @@ fun main() {
 }
 ```
 
-\# 完整可运行的Demo代码参见[`Demo.kt`](src/test/java/io/foldright/demo/Demo.kt)。
+\# 完整可运行的Demo代码参见[`Demo.kt`](cffu-core/src/test/java/io/foldright/demo/Demo.kt)。
 
 ## 🔌 Java API Docs
 
