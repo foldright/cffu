@@ -248,7 +248,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Wrap an existed {@link CompletableFuture}/{@link CompletionStage}/{@link Cffu} to {@link Cffu}.
+     * Wrap an existed {@link CompletableFuture} / {@link CompletionStage} / {@link Cffu} to {@link Cffu}.
      * for {@link CompletableFuture} class instances,
      * {@link Cffu#cffuUnwrap()} is the inverse operation to this method.
      * <p>
@@ -280,9 +280,8 @@ public final class CffuFactory {
     }
 
     /**
-     * A convenient util method for wrap
-     * input {@link CompletableFuture}/{@link CompletionStage}/{@link Cffu} array element
-     * by {@link #asCffu(CompletionStage)}.
+     * A convenient util method for wrap input {@link CompletableFuture} / {@link CompletionStage} / {@link Cffu}
+     * array element by {@link #asCffu(CompletionStage)}.
      *
      * @see #asCffu(CompletionStage)
      */
@@ -318,7 +317,7 @@ public final class CffuFactory {
      * if you need the results of given Cffus, prefer below methods:
      * <ol>
      *   <li>{@link #cffuAllOf(Cffu[])}
-     *   <li>{@link #cffuCombine(Cffu, Cffu)}/{@link #cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)}
+     *   <li>{@link #cffuCombine(Cffu, Cffu)} / {@link #cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)}
      *       (provided overloaded methods with 2~5 input)
      * </ol>
      * <p>
@@ -355,7 +354,8 @@ public final class CffuFactory {
      * if you need the results of given CompletableFutures, prefer below methods:
      * <ol>
      *   <li>{@link #cffuAllOf(CompletableFuture[])}
-     *   <li>{@link #cffuCombine(CompletableFuture, CompletableFuture)}/{@link #cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
+     *   <li>{@link #cffuCombine(CompletableFuture, CompletableFuture)} /
+     *       {@link #cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
      *       (provided overloaded methods with 2~5 input)
      * </ol>
      *
@@ -954,9 +954,9 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * A convenient util method for converting
-     * input {@link Cffu}/{@link CompletableFuture}/{@link CompletionStage} array element
-     * by {@link Cffu#toCompletableFuture()}/{@link CompletableFuture#toCompletableFuture()}/{@link CompletionStage#toCompletableFuture()}.
+     * A convenient util method for converting input {@link Cffu} / {@link CompletableFuture} / {@link CompletionStage}
+     * array element by {@link Cffu#toCompletableFuture()} / {@link CompletableFuture#toCompletableFuture()} /
+     * {@link CompletionStage#toCompletableFuture()}.
      *
      * @see Cffu#toCompletableFuture()
      * @see CompletableFuture#toCompletableFuture()

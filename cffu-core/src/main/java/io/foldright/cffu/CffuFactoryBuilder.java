@@ -10,6 +10,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.concurrent.Executor;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -76,7 +77,8 @@ public final class CffuFactoryBuilder {
     private Executor wrapExecutor() {
         Executor executor = defaultExecutor;
         for (ExecutorWrapper wrapper : executorWrappers) {
-            executor = wrapper.wrap(executor);
+            Supplier<String> msg = () -> wrapper + "(class: " + wrapper.getClass().getName() + ") return null";
+            executor = requireNonNull(wrapper.wrap(executor), msg);
         }
         return executor;
     }
