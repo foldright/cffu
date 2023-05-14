@@ -1,7 +1,6 @@
 package io.foldright.cffu;
 
 import io.foldright.test_utils.TestThreadPoolManager;
-import io.foldright.test_utils.TestUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -11,8 +10,7 @@ import org.junit.jupiter.api.condition.JRE;
 import java.util.concurrent.*;
 
 import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
-import static io.foldright.cffu.CffuFactoryTest.n;
-import static io.foldright.cffu.CffuFactoryTest.rte;
+import static io.foldright.test_utils.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -76,7 +74,7 @@ class CffuTest {
         // Incomplete Future -> join before timeout
 
         Cffu<Integer> cffu = cffuFactory.supplyAsync(() -> {
-            TestUtils.sleep(300);
+            sleep(300);
             return 42;
         });
         assertEquals(42, cffu.cffuJoin(3, TimeUnit.SECONDS));

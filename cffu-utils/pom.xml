@@ -8,11 +8,9 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>cffu</artifactId>
-	<name>CompletableFuture-Fu(cffu)</name>
-	<description>
-		🦝 A tiny sidekick library for CompletableFuture to improve user experience and reduce misuse.
-	</description>
+	<artifactId>cffu-utils</artifactId>
+	<name>${project.artifactId}</name>
+	<description>Cffu Utils, key user class is CompletableFutureUtils</description>
 	<url>https://github.com/foldright/cffu</url>
 	<inceptionYear>2023</inceptionYear>
 
@@ -51,32 +49,4 @@
 			<organizationUrl>https://foldright.io</organizationUrl>
 		</developer>
 	</developers>
-
-	<dependencies>
-		<dependency>
-			<groupId>io.foldright</groupId>
-			<artifactId>cffu-utils</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<!-- testing libs -->
-		<dependency>
-			<groupId>io.foldright</groupId>
-			<artifactId>cffu-utils</artifactId>
-			<version>${project.version}</version>
-			<!--
-				Guide to using attached tests
-				reuse the tests that you have created for one project in another
-					https://maven.apache.org/guides/mini/guide-attached-tests.html
-			-->
-			<classifier>tests</classifier>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
 </project>

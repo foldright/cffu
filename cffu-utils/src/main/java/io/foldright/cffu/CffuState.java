@@ -4,14 +4,15 @@ import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import static java.util.Objects.requireNonNull;
 
 
 /**
- * Same as {@link Future.State}, existed for java version compatibility,
- * {@link Cffu#cffuState()} to {@link Cffu#state()}.
+ * Same as {@link Future.State}, existed for
+ * java version compatibility({@link CompletableFutureUtils#cffuState} to {@link Future#state()}).
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @see Future.State
@@ -31,7 +32,7 @@ public enum CffuState {
     /**
      * The task completed with a result.
      *
-     * @see Cffu#resultNow()
+     * @see CompletableFutureUtils#resultNow(CompletableFuture)
      * @see Future#resultNow()
      */
     SUCCESS {
@@ -43,7 +44,7 @@ public enum CffuState {
     /**
      * The task completed with an exception.
      *
-     * @see Cffu#exceptionNow()
+     * @see CompletableFutureUtils#exceptionNow(CompletableFuture)
      * @see Future#exceptionNow()
      */
     FAILED {
@@ -55,7 +56,6 @@ public enum CffuState {
     /**
      * The task was cancelled.
      *
-     * @see Cffu#cancel(boolean)
      * @see Future#cancel(boolean)
      */
     CANCELLED {

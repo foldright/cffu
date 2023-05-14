@@ -454,7 +454,6 @@ public final class CompletableFutureUtils {
         if (IS_JAVA9_PLUS) {
             return CompletableFuture.delayedExecutor(delay, unit, executor);
         }
-
         requireNonNull(unit, "unit is null");
         requireNonNull(executor, "executor is null");
         return new DelayedExecutor(delay, unit, executor);
@@ -746,8 +745,9 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static <T> CffuState cffuState(CompletableFuture<T> cf) {
-        if (IS_JAVA19_PLUS)
+        if (IS_JAVA19_PLUS) {
             return CffuState.toCffuState(cf.state());
+        }
 
         // below code is copied from Future#state() with small adoption
 

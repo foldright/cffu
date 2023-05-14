@@ -8,11 +8,9 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>cffu</artifactId>
-	<name>CompletableFuture-Fu(cffu)</name>
-	<description>
-		🦝 A tiny sidekick library for CompletableFuture to improve user experience and reduce misuse.
-	</description>
+	<artifactId>cffu-kotlin</artifactId>
+	<name>${project.artifactId}</name>
+	<description>Cffu Kotlin Support</description>
 	<url>https://github.com/foldright/cffu</url>
 	<inceptionYear>2023</inceptionYear>
 
@@ -55,27 +53,29 @@
 	<dependencies>
 		<dependency>
 			<groupId>io.foldright</groupId>
-			<artifactId>cffu-utils</artifactId>
+			<artifactId>cffu</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-stdlib-jdk8</artifactId>
+			<optional>true</optional>
+		</dependency>
 		<!-- testing libs -->
 		<dependency>
 			<groupId>io.foldright</groupId>
-			<artifactId>cffu-utils</artifactId>
+			<artifactId>cffu</artifactId>
 			<version>${project.version}</version>
-			<!--
-				Guide to using attached tests
-				reuse the tests that you have created for one project in another
-					https://maven.apache.org/guides/mini/guide-attached-tests.html
-			-->
 			<classifier>tests</classifier>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
+			<groupId>io.foldright</groupId>
+			<artifactId>cffu-utils</artifactId>
+			<version>${project.version}</version>
+			<classifier>tests</classifier>
+			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

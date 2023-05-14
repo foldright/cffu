@@ -4,9 +4,6 @@ import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
 import io.foldright.cffu.tuple.Tuple4;
 import io.foldright.cffu.tuple.Tuple5;
-import io.foldright.test_utils.TestThreadPoolManager;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -14,7 +11,6 @@ import java.util.Collections;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static io.foldright.cffu.CffuFactoryTest.*;
 import static io.foldright.cffu.CompletableFutureUtils.*;
 import static io.foldright.test_utils.TestUtils.*;
 import static java.util.concurrent.ForkJoinPool.commonPool;
@@ -91,10 +87,10 @@ class CompletableFutureUtilsTest {
             RuntimeException ex1 = new RuntimeException("ex1");
             RuntimeException ex2 = new RuntimeException("ex2");
             allOfWithResult(
-                    createFailedFuture(rte),
-                    createFailedFuture(another_rte),
-                    createFailedFuture(ex1),
-                    createFailedFuture(ex2)
+                    failedFuture(rte),
+                    failedFuture(anotherRte),
+                    failedFuture(ex1),
+                    failedFuture(ex2)
             ).get();
 
             fail();
@@ -113,9 +109,9 @@ class CompletableFutureUtilsTest {
                         sleep(100);
                         throw rte;
                     }),
-                    createFailedFuture(another_rte),
-                    createFailedFuture(ex1),
-                    createFailedFuture(ex2)
+                    failedFuture(anotherRte),
+                    failedFuture(ex1),
+                    failedFuture(ex2)
             ).get();
 
             fail();
@@ -129,9 +125,9 @@ class CompletableFutureUtilsTest {
         try {
             allOfWithResult(
                     CompletableFuture.completedFuture(n),
-                    createFailedFuture(rte),
+                    failedFuture(rte),
                     CompletableFuture.completedFuture(s),
-                    createFailedFuture(another_rte)
+                    failedFuture(anotherRte)
             ).get();
 
             fail();
@@ -143,8 +139,8 @@ class CompletableFutureUtilsTest {
         try {
             allOfWithResult(
                     CompletableFuture.completedFuture(n),
-                    createFailedFuture(rte),
-                    new CompletableFuture<>()
+                    failedFuture(rte),
+                    createIncompleteFuture()
             ).get(30, TimeUnit.MILLISECONDS);
 
             fail();
@@ -156,7 +152,7 @@ class CompletableFutureUtilsTest {
         try {
             allOfWithResult(
                     createIncompleteFuture(),
-                    createFailedFuture(rte),
+                    failedFuture(rte),
                     createIncompleteFuture()
             ).get(100, TimeUnit.MILLISECONDS);
 
@@ -172,10 +168,10 @@ class CompletableFutureUtilsTest {
             RuntimeException ex1 = new RuntimeException("ex1");
             RuntimeException ex2 = new RuntimeException("ex2");
             allOfFastFailWithResult(
-                    createFailedFuture(rte),
-                    createFailedFuture(another_rte),
-                    createFailedFuture(ex1),
-                    createFailedFuture(ex2)
+                    failedFuture(rte),
+                    failedFuture(anotherRte),
+                    failedFuture(ex1),
+                    failedFuture(ex2)
             ).get();
 
             fail();
@@ -194,25 +190,25 @@ class CompletableFutureUtilsTest {
                         sleep(100);
                         throw rte;
                     }),
-                    createFailedFuture(another_rte),
-                    createFailedFuture(ex1),
-                    createFailedFuture(ex2)
+                    failedFuture(anotherRte),
+                    failedFuture(ex1),
+                    failedFuture(ex2)
             ).get();
 
             fail();
         } catch (ExecutionException expected) {
             // anyOfSuccessWithType: the ex of first complete(in time) cf argument win
             //   ❗dependent on the implementation behavior of `CF.anyOf`️
-            assertSame(another_rte, expected.getCause());
+            assertSame(anotherRte, expected.getCause());
         }
 
         // success and failed
         try {
             allOfFastFailWithResult(
                     CompletableFuture.completedFuture(n),
-                    createFailedFuture(rte),
+                    failedFuture(rte),
                     CompletableFuture.completedFuture(s),
-                    createFailedFuture(another_rte)
+                    failedFuture(anotherRte)
             ).get();
 
             fail();
@@ -224,8 +220,8 @@ class CompletableFutureUtilsTest {
         try {
             allOfFastFailWithResult(
                     CompletableFuture.completedFuture(n),
-                    createFailedFuture(rte),
-                    new CompletableFuture<>()
+                    failedFuture(rte),
+                    createIncompleteFuture()
             ).get(30, TimeUnit.MILLISECONDS);
 
             fail();
@@ -237,7 +233,7 @@ class CompletableFutureUtilsTest {
         try {
             allOfFastFailWithResult(
                     createIncompleteFuture(),
-                    createFailedFuture(rte),
+                    failedFuture(rte),
                     createIncompleteFuture()
             ).get(100, TimeUnit.MILLISECONDS);
 
@@ -253,10 +249,10 @@ class CompletableFutureUtilsTest {
             RuntimeException ex1 = new RuntimeException("ex1");
             RuntimeException ex2 = new RuntimeException("ex2");
             allOfFastFailWithResult(
-                    createFailedFuture(rte),
-                    createFailedFuture(another_rte),
-                    createFailedFuture(ex1),
-                    createFailedFuture(ex2)
+                    failedFuture(rte),
+                    failedFuture(anotherRte),
+                    failedFuture(ex1),
+                    failedFuture(ex2)
             ).get();
 
             fail();
@@ -275,25 +271,25 @@ class CompletableFutureUtilsTest {
                         sleep(100);
                         throw rte;
                     }),
-                    createFailedFuture(another_rte),
-                    createFailedFuture(ex1),
-                    createFailedFuture(ex2)
+                    failedFuture(anotherRte),
+                    failedFuture(ex1),
+                    failedFuture(ex2)
             ).get();
 
             fail();
         } catch (ExecutionException expected) {
             // anyOfSuccessWithType: the ex of first complete(in time) cf argument win
             //   ❗dependent on the implementation behavior of `CF.anyOf`️
-            assertSame(another_rte, expected.getCause());
+            assertSame(anotherRte, expected.getCause());
         }
 
         // success and failed
         try {
             allOfFastFail(
                     CompletableFuture.completedFuture(n),
-                    createFailedFuture(rte),
+                    failedFuture(rte),
                     CompletableFuture.completedFuture(s),
-                    createFailedFuture(another_rte)
+                    failedFuture(anotherRte)
             ).get();
 
             fail();
@@ -305,8 +301,8 @@ class CompletableFutureUtilsTest {
         try {
             allOfFastFail(
                     CompletableFuture.completedFuture(n),
-                    createFailedFuture(rte),
-                    new CompletableFuture<>()
+                    failedFuture(rte),
+                    createIncompleteFuture()
             ).get(30, TimeUnit.MILLISECONDS);
 
             fail();
@@ -318,7 +314,7 @@ class CompletableFutureUtilsTest {
         try {
             allOfFastFail(
                     createIncompleteFuture(),
-                    createFailedFuture(rte),
+                    failedFuture(rte),
                     createIncompleteFuture()
             ).get(100, TimeUnit.MILLISECONDS);
 
@@ -434,22 +430,22 @@ class CompletableFutureUtilsTest {
                         sleep(100);
                         throw rte;
                     }),
-                    createFailedFuture(another_rte),
-                    createFailedFuture(ex1),
-                    createFailedFuture(ex2)
+                    failedFuture(anotherRte),
+                    failedFuture(ex1),
+                    failedFuture(ex2)
             ).get();
 
             fail();
         } catch (ExecutionException expected) {
             // anyOfSuccessWithType: the ex of first complete(in time) cf argument win
             //   ❗dependent on the implementation behavior of `CF.anyOf`️
-            assertSame(another_rte, expected.getCause());
+            assertSame(anotherRte, expected.getCause());
         }
         // incomplete fail incomplete
         try {
             anyOfWithType(
                     createIncompleteFuture(),
-                    createFailedFuture(rte),
+                    failedFuture(rte),
                     createIncompleteFuture()
             ).get();
 
@@ -469,9 +465,9 @@ class CompletableFutureUtilsTest {
                         sleep(100);
                         throw rte;
                     }),
-                    createFailedFuture(another_rte),
-                    createFailedFuture(ex1),
-                    createFailedFuture(ex2)
+                    failedFuture(anotherRte),
+                    failedFuture(ex1),
+                    failedFuture(ex2)
             ).get();
 
             fail();
@@ -484,7 +480,7 @@ class CompletableFutureUtilsTest {
         try {
             anyOfSuccessWithType(
                     createIncompleteFuture(),
-                    createFailedFuture(rte),
+                    failedFuture(rte),
                     createIncompleteFuture()
             ).get(30, TimeUnit.MILLISECONDS);
 
@@ -507,7 +503,7 @@ class CompletableFutureUtilsTest {
                 createIncompleteFuture(),
                 CompletableFuture.supplyAsync(() -> {
                     sleep(300);
-                    return another_n;
+                    return anotherN;
                 }),
                 CompletableFuture.completedFuture(n)
         ).get());
@@ -516,11 +512,11 @@ class CompletableFutureUtilsTest {
         assertEquals(n, anyOfWithType(
                 CompletableFuture.supplyAsync(() -> {
                     sleep(300);
-                    return another_n;
+                    return anotherN;
                 }),
                 CompletableFuture.supplyAsync(() -> {
                     sleep(300);
-                    return another_n;
+                    return anotherN;
                 }),
                 CompletableFuture.completedFuture(n)
         ).get());
@@ -543,8 +539,8 @@ class CompletableFutureUtilsTest {
                         sleep(100);
                         return n;
                     }),
-                    createFailedFuture(rte),
-                    createFailedFuture(rte)
+                    failedFuture(rte),
+                    failedFuture(rte)
             ).get();
 
             fail();
@@ -560,7 +556,7 @@ class CompletableFutureUtilsTest {
                 createIncompleteFuture(),
                 CompletableFuture.supplyAsync(() -> {
                     sleep(300);
-                    return another_n;
+                    return anotherN;
                 }),
                 CompletableFuture.completedFuture(n)
         ).get());
@@ -569,11 +565,11 @@ class CompletableFutureUtilsTest {
         assertEquals(n, anyOfSuccessWithType(
                 CompletableFuture.supplyAsync(() -> {
                     sleep(300);
-                    return another_n;
+                    return anotherN;
                 }),
                 CompletableFuture.supplyAsync(() -> {
                     sleep(300);
-                    return another_n;
+                    return anotherN;
                 }),
                 CompletableFuture.completedFuture(n)
         ).get());
@@ -595,8 +591,8 @@ class CompletableFutureUtilsTest {
                     sleep(100);
                     return n;
                 }),
-                createFailedFuture(rte),
-                createFailedFuture(rte)
+                failedFuture(rte),
+                failedFuture(rte)
         ).get());
     }
 
@@ -617,18 +613,18 @@ class CompletableFutureUtilsTest {
                 CompletableFuture.completedFuture(d)
         ).get());
 
-        assertEquals(Tuple4.of(n, s, d, another_n), CompletableFutureUtils.combine(
+        assertEquals(Tuple4.of(n, s, d, anotherN), CompletableFutureUtils.combine(
                 CompletableFuture.completedFuture(n),
                 CompletableFuture.completedFuture(s),
                 CompletableFuture.completedFuture(d),
-                CompletableFuture.completedFuture(another_n)
+                CompletableFuture.completedFuture(anotherN)
         ).get());
 
-        assertEquals(Tuple5.of(n, s, d, another_n, n + n), CompletableFutureUtils.combine(
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), CompletableFutureUtils.combine(
                 CompletableFuture.completedFuture(n),
                 CompletableFuture.completedFuture(s),
                 CompletableFuture.completedFuture(d),
-                CompletableFuture.completedFuture(another_n),
+                CompletableFuture.completedFuture(anotherN),
                 CompletableFuture.completedFuture(n + n)
         ).get());
     }
@@ -638,7 +634,7 @@ class CompletableFutureUtilsTest {
         try {
             CompletableFutureUtils.combine(
                     CompletableFuture.completedFuture(n),
-                    createFailedFuture(rte)
+                    failedFuture(rte)
             ).get();
 
             fail();
@@ -649,7 +645,7 @@ class CompletableFutureUtilsTest {
         try {
             CompletableFutureUtils.combine(
                     CompletableFuture.completedFuture(n),
-                    createFailedFuture(rte),
+                    failedFuture(rte),
                     CompletableFuture.completedFuture(s)
             ).get();
 
@@ -662,9 +658,9 @@ class CompletableFutureUtilsTest {
             CompletableFutureUtils.combine(
                     CompletableFuture.completedFuture(n),
                     CompletableFuture.completedFuture(d),
-                    createFailedFuture(rte),
+                    failedFuture(rte),
                     CompletableFuture.completedFuture(s),
-                    CompletableFuture.completedFuture(another_n)
+                    CompletableFuture.completedFuture(anotherN)
             ).get();
 
             fail();
@@ -682,64 +678,160 @@ class CompletableFutureUtilsTest {
 
     @Test
     void test_failedFuture() throws Exception {
-        assertTrue(CompletableFutureUtils.failedFuture(rte).isDone());
-        assertEquals(n, CompletableFutureUtils.completedStage(n).toCompletableFuture().get());
-        assertTrue(CompletableFutureUtils.failedStage(rte).toCompletableFuture().isDone());
+        assertTrue(failedFuture(rte).isDone());
+        assertEquals(n, completedStage(n).toCompletableFuture().get());
+        assertTrue(failedStage(rte).toCompletableFuture().isDone());
     }
 
     @Test
     void test_delayedExecutor() throws Exception {
         final AtomicReference<String> holder = new AtomicReference<>();
 
-        Executor delayer = CompletableFutureUtils.delayedExecutor(1, TimeUnit.MILLISECONDS);
+        Executor delayer = delayedExecutor(1, TimeUnit.MILLISECONDS);
         CompletableFuture.runAsync(() -> holder.set(testName), delayer).get();
         assertEquals(testName, holder.get());
     }
 
     @Test
     void test_exceptionallyAsync() throws Exception {
-        CompletableFuture<Integer> cf = CompletableFutureUtils.failedFuture(rte);
-        assertEquals(n, CompletableFutureUtils.exceptionallyAsync(cf, ex -> n).get());
+        CompletableFuture<Integer> cf = failedFuture(rte);
+        assertEquals(n, exceptionallyAsync(cf, ex -> n).get());
+
+        cf = CompletableFuture.completedFuture(n);
+        assertEquals(n, exceptionallyAsync(cf, ex -> anotherN).get());
+
     }
 
     @Test
     void test_timeout() throws Exception {
-        CompletableFuture<Integer> cf = new CompletableFuture<>();
+        CompletableFuture<Integer> cf = createIncompleteFuture();
         try {
-            CompletableFutureUtils.orTimeout(cf, 1, TimeUnit.MILLISECONDS).get();
+            orTimeout(cf, 1, TimeUnit.MILLISECONDS).get();
         } catch (ExecutionException expected) {
             assertEquals(TimeoutException.class, expected.getCause().getClass());
         }
 
-        cf = new CompletableFuture<>();
-        assertEquals(n, CompletableFutureUtils.completeOnTimeout(cf, n, 1, TimeUnit.MILLISECONDS).get());
+        cf = createIncompleteFuture();
+        assertEquals(n, completeOnTimeout(cf, n, 1, TimeUnit.MILLISECONDS).get());
+
+        cf = CompletableFuture.completedFuture(n);
+        assertEquals(n, completeOnTimeout(cf, anotherN, 1, TimeUnit.MILLISECONDS).get());
+
+        cf = CompletableFuture.completedFuture(n);
+        assertEquals(n, orTimeout(cf, 1, TimeUnit.MILLISECONDS).get());
     }
 
     @Test
     void test_exceptionallyCompose() throws Exception {
-        CompletableFuture<Object> cf = failedFuture(rte);
+        CompletableFuture<Object> completed = CompletableFuture.completedFuture(n);
+        CompletableFuture<Object> failed = failedFuture(rte);
 
-        assertEquals(n, CompletableFutureUtils.exceptionallyCompose(cf,
+        assertEquals(n, exceptionallyCompose(failed,
                 ex -> CompletableFuture.completedFuture(n)).get());
-        assertEquals(n, CompletableFutureUtils.exceptionallyComposeAsync(cf,
+        assertEquals(n, exceptionallyCompose(completed,
+                ex -> CompletableFuture.completedFuture(anotherN)).get());
+
+        assertEquals(n, exceptionallyComposeAsync(failed,
                 ex -> CompletableFuture.completedFuture(n)).get());
+        assertEquals(n, exceptionallyComposeAsync(completed,
+                ex -> CompletableFuture.completedFuture(anotherN)).get());
     }
 
     @Test
+    @SuppressWarnings({"ResultOfMethodCallIgnored", "ThrowableNotThrown"})
     void test_read() {
-        CompletableFuture<Integer> cf = CompletableFuture.completedFuture(n);
-        CompletableFuture<Object> ff = failedFuture(rte);
-        assertEquals(n, CompletableFutureUtils.cffuJoin(cf, 1, TimeUnit.MILLISECONDS));
-        assertEquals(n, CompletableFutureUtils.resultNow(cf));
-        assertSame(rte, CompletableFutureUtils.exceptionNow(ff));
-        assertSame(CffuState.SUCCESS, CompletableFutureUtils.cffuState(cf));
-        assertSame(CffuState.FAILED, CompletableFutureUtils.cffuState(ff));
+        final CompletableFuture<Integer> completed = CompletableFuture.completedFuture(n);
+
+        assertEquals(n, cffuJoin(completed, 1, TimeUnit.MILLISECONDS));
+        assertEquals(n, resultNow(completed));
+        try {
+            exceptionNow(completed);
+            fail();
+        } catch (IllegalStateException expected) {
+            if (expected.getMessage() != null) assertEquals("Task completed with a result", expected.getMessage());
+        }
+        assertSame(CffuState.SUCCESS, cffuState(completed));
+
+        ////////////////////////////////////////
+
+        final CompletableFuture<Object> failed = failedFuture(rte);
+
+        try {
+            cffuJoin(failed, 1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (CompletionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            resultNow(failed);
+            fail();
+        } catch (IllegalStateException expected) {
+            if (expected.getMessage() != null) assertEquals("Task completed with exception", expected.getMessage());
+        }
+        assertSame(rte, exceptionNow(failed));
+        assertSame(CffuState.FAILED, cffuState(failed));
+
+        ////////////////////////////////////////
+
+        CompletableFuture<Object> cancelled = createCancelledFuture();
+        try {
+            resultNow(cancelled);
+            fail();
+        } catch (IllegalStateException expected) {
+            if (expected.getMessage() != null) assertEquals("Task was cancelled", expected.getMessage());
+        }
+        try {
+            exceptionNow(cancelled);
+            fail();
+        } catch (IllegalStateException expected) {
+            if (expected.getMessage() != null) assertEquals("Task was cancelled", expected.getMessage());
+        }
+        assertSame(CffuState.CANCELLED, cffuState(cancelled));
+
+        ////////////////////////////////////////
+
+        final CompletableFuture<Object> incomplete = createIncompleteFuture();
+
+        try {
+            cffuJoin(incomplete, 1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (CompletionException expected) {
+            assertTrue(expected.getCause() instanceof TimeoutException);
+        }
+        try {
+            resultNow(incomplete);
+            fail();
+        } catch (IllegalStateException expected) {
+            if (expected.getMessage() != null) assertEquals("Task has not completed", expected.getMessage());
+        }
+        try {
+            exceptionNow(incomplete);
+            fail();
+        } catch (IllegalStateException expected) {
+            if (expected.getMessage() != null) assertEquals("Task has not completed", expected.getMessage());
+        }
+        assertSame(CffuState.RUNNING, cffuState(incomplete));
+
+        // Incomplete Future -> join before timeout
+        CompletableFuture<Integer> later = createFutureCompleteLater(n);
+        assertEquals(n, cffuJoin(later, 3, TimeUnit.SECONDS));
     }
 
     @Test
     void test_write() throws Exception {
-        CompletableFuture<Integer> cf = new CompletableFuture<>();
-        assertEquals(n, CompletableFutureUtils.completeAsync(cf, () -> n).get());
+        assertEquals(n, completeAsync(createIncompleteFuture(), () -> n).get());
+        assertEquals(n, completeAsync(createIncompleteFuture(), () -> n, commonPool()).get());
+        try {
+            completeAsync(createIncompleteFuture(), () -> {
+                throw rte;
+            }).get();
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+
+        CompletableFuture<Integer> completed = CompletableFuture.completedFuture(n);
+        assertEquals(n, completeAsync(completed, () -> anotherN).get());
     }
 
     @Test
@@ -747,8 +839,8 @@ class CompletableFutureUtilsTest {
         CompletionStage<Integer> mf = minimalCompletionStage(CompletableFuture.completedFuture(n));
         assertEquals(n, mf.toCompletableFuture().get());
 
-        CompletableFuture<Integer> cf = new CompletableFuture<>();
-        CompletableFutureUtils.copy(cf).complete(n);
+        CompletableFuture<Integer> cf = createIncompleteFuture();
+        copy(cf).complete(n);
         assertFalse(cf.isDone());
 
         CompletableFuture<Object> incomplete = newIncompleteFuture(cf);
@@ -758,9 +850,14 @@ class CompletableFutureUtilsTest {
     }
 
     @Test
-    void test_getter() {
+    void test_executor() {
         Executor executor = defaultExecutor();
         assertIsDefaultExecutor(executor);
+
+        assertIsDefaultExecutor(screenExecutor(commonPool()));
+
+        ExecutorService e = Executors.newCachedThreadPool();
+        assertSame(e, screenExecutor(e));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -778,16 +875,4 @@ class CompletableFutureUtilsTest {
     }
 
     private static final String testName = "CompletableFutureUtilsTest";
-
-    private static ExecutorService executorService;
-
-    @BeforeAll
-    static void beforeAll() {
-        executorService = TestThreadPoolManager.createThreadPool(testName);
-    }
-
-    @AfterAll
-    static void afterAll() {
-        TestThreadPoolManager.shutdownExecutorService(executorService);
-    }
 }

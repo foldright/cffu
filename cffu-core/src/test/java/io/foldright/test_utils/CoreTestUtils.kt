@@ -1,4 +1,4 @@
-@file:JvmName("TestUtils")
+@file:JvmName("CoreTestUtils")
 
 package io.foldright.test_utils
 
@@ -15,19 +15,6 @@ import org.apache.commons.lang3.JavaVersion
 import org.apache.commons.lang3.SystemUtils.isJavaVersionAtLeast
 import java.util.concurrent.*
 
-
-////////////////////////////////////////////////////////////////////////////////
-// CF creation util functions
-//
-//   - with sleep delay
-//   - compatibility logic of Java version
-////////////////////////////////////////////////////////////////////////////////
-
-fun <T> createIncompleteFuture(): CompletableFuture<T> = CompletableFuture()
-
-fun <T> createFailedFuture(ex: Throwable) = CompletableFuture<T>().apply {
-    completeExceptionally(ex)
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper functions for api compatibility test:
@@ -72,14 +59,6 @@ fun assertCffuRunInThreadOf(executorService: ExecutorService) {
 ////////////////////////////////////////////////////////////////////////////////
 // Simple util functions
 ////////////////////////////////////////////////////////////////////////////////
-
-/**
- * sleep without throwing checked exception
- */
-@JvmOverloads
-fun sleep(millis: Long = 10) {
-    Thread.sleep(millis)
-}
 
 fun <T> merge(list1: List<T>, list2: List<T>) = list1.merge(list2)
 

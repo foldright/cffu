@@ -13,7 +13,7 @@ import io.foldright.cffu.Cffu;
 import io.foldright.cffu.CffuFactory;
 import io.foldright.cffu.CffuFactoryBuilder;
 import io.foldright.test_utils.TestThreadPoolManager;
-import io.foldright.test_utils.TestUtils;
+import io.foldright.test_utils.CoreTestUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ class CffuApiCompatibilityTest {
         // completedFuture
         Cffu<String> f0 = cffuFactory.completedFuture(hello);
         assertEquals(hello, f0.get());
-        TestUtils.shouldNotBeMinimalStage(f0);
+        CoreTestUtils.shouldNotBeMinimalStage(f0);
         // below methods is tested in below test method
         // - completedStage
         // - failedFuture
@@ -56,7 +56,7 @@ class CffuApiCompatibilityTest {
         // completedStage
         Cffu<String> cf = (Cffu<String>) cffuFactory.completedStage(hello);
         assertEquals(hello, cf.toCompletableFuture().get());
-        TestUtils.shouldBeMinimalStage(cf);
+        CoreTestUtils.shouldBeMinimalStage(cf);
 
         // failedFuture
         cf = cffuFactory.failedFuture(rte);
@@ -66,7 +66,7 @@ class CffuApiCompatibilityTest {
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
-        TestUtils.shouldNotBeMinimalStage(cf);
+        CoreTestUtils.shouldNotBeMinimalStage(cf);
 
         // failedStage
         cf = (Cffu<String>) cffuFactory.<String>failedStage(rte);
@@ -76,7 +76,7 @@ class CffuApiCompatibilityTest {
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
-        TestUtils.shouldBeMinimalStage(cf);
+        CoreTestUtils.shouldBeMinimalStage(cf);
     }
 
     @Test
@@ -85,35 +85,35 @@ class CffuApiCompatibilityTest {
 
         // runAsync
         Cffu<Void> cf = cffuFactory.runAsync(() -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             holder.set(hello);
         });
         assertNull(cf.get());
         assertEquals(hello, holder.get());
-        TestUtils.shouldNotBeMinimalStage(cf);
+        CoreTestUtils.shouldNotBeMinimalStage(cf);
 
         holder.set(null);
         cf = cffuFactory.runAsync(() -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             holder.set(hello);
         }, anotherExecutorService);
         assertNull(cf.get());
         assertEquals(hello, holder.get());
-        TestUtils.shouldNotBeMinimalStage(cf);
+        CoreTestUtils.shouldNotBeMinimalStage(cf);
 
         // supplyAsync
         Cffu<String> s_cf = cffuFactory.supplyAsync(() -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             return hello;
         });
         assertEquals(hello, s_cf.get());
-        TestUtils.shouldNotBeMinimalStage(s_cf);
+        CoreTestUtils.shouldNotBeMinimalStage(s_cf);
         s_cf = cffuFactory.supplyAsync(() -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             return hello;
         }, anotherExecutorService);
         assertEquals(hello, s_cf.get());
-        TestUtils.shouldNotBeMinimalStage(s_cf);
+        CoreTestUtils.shouldNotBeMinimalStage(s_cf);
     }
 
     @Test
@@ -154,7 +154,7 @@ class CffuApiCompatibilityTest {
 
         Executor delayer = cffuFactory.delayedExecutor(1, TimeUnit.MILLISECONDS);
         cffuFactory.runAsync(() -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             holder.set(hello);
         }, delayer).get();
         assertEquals(hello, holder.get());
@@ -162,7 +162,7 @@ class CffuApiCompatibilityTest {
         holder.set(null);
         delayer = cffuFactory.delayedExecutor(1, TimeUnit.MILLISECONDS, anotherExecutorService);
         cffuFactory.runAsync(() -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             holder.set(hello);
         }, delayer).get();
         assertEquals(hello, holder.get());
@@ -182,13 +182,13 @@ class CffuApiCompatibilityTest {
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.thenRunAsync(() -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             holder.set(hello);
         }).get();
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.thenRunAsync(() -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             holder.set(hello);
         }, anotherExecutorService).get();
         assertEquals(hello, holder.get());
@@ -198,24 +198,24 @@ class CffuApiCompatibilityTest {
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.thenAcceptAsync(x -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             holder.set(hello);
         }).get();
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.thenAcceptAsync(x -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             holder.set(hello);
         }, anotherExecutorService).get();
         assertEquals(hello, holder.get());
 
         assertEquals(43, cf.thenApply(x -> x + 1).get());
         assertEquals(44, cf.thenApplyAsync(x -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             return x + 2;
         }).get());
         assertEquals(45, cf.thenApplyAsync(x -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             return x + 3;
         }, anotherExecutorService).get());
     }
@@ -230,13 +230,13 @@ class CffuApiCompatibilityTest {
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.runAfterBothAsync(cf, () -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             holder.set(hello);
         }).get();
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.runAfterBothAsync(cf, () -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             holder.set(hello);
         }, anotherExecutorService).get();
         assertEquals(hello, holder.get());
@@ -246,24 +246,24 @@ class CffuApiCompatibilityTest {
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.thenAcceptBothAsync(cf, (x, y) -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             holder.set(hello);
         }).get();
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.thenAcceptBothAsync(cf, (x, y) -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             holder.set(hello);
         }, anotherExecutorService).get();
         assertEquals(hello, holder.get());
 
         assertEquals(84, cf.thenCombine(cf, Integer::sum).get());
         assertEquals(84, cf.thenCombineAsync(cf, (a, b) -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             return Integer.sum(a, b);
         }).get());
         assertEquals(84, cf.thenCombineAsync(cf, (a, b) -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             return Integer.sum(a, b);
         }, anotherExecutorService).get());
     }
@@ -278,13 +278,13 @@ class CffuApiCompatibilityTest {
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.runAfterEitherAsync(cf, () -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             holder.set(hello);
         }).get();
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.runAfterEitherAsync(cf, () -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             holder.set(hello);
         }, anotherExecutorService).get();
         assertEquals(hello, holder.get());
@@ -294,24 +294,24 @@ class CffuApiCompatibilityTest {
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.acceptEitherAsync(cf, x -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             holder.set(hello);
         }).get();
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.acceptEitherAsync(cf, x -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             holder.set(hello);
         }, anotherExecutorService).get();
         assertEquals(hello, holder.get());
 
         assertEquals(43, cf.applyToEither(cf, x -> x + 1).get());
         assertEquals(44, cf.applyToEitherAsync(cf, x -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             return x + 2;
         }).get());
         assertEquals(45, cf.applyToEitherAsync(cf, x -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             return x + 3;
         }, anotherExecutorService).get());
     }
@@ -319,7 +319,7 @@ class CffuApiCompatibilityTest {
     @Test
     void errorHandling_methods() throws Exception {
         Cffu<Integer> cf = cffuFactory.completedFuture(42);
-        Cffu<Object> failed = TestUtils.safeNewFailedCffu(executorService, rte);
+        Cffu<Object> failed = CoreTestUtils.safeNewFailedCffu(executorService, rte);
 
         // exceptionally
         assertEquals(42, cf.exceptionally(t -> 43).get());
@@ -332,23 +332,23 @@ class CffuApiCompatibilityTest {
     @Test
     void errorHandling_methods__Java9() throws Exception {
         Cffu<Integer> cf = cffuFactory.completedFuture(42);
-        Cffu<Object> failed = TestUtils.safeNewFailedCffu(executorService, rte);
+        Cffu<Object> failed = CoreTestUtils.safeNewFailedCffu(executorService, rte);
 
         assertEquals(42, cf.exceptionallyAsync(t -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             return 43;
         }).get());
         assertEquals(43, failed.exceptionallyAsync(t -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             return 43;
         }).get());
 
         assertEquals(42, cf.exceptionallyAsync(t -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             return 44;
         }, anotherExecutorService).get());
         assertEquals(44, failed.exceptionallyAsync(t -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             return 44;
         }, anotherExecutorService).get());
     }
@@ -382,11 +382,11 @@ class CffuApiCompatibilityTest {
 
         assertEquals(43, cf.thenCompose(x -> cffuFactory.completedFuture(43)).get());
         assertEquals(44, cf.thenComposeAsync(x -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             return cffuFactory.completedFuture(44);
         }).get());
         assertEquals(45, cf.thenComposeAsync(x -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             return cffuFactory.completedFuture(45);
         }, anotherExecutorService).get());
     }
@@ -398,24 +398,24 @@ class CffuApiCompatibilityTest {
 
         assertEquals(42, cf.exceptionallyCompose(x -> cffuFactory.completedFuture(43)).get());
         assertEquals(42, cf.exceptionallyComposeAsync(x -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             return cffuFactory.completedFuture(44);
         }).get());
         assertEquals(42, cf.exceptionallyComposeAsync(x -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             return cffuFactory.completedFuture(45);
         }, anotherExecutorService).get());
 
         // for failed
-        Cffu<Integer> failed = TestUtils.safeNewFailedCffu(executorService, rte);
+        Cffu<Integer> failed = CoreTestUtils.safeNewFailedCffu(executorService, rte);
 
         assertEquals(43, failed.exceptionallyCompose(x -> cffuFactory.completedFuture(43)).get());
         assertEquals(44, failed.exceptionallyComposeAsync(x -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             return cffuFactory.completedFuture(44);
         }).get());
         assertEquals(45, failed.exceptionallyComposeAsync(x -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             return cffuFactory.completedFuture(45);
         }, anotherExecutorService).get());
     }
@@ -426,11 +426,11 @@ class CffuApiCompatibilityTest {
 
         assertEquals(43, cf.handle((x, e) -> 43).get());
         assertEquals(44, cf.handleAsync((x, e) -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             return 44;
         }).get());
         assertEquals(45, cf.handleAsync((x, e) -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             return 45;
         }, anotherExecutorService).get());
 
@@ -440,13 +440,13 @@ class CffuApiCompatibilityTest {
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.whenCompleteAsync((x, e) -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             holder.set(hello);
         }).get();
         assertEquals(hello, holder.get());
         holder.set(null);
         cf.whenCompleteAsync((x, e) -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             holder.set(hello);
         }, anotherExecutorService).get();
         assertEquals(hello, holder.get());
@@ -455,7 +455,7 @@ class CffuApiCompatibilityTest {
     @Test
     void readExplicitlyMethods() throws Exception {
         Cffu<Integer> cf = cffuFactory.completedFuture(42);
-        Cffu<Object> failed = TestUtils.safeNewFailedCffu(executorService, rte);
+        Cffu<Object> failed = CoreTestUtils.safeNewFailedCffu(executorService, rte);
 
         Integer r = cf.get();
         assertEquals(42, r);
@@ -510,7 +510,7 @@ class CffuApiCompatibilityTest {
     @Test
     void readExplicitlyMethods__Java19() throws Exception {
         Cffu<Integer> cf = cffuFactory.completedFuture(42);
-        Cffu<Object> failed = TestUtils.safeNewFailedCffu(executorService, rte);
+        Cffu<Object> failed = CoreTestUtils.safeNewFailedCffu(executorService, rte);
         Integer r = cf.get();
         assertEquals(42, r);
 
@@ -537,7 +537,7 @@ class CffuApiCompatibilityTest {
     @EnabledForJreRange(min = JRE.JAVA_19) /* GEN_MARK_KEEP */
     void readExplicitlyMethods__Java19_CanNotCompatible() {
         Cffu<Integer> cf = cffuFactory.completedFuture(42);
-        Cffu<Object> failed = TestUtils.safeNewFailedCffu(executorService, rte);
+        Cffu<Object> failed = CoreTestUtils.safeNewFailedCffu(executorService, rte);
         Cffu<Integer> incomplete = cffuFactory.newIncompleteCffu();
 
         // state
@@ -584,22 +584,22 @@ class CffuApiCompatibilityTest {
 
         // completeAsync
         assertEquals(42, cf.completeAsync(() -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             return 4242;
         }).get());
         assertEquals(42, cf.completeAsync(() -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             return 424242;
         }, anotherExecutorService).get());
 
         Cffu<Integer> incomplete = cffuFactory.newIncompleteCffu();
         assertEquals(4242, incomplete.completeAsync(() -> {
-            TestUtils.assertCffuRunInDefaultThread(executorService);
+            CoreTestUtils.assertCffuRunInDefaultThread(executorService);
             return 4242;
         }).get());
         incomplete = cffuFactory.newIncompleteCffu();
         assertEquals(424242, incomplete.completeAsync(() -> {
-            TestUtils.assertCffuRunInThreadOf(anotherExecutorService);
+            CoreTestUtils.assertCffuRunInThreadOf(anotherExecutorService);
             return 424242;
         }, anotherExecutorService).get());
 
@@ -637,7 +637,7 @@ class CffuApiCompatibilityTest {
         Cffu<Integer> cf = cffuFactory.completedFuture(42);
 
         // minimalCompletionStage
-        TestUtils.shouldBeMinimalStage((Cffu<Integer>) cf.minimalCompletionStage());
+        CoreTestUtils.shouldBeMinimalStage((Cffu<Integer>) cf.minimalCompletionStage());
 
         // copy
         assertEquals(42, cf.copy().get());
@@ -695,7 +695,7 @@ class CffuApiCompatibilityTest {
         cancelledCf.cancel(false);
 
         final Cffu<Integer> exceptionallyCf =
-                TestUtils.safeNewFailedCffu(executorService, rte);
+                CoreTestUtils.safeNewFailedCffu(executorService, rte);
 
         ////////////////////////////////////////
         // different behavior
@@ -779,7 +779,7 @@ class CffuApiCompatibilityTest {
         cancelledCf.cancel(false);
 
         final Cffu<Integer> exceptionallyCf =
-                TestUtils.safeNewFailedCffu(executorService, rte);
+                CoreTestUtils.safeNewFailedCffu(executorService, rte);
 
         ////////////////////////////////////////
         // different behavior
@@ -830,7 +830,7 @@ class CffuApiCompatibilityTest {
         cf = cffuFactory.completedFuture(42);
         // auto unwrap first level ExecutionException
         check1MoreLevelForExecutionException(cf.thenRun(() -> {
-            TestUtils.sneakyThrow(new ExecutionException(rte));
+            CoreTestUtils.sneakyThrow(new ExecutionException(rte));
         }));
     }
 

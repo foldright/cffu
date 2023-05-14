@@ -17,7 +17,9 @@ import java.util.concurrent.*;
 import java.util.function.Function;
 
 import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
+import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
 import static io.foldright.test_utils.TestUtils.*;
+import static io.foldright.test_utils.CoreTestUtils.*;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,22 +28,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * see io.foldright.compatibility_test.CffuApiCompatibilityTest
  */
 class CffuFactoryTest {
-    ////////////////////////////////////////////////////////////////////////////////
-    // test constants
-    ////////////////////////////////////////////////////////////////////////////////
-
-    static final int n = 42;
-    static final int another_n = 424242;
-
-    static final String s = "S42";
-
-    static final double d = 42.1;
-
-    static final RuntimeException rte = new RuntimeException("Bang");
-    static final RuntimeException another_rte = new RuntimeException("BangAnother");
-
-    private static CffuFactory cffuFactory;
-
     ///////////////////////////////////////////////////////////////////////////////
     //# Factory Methods, equivalent to same name static methods of CompletableFuture
     //
@@ -90,7 +76,7 @@ class CffuFactoryTest {
         CompletionStage<Integer> se = stage.exceptionally(throwable -> n);
 
         try {
-            createFailedFuture(rte).toCompletableFuture().join();
+            failedFuture(rte).toCompletableFuture().join();
             fail();
         } catch (CompletionException expected) {
             assertSame(rte, expected.getCause());
@@ -183,10 +169,10 @@ class CffuFactoryTest {
     void test_allOf_CompletableFuture() throws Exception {
         cffuFactory.allOf(
                 CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(another_n)
+                CompletableFuture.completedFuture(anotherN)
         ).get();
         cffuFactory.allOf(
-                CompletableFuture.completedFuture(another_n)
+                CompletableFuture.completedFuture(anotherN)
         ).get();
 
         assertNull(cffuFactory.allOf().get());
@@ -195,20 +181,20 @@ class CffuFactoryTest {
 
         cffuFactory.allOfFastFail(
                 CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(another_n)
+                CompletableFuture.completedFuture(anotherN)
         ).get();
         cffuFactory.allOfFastFail(
-                CompletableFuture.completedFuture(another_n)
+                CompletableFuture.completedFuture(anotherN)
         ).get();
 
         assertNull(cffuFactory.allOfFastFail().get());
 
         cffuFactory.allOfFastFail(
                 cffuFactory.completedFuture(n),
-                cffuFactory.completedFuture(another_n)
+                cffuFactory.completedFuture(anotherN)
         ).get();
         cffuFactory.allOfFastFail(
-                cffuFactory.completedFuture(another_n)
+                cffuFactory.completedFuture(anotherN)
         ).get();
     }
 
@@ -216,10 +202,10 @@ class CffuFactoryTest {
     void test_anyOf_CompletableFuture() throws Exception {
         cffuFactory.anyOf(
                 CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(another_n)
+                CompletableFuture.completedFuture(anotherN)
         ).get();
-        assertEquals(another_n, cffuFactory.anyOf(
-                CompletableFuture.completedFuture(another_n)
+        assertEquals(anotherN, cffuFactory.anyOf(
+                CompletableFuture.completedFuture(anotherN)
         ).get());
 
         assertFalse(cffuFactory.anyOf().isDone());
@@ -228,10 +214,10 @@ class CffuFactoryTest {
 
         cffuFactory.anyOfSuccess(
                 CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(another_n)
+                CompletableFuture.completedFuture(anotherN)
         ).get();
-        assertEquals(another_n, cffuFactory.anyOfSuccess(
-                CompletableFuture.completedFuture(another_n)
+        assertEquals(anotherN, cffuFactory.anyOfSuccess(
+                CompletableFuture.completedFuture(anotherN)
         ).get());
 
         try {
@@ -243,10 +229,10 @@ class CffuFactoryTest {
 
         cffuFactory.anyOfSuccess(
                 cffuFactory.completedFuture(n),
-                cffuFactory.completedFuture(another_n)
+                cffuFactory.completedFuture(anotherN)
         ).get();
-        assertEquals(another_n, cffuFactory.anyOfSuccess(
-                cffuFactory.completedFuture(another_n)
+        assertEquals(anotherN, cffuFactory.anyOfSuccess(
+                cffuFactory.completedFuture(anotherN)
         ).get());
     }
 
@@ -403,7 +389,7 @@ class CffuFactoryTest {
         try {
             cffuFactory.cffuAnyOf(
                     createIncompleteFuture(),
-                    createFailedFuture(rte),
+                    failedFuture(rte),
                     createIncompleteFuture()
             ).get();
 
@@ -430,7 +416,7 @@ class CffuFactoryTest {
                 cffuFactory.newIncompleteCffu(),
                 cffuFactory.supplyAsync(() -> {
                     sleep(300);
-                    return another_n;
+                    return anotherN;
                 }),
                 cffuFactory.completedFuture(n)
         ).get());
@@ -449,11 +435,11 @@ class CffuFactoryTest {
         assertEquals(n, cffuFactory.cffuAnyOfSuccess(
                 cffuFactory.supplyAsync(() -> {
                     sleep(300);
-                    return another_n;
+                    return anotherN;
                 }),
                 cffuFactory.supplyAsync(() -> {
                     sleep(300);
-                    return another_n;
+                    return anotherN;
                 }),
                 cffuFactory.completedFuture(n)
         ).get());
@@ -466,7 +452,7 @@ class CffuFactoryTest {
                 createIncompleteFuture(),
                 CompletableFuture.supplyAsync(() -> {
                     sleep(300);
-                    return another_n;
+                    return anotherN;
                 }),
                 CompletableFuture.completedFuture(n)
         ).get());
@@ -485,11 +471,11 @@ class CffuFactoryTest {
         assertEquals(n, cffuFactory.cffuAnyOfSuccess(
                 CompletableFuture.supplyAsync(() -> {
                     sleep(300);
-                    return another_n;
+                    return anotherN;
                 }),
                 CompletableFuture.supplyAsync(() -> {
                     sleep(300);
-                    return another_n;
+                    return anotherN;
                 }),
                 CompletableFuture.completedFuture(n)
         ).get());
@@ -517,18 +503,18 @@ class CffuFactoryTest {
                 CompletableFuture.completedFuture(d)
         ).get());
 
-        assertEquals(Tuple4.of(n, s, d, another_n), cffuFactory.cffuCombine(
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.cffuCombine(
                 CompletableFuture.completedFuture(n),
                 CompletableFuture.completedFuture(s),
                 CompletableFuture.completedFuture(d),
-                CompletableFuture.completedFuture(another_n)
+                CompletableFuture.completedFuture(anotherN)
         ).get());
 
-        assertEquals(Tuple5.of(n, s, d, another_n, n + n), cffuFactory.cffuCombine(
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.cffuCombine(
                 CompletableFuture.completedFuture(n),
                 CompletableFuture.completedFuture(s),
                 CompletableFuture.completedFuture(d),
-                CompletableFuture.completedFuture(another_n),
+                CompletableFuture.completedFuture(anotherN),
                 CompletableFuture.completedFuture(n + n)
         ).get());
 
@@ -545,18 +531,18 @@ class CffuFactoryTest {
                 cffuFactory.completedFuture(d)
         ).get());
 
-        assertEquals(Tuple4.of(n, s, d, another_n), cffuFactory.cffuCombine(
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.cffuCombine(
                 cffuFactory.completedFuture(n),
                 cffuFactory.completedFuture(s),
                 cffuFactory.completedFuture(d),
-                cffuFactory.completedFuture(another_n)
+                cffuFactory.completedFuture(anotherN)
         ).get());
 
-        assertEquals(Tuple5.of(n, s, d, another_n, n + n), cffuFactory.cffuCombine(
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.cffuCombine(
                 cffuFactory.completedFuture(n),
                 cffuFactory.completedFuture(s),
                 cffuFactory.completedFuture(d),
-                cffuFactory.completedFuture(another_n),
+                cffuFactory.completedFuture(anotherN),
                 cffuFactory.completedFuture(n + n)
         ).get());
 
@@ -571,16 +557,16 @@ class CffuFactoryTest {
                 CompletableFuture.completedFuture(d)
         ).get());
 
-        assertEquals(Tuple4.of(n, s, d, another_n), cffuFactory.completedFuture(n).cffuCombine(
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.completedFuture(n).cffuCombine(
                 CompletableFuture.completedFuture(s),
                 CompletableFuture.completedFuture(d),
-                CompletableFuture.completedFuture(another_n)
+                CompletableFuture.completedFuture(anotherN)
         ).get());
 
-        assertEquals(Tuple5.of(n, s, d, another_n, n + n), cffuFactory.completedFuture(n).cffuCombine(
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.completedFuture(n).cffuCombine(
                 CompletableFuture.completedFuture(s),
                 CompletableFuture.completedFuture(d),
-                CompletableFuture.completedFuture(another_n),
+                CompletableFuture.completedFuture(anotherN),
                 CompletableFuture.completedFuture(n + n)
         ).get());
 
@@ -595,16 +581,16 @@ class CffuFactoryTest {
                 cffuFactory.completedFuture(d)
         ).get());
 
-        assertEquals(Tuple4.of(n, s, d, another_n), cffuFactory.completedFuture(n).cffuCombine(
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.completedFuture(n).cffuCombine(
                 cffuFactory.completedFuture(s),
                 cffuFactory.completedFuture(d),
-                cffuFactory.completedFuture(another_n)
+                cffuFactory.completedFuture(anotherN)
         ).get());
 
-        assertEquals(Tuple5.of(n, s, d, another_n, n + n), cffuFactory.completedFuture(n).cffuCombine(
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.completedFuture(n).cffuCombine(
                 cffuFactory.completedFuture(s),
                 cffuFactory.completedFuture(d),
-                cffuFactory.completedFuture(another_n),
+                cffuFactory.completedFuture(anotherN),
                 cffuFactory.completedFuture(n + n)
         ).get());
     }
@@ -614,7 +600,7 @@ class CffuFactoryTest {
         try {
             cffuFactory.cffuCombine(
                     CompletableFuture.completedFuture(n),
-                    createFailedFuture(rte)
+                    failedFuture(rte)
             ).get();
 
             fail();
@@ -625,7 +611,7 @@ class CffuFactoryTest {
         try {
             cffuFactory.cffuCombine(
                     CompletableFuture.completedFuture(n),
-                    createFailedFuture(rte),
+                    failedFuture(rte),
                     CompletableFuture.completedFuture(s)
             ).get();
 
@@ -638,9 +624,9 @@ class CffuFactoryTest {
             cffuFactory.cffuCombine(
                     CompletableFuture.completedFuture(n),
                     CompletableFuture.completedFuture(d),
-                    createFailedFuture(rte),
+                    failedFuture(rte),
                     CompletableFuture.completedFuture(s),
-                    CompletableFuture.completedFuture(another_n)
+                    CompletableFuture.completedFuture(anotherN)
             ).get();
 
             fail();
@@ -664,7 +650,7 @@ class CffuFactoryTest {
         @SuppressWarnings("unchecked")
         CompletableFuture<Integer>[] cfArray = new CompletableFuture[]{
                 CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(another_n)
+                CompletableFuture.completedFuture(anotherN)
         };
         @SuppressWarnings("unchecked")
         CompletionStage<Integer>[] csArray = new CompletableFuture[]{
@@ -687,7 +673,7 @@ class CffuFactoryTest {
         @SuppressWarnings("unchecked")
         CompletableFuture<Integer>[] cfArray = new CompletableFuture[]{
                 CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(another_n)
+                CompletableFuture.completedFuture(anotherN)
         };
         @SuppressWarnings("unchecked")
         Cffu<Integer>[] input = new Cffu[]{
@@ -702,7 +688,7 @@ class CffuFactoryTest {
         @SuppressWarnings("unchecked")
         Cffu<Integer>[] input = new Cffu[]{
                 cffuFactory.completedFuture(n),
-                cffuFactory.completedFuture(another_n),
+                cffuFactory.completedFuture(anotherN),
                 cffuFactory.newIncompleteCffu()
         };
 
@@ -714,7 +700,7 @@ class CffuFactoryTest {
         @SuppressWarnings("unchecked")
         CompletableFuture<Integer>[] input = new CompletableFuture[]{
                 CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(another_n)
+                CompletableFuture.completedFuture(anotherN)
         };
 
         assertArrayEquals(input, CffuFactory.completableFutureListToArray(Arrays.asList(input)));
@@ -771,6 +757,8 @@ class CffuFactoryTest {
     ////////////////////////////////////////////////////////////////////////////////
     //# Test helper methods
     ////////////////////////////////////////////////////////////////////////////////
+
+    private static CffuFactory cffuFactory;
 
     private static ExecutorService executorService;
 

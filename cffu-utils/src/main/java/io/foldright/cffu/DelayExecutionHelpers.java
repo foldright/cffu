@@ -37,7 +37,6 @@ final class Delayer {
     /**
      * @return a Future can be used to cancel the delayed task(timeout CF)
      * @see FutureCanceller
-     * @see Cffu#orTimeout(long, TimeUnit)
      */
     public static ScheduledFuture<?> delayToTimoutCf(CompletableFuture<?> cf, long delay, TimeUnit unit) {
         return delay(new CfTimeout(cf), delay, unit);
@@ -46,7 +45,6 @@ final class Delayer {
     /**
      * @return a Future can be used to cancel the delayed task(complete CF)
      * @see FutureCanceller
-     * @see Cffu#completeOnTimeout(Object, long, TimeUnit)
      */
     public static <T> ScheduledFuture<?> delayToCompleteCf(CompletableFuture<T> cf, T value, long delay, TimeUnit unit) {
         return delay(new CfCompleter<>(cf, value), delay, unit);
@@ -93,9 +91,6 @@ final class DelayedExecutor implements Executor {
 
 /**
  * Action to submit task(Runnable) to executor
- *
- * @see CffuFactory#delayedExecutor(long, TimeUnit)
- * @see CffuFactory#delayedExecutor(long, TimeUnit, Executor)
  */
 final class TaskSubmitter implements Runnable {
     private final Executor executor;
@@ -151,8 +146,6 @@ final class CfCompleter<T> implements Runnable {
 /**
  * Action to cancel unneeded scheduled task by Future (for example timeouts)
  *
- * @see Cffu#orTimeout(long, TimeUnit)
- * @see Cffu#completeOnTimeout(Object, long, TimeUnit)
  * @see Delayer#delay(Runnable, long, TimeUnit)
  * @see Delayer#delayToTimoutCf(CompletableFuture, long, TimeUnit)
  * @see Delayer#delayToCompleteCf(CompletableFuture, Object, long, TimeUnit)
