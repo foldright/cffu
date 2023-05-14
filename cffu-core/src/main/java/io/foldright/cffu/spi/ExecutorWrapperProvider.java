@@ -15,7 +15,7 @@ import java.util.concurrent.Executor;
  * @see CffuFactoryBuilder#build()
  */
 @FunctionalInterface
-public interface ExecutorWrapper {
+public interface ExecutorWrapperProvider {
     /**
      * Wraps given executor.
      */

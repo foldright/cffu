@@ -1,4 +1,4 @@
-# 🦝 cffu executor wrapper SPI implementation for TTL
+# 🦝 cffu executor wrapper provider SPI implementation for TTL
 
 Integrate [`TransmittableThreadLocal`](https://github.com/alibaba/transmittable-thread-local),
 auto wrap cffu executor by `TtlExecutors.getTtlExecutor(...)`.

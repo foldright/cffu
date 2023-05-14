@@ -6,7 +6,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 
-class ExecutorWrapperTest : FunSpec({
+class ExecutorWrapperProviderTest : FunSpec({
     test("disable TestExecutorWrapper") {
         val factory = CffuFactoryBuilder.newCffuFactoryBuilder(testThreadPoolExecutor).build()
         val cffu = factory.runAsync {}

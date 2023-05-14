@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>cffu-ttl-executor-wrapper</artifactId>
-	<name>cffu executor wrapper SPI implementation for TTL</name>
+	<name>cffu executor wrapper provider for TTL</name>
 	<description>${project.name}</description>
 	<url>https://github.com/foldright/cffu</url>
 	<inceptionYear>2023</inceptionYear>

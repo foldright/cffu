@@ -3,7 +3,7 @@ package io.foldright.cffu.spi
 import java.util.concurrent.Executor
 
 
-class TestExecutorWrapper : ExecutorWrapper {
+class TestExecutorWrapperProvider : ExecutorWrapperProvider {
     override fun wrap(executor: Executor): Executor =
         if (isTestExecutorWrapperEnabled()) object : Executor by executor {}
         else executor

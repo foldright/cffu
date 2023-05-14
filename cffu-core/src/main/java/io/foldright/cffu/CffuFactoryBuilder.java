@@ -2,7 +2,7 @@ package io.foldright.cffu;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
-import io.foldright.cffu.spi.ExecutorWrapper;
+import io.foldright.cffu.spi.ExecutorWrapperProvider;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -76,17 +76,17 @@ public final class CffuFactoryBuilder {
 
     private Executor wrapExecutor() {
         Executor executor = defaultExecutor;
-        for (ExecutorWrapper wrapper : executorWrappers) {
-            Supplier<String> msg = () -> wrapper + "(class: " + wrapper.getClass().getName() + ") return null";
-            executor = requireNonNull(wrapper.wrap(executor), msg);
+        for (ExecutorWrapperProvider provider : EXECUTOR_WRAPPER_PROVIDERS) {
+            Supplier<String> msg = () -> provider + "(class: " + provider.getClass().getName() + ") return null";
+            executor = requireNonNull(provider.wrap(executor), msg);
         }
         return executor;
     }
 
-    private static final List<ExecutorWrapper> executorWrappers = loadExecutorWrappers();
+    private static final List<ExecutorWrapperProvider> EXECUTOR_WRAPPER_PROVIDERS = loadExecutorWrapperProviders();
 
-    private static List<ExecutorWrapper> loadExecutorWrappers() {
-        final ServiceLoader<ExecutorWrapper> loader = ServiceLoader.load(ExecutorWrapper.class);
+    private static List<ExecutorWrapperProvider> loadExecutorWrapperProviders() {
+        final ServiceLoader<ExecutorWrapperProvider> loader = ServiceLoader.load(ExecutorWrapperProvider.class);
         return StreamSupport.stream(loader.spliterator(), false).collect(Collectors.toList());
     }
 }
