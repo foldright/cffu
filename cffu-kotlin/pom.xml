@@ -50,6 +50,10 @@
 		</developer>
 	</developers>
 
+	<properties>
+		<dokka.version>1.8.10</dokka.version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>io.foldright</groupId>
@@ -90,6 +94,75 @@
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
+		</profile>
+		<profile>
+			<id>gen-api-doc</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<!--
+							https://maven.apache.org/plugins/maven-javadoc-plugin/javadoc-mojo.html
+							https://docs.oracle.com/en/java/javase/11/javadoc/javadoc-command.html
+						-->
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+					<plugin>
+						<!--
+							use dokka-maven-plugin to generate javadoc for kotlin project
+							https://kotlinlang.org/docs/dokka-maven.html
+						-->
+						<groupId>org.jetbrains.dokka</groupId>
+						<artifactId>dokka-maven-plugin</artifactId>
+						<version>${dokka.version}</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>dokka</goal>
+									<goal>javadocJar</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<jdkVersion>19</jdkVersion>
+							<documentedVisibilities>
+								<visibility>PUBLIC</visibility>
+								<visibility>PROTECTED</visibility>
+							</documentedVisibilities>
+							<externalDocumentationLinks>
+								<link>
+									<url>
+										https://www.javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/${spotbugs.annotations.version}/
+									</url>
+									<packageListUrl>file:/${javadoc.package.list.dir}/spotbugs-annotations/package-list</packageListUrl>
+								</link>
+								<link>
+									<url>https://www.javadoc.io/doc/org.jetbrains/annotations/${jetbrains.annotations.version}/</url>
+									<packageListUrl>file:/${javadoc.package.list.dir}/jetbrains-annotations/package-list</packageListUrl>
+								</link>
+								<link>
+									<url>https://www.javadoc.io/doc/com.google.code.findbugs/jsr305/${jsr305.version}/</url>
+									<packageListUrl>file:/${javadoc.package.list.dir}/jsr305/package-list</packageListUrl>
+								</link>
+								<link>
+									<url>https://docs.oracle.com/en/java/javase/19/docs/api/java.base/</url>
+									<packageListUrl>file:/${javadoc.package.list.dir}/java/package-list</packageListUrl>
+								</link>
+							</externalDocumentationLinks>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 </project>
