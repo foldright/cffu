@@ -61,22 +61,38 @@
 
 		<!-- testing libs -->
 		<dependency>
-			<groupId>io.foldright</groupId>
-			<artifactId>cffu-utils</artifactId>
-			<version>${project.version}</version>
-			<!--
-				Guide to using attached tests
-				reuse the tests that you have created for one project in another
-					https://maven.apache.org/guides/mini/guide-attached-tests.html
-			-->
-			<classifier>tests</classifier>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>enable-test-jar-if-not-maven-skip-test</id>
+			<activation>
+				<property>
+					<name>maven.test.skip</name>
+					<value>!true</value>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>io.foldright</groupId>
+					<artifactId>cffu-utils</artifactId>
+					<version>${project.version}</version>
+					<!--
+						Guide to using attached tests
+						reuse the tests that you have created for one project in another
+							https://maven.apache.org/guides/mini/guide-attached-tests.html
+						How to create a jar containing test classes
+							https://maven.apache.org/plugins/maven-jar-plugin/examples/create-test-jar.html
+					-->
+					<classifier>tests</classifier>
+					<type>test-jar</type>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 </project>

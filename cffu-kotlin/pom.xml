@@ -61,22 +61,35 @@
 			<artifactId>kotlin-stdlib-jdk8</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<!-- testing libs -->
-		<dependency>
-			<groupId>io.foldright</groupId>
-			<artifactId>cffu</artifactId>
-			<version>${project.version}</version>
-			<classifier>tests</classifier>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.foldright</groupId>
-			<artifactId>cffu-utils</artifactId>
-			<version>${project.version}</version>
-			<classifier>tests</classifier>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
+	<profiles>
+		<profile>
+			<id>enable-test-jar-if-not-maven-skip-test</id>
+			<activation>
+				<property>
+					<name>maven.test.skip</name>
+					<value>!true</value>
+				</property>
+			</activation>
+			<dependencies>
+				<!-- testing libs -->
+				<dependency>
+					<groupId>io.foldright</groupId>
+					<artifactId>cffu</artifactId>
+					<version>${project.version}</version>
+					<classifier>tests</classifier>
+					<type>test-jar</type>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>io.foldright</groupId>
+					<artifactId>cffu-utils</artifactId>
+					<version>${project.version}</version>
+					<classifier>tests</classifier>
+					<type>test-jar</type>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 </project>
