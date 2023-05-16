@@ -507,6 +507,7 @@
 						https://docs.oracle.com/en/java/javase/11/javadoc/javadoc-command.html#GUID-51213F2C-6E01-4A03-A82A-17428A258A0F
 				-->
 				<javadoc.package.list.dir>${maven.multiModuleProjectDirectory}/src/package-list</javadoc.package.list.dir>
+				<aggregating.javadoc.title>cffu ${project.version} API</aggregating.javadoc.title>
 			</properties>
 			<build>
 				<plugins>
@@ -565,6 +566,26 @@
 								<additionalJOption>-J-Duser.country=US</additionalJOption>
 							</additionalJOptions>
 						</configuration>
+						<executions>
+							<execution>
+								<!--
+									Aggregating Javadocs For Multi-Projects
+										https://maven.apache.org/plugins/maven-javadoc-plugin/examples/aggregate.html
+								-->
+								<id>aggregate</id>
+								<inherited>false</inherited>
+								<goals>
+									<goal>aggregate</goal>
+								</goals>
+								<!-- https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html -->
+								<phase>package</phase>
+								<configuration>
+									<!-- https://maven.apache.org/plugins/maven-javadoc-plugin/aggregate-mojo.html#doctitle -->
+									<doctitle>${aggregating.javadoc.title}</doctitle>
+									<windowtitle>${aggregating.javadoc.title}</windowtitle>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
