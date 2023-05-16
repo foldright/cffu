@@ -17,7 +17,7 @@ import java.util.concurrent.Executor;
 @FunctionalInterface
 public interface ExecutorWrapperProvider {
     /**
-     * Wraps given executor.
+     * Returns the executor wrapper of the given executor.
      */
     @NonNull
     Executor wrap(@NonNull Executor executor);

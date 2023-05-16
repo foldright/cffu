@@ -472,7 +472,9 @@ For `Gradle` projects:
 ```groovy
 // Gradle Kotlin DSL
 implementation("io.foldright:cffu:0.9.5")
+```
 
+```groovy
 // Gradle Groovy DSL
 implementation 'io.foldright:cffu:0.9.5'
 ```

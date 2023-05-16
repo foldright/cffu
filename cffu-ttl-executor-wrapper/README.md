@@ -1,11 +1,14 @@
-# 🦝 cffu executor wrapper provider SPI implementation for TTL
+# 🦝 `Cffu` executor wrapper provider SPI implementation for TTL
+
+`Cffu` executor wrapper provider(`ExecutorWrapperProvider`) SPI implementation for
+[📌TransmittableThreadLocal(TTL)](https://github.com/alibaba/transmittable-thread-local).
 
 Integrate [`TransmittableThreadLocal`](https://github.com/alibaba/transmittable-thread-local),
 auto wrap cffu executor by `TtlExecutors.getTtlExecutor(...)`.
 
 ## 🍪 Dependency
 
-This dependency should only need at `Runtime`.
+This dependency should only be used at `Runtime`.
 
 For `Maven` projects:
 
@@ -23,10 +26,12 @@ For `Gradle` projects:
 
 ```groovy
 // Gradle Kotlin DSL
-runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:0.9.4")
+runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:0.9.5")
+```
 
+```groovy
 // Gradle Groovy DSL
-runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:0.9.4'
+runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:0.9.5'
 ```
 
 `cffu-ttl-executor-wrapper` has published to maven central, find the latest version at
