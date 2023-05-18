@@ -52,6 +52,7 @@
 		<module>cffu-utils</module>
 		<module>cffu-core</module>
 		<module>cffu-kotlin</module>
+		<module>cffu-bom</module>
 		<!-- cffu extension/SPI modules -->
 		<module>cffu-ttl-executor-wrapper</module>
 	</modules>
