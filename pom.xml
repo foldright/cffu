@@ -7,7 +7,7 @@
 	<version>0.9.x-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
-	<description>${parent.artifactId}</description>
+	<description>cffu parent</description>
 	<url>https://github.com/foldright/cffu</url>
 	<inceptionYear>2023</inceptionYear>
 
@@ -53,7 +53,7 @@
 		<module>cffu-core</module>
 		<module>cffu-kotlin</module>
 		<module>cffu-bom</module>
-		<!-- cffu extension/SPI modules -->
+		<!-- cffu SPI extension implementation modules -->
 		<module>cffu-ttl-executor-wrapper</module>
 	</modules>
 
@@ -508,7 +508,7 @@
 						https://docs.oracle.com/en/java/javase/11/javadoc/javadoc-command.html#GUID-51213F2C-6E01-4A03-A82A-17428A258A0F
 				-->
 				<javadoc.package.list.dir>${maven.multiModuleProjectDirectory}/src/package-list</javadoc.package.list.dir>
-				<aggregating.javadoc.title>cffu ${project.version} API</aggregating.javadoc.title>
+				<aggregating.javadoc.title>CompletableFuture-Fu(cffu) ${project.version} API</aggregating.javadoc.title>
 			</properties>
 			<build>
 				<plugins>
