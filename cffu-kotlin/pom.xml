@@ -51,6 +51,7 @@
 	</developers>
 
 	<properties>
+		<maven.javadoc.skip>true</maven.javadoc.skip>
 		<dokka.version>1.8.10</dokka.version>
 	</properties>
 
@@ -105,17 +106,6 @@
 			</activation>
 			<build>
 				<plugins>
-					<plugin>
-						<!--
-							https://maven.apache.org/plugins/maven-javadoc-plugin/javadoc-mojo.html
-							https://docs.oracle.com/en/java/javase/11/javadoc/javadoc-command.html
-						-->
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</plugin>
 					<plugin>
 						<!--
 							use dokka-maven-plugin to generate javadoc for kotlin project

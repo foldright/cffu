@@ -60,7 +60,9 @@
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
+		<!-- A Guide to Maven Encoding https://www.baeldung.com/maven-encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
 		<maven.deploy.skip>false</maven.deploy.skip>
 
 		<spotbugs.annotations.version>4.7.3</spotbugs.annotations.version>
@@ -520,11 +522,8 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<configuration>
-							<source>19</source>
+							<source>8</source>
 							<show>protected</show>
-							<charset>UTF-8</charset>
-							<encoding>UTF-8</encoding>
-							<docencoding>UTF-8</docencoding>
 							<quiet>true</quiet>
 							<!--
 								How to disable Javadoc warnings in Maven Javadoc Plugin? - Stack Overflow
@@ -535,32 +534,31 @@
 							<excludePackageNames>${javadoc.default.exclude.packages}</excludePackageNames>
 							<!-- https://maven.apache.org/plugins/maven-javadoc-plugin/javadoc-mojo.html#detectOfflineLinks -->
 							<detectOfflineLinks>false</detectOfflineLinks>
-							<offlineLinks>
-								<offlineLink>
-									<url>
-										https://www.javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/${spotbugs.annotations.version}/
-									</url>
-									<location>${javadoc.package.list.dir}/spotbugs-annotations/</location>
-								</offlineLink>
-								<offlineLink>
-									<url>https://www.javadoc.io/doc/org.jetbrains/annotations/${jetbrains.annotations.version}/</url>
-									<location>${javadoc.package.list.dir}/jetbrains-annotations/</location>
-								</offlineLink>
-								<offlineLink>
-									<url>https://www.javadoc.io/doc/com.google.code.findbugs/jsr305/${jsr305.version}/</url>
-									<location>${javadoc.package.list.dir}/jsr305/</location>
-								</offlineLink>
-								<offlineLink>
-									<url>https://docs.oracle.com/en/java/javase/19/docs/api/java.base/</url>
-									<location>${javadoc.package.list.dir}/java/</location>
-								</offlineLink>
-							</offlineLinks>
 							<additionalOptions>
 								<!--
 									Maven javadoc Search redirects to "/undefined/.." url - Stack Overflow
 									https://stackoverflow.com/questions/52326318
 								-->
 								<additionalOption>-html5</additionalOption>
+
+								<additionalOption>-linkoffline</additionalOption>
+								<additionalOption>
+									https://www.javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/${spotbugs.annotations.version}/
+								</additionalOption>
+								<additionalOption>${javadoc.package.list.dir}/spotbugs-annotations/</additionalOption>
+								<additionalOption>-linkoffline</additionalOption>
+								<additionalOption>
+									https://www.javadoc.io/doc/org.jetbrains/annotations/${jetbrains.annotations.version}/
+								</additionalOption>
+								<additionalOption>${javadoc.package.list.dir}/jetbrains-annotations/</additionalOption>
+								<additionalOption>-linkoffline</additionalOption>
+								<additionalOption>
+									https://www.javadoc.io/doc/com.google.code.findbugs/jsr305/${jsr305.version}/
+								</additionalOption>
+								<additionalOption>${javadoc.package.list.dir}/jsr305/</additionalOption>
+								<additionalOption>-linkoffline</additionalOption>
+								<additionalOption>https://docs.oracle.com/en/java/javase/19/docs/api/java.base/</additionalOption>
+								<additionalOption>${javadoc.package.list.dir}/java/</additionalOption>
 							</additionalOptions>
 							<additionalJOptions>
 								<additionalJOption>-J-Duser.language=en</additionalJOption>
