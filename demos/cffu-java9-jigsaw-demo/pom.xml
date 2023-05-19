@@ -22,11 +22,6 @@
 			<artifactId>cffu</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>io.foldright</groupId>
-			<artifactId>cffu-utils</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>

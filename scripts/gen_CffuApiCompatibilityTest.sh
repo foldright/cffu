@@ -23,7 +23,7 @@ sed -r '/^import /,${
   /@EnabledForJreRange\(.*\)$/d
 
   # replace CompatibilityTestHelper methods
-  s/\b((Core)?TestUtils)\.(\w*)CompletableFuture(\w*)/\1\.\3Cffu\4/g
+  s/\b(TestUtils)\.(\w*)CompletableFuture(\w*)/\1\.\2Cffu\3/g
 
   # replace CompletableFuture constructor to cffuFactory.newIncompleteCffu() methods
   s/\bnew\s+CompletableFuture<>/cffuFactory.newIncompleteCffu/g

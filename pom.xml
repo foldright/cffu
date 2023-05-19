@@ -49,7 +49,6 @@
 
 	<modules>
 		<!-- cffu modules -->
-		<module>cffu-utils</module>
 		<module>cffu-core</module>
 		<module>cffu-kotlin</module>
 		<module>cffu-bom</module>

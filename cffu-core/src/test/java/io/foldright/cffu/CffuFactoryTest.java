@@ -19,7 +19,6 @@ import java.util.function.Function;
 import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
 import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
 import static io.foldright.test_utils.TestUtils.*;
-import static io.foldright.test_utils.CoreTestUtils.*;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static org.junit.jupiter.api.Assertions.*;
 

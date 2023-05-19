@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * Same as {@link Future.State}, existed for
- * java version compatibility({@link CompletableFutureUtils#cffuState} to {@link Future#state()}).
+ * java version compatibility({@link Cffu#cffuState cffuState} to {@link Future#state()}).
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @see Future.State
@@ -32,8 +32,9 @@ public enum CffuState {
     /**
      * The task completed with a result.
      *
-     * @see CompletableFutureUtils#resultNow(CompletableFuture)
+     * @see Cffu#resultNow()
      * @see Future#resultNow()
+     * @see CompletableFutureUtils#resultNow(CompletableFuture)
      */
     SUCCESS {
         @Override
@@ -44,8 +45,9 @@ public enum CffuState {
     /**
      * The task completed with an exception.
      *
-     * @see CompletableFutureUtils#exceptionNow(CompletableFuture)
+     * @see Cffu#exceptionNow()
      * @see Future#exceptionNow()
+     * @see CompletableFutureUtils#exceptionNow(CompletableFuture)
      */
     FAILED {
         @Override
@@ -56,6 +58,7 @@ public enum CffuState {
     /**
      * The task was cancelled.
      *
+     * @see Cffu#cancel(boolean)
      * @see Future#cancel(boolean)
      */
     CANCELLED {
