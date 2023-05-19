@@ -364,6 +364,29 @@
 					<version>3.1.0</version>
 				</plugin>
 				<plugin>
+					<!-- https://github.com/moditect/moditect -->
+					<groupId>org.moditect</groupId>
+					<artifactId>moditect-maven-plugin</artifactId>
+					<version>1.0.0.Final</version>
+					<executions>
+						<execution>
+							<id>add-module-infos</id>
+							<phase>package</phase>
+							<goals>
+								<goal>add-module-info</goal>
+							</goals>
+							<configuration>
+								<jvmVersion>9</jvmVersion>
+								<overwriteExistingFiles>true</overwriteExistingFiles>
+								<module>
+									<!-- using `moduleInfoFile` is more IDE/editor friendly than `moduleInfoSource`/`moduleInfo` -->
+									<moduleInfoFile>${project.basedir}/src/main/moditect/module-info.java</moduleInfoFile>
+								</module>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
 					<version>3.3.0</version>

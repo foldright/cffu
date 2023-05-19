@@ -49,4 +49,13 @@
 			<organizationUrl>https://foldright.io</organizationUrl>
 		</developer>
 	</developers>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.moditect</groupId>
+				<artifactId>moditect-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>

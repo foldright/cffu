@@ -67,6 +67,15 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.moditect</groupId>
+				<artifactId>moditect-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 	<profiles>
 		<profile>
 			<id>enable-test-jar-if-not-maven-skip-test</id>
