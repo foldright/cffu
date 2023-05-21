@@ -1,0 +1,26 @@
+#!/bin/bash
+set -eEuo pipefail
+# adjust current dir to script dir
+cd "$(dirname "$(readlink -f "$0")")"/..
+
+readonly BABY_ROOT="$PWD/../scripts/bash-buddy"
+source "$BABY_ROOT"/lib/trap_error_info.sh
+source "$BABY_ROOT"/lib/common_utils.sh
+source "$BABY_ROOT"/lib/java_build_utils.sh
+
+readonly JDK_VERSIONS=(
+  8
+  11
+  17
+)
+
+for jdk_version in "${JDK_VERSIONS[@]}"; do
+  jh_var_name="JAVA${jdk_version}_HOME"
+  [ -d "${!jh_var_name:-}" ] || cu::die "\$${jh_var_name}(${!jh_var_name:-}) dir is not existed!"
+  export JAVA_HOME="${!jh_var_name}"
+
+  cu::head_line_echo "test with Java $jdk_version: $JAVA_HOME"
+
+  cffu-demo/scripts/run.sh
+  cffu-java9-jigsaw-demo/scripts/run.sh
+done

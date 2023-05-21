@@ -1,4 +1,4 @@
-package io.foldright.demo;
+package io.foldright.demo.cffu;
 
 import io.foldright.cffu.Cffu;
 import io.foldright.cffu.CffuFactory;
@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
 
 
-public class Demo {
+public class CffuDemo {
     private static final ExecutorService myBizThreadPool = Executors.newFixedThreadPool(42);
 
     // Create a CffuFactory with configuration of the customized thread pool

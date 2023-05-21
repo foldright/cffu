@@ -360,7 +360,7 @@ import java.util.concurrent.Executors;
 import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
 
 
-public class Demo {
+public class CffuDemo {
     private static final ExecutorService myBizThreadPool = Executors.newFixedThreadPool(42);
 
     // Create a CffuFactory with configuration of the customized thread pool
@@ -405,7 +405,7 @@ public class Demo {
 }
 ```
 
-\# 完整可运行的Demo代码参见[`Demo.java`](cffu-core/src/test/java/io/foldright/demo/Demo.java)。
+\# 完整可运行的Demo代码参见[`CffuDemo.java`](demos/cffu-demo/src/main/java/io/foldright/demo/cffu/CffuDemo.java)。
 
 ### `Kotlin`
 
@@ -448,7 +448,7 @@ fun main() {
 }
 ```
 
-\# 完整可运行的Demo代码参见[`Demo.kt`](cffu-core/src/test/java/io/foldright/demo/Demo.kt)。
+\# 完整可运行的Demo代码参见[`CffuDemo.kt`](demos/cffu-demo/src/main/java/io/foldright/demo/cffu/CffuDemo.kt)。
 
 ## 🔌 Java API Docs
 

@@ -1,4 +1,4 @@
-package io.foldright.demo
+package io.foldright.demo.cffu
 
 import io.foldright.cffu.CffuFactory
 import io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder

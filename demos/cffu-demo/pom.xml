@@ -1,0 +1,101 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>io.foldright.cffu-demos</groupId>
+		<artifactId>demos-parent</artifactId>
+		<version>0.9.x-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>cffu-demo</artifactId>
+
+	<properties>
+		<demo.module.name>io.foldright.cffu.demo</demo.module.name>
+		<exec.main.class>io.foldright.demo.cffu.CffuDemo</exec.main.class>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>io.foldright</groupId>
+			<artifactId>cffu</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.foldright</groupId>
+			<artifactId>cffu-kotlin</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-stdlib-jdk8</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<!--
+					Compiling Kotlin and Java sources - Using Maven - Kotlin Programming Language
+						https://kotlinlang.org/docs/maven.html#compile-kotlin-and-java-sources
+					Making sure that the kotlin plugin is above the maven-compiler-plugin in your pom.xml file!
+				-->
+				<groupId>org.jetbrains.kotlin</groupId>
+				<artifactId>kotlin-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>compile</id>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>test-compile</id>
+						<goals>
+							<goal>test-compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<executions>
+					<!-- Replacing default-compile as it is treated specially by Maven -->
+					<execution>
+						<id>default-compile</id>
+						<phase>none</phase>
+					</execution>
+					<!-- Replacing default-testCompile as it is treated specially by Maven -->
+					<execution>
+						<id>default-testCompile</id>
+						<phase>none</phase>
+					</execution>
+					<execution>
+						<id>java-compile</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>java-test-compile</id>
+						<phase>test-compile</phase>
+						<goals>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>run-kotlin-demo</id>
+			<properties>
+				<exec.main.class>io.foldright.demo.cffu.CffuDemoKt</exec.main.class>
+			</properties>
+		</profile>
+	</profiles>
+</project>

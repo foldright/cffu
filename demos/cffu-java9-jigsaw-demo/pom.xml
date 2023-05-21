@@ -1,19 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>io.foldright</groupId>
+	<parent>
+		<groupId>io.foldright.cffu-demos</groupId>
+		<artifactId>demos-parent</artifactId>
+		<version>0.9.x-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
 	<artifactId>cffu-java9-jigsaw-demo</artifactId>
-	<version>0.9.x-SNAPSHOT</version>
 
 	<properties>
-		<maven.compiler.source>9</maven.compiler.source>
-		<maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
-		<!-- A Guide to Maven Encoding https://www.baeldung.com/maven-encoding -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
-		<maven.deploy.skip>true</maven.deploy.skip>
-
-		<junit5.version>5.9.3</junit5.version>
+		<demo.module.name>io.foldright.cffu.jigsaw.demo</demo.module.name>
+		<exec.main.class>io.foldright.demo.jigsaw.Main</exec.main.class>
 	</properties>
 
 	<dependencies>
@@ -22,111 +21,5 @@
 			<artifactId>cffu</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.junit</groupId>
-				<artifactId>junit-bom</artifactId>
-				<version>${junit5.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-	<build>
-		<plugins>
-			<plugin>
-				<!--
-					https://www.mojohaus.org/exec-maven-plugin/
-					https://www.mojohaus.org/exec-maven-plugin/exec-mojo.html
-
-				-->
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<configuration>
-					<executable>${java.home}/bin/java</executable>
-					<arguments>
-						<argument>-Xmx256m</argument>
-						<argument>-Xms256m</argument>
-						<argument>-ea</argument>
-						<argument>-Duser.language=en</argument>
-						<argument>-Duser.country=US</argument>
-
-						<!--
-							Running Java programs with the exec goal
-								https://www.mojohaus.org/exec-maven-plugin/examples/example-exec-for-java-programs.html
-						-->
-						<argument>--module-path</argument>
-						<modulepath/>
-
-						<argument>-m</argument>
-						<argument>io.foldright.cffu.jigsaw.demo/io.foldright.demo.jigsaw.Main</argument>
-					</arguments>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>enforce-maven</id>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<requireJavaVersion>
-									<version>9</version>
-								</requireJavaVersion>
-								<requireMavenVersion>
-									<version>3.3.9</version>
-								</requireMavenVersion>
-							</rules>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-source-plugin</artifactId>
-					<version>3.2.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.5.0</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-deploy-plugin</artifactId>
-					<version>3.1.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>exec-maven-plugin</artifactId>
-					<version>3.1.0</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-enforcer-plugin</artifactId>
-					<version>3.3.0</version>
-				</plugin>
-				<plugin>
-					<groupId>org.jacoco</groupId>
-					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.10</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
 </project>
