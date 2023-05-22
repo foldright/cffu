@@ -2,6 +2,4 @@
 
 module io.foldright.cffu.demo {
     requires io.foldright.cffu;
-    requires io.foldright.cffu.kotlin;
-    requires kotlin.stdlib.jdk8;
 }

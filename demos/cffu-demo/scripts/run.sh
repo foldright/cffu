@@ -9,4 +9,3 @@ source "$BABY_ROOT"/lib/common_utils.sh
 source "$BABY_ROOT"/lib/java_build_utils.sh
 
 jvb::mvn_cmd clean compile exec:exec
-jvb::mvn_cmd exec:exec -Prun-kotlin-demo

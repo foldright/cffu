@@ -27,7 +27,7 @@
 
 	<modules>
 		<module>cffu-demo</module>
-		<module>cffu-java9-jigsaw-demo</module>
+		<module>cffu-kotlin-demo</module>
 	</modules>
 
 	<dependencies>
