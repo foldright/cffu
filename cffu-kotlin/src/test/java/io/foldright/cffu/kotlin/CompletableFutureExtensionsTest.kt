@@ -58,8 +58,7 @@ class CompletableFutureExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(42.0),
         ).allOfCompletableFutureVoid().await().shouldBeNull()
 
-        // FIXME: Need Type arguments for array...
-        arrayOf<CompletableFuture<*>>(
+        arrayOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture("42"),
             CompletableFuture.completedFuture(42.0),
@@ -103,8 +102,7 @@ class CompletableFutureExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(42.0),
         ).allOfFastFailCompletableFutureVoid().await().shouldBeNull()
 
-        // FIXME: Need Type arguments for array...
-        arrayOf<CompletableFuture<*>>(
+        arrayOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture("42"),
             CompletableFuture.completedFuture(42.0),
@@ -149,8 +147,7 @@ class CompletableFutureExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(42),
         ).anyOfCompletableFutureAny().await() shouldBe 42
 
-        // FIXME: Need Type arguments for array...
-        arrayOf<CompletableFuture<*>>(
+        arrayOf(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
             CompletableFuture.completedFuture(42),
@@ -200,8 +197,7 @@ class CompletableFutureExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(42),
         ).anyOfSuccessCompletableFutureAny().await() shouldBe 42
 
-        // FIXME: Need Type arguments for array...
-        arrayOf<CompletableFuture<*>>(
+        arrayOf(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
             CompletableFuture.completedFuture(42),

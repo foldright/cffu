@@ -44,7 +44,7 @@ fun <T> Collection<CompletionStage<T>>.asCffu(cffuFactory: CffuFactory): List<Cf
  * @see CffuFactory.asCffuArray
  * @see CffuFactory.asCffu
  */
-fun <T, CS : CompletionStage<T>> Array<CS>.asCffu(cffuFactory: CffuFactory): Array<Cffu<T>> =
+fun <T> Array<out CompletionStage<T>>.asCffu(cffuFactory: CffuFactory): Array<Cffu<T>> =
     cffuFactory.asCffuArray(*this)
 
 ////////////////////////////////////////
@@ -183,7 +183,7 @@ fun Collection<Cffu<*>>.allOfCffuVoid(cffuFactory: CffuFactory = ABSENT): Cffu<V
  * @see CffuFactory.allOf
  */
 
-fun Array<Cffu<*>>.allOfCffuVoid(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
+fun Array<out Cffu<*>>.allOfCffuVoid(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
     return factory.allOf(*this)
@@ -219,7 +219,7 @@ fun Collection<CompletableFuture<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cf
  * @see allOfCffu
  * @see CffuFactory.allOf
  */
-fun Array<CompletableFuture<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
+fun Array<out CompletableFuture<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
     cffuFactory.allOf(*this)
 
 /**
@@ -304,7 +304,7 @@ fun <T> Collection<CompletableFuture<T>>.allOfFastFailCffu(cffuFactory: CffuFact
  * @see allOfFastFailCffuVoid
  * @see CffuFactory.cffuAllOfFastFail
  */
-fun <T> Array<CompletableFuture<T>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+fun <T> Array<out CompletableFuture<T>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
     cffuFactory.cffuAllOfFastFail(*this)
 
 /**
@@ -347,7 +347,7 @@ fun Collection<Cffu<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFactory = ABSENT)
  * @see allOfFastFailCffu
  * @see CffuFactory.allOfFastFail
  */
-fun Array<Cffu<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
+fun Array<out Cffu<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
     return factory.allOfFastFail(*this)
@@ -385,7 +385,7 @@ fun Collection<CompletableFuture<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFact
  * @see allOfFastFailCffu
  * @see CffuFactory.allOfFastFail
  */
-fun Array<CompletableFuture<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
+fun Array<out CompletableFuture<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
     cffuFactory.allOfFastFail(*this)
 
 ////////////////////////////////////////
@@ -486,7 +486,7 @@ fun Collection<Cffu<*>>.anyOfCffuAny(cffuFactory: CffuFactory = ABSENT): Cffu<An
  * @see anyOfCffu
  * @see CffuFactory.anyOf
  */
-fun Array<Cffu<*>>.anyOfCffuAny(cffuFactory: CffuFactory = ABSENT): Cffu<Any> {
+fun Array<out Cffu<*>>.anyOfCffuAny(cffuFactory: CffuFactory = ABSENT): Cffu<Any> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
     return factory.anyOf(*this)
@@ -512,7 +512,7 @@ fun Collection<CompletableFuture<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cff
  * @see anyOfCffu
  * @see CffuFactory.anyOf
  */
-fun Array<CompletableFuture<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
+fun Array<out CompletableFuture<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
     cffuFactory.anyOf(*this)
 
 /**
@@ -630,7 +630,7 @@ fun Collection<Cffu<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory = ABSENT): 
  * @see anyOfSuccessCffu
  * @see CffuFactory.anyOfSuccess
  */
-fun Array<Cffu<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory = ABSENT): Cffu<Any> {
+fun Array<out Cffu<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory = ABSENT): Cffu<Any> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
     return factory.anyOfSuccess(*this)
@@ -666,7 +666,7 @@ fun Collection<CompletableFuture<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactor
  * @see anyOfSuccessCffu
  * @see CffuFactory.anyOfSuccess
  */
-fun Array<CompletableFuture<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
+fun Array<out CompletableFuture<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
     cffuFactory.anyOfSuccess(*this)
 
 ////////////////////////////////////////
@@ -690,7 +690,7 @@ fun <T> Collection<CompletionStage<T>>.toCompletableFuture(): List<CompletableFu
  *
  * @see CffuFactory.toCompletableFutureArray
  */
-fun <T, CS : CompletionStage<T>> Array<CS>.toCompletableFuture(): Array<CompletableFuture<T>> =
+fun <T> Array<out CompletionStage<T>>.toCompletableFuture(): Array<CompletableFuture<T>> =
     CffuFactory.toCompletableFutureArray(*this)
 
 ////////////////////////////////////////

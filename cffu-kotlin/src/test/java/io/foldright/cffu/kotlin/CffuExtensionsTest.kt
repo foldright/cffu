@@ -137,14 +137,13 @@ class CffuExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(44),
         ).allOfCffuVoid(testCffuFactory).await().shouldBeNull()
 
-        // FIXME: Need Type arguments for array...
-        arrayOf<Cffu<*>>(
+        arrayOf(
             testCffuFactory.completedFuture(42),
             testCffuFactory.completedFuture(43),
             testCffuFactory.completedFuture(44),
         ).allOfCffuVoid(testCffuFactory).await().shouldBeNull()
 
-        arrayOf<CompletableFuture<*>>(
+        arrayOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture(43),
             CompletableFuture.completedFuture(44),
@@ -214,14 +213,13 @@ class CffuExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(44),
         ).allOfFastFailCffuVoid(testCffuFactory).await().shouldBeNull()
 
-        // FIXME: Need Type arguments for array...
-        arrayOf<Cffu<*>>(
+        arrayOf(
             testCffuFactory.completedFuture(42),
             testCffuFactory.completedFuture(43),
             testCffuFactory.completedFuture(44),
         ).allOfFastFailCffuVoid(testCffuFactory).await().shouldBeNull()
 
-        arrayOf<CompletableFuture<*>>(
+        arrayOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture(43),
             CompletableFuture.completedFuture(44),
@@ -291,14 +289,13 @@ class CffuExtensionsTest : FunSpec({
             CompletableFuture(),
         ).anyOfCffuAny(testCffuFactory).await() shouldBe 42
 
-        // FIXME: Need Type arguments for array...
-        arrayOf<Cffu<*>>(
+        arrayOf(
             testCffuFactory.newIncompleteCffu<String>(),
             testCffuFactory.newIncompleteCffu<Double>(),
             testCffuFactory.completedFuture(42),
         ).anyOfCffuAny(testCffuFactory).await() shouldBe 42
 
-        arrayOf<CompletableFuture<*>>(
+        arrayOf(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
             CompletableFuture.completedFuture(42),
@@ -372,14 +369,13 @@ class CffuExtensionsTest : FunSpec({
             CompletableFuture(),
         ).anyOfSuccessCffuAny(testCffuFactory).await() shouldBe 42
 
-        // FIXME: Need Type arguments for array...
-        arrayOf<Cffu<*>>(
+        arrayOf(
             testCffuFactory.newIncompleteCffu<String>(),
             testCffuFactory.newIncompleteCffu<Double>(),
             testCffuFactory.completedFuture(42),
         ).anyOfSuccessCffuAny(testCffuFactory).await() shouldBe 42
 
-        arrayOf<CompletableFuture<*>>(
+        arrayOf(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
             CompletableFuture.completedFuture(42),

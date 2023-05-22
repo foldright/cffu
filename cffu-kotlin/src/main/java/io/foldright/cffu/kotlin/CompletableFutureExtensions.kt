@@ -103,7 +103,7 @@ fun Collection<CompletableFuture<*>>.allOfCompletableFutureVoid(): CompletableFu
  * @see allOfCompletableFuture
  * @see CompletableFuture.allOf
  */
-fun Array<CompletableFuture<*>>.allOfCompletableFutureVoid(): CompletableFuture<Void> =
+fun Array<out CompletableFuture<*>>.allOfCompletableFutureVoid(): CompletableFuture<Void> =
     CompletableFuture.allOf(*this)
 
 /**
@@ -179,7 +179,7 @@ fun Collection<CompletableFuture<*>>.allOfFastFailCompletableFutureVoid(): Compl
  * @see allOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
-fun Array<CompletableFuture<*>>.allOfFastFailCompletableFutureVoid(): CompletableFuture<Void> =
+fun Array<out CompletableFuture<*>>.allOfFastFailCompletableFutureVoid(): CompletableFuture<Void> =
     CompletableFutureUtils.allOfFastFail(*this)
 
 
@@ -255,7 +255,7 @@ fun Collection<CompletableFuture<*>>.anyOfCompletableFutureAny(): CompletableFut
  * @see anyOfCompletableFuture
  * @see CompletableFuture.anyOf
  */
-fun Array<CompletableFuture<*>>.anyOfCompletableFutureAny(): CompletableFuture<Any> =
+fun Array<out CompletableFuture<*>>.anyOfCompletableFutureAny(): CompletableFuture<Any> =
     CompletableFuture.anyOf(*this)
 
 /**
@@ -323,7 +323,7 @@ fun Collection<CompletableFuture<*>>.anyOfSuccessCompletableFutureAny(): Complet
  * @see anyOfCompletableFuture
  * @see CompletableFutureUtils.anyOfSuccess
  */
-fun Array<CompletableFuture<*>>.anyOfSuccessCompletableFutureAny(): CompletableFuture<Any> =
+fun Array<out CompletableFuture<*>>.anyOfSuccessCompletableFutureAny(): CompletableFuture<Any> =
     CompletableFutureUtils.anyOfSuccess(*this)
 
 ////////////////////////////////////////
