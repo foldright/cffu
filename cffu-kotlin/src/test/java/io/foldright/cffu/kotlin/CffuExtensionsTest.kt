@@ -18,6 +18,7 @@ import io.kotest.matchers.types.shouldNotBeTypeOf
 import kotlinx.coroutines.future.await
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
+import java.util.concurrent.Executors
 
 const val n = 42
 const val anotherN = 4242
@@ -380,6 +381,72 @@ class CffuExtensionsTest : FunSpec({
             CompletableFuture<Double>(),
             CompletableFuture.completedFuture(42),
         ).anyOfSuccessCffuAny(testCffuFactory).await() shouldBe 42
+    }
+
+
+    val cffuFactoryForOptional = newCffuFactoryBuilder(Executors.newCachedThreadPool()).build()
+    fun assertCffuFactoryForOptional(cffu: Cffu<*>) {
+        cffu.cffuFactory() shouldBeSameInstanceAs cffuFactoryForOptional
+    }
+
+    fun assertEmptyCollection(block: () -> Any?) {
+        shouldThrow<IllegalArgumentException> { block() }
+            .message shouldBe "no cffuFactory argument provided when this collection is empty"
+    }
+
+    fun assertEmptyArray(block: () -> Any?) {
+        shouldThrow<IllegalArgumentException> { block() }
+            .message shouldBe "no cffuFactory argument provided when this array is empty"
+    }
+
+    test("optional `cffuFactory`") {
+        val cf1 = cffuFactoryForOptional.completedFuture(n)
+        val cf2 = testCffuFactory.completedFuture(n + 1)
+
+        val emptyList: List<Cffu<Int>> = listOf()
+        val list = listOf(cf1, cf2)
+        val emptyArray: Array<Cffu<Int>> = arrayOf()
+        val array = arrayOf(cf1, cf2)
+
+        assertEmptyCollection { emptyList.allOfCffu() }
+        assertCffuFactoryForOptional(list.allOfCffu())
+        assertEmptyArray { emptyArray.allOfCffu() }
+        assertCffuFactoryForOptional(array.allOfCffu())
+
+        assertEmptyCollection { emptyList.allOfCffuVoid() }
+        assertCffuFactoryForOptional(list.allOfCffuVoid())
+        assertEmptyArray { emptyArray.allOfCffuVoid() }
+        assertCffuFactoryForOptional(array.allOfCffuVoid())
+
+        assertEmptyCollection { emptyList.allOfFastFailCffu() }
+        assertCffuFactoryForOptional(list.allOfFastFailCffu())
+        assertEmptyArray { emptyArray.allOfFastFailCffu() }
+        assertCffuFactoryForOptional(array.allOfFastFailCffu())
+
+        assertEmptyCollection { emptyList.allOfFastFailCffuVoid() }
+        assertCffuFactoryForOptional(list.allOfFastFailCffuVoid())
+        assertEmptyArray { emptyArray.allOfFastFailCffuVoid() }
+        assertCffuFactoryForOptional(array.allOfFastFailCffuVoid())
+
+        assertEmptyCollection { emptyList.anyOfCffu() }
+        assertCffuFactoryForOptional(list.anyOfCffu())
+        assertEmptyArray { emptyArray.anyOfCffu() }
+        assertCffuFactoryForOptional(array.anyOfCffu())
+
+        assertEmptyCollection { emptyList.anyOfCffuAny() }
+        assertCffuFactoryForOptional(list.anyOfCffuAny())
+        assertEmptyArray { emptyArray.anyOfCffuAny() }
+        assertCffuFactoryForOptional(array.anyOfCffuAny())
+
+        assertEmptyCollection { emptyList.anyOfSuccessCffu() }
+        assertCffuFactoryForOptional(list.anyOfSuccessCffu())
+        assertEmptyArray { emptyArray.anyOfSuccessCffu() }
+        assertCffuFactoryForOptional(array.anyOfSuccessCffu())
+
+        assertEmptyCollection { emptyList.anyOfSuccessCffuAny() }
+        assertCffuFactoryForOptional(list.anyOfSuccessCffuAny())
+        assertEmptyArray { emptyArray.anyOfSuccessCffuAny() }
+        assertCffuFactoryForOptional(array.anyOfSuccessCffuAny())
     }
 
     ////////////////////////////////////////
