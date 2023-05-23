@@ -14,6 +14,7 @@
 <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-1.5+-7F52FF.svg?logo=kotlin&logoColor=white" alt="Kotlin"></a>
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/foldright/cffu?color=4D7A97&logo=apache" alt="License"></a>
 <a href="https://foldright.io/cffu/apidocs/"><img src="https://img.shields.io/github/release/foldright/cffu?label=javadoc&color=339933&logo=microsoft-academic&logoColor=white" alt="Javadocs"></a>
+<a href="https://foldright.io/cffu/dokka/"><img src="https://img.shields.io/github/release/foldright/cffu?label=dokka&color=339933&logo=kotlin&logoColor=white" alt="dokka"></a>
 <a href="https://central.sonatype.com/artifact/io.foldright/cffu/0.9.0/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
 <a href="https://github.com/foldright/cffu/releases"><img src="https://img.shields.io/github/release/foldright/cffu.svg" alt="GitHub Releases"></a>
 <a href="https://github.com/foldright/cffu/stargazers"><img src="https://img.shields.io/github/stars/foldright/cffu" alt="GitHub Stars"></a>
@@ -322,7 +323,7 @@ Backport`Java 9+`高版本的所有`CompletableFuture`新功能，在`Java 8`可
 其中重要的Backport功能有：
 
 - 超时控制：`orTimeout(...)`/`completeOnTimeout(...)`方法
-- 延迟执行：`defaultExecutor(...)`方法
+- 延迟执行：`delayedExecutor(...)`方法
 - 工厂方法：`failedFuture(...)`/`completedStage(...)`/`failedStage(...)`
 
 ## 🌿 业务使用中`CompletableFuture`所缺失的功能介绍
@@ -442,36 +443,102 @@ fun main() {
 
 \# 完整可运行的Demo代码参见[`CffuDemo.kt`](demos/cffu-kotlin-demo/src/main/java/io/foldright/demo/cffu/kotlin/CffuDemo.kt)。
 
-## 🔌 Java API Docs
+## 🔌 API Docs
 
-当前版本的Java API文档地址： <https://foldright.io/cffu/apidocs/>
+- 当前版本的`Java API`文档： https://foldright.io/cffu/apidocs/
+- 当前版本的`Kotlin API`文档： https://foldright.io/cffu/dokka/
 
 ## 🍪依赖
 
-For `Maven` projects:
+> 可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/0.9.0/versions) 查看最新版本与可用版本列表。
 
-```xml
+- `cffu`库（包含[`Java CompletableFuture`](https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/concurrent/CompletableFuture.html)的增强`CompletableFutureUtils`）:
+  - For `Maven` projects:
 
-<dependency>
-  <groupId>io.foldright</groupId>
-  <artifactId>cffu</artifactId>
-  <version>0.9.6</version>
-</dependency>
-```
+    ```xml
 
-For `Gradle` projects:
+    <dependency>
+      <groupId>io.foldright</groupId>
+      <artifactId>cffu</artifactId>
+      <version>0.9.7</version>
+    </dependency>
+    ```
+  - For `Gradle` projects:
 
-```groovy
-// Gradle Kotlin DSL
-implementation("io.foldright:cffu:0.9.6")
-```
+    ```groovy
+    // Gradle Kotlin DSL
+    implementation("io.foldright:cffu:0.9.7")
+    ```
+    ```groovy
+    // Gradle Groovy DSL
+    implementation 'io.foldright:cffu:0.9.7'
+    ```
+- `cffu Kotlin`支持库:
+  - For `Maven` projects:
 
-```groovy
-// Gradle Groovy DSL
-implementation 'io.foldright:cffu:0.9.6'
-```
+    ```xml
 
-可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/0.9.0/versions) 查看最新版本与可用版本列表。
+    <dependency>
+      <groupId>io.foldright</groupId>
+      <artifactId>cffu-kotlin</artifactId>
+      <version>0.9.7</version>
+    </dependency>
+    ```
+  - For `Gradle` projects:
+
+    ```groovy
+    // Gradle Kotlin DSL
+    implementation("io.foldright:cffu-kotlin:0.9.7")
+    ```
+    ```groovy
+    // Gradle Groovy DSL
+    implementation 'io.foldright:cffu-kotlin:0.9.7'
+    ```
+- `cffu bom`:
+  - For `Maven` projects:
+
+    ```xml
+
+    <dependency>
+      <groupId>io.foldright</groupId>
+      <artifactId>cffu-bom</artifactId>
+      <version>0.9.7</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+    ```
+  - For `Gradle` projects:
+
+    ```groovy
+    // Gradle Kotlin DSL
+    implementation(platform("io.foldright:cffu-bom:0.9.7"))
+    ```
+    ```groovy
+    // Gradle Groovy DSL
+    implementation platform('io.foldright:cffu-bom:0.9.7')
+    ```
+- [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local)的[`cffu executor wrapper SPI`实现](cffu-ttl-executor-wrapper)：
+  - For `Maven` projects:
+
+    ```xml
+
+    <dependency>
+      <groupId>io.foldright</groupId>
+      <artifactId>cffu-ttl-executor-wrapper</artifactId>
+      <version>0.9.7</version>
+      <scope>runtime</scope>
+    </dependency>
+    ```
+  - For `Gradle` projects:
+
+    ```groovy
+    // Gradle Kotlin DSL
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:0.9.7")
+    ```
+    ```groovy
+    // Gradle Groovy DSL
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:0.9.7'
+    ```
 
 # 👋 ∞、关于库名
 
