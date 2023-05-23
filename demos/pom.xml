@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.foldright.cffu-demos</groupId>
 	<artifactId>demos-parent</artifactId>
-	<version>0.9.x-SNAPSHOT</version>
+	<version>0.9.6</version>
 	<packaging>pom</packaging>
 
 	<properties>
