@@ -142,19 +142,19 @@
 									<url>
 										https://www.javadoc.io/doc/com.github.spotbugs/spotbugs-annotations/${spotbugs.annotations.version}/
 									</url>
-									<packageListUrl>file:/${javadoc.package.list.dir}/spotbugs-annotations/package-list</packageListUrl>
+									<packageListUrl>file://${javadoc.package.list.dir}/spotbugs-annotations/package-list</packageListUrl>
 								</link>
 								<link>
 									<url>https://www.javadoc.io/doc/org.jetbrains/annotations/${jetbrains.annotations.version}/</url>
-									<packageListUrl>file:/${javadoc.package.list.dir}/jetbrains-annotations/package-list</packageListUrl>
+									<packageListUrl>file://${javadoc.package.list.dir}/jetbrains-annotations/package-list</packageListUrl>
 								</link>
 								<link>
 									<url>https://www.javadoc.io/doc/com.google.code.findbugs/jsr305/${jsr305.version}/</url>
-									<packageListUrl>file:/${javadoc.package.list.dir}/jsr305/package-list</packageListUrl>
+									<packageListUrl>file://${javadoc.package.list.dir}/jsr305/package-list</packageListUrl>
 								</link>
 								<link>
 									<url>https://docs.oracle.com/en/java/javase/19/docs/api/java.base/</url>
-									<packageListUrl>file:/${javadoc.package.list.dir}/java/package-list</packageListUrl>
+									<packageListUrl>file://${javadoc.package.list.dir}/java/package-list</packageListUrl>
 								</link>
 							</externalDocumentationLinks>
 						</configuration>
