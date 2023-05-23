@@ -455,7 +455,7 @@ For `Maven` projects:
 <dependency>
   <groupId>io.foldright</groupId>
   <artifactId>cffu</artifactId>
-  <version>0.9.6</version>
+  <version>0.9.7</version>
 </dependency>
 ```
 
@@ -463,12 +463,12 @@ For `Gradle` projects:
 
 ```groovy
 // Gradle Kotlin DSL
-implementation("io.foldright:cffu:0.9.6")
+implementation("io.foldright:cffu:0.9.7")
 ```
 
 ```groovy
 // Gradle Groovy DSL
-implementation 'io.foldright:cffu:0.9.6'
+implementation 'io.foldright:cffu:0.9.7'
 ```
 
 可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/0.9.0/versions) 查看最新版本与可用版本列表。
