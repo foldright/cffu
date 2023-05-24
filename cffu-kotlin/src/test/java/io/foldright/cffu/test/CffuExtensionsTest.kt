@@ -1,8 +1,9 @@
-package io.foldright.cffu.kotlin
+package io.foldright.cffu.test
 
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder
 import io.foldright.cffu.NoCfsProvidedException
+import io.foldright.cffu.kotlin.*
 import io.foldright.test_utils.testCffuFactory
 import io.foldright.test_utils.testForkJoinPoolExecutor
 import io.foldright.test_utils.testThreadPoolExecutor
