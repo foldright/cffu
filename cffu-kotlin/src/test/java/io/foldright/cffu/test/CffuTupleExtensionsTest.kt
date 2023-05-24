@@ -1,5 +1,6 @@
-package io.foldright.cffu.kotlin
+package io.foldright.cffu.test
 
+import io.foldright.cffu.kotlin.*
 import io.foldright.cffu.tuple.Tuple2
 import io.foldright.cffu.tuple.Tuple3
 import io.foldright.cffu.tuple.Tuple4
