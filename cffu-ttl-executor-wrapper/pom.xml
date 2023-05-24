@@ -61,13 +61,4 @@
 			<artifactId>transmittable-thread-local</artifactId>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.moditect</groupId>
-				<artifactId>moditect-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 </project>
