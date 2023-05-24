@@ -11,7 +11,6 @@ import io.foldright.cffu.tuple.Tuple5;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +46,6 @@ import static java.util.Objects.requireNonNull;
  * @see Cffu
  * @see CompletableFuture
  */
-@Immutable
 @ThreadSafe
 @ParametersAreNonnullByDefault
 @ReturnValuesAreNonnullByDefault
