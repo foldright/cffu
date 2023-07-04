@@ -66,14 +66,10 @@ class CffuExtensionsTest : FunSpec({
 
     test("asCffu for CompletableFuture array") {
         val cfArray: Array<CompletableFuture<Int>> = Array(10) { CompletableFuture.completedFuture(it) }
-        cfArray.asCffu(testCffuFactory).forEachIndexed { index, cffu ->
-            checkAsCffu(cffu, index)
-        }
+        cfArray.asCffu(testCffuFactory).forEachIndexed { index, cffu -> checkAsCffu(cffu, index) }
 
         val csArray: Array<CompletionStage<Int>> = Array(10) { CompletableFuture.completedFuture(it) }
-        csArray.asCffu(testCffuFactory).forEachIndexed { index, cffu ->
-            checkAsCffu(cffu, index)
-        }
+        csArray.asCffu(testCffuFactory).forEachIndexed { index, cffu -> checkAsCffu(cffu, index) }
     }
 
     test("allOf*") {

@@ -19,6 +19,7 @@ import java.util.function.Function;
 import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
 import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
 import static io.foldright.test_utils.TestUtils.*;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -116,7 +117,7 @@ class CffuFactoryTest {
 
     @Test
     void test_asCffu() throws Exception {
-        Cffu<Integer> cf = cffuFactory.asCffu(CompletableFuture.completedFuture(n));
+        Cffu<Integer> cf = cffuFactory.asCffu(completedFuture(n));
 
         assertEquals(n, cf.get());
         shouldNotBeMinimalStage(cf);
@@ -153,7 +154,7 @@ class CffuFactoryTest {
     @Test
     @EnabledForJreRange(min = JRE.JAVA_9)
     void test_asCffuArray() throws Exception {
-        Cffu<Integer>[] cffus = cffuFactory.asCffuArray(CompletableFuture.completedStage(n), CompletableFuture.completedFuture(n));
+        Cffu<Integer>[] cffus = cffuFactory.asCffuArray(CompletableFuture.completedStage(n), completedFuture(n));
         assertEquals(n, cffus[1].get());
 
         shouldBeMinimalStage(cffus[0]);
@@ -166,58 +167,33 @@ class CffuFactoryTest {
 
     @Test
     void test_allOf_CompletableFuture() throws Exception {
-        cffuFactory.allOf(
-                CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(anotherN)
-        ).get();
-        cffuFactory.allOf(
-                CompletableFuture.completedFuture(anotherN)
-        ).get();
+        cffuFactory.allOf(completedFuture(n), completedFuture(anotherN)).get();
+        cffuFactory.allOf(completedFuture(anotherN)).get();
 
         assertNull(cffuFactory.allOf().get());
 
         ////////////////////////////////////////
 
-        cffuFactory.allOfFastFail(
-                CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(anotherN)
-        ).get();
-        cffuFactory.allOfFastFail(
-                CompletableFuture.completedFuture(anotherN)
-        ).get();
+        cffuFactory.allOfFastFail(completedFuture(n), completedFuture(anotherN)).get();
+        cffuFactory.allOfFastFail(completedFuture(anotherN)).get();
 
         assertNull(cffuFactory.allOfFastFail().get());
 
-        cffuFactory.allOfFastFail(
-                cffuFactory.completedFuture(n),
-                cffuFactory.completedFuture(anotherN)
-        ).get();
-        cffuFactory.allOfFastFail(
-                cffuFactory.completedFuture(anotherN)
-        ).get();
+        cffuFactory.allOfFastFail(cffuFactory.completedFuture(n), cffuFactory.completedFuture(anotherN)).get();
+        cffuFactory.allOfFastFail(cffuFactory.completedFuture(anotherN)).get();
     }
 
     @Test
     void test_anyOf_CompletableFuture() throws Exception {
-        cffuFactory.anyOf(
-                CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(anotherN)
-        ).get();
-        assertEquals(anotherN, cffuFactory.anyOf(
-                CompletableFuture.completedFuture(anotherN)
-        ).get());
+        cffuFactory.anyOf(completedFuture(n), completedFuture(anotherN)).get();
+        assertEquals(anotherN, cffuFactory.anyOf(completedFuture(anotherN)).get());
 
         assertFalse(cffuFactory.anyOf().isDone());
 
         ////////////////////////////////////////
 
-        cffuFactory.anyOfSuccess(
-                CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(anotherN)
-        ).get();
-        assertEquals(anotherN, cffuFactory.anyOfSuccess(
-                CompletableFuture.completedFuture(anotherN)
-        ).get());
+        cffuFactory.anyOfSuccess(completedFuture(n), completedFuture(anotherN)).get();
+        assertEquals(anotherN, cffuFactory.anyOfSuccess(completedFuture(anotherN)).get());
 
         try {
             cffuFactory.anyOfSuccess().get();
@@ -254,15 +230,10 @@ class CffuFactoryTest {
     @Test
     void test_cffuAllOf() throws Exception {
         assertEquals(Arrays.asList(n, n + 1),
-                cffuFactory.cffuAllOf(
-                        CompletableFuture.completedFuture(n),
-                        CompletableFuture.completedFuture(n + 1)
-                ).get()
+                cffuFactory.cffuAllOf(completedFuture(n), completedFuture(n + 1)).get()
         );
         assertEquals(Collections.singletonList(n),
-                cffuFactory.cffuAllOf(
-                        CompletableFuture.completedFuture(n)
-                ).get()
+                cffuFactory.cffuAllOf(completedFuture(n)).get()
         );
 
         assertEquals(Collections.emptyList(),
@@ -270,29 +241,19 @@ class CffuFactoryTest {
         );
 
         assertEquals(Arrays.asList(n, n + 1),
-                cffuFactory.cffuAllOf(
-                        cffuFactory.completedFuture(n),
-                        cffuFactory.completedFuture(n + 1)
-                ).get()
+                cffuFactory.cffuAllOf(cffuFactory.completedFuture(n), cffuFactory.completedFuture(n + 1)).get()
         );
         assertEquals(Collections.singletonList(n),
-                cffuFactory.cffuAllOf(
-                        cffuFactory.completedFuture(n)
-                ).get()
+                cffuFactory.cffuAllOf(cffuFactory.completedFuture(n)).get()
         );
 
         ////////////////////////////////////////
 
         assertEquals(Arrays.asList(n, n + 1),
-                cffuFactory.cffuAllOfFastFail(
-                        CompletableFuture.completedFuture(n),
-                        CompletableFuture.completedFuture(n + 1)
-                ).get()
+                cffuFactory.cffuAllOfFastFail(completedFuture(n), completedFuture(n + 1)).get()
         );
         assertEquals(Collections.singletonList(n),
-                cffuFactory.cffuAllOfFastFail(
-                        CompletableFuture.completedFuture(n)
-                ).get()
+                cffuFactory.cffuAllOfFastFail(completedFuture(n)).get()
         );
 
         assertEquals(Collections.emptyList(),
@@ -300,15 +261,10 @@ class CffuFactoryTest {
         );
 
         assertEquals(Arrays.asList(n, n + 1),
-                cffuFactory.cffuAllOfFastFail(
-                        cffuFactory.completedFuture(n),
-                        cffuFactory.completedFuture(n + 1)
-                ).get()
+                cffuFactory.cffuAllOfFastFail(cffuFactory.completedFuture(n), cffuFactory.completedFuture(n + 1)).get()
         );
         assertEquals(Collections.singletonList(n),
-                cffuFactory.cffuAllOfFastFail(
-                        cffuFactory.completedFuture(n)
-                ).get()
+                cffuFactory.cffuAllOfFastFail(cffuFactory.completedFuture(n)).get()
         );
     }
 
@@ -343,10 +299,10 @@ class CffuFactoryTest {
     void test_cffuAnyOf() throws Exception {
         assertEquals(n, cffuFactory.cffuAnyOf(
                 createIncompleteFuture(),
-                CompletableFuture.completedFuture(n)
+                completedFuture(n)
         ).get());
         assertEquals(n, cffuFactory.cffuAnyOf(
-                CompletableFuture.completedFuture(n)
+                completedFuture(n)
         ).get());
 
         assertFalse(cffuFactory.cffuAnyOf().isDone());
@@ -361,13 +317,8 @@ class CffuFactoryTest {
 
         ////////////////////////////////////////
 
-        assertEquals(n, cffuFactory.cffuAnyOfSuccess(
-                createIncompleteFuture(),
-                CompletableFuture.completedFuture(n)
-        ).get());
-        assertEquals(n, cffuFactory.cffuAnyOfSuccess(
-                CompletableFuture.completedFuture(n)
-        ).get());
+        assertEquals(n, cffuFactory.cffuAnyOfSuccess(createIncompleteFuture(), completedFuture(n)).get());
+        assertEquals(n, cffuFactory.cffuAnyOfSuccess(completedFuture(n)).get());
 
         assertSame(NoCfsProvidedException.class, cffuFactory.cffuAnyOfSuccess().exceptionNow().getClass());
 
@@ -375,9 +326,7 @@ class CffuFactoryTest {
                 cffuFactory.completedFuture(n),
                 cffuFactory.newIncompleteCffu()
         ).get());
-        assertEquals(n, cffuFactory.cffuAnyOfSuccess(
-                cffuFactory.completedFuture(n)
-        ).get());
+        assertEquals(n, cffuFactory.cffuAnyOfSuccess(cffuFactory.completedFuture(n)).get());
     }
 
     @Test
@@ -386,11 +335,7 @@ class CffuFactoryTest {
         // even later cfs normally completed!
 
         try {
-            cffuFactory.cffuAnyOf(
-                    createIncompleteFuture(),
-                    failedFuture(rte),
-                    createIncompleteFuture()
-            ).get();
+            cffuFactory.cffuAnyOf(createIncompleteFuture(), failedFuture(rte), createIncompleteFuture()).get();
 
             fail();
         } catch (ExecutionException expected) {
@@ -402,7 +347,7 @@ class CffuFactoryTest {
 
         assertEquals(n, cffuFactory.cffuAnyOf(
                 createIncompleteFuture(),
-                CompletableFuture.completedFuture(n),
+                completedFuture(n),
                 createIncompleteFuture()
         ).get());
     }
@@ -453,7 +398,7 @@ class CffuFactoryTest {
                     sleep(300);
                     return anotherN;
                 }),
-                CompletableFuture.completedFuture(n)
+                completedFuture(n)
         ).get());
         // success then failed
         assertEquals(n, cffuFactory.cffuAnyOfSuccess(
@@ -463,7 +408,7 @@ class CffuFactoryTest {
                     sleep(300);
                     throw rte;
                 }),
-                CompletableFuture.completedFuture(n)
+                completedFuture(n)
         ).get());
 
         // all success
@@ -476,7 +421,7 @@ class CffuFactoryTest {
                     sleep(300);
                     return anotherN;
                 }),
-                CompletableFuture.completedFuture(n)
+                completedFuture(n)
         ).get());
 
         //////////////////////////////////////////////////////////////////////////////
@@ -492,29 +437,29 @@ class CffuFactoryTest {
     @Test
     void test_cffuCombine() throws Exception {
         assertEquals(Tuple2.of(n, s), cffuFactory.cffuCombine(
-                CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(s)
+                completedFuture(n),
+                completedFuture(s)
         ).get());
 
         assertEquals(Tuple3.of(n, s, d), cffuFactory.cffuCombine(
-                CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(s),
-                CompletableFuture.completedFuture(d)
+                completedFuture(n),
+                completedFuture(s),
+                completedFuture(d)
         ).get());
 
         assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.cffuCombine(
-                CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(s),
-                CompletableFuture.completedFuture(d),
-                CompletableFuture.completedFuture(anotherN)
+                completedFuture(n),
+                completedFuture(s),
+                completedFuture(d),
+                completedFuture(anotherN)
         ).get());
 
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.cffuCombine(
-                CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(s),
-                CompletableFuture.completedFuture(d),
-                CompletableFuture.completedFuture(anotherN),
-                CompletableFuture.completedFuture(n + n)
+                completedFuture(n),
+                completedFuture(s),
+                completedFuture(d),
+                completedFuture(anotherN),
+                completedFuture(n + n)
         ).get());
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -548,25 +493,25 @@ class CffuFactoryTest {
         ////////////////////////////////////////////////////////////////////////////////
 
         assertEquals(Tuple2.of(n, s), cffuFactory.completedFuture(n).cffuCombine(
-                CompletableFuture.completedFuture(s)
+                completedFuture(s)
         ).get());
 
         assertEquals(Tuple3.of(n, s, d), cffuFactory.completedFuture(n).cffuCombine(
-                CompletableFuture.completedFuture(s),
-                CompletableFuture.completedFuture(d)
+                completedFuture(s),
+                completedFuture(d)
         ).get());
 
         assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.completedFuture(n).cffuCombine(
-                CompletableFuture.completedFuture(s),
-                CompletableFuture.completedFuture(d),
-                CompletableFuture.completedFuture(anotherN)
+                completedFuture(s),
+                completedFuture(d),
+                completedFuture(anotherN)
         ).get());
 
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.completedFuture(n).cffuCombine(
-                CompletableFuture.completedFuture(s),
-                CompletableFuture.completedFuture(d),
-                CompletableFuture.completedFuture(anotherN),
-                CompletableFuture.completedFuture(n + n)
+                completedFuture(s),
+                completedFuture(d),
+                completedFuture(anotherN),
+                completedFuture(n + n)
         ).get());
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -597,10 +542,15 @@ class CffuFactoryTest {
     @Test
     void test_cffuCombine_exceptionally() throws Exception {
         try {
-            cffuFactory.cffuCombine(
-                    CompletableFuture.completedFuture(n),
-                    failedFuture(rte)
-            ).get();
+            cffuFactory.cffuCombine(completedFuture(n), failedFuture(rte)).get();
+
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+
+        try {
+            cffuFactory.cffuCombine(completedFuture(n), failedFuture(rte), completedFuture(s)).get();
 
             fail();
         } catch (ExecutionException expected) {
@@ -609,23 +559,11 @@ class CffuFactoryTest {
 
         try {
             cffuFactory.cffuCombine(
-                    CompletableFuture.completedFuture(n),
+                    completedFuture(n),
+                    completedFuture(d),
                     failedFuture(rte),
-                    CompletableFuture.completedFuture(s)
-            ).get();
-
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-
-        try {
-            cffuFactory.cffuCombine(
-                    CompletableFuture.completedFuture(n),
-                    CompletableFuture.completedFuture(d),
-                    failedFuture(rte),
-                    CompletableFuture.completedFuture(s),
-                    CompletableFuture.completedFuture(anotherN)
+                    completedFuture(s),
+                    completedFuture(anotherN)
             ).get();
 
             fail();
@@ -648,8 +586,8 @@ class CffuFactoryTest {
     void test_toCompletableFutureArray() {
         @SuppressWarnings("unchecked")
         CompletableFuture<Integer>[] cfArray = new CompletableFuture[]{
-                CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(anotherN)
+                completedFuture(n),
+                completedFuture(anotherN)
         };
         @SuppressWarnings("unchecked")
         CompletionStage<Integer>[] csArray = new CompletableFuture[]{
@@ -671,8 +609,8 @@ class CffuFactoryTest {
     void test_cffuArrayUnwrap() {
         @SuppressWarnings("unchecked")
         CompletableFuture<Integer>[] cfArray = new CompletableFuture[]{
-                CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(anotherN)
+                completedFuture(n),
+                completedFuture(anotherN)
         };
         @SuppressWarnings("unchecked")
         Cffu<Integer>[] input = new Cffu[]{
@@ -697,10 +635,7 @@ class CffuFactoryTest {
     @Test
     void test_completableFutureListToArray() {
         @SuppressWarnings("unchecked")
-        CompletableFuture<Integer>[] input = new CompletableFuture[]{
-                CompletableFuture.completedFuture(n),
-                CompletableFuture.completedFuture(anotherN)
-        };
+        CompletableFuture<Integer>[] input = new CompletableFuture[]{completedFuture(n), completedFuture(anotherN)};
 
         assertArrayEquals(input, CffuFactory.completableFutureListToArray(Arrays.asList(input)));
     }
