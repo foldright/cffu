@@ -624,7 +624,7 @@ class CompletableFutureUtilsTest {
     @Test
     void test_combine_exceptionally() throws Exception {
         final CompletableFuture<Object> incomplete = new CompletableFuture<>();
-        final CompletableFuture<Object> fail = CompletableFutureUtils.failedFuture(rte);
+        final CompletableFuture<Object> fail = failedFuture(rte);
 
         final CompletableFuture<Integer> cf_n = CompletableFuture.completedFuture(n);
         final CompletableFuture<String> cf_s = CompletableFuture.completedFuture(s);
@@ -689,6 +689,37 @@ class CompletableFutureUtilsTest {
             fail();
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
+        }
+    }
+
+    @Test
+    void test_combine_NotFastFail() throws Exception {
+        final CompletableFuture<Object> incomplete = new CompletableFuture<>();
+        final CompletableFuture<Object> fail = failedFuture(rte);
+
+        final CompletableFuture<String> cf_s = CompletableFuture.completedFuture(s);
+        final CompletableFuture<Double> cf_d = CompletableFuture.completedFuture(d);
+        final CompletableFuture<Integer> cf_an = CompletableFuture.completedFuture(anotherN);
+
+        try {
+            CompletableFutureUtils.combine(incomplete, fail).get(100, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (TimeoutException expected) {
+        }
+        try {
+            CompletableFutureUtils.combine(incomplete, fail, cf_s).get(100, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (TimeoutException expected) {
+        }
+        try {
+            CompletableFutureUtils.combine(incomplete, fail, cf_d, cf_s).get(100, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (TimeoutException expected) {
+        }
+        try {
+            CompletableFutureUtils.combine(incomplete, cf_d, fail, cf_s, cf_an).get(100, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (TimeoutException expected) {
         }
     }
 
