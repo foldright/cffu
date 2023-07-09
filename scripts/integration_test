@@ -48,6 +48,9 @@ export JAVA_HOME="${!default_jh_var_name}"
 
 cu::log_then_run scripts/gen_CffuApiCompatibilityTest.sh
 
+cu::head_line_echo "check kotlin compiler api version 1.5 with kotlin 1.8 "
+jvb::mvn_cmd clean test-compile -D kotlin.version=1.8.22 -D kotlin.compiler.apiVersion=1.5
+
 cu::head_line_echo "build and test with Java $default_build_jdk_version: $JAVA_HOME"
 jvb::mvn_cmd clean install
 
@@ -58,6 +61,7 @@ jvb::mvn_cmd clean install
 readonly KT_VERSION_FOR_JAVA8=1.5.0
 readonly KT_VERSION_FOR_JAVA11=1.6.0
 readonly KT_VERSION_FOR_JAVA17=1.7.0
+readonly KT_VERSION_FOR_JAVA20=1.8.22
 
 for jdk_version in "${JDK_VERSIONS[@]}"; do
   # skip default jdk, already tested above
