@@ -5,7 +5,7 @@ cd "$(dirname "$(readlink -f "$0")")"
 
 source "$PWD/bash-buddy/lib/trap_error_info.sh"
 source "$PWD/bash-buddy/lib/common_utils.sh"
-source "$PWD/bash-buddy/lib/java_build_utils.sh"
+source "$PWD/bash-buddy/lib/java_utils.sh"
 
 readonly nl=$'\n' # new line
 

@@ -6,7 +6,8 @@ BASH_BUDDY_ROOT="$(readlink -f bash-buddy)"
 readonly BASH_BUDDY_ROOT
 source "$BASH_BUDDY_ROOT/lib/trap_error_info.sh"
 source "$BASH_BUDDY_ROOT/lib/common_utils.sh"
-source "$BASH_BUDDY_ROOT/lib/java_build_utils.sh"
+source "$BASH_BUDDY_ROOT/lib/java_utils.sh"
+source "$BASH_BUDDY_ROOT/lib/maven_utils.sh"
 
 ################################################################################
 # ci build logic
@@ -22,7 +23,6 @@ readonly JDK_VERSIONS=(
   20
   21
 )
-readonly default_jh_var_name="JAVA${default_build_jdk_version}_HOME"
 
 # here use `install` and `-D performRelease` intended
 #   to check release operations.
@@ -31,8 +31,8 @@ readonly default_jh_var_name="JAVA${default_build_jdk_version}_HOME"
 #   https://stackoverflow.com/questions/25201430
 #
 # shellcheck disable=SC2034
-readonly JVB_MVN_OPTS=(
-  "${JVB_DEFAULT_MVN_OPTS[@]}"
+readonly MVU_MVN_OPTS=(
+  "${MVU_DEFAULT_MVN_OPTS[@]}"
   -DperformRelease -P'!gen-sign'
   ${CI_MORE_MVN_OPTS:+${CI_MORE_MVN_OPTS}}
 )
@@ -43,16 +43,15 @@ cd ..
 # build and test by default version jdk
 ########################################
 
-[ -d "${!default_jh_var_name:-}" ] || cu::die "\$${default_jh_var_name}(${!default_jh_var_name:-}) dir is not existed!"
-export JAVA_HOME="${!default_jh_var_name}"
+jvu::switch_to_jdk "$default_build_jdk_version"
 
 cu::log_then_run scripts/gen_CffuApiCompatibilityTest.sh
 
 cu::head_line_echo "check kotlin compiler api version 1.5 with kotlin 1.8 "
-jvb::mvn_cmd clean test-compile -D kotlin.version=1.8.22 -D kotlin.compiler.apiVersion=1.5
+mvu::mvn_cmd clean test-compile -D kotlin.version=1.8.22 -D kotlin.compiler.apiVersion=1.5
 
 cu::head_line_echo "build and test with Java $default_build_jdk_version: $JAVA_HOME"
-jvb::mvn_cmd clean install
+mvu::mvn_cmd clean install
 
 ########################################
 # test by multiply version jdks
@@ -63,24 +62,22 @@ readonly KT_VERSION_FOR_JAVA11=1.6.0
 readonly KT_VERSION_FOR_JAVA17=1.7.0
 readonly KT_VERSION_FOR_JAVA20=1.8.22
 
+# about CI env var
+#   https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
+if [ "${CI:-}" = true ]; then
+  readonly CI_MORE_BEGIN_OPTS=jacoco:prepare-agent CI_MORE_END_OPTS=jacoco:report
+fi
+
 for jdk_version in "${JDK_VERSIONS[@]}"; do
   # skip default jdk, already tested above
   [ "$jdk_version" = "$default_build_jdk_version" ] && continue
 
-  jh_var_name="JAVA${jdk_version}_HOME"
-  [ -d "${!jh_var_name:-}" ] || cu::die "\$${jh_var_name}(${!jh_var_name:-}) dir is not existed!"
-  export JAVA_HOME="${!jh_var_name}"
+  jvu::switch_to_jdk "$jdk_version"
 
   # just test without build
   cu::head_line_echo "test with Java $jdk_version: $JAVA_HOME"
 
   kt_version_var_name="KT_VERSION_FOR_JAVA${jdk_version}"
   kt_version_opt="${!kt_version_var_name:+-Dkotlin.version=${!kt_version_var_name}}"
-  # about CI env var
-  #   https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
-  if [ "${CI:-}" = true ]; then
-    jvb::mvn_cmd jacoco:prepare-agent surefire:test jacoco:report $kt_version_opt
-  else
-    jvb::mvn_cmd surefire:test $kt_version_opt
-  fi
+  mvu::mvn_cmd ${CI_MORE_BEGIN_OPTS:-} dependency:properties surefire:test ${CI_MORE_END_OPTS:-} $kt_version_opt
 done
