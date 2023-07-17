@@ -48,7 +48,8 @@ jobs:
           java-version: 21-ea
           distribution: zulu
 
-      - run: scripts/integration_test
+      - name: run integration test
+        run: scripts/integration_test && demos/scripts/integration_test
         env:
           JAVA8_HOME: ${{ env.JAVA_HOME_8_X64 }}
           JAVA11_HOME: ${{ env.JAVA_HOME_11_X64 }}
@@ -56,13 +57,6 @@ jobs:
           JAVA19_HOME: ${{ env.JAVA_HOME_19_X64 }}
           JAVA20_HOME: ${{ env.JAVA_HOME_20_X64 }}
           JAVA21_HOME: ${{ env.JAVA_HOME_21_X64 }}
-
-      - run: demos/scripts/integration_test
-        env:
-          JAVA8_HOME: ${{ env.JAVA_HOME_8_X64 }}
-          JAVA11_HOME: ${{ env.JAVA_HOME_11_X64 }}
-          JAVA17_HOME: ${{ env.JAVA_HOME_17_X64 }}
-          JAVA20_HOME: ${{ env.JAVA_HOME_20_X64 }}
 
       - name: remove self maven install files
         run: rm -rf $HOME/.m2/repository/io/foldright/cffu*
