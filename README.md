@@ -25,20 +25,81 @@
 <a href="https://gitpod.io/#https://github.com/foldright/cffu"><img src="https://img.shields.io/badge/Gitpod-ready to code-339933?label=gitpod&logo=gitpod&logoColor=white" alt="gitpod: Ready to Code"></a>
 </p>
 
-<a href="#dummy"><img src="https://user-images.githubusercontent.com/1063891/230850403-87ff74de-1acb-4aff-b9b4-632e4e51e225.png" width="20%" align="right" alt="shifu" /></a>
+<a href="#dummy"><img src="https://user-images.githubusercontent.com/1063891/230850403-87ff74de-1acb-4aff-b9b4-632e4e51e225.png" width="23%" align="right" alt="shifu" /></a>
+
+--------------------------------------------------------------------------------
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [🔧 功能](#-%E5%8A%9F%E8%83%BD)
+  - [关于`CompletableFuture`](#%E5%85%B3%E4%BA%8Ecompletablefuture)
+- [👥 User Guide](#-user-guide)
+  - [1. `cffu`的三种使用方式](#1-cffu%E7%9A%84%E4%B8%89%E7%A7%8D%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F)
+    - [1) `Cffu`类](#1-cffu%E7%B1%BB)
+    - [2) `CompletableFutureUtils`工具类](#2-completablefutureutils%E5%B7%A5%E5%85%B7%E7%B1%BB)
+    - [3) `Kotlin`扩展方法](#3-kotlin%E6%89%A9%E5%B1%95%E6%96%B9%E6%B3%95)
+  - [2. `cffu`功能介绍](#2-cffu%E5%8A%9F%E8%83%BD%E4%BB%8B%E7%BB%8D)
+    - [2.1 返回多个运行`CF`的结果](#21-%E8%BF%94%E5%9B%9E%E5%A4%9A%E4%B8%AA%E8%BF%90%E8%A1%8Ccf%E7%9A%84%E7%BB%93%E6%9E%9C)
+    - [2.2 支持设置缺省的业务线程池](#22-%E6%94%AF%E6%8C%81%E8%AE%BE%E7%BD%AE%E7%BC%BA%E7%9C%81%E7%9A%84%E4%B8%9A%E5%8A%A1%E7%BA%BF%E7%A8%8B%E6%B1%A0)
+    - [2.3 高效灵活的并发执行策略（`allOfFastFail`/`anyOfSuccess`）](#23-%E9%AB%98%E6%95%88%E7%81%B5%E6%B4%BB%E7%9A%84%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E7%AD%96%E7%95%A5alloffastfailanyofsuccess)
+    - [`cffuAnyOf`方法](#cffuanyof%E6%96%B9%E6%B3%95)
+    - [`cffuJoin(timeout, unit)`方法](#cffujointimeout-unit%E6%96%B9%E6%B3%95)
+    - [支持超时的`join`的方法；就像`cf.get(timeout, unit)` 之于 `cf.get()`](#%E6%94%AF%E6%8C%81%E8%B6%85%E6%97%B6%E7%9A%84join%E7%9A%84%E6%96%B9%E6%B3%95%E5%B0%B1%E5%83%8Fcfgettimeout-unit-%E4%B9%8B%E4%BA%8E-cfget)
+    - [Backport支持`Java 8`](#backport%E6%94%AF%E6%8C%81java-8)
+    - [实现所在的类：](#%E5%AE%9E%E7%8E%B0%E6%89%80%E5%9C%A8%E7%9A%84%E7%B1%BB)
+  - [3. 如何从直接使用`CompletableFuture`类迁移到`Cffu`类](#3-%E5%A6%82%E4%BD%95%E4%BB%8E%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8completablefuture%E7%B1%BB%E8%BF%81%E7%A7%BB%E5%88%B0cffu%E7%B1%BB)
+- [🔌 API Docs](#-api-docs)
+- [🍪依赖](#%E4%BE%9D%E8%B5%96)
+- [📚 更多资料](#-%E6%9B%B4%E5%A4%9A%E8%B5%84%E6%96%99)
+- [👋 关于库名](#-%E5%85%B3%E4%BA%8E%E5%BA%93%E5%90%8D)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+--------------------------------------------------------------------------------
+
+# 🔧 功能
+
+👉 `cffu`（`CompletableFuture Fu`）是一个小小的[`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/CompletableFuture.html)辅助增强库，提升`CF`的使用体验并减少误用，期望在业务中更方便高效安全地使用`CF`。
+
+提供的功能有：
+
+- ☘️ **补全业务使用中缺失的功能**
+  - 更方便的功能，如
+    - `cffuAllOf`/`allOfWithResult`方法：返回多个`CF`的结果，而不是`Void`无结果（`allOf`）
+    - `cffuCombine`/`combine`方法：返回多个`CF`的不同类型结果，而不是同一类型（`cffuAllOf`/`allOfWithResult`）
+  - 更高效灵活的并发执行策略，如
+    - `cffuAllOfFastFail`/`allOfFastFail`方法：有`CF`失败时快速返回，而不再等待所有`CF`运行完成（`allOf`）
+    - `cffuAnyOfSuccess`/`anyOfSuccess`方法：返回首个成功的`CF`结果，而不是首个完成的`CF`（`anyOf`）
+  - 更安全的使用方式，如
+    - 支持设置缺省的业务线程池（`CffuFactoryBuilder#newCffuFactoryBuilder(executor)`方法）
+    - `cffuJoin(timeout, unit)`方法：支持超时的`join`的方法
+    - 支持禁止强制篡改（`CffuFactoryBuilder#forbidObtrudeMethods`方法）
+    - 在类方法附加完善的代码质量注解以在编码时`IDE`就能提示出尽量多的问题（如`@NonNull`、`@Nullable`、`@CheckReturnValue`、`@Contract`等）
+- 💪 **已有功能的增强**，如
+  - `cffuAnyOf`/`anyOfWithType`方法：返回类型是`T`（类型安全），而不是返回`Object`（`anyOf`）
+- ⏳ **`Backport`支持`Java 8`**，`Java 9+`高版本的所有`CF`新功能在`Java 8`等低`Java`版本直接可用，如
+  - 超时控制：`orTimeout`/`completeOnTimeout`方法
+  - 延迟执行：`delayedExecutor`方法
+  - 工厂方法：`failedFuture`/`completedStage`/`failedStage`
+- 🍩 **一等公民支持`Kotlin`**
+
+更多`cffu`的使用方式与功能说明详见 [User Guide](#-user-guide)。
+
+## 关于`CompletableFuture`
 
 如何管理并发执行是个复杂易错的问题，业界有大量的工具、框架可以采用。
 
 > 并发工具、框架的广度了解，可以看看如《[七周七并发模型](https://book.douban.com/subject/26337939/)》、《[Java虚拟机并发编程](https://book.douban.com/subject/24533312/)》、《[Scala并发编程（第2版）](https://book.douban.com/subject/35448965/)》；更多关于并发主题的书籍参见[书单](https://www.douban.com/doulist/41916951/)。
 
-其中[`CompletableFuture (CF)`](https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/concurrent/CompletableFuture.html)有其优点：
+其中[`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/CompletableFuture.html)有其优点：
 
 - **`Java`标准库内置**
   - 无需额外依赖，几乎总是可用
   - 相信有极高的实现质量
 - **广为人知广泛使用，有一流的群众基础**
   - `CompletableFuture`在2014年发布的`Java 8`提供，有～10年了
-  - `CompletableFuture`的父接口[`Future`](https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/concurrent/Future.html)早在2004年发布的`Java 5`中提供，有～20年了
+  - `CompletableFuture`的父接口[`Future`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/Future.html)早在2004年发布的`Java 5`中提供，有～20年了
   - 虽然`Future`接口不支持 执行结果的异步获取与并发执行逻辑的编排，但也让广大`Java`开发者熟悉了`Future`这个典型的概念与工具
 - **功能强大、但不会非常庞大复杂**
   - 足以应对日常的业务需求开发
@@ -46,9 +107,9 @@
   - 当然基本的并发关注方面及其复杂性，与具体使用哪个工具无关，都是要理解与注意的
 - **高层抽象**
   - 或说 以业务流程的形式表达技术的并发流程
-  - 可以不使用繁琐易错的基础并发协调工具，如[`CountDownLatch`](https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/concurrent/CountDownLatch.html)、锁（[`Lock`](https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/concurrent/locks/package-summary.html)）、信号量（[`Semaphore`](https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/concurrent/Semaphore.html)）
+  - 可以不使用繁琐易错的基础并发协调工具，如[`CountDownLatch`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/CountDownLatch.html)、锁（[`Lock`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/locks/package-summary.html)）、信号量（[`Semaphore`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/Semaphore.html)）
 
-和其它并发工具、框架一样，`CompletableFuture` 用于
+和其它并发工具、框架一样，`CompletableFuture`用于
 
 - 并发执行业务逻辑，或说编排并发的处理流程/处理任务
 - 利用多核并行处理
@@ -56,300 +117,34 @@
 
 值得更深入了解和应用。 💕
 
---------------------------------------------------------------------------------
+# 👥 User Guide
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## 1. `cffu`的三种使用方式
 
-- [🎯 〇、目标](#-%E3%80%87%E7%9B%AE%E6%A0%87)
-- [🦮 一、`CompletableFuture` Guide](#-%E4%B8%80completablefuture-guide)
-  - [🔠 `CF`并发执行的描述及其用语](#-cf%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E7%9A%84%E6%8F%8F%E8%BF%B0%E5%8F%8A%E5%85%B6%E7%94%A8%E8%AF%AD)
-  - [🕹️ `CF`并发执行的关注方面](#-cf%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E7%9A%84%E5%85%B3%E6%B3%A8%E6%96%B9%E9%9D%A2)
-    - [1. 输入输出](#1-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA)
-    - [2. 调度](#2-%E8%B0%83%E5%BA%A6)
-    - [3. 错误处理](#3-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86)
-    - [4. 任务执行的超时控制](#4-%E4%BB%BB%E5%8A%A1%E6%89%A7%E8%A1%8C%E7%9A%84%E8%B6%85%E6%97%B6%E6%8E%A7%E5%88%B6)
-  - [🔧 `CF`的功能介绍 | 💪 `CF`方法分类说明](#-cf%E7%9A%84%E5%8A%9F%E8%83%BD%E4%BB%8B%E7%BB%8D---cf%E6%96%B9%E6%B3%95%E5%88%86%E7%B1%BB%E8%AF%B4%E6%98%8E)
-  - [📐 `CF`的设计模式 | 🐻 最佳实践与使用陷阱](#-cf%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F---%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E4%B8%8E%E4%BD%BF%E7%94%A8%E9%99%B7%E9%98%B1)
-- [📦 二、`cffu`库](#-%E4%BA%8Ccffu%E5%BA%93)
-  - [🔧 功能](#-%E5%8A%9F%E8%83%BD)
-    - [新功能](#%E6%96%B0%E5%8A%9F%E8%83%BD)
-    - [Backport支持`Java 8`](#backport%E6%94%AF%E6%8C%81java-8)
-  - [🌿 业务使用中`CompletableFuture`所缺失的功能介绍](#-%E4%B8%9A%E5%8A%A1%E4%BD%BF%E7%94%A8%E4%B8%ADcompletablefuture%E6%89%80%E7%BC%BA%E5%A4%B1%E7%9A%84%E5%8A%9F%E8%83%BD%E4%BB%8B%E7%BB%8D)
-  - [🎪 使用示例](#-%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B)
-    - [`Java`](#java)
-    - [`Kotlin`](#kotlin)
-  - [🔌 Java API Docs](#-java-api-docs)
-  - [🍪依赖](#%E4%BE%9D%E8%B5%96)
-- [👋 ∞、关于库名](#-%E2%88%9E%E5%85%B3%E4%BA%8E%E5%BA%93%E5%90%8D)
+`cffu`支持三种使用方式：
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+- 🦝 1) **使用`Cffu`类**
+  - 项目使用`Java`语言时，推荐这种使用方式
+  - 直接使用`CompletableFuture`类的代码可以比较简单的迁移到`Cffu`类，包含2步修改：
+    - 在类型声明地方，由`CompletableFuture`改成`Cffu`
+    - 在`CompletableFuture`静态方法调用的地方，类名`CompletableFuture`改成`CffuFactory`实例
+    - 更多参见[如何从直接使用`CompletableFuture`类迁移到`Cffu`类](#3-%E5%A6%82%E4%BD%95%E4%BB%8E%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8completablefuture%E7%B1%BB%E8%BF%81%E7%A7%BB%E5%88%B0cffu%E7%B1%BB)
+  - 依赖`io.foldright:cffu`库
+- 🛠️️ 2) **使用`CompletableFutureUtils`工具类**
+  - 如果你不想引入新的类型（`cffu`）、觉得这样增加了使用复杂性的话，
+    - 完全可以把`Cffu`库当然一个`Util`工具类来用，而不使用`Cffu`类
+    - 优化`CompletableFuture`使用的工具方法在业务项目中很常见，  
+      `CompletableFutureUtils`提供了一系列实用可靠的工具方法
+  - 这种使用方式有些`cffu`功能没有提供（也没有想到实现方案） 😔  
+    如支持设置缺省的业务线程池、禁止强制篡改
+  - 依赖`io.foldright:cffu`库
+- 🍩 3) **使用`Kotlin`扩展方法**
+  - 项目使用`Kotlin`语言时，推荐这种使用方式
+  - 要依赖`io.foldright:cffu-kotlin`库
 
---------------------------------------------------------------------------------
+在介绍功能点之前，可以先看看`cffu`不同使用方式的示例。 🎪
 
-# 🎯 〇、目标
-
-- 作为文档库（即`CompletableFuture` Guide）：
-  - 完备说明`CompletableFuture`的使用方式
-  - 给出 最佳实践建议 与 使用陷阱注意
-  - 期望在业务中，更有效安全地使用`CompletableFuture`
-- 作为代码库（即`cffu`库）：
-  - 补齐在业务使用中`CompletableFuture`所缺失的功能
-  - 期望在业务中，更方便自然地使用`CompletableFuture`
-
-# 🦮 一、`CompletableFuture` Guide
-
-> 为了阅读的简洁方便，后文`CompletableFuture`会简写成`CF`。
-
-## 🔠 `CF`并发执行的描述及其用语
-
-<a href="#dummy"><img src="https://user-images.githubusercontent.com/1063891/230757830-397055e9-b701-4074-bbb9-dc227fd0f8f2.png" width="22%" align="right" alt="cf-graph" /></a>
-
-基本概念与术语：
-
-- 任务（`Task`）/ 计算（`Computation`）
-  - 任务逻辑（`Task Logic`）/ 业务逻辑（`Biz Logic`）
-  - 执行（`Execute`）任务
-- 状态（`State`）
-  - 运行中（`Running`）<sup><b><i>〚1〛</i></b></sup>
-  - 取消（`Cancelled`）<sup><b><i>〚2〛</i></b></sup>
-  - 完成（`Completed` / `Done`）
-    - 成功（`Success` / `Successful`）/ 正常完成（`Completed Normally`）/ 成功完成（`Completed Successfully`）
-    - 失败（`Failed` / `Fail`）/ 异常完成（`Completed Exceptionally`）
-- 状态转变（`Transition`）
-  - 事件（`Event`）、触发（`Trigger`）
-- 业务流程（`Biz Flow`）、`CF`链（`Chain`）
-  - 流程图（`Flow Graph`）、有向无环图 / `DAG`
-    - 为什么构建的`CF`链一定是`DAG`？
-  - 流程编排（`Flow Choreography`）
-- 前驱（`Predecessor`）/ 后继（`Successor`）
-  - 上游任务 / 前驱任务 / `Dependency Task`（我依赖的任务）
-  - 下游任务 / 后继任务 / `Dependent Task`（依赖我的任务）
-
-> 注：上面用`/`隔开的多个词是，在表述`CF`同一个概念时，会碰到的多个术语；在不影响理解的情况下，后文会尽量统一用第一个词来表达。
-
-<a href="#dummy"><img src="https://user-images.githubusercontent.com/1063891/230757836-ea49a8cb-9e68-40c8-9efa-c3e880eecde4.png" width="30%" align="right"  alt="task stauts transition"></a>
-
-更多说明：
-
-- 〚1〛 任务状态有且有只有 运行中（`Running`）、取消（`Cancelled`）、完成（`Completed`）这3种状态。
-  - 对于「完成」状态，进一步可以分成 成功（`Success`）、失败（`Failed`）2种状态。
-- 所以也可以说，任务状态有且只有 运行中、取消、成功、失败 这4种状态。
-  - 右图是任务的状态及其转变图。
-  - 在概念上`CF`的状态转变只能是单次单向的，这很简单可靠、也容易理解并和使用直觉一致。
-  - > 注：虽然下文提到的`obtrudeValue()`/`obtrudeException`方法可以突破`CF`概念上的约定，但这2个后门方法在正常设计实现中不应该会用到，尤其在业务使用应该完全忽略；带来的问题也由使用者自己了解清楚并注意。
-- 〚2〛 关于「取消」状态：
-  - 对于`CompletableFuture`，取消的实现方式是设置[`CancellationException`](https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/concurrent/CancellationException.html)异常。
-- 对于「取消」状态，或说设置了「`CancellationException`」失败异常的`CompletableFuture cf`，相比其它异常失败 / 设置了其它失败异常 的情况，不一样的地方：
-  - 调用`cf.get()` / `cf.get(timeout, unit)`方法
-    - 会抛出`CancellationException`异常
-    - 其它异常失败时，这2个方法抛出的是包了一层的`ExecutionException`，`cause`是实际的失败异常
-  - 调用`cf.join()` / `cf.getNow(valueIfAbsent)`方法
-    - 会抛出`CancellationException`异常
-    - 其它异常失败时，这2个方法抛出的是包了一层的`CompletionException`，`cause`是实际的失败异常
-  - 调用`cf.exceptionNow()`方法
-    - 会抛出`IllegalStateException`，而**不是返回**`cf`所设置的`CancellationException`异常
-    - 其它异常失败时，`exceptionNow()`返回设置的异常
-  - 调用`cf.isCancelled()`方法
-    - 返回`true`
-    - 其它异常失败时，`isCancelled()`返回`false`
-- 其它地方，`CancellationException`异常与其它异常是一样处理的。比如：
-  - 调用`cf.resultNow()`方法  
-    都是抛出`IllegalStateException`异常
-  - 调用`cf.isDone()`、`cf.isCompletedExceptionally()`  
-    都是返回`true`
-  - `CompletionStage`接口方法对异常的处理，如  
-    `cf.exceptionally()`的方法参数`Function<Throwable, T>`所处理的都是直接设置的异常对象没有包装过
-
-## 🕹️ `CF`并发执行的关注方面
-
-`CF`任务执行/流程编排，即执行提交的代码逻辑/计算/任务，涉及下面4个方面：
-
-- **任务的输入输出**
-  - 即`CF`所关联任务的输入参数/返回结果（及其数据类型）
-- **任务的调度，即在哪个线程来执行任务**。可以是
-  - 在触发的线程中就地连续执行任务
-  - 在指定`Executor`（的线程）中执行任务
-- **任务的错误处理**（任务运行出错）
-- **任务的超时控制**
-  - 超时控制是并发的基础关注方面之一
-  - 到了`Java 9`提供了内置支持，新增了`completeOnTimeout(...)`/`orTimeout(...)`方法
-
-> 本节「并发关注方面」，会举例上一些`CF`方法名，以说明`CF`方法的命名模式；  
-> 可以先不用关心方法的具体功能，在「`CF`的功能介绍」中会分类展开说明`CF`方法及其功能。
-
-### 1. 输入输出
-
-对应下面4种情况：
-
-- **无输入无返回（00）**
-  - 对应`Runnable`接口（包含单个`run`方法）
-- **无输入有返回（01）**
-  - 对应[`Supplier<O>`](https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/function/Supplier.html)接口（包含单个`supply`方法）
-- **有输入无返回（10）**
-  - 对应[`Consumer<I>`](https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/function/Consumer.html)接口（包含单个`accept`方法）
-- **有输入有返回（11）**
-  - 对应[`Function<I, O>`](https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/function/Function.html)接口（包含单个`apply`方法）
-
-注：
-
-- 对于有输入或返回的接口（即除了`Runnable`接口）
-  - 都是泛型的，所以可以支持不同的具体数据类型
-  - 都是处理单个输入数据
-  - 如果要处理两个输入数据，即有两个上游`CF`的返回，会涉及下面的变体接口
-- 对于有输入接口，有两个输入参数的变体接口：
-  - `Consumer`接口的两参数变体接口：[`BiConsumer<I1, I2>`](https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/function/BiConsumer.html)
-  - `Function`接口的两参数变体接口：[`BiFunction<I1, I2, O>`](https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/function/BiFunction.html)
-
-----------------------------------------
-
-`CF`通过其方法名中包含的用词来体现：
-
-- **`run`：无输入无返回（00）**
-  - 即是`Runnable`接口包含的`run`方法名
-  - 相应的`CF`方法名的一些例子：
-    - `runAsync(Runnable runnable)`
-    - `thenRun(Runnable action)`
-    - `runAfterBoth(CompletionStage<?> other, Runnable action)`
-    - `runAfterEitherAsync(CompletionStage<?> other, Runnable action)`
-- **`supply`：无输入有返回（01）**
-  - 即是`Supplier`接口包含的`supply`方法名
-  - 相应的`CF`方法名的一些例子：
-    - `supplyAsync(Supplier<U> supplier)`
-    - `supplyAsync(Supplier<U> supplier, Executor executor)`
-- **`accept`：有输入无返回（10）**
-  - 即是`Consumer`接口包含的`accept`方法名
-  - 相应的`CF`方法名的一些例子：
-    - `thenAccept(Consumer<T> action)`
-    - `thenAcceptAsync(Consumer<T> action)`
-    - `thenAcceptBoth(CompletionStage<U> other, BiConsumer<T, U> action)`
-    - `acceptEitherAsync(CompletionStage<T> other, Consumer<T> action)`
-- **`apply`：有输入有返回（11）**
-  - 即是`Function`接口包含的`apply`方法名。`CF`的方法如
-  - 相应的`CF`方法名的一些例子：
-    - `thenApply(Function<T, U> fn)`
-    - `thenApplyAsync(Function<T, U> fn)`
-    - `applyToEither(CompletionStage<T> other, Function<T, U> fn)`
-
-### 2. 调度
-
-任务调度是指，任务在哪个线程执行。有2种方式：
-
-- 在触发的线程中就地连续执行任务
-- 在指定`Executor`（的线程）中执行任务
-
-`CF`通过方法名后缀`Async`来体现调度方式：
-
-- **有方法名后缀`Async`**：
-  - 在触发`CF`后，任务在指定`Executor`执行
-    - 如果不指定`executor`参数，缺省是`ForkJoinPool.commonPool()`
-  - 相应的`CF`方法名的一些例子：
-    - `runAsync(Runnable runnable)`
-    - `thenAcceptAsync(Consumer<T> action, Executor executor)`
-    - `runAfterBothAsync(CompletionStage<?> other, Runnable action)`
-- **无方法名后缀`Async`**：
-  - 任务在触发线程就地连续执行
-  - 相应的`CF`方法名的一些例子：
-    - `thenAccept(Consumer<T> action)`
-    - `thenApply(Function<T, U> fn)`
-    - `applyToEither(CompletionStage<T> other, Function<T, U> fn)`
-
-### 3. 错误处理
-
-提交给`CF`的任务可以运行出错（抛出异常），即状态是失败（`Failed`）或取消（`Cancelled`）。
-
-对于直接读取结果的方法：
-
-- 读取 成功结果的方法，如
-  `cf.get()`、`cf.join()`会抛出异常（包装的异常）来反馈
-- 读取 失败结果的方法，如
-  `cf.exceptionNow()`会返回结果异常或是抛出异常来反馈
-
-对于`CompletionStage`接口中编排执行的方法，会根据方法的功能 是只处理成功结果或失败结果一者，或是同时处理成功失败结果二者。如
-
-- `exceptionally(...)`只处理 失败结果
-- `whenComplete(...)`/`handle(...)`同时处理 成功与失败结果；
-  - 这2个方法的参数`lamdba`（`BiConsumer`/`BiFunction`）同时输入成功失败结果2个参数：`value`与`exception`
-- 其它多数的方法只处理 成功结果
-- 对于不处理的结果，效果上就好像  
-  没有调用这个`CompletionStage`方法一样，即短路`bypass`了 👏
-
-### 4. 任务执行的超时控制
-
-超时控制是并发的基础关注方面之一。
-
-到了`Java 9`提供了内置支持，新增了`completeOnTimeout(...)`/`orTimeout(...)`方法。
-
-> `CF`的超时控制，在实现上其实可以看成是`CF`的使用方式，并不是`CF`要实现基础能力；即可以通过其它已有的`CF`功能，在`CF`外围实现。
-
-## 🔧 `CF`的功能介绍 | 💪 `CF`方法分类说明
-
-见子文档页  [`cf-functions-intro.md`](docs/cf-functions-intro.md)
-
-`CF`的方法个数比较多，所以介绍内容有些多，内容继续完善中… 💪 💕
-
-## 📐 `CF`的设计模式 | 🐻 最佳实践与使用陷阱
-
-见子文档页 [`cf-design-patterns.md`](docs/cf-design-patterns.md)
-
-还没有什么内容，收集思考展开中… 💪 💕
-
-# 📦 二、`cffu`库
-
-## 🔧 功能
-
-### 新功能
-
-- 支持设置缺省的业务线程池
-  - `CompletableFuture`的缺省线程池是`ForkJoinPool.commonPool()`，这个线程池差不多`CPU`个线程，合适执行`CPU`密集的任务。
-  - 对于业务逻辑往往有很多等待操作（如网络`IO`、阻塞等待），并不是`CPU`密集的；使用这个缺省线程池`ForkJoinPool.commonPool()`很危险❗️  
-    所以每次调用`CompletableFuture`的`*async`方法时，都传入业务线程池，很繁琐易错 🤯
-  - `Cffu`支持设置缺省的业务线程池，规避上面的繁琐与危险
-- 一等公民支持`Kotlin` 🍩
-- `cffuAllOf`方法
-  - 运行多个`CompletableFuture`并返回结果的`allOf`方法
-- `cffuAnyOf`方法
-  - 返回具体类型的`anyOf`方法
-- `cffuCombine(...)`方法
-  - 运行多个(2 ~ 5个)不同类型的`CompletableFuture`，返回结果元组
-- `cffuJoin(timeout, unit)`方法
-  - 支持超时的`join`的方法；就像`cf.get(timeout, unit)` 之于 `cf.get()`
-  - `CompletableFuture`缺少这个功能，`cf.join()`会「不超时永远等待」很危险❗️
-
-### Backport支持`Java 8`
-
-Backport`Java 9+`高版本的所有`CompletableFuture`新功能，在`Java 8`可以直接使用。
-
-其中重要的Backport功能有：
-
-- 超时控制：`orTimeout(...)`/`completeOnTimeout(...)`方法
-- 延迟执行：`delayedExecutor(...)`方法
-- 工厂方法：`failedFuture(...)`/`completedStage(...)`/`failedStage(...)`
-
-## 🌿 业务使用中`CompletableFuture`所缺失的功能介绍
-
-- 运行多个`CompletableFuture`并返回结果的`allOf`方法：
-  - `resultAllOf`方法，运行多个**相同**结果类型的`CompletableFuture`
-    - `CompletableFuture<List<T>> resultAllOf(CompletableFuture<T>... cfs)`
-    - `CompletableFuture<List<T>> resultAllOf(List<? extends CompletableFuture<T>> cfs)`
-  - `resultOf`方法，运行多个**不同**结果类型的`CompletableFuture`
-    - `CompletableFuture<Pair<T1, T2>> resultOf(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2)`
-    - `CompletableFuture<Triple<T1, T2, T3>> resultOf(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3)`
-- 具体类型的`anyOf`方法：
-  - 提供的方法：
-    - `CompletableFuture<T> anyOf(CompletableFuture<T>... cfs)`
-    - `CompletableFuture<T> anyOf(List<? extends CompletableFuture<T>> cfs)`
-  - `CF`返回的类型是`Object`，丢失具体类型：
-    - `CompletableFuture<Object> anyOf(CompletableFuture<?>... cfs)`
-
-实现所在的类：
-
-- [`Cffu.java`](cffu-core/src/main/java/io/foldright/cffu/Cffu.java)
-- [`CffuFactory.java`](cffu-core/src/main/java/io/foldright/cffu/CffuFactory.java)
-
-## 🎪 使用示例
-
-### `Java`
+### 1) `Cffu`类
 
 ```java
 public class CffuDemo {
@@ -377,7 +172,7 @@ public class CffuDemo {
       return n * 2;
     });
     final Cffu<Integer> longFailedTask = cf42.thenApplyAsync(unused -> {
-      sleep(1_000);
+      sleep(1000);
       throw new RuntimeException("Bang!");
     });
 
@@ -395,9 +190,53 @@ public class CffuDemo {
 }
 ```
 
-\# 完整可运行的Demo代码参见[`CffuDemo.java`](demos/cffu-demo/src/main/java/io/foldright/demo/cffu/CffuDemo.java)。
+> \# 完整可运行的Demo代码参见[`CffuDemo.java`](demos/cffu-demo/src/main/java/io/foldright/demo/cffu/CffuDemo.java)。
 
-### `Kotlin`
+### 2) `CompletableFutureUtils`工具类
+
+```java
+public class CompletableFutureUtilsDemo {
+  private static final ExecutorService myBizThreadPool = Executors.newCachedThreadPool();
+
+  public static void main(String[] args) throws Exception {
+    final CompletableFuture<Integer> cf42 = CompletableFuture
+        .supplyAsync(() -> 21, myBizThreadPool)  // Run in myBizThreadPool
+        .thenApply(n -> n * 2);
+
+    final CompletableFuture<Integer> longTaskA = cf42.thenApplyAsync(n -> {
+      sleep(1001);
+      return n / 2;
+    }, myBizThreadPool);
+    final CompletableFuture<Integer> longTaskB = cf42.thenApplyAsync(n -> {
+      sleep(1002);
+      return n / 2;
+    }, myBizThreadPool);
+    final CompletableFuture<Integer> longTaskC = cf42.thenApplyAsync(n -> {
+      sleep(100);
+      return n * 2;
+    }, myBizThreadPool);
+    final CompletableFuture<Integer> longFailedTask = cf42.thenApplyAsync(unused -> {
+      sleep(1000);
+      throw new RuntimeException("Bang!");
+    }, myBizThreadPool);
+
+    final CompletableFuture<Integer> combined = longTaskA.thenCombine(longTaskB, Integer::sum);
+    final CompletableFuture<Integer> combinedWithTimeout = CompletableFutureUtils.orTimeout(combined, 1500, TimeUnit.MILLISECONDS);
+    System.out.println("combined result: " + combinedWithTimeout.get());
+    final CompletableFuture<Integer> anyOfSuccess = CompletableFutureUtils.anyOfSuccessWithType(longTaskC, longFailedTask);
+    System.out.println("anyOfSuccess result: " + anyOfSuccess.get());
+
+    ////////////////////////////////////////
+    // cleanup
+    ////////////////////////////////////////
+    myBizThreadPool.shutdown();
+  }
+}
+```
+
+> \# 完整可运行的Demo代码参见[`CompletableFutureUtilsDemo.java`](demos/cffu-demo/src/main/java/io/foldright/demo/cffu/CompletableFutureUtilsDemo.java)。
+
+### 3) `Kotlin`扩展方法
 
 ```kt
 private val myBizThreadPool: ExecutorService = Executors.newCachedThreadPool()
@@ -441,22 +280,274 @@ fun main() {
 }
 ```
 
-\# 完整可运行的Demo代码参见[`CffuDemo.kt`](demos/cffu-kotlin-demo/src/main/java/io/foldright/demo/cffu/kotlin/CffuDemo.kt)。
+> \# 完整可运行的Demo代码参见[`CffuDemo.kt`](demos/cffu-kotlin-demo/src/main/java/io/foldright/demo/cffu/kotlin/CffuDemo.kt)。
 
-## 🔌 API Docs
+## 2. `cffu`功能介绍
+
+### 2.1 返回多个运行`CF`的结果
+
+`CompletableFuture`的`allOf`方法没有返回结果，只是返回`Void`，不方便获得所运行的多个`CF`结果。  
+\# 要再通过入参`CF`的`get`方法来获取结果。
+
+`cffu`的`cffuAllOf`/`allOfWithResult`方法可以返回多个`CF`结果的功能。
+
+示例代码如下：
+
+```java
+public class AllOfWithResultDemo {
+  public static void main(String[] args) {
+    //////////////////////////////////////////////////
+    // CffuFactory#cffuAllOf
+    //////////////////////////////////////////////////
+    Cffu<Integer> cffu1 = cffuFactory.completedFuture(21);
+    Cffu<Integer> cffu2 = cffuFactory.completedFuture(42);
+
+    Cffu<Void> allOf2 = cffuFactory.allOf(cffu1, cffu2);
+    // Result type is Void!!
+    // the result can be got by input argument `cf1.get()`, but it's cumbersome.
+    // so we can see a lot the util methods to enhance allOf with result in our project.
+
+    Cffu<List<Integer>> allOfWithResult = cffuFactory.cffuAllOf(cffu1, cffu2);
+    System.out.println(allOfWithResult.get());
+
+    //////////////////////////////////////////////////
+    // or CompletableFutureUtils#allOfWithResult
+    //////////////////////////////////////////////////
+    CompletableFuture<Integer> cf1 = CompletableFuture.completedFuture(21);
+    CompletableFuture<Integer> cf2 = CompletableFuture.completedFuture(42);
+
+    CompletableFuture<Void> allOf = CompletableFuture.allOf(cf1, cf2);
+    // Result type is Void!!
+
+    CompletableFuture<List<Integer>> allOfWithResult2 = CompletableFutureUtils.allOfWithResult(cf1, cf2);
+    System.out.println(allOfWithResult2.get());
+  }
+}
+```
+
+> \# 完整可运行的Demo代码参见[`AllOfWithResultDemo.java`](cffu-core/src/test/java/io/foldright/demo/AllOfWithResultDemo.java)。
+
+上面多个相同结果类型的`CF`，`cffu`还提供了返回多个不同类型`CF`结果的方法，`cffuCombine`/`CompletableFutureUtils#combine`方法。
+
+示例代码如下：
+
+```java
+public class CffuCombineDemo {
+  public static void main(String[] args) throws Exception {
+    //////////////////////////////////////////////////
+    // cffuCombine
+    //////////////////////////////////////////////////
+    Cffu<String> cffu1 = cffuFactory.completedFuture("21");
+    Cffu<Integer> cffu2 = cffuFactory.completedFuture(42);
+
+    Cffu<Tuple2<String, Integer>> allOfWithResult = cffu1.cffuCombine(cffu2);
+    // or: cffuFactory.cffuCombine(cffu1, cffu2);
+    System.out.println(allOfWithResult.get());
+
+    //////////////////////////////////////////////////
+    // or CompletableFutureUtils.combine
+    //////////////////////////////////////////////////
+    CompletableFuture<String> cf1 = CompletableFuture.completedFuture("21");
+    CompletableFuture<Integer> cf2 = CompletableFuture.completedFuture(42);
+
+    CompletableFuture<Tuple2<String, Integer>> allOfWithResult2 = CompletableFutureUtils.combine(cf1, cf2);
+    System.out.println(allOfWithResult2.get());
+  }
+}
+```
+
+> \# 完整可运行的Demo代码参见[`CffuCombineDemo.java`](cffu-core/src/test/java/io/foldright/demo/CffuCombineDemo.java)。
+
+### 2.2 支持设置缺省的业务线程池
+
+- `CompletableFuture`执行执行（即`CompletableFuture`的`*async`方法），使用的缺省线程池是`ForkJoinPool.commonPool()`。
+- 这个线程池差不多是`CPU`个线程，合适执行`CPU`密集的任务；对于业务逻辑，往往有很多等待操作（如网络`IO`、阻塞等待），并不是`CPU`密集的。
+- 业务使用这个缺省线程池`ForkJoinPool.commonPool()`是很危险的❗
+
+结果就是，业务调用`CompletableFuture`的`*async`方法时，几乎每次都要反复传入业务线程池；这让`CompletableFuture`的使用很繁琐易错 🤯
+
+示例代码如下：
+
+```java
+public class NoDefaultExecutorSettingForCompletableFuture {
+  public static final Executor myBizExecutor = Executors.newCachedThreadPool();
+
+  public static void main(String[] args) {
+    CompletableFuture<Void> cf1 = CompletableFuture.runAsync(() -> System.out.println("doing a long time work!"),
+        myBizExecutor);
+
+    CompletableFuture<Void> cf2 = CompletableFuture
+        .supplyAsync(
+            () -> {
+              System.out.println("doing another long time work!!");
+              return 42;
+            },
+            myBizExecutor)
+        .thenAcceptAsync(
+            i -> System.out.println("doing third long time work!!!"),
+            myBizExecutor);
+
+    CompletableFuture.allOf(cf1, cf2).join();
+  }
+}
+```
+
+> \# 完整可运行的Demo代码参见[`NoDefaultExecutorSettingForCompletableFuture.java`](cffu-core/src/test/java/io/foldright/demo/NoDefaultExecutorSettingForCompletableFuture.java)。
+
+`Cffu`支持设置缺省的业务线程池，规避上面的繁琐与危险。示例代码如下：
+
+```java
+public class DefaultExecutorSettingForCffu {
+  public static final Executor myBizExecutor = Executors.newCachedThreadPool();
+  public static final CffuFactory cffuFactory = newCffuFactoryBuilder(myBizExecutor).build();
+
+  public static void main(String[] args) {
+    Cffu<Void> cf1 = cffuFactory.runAsync(() -> System.out.println("doing a long time work!"));
+
+    Cffu<Void> cf2 = cffuFactory.supplyAsync(() -> {
+      System.out.println("doing another long time work!!");
+      return 42;
+    }).thenAcceptAsync(i -> System.out.println("doing third long time work!!!"));
+
+    cffuFactory.allOf(cf1, cf2).join();
+  }
+}
+```
+
+> \# 完整可运行的Demo代码参见[`DefaultExecutorSettingForCffu.java`](cffu-core/src/test/java/io/foldright/demo/DefaultExecutorSettingForCffu.java)。
+
+### 2.3 高效灵活的并发执行策略（`allOfFastFail`/`anyOfSuccess`）
+
+- `CompletableFuture`的`allOf`方法会等待所有输入`CF`运行完成；即使有`CF`失败了也要等待后续`CF`运行完成，再返回一个失败`CF`。
+  - 对于业务逻辑来说，这样失败的继续等待策略，减慢了业务响应性，会希望如果有输入`CF`失败了，而快速失败不再等待。
+  - `cffu`提供了相应的`cffuAllOfFastFail`/`allOfFastFail`方法。
+- `CompletableFuture`的`anyOf`方法返回首个完成的`CF`（不会等待后续没有完成`CF`，赛马模式）；即使首个完成的`CF`是失败的，也会返回这个失败的`CF`。
+  - 对于业务逻辑来说，会希望赛马模式返回首个成功的`CF`，而不是首个完成但失败的`CF`。（当所有的输入`CF`都失败时，才返回失败）
+  - `cffu`提供了相应的`cffuAnyOfSuccess`/`anyOfSuccess`方法。
+
+> 📔 关于多个`CF`的并发执行策略，可以看看`Javascript`的[`Promise Concurrency`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#promise_concurrency)；在`Javascript`中，`Promise`即对应`CompletableFuture`。
+>
+> `Javascript Promise`提供了4个并发执行方法：
+>
+> - [`Promise.all()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all)：等待所有`Promise`运行完成，只要有一个失败就返回失败（对应`cffu`的`allOfFastFail`方法）
+> - [`Promise.allSettled()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled)：等待所有`Promise`运行完成，不管成功失败（对应`cffu`的`allOf`方法）
+> - [`Promise.any()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/any)：赛马模式，返回首个成功的`Promise`（对应`cffu`的`anyOfSuccess`方法）
+> - [`Promise.race()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race)：赛马模式，返回首个完成的`Promise`（对应`cffu`的`anyOf`方法）
+>
+> PS：`Javascript Promise`的方法命名真考究真好 👍
+>
+> `cffu`新加2个方法后，与`Javascript Promise`规范的并发方法一致对齐了～ 👏
+
+示例代码如下：
+
+```java
+public class ConcurrencyStrategyDemo {
+  public static final Executor myBizExecutor = Executors.newCachedThreadPool();
+  public static final CffuFactory cffuFactory = newCffuFactoryBuilder(myBizExecutor).build();
+
+  public static void main(String[] args) throws Exception {
+    //////////////////////////////////////////////////
+    // CffuFactory#cffuAllOfFastFail
+    // CffuFactory#allOfFastFail
+    //////////////////////////////////////////////////
+    Cffu<Integer> successAfterLongTime = cffuFactory.supplyAsync(() -> {
+      sleep(10_000); // sleep LONG time
+      return 42;
+    });
+    Cffu<Integer> failed = cffuFactory.failedFuture(new RuntimeException("Bang!"));
+
+    Cffu<Void> cffu1 = cffuFactory.allOfFastFail(successAfterLongTime, failed);
+    // Result type is Void!
+    // fast failed without waiting successAfterLongTime
+
+    Cffu<List<Integer>> fastFailed = cffuFactory.cffuAllOfFastFail(successAfterLongTime, failed);
+    // fast failed without waiting successAfterLongTime
+    System.out.println(fastFailed.get());
+
+    //////////////////////////////////////////////////
+    // or CompletableFutureUtils#allOfFastFailWithResult
+    //    CompletableFutureUtils#allOfFastFail
+    //////////////////////////////////////////////////
+    CompletableFuture<Integer> successAfterLongTimeCf = CompletableFuture.supplyAsync(() -> {
+      sleep(10_000); // sleep LONG time
+      return 42;
+    });
+    CompletableFuture<Integer> failedCf = CompletableFutureUtils.failedFuture(new RuntimeException("Bang!"));
+
+    CompletableFuture<Void> cf1 = CompletableFutureUtils.allOfFastFail(successAfterLongTimeCf, failedCf);
+    // Result type is Void!
+    // fast failed without waiting successAfterLongTimeCf
+
+    CompletableFuture<List<Integer>> fastFailedCf = CompletableFutureUtils.allOfFastFailWithResult(successAfterLongTimeCf, failedCf);
+    // fast failed without waiting successAfterLongTime
+    System.out.println(fastFailedCf.get());
+  }
+}
+```
+
+> \# 完整可运行的Demo代码参见[`ConcurrencyStrategyDemo.java`](cffu-core/src/test/java/io/foldright/demo/ConcurrencyStrategyDemo.java)。
+
+### `cffuAnyOf`方法
+
+返回具体类型的`anyOf`方法
+
+- 提供的方法：
+  - `CompletableFuture<T> anyOf(CompletableFuture<T>... cfs)`
+  - `CompletableFuture<T> anyOf(List<? extends CompletableFuture<T>> cfs)`
+- `CF`返回的类型是`Object`，丢失具体类型：
+  - `CompletableFuture<Object> anyOf(CompletableFuture<?>... cfs)`
+
+### `cffuJoin(timeout, unit)`方法
+
+### 支持超时的`join`的方法；就像`cf.get(timeout, unit)` 之于 `cf.get()`
+
+`CompletableFuture`缺少这个功能，`cf.join()`会「不超时永远等待」很危险❗️
+
+### Backport支持`Java 8`
+
+Backport`Java 9+`高版本的所有`CompletableFuture`新功能，在`Java 8`可以直接使用。
+
+其中重要的Backport功能有：
+
+- 超时控制：`orTimeout(...)`/`completeOnTimeout(...)`方法
+- 延迟执行：`delayedExecutor(...)`方法
+- 工厂方法：`failedFuture(...)`/`completedStage(...)`/`failedStage(...)`
+
+### 实现所在的类：
+
+- `cffu`
+  - [`Cffu.java`](cffu-core/src/main/java/io/foldright/cffu/Cffu.java)
+  - [`CffuFactory.java`](cffu-core/src/main/java/io/foldright/cffu/CffuFactory.java)
+- `cffu util`
+  - [`CompletableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu/CompletableFutureUtils.java)
+
+## 3. 如何从直接使用`CompletableFuture`类迁移到`Cffu`类
+
+为了使用`Cffu`增强功能，可以迁移已有直接使用`CompletableFuture`的代码到`Cffu`。包含2步修改：
+
+- 在类型声明地方，`CompletableFuture`改成`Cffu`
+- 在`CompletableFuture`静态方法调用的地方，类名`CompletableFuture`改成`CffuFactory`实例
+
+之所以可以这样迁移，是因为：
+
+- `CompletableFuture`类的所有实例方法都在`Cffu`类，且有相同的方法签名与功能。
+- `CompletableFuture`类的所有静态方法都在`CffuFactory`类，且有相同的方法签名与功能。
+
+# 🔌 API Docs
 
 - 当前版本的`Java API`文档： https://foldright.io/cffu/apidocs/
 - 当前版本的`Kotlin API`文档： https://foldright.io/cffu/dokka/
 
-## 🍪依赖
+代码示例：
+
+# 🍪依赖
 
 > 可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/0.9.0/versions) 查看最新版本与可用版本列表。
 
-- `cffu`库（包含[`Java CompletableFuture`](https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/concurrent/CompletableFuture.html)的增强`CompletableFutureUtils`）:
+- `cffu`库（包含[`Java CompletableFuture`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/CompletableFuture.html)的增强`CompletableFutureUtils`）:
   - For `Maven` projects:
 
     ```xml
-
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
@@ -477,7 +568,6 @@ fun main() {
   - For `Maven` projects:
 
     ```xml
-
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-kotlin</artifactId>
@@ -498,7 +588,6 @@ fun main() {
   - For `Maven` projects:
 
     ```xml
-
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-bom</artifactId>
@@ -521,7 +610,6 @@ fun main() {
   - For `Maven` projects:
 
     ```xml
-
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
@@ -540,10 +628,17 @@ fun main() {
     runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:0.9.7'
     ```
 
-# 👋 ∞、关于库名
+# 📚 更多资料
+
+- [`CompletableFuture` Guide](docs/completable-future-guide.md)
+  - 完备说明`CompletableFuture`的使用方式
+  - 给出 最佳实践建议 与 使用陷阱注意
+  - 期望在业务中，更有效安全地使用`CompletableFuture`
+
+# 👋 关于库名
 
 `cffu` 是 `CompletableFuture-Fu`的缩写；读作`C Fu`，谐音`Shifu/师傅`。
 
 嗯嗯，想到了《功夫熊猫》里可爱的小浣熊师傅吧～ 🦝
 
-<a href="#dummy"><img src="https://user-images.githubusercontent.com/1063891/230850403-87ff74de-1acb-4aff-b9b4-632e4e51e225.png" width="35%" alt="shifu" /></a>
+<a href="#dummy"><img src="https://user-images.githubusercontent.com/1063891/230850403-87ff74de-1acb-4aff-b9b4-632e4e51e225.png" width="40%" alt="shifu" /></a>

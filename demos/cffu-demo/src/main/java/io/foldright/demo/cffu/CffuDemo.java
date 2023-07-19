@@ -35,7 +35,7 @@ public class CffuDemo {
             return n * 2;
         });
         final Cffu<Integer> longFailedTask = cf42.thenApplyAsync(unused -> {
-            sleep(1_000);
+            sleep(1000);
             throw new RuntimeException("Bang!");
         });
 
