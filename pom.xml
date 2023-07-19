@@ -584,7 +584,7 @@
 								</additionalOption>
 								<additionalOption>${javadoc.package.list.dir}/jsr305/</additionalOption>
 								<additionalOption>-linkoffline</additionalOption>
-								<additionalOption>https://docs.oracle.com/en/java/javase/19/docs/api/java.base/</additionalOption>
+								<additionalOption>https://docs.oracle.com/en/java/javase/20/docs/api/java.base/</additionalOption>
 								<additionalOption>${javadoc.package.list.dir}/java/</additionalOption>
 							</additionalOptions>
 							<additionalJOptions>
