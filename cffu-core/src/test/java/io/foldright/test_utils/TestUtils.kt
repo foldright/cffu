@@ -750,14 +750,7 @@ fun isJava9Plus() = isJavaVersionAtLeast(JavaVersion.JAVA_9)
 
 fun isJava12Plus() = isJavaVersionAtLeast(JavaVersion.JAVA_12)
 
-fun isJava19Plus(): Boolean = try {
-    val cf = CompletableFuture.completedFuture(42)
-    // `resultNow` is the new method of CompletableFuture since java 19
-    cf.resultNow()
-    true
-} catch (_: NoSuchMethodError) {
-    false
-}
+fun isJava19Plus(): Boolean = isJavaVersionAtLeast(JavaVersion.JAVA_19)
 
 // about CI env var
 // https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
