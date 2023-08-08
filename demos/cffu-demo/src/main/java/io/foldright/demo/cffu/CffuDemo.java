@@ -12,7 +12,6 @@ import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
 
 public class CffuDemo {
     private static final ExecutorService myBizThreadPool = Executors.newCachedThreadPool();
-
     // Create a CffuFactory with configuration of the customized thread pool
     private static final CffuFactory cffuFactory = newCffuFactoryBuilder(myBizThreadPool).build();
 
@@ -35,7 +34,7 @@ public class CffuDemo {
             return n * 2;
         });
         final Cffu<Integer> longFailedTask = cf42.thenApplyAsync(unused -> {
-            sleep(1_000);
+            sleep(1000);
             throw new RuntimeException("Bang!");
         });
 

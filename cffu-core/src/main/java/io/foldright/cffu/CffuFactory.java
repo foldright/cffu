@@ -20,7 +20,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-import static io.foldright.cffu.CompletableFutureUtils.screenExecutor;
 import static java.util.Objects.requireNonNull;
 
 
@@ -56,7 +55,7 @@ public final class CffuFactory {
     private final boolean forbidObtrudeMethods;
 
     CffuFactory(Executor defaultExecutor, boolean forbidObtrudeMethods) {
-        this.defaultExecutor = screenExecutor(defaultExecutor);
+        this.defaultExecutor = CompletableFutureUtils.screenExecutor(defaultExecutor);
         this.forbidObtrudeMethods = forbidObtrudeMethods;
     }
 
