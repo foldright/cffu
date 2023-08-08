@@ -572,6 +572,144 @@ class CffuFactoryTest {
         }
     }
 
+    @Test
+    void test_cffuCombineFastFail() throws Exception {
+        assertEquals(Tuple2.of(n, s), cffuFactory.cffuCombineFastFail(
+                completedFuture(n),
+                completedFuture(s)
+        ).get());
+
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.cffuCombineFastFail(
+                completedFuture(n),
+                completedFuture(s),
+                completedFuture(d)
+        ).get());
+
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.cffuCombineFastFail(
+                completedFuture(n),
+                completedFuture(s),
+                completedFuture(d),
+                completedFuture(anotherN)
+        ).get());
+
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.cffuCombineFastFail(
+                completedFuture(n),
+                completedFuture(s),
+                completedFuture(d),
+                completedFuture(anotherN),
+                completedFuture(n + n)
+        ).get());
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        assertEquals(Tuple2.of(n, s), cffuFactory.cffuCombineFastFail(
+                cffuFactory.completedFuture(n),
+                cffuFactory.completedFuture(s)
+        ).get());
+
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.cffuCombineFastFail(
+                cffuFactory.completedFuture(n),
+                cffuFactory.completedFuture(s),
+                cffuFactory.completedFuture(d)
+        ).get());
+
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.cffuCombineFastFail(
+                cffuFactory.completedFuture(n),
+                cffuFactory.completedFuture(s),
+                cffuFactory.completedFuture(d),
+                cffuFactory.completedFuture(anotherN)
+        ).get());
+
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.cffuCombineFastFail(
+                cffuFactory.completedFuture(n),
+                cffuFactory.completedFuture(s),
+                cffuFactory.completedFuture(d),
+                cffuFactory.completedFuture(anotherN),
+                cffuFactory.completedFuture(n + n)
+        ).get());
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        assertEquals(Tuple2.of(n, s), cffuFactory.completedFuture(n).cffuCombineFastFail(
+                completedFuture(s)
+        ).get());
+
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.completedFuture(n).cffuCombineFastFail(
+                completedFuture(s),
+                completedFuture(d)
+        ).get());
+
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.completedFuture(n).cffuCombineFastFail(
+                completedFuture(s),
+                completedFuture(d),
+                completedFuture(anotherN)
+        ).get());
+
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.completedFuture(n).cffuCombineFastFail(
+                completedFuture(s),
+                completedFuture(d),
+                completedFuture(anotherN),
+                completedFuture(n + n)
+        ).get());
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        assertEquals(Tuple2.of(n, s), cffuFactory.completedFuture(n).cffuCombineFastFail(
+                cffuFactory.completedFuture(s)
+        ).get());
+
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.completedFuture(n).cffuCombineFastFail(
+                cffuFactory.completedFuture(s),
+                cffuFactory.completedFuture(d)
+        ).get());
+
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.completedFuture(n).cffuCombineFastFail(
+                cffuFactory.completedFuture(s),
+                cffuFactory.completedFuture(d),
+                cffuFactory.completedFuture(anotherN)
+        ).get());
+
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.completedFuture(n).cffuCombineFastFail(
+                cffuFactory.completedFuture(s),
+                cffuFactory.completedFuture(d),
+                cffuFactory.completedFuture(anotherN),
+                cffuFactory.completedFuture(n + n)
+        ).get());
+    }
+
+    @Test
+    void test_cffuCombineFastFail_exceptionally() throws Exception {
+        try {
+            cffuFactory.cffuCombineFastFail(completedFuture(n), failedFuture(rte)).get();
+
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+
+        try {
+            cffuFactory.cffuCombineFastFail(completedFuture(n), failedFuture(rte), completedFuture(s)).get();
+
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+
+        try {
+            cffuFactory.cffuCombineFastFail(
+                    completedFuture(n),
+                    completedFuture(d),
+                    failedFuture(rte),
+                    completedFuture(s),
+                    completedFuture(anotherN)
+            ).get();
+
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# Conversion (Static) Methods
     //

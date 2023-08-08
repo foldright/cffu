@@ -387,6 +387,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //
     //    - cffuCombine(Cffu...)
     //    - cffuCombine(CompletableFuture...)
+    //    - cffuCombineFastFail(Cffu...)
+    //    - cffuCombineFastFail(CompletableFuture...)
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -429,6 +431,45 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
+     * Same as {@link CffuFactory#cffuCombineFastFail(Cffu, Cffu)}, providing this method is convenient for method chaining.
+     * <p>
+     * call this method
+     * <p>
+     * {@code combinedCffu = cffu.cffuCombineFastFail(cffu2);}
+     * <p>
+     * is same as:
+     * <p>
+     * {@code combinedCffu = cffu.cffuFactory().cffuCombineFastFail(cffu, cffu2);}
+     *
+     * @return the new Cffu
+     * @see CffuFactory#cffuCombineFastFail(Cffu, Cffu)
+     */
+    @Contract(pure = true)
+    public <T2> Cffu<Tuple2<T, T2>> cffuCombineFastFail(Cffu<T2> cf2) {
+        return fac.cffuCombineFastFail(this, cf2);
+    }
+
+    /**
+     * Same as {@link CffuFactory#cffuCombineFastFail(CompletableFuture, CompletableFuture)},
+     * providing this method is convenient for method chaining.
+     * <p>
+     * call this method
+     * <p>
+     * {@code combinedCffu = cffu.cffuCombineFastFail(cf2);}
+     * <p>
+     * is same as:
+     * <p>
+     * {@code combinedCffu = cffu.cffuFactory().cffuCombineFastFail(cffu.toCompletableFuture(), cf2);}
+     *
+     * @return the new Cffu
+     * @see CffuFactory#cffuCombineFastFail(CompletableFuture, CompletableFuture)
+     */
+    @Contract(pure = true)
+    public <T2> Cffu<Tuple2<T, T2>> cffuCombineFastFail(CompletableFuture<T2> cf2) {
+        return fac.cffuCombineFastFail(toCompletableFuture(), cf2);
+    }
+
+    /**
      * Same as {@link CffuFactory#cffuCombine(Cffu, Cffu, Cffu)},
      * providing this method is convenient for method chaining.
      * <p>
@@ -466,6 +507,46 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Contract(pure = true)
     public <T2, T3> Cffu<Tuple3<T, T2, T3>> cffuCombine(CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
         return fac.cffuCombine(toCompletableFuture(), cf2, cf3);
+    }
+
+    /**
+     * Same as {@link CffuFactory#cffuCombineFastFail(Cffu, Cffu, Cffu)},
+     * providing this method is convenient for method chaining.
+     * <p>
+     * call this method
+     * <p>
+     * {@code combinedCffu = cffu.cffuCombineFastFail(cffu2, cffu3);}
+     * <p>
+     * is same as:
+     * <p>
+     * {@code combinedCffu = cffu.cffuFactory().cffuCombineFastFail(cffu, cffu2, cffu3);}
+     *
+     * @return the new Cffu
+     * @see CffuFactory#cffuCombineFastFail(Cffu, Cffu, Cffu)
+     */
+    @Contract(pure = true)
+    public <T2, T3> Cffu<Tuple3<T, T2, T3>> cffuCombineFastFail(Cffu<T2> cf2, Cffu<T3> cf3) {
+        return fac.cffuCombineFastFail(this, cf2, cf3);
+    }
+
+    /**
+     * Same as {@link CffuFactory#cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture)},
+     * providing this method is convenient for method chaining.
+     * <p>
+     * call this method
+     * <p>
+     * {@code combinedCffu = cffu.cffuCombineFastFail(cf2, cf3);}
+     * <p>
+     * is same as:
+     * <p>
+     * {@code combinedCffu = cffu.cffuFactory().cffuCombineFastFail(cffu.toCompletableFuture(), cf2, cf3);}
+     *
+     * @return the new Cffu
+     * @see CffuFactory#cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture)
+     */
+    @Contract(pure = true)
+    public <T2, T3> Cffu<Tuple3<T, T2, T3>> cffuCombineFastFail(CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
+        return fac.cffuCombineFastFail(toCompletableFuture(), cf2, cf3);
     }
 
     /**
@@ -510,6 +591,47 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
+     * Same as {@link CffuFactory#cffuCombineFastFail(Cffu, Cffu, Cffu, Cffu)},
+     * providing this method is convenient for method chaining.
+     * <p>
+     * call this method
+     * <p>
+     * {@code combinedCffu = cffu.cffuCombineFastFail(cffu2, cffu3, cffu4);}
+     * <p>
+     * is same as:
+     * <p>
+     * {@code combinedCffu = cffu.cffuFactory().cffuCombineFastFail(cffu, cffu2, cffu3, cffu4);}
+     *
+     * @return the new Cffu
+     * @see CffuFactory#cffuCombineFastFail(Cffu, Cffu, Cffu, Cffu)
+     */
+    @Contract(pure = true)
+    public <T2, T3, T4> Cffu<Tuple4<T, T2, T3, T4>> cffuCombineFastFail(Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4) {
+        return fac.cffuCombineFastFail(this, cf2, cf3, cf4);
+    }
+
+    /**
+     * Same as {@link CffuFactory#cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)},
+     * providing this method is convenient for method chaining.
+     * <p>
+     * call this method
+     * <p>
+     * {@code combinedCffu = cffu.cffuCombineFastFail(cf2, cf3, cf4);}
+     * <p>
+     * is same as:
+     * <p>
+     * {@code combinedCffu = cffu.cffuFactory().cffuCombineFastFail(cffu.toCompletableFuture(), cf2, cf3, cf4);}
+     *
+     * @return the new Cffu
+     * @see CffuFactory#cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
+     */
+    @Contract(pure = true)
+    public <T2, T3, T4> Cffu<Tuple4<T, T2, T3, T4>> cffuCombineFastFail(
+            CompletableFuture<T2> cf2, CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
+        return fac.cffuCombineFastFail(toCompletableFuture(), cf2, cf3, cf4);
+    }
+
+    /**
      * Same as {@link CffuFactory#cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)},
      * providing this method is convenient for method chaining.
      * <p>
@@ -549,6 +671,48 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public <T2, T3, T4, T5> Cffu<Tuple5<T, T2, T3, T4, T5>> cffuCombine(
             CompletableFuture<T2> cf2, CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
         return fac.cffuCombine(toCompletableFuture(), cf2, cf3, cf4, cf5);
+    }
+
+    /**
+     * Same as {@link CffuFactory#cffuCombineFastFail(Cffu, Cffu, Cffu, Cffu, Cffu)},
+     * providing this method is convenient for method chaining.
+     * <p>
+     * call this method
+     * <p>
+     * {@code combinedCffu = cffu.cffuCombineFastFail(cffu2, cffu3, cffu4, cffu5);}
+     * <p>
+     * is same as:
+     * <p>
+     * {@code combinedCffu = cffu.cffuFactory().cffuCombineFastFail(cffu, cffu2, cffu3, cffu4, cffu5);}
+     *
+     * @return the new Cffu
+     * @see CffuFactory#cffuCombineFastFail(Cffu, Cffu, Cffu, Cffu, Cffu)
+     */
+    @Contract(pure = true)
+    public <T2, T3, T4, T5> Cffu<Tuple5<T, T2, T3, T4, T5>> cffuCombineFastFail(
+            Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4, Cffu<T5> cf5) {
+        return fac.cffuCombineFastFail(this, cf2, cf3, cf4, cf5);
+    }
+
+    /**
+     * Same as {@link CffuFactory#cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)},
+     * providing this method is convenient for method chaining.
+     * <p>
+     * call this method
+     * <p>
+     * {@code combinedCffu = cffu.cffuCombineFastFail(cf2, cf3, cf4, cf5);}
+     * <p>
+     * is same as:
+     * <p>
+     * {@code combinedCffu = cffu.cffuFactory().cffuCombineFastFail(cffu.toCompletableFuture(), cf2, cf3, cf4, cf5);}
+     *
+     * @return the new Cffu
+     * @see CffuFactory#cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
+     */
+    @Contract(pure = true)
+    public <T2, T3, T4, T5> Cffu<Tuple5<T, T2, T3, T4, T5>> cffuCombineFastFail(
+            CompletableFuture<T2> cf2, CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
+        return fac.cffuCombineFastFail(toCompletableFuture(), cf2, cf3, cf4, cf5);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
