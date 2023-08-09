@@ -1,4 +1,4 @@
-# <div align="center"><a href="#dummy"><img src="https://user-images.githubusercontent.com/1063891/230851256-ac495db4-e2cd-4dbe-b881-91a143c4b551.png" alt="🦝 CompletableFuture Fu (CF-Fu)"></a></div>
+# <div align="center"><a href="#dummy"><img src="https://github.com/foldright/cffu/assets/1063891/124658cd-025f-471e-8da1-7eea0e482915" alt="🦝 CompletableFuture Fu (CF-Fu)"></a></div>
 
 > 🚧 项目还在开发中，发布了`v0.x`版本： [![Maven Central](https://img.shields.io/maven-central/v/io.foldright/cffu?logo=apache-maven&label=cffu&logoColor=white)](https://central.sonatype.com/artifact/io.foldright/cffu/0.9.0/versions)
 >
