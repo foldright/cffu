@@ -392,10 +392,23 @@ public final class CffuFactory {
      * also does so *without* waiting other incomplete given Cffus,
      * with a CompletionException holding this exception as its cause.
      * If no Cffus are provided, returns a Cffu completed with the value {@code null}.
+     * <p>
+     * if you need the results of given Cffus, prefer below methods:
+     * <ol>
+     *   <li>{@link #cffuAllOfFastFail(Cffu[])}
+     *   <li>{@link #cffuCombineFastFail(Cffu, Cffu)} / {@link #cffuCombineFastFail(Cffu, Cffu, Cffu, Cffu, Cffu)}
+     *       (provided overloaded methods with 2~5 input)
+     * </ol>
+     * <p>
      *
      * @param cfs the Cffus
      * @return a new Cffu that is successful when all the given Cffus success
      * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #cffuAllOfFastFail(Cffu[])
+     * @see #cffuCombineFastFail(Cffu, Cffu)
+     * @see #cffuCombineFastFail(Cffu, Cffu, Cffu)
+     * @see #cffuCombineFastFail(Cffu, Cffu, Cffu, Cffu)
+     * @see #cffuCombineFastFail(Cffu, Cffu, Cffu, Cffu, Cffu)
      * @see CompletableFutureUtils#allOfFastFail(CompletableFuture[])
      */
     @Contract(pure = true)
@@ -414,12 +427,24 @@ public final class CffuFactory {
      * If no CompletableFutures are provided, returns a Cffu completed with the value {@code null}.
      * <p>
      * Same as {@link #allOfFastFail(Cffu[])} with overloaded argument type {@link CompletableFuture}.
+     * <p>
+     * if you need the results of given CompletableFutures, prefer below methods:
+     * <ol>
+     *   <li>{@link #cffuAllOfFastFail(CompletableFuture[])}
+     *   <li>{@link #cffuCombineFastFail(CompletableFuture, CompletableFuture)} /
+     *       {@link #cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
+     *       (provided overloaded methods with 2~5 input)
+     * </ol>
      *
      * @param cfs the CompletableFutures
      * @return a new Cffu that is successful when all the given CompletableFutures success
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #allOfFastFail(Cffu[])
      * @see #cffuAllOfFastFail(CompletableFuture[])
+     * @see #cffuCombineFastFail(CompletableFuture, CompletableFuture)
+     * @see #cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see #cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see #cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
      * @see CompletableFutureUtils#allOfFastFail(CompletableFuture[])
      */
     @Contract(pure = true)

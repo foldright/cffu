@@ -237,6 +237,74 @@ class CompletableFutureExtensionsTest : FunSpec({
         ).get() shouldBe Tuple5.of(n, s, d, anotherN, n + n)
     }
 
+    test("combine should NOT fast fail - CompletableFuture") {
+        val incomplete = CompletableFuture<Any>()
+        val fail = CompletableFutureUtils.failedFuture<Any>(rte)
+
+        val cfS = CompletableFuture.completedFuture(s)
+        val cfD = CompletableFuture.completedFuture(d)
+        val cfAn = CompletableFuture.completedFuture(anotherN)
+
+        shouldThrow<TimeoutException> {
+            incomplete.combine(fail).get(50, TimeUnit.MILLISECONDS)
+        }
+        shouldThrow<TimeoutException> {
+            incomplete.combine(fail, cfS).get(50, TimeUnit.MILLISECONDS)
+        }
+        shouldThrow<TimeoutException> {
+            incomplete.combine(fail, cfD, cfS).get(50, TimeUnit.MILLISECONDS)
+        }
+        shouldThrow<TimeoutException> {
+            incomplete.combine(cfD, fail, cfS, cfAn).get(50, TimeUnit.MILLISECONDS)
+        }
+    }
+
+    test("combineFastFail - CompletableFuture") {
+        CompletableFuture.completedFuture(n).combineFastFail(
+            CompletableFuture.completedFuture(s)
+        ).get() shouldBe Tuple2.of(n, s)
+
+        CompletableFuture.completedFuture(n).combineFastFail(
+            CompletableFuture.completedFuture(s),
+            CompletableFuture.completedFuture(d)
+        ).get() shouldBe Tuple3.of(n, s, d)
+
+        CompletableFuture.completedFuture(n).combineFastFail(
+            CompletableFuture.completedFuture(s),
+            CompletableFuture.completedFuture(d),
+            CompletableFuture.completedFuture(anotherN)
+        ).get() shouldBe Tuple4.of(n, s, d, anotherN)
+
+        CompletableFuture.completedFuture(n).combineFastFail(
+            CompletableFuture.completedFuture(s),
+            CompletableFuture.completedFuture(d),
+            CompletableFuture.completedFuture(anotherN),
+            CompletableFuture.completedFuture(n + n)
+        ).get() shouldBe Tuple5.of(n, s, d, anotherN, n + n)
+    }
+
+    test("combineFastFail should fast fail - CompletableFuture") {
+        val incomplete = CompletableFuture<Any>()
+        val fail = CompletableFutureUtils.failedFuture<Any>(rte)
+
+        val cfS = CompletableFuture.completedFuture(s)
+        val cfD = CompletableFuture.completedFuture(d)
+        val cfAn = CompletableFuture.completedFuture(anotherN)
+
+        shouldThrow<ExecutionException> {
+            incomplete.combineFastFail(fail).get(0, TimeUnit.MILLISECONDS)
+        }.cause shouldBeSameInstanceAs rte
+        shouldThrow<ExecutionException> {
+            incomplete.combineFastFail(fail, cfS).get(0, TimeUnit.MILLISECONDS)
+        }.cause shouldBeSameInstanceAs rte
+        shouldThrow<ExecutionException> {
+            incomplete.combineFastFail(fail, cfD, cfS).get(0, TimeUnit.MILLISECONDS)
+        }.cause shouldBeSameInstanceAs rte
+        shouldThrow<ExecutionException> {
+            incomplete.combineFastFail(cfD, fail, cfS, cfAn).get(0, TimeUnit.MILLISECONDS)
+        }.cause shouldBeSameInstanceAs rte
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# Backport CF instance methods
     //  compatibility for low Java version

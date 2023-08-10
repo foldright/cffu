@@ -648,22 +648,22 @@ class CompletableFutureUtilsTest {
         final CompletableFuture<Integer> cf_an = completedFuture(anotherN);
 
         try {
-            combine(incomplete, fail).get(100, TimeUnit.MILLISECONDS);
+            combine(incomplete, fail).get(50, TimeUnit.MILLISECONDS);
             fail();
         } catch (TimeoutException expected) {
         }
         try {
-            combine(incomplete, fail, cf_s).get(100, TimeUnit.MILLISECONDS);
+            combine(incomplete, fail, cf_s).get(50, TimeUnit.MILLISECONDS);
             fail();
         } catch (TimeoutException expected) {
         }
         try {
-            combine(incomplete, fail, cf_d, cf_s).get(100, TimeUnit.MILLISECONDS);
+            combine(incomplete, fail, cf_d, cf_s).get(50, TimeUnit.MILLISECONDS);
             fail();
         } catch (TimeoutException expected) {
         }
         try {
-            combine(incomplete, cf_d, fail, cf_s, cf_an).get(100, TimeUnit.MILLISECONDS);
+            combine(incomplete, cf_d, fail, cf_s, cf_an).get(50, TimeUnit.MILLISECONDS);
             fail();
         } catch (TimeoutException expected) {
         }
