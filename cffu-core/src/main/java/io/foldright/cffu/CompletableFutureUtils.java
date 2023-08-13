@@ -979,9 +979,15 @@ public final class CompletableFutureUtils {
     //# Getter methods
 
     /**
-     * Returns the default Executor used for async methods that do not specify an Executor.
+     * Returns the default Executor used for async methods that do not specify an Executor. e.g.
+     * <ul>
+     *     <li>{@link #delayedExecutor(long, TimeUnit)}
+     *     <li>{@link #exceptionallyAsync(CompletableFuture, Function)}
+     *     <li>{@link #completeAsync(CompletableFuture, Supplier)}
+     * </ul>
      * This class uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread,
-     * or else an Executor using one thread per async task.
+     * or else an Executor using one thread per async task.<br>
+     * <b><i>CAUTION:</i></b>This executor may be not suitable for common biz use(io intensive).
      *
      * @return the executor
      */

@@ -1694,9 +1694,18 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns the default Executor used for async methods that do not specify an Executor.
-     * This class uses the {@code CffuFactory.defaultExecutor}
-     * config by {@link CffuFactoryBuilder#newCffuFactoryBuilder(Executor)}.
+     * Returns the default Executor used for async methods that do not specify an Executor. e.g.
+     * <ul>
+     *     <li>{@link #thenRunAsync(Runnable)}
+     *     <li>{@link #thenAcceptAsync(Consumer)}
+     *     <li>{@link #thenApplyAsync(Function)}
+     *     <li>{@link #runAfterBothAsync(CompletionStage, Runnable)}
+     *     <li>{@link #runAfterEitherAsync(CompletionStage, Runnable)}
+     *     <li>{@link #thenCombineAsync(CompletionStage, BiFunction)}
+     *     <li>{@link #whenCompleteAsync(BiConsumer)}
+     *     <li>{@link #completeAsync(Supplier)}
+     * </ul>
+     * config from the {@link CffuFactory#defaultExecutor()}.
      *
      * @return the default executor
      * @see CffuFactory#defaultExecutor()

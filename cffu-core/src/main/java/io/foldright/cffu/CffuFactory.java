@@ -1202,7 +1202,13 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns {@code defaultExecutor}.
+     * Returns the default Executor used for async methods that do not specify an Executor. e.g.
+     * <ul>
+     *     <li>{@link #runAsync(Runnable)}
+     *     <li>{@link #supplyAsync(Supplier)}
+     *     <li>{@link #delayedExecutor(long, TimeUnit)}
+     * </ul>
+     * configured by {@link CffuFactoryBuilder#newCffuFactoryBuilder(Executor)}.
      *
      * @return the default executor
      * @see Cffu#defaultExecutor()
