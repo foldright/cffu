@@ -52,10 +52,13 @@ public final class CffuFactory {
     @NonNull
     private final Executor defaultExecutor;
 
+    private final Timeout defaultBlockingTimeout;
+
     private final boolean forbidObtrudeMethods;
 
-    CffuFactory(Executor defaultExecutor, boolean forbidObtrudeMethods) {
+    CffuFactory(Executor defaultExecutor, Timeout defaultBlockingTimeout, boolean forbidObtrudeMethods) {
         this.defaultExecutor = CompletableFutureUtils.screenExecutor(defaultExecutor);
+        this.defaultBlockingTimeout = defaultBlockingTimeout;
         this.forbidObtrudeMethods = forbidObtrudeMethods;
     }
 
@@ -1217,6 +1220,19 @@ public final class CffuFactory {
     @Contract(pure = true)
     public Executor defaultExecutor() {
         return defaultExecutor;
+    }
+
+
+    /**
+     * Returns a {@link CffuFactoryBuilder} with {@code defaultBlockingTimeout} setting
+     * for blocking methods {@link Cffu#get()}} and {@link Cffu#join()}.
+     * <p>
+     * if {@code defaultBlockingTimeout} is not set, these blocking methods will wait forever
+     * (the behavior of {@link CompletableFuture#get()}/{@link CompletableFuture#join()}).
+     */
+    @Nullable
+    public Timeout getDefaultBlockingTimeout() {
+        return defaultBlockingTimeout;
     }
 
     /**

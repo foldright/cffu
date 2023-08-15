@@ -9,7 +9,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -30,6 +32,8 @@ import static java.util.Objects.requireNonNull;
 public final class CffuFactoryBuilder {
     @NonNull
     private final Executor defaultExecutor;
+
+    private volatile Timeout defaultBlockingTimeout;
 
     private volatile boolean forbidObtrudeMethods = false;
 
@@ -54,6 +58,22 @@ public final class CffuFactoryBuilder {
     }
 
     /**
+     * Returns a {@link CffuFactoryBuilder} with {@code defaultBlockingTimeout} setting
+     * for blocking methods {@link Cffu#get()}} and {@link Cffu#join()}.
+     * <p>
+     * if {@code defaultBlockingTimeout} is not set, these blocking methods will wait forever
+     * (the behavior of {@link CompletableFuture#get()}/{@link CompletableFuture#join()}).
+     *
+     * @param timeout the maximum time to wait; if {@code timeout < 0}, clear the default timeout setting.
+     * @param unit    the time unit of the timeout argument
+     */
+    public CffuFactoryBuilder defaultBlockingTimeout(long timeout, TimeUnit unit) {
+        if (timeout < 0) this.defaultBlockingTimeout = null;
+        else this.defaultBlockingTimeout = new Timeout(timeout, unit);
+        return this;
+    }
+
+    /**
      * Sets {@code forbidObtrudeMethods} or not.
      *
      * @see CffuFactory#forbidObtrudeMethods()
@@ -72,7 +92,7 @@ public final class CffuFactoryBuilder {
      */
     @Contract(pure = true)
     public CffuFactory build() {
-        return new CffuFactory(defaultExecutor, forbidObtrudeMethods);
+        return new CffuFactory(defaultExecutor, defaultBlockingTimeout, forbidObtrudeMethods);
     }
 
     private static Executor wrapExecutor(Executor executor) {

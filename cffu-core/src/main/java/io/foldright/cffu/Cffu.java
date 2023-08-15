@@ -1271,8 +1271,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public T get() throws InterruptedException, ExecutionException {
         checkMinimalStage();
-
-        return cf.get();
+        if (fac.getDefaultBlockingTimeout() == null) return cf.get();
+        else return cf.get(fac.getDefaultBlockingTimeout().getTimeout(), fac.getDefaultBlockingTimeout().getUnit());
     }
 
     /**
@@ -1323,7 +1323,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public T join() {
         checkMinimalStage();
 
-        return cf.join();
+        if (fac.getDefaultBlockingTimeout() == null) return cf.join();
+        else return cffuJoin(fac.getDefaultBlockingTimeout().getTimeout(), fac.getDefaultBlockingTimeout().getUnit());
     }
 
     /**
