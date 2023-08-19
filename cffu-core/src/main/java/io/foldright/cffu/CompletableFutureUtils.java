@@ -14,8 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 import static java.util.Objects.requireNonNull;
 
@@ -29,7 +28,7 @@ import static java.util.Objects.requireNonNull;
 @ReturnValuesAreNonnullByDefault
 public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
-    //# allOf* methods
+    //# `allOf*` methods
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -166,7 +165,7 @@ public final class CompletableFutureUtils {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# anyOf* methods
+    //# `anyOf*` methods
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -252,7 +251,7 @@ public final class CompletableFutureUtils {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# combine methods
+    //# `combine` methods
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -476,6 +475,182 @@ public final class CompletableFutureUtils {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
+    //# "Both fast fail" enhanced `then both(binary input)` methods of CompletionStage:
+    //
+    //    - runAfterBothFastFail*(Runnable):     Void, Void -> Void
+    //    - thenAcceptBothFastFail*(BiConsumer): (T1, T2) -> Void
+    //    - thenCombineFastFail*(BiFunction):    (T1, T2) -> U
+    ////////////////////////////////////////////////////////////////////////////////
+
+    public static CompletableFuture<Void> runAfterBothFastFail(
+            CompletionStage<?> one, CompletionStage<?> other, Runnable action) {
+        requireNonNull(one, "one is null");
+        requireNonNull(other, "other is null");
+        requireNonNull(action, "action is null");
+
+        return allOfFastFail(one.toCompletableFuture(), other.toCompletableFuture()).thenRun(action);
+    }
+
+    public static CompletableFuture<Void> runAfterBothFastFailAsync(
+            CompletionStage<?> one, CompletionStage<?> other, Runnable action) {
+        return runAfterBothFastFailAsync(one, other, action, AsyncPoolHolder.ASYNC_POOL);
+    }
+
+    public static CompletableFuture<Void> runAfterBothFastFailAsync(
+            CompletionStage<?> one, CompletionStage<?> other, Runnable action, Executor executor) {
+        requireNonNull(one, "one is null");
+        requireNonNull(other, "other is null");
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
+        return allOfFastFail(one.toCompletableFuture(), other.toCompletableFuture()).thenRunAsync(action, executor);
+    }
+
+    public static <T, U> CompletableFuture<Void> thenAcceptBothFastFail(
+            CompletionStage<T> one, CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
+        requireNonNull(one, "one is null");
+        requireNonNull(other, "other is null");
+        requireNonNull(action, "action is null");
+
+        return combineFastFail(one.toCompletableFuture(), other.toCompletableFuture())
+                .thenAccept(t -> action.accept(t._1, t._2));
+    }
+
+    public static <T, U> CompletableFuture<Void> thenAcceptBothFastFailAsync(
+            CompletionStage<T> one, CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
+        return thenAcceptBothFastFailAsync(one, other, action, AsyncPoolHolder.ASYNC_POOL);
+    }
+
+    public static <T, U> CompletableFuture<Void> thenAcceptBothFastFailAsync(
+            CompletionStage<T> one, CompletionStage<? extends U> other,
+            BiConsumer<? super T, ? super U> action, Executor executor) {
+        requireNonNull(one, "one is null");
+        requireNonNull(other, "other is null");
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
+        return combineFastFail(one.toCompletableFuture(), other.toCompletableFuture())
+                .thenAcceptAsync(t -> action.accept(t._1, t._2), executor);
+    }
+
+    public static <T, U, V> CompletableFuture<V> thenCombineFastFail(
+            CompletionStage<T> one, CompletionStage<? extends U> other,
+            BiFunction<? super T, ? super U, ? extends V> fn) {
+        requireNonNull(one, "one is null");
+        requireNonNull(other, "other is null");
+        requireNonNull(fn, "fn is null");
+
+        return combineFastFail(one.toCompletableFuture(), other.toCompletableFuture())
+                .thenApply(t -> fn.apply(t._1, t._2));
+    }
+
+    public static <T, U, V> CompletableFuture<V> thenCombineFastFailAsync(
+            CompletionStage<T> one, CompletionStage<? extends U> other,
+            BiFunction<? super T, ? super U, ? extends V> fn) {
+        return thenCombineFastFailAsync(one, other, fn, AsyncPoolHolder.ASYNC_POOL);
+    }
+
+    public static <T, U, V> CompletableFuture<V> thenCombineFastFailAsync(
+            CompletionStage<T> one, CompletionStage<? extends U> other,
+            BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
+        requireNonNull(one, "one is null");
+        requireNonNull(other, "other is null");
+        requireNonNull(fn, "fn is null");
+        requireNonNull(executor, "executor is null");
+
+        return combineFastFail(one.toCompletableFuture(), other.toCompletableFuture())
+                .thenApplyAsync(t -> fn.apply(t._1, t._2), executor);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# "Either success" enhanced `then either(binary input)` methods of CompletionStage:
+    //
+    //    - runAfterEitherSuccess*(Runnable):  Void, Void -> Void
+    //    - acceptEitherSuccess*(BiConsumer):  (T1, T2) -> Void
+    //    - applyToEitherSuccess*(BiFunction): (T1, T2) -> U
+    ////////////////////////////////////////////////////////////////////////////////
+
+    public static CompletableFuture<Void> runAfterEitherSuccess(
+            CompletionStage<?> one, CompletionStage<?> other, Runnable action) {
+        requireNonNull(one, "one is null");
+        requireNonNull(other, "other is null");
+        requireNonNull(action, "action is null");
+
+        return anyOfSuccess(one.toCompletableFuture(), other.toCompletableFuture()).thenRun(action);
+    }
+
+    public static CompletableFuture<Void> runAfterEitherSuccessAsync(
+            CompletionStage<?> one, CompletionStage<?> other, Runnable action) {
+        return runAfterEitherSuccessAsync(one, other, action, AsyncPoolHolder.ASYNC_POOL);
+    }
+
+    public static CompletableFuture<Void> runAfterEitherSuccessAsync(
+            CompletionStage<?> one, CompletionStage<?> other, Runnable action, Executor executor) {
+        requireNonNull(one, "one is null");
+        requireNonNull(other, "other is null");
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
+        return anyOfSuccess(one.toCompletableFuture(), other.toCompletableFuture()).thenRunAsync(action, executor);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T> CompletableFuture<Void> acceptEitherSuccess(
+            CompletionStage<T> one, CompletionStage<? extends T> other, Consumer<? super T> action) {
+        requireNonNull(one, "one is null");
+        requireNonNull(other, "other is null");
+        requireNonNull(action, "action is null");
+
+        return anyOfSuccess(one.toCompletableFuture(), other.toCompletableFuture())
+                .thenAccept((Consumer) action);
+    }
+
+    public static <T> CompletableFuture<Void> acceptEitherSuccessAsync(
+            CompletionStage<T> one, CompletionStage<? extends T> other, Consumer<? super T> action) {
+        return acceptEitherSuccessAsync(one, other, action, AsyncPoolHolder.ASYNC_POOL);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T> CompletableFuture<Void> acceptEitherSuccessAsync(
+            CompletionStage<T> one, CompletionStage<? extends T> other, Consumer<? super T> action, Executor executor) {
+        requireNonNull(one, "one is null");
+        requireNonNull(other, "other is null");
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
+        return anyOfSuccess(one.toCompletableFuture(), other.toCompletableFuture())
+                .thenAcceptAsync((Consumer) action, executor);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T, U> CompletableFuture<U> applyToEitherSuccess(
+            CompletionStage<T> one, CompletionStage<? extends T> other, Function<? super T, U> fn) {
+        requireNonNull(one, "one is null");
+        requireNonNull(other, "other is null");
+        requireNonNull(fn, "fn is null");
+
+        return anyOfSuccess(one.toCompletableFuture(), other.toCompletableFuture())
+                .thenApply((Function) fn);
+    }
+
+    public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
+            CompletionStage<T> one, CompletionStage<? extends T> other, Function<? super T, U> fn) {
+        return applyToEitherSuccessAsync(one, other, fn, AsyncPoolHolder.ASYNC_POOL);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
+            CompletionStage<T> one, CompletionStage<? extends T> other, Function<? super T, U> fn, Executor executor) {
+        requireNonNull(one, "one is null");
+        requireNonNull(other, "other is null");
+        requireNonNull(fn, "fn is null");
+        requireNonNull(executor, "executor is null");
+
+        return anyOfSuccess(one.toCompletableFuture(), other.toCompletableFuture())
+                .thenApplyAsync((Function) fn, executor);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
     //# Backport CF methods
     //  compatibility for low Java version
     ////////////////////////////////////////////////////////////////////////////////
@@ -576,7 +751,7 @@ public final class CompletableFutureUtils {
     }
 
     ////////////////////////////////////////
-    //# backport instance methods
+    //# Backport instance methods
     ////////////////////////////////////////
 
     //# Error Handling methods of CompletionStage
