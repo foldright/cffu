@@ -33,8 +33,8 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture with the results of all the given CompletableFutures,
-     * the new CompletableFuture is completed when all the given CompletableFutures complete.
+     * Returns a new CompletableFuture with the results in the <strong>same order</strong> of all the given
+     * CompletableFutures, the new CompletableFuture is completed when all the given CompletableFutures complete.
      * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
      * also does so, with a CompletionException holding this exception as its cause.
      * If no CompletableFutures are provided, returns a CompletableFuture completed
@@ -104,8 +104,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture with the results of all the given CompletableFutures,
-     * the new CompletableFuture success when all the given CompletableFutures success.
+     * Returns a new CompletableFuture with the results in the <strong>same order</strong> of all the given
+     * CompletableFutures, the new CompletableFuture success when all the given CompletableFutures success.
      * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
      * also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
@@ -981,7 +981,8 @@ public final class CompletableFutureUtils {
     /**
      * Returns the default Executor used for async methods that do not specify an Executor.
      * This class uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread,
-     * or else an Executor using one thread per async task.
+     * or else an Executor using one thread per async task.<br>
+     * <b><i>CAUTION:</i></b>This executor may be not suitable for common biz use(io intensive).
      *
      * @return the executor
      */

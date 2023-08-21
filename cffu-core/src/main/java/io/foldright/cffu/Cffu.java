@@ -1695,8 +1695,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns the default Executor used for async methods that do not specify an Executor.
-     * This class uses the {@code CffuFactory.defaultExecutor}
-     * config by {@link CffuFactoryBuilder#newCffuFactoryBuilder(Executor)}.
+     * Config from the {@link CffuFactory#defaultExecutor()},
+     * and can re-configured by {@link #resetCffuFactory(CffuFactory)}.
      *
      * @return the default executor
      * @see CffuFactory#defaultExecutor()
@@ -1710,6 +1710,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns the {@link CffuFactory} of this Cffu.
+     * This can be re-configured by {@link #resetCffuFactory(CffuFactory)}.
      *
      * @return the CffuFactory
      * @see #defaultExecutor()
@@ -1721,6 +1722,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns {@code forbidObtrudeMethods} or not.
+     * This can be re-configured by {@link #resetCffuFactory(CffuFactory)}.
      *
      * @see Cffu#obtrudeValue(Object)
      * @see Cffu#obtrudeException(Throwable)

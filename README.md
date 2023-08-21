@@ -52,7 +52,7 @@
     - [2.3 高效灵活的并发执行策略（`allOfFastFail`/`anyOfSuccess`）](#23-%E9%AB%98%E6%95%88%E7%81%B5%E6%B4%BB%E7%9A%84%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E7%AD%96%E7%95%A5alloffastfailanyofsuccess)
     - [2.4 支持超时的`join`的方法](#24-%E6%94%AF%E6%8C%81%E8%B6%85%E6%97%B6%E7%9A%84join%E7%9A%84%E6%96%B9%E6%B3%95)
     - [2.5 `Backport`支持`Java 8`](#25-backport%E6%94%AF%E6%8C%81java-8)
-    - [2.5 返回具体类型的`anyOf`方法](#25-%E8%BF%94%E5%9B%9E%E5%85%B7%E4%BD%93%E7%B1%BB%E5%9E%8B%E7%9A%84anyof%E6%96%B9%E6%B3%95)
+    - [2.6 返回具体类型的`anyOf`方法](#26-%E8%BF%94%E5%9B%9E%E5%85%B7%E4%BD%93%E7%B1%BB%E5%9E%8B%E7%9A%84anyof%E6%96%B9%E6%B3%95)
     - [更多功能说明](#%E6%9B%B4%E5%A4%9A%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E)
   - [3. 如何从直接使用`CompletableFuture`类迁移到`Cffu`类](#3-%E5%A6%82%E4%BD%95%E4%BB%8E%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8completablefuture%E7%B1%BB%E8%BF%81%E7%A7%BB%E5%88%B0cffu%E7%B1%BB)
 - [🔌 API Docs](#-api-docs)
@@ -412,27 +412,27 @@ public class DefaultExecutorSettingForCffu {
 
 ### 2.3 高效灵活的并发执行策略（`allOfFastFail`/`anyOfSuccess`）
 
-- `CompletableFuture`的`allOf`方法会等待所有输入`CF`运行完成；即使有`CF`失败了也要等待后续`CF`运行完成，再返回一个失败`CF`。
-  - 对于业务逻辑来说，这样失败的继续等待策略，减慢了业务响应性，会希望如果有输入`CF`失败了，而快速失败不再等待；  
-    当所有的输入`CF`都成功时，才返回成功
+- `CompletableFuture`的`allOf`方法会等待所有输入`CF`运行完成；即使有`CF`失败了也要等待后续`CF`运行完成，再返回一个失败的`CF`。
+  - 对于业务逻辑来说，这样失败且继续等待策略，减慢了业务响应性；会希望如果有输入`CF`失败了，则快速失败不再做于事无补的等待
   - `cffu`提供了相应的`cffuAllOfFastFail`/`allOfFastFail`方法
-- `CompletableFuture`的`anyOf`方法返回首个完成的`CF`（不会等待后续没有完成`CF`，赛马模式）；即使首个完成的`CF`是失败的，也会返回这个失败的`CF`。
-  - 对于业务逻辑来说，会希望赛马模式返回首个成功的`CF`，而不是首个完成但失败的`CF`；  
-    当所有的输入`CF`都失败时，才返回失败
+  - `allOf`/`allOfFastFail`两者都是，只有当所有的输入`CF`都成功时，才返回成功结果
+- `CompletableFuture`的`anyOf`方法返回首个完成的`CF`（不会等待后续没有完成的`CF`，赛马模式）；即使首个完成的`CF`是失败的，也会返回这个失败的`CF`结果。
+  - 对于业务逻辑来说，会希望赛马模式返回首个成功的`CF`结果，而不是首个完成但失败的`CF`
   - `cffu`提供了相应的`cffuAnyOfSuccess`/`anyOfSuccess`方法
+  - `anyOfSuccess`只有当所有的输入`CF`都失败时，才返回失败结果
 
-> 📔 关于多个`CF`的并发执行策略，可以看看`Javascript`的[`Promise Concurrency`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#promise_concurrency)；在`Javascript`中，`Promise`即对应`CompletableFuture`。
+> 📔 关于多个`CF`的并发执行策略，可以看看`JavaScript`规范[`Promise Concurrency`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#promise_concurrency)；在`JavaScript`中，`Promise`即对应`CompletableFuture`。
 >
-> `Javascript Promise`提供了4个并发执行方法：
+> `JavaScript Promise`提供了4个并发执行方法：
 >
-> - [`Promise.all()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all)：等待所有`Promise`运行完成，只要有一个失败就返回失败（对应`cffu`的`allOfFastFail`方法）
+> - [`Promise.all()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all)：等待所有`Promise`运行成功，只要有一个失败就立即返回失败（对应`cffu`的`allOfFastFail`方法）
 > - [`Promise.allSettled()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled)：等待所有`Promise`运行完成，不管成功失败（对应`cffu`的`allOf`方法）
-> - [`Promise.any()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/any)：赛马模式，返回首个成功的`Promise`（对应`cffu`的`anyOfSuccess`方法）
-> - [`Promise.race()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race)：赛马模式，返回首个完成的`Promise`（对应`cffu`的`anyOf`方法）
+> - [`Promise.any()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/any)：赛马模式，立即返回首个成功的`Promise`（对应`cffu`的`anyOfSuccess`方法）
+> - [`Promise.race()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race)：赛马模式，立即返回首个完成的`Promise`（对应`cffu`的`anyOf`方法）
 >
-> PS：`Javascript Promise`的方法命名真考究真好 👍
+> PS：`JavaScript Promise`的方法命名真考究～ 👍
 >
-> `cffu`新加2个方法后，与`Javascript Promise`规范的并发方法一致对齐了～ 👏
+> `cffu`新加2个方法后，对齐了`JavaScript Promise`规范的并发方法～ 👏
 
 示例代码如下：
 
@@ -515,7 +515,7 @@ public class ConcurrencyStrategyDemo {
 
 这些`backport`的方法是`CompletableFuture`的已有功能，不附代码示例。
 
-### 2.5 返回具体类型的`anyOf`方法
+### 2.6 返回具体类型的`anyOf`方法
 
 `CompletableFuture.anyOf`方法返回类型是`Object`，丢失具体类型，不够类型安全，使用时需要转型也不方便。
 

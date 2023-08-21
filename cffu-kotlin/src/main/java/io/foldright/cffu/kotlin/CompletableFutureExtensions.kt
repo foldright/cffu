@@ -27,8 +27,8 @@ import java.util.concurrent.TimeUnit
 ////////////////////////////////////////
 
 /**
- * Returns a new CompletableFuture with the results of all the given CompletableFutures,
- * the returned new CompletableFuture is completed when all the given CompletableFutures complete.
+ * Returns a new CompletableFuture with the results in the <strong>same order</strong> of all the given
+ * CompletableFutures, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so, with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed
@@ -45,8 +45,8 @@ fun <T> Collection<CompletableFuture<T>>.allOfCompletableFuture(): CompletableFu
     CompletableFutureUtils.allOfWithResult(*this.toTypedArray())
 
 /**
- * Returns a new CompletableFuture with the results of all the given CompletableFutures,
- * the returned new CompletableFuture is completed when all the given CompletableFutures complete.
+ * Returns a new CompletableFuture with the results in the <strong>same order</strong> of all the given
+ * CompletableFutures, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so, with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed
@@ -107,8 +107,8 @@ fun Array<out CompletableFuture<*>>.allOfCompletableFutureVoid(): CompletableFut
     CompletableFuture.allOf(*this)
 
 /**
- * Returns a new CompletableFuture with the results of all the given CompletableFutures,
- * the new CompletableFuture success when all the given CompletableFutures success.
+ * Returns a new CompletableFuture with the results in the <strong>same order</strong> of all the given
+ * CompletableFutures, the new CompletableFuture success when all the given CompletableFutures success.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so *without* waiting other incomplete given CompletableFutures,
  * with a CompletionException holding this exception as its cause.
@@ -126,8 +126,8 @@ fun <T> Collection<CompletableFuture<T>>.allOfFastFailCompletableFuture(): Compl
     CompletableFutureUtils.allOfFastFailWithResult(*this.toTypedArray())
 
 /**
- * Returns a new CompletableFuture with the results of all the given CompletableFutures,
- * the new CompletableFuture success when all the given CompletableFutures success.
+ * Returns a new CompletableFuture with the results in the <strong>same order</strong> of all the given
+ * CompletableFutures, the new CompletableFuture success when all the given CompletableFutures success.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so *without* waiting other incomplete given CompletableFutures,
  * with a CompletionException holding this exception as its cause.
