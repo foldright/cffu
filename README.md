@@ -412,27 +412,27 @@ public class DefaultExecutorSettingForCffu {
 
 ### 2.3 高效灵活的并发执行策略（`allOfFastFail`/`anyOfSuccess`）
 
-- `CompletableFuture`的`allOf`方法会等待所有输入`CF`运行完成；即使有`CF`失败了也要等待后续`CF`运行完成，再返回一个失败`CF`。
-  - 对于业务逻辑来说，这样失败的继续等待策略，减慢了业务响应性，会希望如果有输入`CF`失败了，而快速失败不再等待；  
-    当所有的输入`CF`都成功时，才返回成功
+- `CompletableFuture`的`allOf`方法会等待所有输入`CF`运行完成；即使有`CF`失败了也要等待后续`CF`运行完成，再返回一个失败的`CF`。
+  - 对于业务逻辑来说，这样失败且继续等待策略，减慢了业务响应性；会希望如果有输入`CF`失败了，则快速失败不再做于事无补的等待
   - `cffu`提供了相应的`cffuAllOfFastFail`/`allOfFastFail`方法
-- `CompletableFuture`的`anyOf`方法返回首个完成的`CF`（不会等待后续没有完成`CF`，赛马模式）；即使首个完成的`CF`是失败的，也会返回这个失败的`CF`。
-  - 对于业务逻辑来说，会希望赛马模式返回首个成功的`CF`，而不是首个完成但失败的`CF`；  
-    当所有的输入`CF`都失败时，才返回失败
+  - `allOf`/`allOfFastFail`两者都是，只有当所有的输入`CF`都成功时，才返回成功结果
+- `CompletableFuture`的`anyOf`方法返回首个完成的`CF`（不会等待后续没有完成的`CF`，赛马模式）；即使首个完成的`CF`是失败的，也会返回这个失败的`CF`结果。
+  - 对于业务逻辑来说，会希望赛马模式返回首个成功的`CF`结果，而不是首个完成但失败的`CF`
   - `cffu`提供了相应的`cffuAnyOfSuccess`/`anyOfSuccess`方法
+  - `anyOfSuccess`只有当所有的输入`CF`都失败时，才返回失败结果
 
-> 📔 关于多个`CF`的并发执行策略，可以看看`Javascript`的[`Promise Concurrency`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#promise_concurrency)；在`Javascript`中，`Promise`即对应`CompletableFuture`。
+> 📔 关于多个`CF`的并发执行策略，可以看看`JavaScript`规范[`Promise Concurrency`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#promise_concurrency)；在`JavaScript`中，`Promise`即对应`CompletableFuture`。
 >
-> `Javascript Promise`提供了4个并发执行方法：
+> `JavaScript Promise`提供了4个并发执行方法：
 >
-> - [`Promise.all()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all)：等待所有`Promise`运行完成，只要有一个失败就返回失败（对应`cffu`的`allOfFastFail`方法）
+> - [`Promise.all()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all)：等待所有`Promise`运行成功，只要有一个失败就立即返回失败（对应`cffu`的`allOfFastFail`方法）
 > - [`Promise.allSettled()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled)：等待所有`Promise`运行完成，不管成功失败（对应`cffu`的`allOf`方法）
-> - [`Promise.any()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/any)：赛马模式，返回首个成功的`Promise`（对应`cffu`的`anyOfSuccess`方法）
-> - [`Promise.race()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race)：赛马模式，返回首个完成的`Promise`（对应`cffu`的`anyOf`方法）
+> - [`Promise.any()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/any)：赛马模式，立即返回首个成功的`Promise`（对应`cffu`的`anyOfSuccess`方法）
+> - [`Promise.race()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race)：赛马模式，立即返回首个完成的`Promise`（对应`cffu`的`anyOf`方法）
 >
-> PS：`Javascript Promise`的方法命名真考究真好 👍
+> PS：`JavaScript Promise`的方法命名真考究～ 👍
 >
-> `cffu`新加2个方法后，与`Javascript Promise`规范的并发方法一致对齐了～ 👏
+> `cffu`新加2个方法后，对齐了`JavaScript Promise`规范的并发方法～ 👏
 
 示例代码如下：
 
