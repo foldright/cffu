@@ -586,7 +586,7 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu with the results of all the given Cffus,
+     * Returns a new Cffu with the results in the <strong>same order</strong> of all the given Cffus,
      * the new Cffu is completed when all the given Cffus complete.
      * Returns a new Cffu that is completed when all the given Cffus complete.
      * If any of the given Cffus complete exceptionally, then the returned Cffu
@@ -609,7 +609,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the results of all the given CompletableFutures,
+     * Returns a new Cffu with the results in the <strong>same order</strong> of all the given CompletableFutures,
      * the new Cffu is completed when all the given CompletableFutures complete.
      * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
      * also does so, with a CompletionException holding this exception as its cause.
@@ -642,7 +642,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the results of all the given Cffus,
+     * Returns a new Cffu with the results in the <strong>same order</strong> of all the given Cffus,
      * the new Cffu success when all the given Cffus success.
      * If any of the given Cffus complete exceptionally, then the returned Cffu
      * also does so *without* waiting other incomplete given Cffus,
@@ -663,7 +663,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the results of all the given CompletableFutures,
+     * Returns a new Cffu with the results in the <strong>same order</strong> of all the given CompletableFutures,
      * the new Cffu success when all the given CompletableFutures success.
      * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
      * also does so *without* waiting other incomplete given CompletableFutures,
@@ -1177,7 +1177,8 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns {@code defaultExecutor}.
+     * Returns the default Executor used for async methods that do not specify an Executor.
+     * Configured by {@link CffuFactoryBuilder#newCffuFactoryBuilder(Executor)}.
      *
      * @return the default executor
      * @see Cffu#defaultExecutor()
