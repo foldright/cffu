@@ -64,16 +64,16 @@
 		<project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
 		<maven.deploy.skip>false</maven.deploy.skip>
 
-		<spotbugs.annotations.version>4.7.3</spotbugs.annotations.version>
+		<spotbugs.annotations.version>4.8.0</spotbugs.annotations.version>
 		<jsr305.version>3.0.2</jsr305.version>
 		<jetbrains.annotations.version>24.0.1</jetbrains.annotations.version>
 
-		<kotlin.version>1.9.0</kotlin.version>
+		<kotlin.version>1.9.10</kotlin.version>
 		<kotlin.compiler.jvmTarget>${maven.compiler.source}</kotlin.compiler.jvmTarget>
 		<!-- https://kotlinlang.org/docs/maven.html#specifying-compiler-options -->
 		<kotlin.compiler.apiVersion>1.6</kotlin.compiler.apiVersion>
 
-		<slf4j.version>2.0.7</slf4j.version>
+		<slf4j.version>2.0.9</slf4j.version>
 
 		<!-- testing dependencies versions -->
 		<junit5.version>5.10.0</junit5.version>
@@ -398,7 +398,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.5.0</version>
+					<version>3.5.1</version>
 					<configuration>
 						<shadeSourcesContent>true</shadeSourcesContent>
 						<dependencyReducedPomLocation>
@@ -414,7 +414,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.5.0</version>
+					<version>3.6.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -439,7 +439,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
-					<version>3.3.0</version>
+					<version>3.4.1</version>
 				</plugin>
 				<plugin>
 					<groupId>io.github.git-commit-id</groupId>
@@ -449,12 +449,12 @@
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.7.3.5</version>
+					<version>4.7.3.6</version>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.10</version>
+					<version>0.8.11</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
