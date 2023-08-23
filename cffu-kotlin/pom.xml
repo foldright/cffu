@@ -52,7 +52,7 @@
 
 	<properties>
 		<maven.javadoc.skip>true</maven.javadoc.skip>
-		<dokka.version>1.8.20</dokka.version>
+		<dokka.version>1.9.0</dokka.version>
 	</properties>
 
 	<dependencies>
