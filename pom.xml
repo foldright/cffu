@@ -73,7 +73,7 @@
 		<!-- https://kotlinlang.org/docs/maven.html#specifying-compiler-options -->
 		<kotlin.compiler.apiVersion>1.6</kotlin.compiler.apiVersion>
 
-		<slf4j.version>2.0.7</slf4j.version>
+		<slf4j.version>2.0.9</slf4j.version>
 
 		<!-- testing dependencies versions -->
 		<junit5.version>5.10.0</junit5.version>
