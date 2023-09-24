@@ -25,7 +25,7 @@
 <a href="https://gitpod.io/#https://github.com/foldright/cffu"><img src="https://img.shields.io/badge/Gitpod-ready to code-339933?label=gitpod&logo=gitpod&logoColor=white" alt="gitpod: Ready to Code"></a>
 </p>
 
-👉 `cffu`（`CompletableFuture Fu` 🦝）是一个小小的[`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/CompletableFuture.html)辅助增强库，提升`CF`使用体验并减少误用，期望在业务中更方便高效安全地使用`CF`。
+👉 `cffu`（`CompletableFuture Fu` 🦝）是一个小小的[`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)辅助增强库，提升`CF`使用体验并减少误用，期望在业务中更方便高效安全地使用`CF`。
 
 欢迎 👏 💖
 
@@ -97,14 +97,14 @@
 
 > 并发工具、框架的广度了解，可以看看如《[七周七并发模型](https://book.douban.com/subject/26337939/)》、《[Java虚拟机并发编程](https://book.douban.com/subject/24533312/)》、《[Scala并发编程（第2版）](https://book.douban.com/subject/35448965/)》；更多关于并发主题的书籍参见[书单](https://www.douban.com/doulist/41916951/)。
 
-其中[`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/CompletableFuture.html)有其优点：
+其中[`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)有其优点：
 
 - **`Java`标准库内置**
   - 无需额外依赖，几乎总是可用
   - 相信有极高的实现质量
 - **广为人知广泛使用，有一流的群众基础**
   - `CompletableFuture`在2014年发布的`Java 8`提供，有～10年了
-  - `CompletableFuture`的父接口[`Future`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/Future.html)早在2004年发布的`Java 5`中提供，有～20年了
+  - `CompletableFuture`的父接口[`Future`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Future.html)早在2004年发布的`Java 5`中提供，有～20年了
   - 虽然`Future`接口不支持 执行结果的异步获取与并发执行逻辑的编排，但也让广大`Java`开发者熟悉了`Future`这个典型的概念与工具
 - **功能强大、但不会非常庞大复杂**
   - 足以应对日常的业务需求开发
@@ -112,7 +112,7 @@
   - 当然基本的并发关注方面及其复杂性，与具体使用哪个工具无关，都是要理解与注意的
 - **高层抽象**
   - 或说 以业务流程的形式表达技术的并发流程
-  - 可以不使用繁琐易错的基础并发协调工具，如[`CountDownLatch`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/CountDownLatch.html)、锁（[`Lock`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/locks/package-summary.html)）、信号量（[`Semaphore`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/Semaphore.html)）
+  - 可以不使用繁琐易错的基础并发协调工具，如[`CountDownLatch`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CountDownLatch.html)、锁（[`Lock`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/locks/package-summary.html)）、信号量（[`Semaphore`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Semaphore.html)）
 
 和其它并发工具、框架一样，`CompletableFuture`用于
 
@@ -558,7 +558,7 @@ public class ConcurrencyStrategyDemo {
 
 > 可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/0.9.0/versions) 查看最新版本与可用版本列表。
 
-- `cffu`库（包含[`Java CompletableFuture`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/CompletableFuture.html)的增强`CompletableFutureUtils`）:
+- `cffu`库（包含[`Java CompletableFuture`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)的增强`CompletableFutureUtils`）:
   - For `Maven` projects:
 
     ```xml
@@ -645,8 +645,8 @@ public class ConcurrencyStrategyDemo {
 # 📚 更多资料
 
 - 官方资料
-  - [`CompletionStage` JavaDoc](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/CompletionStage.html)
-  - [`CompletableFuture` JavaDoc](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/CompletableFuture.html)
+  - [`CompletionStage` JavaDoc](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletionStage.html)
+  - [`CompletableFuture` JavaDoc](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)
 - [`CompletableFuture` Guide](docs/completable-future-guide.md)
   - 完备说明`CompletableFuture`的使用方式
   - 给出 最佳实践建议 与 使用陷阱注意

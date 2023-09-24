@@ -85,7 +85,7 @@
 - 这2个方法是在组合输入的多个`CF`的结果，本身复杂业务执行逻辑，逻辑简单无阻塞，所以无需`Executor`。
 - 这2个方法所返回的`CF`，在结果获取上，有不方便的地方： 😔
   - 对于`allOf`方法，返回`CF`结果是`Void`即无内容，并没有持有多个输入`CF`的结果
-    - [`allOf`方法的文档](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/CompletableFuture.html#allOf(java.util.concurrent.CompletableFuture...))给的解决方法是，再通过调用各个输入`CF`的结果读取方法（如`join()`）来获得：
+    - [`allOf`方法的文档](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html#allOf(java.util.concurrent.CompletableFuture...))给的解决方法是，再通过调用各个输入`CF`的结果读取方法（如`join()`）来获得：
     - > the results of the given CompletableFutures are not reflected in the returned CompletableFuture, but may be obtained by inspecting them individually.
   - 对于`anyOf`方法，返回`CF`结果类型是`Object`，要使用这个结果一定要做强制类型转换
   - > 这些不方便的地方，在`cffu`库中，提供了对应的加强解决 💗

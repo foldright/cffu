@@ -20,7 +20,6 @@ readonly JDK_VERSIONS=(
   11
   17
   "$default_build_jdk_version"
-  20
   21
 )
 

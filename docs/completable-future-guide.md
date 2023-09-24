@@ -65,7 +65,7 @@
   - 在概念上`CF`的状态转变只能是单次单向的，这很简单可靠、也容易理解并和使用直觉一致。
   - > 注：虽然下文提到的`obtrudeValue()`/`obtrudeException`方法可以突破`CF`概念上的约定，但这2个后门方法在正常设计实现中不应该会用到，尤其在业务使用应该完全忽略；带来的问题也由使用者自己了解清楚并注意。
 - 〚2〛 关于「取消」状态：
-  - 对于`CompletableFuture`，取消的实现方式是设置[`CancellationException`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/concurrent/CancellationException.html)异常。
+  - 对于`CompletableFuture`，取消的实现方式是设置[`CancellationException`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CancellationException.html)异常。
 - 对于「取消」状态，或说设置了「`CancellationException`」失败异常的`CompletableFuture cf`，相比其它异常失败 / 设置了其它失败异常 的情况，不一样的地方：
   - 调用`cf.get()` / `cf.get(timeout, unit)`方法
     - 会抛出`CancellationException`异常
@@ -111,11 +111,11 @@
 - **无输入无返回（00）**
   - 对应`Runnable`接口（包含单个`run`方法）
 - **无输入有返回（01）**
-  - 对应[`Supplier<O>`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/function/Supplier.html)接口（包含单个`supply`方法）
+  - 对应[`Supplier<O>`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html)接口（包含单个`supply`方法）
 - **有输入无返回（10）**
-  - 对应[`Consumer<I>`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/function/Consumer.html)接口（包含单个`accept`方法）
+  - 对应[`Consumer<I>`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html)接口（包含单个`accept`方法）
 - **有输入有返回（11）**
-  - 对应[`Function<I, O>`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/function/Function.html)接口（包含单个`apply`方法）
+  - 对应[`Function<I, O>`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html)接口（包含单个`apply`方法）
 
 注：
 
@@ -124,8 +124,8 @@
   - 都是处理单个输入数据
   - 如果要处理两个输入数据，即有两个上游`CF`的返回，会涉及下面的变体接口
 - 对于有输入接口，有两个输入参数的变体接口：
-  - `Consumer`接口的两参数变体接口：[`BiConsumer<I1, I2>`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/function/BiConsumer.html)
-  - `Function`接口的两参数变体接口：[`BiFunction<I1, I2, O>`](https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/function/BiFunction.html)
+  - `Consumer`接口的两参数变体接口：[`BiConsumer<I1, I2>`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html)
+  - `Function`接口的两参数变体接口：[`BiFunction<I1, I2, O>`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html)
 
 ----------------------------------------
 
