@@ -153,7 +153,7 @@ public final class CffuFactory {
      * a completed Cffu with the value {@code null}
      */
     @Contract(pure = true)
-    private <T> Cffu<T> dummy() {
+    private Cffu<Void> dummy() {
         return completedFuture(null);
     }
 
