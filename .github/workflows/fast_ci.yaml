@@ -8,7 +8,7 @@ jobs:
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#choosing-github-hosted-runners
     runs-on: ${{ matrix.os }}
     timeout-minutes: 5
-    name: fast test on OS ${{ matrix.os }}
+    name: fast CI on OS ${{ matrix.os }}
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest ]
@@ -18,29 +18,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: setup Java 19
+      - name: Setup Java 19
         uses: actions/setup-java@v4
         with:
           java-version: 19
           distribution: temurin
           # only first java setup need enable cache
           cache: maven
-      - name: build and test with Java 19
+      - name: Build and test with Java 19
         run: ./mvnw -V --no-transfer-progress clean install
 
-      - name: setup Java 8
+      - name: Setup Java 8
         uses: actions/setup-java@v4
         with:
           java-version: 8
           distribution: zulu
-      - name: test with Java 8
+      - name: Test with Java 8
         run: ./mvnw -V --no-transfer-progress surefire:test
 
-      - name: 'remove self maven install files(OS: *nix)'
+      - name: 'Remove self maven install files(OS: *nix)'
         run: rm -rf $HOME/.m2/repository/io/foldright/cffu*
         # https://docs.github.com/en/actions/learn-github-actions/expressions
         # https://docs.github.com/en/actions/learn-github-actions/variables#detecting-the-operating-system
         if: runner.os != 'Windows'
-      - name: 'remove self maven install files(OS: Windows)'
+      - name: 'Remove self maven install files(OS: Windows)'
         run: Remove-Item -Recurse -Force $home/.m2/repository/io/foldright/cffu*
         if: runner.os == 'Windows'
