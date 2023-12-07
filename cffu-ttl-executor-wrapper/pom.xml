@@ -28,9 +28,13 @@
 		<url>https://github.com/foldright/cffu</url>
 	</scm>
 	<issueManagement>
-		<url>https://github.com/foldright/cffu/issues</url>
 		<system>GitHub Issues</system>
+		<url>https://github.com/foldright/cffu/issues</url>
 	</issueManagement>
+	<ciManagement>
+		<system>GitHub Actions</system>
+		<url>https://github.com/foldright/cffu/actions</url>
+	</ciManagement>
 	<organization>
 		<name>FoldRight</name>
 		<url>https://foldright.io</url>
