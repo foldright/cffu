@@ -327,7 +327,7 @@ fun Array<out CompletableFuture<*>>.anyOfSuccessCompletableFutureAny(): Completa
     CompletableFutureUtils.anyOfSuccess(*this)
 
 ////////////////////////////////////////
-//# combine methods
+//# combine/combineFastFail methods
 ////////////////////////////////////////
 
 /**
@@ -337,11 +337,27 @@ fun Array<out CompletableFuture<*>>.anyOfSuccessCompletableFutureAny(): Completa
  *
  * @return a new CompletableFuture that is completed when the given 2 CompletableFutures complete
  * @throws NullPointerException if any input CompletableFutures are `null`
+ * @see CompletableFutureUtils.combine
  * @see allOfCompletableFuture
  * @see CompletableFuture.allOf
  */
 fun <T1, T2> CompletableFuture<T1>.combine(cf2: CompletableFuture<T2>): CompletableFuture<Tuple2<T1, T2>> =
     CompletableFutureUtils.combine(this, cf2)
+
+/**
+ * Returns a new CompletableFuture that is successful when the given two CompletableFutures success.
+ * If any of the given CompletableFutures complete exceptionally, then the returned
+ * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * @return a new CompletableFuture that is successful when the given two CompletableFutures success
+ * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+ * @see CompletableFutureUtils.combineFastFail
+ * @see allOfFastFailCompletableFuture
+ * @see CompletableFutureUtils.allOfFastFail
+ */
+fun <T1, T2> CompletableFuture<T1>.combineFastFail(cf2: CompletableFuture<T2>): CompletableFuture<Tuple2<T1, T2>> =
+    CompletableFutureUtils.combineFastFail(this, cf2)
 
 /**
  * Returns a new CompletableFuture that is completed when the given three CompletableFutures complete.
@@ -350,6 +366,7 @@ fun <T1, T2> CompletableFuture<T1>.combine(cf2: CompletableFuture<T2>): Completa
  *
  * @return a new CompletableFuture that is completed when the given 3 CompletableFutures complete
  * @throws NullPointerException if any input CompletableFutures are `null`
+ * @see CompletableFutureUtils.combine
  * @see allOfCompletableFuture
  * @see CompletableFuture.allOf
  */
@@ -359,12 +376,30 @@ fun <T1, T2, T3> CompletableFuture<T1>.combine(
     CompletableFutureUtils.combine(this, cf2, cf3)
 
 /**
+ * Returns a new CompletableFuture that is successful when the given three CompletableFutures success.
+ * If any of the given CompletableFutures complete exceptionally, then the returned
+ * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * @return a new CompletableFuture that is successful when the given three CompletableFutures success
+ * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+ * @see CompletableFutureUtils.combineFastFail
+ * @see allOfFastFailCompletableFuture
+ * @see CompletableFutureUtils.allOfFastFail
+ */
+fun <T1, T2, T3> CompletableFuture<T1>.combineFastFail(
+    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>
+): CompletableFuture<Tuple3<T1, T2, T3>> =
+    CompletableFutureUtils.combineFastFail(this, cf2, cf3)
+
+/**
  * Returns a new CompletableFuture that is completed when the given 4 CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned
  * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
  *
  * @return a new CompletableFuture that is completed when the given 4 CompletableFutures complete
  * @throws NullPointerException if any input CompletableFutures are `null`
+ * @see CompletableFutureUtils.combine
  * @see allOfCompletableFuture
  * @see CompletableFuture.allOf
  */
@@ -374,12 +409,30 @@ fun <T1, T2, T3, T4> CompletableFuture<T1>.combine(
     CompletableFutureUtils.combine(this, cf2, cf3, cf4)
 
 /**
+ * Returns a new CompletableFuture that is successful when the given 4 CompletableFutures success.
+ * If any of the given CompletableFutures complete exceptionally, then the returned
+ * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * @return a new CompletableFuture that is successful when the given 4 CompletableFutures success
+ * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+ * @see CompletableFutureUtils.combineFastFail
+ * @see allOfFastFailCompletableFuture
+ * @see CompletableFutureUtils.allOfFastFail
+ */
+fun <T1, T2, T3, T4> CompletableFuture<T1>.combineFastFail(
+    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>, cf4: CompletableFuture<T4>
+): CompletableFuture<Tuple4<T1, T2, T3, T4>> =
+    CompletableFutureUtils.combineFastFail(this, cf2, cf3, cf4)
+
+/**
  * Returns a new CompletableFuture that is completed when the given 5 CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned
  * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
  *
  * @return a new CompletableFuture that is completed when the given 5 CompletableFutures complete
  * @throws NullPointerException if any input CompletableFutures are `null`
+ * @see CompletableFutureUtils.combine
  * @see allOfCompletableFuture
  * @see CompletableFuture.allOf
  */
@@ -388,6 +441,24 @@ fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.combine(
     cf4: CompletableFuture<T4>, cf5: CompletableFuture<T5>
 ): CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> =
     CompletableFutureUtils.combine(this, cf2, cf3, cf4, cf5)
+
+/**
+ * Returns a new CompletableFuture that is successful when the given 5 CompletableFutures success.
+ * If any of the given CompletableFutures complete exceptionally, then the returned
+ * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * @return a new CompletableFuture that is successful when the given 5 CompletableFutures success
+ * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+ * @see CompletableFutureUtils.combineFastFail
+ * @see allOfFastFailCompletableFuture
+ * @see CompletableFutureUtils.allOfFastFail
+ */
+fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.combineFastFail(
+    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>,
+    cf4: CompletableFuture<T4>, cf5: CompletableFuture<T5>
+): CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> =
+    CompletableFutureUtils.combineFastFail(this, cf2, cf3, cf4, cf5)
 
 ////////////////////////////////////////////////////////////////////////////////
 //# Backport CF instance methods

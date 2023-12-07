@@ -237,6 +237,30 @@ class CompletableFutureExtensionsTest : FunSpec({
         ).get() shouldBe Tuple5.of(n, s, d, anotherN, n + n)
     }
 
+    test("combineFastFail - CompletableFuture") {
+        CompletableFuture.completedFuture(n).combineFastFail(
+            CompletableFuture.completedFuture(s)
+        ).get() shouldBe Tuple2.of(n, s)
+
+        CompletableFuture.completedFuture(n).combineFastFail(
+            CompletableFuture.completedFuture(s),
+            CompletableFuture.completedFuture(d)
+        ).get() shouldBe Tuple3.of(n, s, d)
+
+        CompletableFuture.completedFuture(n).combineFastFail(
+            CompletableFuture.completedFuture(s),
+            CompletableFuture.completedFuture(d),
+            CompletableFuture.completedFuture(anotherN)
+        ).get() shouldBe Tuple4.of(n, s, d, anotherN)
+
+        CompletableFuture.completedFuture(n).combineFastFail(
+            CompletableFuture.completedFuture(s),
+            CompletableFuture.completedFuture(d),
+            CompletableFuture.completedFuture(anotherN),
+            CompletableFuture.completedFuture(n + n)
+        ).get() shouldBe Tuple5.of(n, s, d, anotherN, n + n)
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# Backport CF instance methods
     //  compatibility for low Java version
