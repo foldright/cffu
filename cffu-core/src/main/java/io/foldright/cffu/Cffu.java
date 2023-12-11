@@ -719,8 +719,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //# `then either(binary input)` methods of CompletionStage:
     //
     //    - runAfterEither*(Runnable):  Void, Void -> Void
-    //    - acceptEither*(BiConsumer):  (T1, T2) -> Void
-    //    - applyToEither*(BiFunction): (T1, T2) -> U
+    //    - acceptEither*(Consumer):  (T, T) -> Void
+    //    - applyToEither*(Function): (T, T) -> U
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
