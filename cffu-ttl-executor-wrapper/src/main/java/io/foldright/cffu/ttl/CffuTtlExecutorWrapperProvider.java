@@ -2,6 +2,7 @@ package io.foldright.cffu.ttl;
 
 import com.alibaba.ttl.threadpool.TtlExecutors;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.foldright.cffu.spi.ExecutorWrapperProvider;
 
 import java.util.concurrent.Executor;
@@ -20,6 +21,7 @@ public class CffuTtlExecutorWrapperProvider implements ExecutorWrapperProvider {
      */
     @NonNull
     @Override
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     public Executor wrap(@NonNull Executor executor) {
         return TtlExecutors.getTtlExecutor(requireNonNull(executor, "executor is null"));
     }

@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 21
-          distribution: zulu
+          distribution: microsoft
           # only first java setup need enable cache
           cache: maven
       - name: Build and test with Java 21
