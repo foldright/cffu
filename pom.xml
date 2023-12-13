@@ -70,20 +70,20 @@
 		<maven.enforcer.pom.version.regex>^\d(\.\d+)?\.(\d+|x)-SNAPSHOT$</maven.enforcer.pom.version.regex>
 		<release.pom.version.regex>^\d\.\d+\.\d+(-(Alpha|Beta|RC)\d+)?$</release.pom.version.regex>
 
-		<spotbugs.annotations.version>4.8.2</spotbugs.annotations.version>
+		<spotbugs.annotations.version>4.8.4</spotbugs.annotations.version>
 		<jsr305.version>3.0.2</jsr305.version>
 		<jetbrains.annotations.version>24.1.0</jetbrains.annotations.version>
 
-		<kotlin.version>1.9.21</kotlin.version>
+		<kotlin.version>1.9.23</kotlin.version>
 		<kotlin.compiler.jvmTarget>${maven.compiler.source}</kotlin.compiler.jvmTarget>
 		<!-- https://kotlinlang.org/docs/maven.html#specifying-compiler-options -->
 		<kotlin.compiler.apiVersion>1.6</kotlin.compiler.apiVersion>
 
-		<slf4j.version>2.0.9</slf4j.version>
+		<slf4j.version>2.0.13</slf4j.version>
 
 		<!-- testing dependencies versions -->
-		<junit5.version>5.10.1</junit5.version>
-		<kotest.version>5.8.0</kotest.version>
+		<junit5.version>5.10.2</junit5.version>
+		<kotest.version>5.8.1</kotest.version>
 	</properties>
 
 	<dependencies>
@@ -185,7 +185,7 @@
 			<dependency>
 				<groupId>com.alibaba</groupId>
 				<artifactId>transmittable-thread-local</artifactId>
-				<version>2.14.4</version>
+				<version>2.14.5</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
@@ -379,7 +379,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.11.0</version>
+					<version>3.13.0</version>
 					<configuration>
 						<!-- https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#compilerArgs -->
 						<compilerArgs>
@@ -391,23 +391,23 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.2.2</version>
+					<version>3.2.5</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.3.0</version>
+					<version>3.4.1</version>
 				</plugin>
 				<plugin>
 					<!-- https://github.com/moditect/moditect -->
 					<groupId>org.moditect</groupId>
 					<artifactId>moditect-maven-plugin</artifactId>
-					<version>1.1.0</version>
+					<version>1.2.1.Final</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.5.1</version>
+					<version>3.5.2</version>
 					<configuration>
 						<shadeSourcesContent>true</shadeSourcesContent>
 						<dependencyReducedPomLocation>
@@ -418,7 +418,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>3.3.0</version>
+					<version>3.3.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -428,7 +428,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
-					<version>3.1.0</version>
+					<version>3.2.4</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -453,17 +453,17 @@
 				<plugin>
 					<groupId>io.github.git-commit-id</groupId>
 					<artifactId>git-commit-id-maven-plugin</artifactId>
-					<version>7.0.0</version>
+					<version>8.0.2</version>
 				</plugin>
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.8.2.0</version>
+					<version>4.8.4.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.11</version>
+					<version>0.8.12</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
