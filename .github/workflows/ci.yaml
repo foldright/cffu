@@ -24,21 +24,23 @@ jobs:
             11
             17
             21
+            22
           distribution: zulu
           # only first java setup need enable cache
           cache: maven
 
       - name: Run integration test
-        run: scripts/integration_test && demos/scripts/integration_test
+        run: scripts/integration_test
+      - name: Run integration of demos
+        run: demos/scripts/integration_test
 
       - name: Remove self maven install files
         run: rm -rf $HOME/.m2/repository/io/foldright/cffu*
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          name: codecov-umbrella
-          token: ${{ secrets.CODECOV_TOKEN }}
+        uses: codecov/codecov-action@v4
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       # https://remarkablemark.org/blog/2017/10/12/check-git-dirty/
       - name: Check git dirty

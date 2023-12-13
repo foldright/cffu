@@ -14,7 +14,7 @@
 		<project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
 		<maven.deploy.skip>true</maven.deploy.skip>
 
-		<kotlin.version>1.9.21</kotlin.version>
+		<kotlin.version>1.9.23</kotlin.version>
 		<kotlin.compiler.jvmTarget>${maven.compiler.source}</kotlin.compiler.jvmTarget>
 
 		<!-- overridden by submodule -->
@@ -22,7 +22,7 @@
 		<demo.module.name/>
 
 		<!-- testing dependencies versions -->
-		<junit5.version>5.10.1</junit5.version>
+		<junit5.version>5.10.2</junit5.version>
 	</properties>
 
 	<modules>
@@ -115,7 +115,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.11.0</version>
+					<version>3.13.0</version>
 					<configuration>
 						<!-- https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#compilerArgs -->
 						<compilerArgs>
@@ -127,7 +127,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.2.2</version>
+					<version>3.2.5</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -137,7 +137,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>3.3.0</version>
+					<version>3.3.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -147,7 +147,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
-					<version>3.1.0</version>
+					<version>3.2.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -167,7 +167,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
-					<version>3.1.1</version>
+					<version>3.2.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -177,7 +177,7 @@
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.11</version>
+					<version>0.8.12</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
