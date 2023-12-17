@@ -70,7 +70,7 @@
 				<artifactId>maven-enforcer-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>enforce-maven</id>
+						<id>enforce-require-version</id>
 						<goals>
 							<goal>enforce</goal>
 						</goals>
@@ -279,6 +279,25 @@
 
 								<argument>${exec.main.class}</argument>
 							</arguments>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>disable-javac-options-warning-for-java21+</id>
+			<activation>
+				<jdk>[21,)</jdk>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<compilerArgs>
+								<arg>-Xlint:-options</arg>
+							</compilerArgs>
 						</configuration>
 					</plugin>
 				</plugins>

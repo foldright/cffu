@@ -13,14 +13,13 @@ source "$BASH_BUDDY_ROOT/lib/maven_utils.sh"
 # ci build logic
 ################################################################################
 
-readonly default_build_jdk_version=19
+readonly default_build_jdk_version=21
 # shellcheck disable=SC2034
 readonly JDK_VERSIONS=(
   8
   11
   17
   "$default_build_jdk_version"
-  21
 )
 
 # here use `install` and `-D performRelease` intended

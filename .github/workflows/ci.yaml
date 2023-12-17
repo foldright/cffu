@@ -32,11 +32,6 @@ jobs:
         with:
           java-version: 17
           distribution: microsoft
-      - name: Setup Java 19
-        uses: actions/setup-java@v4
-        with:
-          java-version: 19
-          distribution: temurin
       - name: Setup Java 21
         uses: actions/setup-java@v4
         with:

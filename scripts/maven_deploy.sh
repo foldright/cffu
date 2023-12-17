@@ -4,7 +4,7 @@ cd "$(dirname "$(readlink -f "$0")")/.."
 
 source "scripts/bash-buddy/lib/java_utils.sh"
 
-jvu::switch_to_jdk 19
+jvu::switch_to_jdk 21
 
 ########################################
 # integration test

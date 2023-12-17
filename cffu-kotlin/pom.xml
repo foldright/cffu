@@ -128,7 +128,7 @@
 							</execution>
 						</executions>
 						<configuration>
-							<jdkVersion>19</jdkVersion>
+							<jdkVersion>21</jdkVersion>
 							<documentedVisibilities>
 								<visibility>PUBLIC</visibility>
 								<visibility>PROTECTED</visibility>
