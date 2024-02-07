@@ -157,9 +157,8 @@
 			<dependency>
 				<!--
 					JSR305 is already Dormant status, so SpotBugs does not release jsr305 jar file.
-					Please continue using findbugs’ one.
-					depend on spotbugs-annotations instead.
-					https://spotbugs.readthedocs.io/en/stable/migration.html
+					Please continue using findbugs’ one, depend on spotbugs-annotations instead.
+						https://spotbugs.readthedocs.io/en/stable/migration.html
 				-->
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-annotations</artifactId>
@@ -210,9 +209,7 @@
 				<version>3.0.5</version>
 			</dependency>
 
-			<!--
-				testing libs
-			-->
+			<!-- testing libs -->
 			<!-- https://github.com/kotlintest/kotlintest -->
 			<dependency>
 				<groupId>io.kotest</groupId>
@@ -297,49 +294,29 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!--
-				official docs: https://maven.apache.org/enforcer/enforcer-rules/requireMavenVersion.html
-				add maven-enforcer-plugin to make sure the right jdk is used
-					https://stackoverflow.com/a/18420462/922688
-			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>enforce-require-version</id>
+						<id>enforces</id>
 						<goals>
 							<goal>enforce</goal>
 						</goals>
 						<configuration>
 							<rules>
-								<requireJavaVersion>
-									<version>19</version>
-								</requireJavaVersion>
+								<!-- official docs: https://maven.apache.org/enforcer/enforcer-rules/requireMavenVersion.html -->
 								<requireMavenVersion>
 									<version>3.3.9</version>
 								</requireMavenVersion>
+								<!--
+									add maven-enforcer-plugin to make sure the right jdk is used
+										https://stackoverflow.com/a/18420462/922688
+								-->
+								<requireJavaVersion>
+									<version>19</version>
+								</requireJavaVersion>
 							</rules>
-						</configuration>
-					</execution>
-					<execution>
-						<id>enforce-property</id>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<!-- https://maven.apache.org/enforcer/enforcer-rules/requireProperty.html -->
-								<requireProperty>
-									<property>project.version</property>
-									<regex>^\d\.\d+\.\d+(-(Alpha|Beta|RC)\d+)?$|^\d(\.\d+)?\.(\d+|x)-SNAPSHOT$</regex>
-									<regexMessage>"Project version(${project.version}) format is invalid!"</regexMessage>
-								</requireProperty>
-								<requireProperty>
-									<property>maven.multiModuleProjectDirectory</property>
-								</requireProperty>
-							</rules>
-							<fail>true</fail>
 						</configuration>
 					</execution>
 				</executions>
@@ -535,7 +512,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>enforce-jdk-21-when-release</id>
+			<id>enforce-when-release</id>
 			<activation>
 				<property>
 					<name>performRelease</name>
@@ -549,19 +526,33 @@
 						<artifactId>maven-enforcer-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>enforce-require-version</id>
-								<goals>
-									<goal>enforce</goal>
-								</goals>
+								<id>enforces</id>
 								<configuration>
 									<rules>
 										<requireJavaVersion>
 											<version>21</version>
 										</requireJavaVersion>
+										<!-- https://maven.apache.org/enforcer/enforcer-rules/requireProperty.html -->
+										<requireProperty>
+											<property>project.version</property>
+											<regex>^\d\.\d+\.\d+(-(Alpha|Beta|RC)\d+)?$|^\d(\.\d+)?\.(\d+|x)-SNAPSHOT$</regex>
+											<regexMessage>"Project version(${project.version}) format is invalid!"</regexMessage>
+										</requireProperty>
+										<!-- https://www.mojohaus.org/extra-enforcer-rules/enforceBytecodeVersion.html -->
+										<enforceBytecodeVersion>
+											<maxJdkVersion>${maven.compiler.source}</maxJdkVersion>
+										</enforceBytecodeVersion>
 									</rules>
 								</configuration>
 							</execution>
 						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>org.codehaus.mojo</groupId>
+								<artifactId>extra-enforcer-rules</artifactId>
+								<version>1.7.0</version>
+							</dependency>
+						</dependencies>
 					</plugin>
 				</plugins>
 			</build>
