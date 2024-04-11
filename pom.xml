@@ -67,6 +67,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
 		<maven.deploy.skip>false</maven.deploy.skip>
+		<maven.enforcer.pom.version.regex>^\d(\.\d+)?\.(\d+|x)-SNAPSHOT$</maven.enforcer.pom.version.regex>
+		<release.pom.version.regex>^\d\.\d+\.\d+(-(Alpha|Beta|RC)\d+)?$</release.pom.version.regex>
 
 		<spotbugs.annotations.version>4.8.2</spotbugs.annotations.version>
 		<jsr305.version>3.0.2</jsr305.version>
@@ -305,10 +307,6 @@
 						</goals>
 						<configuration>
 							<rules>
-								<!-- official docs: https://maven.apache.org/enforcer/enforcer-rules/requireMavenVersion.html -->
-								<requireMavenVersion>
-									<version>3.3.9</version>
-								</requireMavenVersion>
 								<!--
 									add maven-enforcer-plugin to make sure the right jdk is used
 										https://stackoverflow.com/a/18420462/922688
@@ -316,6 +314,16 @@
 								<requireJavaVersion>
 									<version>19</version>
 								</requireJavaVersion>
+								<!-- official docs: https://maven.apache.org/enforcer/enforcer-rules/requireMavenVersion.html -->
+								<requireMavenVersion>
+									<version>3.3.9</version>
+								</requireMavenVersion>
+								<!-- https://maven.apache.org/enforcer/enforcer-rules/requireProperty.html -->
+								<requireProperty>
+									<property>project.version</property>
+									<regex>${maven.enforcer.pom.version.regex}</regex>
+									<regexMessage>Project version(${project.version}) format is invalid!</regexMessage>
+								</requireProperty>
 							</rules>
 						</configuration>
 					</execution>
@@ -511,6 +519,7 @@
 				</plugins>
 			</build>
 		</profile>
+
 		<profile>
 			<id>enforce-when-release</id>
 			<activation>
@@ -532,12 +541,6 @@
 										<requireJavaVersion>
 											<version>21</version>
 										</requireJavaVersion>
-										<!-- https://maven.apache.org/enforcer/enforcer-rules/requireProperty.html -->
-										<requireProperty>
-											<property>project.version</property>
-											<regex>^\d\.\d+\.\d+(-(Alpha|Beta|RC)\d+)?$|^\d(\.\d+)?\.(\d+|x)-SNAPSHOT$</regex>
-											<regexMessage>"Project version(${project.version}) format is invalid!"</regexMessage>
-										</requireProperty>
 										<!-- https://www.mojohaus.org/extra-enforcer-rules/enforceBytecodeVersion.html -->
 										<enforceBytecodeVersion>
 											<maxJdkVersion>${maven.compiler.source}</maxJdkVersion>
@@ -557,6 +560,32 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>enforce-project-version-when-release</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<properties>
+				<maven.enforcer.pom.version.regex>${release.pom.version.regex}</maven.enforcer.pom.version.regex>
+			</properties>
+		</profile>
+		<profile>
+			<id>enforce-project-version-when-github-actions-triggered-by-tag</id>
+			<activation>
+				<property>
+					<!-- https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables -->
+					<name>env.GITHUB_REF_TYPE</name>
+					<value>tag</value>
+				</property>
+			</activation>
+			<properties>
+				<maven.enforcer.pom.version.regex>${release.pom.version.regex}</maven.enforcer.pom.version.regex>
+			</properties>
+		</profile>
+
 		<profile>
 			<id>gen-src</id>
 			<activation>
