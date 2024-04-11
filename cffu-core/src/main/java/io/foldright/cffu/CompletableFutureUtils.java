@@ -144,7 +144,7 @@ public final class CompletableFutureUtils {
     private static void requireCfsAndEleNonNull(CompletableFuture<?>... cfs) {
         requireNonNull(cfs, "cfs is null");
         for (int i = 0; i < cfs.length; i++) {
-            requireNonNull(cfs[i], "cf" + i + " is null");
+            requireNonNull(cfs[i], "cf" + (i + 1) + " is null");
         }
     }
 
