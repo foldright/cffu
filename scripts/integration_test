@@ -31,7 +31,7 @@ readonly JDK_VERSIONS=(
 # shellcheck disable=SC2034
 readonly MVU_MVN_OPTS=(
   "${MVU_DEFAULT_MVN_OPTS[@]}"
-  -DperformRelease -P'!gen-sign'
+  -DperformRelease -P'!gen-sign' -P'!enforce-project-version-when-release'
   ${CI_MORE_MVN_OPTS:+${CI_MORE_MVN_OPTS}}
 )
 
