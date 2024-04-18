@@ -981,7 +981,8 @@ public final class CompletableFutureUtils {
     /**
      * Returns the default Executor used for async methods that do not specify an Executor.
      * This class uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread,
-     * or else an Executor using one thread per async task.
+     * or else an Executor using one thread per async task.<br>
+     * <b><i>CAUTION:</i></b>This executor may be not suitable for common biz use(io intensive).
      *
      * @return the executor
      */
