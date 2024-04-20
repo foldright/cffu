@@ -602,8 +602,9 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     @SafeVarargs
-    public final <T> Cffu<List<T>> cffuAllOf(Cffu<T>... cfs) {
-        return cffuAllOf(toCompletableFutureArray(cfs));
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public final <T> Cffu<List<T>> cffuAllOf(Cffu<? extends T>... cfs) {
+        return cffuAllOf(toCompletableFutureArray((Cffu[]) cfs));
     }
 
     /**
@@ -622,7 +623,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     @SafeVarargs
-    public final <T> Cffu<List<T>> cffuAllOf(CompletableFuture<T>... cfs) {
+    public final <T> Cffu<List<T>> cffuAllOf(CompletableFuture<? extends T>... cfs) {
         return new0(CompletableFutureUtils.allOfWithResult(cfs));
     }
 
@@ -654,8 +655,9 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     @SafeVarargs
-    public final <T> Cffu<List<T>> cffuAllOfFastFail(Cffu<T>... cfs) {
-        return cffuAllOfFastFail(toCompletableFutureArray(cfs));
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public final <T> Cffu<List<T>> cffuAllOfFastFail(Cffu<? extends T>... cfs) {
+        return cffuAllOfFastFail(toCompletableFutureArray((Cffu[]) cfs));
     }
 
     /**
@@ -676,7 +678,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     @SafeVarargs
-    public final <T> Cffu<List<T>> cffuAllOfFastFail(CompletableFuture<T>... cfs) {
+    public final <T> Cffu<List<T>> cffuAllOfFastFail(CompletableFuture<? extends T>... cfs) {
         return new0(CompletableFutureUtils.allOfFastFailWithResult(cfs));
     }
 
@@ -705,8 +707,9 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     @SafeVarargs
-    public final <T> Cffu<T> cffuAnyOf(Cffu<T>... cfs) {
-        return cffuAnyOf(toCompletableFutureArray(cfs));
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public final <T> Cffu<T> cffuAnyOf(Cffu<? extends T>... cfs) {
+        return cffuAnyOf(toCompletableFutureArray((Cffu[]) cfs));
     }
 
     /**
@@ -722,7 +725,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     @SafeVarargs
-    public final <T> Cffu<T> cffuAnyOf(CompletableFuture<T>... cfs) {
+    public final <T> Cffu<T> cffuAnyOf(CompletableFuture<? extends T>... cfs) {
         return new0(CompletableFutureUtils.anyOfWithType(cfs));
     }
 
@@ -752,8 +755,9 @@ public final class CffuFactory {
      * @see #cffuAnyOf(Cffu[])
      */
     @SafeVarargs
-    public final <T> Cffu<T> cffuAnyOfSuccess(Cffu<T>... cfs) {
-        return cffuAnyOfSuccess(toCompletableFutureArray(cfs));
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public final <T> Cffu<T> cffuAnyOfSuccess(Cffu<? extends T>... cfs) {
+        return cffuAnyOfSuccess(toCompletableFutureArray((Cffu[]) cfs));
     }
 
     /**
@@ -773,7 +777,7 @@ public final class CffuFactory {
      * @see #cffuAnyOf(Cffu[])
      */
     @SafeVarargs
-    public final <T> Cffu<T> cffuAnyOfSuccess(CompletableFuture<T>... cfs) {
+    public final <T> Cffu<T> cffuAnyOfSuccess(CompletableFuture<? extends T>... cfs) {
         return new0(CompletableFutureUtils.anyOfSuccessWithType(cfs));
     }
 

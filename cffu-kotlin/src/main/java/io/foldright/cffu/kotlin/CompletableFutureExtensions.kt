@@ -57,7 +57,7 @@ fun <T> Collection<CompletableFuture<T>>.allOfCompletableFuture(): CompletableFu
  * @see allOfCffu
  * @see allOfCompletableFutureVoid
  */
-fun <T> Array<CompletableFuture<T>>.allOfCompletableFuture(): CompletableFuture<List<T>> =
+fun <T> Array<out CompletableFuture<T>>.allOfCompletableFuture(): CompletableFuture<List<T>> =
     CompletableFutureUtils.allOfWithResult(*this)
 
 /**
@@ -137,7 +137,7 @@ fun <T> Collection<CompletableFuture<T>>.allOfFastFailCompletableFuture(): Compl
  * @see allOfFastFailCffu
  * @see allOfFastFailCompletableFutureVoid
  */
-fun <T> Array<CompletableFuture<T>>.allOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
+fun <T> Array<out CompletableFuture<T>>.allOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
     CompletableFutureUtils.allOfFastFailWithResult(*this)
 
 /**
@@ -217,7 +217,7 @@ fun <T> Collection<CompletableFuture<T>>.anyOfCompletableFuture(): CompletableFu
  * @see anyOfCffu
  * @see anyOfCompletableFutureAny
  */
-fun <T> Array<CompletableFuture<T>>.anyOfCompletableFuture(): CompletableFuture<T> =
+fun <T> Array<out CompletableFuture<T>>.anyOfCompletableFuture(): CompletableFuture<T> =
     CompletableFutureUtils.anyOfWithType(*this)
 
 /**
@@ -285,7 +285,7 @@ fun <T> Collection<CompletableFuture<T>>.anyOfSuccessCompletableFuture(): Comple
  * @see anyOfCompletableFuture
  * @see CompletableFutureUtils.anyOfSuccessWithType
  */
-fun <T> Array<CompletableFuture<T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
+fun <T> Array<out CompletableFuture<T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
     CompletableFutureUtils.anyOfSuccessWithType(*this)
 
 /**
