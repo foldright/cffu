@@ -50,7 +50,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     @SafeVarargs
     @SuppressWarnings("unchecked")
-    public static <T> CompletableFuture<List<T>> allOfWithResult(CompletableFuture<T>... cfs) {
+    public static <T> CompletableFuture<List<T>> allOfWithResult(CompletableFuture<? extends T>... cfs) {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return CompletableFuture.completedFuture(arrayList());
@@ -121,7 +121,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     @SafeVarargs
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <T> CompletableFuture<List<T>> allOfFastFailWithResult(CompletableFuture<T>... cfs) {
+    public static <T> CompletableFuture<List<T>> allOfFastFailWithResult(CompletableFuture<? extends T>... cfs) {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return CompletableFuture.completedFuture(arrayList());
@@ -198,7 +198,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     @SafeVarargs
     @SuppressWarnings("unchecked")
-    public static <T> CompletableFuture<T> anyOfWithType(CompletableFuture<T>... cfs) {
+    public static <T> CompletableFuture<T> anyOfWithType(CompletableFuture<? extends T>... cfs) {
         return (CompletableFuture<T>) CompletableFuture.anyOf(cfs);
     }
 
@@ -256,7 +256,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     @SafeVarargs
     @SuppressWarnings("unchecked")
-    public static <T> CompletableFuture<T> anyOfSuccessWithType(CompletableFuture<T>... cfs) {
+    public static <T> CompletableFuture<T> anyOfSuccessWithType(CompletableFuture<? extends T>... cfs) {
         return (CompletableFuture<T>) anyOfSuccess(cfs);
     }
 
