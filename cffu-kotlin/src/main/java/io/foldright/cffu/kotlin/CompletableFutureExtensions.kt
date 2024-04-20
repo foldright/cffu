@@ -1,3 +1,5 @@
+@file:Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+
 package io.foldright.cffu.kotlin
 
 import io.foldright.cffu.CffuState
@@ -10,6 +12,8 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
+import java.util.function.Function
+import java.util.function.Supplier
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -383,8 +387,6 @@ fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.combineFastFail(
 ////////////////////////////////////////////////////////////////////////////////
 //# Backport CF instance methods
 //  compatibility for low Java version
-//
-//  all methods name prefix with `cffu`
 ////////////////////////////////////////////////////////////////////////////////
 
 //# Error Handling methods of CompletionStage
@@ -399,7 +401,7 @@ fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.combineFastFail(
  * if given CompletionStage completed exceptionally
  * @return the new CompletionStage
  */
-fun <T> CompletableFuture<T>.cffuExceptionallyAsync(fn: (Throwable) -> T): CompletableFuture<T> =
+fun <T> CompletableFuture<T>.exceptionallyAsync(fn: Function<Throwable, out T>): CompletableFuture<T> =
     CompletableFutureUtils.exceptionallyAsync(this, fn)
 
 /**
@@ -412,20 +414,22 @@ fun <T> CompletableFuture<T>.cffuExceptionallyAsync(fn: (Throwable) -> T): Compl
  * @param executor the executor to use for asynchronous execution
  * @return the new CompletionStage
  */
-fun <T> CompletableFuture<T>.cffuExceptionallyAsync(fn: (Throwable) -> T, executor: Executor): CompletableFuture<T> =
+fun <T> CompletableFuture<T>.exceptionallyAsync(
+    fn: Function<Throwable, out T>, executor: Executor
+): CompletableFuture<T> =
     CompletableFutureUtils.exceptionallyAsync(this, fn, executor)
 
 //# Timeout Control methods
 
 /**
- * Exceptionally completes this CompletableFuture with a [TimeoutException][java.util.concurrent.TimeoutException]
+ * Exceptionally completes this CompletableFuture with a TimeoutException
  * if not otherwise completed before the given timeout.
  *
  * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of `unit`
  * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
  * @return this CompletableFuture
  */
-fun <T> CompletableFuture<T>.cffuOrTimeout(timeout: Long, unit: TimeUnit): CompletableFuture<T> =
+fun <T> CompletableFuture<T>.orTimeout(timeout: Long, unit: TimeUnit): CompletableFuture<T> =
     CompletableFutureUtils.orTimeout(this, timeout, unit)
 
 /**
@@ -436,7 +440,7 @@ fun <T> CompletableFuture<T>.cffuOrTimeout(timeout: Long, unit: TimeUnit): Compl
  * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
  * @return given CompletableFuture
  */
-fun <T> CompletableFuture<T>.cffuCompleteOnTimeout(value: T, timeout: Long, unit: TimeUnit): CompletableFuture<T> =
+fun <T> CompletableFuture<T>.completeOnTimeout(value: T, timeout: Long, unit: TimeUnit): CompletableFuture<T> =
     CompletableFutureUtils.completeOnTimeout(this, value, timeout, unit)
 
 //# Advanced methods of CompletionStage
@@ -449,7 +453,9 @@ fun <T> CompletableFuture<T>.cffuCompleteOnTimeout(value: T, timeout: Long, unit
  *           CompletionStage if given CompletionStage completed exceptionally
  * @return the new CompletionStage
  */
-fun <T> CompletableFuture<T>.cffuExceptionallyCompose(fn: (Throwable) -> CompletionStage<T>): CompletableFuture<T> =
+fun <T> CompletableFuture<T>.exceptionallyCompose(
+    fn: Function<Throwable, out CompletionStage<T>>
+): CompletableFuture<T> =
     CompletableFutureUtils.exceptionallyCompose(this, fn)
 
 /**
@@ -461,8 +467,8 @@ fun <T> CompletableFuture<T>.cffuExceptionallyCompose(fn: (Throwable) -> Complet
  *           CompletionStage if given CompletionStage completed exceptionally
  * @return the new CompletionStage
  */
-fun <T> CompletableFuture<T>.cffuExceptionallyComposeAsync(
-    fn: (Throwable) -> CompletionStage<T>
+fun <T> CompletableFuture<T>.exceptionallyComposeAsync(
+    fn: Function<Throwable, out CompletionStage<T>>
 ): CompletableFuture<T> =
     CompletableFutureUtils.exceptionallyComposeAsync(this, fn)
 
@@ -475,8 +481,8 @@ fun <T> CompletableFuture<T>.cffuExceptionallyComposeAsync(
  * @param executor the executor to use for asynchronous execution
  * @return the new CompletionStage
  */
-fun <T> CompletableFuture<T>.cffuExceptionallyComposeAsync(
-    fn: (Throwable) -> CompletionStage<T>, executor: Executor
+fun <T> CompletableFuture<T>.exceptionallyComposeAsync(
+    fn: Function<Throwable, out CompletionStage<T>>, executor: Executor
 ): CompletableFuture<T> =
     CompletableFutureUtils.exceptionallyComposeAsync(this, fn, executor)
 
@@ -501,9 +507,8 @@ fun <T> CompletableFuture<T>.cffuExceptionallyComposeAsync(
  * ```
  *
  * <b><i>CAUTION:<br></i></b>
- * if the wait timed out, this method throws an (unchecked) [CompletionException][java.util.concurrent.CompletionException]
- * with the [TimeoutException][java.util.concurrent.TimeoutException] as its cause;
- * NOT throws a (checked) [TimeoutException][java.util.concurrent.TimeoutException] like [CompletableFuture.get].
+ * if the wait timed out, this method throws an (unchecked) CompletionException with the TimeoutException as its cause;
+ * NOT throws a (checked) TimeoutException like [CompletableFuture.get].
  *
  * @param timeout the maximum time to wait
  * @param unit    the time unit of the timeout argument
@@ -530,7 +535,7 @@ fun <T> CompletableFuture<T>.join(timeout: Long, unit: TimeUnit): T =
  * ```
  */
 @Suppress("UNCHECKED_CAST")
-fun <T> CompletableFuture<T>.cffuResultNow(): T =
+fun <T> CompletableFuture<T>.resultNow(): T =
     CompletableFutureUtils.resultNow(this) as T
 
 /**
@@ -543,7 +548,7 @@ fun <T> CompletableFuture<T>.cffuResultNow(): T =
  *                               or the task was cancelled
  * @see CompletableFuture#resultNow()
  */
-fun <T> CompletableFuture<T>.cffuExceptionNow(): Throwable =
+fun <T> CompletableFuture<T>.exceptionNow(): Throwable =
     CompletableFutureUtils.exceptionNow(this)
 
 /**
@@ -566,7 +571,7 @@ fun <T> CompletableFuture<T>.cffuState(): CffuState =
  * @param supplier a function returning the value to be used to complete given CompletableFuture
  * @return given CompletableFuture
  */
-fun <T> CompletableFuture<T>.cffuCompleteAsync(supplier: () -> T): CompletableFuture<T> =
+fun <T> CompletableFuture<T>.completeAsync(supplier: Supplier<out T>): CompletableFuture<T> =
     CompletableFutureUtils.completeAsync(this, supplier)
 
 /**
@@ -577,7 +582,7 @@ fun <T> CompletableFuture<T>.cffuCompleteAsync(supplier: () -> T): CompletableFu
  * @param executor the executor to use for asynchronous execution
  * @return given CompletableFuture
  */
-fun <T> CompletableFuture<T>.cffuCompleteAsync(supplier: () -> T, executor: Executor): CompletableFuture<T> =
+fun <T> CompletableFuture<T>.completeAsync(supplier: Supplier<out T>, executor: Executor): CompletableFuture<T> =
     CompletableFutureUtils.completeAsync(this, supplier, executor)
 
 //# Re-Config methods
@@ -594,7 +599,7 @@ fun <T> CompletableFuture<T>.cffuCompleteAsync(supplier: () -> T, executor: Exec
  *
  * @return the new CompletionStage
  */
-fun <T> CompletableFuture<T>.cffuMinimalCompletionStage(): CompletionStage<T> =
+fun <T> CompletableFuture<T>.minimalCompletionStage(): CompletionStage<T> =
     CompletableFutureUtils.minimalCompletionStage(this)
 
 /**
@@ -606,7 +611,7 @@ fun <T> CompletableFuture<T>.cffuMinimalCompletionStage(): CompletionStage<T> =
  *
  * @return the new CompletableFuture
  */
-fun <T> CompletableFuture<T>.cffuCopy(): CompletableFuture<T> =
+fun <T> CompletableFuture<T>.copy(): CompletableFuture<T> =
     CompletableFutureUtils.copy(this)
 
 /**
@@ -615,5 +620,5 @@ fun <T> CompletableFuture<T>.cffuCopy(): CompletableFuture<T> =
  * @param <T> the type of the value
  * @return a new CompletableFuture
  */
-fun <T, U> CompletableFuture<T>.cffuNewIncompleteFuture(): CompletableFuture<U> =
+fun <T, U> CompletableFuture<T>.newIncompleteFuture(): CompletableFuture<U> =
     CompletableFutureUtils.newIncompleteFuture(this)
