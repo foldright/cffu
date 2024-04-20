@@ -10,8 +10,8 @@ import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Function;
@@ -37,8 +37,7 @@ public final class CompletableFutureUtils {
      * CompletableFutures, the new CompletableFuture is completed when all the given CompletableFutures complete.
      * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
      * also does so, with a CompletionException holding this exception as its cause.
-     * If no CompletableFutures are provided, returns a CompletableFuture completed
-     * with the value {@link Collections#emptyList() emptyList}.
+     * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
      * <p>
      * Same to {@link CompletableFuture#allOf(CompletableFuture[])},
      * but the returned CompletableFuture contains the results of the given CompletableFutures.
@@ -54,8 +53,8 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<List<T>> allOfWithResult(CompletableFuture<T>... cfs) {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
-        if (size == 0) return CompletableFuture.completedFuture(Collections.emptyList());
-        if (size == 1) return cfs[0].thenApply(Arrays::asList);
+        if (size == 0) return CompletableFuture.completedFuture(arrayList());
+        if (size == 1) return cfs[0].thenApply(CompletableFutureUtils::arrayList);
 
         final Object[] result = new Object[size];
 
@@ -66,7 +65,7 @@ public final class CompletableFutureUtils {
         }
 
         return CompletableFuture.allOf(collectResultCfs)
-                .thenApply(unused -> (List<T>) Arrays.asList(result));
+                .thenApply(unused -> (List<T>) arrayList(result));
     }
 
     /**
@@ -109,8 +108,7 @@ public final class CompletableFutureUtils {
      * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
      * also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
-     * If no CompletableFutures are provided, returns a CompletableFuture completed
-     * with the value {@link Collections#emptyList() emptyList}.
+     * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
      * <p>
      * Same to {@link #allOfFastFail(CompletableFuture[])},
      * but the returned CompletableFuture contains the results of the given CompletableFutures.
@@ -126,8 +124,8 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<List<T>> allOfFastFailWithResult(CompletableFuture<T>... cfs) {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
-        if (size == 0) return CompletableFuture.completedFuture(Collections.emptyList());
-        if (size == 1) return cfs[0].thenApply(Arrays::asList);
+        if (size == 0) return CompletableFuture.completedFuture(arrayList());
+        if (size == 1) return cfs[0].thenApply(CompletableFutureUtils::arrayList);
 
         final CompletableFuture[] successOrBeIncomplete = new CompletableFuture[size];
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
@@ -146,6 +144,17 @@ public final class CompletableFutureUtils {
         for (int i = 0; i < cfs.length; i++) {
             requireNonNull(cfs[i], "cf" + (i + 1) + " is null");
         }
+    }
+
+    /**
+     * Returns normal array list instead of unmodifiable or fixed-size list.
+     * Safer for application code which may reuse the returned list as normal collection.
+     */
+    @SuppressWarnings("unchecked")
+    private static <T> List<T> arrayList(T... elements) {
+        List<T> ret = new ArrayList<>(elements.length);
+        ret.addAll(Arrays.asList(elements));
+        return ret;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -609,7 +618,7 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<T> exceptionallyAsync(
             CompletableFuture<T> cf, Function<Throwable, ? extends T> fn, Executor executor) {
         if (IS_JAVA12_PLUS) {
-            return (cf.exceptionallyAsync(fn, executor));
+            return cf.exceptionallyAsync(fn, executor);
         }
 
         // below code is copied from CompletionStage#exceptionallyAsync
@@ -631,8 +640,7 @@ public final class CompletableFutureUtils {
      */
     public static <T> CompletableFuture<T> orTimeout(CompletableFuture<T> cf, long timeout, TimeUnit unit) {
         if (IS_JAVA9_PLUS) {
-            cf.orTimeout(timeout, unit);
-            return cf;
+            return cf.orTimeout(timeout, unit);
         }
 
         // below code is copied from CompletableFuture#orTimeout with small adoption
@@ -656,8 +664,7 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<T> completeOnTimeout(
             CompletableFuture<T> cf, @Nullable T value, long timeout, TimeUnit unit) {
         if (IS_JAVA9_PLUS) {
-            cf.completeOnTimeout(value, timeout, unit);
-            return cf;
+            return cf.completeOnTimeout(value, timeout, unit);
         }
 
         // below code is copied from CompletableFuture#completeOnTimeout with small adoption
@@ -683,7 +690,7 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<T> exceptionallyCompose(
             CompletableFuture<T> cf, Function<Throwable, ? extends CompletionStage<T>> fn) {
         if (IS_JAVA12_PLUS) {
-            return (cf.exceptionallyCompose(fn));
+            return cf.exceptionallyCompose(fn);
         }
 
         // below code is copied from CompletionStage.exceptionallyCompose
@@ -765,9 +772,7 @@ public final class CompletableFutureUtils {
     public static <T> T cffuJoin(CompletableFuture<T> cf, long timeout, TimeUnit unit) {
         if (cf.isDone()) return cf.join();
 
-        CompletableFuture<T> f = copy(cf);
-        orTimeout(f, timeout, unit);
-        return f.join();
+        return orTimeout(copy(cf), timeout, unit).join();
     }
 
     /**
@@ -911,8 +916,7 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<T> completeAsync(
             CompletableFuture<T> cf, Supplier<? extends T> supplier, Executor executor) {
         if (IS_JAVA9_PLUS) {
-            cf.completeAsync(supplier, executor);
-            return cf;
+            return cf.completeAsync(supplier, executor);
         }
 
         // below code is copied from CompletableFuture#completeAsync with small adoption
@@ -971,9 +975,9 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <T, U> CompletableFuture<U> newIncompleteFuture(CompletableFuture<T> cf) {
         if (IS_JAVA9_PLUS) {
-            return (cf.newIncompleteFuture());
+            return cf.newIncompleteFuture();
         }
-        return (new CompletableFuture<>());
+        return new CompletableFuture<>();
     }
 
     //# Getter methods
@@ -1006,7 +1010,7 @@ public final class CompletableFutureUtils {
         return requireNonNull(e, "defaultExecutor is null");
     }
 
-    private static final boolean USE_COMMON_POOL = (ForkJoinPool.getCommonPoolParallelism() > 1);
+    private static final boolean USE_COMMON_POOL = ForkJoinPool.getCommonPoolParallelism() > 1;
 
     /**
      * Fallback if ForkJoinPool.commonPool() cannot support parallelism

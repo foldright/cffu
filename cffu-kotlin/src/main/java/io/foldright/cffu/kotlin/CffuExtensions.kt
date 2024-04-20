@@ -68,8 +68,7 @@ private const val ERROR_MSG_FOR_ARRAY = "no cffuFactory argument provided when t
  * the new Cffu is completed when all the given Cffus complete.
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
- * If no Cffus are provided, returns a Cffu completed
- * with the value [emptyList][java.util.Collections.emptyList].
+ * If no Cffus are provided, returns a Cffu completed with the value empty list.
  *
  * Same as [allOfCffuVoid], but the returned Cffu contains the results of input Cffus.
  * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
@@ -91,8 +90,7 @@ fun <T> Collection<Cffu<T>>.allOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<L
  * the new Cffu is completed when all the given Cffus complete.
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
- * If no Cffus are provided, returns a Cffu completed
- * with the value [emptyList][java.util.Collections.emptyList].
+ * If no Cffus are provided, returns a Cffu completed with the value empty list.
  *
  * Same as [allOfCffuVoid], but the returned Cffu contains the results of input Cffus.
  * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
@@ -114,8 +112,7 @@ fun <T> Array<Cffu<T>>.allOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T
  * the new Cffu is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a Cffu completed
- * with the value [emptyList][java.util.Collections.emptyList].
+ * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
  *
  * Same as [allOfCffuVoid], but the returned Cffu contains the results of input CompletableFutures.
  * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
@@ -132,8 +129,7 @@ fun <T> Collection<CompletableFuture<T>>.allOfCffu(cffuFactory: CffuFactory): Cf
  * the new Cffu is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a Cffu completed
- * with the value [emptyList][java.util.Collections.emptyList].
+ * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
  *
  * Same as [allOfCffuVoid], but the returned Cffu contains the results of input CompletableFutures.
  * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
@@ -228,8 +224,7 @@ fun Array<out CompletableFuture<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cff
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given Cffus,
  * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a Cffu completed
- * with the value [emptyList][java.util.Collections.emptyList].
+ * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
  *
  * Same as [allOfFastFailCffuVoid], but the returned Cffu contains the results of input Cffus.
  * Same as [CffuFactory.cffuAllOfFastFail], providing this method is convenient for method chaining.
@@ -252,8 +247,7 @@ fun <T> Collection<Cffu<T>>.allOfFastFailCffu(cffuFactory: CffuFactory = ABSENT)
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given Cffus,
  * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a Cffu completed
- * with the value [emptyList][java.util.Collections.emptyList].
+ * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
  *
  * Same as [allOfFastFailCffuVoid], but the returned Cffu contains the results of input Cffus.
  * Same as [CffuFactory.cffuAllOfFastFail], providing this method is convenient for method chaining.
@@ -276,8 +270,7 @@ fun <T> Array<Cffu<T>>.allOfFastFailCffu(cffuFactory: CffuFactory = ABSENT): Cff
  * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given CompletableFutures,
  * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a Cffu completed
- * with the value [emptyList][java.util.Collections.emptyList].
+ * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
  *
  * Same as [allOfFastFailCffuVoid], but the returned Cffu contains the results of input Cffus.
  * Same as [CffuFactory.cffuAllOfFastFail], providing this method is convenient for method chaining.
@@ -295,8 +288,7 @@ fun <T> Collection<CompletableFuture<T>>.allOfFastFailCffu(cffuFactory: CffuFact
  * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given CompletableFutures,
  * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a Cffu completed
- * with the value [emptyList][java.util.Collections.emptyList].
+ * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
  *
  * Same as [allOfFastFailCffuVoid], but the returned Cffu contains the results of input Cffus.
  * Same as [CffuFactory.cffuAllOfFastFail], providing this method is convenient for method chaining.
