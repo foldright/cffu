@@ -31,8 +31,7 @@ import java.util.concurrent.TimeUnit
  * CompletableFutures, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so, with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a CompletableFuture completed
- * with the value [emptyList][java.util.Collections.emptyList].
+ * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
  *
  * Same as [allOfCompletableFutureVoid],
  * but the returned CompletableFuture contains the results of input CompletableFutures.
@@ -49,8 +48,7 @@ fun <T> Collection<CompletableFuture<T>>.allOfCompletableFuture(): CompletableFu
  * CompletableFutures, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so, with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a CompletableFuture completed
- * with the value [emptyList][java.util.Collections.emptyList].
+ * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
  *
  * Same as [allOfCompletableFutureVoid],
  * but the returned CompletableFuture contains the results of input CompletableFutures.
@@ -112,8 +110,7 @@ fun Array<out CompletableFuture<*>>.allOfCompletableFutureVoid(): CompletableFut
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so *without* waiting other incomplete given CompletableFutures,
  * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a CompletableFuture completed
- * with the value [emptyList][java.util.Collections.emptyList].
+ * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
  *
  * Same as [allOfFastFailCompletableFutureVoid],
  * but the returned CompletableFuture contains the results of input CompletableFutures.
@@ -131,8 +128,7 @@ fun <T> Collection<CompletableFuture<T>>.allOfFastFailCompletableFuture(): Compl
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so *without* waiting other incomplete given CompletableFutures,
  * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a CompletableFuture completed
- * with the value [emptyList][java.util.Collections.emptyList].
+ * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
  *
  * Same as [allOfFastFailCompletableFutureVoid],
  * but the returned CompletableFuture contains the results of input CompletableFutures.
