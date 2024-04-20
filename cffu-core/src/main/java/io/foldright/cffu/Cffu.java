@@ -1232,10 +1232,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     //# Read(explicitly) methods of CompletableFuture
     //
-    //    - get()                   // BLOCKING!
-    //    - get(timeout, unit)      // BLOCKING!
-    //    - join()                  // BLOCKING!
-    //    - cffuJoin(timeout, unit) // BLOCKING!
+    //    - get()               // BLOCKING!
+    //    - get(timeout, unit)  // BLOCKING!
+    //    - join()              // BLOCKING!
+    //    - join(timeout, unit) // BLOCKING!
     //    - getNow(T valueIfAbsent)
     //    - resultNow()
     //    - exceptionNow()
@@ -1244,7 +1244,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //    - isCompletedExceptionally()
     //    - isCancelled()
     //    - state()
-    //    - cffuState()
+    //    - state()
     //
     // NOTE about ExecutionException or CompletionException when the computation threw an exception:
     //   - get methods throw ExecutionException(checked exception)
@@ -1261,7 +1261,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws ExecutionException    if the computation threw an exception
      * @throws InterruptedException  if the current thread was interrupted while waiting
      * @see #join()
-     * @see #cffuJoin(long, TimeUnit)
+     * @see #join(long, TimeUnit)
      * @see #getNow(Object)
      * @see #resultNow()
      * @see #get(long, TimeUnit)
@@ -1286,7 +1286,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws ExecutionException    if the computation threw an exception
      * @throws InterruptedException  if the current thread was interrupted while waiting
      * @throws TimeoutException      if the wait timed out
-     * @see #cffuJoin(long, TimeUnit)
+     * @see #join(long, TimeUnit)
      * @see #getNow(Object)
      * @see #resultNow()
      * @see #join()
@@ -1312,7 +1312,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws CancellationException if the computation was cancelled
      * @throws CompletionException   if this future completed exceptionally
      *                               or a completion computation threw an exception
-     * @see #cffuJoin(long, TimeUnit)
+     * @see #join(long, TimeUnit)
      * @see #getNow(Object)
      * @see #resultNow()
      * @see #get(long, TimeUnit)
@@ -1333,7 +1333,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <b><i>NOTE:<br></i></b>
      * call this method
      * <p>
-     * {@code result = cffu.cffuJoin(timeout, unit);}
+     * {@code result = cffu.join(timeout, unit);}
      * <p>
      * is same as:
      *
@@ -1363,10 +1363,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Blocking
     @Nullable
-    public T cffuJoin(long timeout, TimeUnit unit) {
+    public T join(long timeout, TimeUnit unit) {
         checkMinimalStage();
 
-        return CompletableFutureUtils.cffuJoin(cf, timeout, unit);
+        return CompletableFutureUtils.join(cf, timeout, unit);
     }
 
     /**
@@ -1379,7 +1379,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws CompletionException   if this future completed exceptionally
      *                               or a completion computation threw an exception
      * @see #resultNow()
-     * @see #cffuJoin(long, TimeUnit)
+     * @see #join(long, TimeUnit)
      * @see #join()
      * @see #get(long, TimeUnit)
      * @see #get()
@@ -1514,7 +1514,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public CffuState cffuState() {
         checkMinimalStage();
 
-        return CompletableFutureUtils.cffuState(cf);
+        return CompletableFutureUtils.state(cf);
     }
 
     ////////////////////////////////////////////////////////////////////////////////

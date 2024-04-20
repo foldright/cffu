@@ -70,18 +70,18 @@
 
 - ☘️ **补全业务使用中缺失的功能**
   - 更方便的功能，如
-    - `cffuAllOf`/`allOfWithResult`方法：返回多个`CF`的结果，而不是无返回结果`Void`（`allOf`）
-    - `cffuCombine`/`combine`方法：返回多个`CF`不同类型的结果，而不是同一类型（`cffuAllOf`/`allOfWithResult`）
+    - `allResultsOf`方法：返回多个`CF`的结果，而不是无返回结果`Void`（`CompletableFuture#allOf()`）
+    - `cffuCombine`/`combine`方法：返回多个`CF`不同类型的结果，而不是同一类型（`allResultsOf`）
   - 更高效灵活的并发执行策略，如
-    - `cffuAllOfFastFail`/`allOfFastFail`方法：有`CF`失败时快速返回，而不再等待所有`CF`运行完成（`allOf`）
-    - `cffuAnyOfSuccess`/`anyOfSuccess`方法：返回首个成功的`CF`结果，而不是首个完成（但可能失败）的`CF`（`anyOf`）
+    - `allOfFastFail`方法：有`CF`失败时快速返回，而不再等待所有`CF`运行完成（`allOf`）
+    - `anyOfSuccess`方法：返回首个成功的`CF`结果，而不是首个完成（但可能失败）的`CF`（`anyOf`）
   - 更安全的使用方式，如
     - 支持设置缺省的业务线程池（`CffuFactoryBuilder#newCffuFactoryBuilder(executor)`方法）
-    - `cffuJoin(timeout, unit)`方法：支持超时的`join`的方法
+    - `join(timeout, unit)`方法：支持超时的`join`的方法
     - 支持禁止强制篡改（`CffuFactoryBuilder#forbidObtrudeMethods`方法）
     - 在类方法附加完善的代码质量注解（如`@NonNull`、`@Nullable`、`@CheckReturnValue`、`@Contract`等），在编码时`IDE`能尽早提示出问题
 - 💪 **已有功能的增强**，如
-  - `cffuAnyOf`/`anyOfWithType`方法：返回类型是`T`（类型安全），而不是返回`Object`（`anyOf`）
+  - `anyOf`方法：返回类型是`T`（类型安全），而不是返回`Object`（`CompletableFuture#anyOf()`）
 - ⏳ **`Backport`支持`Java 8`**，`Java 9+`高版本的所有`CF`新功能在`Java 8`等低`Java`版本直接可用，如
   - 超时控制：`orTimeout`/`completeOnTimeout`方法
   - 延迟执行：`delayedExecutor`方法
@@ -182,7 +182,7 @@ public class CffuDemo {
     final Cffu<Integer> combined = longTaskA.thenCombine(longTaskB, Integer::sum)
         .orTimeout(1500, TimeUnit.MILLISECONDS);
     System.out.println("combined result: " + combined.get());
-    final Cffu<Integer> anyOfSuccess = cffuFactory.cffuAnyOfSuccess(longTaskC, longFailedTask);
+    final Cffu<Integer> anyOfSuccess = cffuFactory.anyOfSuccess(longTaskC, longFailedTask);
     System.out.println("anyOfSuccess result: " + anyOfSuccess.get());
   }
 }
@@ -277,7 +277,7 @@ fun main() {
 `CompletableFuture`的`allOf`方法没有返回结果，只是返回`Void`，不方便获得所运行的多个`CF`结果。  
 \# 要再通过入参`CF`的`get`方法来获取结果。
 
-`cffu`的`cffuAllOf`/`allOfWithResult`方法提供了返回多个`CF`结果的功能。
+`cffu`的`allResultsOf`方法提供了返回多个`CF`结果的功能。
 
 示例代码如下：
 
@@ -288,7 +288,7 @@ public class AllOfWithResultDemo {
 
   public static void main(String[] args) {
     //////////////////////////////////////////////////
-    // CffuFactory#cffuAllOf
+    // CffuFactory#allOf
     //////////////////////////////////////////////////
     Cffu<Integer> cffu1 = cffuFactory.completedFuture(21);
     Cffu<Integer> cffu2 = cffuFactory.completedFuture(42);
@@ -298,11 +298,11 @@ public class AllOfWithResultDemo {
     // the result can be got by input argument `cf1.get()`, but it's cumbersome.
     // so we can see a lot the util methods to enhance allOf with result in our project.
 
-    Cffu<List<Integer>> allOfWithResult = cffuFactory.cffuAllOf(cffu1, cffu2);
-    System.out.println(allOfWithResult.get());
+    Cffu<List<Integer>> allResults = cffuFactory.allResultsOf(cffu1, cffu2);
+    System.out.println(allResults.get());
 
     //////////////////////////////////////////////////
-    // or CompletableFutureUtils#allOfWithResult
+    // or CompletableFutureUtils#allResultsOf
     //////////////////////////////////////////////////
     CompletableFuture<Integer> cf1 = CompletableFuture.completedFuture(21);
     CompletableFuture<Integer> cf2 = CompletableFuture.completedFuture(42);
@@ -310,8 +310,8 @@ public class AllOfWithResultDemo {
     CompletableFuture<Void> allOf = CompletableFuture.allOf(cf1, cf2);
     // Result type is Void!!
 
-    CompletableFuture<List<Integer>> allOfWithResult2 = CompletableFutureUtils.allOfWithResult(cf1, cf2);
-    System.out.println(allOfWithResult2.get());
+    CompletableFuture<List<Integer>> allResults2 = CompletableFutureUtils.allOfWithResult(cf1, cf2);
+    System.out.println(allResults2.get());
   }
 }
 ```
@@ -414,11 +414,11 @@ public class DefaultExecutorSettingForCffu {
 
 - `CompletableFuture`的`allOf`方法会等待所有输入`CF`运行完成；即使有`CF`失败了也要等待后续`CF`运行完成，再返回一个失败的`CF`。
   - 对于业务逻辑来说，这样失败且继续等待策略，减慢了业务响应性；会希望如果有输入`CF`失败了，则快速失败不再做于事无补的等待
-  - `cffu`提供了相应的`cffuAllOfFastFail`/`allOfFastFail`方法
+  - `cffu`提供了相应的`allResultsOfFastFail`/`allOfFastFail`方法
   - `allOf`/`allOfFastFail`两者都是，只有当所有的输入`CF`都成功时，才返回成功结果
 - `CompletableFuture`的`anyOf`方法返回首个完成的`CF`（不会等待后续没有完成的`CF`，赛马模式）；即使首个完成的`CF`是失败的，也会返回这个失败的`CF`结果。
   - 对于业务逻辑来说，会希望赛马模式返回首个成功的`CF`结果，而不是首个完成但失败的`CF`
-  - `cffu`提供了相应的`cffuAnyOfSuccess`/`anyOfSuccess`方法
+  - `cffu`提供了相应的`anyOfSuccess`方法
   - `anyOfSuccess`只有当所有的输入`CF`都失败时，才返回失败结果
 
 > 📔 关于多个`CF`的并发执行策略，可以看看`JavaScript`规范[`Promise Concurrency`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#promise_concurrency)；在`JavaScript`中，`Promise`即对应`CompletableFuture`。
@@ -443,8 +443,8 @@ public class ConcurrencyStrategyDemo {
 
   public static void main(String[] args) throws Exception {
     ////////////////////////////////////////////////////////////////////////
-    // CffuFactory#cffuAllOfFastFail / allOfFastFail
-    // CffuFactory#cffuAnyOfSuccess / anyOfSuccess
+    // CffuFactory#allResultsOfFastFail / allOfFastFail
+    // CffuFactory#anyOfSuccess
     ////////////////////////////////////////////////////////////////////////
     final Cffu<Integer> successAfterLongTime = cffuFactory.supplyAsync(() -> {
       sleep(3000); // sleep LONG time
@@ -454,14 +454,14 @@ public class ConcurrencyStrategyDemo {
 
     // Result type is Void!
     Cffu<Void> cffuAll = cffuFactory.allOfFastFail(successAfterLongTime, failed);
-    Cffu<List<Integer>> fastFailed = cffuFactory.cffuAllOfFastFail(successAfterLongTime, failed);
+    Cffu<List<Integer>> fastFailed = cffuFactory.allResultsOfFastFail(successAfterLongTime, failed);
     // fast failed without waiting successAfterLongTime
     System.out.println(fastFailed.exceptionNow());
 
     // Result type is Object!
     Cffu<Object> cffuAny = cffuFactory.anyOfSuccess(successAfterLongTime, failed);
     System.out.println(cffuAny.get());
-    Cffu<Integer> anyOfSuccess = cffuFactory.cffuAnyOfSuccess(successAfterLongTime, failed);
+    Cffu<Integer> anyOfSuccess = cffuFactory.anyOfSuccess(successAfterLongTime, failed);
     System.out.println(anyOfSuccess.get());
 
     ////////////////////////////////////////////////////////////////////////
@@ -498,7 +498,7 @@ public class ConcurrencyStrategyDemo {
 - 主业务逻辑阻塞，没有机会做相应的处理，以及时响应用户
 - 会费掉一个线程，线程是很有限的资源（一般几百个），耗尽线程意味着服务瘫痪故障
 
-`cffuJoin(timeout, unit)`方法即支持超时的`join`的方法；就像`cf.get(timeout, unit)` 之于 `cf.get()`。
+`join(timeout, unit)`方法即支持超时的`join`的方法；就像`cf.get(timeout, unit)` 之于 `cf.get()`。
 
 这个新方法使用简单类似，不附代码示例。
 
@@ -519,7 +519,7 @@ public class ConcurrencyStrategyDemo {
 
 `CompletableFuture.anyOf`方法返回类型是`Object`，丢失具体类型，不够类型安全，使用时需要转型也不方便。
 
-`cffu`提供了`cffuAnyOf`/`anyOfWithType`方法，返回类型是`T`（类型安全），而不是返回`Object`（`anyOf`）。
+`cffu`提供了`anyOf`/`anyOf`方法，返回类型是`T`（类型安全），而不是返回`Object`（`CompletableFuture#anyOf()`）。
 
 这个新方法使用简单类似，不附代码示例。
 

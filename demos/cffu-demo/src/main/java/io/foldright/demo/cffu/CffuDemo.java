@@ -41,7 +41,7 @@ public class CffuDemo {
         final Cffu<Integer> combined = longTaskA.thenCombine(longTaskB, Integer::sum)
                 .orTimeout(1500, TimeUnit.MILLISECONDS);
         System.out.println("combined result: " + combined.get());
-        final Cffu<Integer> anyOfSuccess = cffuFactory.cffuAnyOfSuccess(longTaskC, longFailedTask);
+        final Cffu<Integer> anyOfSuccess = cffuFactory.anyOfSuccess(longTaskC, longFailedTask);
         System.out.println("anyOfSuccess result: " + anyOfSuccess.get());
 
         ////////////////////////////////////////

@@ -405,7 +405,7 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
     ////////////////////////////////////////////////////////////
 
     shouldThrow<UnsupportedOperationException> {
-        cffuJoin(1, TimeUnit.MILLISECONDS)
+        join(1, TimeUnit.MILLISECONDS)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrow<UnsupportedOperationException> {
         cffuState()
@@ -504,7 +504,7 @@ private fun <T> Cffu<T>.shouldNotMinCffu(recursive: Boolean = false) {
     // Cffu specified methods
     ////////////////////////////////////////////////////////////
 
-    cffuJoin(1, TimeUnit.MILLISECONDS)
+    join(1, TimeUnit.MILLISECONDS)
     cffuState()
 
     //# Cffu Re-Config methods

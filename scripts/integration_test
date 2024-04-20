@@ -74,5 +74,44 @@ for jdk_version in "${JDK_VERSIONS[@]}"; do
 
   kt_version_var_name="KT_VERSION_FOR_JAVA${jdk_version}"
   kt_version_opt="${!kt_version_var_name:+-Dkotlin.version=${!kt_version_var_name}}"
-  mvu::mvn_cmd ${CI_MORE_BEGIN_OPTS:-} dependency:properties surefire:test ${CI_MORE_END_OPTS:-} $kt_version_opt
+
+  pl=
+  if ((jdk_version < default_build_jdk_version)); then
+    pl='-pl cffu-core,cffu-ttl-executor-wrapper'
+  fi
+
+  mvu::mvn_cmd ${pl:-} ${CI_MORE_BEGIN_OPTS:-} dependency:properties surefire:test ${CI_MORE_END_OPTS:-} $kt_version_opt
+done
+
+# test the kotlin extension methods works
+#
+# CAUTION: MUST re-compile the client sources(test codes) by Java 8
+#   Extensions are resolved statically.
+#   If a class has a member function, and an extension function is defined
+#     which has the same receiver type, the same name, and is applicable to given arguments,
+#   the member always wins
+#   https://kotlinlang.org/docs/extensions.html#extensions-are-resolved-statically
+
+jvu::switch_to_jdk 8
+
+cd cffu-kotlin
+
+# recompile cffu-kotlin and run test
+rm -rf target/*test*
+cu::head_line_echo "recompile and test cffu-kotlin with Java 8: $JAVA_HOME"
+mvu::mvn_cmd -P'!gen-git-properties' -Dmaven.main.skip -Denforcer.skip ${CI_MORE_BEGIN_OPTS:-} dependency:properties test-compile surefire:test ${CI_MORE_END_OPTS:-}
+
+for jdk_version in "${JDK_VERSIONS[@]}"; do
+  # skip default jdk, already tested above
+  ((jdk_version == 8)) && continue
+
+  jvu::switch_to_jdk "$jdk_version"
+
+  # just test without build
+  cu::head_line_echo "test cffu-kotlin with Java $jdk_version: $JAVA_HOME"
+
+  kt_version_var_name="KT_VERSION_FOR_JAVA${jdk_version}"
+  kt_version_opt="${!kt_version_var_name:+-Dkotlin.version=${!kt_version_var_name}}"
+
+  mvu::mvn_cmd -Dmaven.main.skip -Denforcer.skip ${CI_MORE_BEGIN_OPTS:-} dependency:properties surefire:test ${CI_MORE_END_OPTS:-} $kt_version_opt
 done
