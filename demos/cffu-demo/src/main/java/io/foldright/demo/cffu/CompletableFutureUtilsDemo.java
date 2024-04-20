@@ -34,8 +34,10 @@ public class CompletableFutureUtilsDemo {
         }, myBizThreadPool);
 
         final CompletableFuture<Integer> combined = longTaskA.thenCombine(longTaskB, Integer::sum);
-        final CompletableFuture<Integer> combinedWithTimeout = CompletableFutureUtils.orTimeout(combined, 1500, TimeUnit.MILLISECONDS);
+        final CompletableFuture<Integer> combinedWithTimeout =
+                CompletableFutureUtils.orTimeout(combined, 1500, TimeUnit.MILLISECONDS);
         System.out.println("combined result: " + combinedWithTimeout.get());
+
         final CompletableFuture<Integer> anyOfSuccess = CompletableFutureUtils.anyOfSuccess(longTaskC, longFailedTask);
         System.out.println("anyOfSuccess result: " + anyOfSuccess.get());
 

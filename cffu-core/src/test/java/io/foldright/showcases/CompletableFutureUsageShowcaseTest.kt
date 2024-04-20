@@ -107,7 +107,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
      *   if executor argument is absent, use default executor of [CompletableFuture.ASYNC_POOL] (normally is a [ForkJoinPool]).
      * - non-`Async` methods(`thenRun/thenApply`) use the thread of notification;
      *   if there is single previous [CompletableFuture], use the same thread of previous CF.
-     *   CAUTION: restrict the concurrency!!
+     *   CAUTION: restrict the concurrency!
      */
     test("execution thread/executor behavior: then*(non-Async) operations chained after *Async UNCOMPLETED CF, trigger by previous *Async CF complete and run in previous Async CF executor").config(
         invocations = 100
@@ -129,7 +129,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
                     thenNonAsyncOpThread = currentThread()
 
                     assertRunInExecutor(testThreadPoolExecutor)
-                }, testThreadPoolExecutor) // !! switch executor !!
+                }, testThreadPoolExecutor) // ! switch executor !
                 .thenApply {
                     // when NOT async,
                     // use same thread of single previous CF
@@ -150,7 +150,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
                 .thenRunAsync {
                     // when run ASYNC,
                     //
-                    // - executor is NOT inherited after switch!!
+                    // - executor is NOT inherited after switch!
                     // - use the DEFAULT EXECUTOR of CompletableFuture, if no executor specified.
                     assertNotRunInExecutor(testThreadPoolExecutor)
                 }

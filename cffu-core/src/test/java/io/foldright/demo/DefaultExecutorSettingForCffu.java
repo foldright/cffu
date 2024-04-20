@@ -17,9 +17,9 @@ public class DefaultExecutorSettingForCffu {
         Cffu<Void> cf1 = cffuFactory.runAsync(() -> System.out.println("doing a long time work!"));
 
         Cffu<Void> cf2 = cffuFactory.supplyAsync(() -> {
-            System.out.println("doing another long time work!!");
+            System.out.println("doing another long time work!");
             return 42;
-        }).thenAcceptAsync(i -> System.out.println("doing third long time work!!!"));
+        }).thenAcceptAsync(i -> System.out.println("doing third long time work!"));
 
         cffuFactory.allOf(cf1, cf2).join();
 

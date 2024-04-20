@@ -64,7 +64,7 @@ private const val ERROR_MSG_FOR_COLL = "no cffuFactory argument provided when th
 private const val ERROR_MSG_FOR_ARRAY = "no cffuFactory argument provided when this array is empty"
 
 /**
- * Returns a new Cffu with the results in the <strong>same order</strong> of all the given Cffus,
+ * Returns a new Cffu with the results in the **same order** of all the given Cffus,
  * the new Cffu is completed when all the given Cffus complete.
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
@@ -86,7 +86,7 @@ fun <T> Collection<Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSE
 }
 
 /**
- * Returns a new Cffu with the results in the <strong>same order</strong> of all the given Cffus,
+ * Returns a new Cffu with the results in the **same order** of all the given Cffus,
  * the new Cffu is completed when all the given Cffus complete.
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
@@ -108,7 +108,7 @@ fun <T> Array<out Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSEN
 }
 
 /**
- * Returns a new Cffu with the results in the <strong>same order</strong> of all the given CompletableFutures,
+ * Returns a new Cffu with the results in the **same order** of all the given CompletableFutures,
  * the new Cffu is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
@@ -125,7 +125,7 @@ fun <T> Collection<CompletableFuture<out T>>.allResultsOfCffu(cffuFactory: CffuF
     cffuFactory.allResultsOf(*this.toTypedArray())
 
 /**
- * Returns a new Cffu with the results in the <strong>same order</strong> of all the given CompletableFutures,
+ * Returns a new Cffu with the results in the **same order** of all the given CompletableFutures,
  * the new Cffu is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
@@ -219,7 +219,7 @@ fun Array<out CompletableFuture<*>>.allOfCffu(cffuFactory: CffuFactory): Cffu<Vo
     cffuFactory.allOf(*this)
 
 /**
- * Returns a new Cffu with the results in the <strong>same order</strong> of all the given Cffus,
+ * Returns a new Cffu with the results in the **same order** of all the given Cffus,
  * the new Cffu success when all the given Cffus success.
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given Cffus,
@@ -242,7 +242,7 @@ fun <T> Collection<Cffu<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactor
 }
 
 /**
- * Returns a new Cffu with the results in the <strong>same order</strong> of all the given Cffus,
+ * Returns a new Cffu with the results in the **same order** of all the given Cffus,
  * the new Cffu success when all the given Cffus success.
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given Cffus,
@@ -265,7 +265,7 @@ fun <T> Array<out Cffu<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactory
 }
 
 /**
- * Returns a new Cffu with the results in the <strong>same order</strong> of all the given CompletableFutures,
+ * Returns a new Cffu with the results in the **same order** of all the given CompletableFutures,
  * the new Cffu success when all the given CompletableFutures success.
  * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given CompletableFutures,
@@ -283,7 +283,7 @@ fun <T> Collection<CompletableFuture<out T>>.allResultsOfFastFailCffu(cffuFactor
     cffuFactory.allResultsOfFastFail(*this.toTypedArray())
 
 /**
- * Returns a new Cffu with the results in the <strong>same order</strong> of all the given CompletableFutures,
+ * Returns a new Cffu with the results in the **same order** of all the given CompletableFutures,
  * the new Cffu success when all the given CompletableFutures success.
  * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given CompletableFutures,

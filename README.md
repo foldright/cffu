@@ -112,7 +112,7 @@
   - 当然基本的并发关注方面及其复杂性，与具体使用哪个工具无关，都是要理解与注意的
 - **高层抽象**
   - 或说 以业务流程的形式表达技术的并发流程
-  - 可以不使用繁琐易错的基础并发协调工具，如[`CountDownLatch`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CountDownLatch.html)、锁（[`Lock`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/locks/package-summary.html)）、信号量（[`Semaphore`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Semaphore.html)）
+  - 可以不使用繁琐易错的基础并发协调工具，如锁（[`Lock`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/locks/package-summary.html)）、[`CountDownLatch`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CountDownLatch.html)、信号量（[`Semaphore`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Semaphore.html)）、[`CyclicBarrier`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CyclicBarrier.html)
 
 和其它并发工具、框架一样，`CompletableFuture`用于
 
@@ -182,6 +182,7 @@ public class CffuDemo {
     final Cffu<Integer> combined = longTaskA.thenCombine(longTaskB, Integer::sum)
         .orTimeout(1500, TimeUnit.MILLISECONDS);
     System.out.println("combined result: " + combined.get());
+
     final Cffu<Integer> anyOfSuccess = cffuFactory.anyOfSuccess(longTaskC, longFailedTask);
     System.out.println("anyOfSuccess result: " + anyOfSuccess.get());
   }
@@ -219,9 +220,11 @@ public class CompletableFutureUtilsDemo {
     }, myBizThreadPool);
 
     final CompletableFuture<Integer> combined = longTaskA.thenCombine(longTaskB, Integer::sum);
-    final CompletableFuture<Integer> combinedWithTimeout = CompletableFutureUtils.orTimeout(combined, 1500, TimeUnit.MILLISECONDS);
+    final CompletableFuture<Integer> combinedWithTimeout =
+        CompletableFutureUtils.orTimeout(combined, 1500, TimeUnit.MILLISECONDS);
     System.out.println("combined result: " + combinedWithTimeout.get());
-    final CompletableFuture<Integer> anyOfSuccess = CompletableFutureUtils.anyOfSuccessWithType(longTaskC, longFailedTask);
+
+    final CompletableFuture<Integer> anyOfSuccess = CompletableFutureUtils.anyOfSuccess(longTaskC, longFailedTask);
     System.out.println("anyOfSuccess result: " + anyOfSuccess.get());
   }
 }
@@ -263,6 +266,7 @@ fun main() {
   val combined = longTaskA.thenCombine(longTaskB, Integer::sum)
     .orTimeout(1500, TimeUnit.MILLISECONDS)
   println("combined result: ${combined.get()}")
+
   val anyOfSuccess: Cffu<Int> = listOf(longTaskC, longFailedTask).anyOfSuccessCffu()
   println("anyOfSuccess result: ${anyOfSuccess.get()}")
 }
@@ -282,19 +286,20 @@ fun main() {
 示例代码如下：
 
 ```java
-public class AllOfWithResultDemo {
+public class AllResultsOfDemo {
   public static final Executor myBizExecutor = Executors.newCachedThreadPool();
   public static final CffuFactory cffuFactory = newCffuFactoryBuilder(myBizExecutor).build();
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     //////////////////////////////////////////////////
-    // CffuFactory#allOf
+    // CffuFactory#allResultsOf
     //////////////////////////////////////////////////
     Cffu<Integer> cffu1 = cffuFactory.completedFuture(21);
     Cffu<Integer> cffu2 = cffuFactory.completedFuture(42);
 
-    Cffu<Void> allOf2 = cffuFactory.allOf(cffu1, cffu2);
-    // Result type is Void!!
+    Cffu<Void> allOf = cffuFactory.allOf(cffu1, cffu2);
+    // Result type is Void!
+    //
     // the result can be got by input argument `cf1.get()`, but it's cumbersome.
     // so we can see a lot the util methods to enhance allOf with result in our project.
 
@@ -307,16 +312,16 @@ public class AllOfWithResultDemo {
     CompletableFuture<Integer> cf1 = CompletableFuture.completedFuture(21);
     CompletableFuture<Integer> cf2 = CompletableFuture.completedFuture(42);
 
-    CompletableFuture<Void> allOf = CompletableFuture.allOf(cf1, cf2);
-    // Result type is Void!!
+    CompletableFuture<Void> allOf2 = CompletableFuture.allOf(cf1, cf2);
+    // Result type is Void!
 
-    CompletableFuture<List<Integer>> allResults2 = CompletableFutureUtils.allOfWithResult(cf1, cf2);
+    CompletableFuture<List<Integer>> allResults2 = CompletableFutureUtils.allResultsOf(cf1, cf2);
     System.out.println(allResults2.get());
   }
 }
 ```
 
-> \# 完整可运行的Demo代码参见[`AllOfWithResultDemo.java`](cffu-core/src/test/java/io/foldright/demo/AllOfWithResultDemo.java)。
+> \# 完整可运行的Demo代码参见[`AllResultsOfDemo.java`](cffu-core/src/test/java/io/foldright/demo/AllResultsOfDemo.java)。
 
 上面多个相同结果类型的`CF`，`cffu`还提供了返回多个不同类型`CF`结果的方法，`cffuCombine`/`CompletableFutureUtils#combine`方法。
 
@@ -334,9 +339,9 @@ public class CffuCombineDemo {
     Cffu<String> cffu1 = cffuFactory.completedFuture("21");
     Cffu<Integer> cffu2 = cffuFactory.completedFuture(42);
 
-    Cffu<Tuple2<String, Integer>> allOfWithResult = cffu1.cffuCombine(cffu2);
+    Cffu<Tuple2<String, Integer>> combined = cffu1.cffuCombine(cffu2);
     // or: cffuFactory.cffuCombine(cffu1, cffu2);
-    System.out.println(allOfWithResult.get());
+    System.out.println(combined.get());
 
     //////////////////////////////////////////////////
     // or CompletableFutureUtils.combine
@@ -344,8 +349,8 @@ public class CffuCombineDemo {
     CompletableFuture<String> cf1 = CompletableFuture.completedFuture("21");
     CompletableFuture<Integer> cf2 = CompletableFuture.completedFuture(42);
 
-    CompletableFuture<Tuple2<String, Integer>> allOfWithResult2 = CompletableFutureUtils.combine(cf1, cf2);
-    System.out.println(allOfWithResult2.get());
+    CompletableFuture<Tuple2<String, Integer>> combined2 = CompletableFutureUtils.combine(cf1, cf2);
+    System.out.println(combined2.get());
   }
 }
 ```
@@ -367,18 +372,19 @@ public class NoDefaultExecutorSettingForCompletableFuture {
   public static final Executor myBizExecutor = Executors.newCachedThreadPool();
 
   public static void main(String[] args) {
-    CompletableFuture<Void> cf1 = CompletableFuture.runAsync(() -> System.out.println("doing a long time work!"),
+    CompletableFuture<Void> cf1 = CompletableFuture.runAsync(
+        () -> System.out.println("doing a long time work!"),
         myBizExecutor);
 
     CompletableFuture<Void> cf2 = CompletableFuture
         .supplyAsync(
             () -> {
-              System.out.println("doing another long time work!!");
+              System.out.println("doing another long time work!");
               return 42;
             },
             myBizExecutor)
         .thenAcceptAsync(
-            i -> System.out.println("doing third long time work!!!"),
+            i -> System.out.println("doing third long time work!"),
             myBizExecutor);
 
     CompletableFuture.allOf(cf1, cf2).join();
@@ -399,9 +405,9 @@ public class DefaultExecutorSettingForCffu {
     Cffu<Void> cf1 = cffuFactory.runAsync(() -> System.out.println("doing a long time work!"));
 
     Cffu<Void> cf2 = cffuFactory.supplyAsync(() -> {
-      System.out.println("doing another long time work!!");
+      System.out.println("doing another long time work!");
       return 42;
-    }).thenAcceptAsync(i -> System.out.println("doing third long time work!!!"));
+    }).thenAcceptAsync(i -> System.out.println("doing third long time work!"));
 
     cffuFactory.allOf(cf1, cf2).join();
   }
@@ -414,7 +420,7 @@ public class DefaultExecutorSettingForCffu {
 
 - `CompletableFuture`的`allOf`方法会等待所有输入`CF`运行完成；即使有`CF`失败了也要等待后续`CF`运行完成，再返回一个失败的`CF`。
   - 对于业务逻辑来说，这样失败且继续等待策略，减慢了业务响应性；会希望如果有输入`CF`失败了，则快速失败不再做于事无补的等待
-  - `cffu`提供了相应的`allResultsOfFastFail`/`allOfFastFail`方法
+  - `cffu`提供了相应的`allOfFastFail`/`allResultsOfFastFail`方法
   - `allOf`/`allOfFastFail`两者都是，只有当所有的输入`CF`都成功时，才返回成功结果
 - `CompletableFuture`的`anyOf`方法返回首个完成的`CF`（不会等待后续没有完成的`CF`，赛马模式）；即使首个完成的`CF`是失败的，也会返回这个失败的`CF`结果。
   - 对于业务逻辑来说，会希望赛马模式返回首个成功的`CF`结果，而不是首个完成但失败的`CF`
@@ -443,7 +449,7 @@ public class ConcurrencyStrategyDemo {
 
   public static void main(String[] args) throws Exception {
     ////////////////////////////////////////////////////////////////////////
-    // CffuFactory#allResultsOfFastFail / allOfFastFail
+    // CffuFactory#allOfFastFail / allResultsOfFastFail
     // CffuFactory#anyOfSuccess
     ////////////////////////////////////////////////////////////////////////
     final Cffu<Integer> successAfterLongTime = cffuFactory.supplyAsync(() -> {
@@ -454,19 +460,17 @@ public class ConcurrencyStrategyDemo {
 
     // Result type is Void!
     Cffu<Void> cffuAll = cffuFactory.allOfFastFail(successAfterLongTime, failed);
+
     Cffu<List<Integer>> fastFailed = cffuFactory.allResultsOfFastFail(successAfterLongTime, failed);
     // fast failed without waiting successAfterLongTime
     System.out.println(fastFailed.exceptionNow());
 
-    // Result type is Object!
-    Cffu<Object> cffuAny = cffuFactory.anyOfSuccess(successAfterLongTime, failed);
-    System.out.println(cffuAny.get());
     Cffu<Integer> anyOfSuccess = cffuFactory.anyOfSuccess(successAfterLongTime, failed);
     System.out.println(anyOfSuccess.get());
 
     ////////////////////////////////////////////////////////////////////////
-    // or CompletableFutureUtils#allOfFastFailWithResult / allOfFastFail
-    //    CompletableFutureUtils#anyOfSuccessWithType / anyOfSuccess
+    // or CompletableFutureUtils#allOfFastFail / allResultsOfFastFail
+    //    CompletableFutureUtils#anyOfSuccess
     ////////////////////////////////////////////////////////////////////////
     final CompletableFuture<Integer> successAfterLongTimeCf = CompletableFuture.supplyAsync(() -> {
       sleep(3000); // sleep LONG time
@@ -476,14 +480,12 @@ public class ConcurrencyStrategyDemo {
 
     // Result type is Void!
     CompletableFuture<Void> cfAll = CompletableFutureUtils.allOfFastFail(successAfterLongTimeCf, failedCf);
-    CompletableFuture<List<Integer>> fastFailedCf = CompletableFutureUtils.allOfFastFailWithResult(successAfterLongTimeCf, failedCf);
+
+    CompletableFuture<List<Integer>> fastFailedCf = CompletableFutureUtils.allResultsOfFastFail(successAfterLongTimeCf, failedCf);
     // fast failed without waiting successAfterLongTime
     System.out.println(CompletableFutureUtils.exceptionNow(fastFailedCf));
 
-    // Result type is Object!
-    CompletableFuture<Object> cfAny = CompletableFutureUtils.anyOfSuccess(successAfterLongTimeCf, failedCf);
-    System.out.println(cfAny.get());
-    CompletableFuture<Integer> cfSuccess = CompletableFutureUtils.anyOfSuccessWithType(successAfterLongTimeCf, failedCf);
+    CompletableFuture<Integer> cfSuccess = CompletableFutureUtils.anyOfSuccess(successAfterLongTimeCf, failedCf);
     System.out.println(cfSuccess.get());
   }
 }

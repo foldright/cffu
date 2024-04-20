@@ -1330,7 +1330,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Waits if necessary for at most the given time for the computation to complete,
      * and then retrieves its result value when complete, or throws an (unchecked) exception if completed exceptionally.
      * <p>
-     * <b><i>NOTE:<br></i></b>
+     * <strong>NOTE:<br></strong>
      * call this method
      * <p>
      * {@code result = cffu.join(timeout, unit);}
@@ -1342,7 +1342,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *     .join();
      * }</pre>
      *
-     * <b><i>CAUTION:<br></i></b>
+     * <strong>CAUTION:<br></strong>
      * if the wait timed out, this method throws an (unchecked) {@link CompletionException}
      * with the {@link TimeoutException} as its cause;
      * NOT throws a (checked) {@link TimeoutException} like {@link #get(long, TimeUnit)}.
@@ -1482,7 +1482,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Returns the computation state, this method just invoke without java version compatibility logic,
      * if you need this function backport into old {@code java 18-}, use {@link #cffuState()} instead.
      * <p>
-     * <b><i>NOTE:<br></i></b>
+     * <strong>NOTE:<br></strong>
      * {@link CompletableFuture#state} is new method since Java 19,
      * this method should have compatibility logic for old Java version;
      * But the return type {@link Future.State} is also added since Java 19,
@@ -1610,7 +1610,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If this CompletableFuture completes exceptionally, then the returned CompletionStage completes
      * exceptionally with a CompletionException with this exception as cause.
      * <p>
-     * <b><i>CAUTION:<br></i></b>
+     * <strong>CAUTION:<br></strong>
      * if run on old Java 8, just return a Cffu with
      * a *normal* underlying CompletableFuture which is NOT with a *minimal* CompletionStage.
      * <p>
@@ -1839,11 +1839,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Subclasses of CompletableFuture should normally override this method to return an instance of the same class
      * as this CompletableFuture. The default implementation returns an instance of class CompletableFuture.
      * <p>
-     * <b><i>NOTE:<br></i></b>
+     * <strong>NOTE:<br></strong>
      * this method existed mainly for API compatibility to {@code CompletableFuture},
      * prefer {@link CffuFactory#newIncompleteCffu()}.
      * <p>
-     * <b><i>CAUTION:<br></i></b>
+     * <strong>CAUTION:<br></strong>
      * for minimal stage instance({@link #isMinimalStage()}), if run on old Java 8,
      * just return a Cffu with a *normal* underlying CompletableFuture which is NOT with a *minimal* CompletionStage.
      *

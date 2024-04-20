@@ -21,7 +21,7 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * This class contains the enhanced methods for {@link CompletableFuture}.
+ * This class contains the enhanced and backport methods for {@link CompletableFuture}.
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  */
@@ -462,8 +462,8 @@ public final class CompletableFutureUtils {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# Backport CF methods
-    //  compatibility for low Java version
+    //# Backport CF static methods
+    //  compatibility for low Java versions
     ////////////////////////////////////////////////////////////////////////////////
 
     //# Factory methods
@@ -489,7 +489,7 @@ public final class CompletableFutureUtils {
      * Returns a new CompletionStage that is already completed with the given value
      * and supports only those methods in interface {@link CompletionStage}.
      * <p>
-     * <b><i>CAUTION:<br></i></b>
+     * <strong>CAUTION:<br></strong>
      * if run on old Java 8, just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @param value the value
@@ -508,7 +508,7 @@ public final class CompletableFutureUtils {
      * Returns a new CompletionStage that is already completed exceptionally with
      * the given exception and supports only those methods in interface {@link CompletionStage}.
      * <p>
-     * <b><i>CAUTION:<br></i></b>
+     * <strong>CAUTION:<br></strong>
      * if run on old Java 8, just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @param ex  the exception
@@ -562,7 +562,7 @@ public final class CompletableFutureUtils {
     }
 
     ////////////////////////////////////////
-    //# backport instance methods
+    //# Backport CF instance methods
     ////////////////////////////////////////
 
     //# Error Handling methods of CompletionStage
@@ -718,7 +718,7 @@ public final class CompletableFutureUtils {
      * Waits if necessary for at most the given time for the computation to complete,
      * and then retrieves its result value when complete, or throws an (unchecked) exception if completed exceptionally.
      * <p>
-     * <b><i>NOTE:<br></i></b>
+     * <strong>NOTE:<br></strong>
      * call this method
      * <p>
      * {@code result = CompletableFutureUtils.join(cf, timeout, unit);}
@@ -730,7 +730,7 @@ public final class CompletableFutureUtils {
      *     .join();
      * }</pre>
      *
-     * <b><i>CAUTION:<br></i></b>
+     * <strong>CAUTION:<br></strong>
      * if the wait timed out, this method throws an (unchecked) {@link CompletionException}
      * with the {@link TimeoutException} as its cause;
      * NOT throws a (checked) {@link TimeoutException} like {@link CompletableFuture#get(long, TimeUnit)}.
@@ -913,7 +913,7 @@ public final class CompletableFutureUtils {
      * If given CompletableFuture completes exceptionally, then the returned CompletionStage completes exceptionally
      * with a CompletionException with given exception as cause.
      * <p>
-     * <b><i>CAUTION:<br></i></b>
+     * <strong>CAUTION:<br></strong>
      * if run on old Java 8, just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @return the new CompletionStage
@@ -963,7 +963,7 @@ public final class CompletableFutureUtils {
      * Returns the default Executor used for async methods that do not specify an Executor.
      * This class uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread,
      * or else an Executor using one thread per async task.<br>
-     * <b><i>CAUTION:</i></b>This executor may be not suitable for common biz use(io intensive).
+     * <strong>CAUTION:</strong> This executor may be not suitable for common biz use(io intensive).
      *
      * @return the executor
      */

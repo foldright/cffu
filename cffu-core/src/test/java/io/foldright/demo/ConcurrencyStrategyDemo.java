@@ -18,7 +18,7 @@ public class ConcurrencyStrategyDemo {
 
     public static void main(String[] args) throws Exception {
         ////////////////////////////////////////////////////////////////////////
-        // CffuFactory#allResultsOfFastFail / allOfFastFail
+        // CffuFactory#allOfFastFail / allResultsOfFastFail
         // CffuFactory#anyOfSuccess
         ////////////////////////////////////////////////////////////////////////
         final Cffu<Integer> successAfterLongTime = cffuFactory.supplyAsync(() -> {
@@ -29,6 +29,7 @@ public class ConcurrencyStrategyDemo {
 
         // Result type is Void!
         Cffu<Void> cffuAll = cffuFactory.allOfFastFail(successAfterLongTime, failed);
+
         Cffu<List<Integer>> fastFailed = cffuFactory.allResultsOfFastFail(successAfterLongTime, failed);
         // fast failed without waiting successAfterLongTime
         System.out.println(fastFailed.exceptionNow());
@@ -37,8 +38,8 @@ public class ConcurrencyStrategyDemo {
         System.out.println(anyOfSuccess.get());
 
         ////////////////////////////////////////////////////////////////////////
-        // or CompletableFutureUtils#allResultsOfFastFail / allOfFastFail
-        //    CompletableFutureUtils#anyOfSuccess / anyOfSuccess
+        // or CompletableFutureUtils#allOfFastFail / allResultsOfFastFail
+        //    CompletableFutureUtils#anyOfSuccess
         ////////////////////////////////////////////////////////////////////////
         final CompletableFuture<Integer> successAfterLongTimeCf = CompletableFuture.supplyAsync(() -> {
             sleep(3000); // sleep LONG time
@@ -48,6 +49,7 @@ public class ConcurrencyStrategyDemo {
 
         // Result type is Void!
         CompletableFuture<Void> cfAll = CompletableFutureUtils.allOfFastFail(successAfterLongTimeCf, failedCf);
+
         CompletableFuture<List<Integer>> fastFailedCf = CompletableFutureUtils.allResultsOfFastFail(successAfterLongTimeCf, failedCf);
         // fast failed without waiting successAfterLongTime
         System.out.println(CompletableFutureUtils.exceptionNow(fastFailedCf));

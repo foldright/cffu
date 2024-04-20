@@ -92,7 +92,7 @@ public final class CffuFactory {
      * Returns a new CompletionStage that is already completed with the given value
      * and supports only those methods in interface {@link CompletionStage}.
      * <p>
-     * <b><i>CAUTION:<br></i></b>
+     * <strong>CAUTION:<br></strong>
      * if run on old Java 8, just return a Cffu with
      * a *normal* underlying CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
@@ -124,7 +124,7 @@ public final class CffuFactory {
      * Returns a new CompletionStage that is already completed exceptionally
      * with the given exception and supports only those methods in interface {@link CompletionStage}.
      * <p>
-     * <b><i>CAUTION:<br></i></b>
+     * <strong>CAUTION:<br></strong>
      * if run on old Java 8, just return a Cffu with
      * a *normal* underlying CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
@@ -247,7 +247,7 @@ public final class CffuFactory {
      * for {@link CompletableFuture} class instances,
      * {@link Cffu#cffuUnwrap()} is the inverse operation to this method.
      * <p>
-     * <b><i>NOTE</i></b>, keep input stage unchanged if possible when wrap:<br>
+     * <strong>NOTE</strong>, keep input stage unchanged if possible when wrap:<br>
      * <ol>
      * <li>if input stage is a {@link Cffu}, re-wrapped with the config of
      *     this {@link CffuFactory} from {@link CffuFactoryBuilder} by {@link Cffu#resetCffuFactory(CffuFactory)}.

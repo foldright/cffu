@@ -31,7 +31,7 @@ import java.util.function.Supplier
 ////////////////////////////////////////
 
 /**
- * Returns a new CompletableFuture with the results in the <strong>same order</strong> of all the given
+ * Returns a new CompletableFuture with the results in the **same order** of all the given
  * CompletableFutures, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so, with a CompletionException holding this exception as its cause.
@@ -48,7 +48,7 @@ fun <T> Collection<CompletableFuture<out T>>.allResultsOfCompletableFuture(): Co
     CompletableFutureUtils.allResultsOf(*this.toTypedArray())
 
 /**
- * Returns a new CompletableFuture with the results in the <strong>same order</strong> of all the given
+ * Returns a new CompletableFuture with the results in the **same order** of all the given
  * CompletableFutures, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so, with a CompletionException holding this exception as its cause.
@@ -109,7 +109,7 @@ fun Array<out CompletableFuture<*>>.allOfCompletableFuture(): CompletableFuture<
     CompletableFuture.allOf(*this)
 
 /**
- * Returns a new CompletableFuture with the results in the <strong>same order</strong> of all the given
+ * Returns a new CompletableFuture with the results in the **same order** of all the given
  * CompletableFutures, the new CompletableFuture success when all the given CompletableFutures success.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so *without* waiting other incomplete given CompletableFutures,
@@ -127,7 +127,7 @@ fun <T> Collection<CompletableFuture<out T>>.allResultsOfFastFailCompletableFutu
     CompletableFutureUtils.allResultsOfFastFail(*this.toTypedArray())
 
 /**
- * Returns a new CompletableFuture with the results in the <strong>same order</strong> of all the given
+ * Returns a new CompletableFuture with the results in the **same order** of all the given
  * CompletableFutures, the new CompletableFuture success when all the given CompletableFutures success.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so *without* waiting other incomplete given CompletableFutures,
@@ -491,9 +491,8 @@ fun <T> CompletableFuture<T>.exceptionallyComposeAsync(
 /**
  * Waits if necessary for at most the given time for the computation to complete,
  * and then retrieves its result value when complete, or throws an (unchecked) exception if completed exceptionally.
- * <p>
- * <b><i>NOTE:<br></i></b>
- * call this method
+ *
+ * **NOTE:** call this method
  *
  * `result = CompletableFutureUtils.join(cf, timeout, unit);`
  *
@@ -506,8 +505,7 @@ fun <T> CompletableFuture<T>.exceptionallyComposeAsync(
  * }
  * ```
  *
- * <b><i>CAUTION:<br></i></b>
- * if the wait timed out, this method throws an (unchecked) CompletionException with the TimeoutException as its cause;
+ * **CAUTION:** if the wait timed out, this method throws an (unchecked) CompletionException with the TimeoutException as its cause;
  * NOT throws a (checked) TimeoutException like [CompletableFuture.get].
  *
  * @param timeout the maximum time to wait
@@ -521,7 +519,7 @@ fun <T> CompletableFuture<T>.join(timeout: Long, unit: TimeUnit): T =
 
 /**
  * Returns the computed result, without waiting.
- * <p>
+ *
  * This method is for cases where the caller knows that the task has already completed successfully,
  * for example when filtering a stream of Future objects for the successful tasks
  * and using a mapping operation to obtain a stream of results.
@@ -540,7 +538,7 @@ fun <T> CompletableFuture<T>.resultNow(): T =
 
 /**
  * Returns the exception thrown by the task, without waiting.
- * <p>
+ *
  * This method is for cases where the caller knows that the task has already completed with an exception.
  *
  * @return the exception thrown by the task

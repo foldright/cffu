@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
 
 
-public class AllOfWithResultDemo {
+public class AllResultsOfDemo {
     public static final ExecutorService myBizExecutor = Executors.newCachedThreadPool();
     public static final CffuFactory cffuFactory = newCffuFactoryBuilder(myBizExecutor).build();
 
@@ -39,7 +39,7 @@ public class AllOfWithResultDemo {
         CompletableFuture<Integer> cf2 = CompletableFuture.completedFuture(42);
 
         CompletableFuture<Void> allOf2 = CompletableFuture.allOf(cf1, cf2);
-        // Result type is Void!!
+        // Result type is Void!
 
         CompletableFuture<List<Integer>> allResults2 = CompletableFutureUtils.allResultsOf(cf1, cf2);
         System.out.println(allResults2.get());
