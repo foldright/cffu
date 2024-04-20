@@ -7,7 +7,7 @@ jobs:
   test:
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#choosing-github-hosted-runners
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     name: CI by multiply java versions
 
     steps:
@@ -26,7 +26,6 @@ jobs:
             21
             22
           distribution: zulu
-          # only first java setup need enable cache
           cache: maven
 
       - name: Run integration test

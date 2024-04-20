@@ -50,10 +50,10 @@ fun <T> Array<out CompletionStage<T>>.asCffu(cffuFactory: CffuFactory): Array<Cf
 ////////////////////////////////////////
 // allOf* methods
 //
+//   - allResultsOfCffu
 //   - allOfCffu
-//   - allOfCffuVoid
+//   - allResultsOfFastFailCffu
 //   - allOfFastFailCffu
-//   - allOfFastFailCffuVoid
 ////////////////////////////////////////
 
 /**
@@ -384,9 +384,7 @@ fun Array<out CompletableFuture<*>>.allOfFastFailCffu(cffuFactory: CffuFactory):
 // anyOf* methods
 //
 //   - anyOfCffu
-//   - anyOfCffuAny
 //   - anyOfSuccessCffu
-//   - anyOfSuccessCffuAny
 ////////////////////////////////////////
 
 /**

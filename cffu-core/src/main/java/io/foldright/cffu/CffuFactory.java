@@ -33,7 +33,6 @@ import static java.util.Objects.requireNonNull;
  * About factory methods conventions of {@link CffuFactory}:
  * <ul>
  *   <li>factory methods return {@link Cffu} instead of {@link CompletableFuture}.
- *   <li>new methods, aka. no equivalent method in {@link CompletableFuture}, prefix method name with {@code cffu}.
  *   <li>only provide varargs methods for multiply Cffu/CF input arguments;
  *     if you have {@code List} input, use static util methods {@link #cffuListToArray(List)}
  *     or {@link #completableFutureListToArray(List)} to convert it to array first.
@@ -293,11 +292,11 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# allOf / anyOf methods, without return result type enhancement
+    //# allOf / anyOf methods
     //  - allOf*, return Cffu<Void>, equivalent to same name methods:
     //    - CompletableFuture.allOf()
     //    - CompletableFutureUtils.allOfFastFail()
-    //  - anyOf*, return Cffu<Object>, equivalent to same name methods:
+    //  - anyOf*, equivalent to same name methods:
     //    - CompletableFuture.anyOf()
     //    - CompletableFutureUtils.anyOfSuccess()
     ////////////////////////////////////////////////////////////////////////////////
@@ -567,10 +566,7 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# New type-safe allOf/anyOf Factory Methods
-    //    method name prefix with `cffu`
-    //
-    //    - allResultsOf
+    //# New allResultsOf* Factory Methods
     ////////////////////////////////////////////////////////////////////////////////
 
     /**

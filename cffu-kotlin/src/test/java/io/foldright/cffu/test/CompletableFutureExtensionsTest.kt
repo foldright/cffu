@@ -264,61 +264,59 @@ class CompletableFutureExtensionsTest : FunSpec({
     ////////////////////////////////////////////////////////////////////////////////
     //# Backport CF instance methods
     //  compatibility for low Java version
-    //
-    //  all methods name prefix with `cffu`
     ////////////////////////////////////////////////////////////////////////////////
 
     test("exceptionallyAsync") {
         val cf = CompletableFutureUtils.failedFuture<Int>(rte)
-        cf.cffuExceptionallyAsync { n }.get() shouldBe n
-        cf.cffuExceptionallyAsync({ n }, testThreadPoolExecutor).get() shouldBe n
+        cf.exceptionallyAsync { n }.get() shouldBe n
+        cf.exceptionallyAsync({ n }, testThreadPoolExecutor).get() shouldBe n
     }
 
-    test(" test_timeout") {
+    test("test_timeout") {
         var cf = CompletableFuture<Int>()
         shouldThrow<ExecutionException> {
-            cf.cffuOrTimeout(1, TimeUnit.MILLISECONDS).get()
+            cf.orTimeout(1, TimeUnit.MILLISECONDS).get()
         }.cause.shouldBeTypeOf<TimeoutException>()
 
         cf = CompletableFuture()
-        cf.cffuCompleteOnTimeout(n, 1, TimeUnit.MILLISECONDS).get() shouldBe n
+        cf.completeOnTimeout(n, 1, TimeUnit.MILLISECONDS).get() shouldBe n
     }
 
     test("exceptionallyCompose") {
         val cf = CompletableFutureUtils.failedFuture<Int>(rte)
-        cf.cffuExceptionallyCompose { CompletableFuture.completedFuture(n) }.get() shouldBe n
-        cf.cffuExceptionallyComposeAsync { CompletableFuture.completedFuture(n) }.get() shouldBe n
-        cf.cffuExceptionallyComposeAsync({ CompletableFuture.completedFuture(n) }, testThreadPoolExecutor)
+        cf.exceptionallyCompose { CompletableFuture.completedFuture(n) }.get() shouldBe n
+        cf.exceptionallyComposeAsync { CompletableFuture.completedFuture(n) }.get() shouldBe n
+        cf.exceptionallyComposeAsync({ CompletableFuture.completedFuture(n) }, testThreadPoolExecutor)
             .get() shouldBe n
     }
 
-    test("read") {
+    test("read methods") {
         val cf = CompletableFuture.completedFuture(n)
         val ff = CompletableFutureUtils.failedFuture<Int>(rte)
 
         cf.join(1, TimeUnit.MILLISECONDS) shouldBe n
-        cf.cffuResultNow() shouldBe n
-        ff.cffuExceptionNow() shouldBeSameInstanceAs rte
+        cf.resultNow() shouldBe n
+        ff.exceptionNow() shouldBeSameInstanceAs rte
 
         cf.cffuState() shouldBe CffuState.SUCCESS
         ff.cffuState() shouldBe CffuState.FAILED
     }
 
-    test("write") {
+    test("write methods") {
         val cf = CompletableFuture<Int>()
-        cf.cffuCompleteAsync { n }.get() shouldBe n
-        cf.cffuCompleteAsync({ n }, testThreadPoolExecutor).get() shouldBe n
+        cf.completeAsync { n }.get() shouldBe n
+        cf.completeAsync({ n }, testThreadPoolExecutor).get() shouldBe n
     }
 
     test("re_config") {
-        CompletableFuture.completedFuture(n).cffuMinimalCompletionStage()
+        CompletableFuture.completedFuture(n).minimalCompletionStage()
             .toCompletableFuture().get() shouldBe n
 
         val cf = CompletableFuture<Int>()
-        cf.cffuCopy().complete(n)
+        cf.copy().complete(n)
         cf.isDone.shouldBeFalse()
 
-        val incomplete = cf.cffuNewIncompleteFuture<Int, Any>()
+        val incomplete: CompletableFuture<Int> = cf.newIncompleteFuture()
         incomplete.isDone.shouldBeFalse()
         incomplete.complete(n)
         cf.isDone.shouldBeFalse()

@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalTime::class)
-
 package io.foldright.showcases
 
 import io.foldright.test_utils.*
@@ -18,7 +16,6 @@ import java.lang.System.currentTimeMillis
 import java.lang.Thread.currentThread
 import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.time.ExperimentalTime
 
 class CompletableFutureUsageShowcaseTest : FunSpec({
     val n = 42
