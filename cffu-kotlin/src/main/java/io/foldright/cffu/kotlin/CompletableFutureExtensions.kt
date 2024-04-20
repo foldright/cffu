@@ -1,3 +1,5 @@
+@file:Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+
 package io.foldright.cffu.kotlin
 
 import io.foldright.cffu.CffuState
@@ -10,6 +12,8 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
+import java.util.function.Function
+import java.util.function.Supplier
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -20,10 +24,10 @@ import java.util.concurrent.TimeUnit
 ////////////////////////////////////////
 //# allOf* methods
 //
+//    - allResultsOfCompletableFuture
 //    - allOfCompletableFuture
-//    - allOfCompletableFutureVoid
+//    - allResultsOfFastFailCompletableFuture
 //    - allOfFastFailCompletableFuture
-//    - allOfFastFailCompletableFutureVoid
 ////////////////////////////////////////
 
 /**
@@ -33,15 +37,15 @@ import java.util.concurrent.TimeUnit
  * also does so, with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
  *
- * Same as [allOfCompletableFutureVoid],
+ * Same as [allOfCompletableFuture],
  * but the returned CompletableFuture contains the results of input CompletableFutures.
- * Same as [CompletableFutureUtils.allOfWithResult], providing this method is convenient for method chaining.
+ * Same as [CompletableFutureUtils.allResultsOf], providing this method is convenient for method chaining.
  *
- * @see allOfCffu
- * @see allOfCompletableFutureVoid
+ * @see allResultsOfCffu
+ * @see allOfCompletableFuture
  */
-fun <T> Collection<CompletableFuture<T>>.allOfCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allOfWithResult(*this.toTypedArray())
+fun <T> Collection<CompletableFuture<out T>>.allResultsOfCompletableFuture(): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allResultsOf(*this.toTypedArray())
 
 /**
  * Returns a new CompletableFuture with the results in the <strong>same order</strong> of all the given
@@ -50,15 +54,15 @@ fun <T> Collection<CompletableFuture<T>>.allOfCompletableFuture(): CompletableFu
  * also does so, with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
  *
- * Same as [allOfCompletableFutureVoid],
+ * Same as [allOfCompletableFuture],
  * but the returned CompletableFuture contains the results of input CompletableFutures.
- * Same as [CompletableFutureUtils.allOfWithResult], providing this method is convenient for method chaining.
+ * Same as [CompletableFutureUtils.allResultsOf], providing this method is convenient for method chaining.
  *
- * @see allOfCffu
- * @see allOfCompletableFutureVoid
+ * @see allResultsOfCffu
+ * @see allOfCompletableFuture
  */
-fun <T> Array<CompletableFuture<T>>.allOfCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allOfWithResult(*this)
+fun <T> Array<out CompletableFuture<out T>>.allResultsOfCompletableFuture(): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allResultsOf(*this)
 
 /**
  * Returns a new CompletableFuture that is completed when all the given CompletableFutures complete.
@@ -74,12 +78,12 @@ fun <T> Array<CompletableFuture<T>>.allOfCompletableFuture(): CompletableFuture<
  *
  * Same as [CompletableFuture.allOf], providing this method is convenient for method chaining.
  *
+ * @see allResultsOfCffu
  * @see allOfCffu
- * @see allOfCffuVoid
- * @see allOfCompletableFuture
+ * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
-fun Collection<CompletableFuture<*>>.allOfCompletableFutureVoid(): CompletableFuture<Void> =
+fun Collection<CompletableFuture<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
     CompletableFuture.allOf(*this.toTypedArray())
 
 /**
@@ -96,12 +100,12 @@ fun Collection<CompletableFuture<*>>.allOfCompletableFutureVoid(): CompletableFu
  *
  * Same as [CompletableFuture.allOf], providing this method is convenient for method chaining.
  *
+ * @see allResultsOfCffu
  * @see allOfCffu
- * @see allOfCffuVoid
- * @see allOfCompletableFuture
+ * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
-fun Array<out CompletableFuture<*>>.allOfCompletableFutureVoid(): CompletableFuture<Void> =
+fun Array<out CompletableFuture<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
     CompletableFuture.allOf(*this)
 
 /**
@@ -112,15 +116,15 @@ fun Array<out CompletableFuture<*>>.allOfCompletableFutureVoid(): CompletableFut
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
  *
- * Same as [allOfFastFailCompletableFutureVoid],
+ * Same as [allOfFastFailCompletableFuture],
  * but the returned CompletableFuture contains the results of input CompletableFutures.
- * Same as [CompletableFutureUtils.allOfFastFailWithResult], providing this method is convenient for method chaining.
+ * Same as [CompletableFutureUtils.allResultsOfFastFail], providing this method is convenient for method chaining.
  *
- * @see allOfFastFailCffu
- * @see allOfFastFailCompletableFutureVoid
+ * @see allResultsOfFastFailCffu
+ * @see allOfFastFailCompletableFuture
  */
-fun <T> Collection<CompletableFuture<T>>.allOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allOfFastFailWithResult(*this.toTypedArray())
+fun <T> Collection<CompletableFuture<out T>>.allResultsOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allResultsOfFastFail(*this.toTypedArray())
 
 /**
  * Returns a new CompletableFuture with the results in the <strong>same order</strong> of all the given
@@ -130,15 +134,15 @@ fun <T> Collection<CompletableFuture<T>>.allOfFastFailCompletableFuture(): Compl
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
  *
- * Same as [allOfFastFailCompletableFutureVoid],
+ * Same as [allOfFastFailCompletableFuture],
  * but the returned CompletableFuture contains the results of input CompletableFutures.
- * Same as [CompletableFutureUtils.allOfFastFailWithResult], providing this method is convenient for method chaining.
+ * Same as [CompletableFutureUtils.allResultsOfFastFail], providing this method is convenient for method chaining.
  *
- * @see allOfFastFailCffu
- * @see allOfFastFailCompletableFutureVoid
+ * @see allResultsOfFastFailCffu
+ * @see allOfFastFailCompletableFuture
  */
-fun <T> Array<CompletableFuture<T>>.allOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allOfFastFailWithResult(*this)
+fun <T> Array<out CompletableFuture<out T>>.allResultsOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allResultsOfFastFail(*this)
 
 /**
  * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
@@ -151,12 +155,12 @@ fun <T> Array<CompletableFuture<T>>.allOfFastFailCompletableFuture(): Completabl
  *
  * Same as [CompletableFutureUtils.allOfFastFail], providing this method is convenient for method chaining.
  *
+ * @see allResultsOfFastFailCffu
  * @see allOfFastFailCffu
- * @see allOfFastFailCffuVoid
- * @see allOfFastFailCompletableFuture
+ * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
-fun Collection<CompletableFuture<*>>.allOfFastFailCompletableFutureVoid(): CompletableFuture<Void> =
+fun Collection<CompletableFuture<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
     CompletableFutureUtils.allOfFastFail(*this.toTypedArray())
 
 /**
@@ -170,12 +174,12 @@ fun Collection<CompletableFuture<*>>.allOfFastFailCompletableFutureVoid(): Compl
  *
  * Same as [CompletableFutureUtils.allOfFastFail], providing this method is convenient for method chaining.
  *
+ * @see allResultsOfFastFailCffu
  * @see allOfFastFailCffu
- * @see allOfFastFailCffuVoid
- * @see allOfFastFailCompletableFuture
+ * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
-fun Array<out CompletableFuture<*>>.allOfFastFailCompletableFutureVoid(): CompletableFuture<Void> =
+fun Array<out CompletableFuture<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
     CompletableFutureUtils.allOfFastFail(*this)
 
 
@@ -183,9 +187,7 @@ fun Array<out CompletableFuture<*>>.allOfFastFailCompletableFutureVoid(): Comple
 //# anyOf* methods
 //
 //    - anyOfCompletableFuture
-//    - anyOfCompletableFutureAny
 //    - anyOfSuccessCompletableFuture
-//    - anyOfSuccessCompletableFutureAny
 ////////////////////////////////////////
 
 /**
@@ -195,14 +197,12 @@ fun Array<out CompletableFuture<*>>.allOfFastFailCompletableFutureVoid(): Comple
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
  *
- * Same as [anyOfCompletableFutureAny], but return result type is specified type instead of type `Any`.
- * Same as [CompletableFutureUtils.anyOfWithType], providing this method is convenient for method chaining.
+ * Same as [CompletableFutureUtils.anyOf], providing this method is convenient for method chaining.
  *
  * @see anyOfCffu
- * @see anyOfCompletableFutureAny
  */
-fun <T> Collection<CompletableFuture<T>>.anyOfCompletableFuture(): CompletableFuture<T> =
-    CompletableFutureUtils.anyOfWithType(*this.toTypedArray())
+fun <T> Collection<CompletableFuture<out T>>.anyOfCompletableFuture(): CompletableFuture<T> =
+    CompletableFutureUtils.anyOf(*this.toTypedArray())
 
 /**
  * Returns a new CompletableFuture that is completed
@@ -211,82 +211,12 @@ fun <T> Collection<CompletableFuture<T>>.anyOfCompletableFuture(): CompletableFu
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
  *
- * Same as [anyOfCompletableFutureAny], but return result type is specified type instead of type `Any`.
- * Same as [CompletableFutureUtils.anyOfWithType], providing this method is convenient for method chaining.
+ * Same as [CompletableFutureUtils.anyOf], providing this method is convenient for method chaining.
  *
  * @see anyOfCffu
- * @see anyOfCompletableFutureAny
  */
-fun <T> Array<CompletableFuture<T>>.anyOfCompletableFuture(): CompletableFuture<T> =
-    CompletableFutureUtils.anyOfWithType(*this)
-
-/**
- * Returns a new CompletableFuture that is completed
- * when any of the given CompletableFutures complete, with the same result.
- * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so,
- * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
- *
- * Same as [CompletableFuture.anyOf], providing this method is convenient for method chaining.
- *
- * @see anyOfCffu
- * @see anyOfCffuAny
- * @see anyOfCompletableFuture
- * @see CompletableFuture.anyOf
- */
-fun Collection<CompletableFuture<*>>.anyOfCompletableFutureAny(): CompletableFuture<Any> =
-    CompletableFuture.anyOf(*this.toTypedArray())
-
-/**
- * Returns a new CompletableFuture that is completed
- * when any of the given CompletableFutures complete, with the same result.
- * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so,
- * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
- *
- * Same as [CompletableFuture.anyOf], providing this method is convenient for method chaining.
- *
- * @see anyOfCffu
- * @see anyOfCffuAny
- * @see anyOfCompletableFuture
- * @see CompletableFuture.anyOf
- */
-fun Array<out CompletableFuture<*>>.anyOfCompletableFutureAny(): CompletableFuture<Any> =
-    CompletableFuture.anyOf(*this)
-
-/**
- * Returns a new CompletableFuture that is successful when any of the given CompletableFutures success,
- * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
- * the returned CompletableFuture also does so, with a CompletionException holding
- * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
- * returns a new CompletableFuture that is already completed exceptionally with a CompletionException
- * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
- *
- * Same as [anyOfSuccessCompletableFutureAny], but return result type is specified type instead of type `Any`.
- * Same as [CompletableFutureUtils.anyOfSuccessWithType], providing this method is convenient for method chaining.
- *
- * @see anyOfCompletableFuture
- * @see CompletableFutureUtils.anyOfSuccessWithType
- */
-fun <T> Collection<CompletableFuture<T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
-    CompletableFutureUtils.anyOfSuccessWithType(*this.toTypedArray())
-
-/**
- * Returns a new CompletableFuture that is successful when any of the given CompletableFutures success,
- * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
- * the returned CompletableFuture also does so, with a CompletionException holding
- * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
- * returns a new CompletableFuture that is already completed exceptionally with a CompletionException
- * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
- *
- * Same as [anyOfSuccessCompletableFutureAny], but return result type is specified type instead of type `Any`.
- * Same as [CompletableFutureUtils.anyOfSuccessWithType], providing this method is convenient for method chaining.
- *
- * @see anyOfCompletableFuture
- * @see CompletableFutureUtils.anyOfSuccessWithType
- */
-fun <T> Array<CompletableFuture<T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
-    CompletableFutureUtils.anyOfSuccessWithType(*this)
+fun <T> Array<out CompletableFuture<out T>>.anyOfCompletableFuture(): CompletableFuture<T> =
+    CompletableFutureUtils.anyOf(*this)
 
 /**
  * Returns a new CompletableFuture that is successful when any of the given CompletableFutures success,
@@ -298,28 +228,26 @@ fun <T> Array<CompletableFuture<T>>.anyOfSuccessCompletableFuture(): Completable
  *
  * Same as [CompletableFutureUtils.anyOfSuccess], providing this method is convenient for method chaining.
  *
- * @see anyOfSuccessCffu
  * @see anyOfCompletableFuture
  * @see CompletableFutureUtils.anyOfSuccess
  */
-fun Collection<CompletableFuture<*>>.anyOfSuccessCompletableFutureAny(): CompletableFuture<Any> =
+fun <T> Collection<CompletableFuture<out T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
     CompletableFutureUtils.anyOfSuccess(*this.toTypedArray())
 
 /**
  * Returns a new CompletableFuture that is successful when any of the given CompletableFutures success,
  * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
  * the returned CompletableFuture also does so, with a CompletionException holding
- * an exception CompletableFuture any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
- * returns a new Cffu that is already completed exceptionally with a CompletionException
+ * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
+ * returns a new CompletableFuture that is already completed exceptionally with a CompletionException
  * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
  * Same as [CompletableFutureUtils.anyOfSuccess], providing this method is convenient for method chaining.
  *
- * @see anyOfSuccessCffu
  * @see anyOfCompletableFuture
  * @see CompletableFutureUtils.anyOfSuccess
  */
-fun Array<out CompletableFuture<*>>.anyOfSuccessCompletableFutureAny(): CompletableFuture<Any> =
+fun <T> Array<out CompletableFuture<out T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
     CompletableFutureUtils.anyOfSuccess(*this)
 
 ////////////////////////////////////////
@@ -334,7 +262,7 @@ fun Array<out CompletableFuture<*>>.anyOfSuccessCompletableFutureAny(): Completa
  * @return a new CompletableFuture that is completed when the given 2 CompletableFutures complete
  * @throws NullPointerException if any input CompletableFutures are `null`
  * @see CompletableFutureUtils.combine
- * @see allOfCompletableFuture
+ * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
 fun <T1, T2> CompletableFuture<T1>.combine(cf2: CompletableFuture<T2>): CompletableFuture<Tuple2<T1, T2>> =
@@ -349,7 +277,7 @@ fun <T1, T2> CompletableFuture<T1>.combine(cf2: CompletableFuture<T2>): Completa
  * @return a new CompletableFuture that is successful when the given two CompletableFutures success
  * @throws NullPointerException if any of the given CompletableFutures are {@code null}
  * @see CompletableFutureUtils.combineFastFail
- * @see allOfFastFailCompletableFuture
+ * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
 fun <T1, T2> CompletableFuture<T1>.combineFastFail(cf2: CompletableFuture<T2>): CompletableFuture<Tuple2<T1, T2>> =
@@ -363,7 +291,7 @@ fun <T1, T2> CompletableFuture<T1>.combineFastFail(cf2: CompletableFuture<T2>): 
  * @return a new CompletableFuture that is completed when the given 3 CompletableFutures complete
  * @throws NullPointerException if any input CompletableFutures are `null`
  * @see CompletableFutureUtils.combine
- * @see allOfCompletableFuture
+ * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
 fun <T1, T2, T3> CompletableFuture<T1>.combine(
@@ -380,7 +308,7 @@ fun <T1, T2, T3> CompletableFuture<T1>.combine(
  * @return a new CompletableFuture that is successful when the given three CompletableFutures success
  * @throws NullPointerException if any of the given CompletableFutures are {@code null}
  * @see CompletableFutureUtils.combineFastFail
- * @see allOfFastFailCompletableFuture
+ * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
 fun <T1, T2, T3> CompletableFuture<T1>.combineFastFail(
@@ -396,7 +324,7 @@ fun <T1, T2, T3> CompletableFuture<T1>.combineFastFail(
  * @return a new CompletableFuture that is completed when the given 4 CompletableFutures complete
  * @throws NullPointerException if any input CompletableFutures are `null`
  * @see CompletableFutureUtils.combine
- * @see allOfCompletableFuture
+ * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
 fun <T1, T2, T3, T4> CompletableFuture<T1>.combine(
@@ -413,7 +341,7 @@ fun <T1, T2, T3, T4> CompletableFuture<T1>.combine(
  * @return a new CompletableFuture that is successful when the given 4 CompletableFutures success
  * @throws NullPointerException if any of the given CompletableFutures are {@code null}
  * @see CompletableFutureUtils.combineFastFail
- * @see allOfFastFailCompletableFuture
+ * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
 fun <T1, T2, T3, T4> CompletableFuture<T1>.combineFastFail(
@@ -429,7 +357,7 @@ fun <T1, T2, T3, T4> CompletableFuture<T1>.combineFastFail(
  * @return a new CompletableFuture that is completed when the given 5 CompletableFutures complete
  * @throws NullPointerException if any input CompletableFutures are `null`
  * @see CompletableFutureUtils.combine
- * @see allOfCompletableFuture
+ * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
 fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.combine(
@@ -447,7 +375,7 @@ fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.combine(
  * @return a new CompletableFuture that is successful when the given 5 CompletableFutures success
  * @throws NullPointerException if any of the given CompletableFutures are {@code null}
  * @see CompletableFutureUtils.combineFastFail
- * @see allOfFastFailCompletableFuture
+ * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
 fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.combineFastFail(
@@ -459,8 +387,6 @@ fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.combineFastFail(
 ////////////////////////////////////////////////////////////////////////////////
 //# Backport CF instance methods
 //  compatibility for low Java version
-//
-//  all methods name prefix with `cffu`
 ////////////////////////////////////////////////////////////////////////////////
 
 //# Error Handling methods of CompletionStage
@@ -475,7 +401,7 @@ fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.combineFastFail(
  * if given CompletionStage completed exceptionally
  * @return the new CompletionStage
  */
-fun <T> CompletableFuture<T>.cffuExceptionallyAsync(fn: (Throwable) -> T): CompletableFuture<T> =
+fun <T> CompletableFuture<T>.exceptionallyAsync(fn: Function<Throwable, out T>): CompletableFuture<T> =
     CompletableFutureUtils.exceptionallyAsync(this, fn)
 
 /**
@@ -488,20 +414,22 @@ fun <T> CompletableFuture<T>.cffuExceptionallyAsync(fn: (Throwable) -> T): Compl
  * @param executor the executor to use for asynchronous execution
  * @return the new CompletionStage
  */
-fun <T> CompletableFuture<T>.cffuExceptionallyAsync(fn: (Throwable) -> T, executor: Executor): CompletableFuture<T> =
+fun <T> CompletableFuture<T>.exceptionallyAsync(
+    fn: Function<Throwable, out T>, executor: Executor
+): CompletableFuture<T> =
     CompletableFutureUtils.exceptionallyAsync(this, fn, executor)
 
 //# Timeout Control methods
 
 /**
- * Exceptionally completes this CompletableFuture with a [TimeoutException][java.util.concurrent.TimeoutException]
+ * Exceptionally completes this CompletableFuture with a TimeoutException
  * if not otherwise completed before the given timeout.
  *
  * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of `unit`
  * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
  * @return this CompletableFuture
  */
-fun <T> CompletableFuture<T>.cffuOrTimeout(timeout: Long, unit: TimeUnit): CompletableFuture<T> =
+fun <T> CompletableFuture<T>.orTimeout(timeout: Long, unit: TimeUnit): CompletableFuture<T> =
     CompletableFutureUtils.orTimeout(this, timeout, unit)
 
 /**
@@ -512,7 +440,7 @@ fun <T> CompletableFuture<T>.cffuOrTimeout(timeout: Long, unit: TimeUnit): Compl
  * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
  * @return given CompletableFuture
  */
-fun <T> CompletableFuture<T>.cffuCompleteOnTimeout(value: T, timeout: Long, unit: TimeUnit): CompletableFuture<T> =
+fun <T> CompletableFuture<T>.completeOnTimeout(value: T, timeout: Long, unit: TimeUnit): CompletableFuture<T> =
     CompletableFutureUtils.completeOnTimeout(this, value, timeout, unit)
 
 //# Advanced methods of CompletionStage
@@ -525,7 +453,9 @@ fun <T> CompletableFuture<T>.cffuCompleteOnTimeout(value: T, timeout: Long, unit
  *           CompletionStage if given CompletionStage completed exceptionally
  * @return the new CompletionStage
  */
-fun <T> CompletableFuture<T>.cffuExceptionallyCompose(fn: (Throwable) -> CompletionStage<T>): CompletableFuture<T> =
+fun <T> CompletableFuture<T>.exceptionallyCompose(
+    fn: Function<Throwable, out CompletionStage<T>>
+): CompletableFuture<T> =
     CompletableFutureUtils.exceptionallyCompose(this, fn)
 
 /**
@@ -537,8 +467,8 @@ fun <T> CompletableFuture<T>.cffuExceptionallyCompose(fn: (Throwable) -> Complet
  *           CompletionStage if given CompletionStage completed exceptionally
  * @return the new CompletionStage
  */
-fun <T> CompletableFuture<T>.cffuExceptionallyComposeAsync(
-    fn: (Throwable) -> CompletionStage<T>
+fun <T> CompletableFuture<T>.exceptionallyComposeAsync(
+    fn: Function<Throwable, out CompletionStage<T>>
 ): CompletableFuture<T> =
     CompletableFutureUtils.exceptionallyComposeAsync(this, fn)
 
@@ -551,8 +481,8 @@ fun <T> CompletableFuture<T>.cffuExceptionallyComposeAsync(
  * @param executor the executor to use for asynchronous execution
  * @return the new CompletionStage
  */
-fun <T> CompletableFuture<T>.cffuExceptionallyComposeAsync(
-    fn: (Throwable) -> CompletionStage<T>, executor: Executor
+fun <T> CompletableFuture<T>.exceptionallyComposeAsync(
+    fn: Function<Throwable, out CompletionStage<T>>, executor: Executor
 ): CompletableFuture<T> =
     CompletableFutureUtils.exceptionallyComposeAsync(this, fn, executor)
 
@@ -565,7 +495,7 @@ fun <T> CompletableFuture<T>.cffuExceptionallyComposeAsync(
  * <b><i>NOTE:<br></i></b>
  * call this method
  *
- * `result = CompletableFutureUtils.cffuJoin(cf, timeout, unit);`
+ * `result = CompletableFutureUtils.join(cf, timeout, unit);`
  *
  * is same as:
  *
@@ -577,9 +507,8 @@ fun <T> CompletableFuture<T>.cffuExceptionallyComposeAsync(
  * ```
  *
  * <b><i>CAUTION:<br></i></b>
- * if the wait timed out, this method throws an (unchecked) [CompletionException][java.util.concurrent.CompletionException]
- * with the [TimeoutException][java.util.concurrent.TimeoutException] as its cause;
- * NOT throws a (checked) [TimeoutException][java.util.concurrent.TimeoutException] like [CompletableFuture.get].
+ * if the wait timed out, this method throws an (unchecked) CompletionException with the TimeoutException as its cause;
+ * NOT throws a (checked) TimeoutException like [CompletableFuture.get].
  *
  * @param timeout the maximum time to wait
  * @param unit    the time unit of the timeout argument
@@ -587,8 +516,8 @@ fun <T> CompletableFuture<T>.cffuExceptionallyComposeAsync(
  * @see CompletableFuture.join
  */
 @Suppress("UNCHECKED_CAST")
-fun <T> CompletableFuture<T>.cffuJoin(timeout: Long, unit: TimeUnit): T =
-    CompletableFutureUtils.cffuJoin(this, timeout, unit) as T
+fun <T> CompletableFuture<T>.join(timeout: Long, unit: TimeUnit): T =
+    CompletableFutureUtils.join(this, timeout, unit) as T
 
 /**
  * Returns the computed result, without waiting.
@@ -606,7 +535,7 @@ fun <T> CompletableFuture<T>.cffuJoin(timeout: Long, unit: TimeUnit): T =
  * ```
  */
 @Suppress("UNCHECKED_CAST")
-fun <T> CompletableFuture<T>.cffuResultNow(): T =
+fun <T> CompletableFuture<T>.resultNow(): T =
     CompletableFutureUtils.resultNow(this) as T
 
 /**
@@ -619,7 +548,7 @@ fun <T> CompletableFuture<T>.cffuResultNow(): T =
  *                               or the task was cancelled
  * @see CompletableFuture#resultNow()
  */
-fun <T> CompletableFuture<T>.cffuExceptionNow(): Throwable =
+fun <T> CompletableFuture<T>.exceptionNow(): Throwable =
     CompletableFutureUtils.exceptionNow(this)
 
 /**
@@ -631,7 +560,7 @@ fun <T> CompletableFuture<T>.cffuExceptionNow(): Throwable =
  * @see CompletableFuture.state
  */
 fun <T> CompletableFuture<T>.cffuState(): CffuState =
-    CompletableFutureUtils.cffuState(this)
+    CompletableFutureUtils.state(this)
 
 //# Write methods of CompletableFuture
 
@@ -642,7 +571,7 @@ fun <T> CompletableFuture<T>.cffuState(): CffuState =
  * @param supplier a function returning the value to be used to complete given CompletableFuture
  * @return given CompletableFuture
  */
-fun <T> CompletableFuture<T>.cffuCompleteAsync(supplier: () -> T): CompletableFuture<T> =
+fun <T> CompletableFuture<T>.completeAsync(supplier: Supplier<out T>): CompletableFuture<T> =
     CompletableFutureUtils.completeAsync(this, supplier)
 
 /**
@@ -653,7 +582,7 @@ fun <T> CompletableFuture<T>.cffuCompleteAsync(supplier: () -> T): CompletableFu
  * @param executor the executor to use for asynchronous execution
  * @return given CompletableFuture
  */
-fun <T> CompletableFuture<T>.cffuCompleteAsync(supplier: () -> T, executor: Executor): CompletableFuture<T> =
+fun <T> CompletableFuture<T>.completeAsync(supplier: Supplier<out T>, executor: Executor): CompletableFuture<T> =
     CompletableFutureUtils.completeAsync(this, supplier, executor)
 
 //# Re-Config methods
@@ -670,7 +599,7 @@ fun <T> CompletableFuture<T>.cffuCompleteAsync(supplier: () -> T, executor: Exec
  *
  * @return the new CompletionStage
  */
-fun <T> CompletableFuture<T>.cffuMinimalCompletionStage(): CompletionStage<T> =
+fun <T> CompletableFuture<T>.minimalCompletionStage(): CompletionStage<T> =
     CompletableFutureUtils.minimalCompletionStage(this)
 
 /**
@@ -682,7 +611,7 @@ fun <T> CompletableFuture<T>.cffuMinimalCompletionStage(): CompletionStage<T> =
  *
  * @return the new CompletableFuture
  */
-fun <T> CompletableFuture<T>.cffuCopy(): CompletableFuture<T> =
+fun <T> CompletableFuture<T>.copy(): CompletableFuture<T> =
     CompletableFutureUtils.copy(this)
 
 /**
@@ -691,5 +620,5 @@ fun <T> CompletableFuture<T>.cffuCopy(): CompletableFuture<T> =
  * @param <T> the type of the value
  * @return a new CompletableFuture
  */
-fun <T, U> CompletableFuture<T>.cffuNewIncompleteFuture(): CompletableFuture<U> =
+fun <T, U> CompletableFuture<T>.newIncompleteFuture(): CompletableFuture<U> =
     CompletableFutureUtils.newIncompleteFuture(this)

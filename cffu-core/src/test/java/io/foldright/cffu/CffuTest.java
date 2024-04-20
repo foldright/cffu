@@ -37,7 +37,7 @@ class CffuTest {
     //    - get()               // BLOCKING
     //    - get(timeout, unit)  // BLOCKING
     //    - join()              // BLOCKING
-    //    - cffuJoin()          // BLOCKING
+    //    - join()          // BLOCKING
     //    - getNow(T valueIfAbsent)
     //    - resultNow()
     //    - exceptionNow()
@@ -51,12 +51,12 @@ class CffuTest {
     @Test
     void test_cffuJoin() {
         // Completed Future
-        assertEquals(n, cffuFactory.completedFuture(n).cffuJoin(1, TimeUnit.MILLISECONDS));
+        assertEquals(n, cffuFactory.completedFuture(n).join(1, TimeUnit.MILLISECONDS));
 
         // Incomplete Future -> CompletionException with TimeoutException
         Cffu<Object> incomplete = cffuFactory.newIncompleteCffu();
         try {
-            incomplete.cffuJoin(1, TimeUnit.MILLISECONDS);
+            incomplete.join(1, TimeUnit.MILLISECONDS);
             fail();
         } catch (CompletionException expected) {
             assertEquals(TimeoutException.class, expected.getCause().getClass());
@@ -65,7 +65,7 @@ class CffuTest {
         // Failed Future -> CompletionException
         Cffu<Object> failed = cffuFactory.failedFuture(rte);
         try {
-            failed.cffuJoin(1, TimeUnit.MILLISECONDS);
+            failed.join(1, TimeUnit.MILLISECONDS);
             fail();
         } catch (CompletionException expected) {
             assertSame(rte, expected.getCause());
@@ -77,7 +77,7 @@ class CffuTest {
             sleep(300);
             return 42;
         });
-        assertEquals(42, cffu.cffuJoin(3, TimeUnit.SECONDS));
+        assertEquals(42, cffu.join(3, TimeUnit.SECONDS));
     }
 
     @Test
