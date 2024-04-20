@@ -1232,10 +1232,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     //# Read(explicitly) methods of CompletableFuture
     //
-    //    - get()                   // BLOCKING!
-    //    - get(timeout, unit)      // BLOCKING!
-    //    - join()                  // BLOCKING!
-    //    - cffuJoin(timeout, unit) // BLOCKING!
+    //    - get()               // BLOCKING!
+    //    - get(timeout, unit)  // BLOCKING!
+    //    - join()              // BLOCKING!
+    //    - join(timeout, unit) // BLOCKING!
     //    - getNow(T valueIfAbsent)
     //    - resultNow()
     //    - exceptionNow()
@@ -1244,7 +1244,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //    - isCompletedExceptionally()
     //    - isCancelled()
     //    - state()
-    //    - cffuState()
+    //    - state()
     //
     // NOTE about ExecutionException or CompletionException when the computation threw an exception:
     //   - get methods throw ExecutionException(checked exception)
@@ -1333,7 +1333,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <b><i>NOTE:<br></i></b>
      * call this method
      * <p>
-     * {@code result = cffu.cffuJoin(timeout, unit);}
+     * {@code result = cffu.join(timeout, unit);}
      * <p>
      * is same as:
      *
@@ -1366,7 +1366,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public T cffuJoin(long timeout, TimeUnit unit) {
         checkMinimalStage();
 
-        return CompletableFutureUtils.cffuJoin(cf, timeout, unit);
+        return CompletableFutureUtils.join(cf, timeout, unit);
     }
 
     /**
@@ -1514,7 +1514,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public CffuState cffuState() {
         checkMinimalStage();
 
-        return CompletableFutureUtils.cffuState(cf);
+        return CompletableFutureUtils.state(cf);
     }
 
     ////////////////////////////////////////////////////////////////////////////////

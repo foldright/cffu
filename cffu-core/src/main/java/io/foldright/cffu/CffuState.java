@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * Same as {@link Future.State}, existed for
- * java version compatibility({@link Cffu#cffuState cffuState} to {@link Future#state()}).
+ * java version compatibility({@link Cffu#cffuState state} to {@link Future#state()}).
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @see Future.State
