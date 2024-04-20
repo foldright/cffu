@@ -744,7 +744,7 @@ public final class CompletableFutureUtils {
      * <b><i>NOTE:<br></i></b>
      * call this method
      * <p>
-     * {@code result = CompletableFutureUtils.cffuJoin(cf, timeout, unit);}
+     * {@code result = CompletableFutureUtils.join(cf, timeout, unit);}
      * <p>
      * is same as:
      *
@@ -769,7 +769,7 @@ public final class CompletableFutureUtils {
      */
     @Blocking
     @Nullable
-    public static <T> T cffuJoin(CompletableFuture<T> cf, long timeout, TimeUnit unit) {
+    public static <T> T join(CompletableFuture<T> cf, long timeout, TimeUnit unit) {
         if (cf.isDone()) return cf.join();
 
         return orTimeout(copy(cf), timeout, unit).join();
@@ -865,7 +865,7 @@ public final class CompletableFutureUtils {
      * @see Future.State
      */
     @Contract(pure = true)
-    public static <T> CffuState cffuState(CompletableFuture<T> cf) {
+    public static <T> CffuState state(CompletableFuture<T> cf) {
         if (IS_JAVA19_PLUS) {
             return CffuState.toCffuState(cf.state());
         }

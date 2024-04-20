@@ -37,7 +37,7 @@ class CffuTest {
     //    - get()               // BLOCKING
     //    - get(timeout, unit)  // BLOCKING
     //    - join()              // BLOCKING
-    //    - cffuJoin()          // BLOCKING
+    //    - join()          // BLOCKING
     //    - getNow(T valueIfAbsent)
     //    - resultNow()
     //    - exceptionNow()

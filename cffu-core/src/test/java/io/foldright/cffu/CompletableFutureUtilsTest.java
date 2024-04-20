@@ -738,7 +738,7 @@ class CompletableFutureUtilsTest {
     void test_read() {
         final CompletableFuture<Integer> completed = completedFuture(n);
 
-        assertEquals(n, cffuJoin(completed, 1, TimeUnit.MILLISECONDS));
+        assertEquals(n, join(completed, 1, TimeUnit.MILLISECONDS));
         assertEquals(n, resultNow(completed));
         try {
             exceptionNow(completed);
@@ -746,14 +746,14 @@ class CompletableFutureUtilsTest {
         } catch (IllegalStateException expected) {
             if (expected.getMessage() != null) assertEquals("Task completed with a result", expected.getMessage());
         }
-        assertSame(CffuState.SUCCESS, cffuState(completed));
+        assertSame(CffuState.SUCCESS, state(completed));
 
         ////////////////////////////////////////
 
         final CompletableFuture<Object> failed = failedFuture(rte);
 
         try {
-            cffuJoin(failed, 1, TimeUnit.MILLISECONDS);
+            join(failed, 1, TimeUnit.MILLISECONDS);
             fail();
         } catch (CompletionException expected) {
             assertSame(rte, expected.getCause());
@@ -765,7 +765,7 @@ class CompletableFutureUtilsTest {
             if (expected.getMessage() != null) assertEquals("Task completed with exception", expected.getMessage());
         }
         assertSame(rte, exceptionNow(failed));
-        assertSame(CffuState.FAILED, cffuState(failed));
+        assertSame(CffuState.FAILED, state(failed));
 
         ////////////////////////////////////////
 
@@ -782,14 +782,14 @@ class CompletableFutureUtilsTest {
         } catch (IllegalStateException expected) {
             if (expected.getMessage() != null) assertEquals("Task was cancelled", expected.getMessage());
         }
-        assertSame(CffuState.CANCELLED, cffuState(cancelled));
+        assertSame(CffuState.CANCELLED, state(cancelled));
 
         ////////////////////////////////////////
 
         final CompletableFuture<Object> incomplete = createIncompleteFuture();
 
         try {
-            cffuJoin(incomplete, 1, TimeUnit.MILLISECONDS);
+            join(incomplete, 1, TimeUnit.MILLISECONDS);
             fail();
         } catch (CompletionException expected) {
             assertTrue(expected.getCause() instanceof TimeoutException);
@@ -806,11 +806,11 @@ class CompletableFutureUtilsTest {
         } catch (IllegalStateException expected) {
             if (expected.getMessage() != null) assertEquals("Task has not completed", expected.getMessage());
         }
-        assertSame(CffuState.RUNNING, cffuState(incomplete));
+        assertSame(CffuState.RUNNING, state(incomplete));
 
         // Incomplete Future -> join before timeout
         CompletableFuture<Integer> later = createFutureCompleteLater(n);
-        assertEquals(n, cffuJoin(later, 3, TimeUnit.SECONDS));
+        assertEquals(n, join(later, 3, TimeUnit.SECONDS));
     }
 
     @Test

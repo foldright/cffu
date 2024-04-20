@@ -565,7 +565,7 @@ fun <T> CompletableFuture<T>.cffuExceptionallyComposeAsync(
  * <b><i>NOTE:<br></i></b>
  * call this method
  *
- * `result = CompletableFutureUtils.cffuJoin(cf, timeout, unit);`
+ * `result = CompletableFutureUtils.join(cf, timeout, unit);`
  *
  * is same as:
  *
@@ -588,7 +588,7 @@ fun <T> CompletableFuture<T>.cffuExceptionallyComposeAsync(
  */
 @Suppress("UNCHECKED_CAST")
 fun <T> CompletableFuture<T>.cffuJoin(timeout: Long, unit: TimeUnit): T =
-    CompletableFutureUtils.cffuJoin(this, timeout, unit) as T
+    CompletableFutureUtils.join(this, timeout, unit) as T
 
 /**
  * Returns the computed result, without waiting.
@@ -631,7 +631,7 @@ fun <T> CompletableFuture<T>.cffuExceptionNow(): Throwable =
  * @see CompletableFuture.state
  */
 fun <T> CompletableFuture<T>.cffuState(): CffuState =
-    CompletableFutureUtils.cffuState(this)
+    CompletableFutureUtils.state(this)
 
 //# Write methods of CompletableFuture
 
