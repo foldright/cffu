@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Contract;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -591,8 +590,7 @@ public final class CffuFactory {
      * Returns a new Cffu that is completed when all the given Cffus complete.
      * If any of the given Cffus complete exceptionally, then the returned Cffu
      * also does so, with a CompletionException holding this exception as its cause.
-     * If no Cffus are provided, returns a Cffu completed
-     * with the value {@link java.util.Collections#emptyList() emptyList}.
+     * If no Cffus are provided, returns a Cffu completed with the value empty list.
      * <p>
      * Same to {@link #allOf(Cffu[])}, but the returned Cffu
      * contains the results of input Cffus.
@@ -613,8 +611,7 @@ public final class CffuFactory {
      * the new Cffu is completed when all the given CompletableFutures complete.
      * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
      * also does so, with a CompletionException holding this exception as its cause.
-     * If no CompletableFutures are provided, returns a Cffu completed
-     * with the value {@link java.util.Collections#emptyList() emptyList}.
+     * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
      * <p>
      * Same as {@link #cffuAllOf(Cffu[])} with overloaded argument type {@link CompletableFuture}.
      *
@@ -647,8 +644,7 @@ public final class CffuFactory {
      * If any of the given Cffus complete exceptionally, then the returned Cffu
      * also does so *without* waiting other incomplete given Cffus,
      * with a CompletionException holding this exception as its cause.
-     * If no CompletableFutures are provided, returns a Cffu completed
-     * with the value {@link Collections#emptyList() emptyList}.
+     * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that is successful when all the given CompletableFutures success
@@ -668,8 +664,7 @@ public final class CffuFactory {
      * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
      * also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
-     * If no CompletableFutures are provided, returns a Cffu completed
-     * with the value {@link Collections#emptyList() emptyList}.
+     * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
      * <p>
      * Same as {@link #cffuAllOfFastFail(Cffu[])} with overloaded argument type {@link CompletableFuture}.
      *
