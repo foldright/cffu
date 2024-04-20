@@ -7,11 +7,8 @@ import java.util.concurrent.CompletableFuture;
  * Exception indicates that NO cfs({@link Cffu} / {@link CompletableFuture}) are provided
  * for methods require cf arguments.
  *
- * @see CffuFactory#cffuAnyOfSuccess(Cffu[])
- * @see CffuFactory#cffuAnyOfSuccess(CompletableFuture[])
  * @see CffuFactory#anyOfSuccess(Cffu[])
  * @see CffuFactory#anyOfSuccess(CompletableFuture[])
- * @see CompletableFutureUtils#anyOfSuccessWithType(CompletableFuture[])
  * @see CompletableFutureUtils#anyOfSuccess(CompletableFuture[])
  */
 @SuppressWarnings("serial")

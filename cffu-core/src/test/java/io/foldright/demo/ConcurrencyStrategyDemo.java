@@ -18,8 +18,8 @@ public class ConcurrencyStrategyDemo {
 
     public static void main(String[] args) throws Exception {
         ////////////////////////////////////////////////////////////////////////
-        // CffuFactory#cffuAllOfFastFail / allOfFastFail
-        // CffuFactory#cffuAnyOfSuccess / anyOfSuccess
+        // CffuFactory#allResultsOfFastFail / allOfFastFail
+        // CffuFactory#anyOfSuccess
         ////////////////////////////////////////////////////////////////////////
         final Cffu<Integer> successAfterLongTime = cffuFactory.supplyAsync(() -> {
             sleep(3000); // sleep LONG time
@@ -29,19 +29,16 @@ public class ConcurrencyStrategyDemo {
 
         // Result type is Void!
         Cffu<Void> cffuAll = cffuFactory.allOfFastFail(successAfterLongTime, failed);
-        Cffu<List<Integer>> fastFailed = cffuFactory.cffuAllOfFastFail(successAfterLongTime, failed);
+        Cffu<List<Integer>> fastFailed = cffuFactory.allResultsOfFastFail(successAfterLongTime, failed);
         // fast failed without waiting successAfterLongTime
         System.out.println(fastFailed.exceptionNow());
 
-        // Result type is Object!
-        Cffu<Object> cffuAny = cffuFactory.anyOfSuccess(successAfterLongTime, failed);
-        System.out.println(cffuAny.get());
-        Cffu<Integer> anyOfSuccess = cffuFactory.cffuAnyOfSuccess(successAfterLongTime, failed);
+        Cffu<Integer> anyOfSuccess = cffuFactory.anyOfSuccess(successAfterLongTime, failed);
         System.out.println(anyOfSuccess.get());
 
         ////////////////////////////////////////////////////////////////////////
-        // or CompletableFutureUtils#allOfFastFailWithResult / allOfFastFail
-        //    CompletableFutureUtils#anyOfSuccessWithType / anyOfSuccess
+        // or CompletableFutureUtils#allResultsOfFastFail / allOfFastFail
+        //    CompletableFutureUtils#anyOfSuccess / anyOfSuccess
         ////////////////////////////////////////////////////////////////////////
         final CompletableFuture<Integer> successAfterLongTimeCf = CompletableFuture.supplyAsync(() -> {
             sleep(3000); // sleep LONG time
@@ -51,14 +48,11 @@ public class ConcurrencyStrategyDemo {
 
         // Result type is Void!
         CompletableFuture<Void> cfAll = CompletableFutureUtils.allOfFastFail(successAfterLongTimeCf, failedCf);
-        CompletableFuture<List<Integer>> fastFailedCf = CompletableFutureUtils.allOfFastFailWithResult(successAfterLongTimeCf, failedCf);
+        CompletableFuture<List<Integer>> fastFailedCf = CompletableFutureUtils.allResultsOfFastFail(successAfterLongTimeCf, failedCf);
         // fast failed without waiting successAfterLongTime
         System.out.println(CompletableFutureUtils.exceptionNow(fastFailedCf));
 
-        // Result type is Object!
-        CompletableFuture<Object> cfAny = CompletableFutureUtils.anyOfSuccess(successAfterLongTimeCf, failedCf);
-        System.out.println(cfAny.get());
-        CompletableFuture<Integer> cfSuccess = CompletableFutureUtils.anyOfSuccessWithType(successAfterLongTimeCf, failedCf);
+        CompletableFuture<Integer> cfSuccess = CompletableFutureUtils.anyOfSuccess(successAfterLongTimeCf, failedCf);
         System.out.println(cfSuccess.get());
 
         ////////////////////////////////////////
