@@ -18,7 +18,7 @@ For `Maven` projects:
   <groupId>io.foldright</groupId>
   <artifactId>cffu-ttl-executor-wrapper</artifactId>
   <scope>runtime</scope>
-  <version>0.9.8</version>
+  <version>0.9.9</version>
 </dependency>
 ```
 
@@ -26,12 +26,12 @@ For `Gradle` projects:
 
 ```groovy
 // Gradle Kotlin DSL
-runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:0.9.8")
+runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:0.9.9")
 ```
 
 ```groovy
 // Gradle Groovy DSL
-runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:0.9.8'
+runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:0.9.9'
 ```
 
 `cffu-ttl-executor-wrapper` has published to maven central, find the latest version at
