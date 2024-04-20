@@ -25,35 +25,35 @@ class CompletableFutureUtilsTest {
 
     @Test
     void test_allOf__success__trivial_case() throws Exception {
-        assertEquals(Arrays.asList(n, n + 1, n + 2), allOfWithResult(
+        assertEquals(Arrays.asList(n, n + 1, n + 2), allResultsOf(
                 completedFuture(n),
                 completedFuture(n + 1),
                 completedFuture(n + 2)
         ).get());
 
-        assertEquals(Arrays.asList(n, n + 1), allOfWithResult(completedFuture(n), completedFuture(n + 1)
+        assertEquals(Arrays.asList(n, n + 1), allResultsOf(completedFuture(n), completedFuture(n + 1)
         ).get());
 
-        assertEquals(Collections.singletonList(n), allOfWithResult(completedFuture(n)).get());
+        assertEquals(Collections.singletonList(n), allResultsOf(completedFuture(n)).get());
 
-        assertEquals(Collections.emptyList(), allOfWithResult().get());
+        assertEquals(Collections.emptyList(), allResultsOf().get());
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        assertEquals(Arrays.asList(n, n + 1, n + 2), allOfFastFailWithResult(
+        assertEquals(Arrays.asList(n, n + 1, n + 2), allResultsOfFastFail(
                 completedFuture(n),
                 completedFuture(n + 1),
                 completedFuture(n + 2)
         ).get());
 
-        assertEquals(Arrays.asList(n, n + 1), allOfFastFailWithResult(
+        assertEquals(Arrays.asList(n, n + 1), allResultsOfFastFail(
                 completedFuture(n),
                 completedFuture(n + 1)
         ).get());
 
-        assertEquals(Collections.singletonList(n), allOfFastFailWithResult(completedFuture(n)).get());
+        assertEquals(Collections.singletonList(n), allResultsOfFastFail(completedFuture(n)).get());
 
-        assertEquals(Collections.emptyList(), allOfFastFailWithResult().get());
+        assertEquals(Collections.emptyList(), allResultsOfFastFail().get());
 
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -72,7 +72,7 @@ class CompletableFutureUtilsTest {
         try {
             RuntimeException ex1 = new RuntimeException("ex1");
             RuntimeException ex2 = new RuntimeException("ex2");
-            allOfWithResult(
+            allResultsOf(
                     failedFuture(rte),
                     failedFuture(anotherRte),
                     failedFuture(ex1),
@@ -81,7 +81,7 @@ class CompletableFutureUtilsTest {
 
             fail();
         } catch (ExecutionException expected) {
-            // anyOfSuccessWithType: the ex of first given cf argument win
+            // anyOfSuccess: the ex of first given cf argument win
             //   ❗dependent on the implementation behavior of `CF.allOf`️
             assertSame(rte, expected.getCause());
         }
@@ -90,7 +90,7 @@ class CompletableFutureUtilsTest {
         try {
             RuntimeException ex1 = new RuntimeException("ex1");
             RuntimeException ex2 = new RuntimeException("ex2");
-            allOfWithResult(
+            allResultsOf(
                     CompletableFuture.supplyAsync(() -> {
                         sleep(100);
                         throw rte;
@@ -102,14 +102,14 @@ class CompletableFutureUtilsTest {
 
             fail();
         } catch (ExecutionException expected) {
-            // anyOfSuccessWithType: the ex of first given cf argument win
+            // anyOfSuccess: the ex of first given cf argument win
             //   ❗dependent on the implementation behavior of `CF.allOf`️
             assertSame(rte, expected.getCause());
         }
 
         // success and failed
         try {
-            allOfWithResult(
+            allResultsOf(
                     completedFuture(n),
                     failedFuture(rte),
                     completedFuture(s),
@@ -123,7 +123,7 @@ class CompletableFutureUtilsTest {
 
         // failed/incomplete/failed
         try {
-            allOfWithResult(
+            allResultsOf(
                     completedFuture(n),
                     failedFuture(rte),
                     createIncompleteFuture()
@@ -136,7 +136,7 @@ class CompletableFutureUtilsTest {
 
         // incomplete fail incomplete
         try {
-            allOfWithResult(
+            allResultsOf(
                     createIncompleteFuture(),
                     failedFuture(rte),
                     createIncompleteFuture()
@@ -153,7 +153,7 @@ class CompletableFutureUtilsTest {
         try {
             RuntimeException ex1 = new RuntimeException("ex1");
             RuntimeException ex2 = new RuntimeException("ex2");
-            allOfFastFailWithResult(
+            allResultsOfFastFail(
                     failedFuture(rte),
                     failedFuture(anotherRte),
                     failedFuture(ex1),
@@ -162,7 +162,7 @@ class CompletableFutureUtilsTest {
 
             fail();
         } catch (ExecutionException expected) {
-            // anyOfSuccessWithType: the ex of first complete(in time) cf argument win
+            // anyOfSuccess: the ex of first complete(in time) cf argument win
             //   ❗dependent on the implementation behavior of `CF.anyOf`️
             assertSame(rte, expected.getCause());
         }
@@ -171,7 +171,7 @@ class CompletableFutureUtilsTest {
         try {
             RuntimeException ex1 = new RuntimeException("ex1");
             RuntimeException ex2 = new RuntimeException("ex2");
-            allOfFastFailWithResult(
+            allResultsOfFastFail(
                     CompletableFuture.supplyAsync(() -> {
                         sleep(100);
                         throw rte;
@@ -183,14 +183,14 @@ class CompletableFutureUtilsTest {
 
             fail();
         } catch (ExecutionException expected) {
-            // anyOfSuccessWithType: the ex of first complete(in time) cf argument win
+            // anyOfSuccess: the ex of first complete(in time) cf argument win
             //   ❗dependent on the implementation behavior of `CF.anyOf`️
             assertSame(anotherRte, expected.getCause());
         }
 
         // success and failed
         try {
-            allOfFastFailWithResult(
+            allResultsOfFastFail(
                     completedFuture(n),
                     failedFuture(rte),
                     completedFuture(s),
@@ -204,7 +204,7 @@ class CompletableFutureUtilsTest {
 
         // failed/incomplete/failed
         try {
-            allOfFastFailWithResult(
+            allResultsOfFastFail(
                     completedFuture(n),
                     failedFuture(rte),
                     createIncompleteFuture()
@@ -217,7 +217,7 @@ class CompletableFutureUtilsTest {
 
         // incomplete fail incomplete
         try {
-            allOfFastFailWithResult(
+            allResultsOfFastFail(
                     createIncompleteFuture(),
                     failedFuture(rte),
                     createIncompleteFuture()
@@ -234,7 +234,7 @@ class CompletableFutureUtilsTest {
         try {
             RuntimeException ex1 = new RuntimeException("ex1");
             RuntimeException ex2 = new RuntimeException("ex2");
-            allOfFastFailWithResult(
+            allResultsOfFastFail(
                     failedFuture(rte),
                     failedFuture(anotherRte),
                     failedFuture(ex1),
@@ -243,7 +243,7 @@ class CompletableFutureUtilsTest {
 
             fail();
         } catch (ExecutionException expected) {
-            // anyOfSuccessWithType: the ex of first complete(in time) cf argument win
+            // anyOfSuccess: the ex of first complete(in time) cf argument win
             //   ❗dependent on the implementation behavior of `CF.anyOf`️
             assertSame(rte, expected.getCause());
         }
@@ -264,7 +264,7 @@ class CompletableFutureUtilsTest {
 
             fail();
         } catch (ExecutionException expected) {
-            // anyOfSuccessWithType: the ex of first complete(in time) cf argument win
+            // anyOfSuccess: the ex of first complete(in time) cf argument win
             //   ❗dependent on the implementation behavior of `CF.anyOf`️
             assertSame(anotherRte, expected.getCause());
         }
@@ -316,35 +316,14 @@ class CompletableFutureUtilsTest {
 
     @Test
     void test_anyOf__success__trivial_case() throws Exception {
-        assertEquals(n, anyOfWithType(completedFuture(n), completedFuture(n + 1), completedFuture(n + 2)).get());
-        assertEquals(n, anyOfWithType(completedFuture(n), completedFuture(n + 1)).get());
+        assertEquals(n, anyOf(completedFuture(n), completedFuture(n + 1), completedFuture(n + 2)).get());
+        assertEquals(n, anyOf(completedFuture(n), completedFuture(n + 1)).get());
 
-        assertEquals(n, anyOfWithType(completedFuture(n)).get());
-        assertFalse(anyOfWithType().isDone());
-
-        // success with incomplete CF
-        assertEquals(n, anyOfWithType(createIncompleteFuture(), createIncompleteFuture(), completedFuture(n)).get());
-
-        ////////////////////////////////////////
-
-        assertEquals(n, anyOfSuccessWithType(completedFuture(n), completedFuture(n + 1), completedFuture(n + 2)).get());
-        assertEquals(n, anyOfSuccessWithType(completedFuture(n), completedFuture(n + 1)).get());
-
-        assertEquals(n, anyOfSuccessWithType(completedFuture(n)).get());
-        try {
-            anyOfSuccessWithType().get();
-
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(NoCfsProvidedException.class, expected.getCause().getClass());
-        }
+        assertEquals(n, anyOf(completedFuture(n)).get());
+        assertFalse(anyOf().isDone());
 
         // success with incomplete CF
-        assertEquals(n, anyOfSuccessWithType(
-                createIncompleteFuture(),
-                createIncompleteFuture(),
-                completedFuture(n)
-        ).get());
+        assertEquals(n, anyOf(createIncompleteFuture(), createIncompleteFuture(), completedFuture(n)).get());
 
         ////////////////////////////////////////
 
@@ -366,16 +345,11 @@ class CompletableFutureUtilsTest {
 
     @Test
     void test_anyOf__exceptionally() throws Exception {
-        // NOTE: skip anyOfSuccess test intended
-        //       same implementation with anyOfSuccessWithType
-
-        ////////////////////////////////////////
-
         // all failed
         try {
             RuntimeException ex1 = new RuntimeException("ex1");
             RuntimeException ex2 = new RuntimeException("ex2");
-            anyOfWithType(
+            anyOf(
                     CompletableFuture.supplyAsync(() -> {
                         sleep(100);
                         throw rte;
@@ -387,13 +361,13 @@ class CompletableFutureUtilsTest {
 
             fail();
         } catch (ExecutionException expected) {
-            // anyOfSuccessWithType: the ex of first complete(in time) cf argument win
+            // anyOfSuccess: the ex of first complete(in time) cf argument win
             //   ❗dependent on the implementation behavior of `CF.anyOf`️
             assertSame(anotherRte, expected.getCause());
         }
         // incomplete fail incomplete
         try {
-            anyOfWithType(createIncompleteFuture(), failedFuture(rte), createIncompleteFuture()).get();
+            anyOf(createIncompleteFuture(), failedFuture(rte), createIncompleteFuture()).get();
 
             fail();
         } catch (ExecutionException expected) {
@@ -406,7 +380,7 @@ class CompletableFutureUtilsTest {
         try {
             RuntimeException ex1 = new RuntimeException("ex1");
             RuntimeException ex2 = new RuntimeException("ex2");
-            anyOfSuccessWithType(
+            anyOfSuccess(
                     CompletableFuture.supplyAsync(() -> {
                         sleep(100);
                         throw rte;
@@ -418,13 +392,13 @@ class CompletableFutureUtilsTest {
 
             fail();
         } catch (ExecutionException expected) {
-            // anyOfSuccessWithType: the ex of first given cf argument win
+            // anyOfSuccess: the ex of first given cf argument win
             //   ❗dependent on the implementation behavior of `CF.allOf`️
             assertSame(rte, expected.getCause());
         }
         // incomplete fail incomplete
         try {
-            anyOfSuccessWithType(
+            anyOfSuccess(
                     createIncompleteFuture(),
                     failedFuture(rte),
                     createIncompleteFuture()
@@ -439,12 +413,12 @@ class CompletableFutureUtilsTest {
     @Test
     void test_anyOf__concurrent() throws Exception {
         // NOTE: skip anyOfSuccess test intended
-        //       same implementation with anyOfSuccessWithType
+        //       same implementation with anyOfSuccess
 
         ////////////////////////////////////////
 
         // incomplete/wait-success then success
-        assertEquals(n, anyOfWithType(
+        assertEquals(n, anyOf(
                 createIncompleteFuture(),
                 createIncompleteFuture(),
                 CompletableFuture.supplyAsync(() -> {
@@ -455,7 +429,7 @@ class CompletableFutureUtilsTest {
         ).get());
 
         // wait/success then success
-        assertEquals(n, anyOfWithType(
+        assertEquals(n, anyOf(
                 CompletableFuture.supplyAsync(() -> {
                     sleep(300);
                     return anotherN;
@@ -468,7 +442,7 @@ class CompletableFutureUtilsTest {
         ).get());
 
         // success then failed
-        assertEquals(n, anyOfWithType(
+        assertEquals(n, anyOf(
                 createIncompleteFuture(),
                 createIncompleteFuture(),
                 CompletableFuture.supplyAsync(() -> {
@@ -480,7 +454,7 @@ class CompletableFutureUtilsTest {
 
         // failed then success
         try {
-            anyOfWithType(
+            anyOf(
                     CompletableFuture.supplyAsync(() -> {
                         sleep(100);
                         return n;
@@ -497,7 +471,7 @@ class CompletableFutureUtilsTest {
         ////////////////////////////////////////
 
         // incomplete/wait-success then success
-        assertEquals(n, anyOfSuccessWithType(
+        assertEquals(n, anyOfSuccess(
                 createIncompleteFuture(),
                 createIncompleteFuture(),
                 CompletableFuture.supplyAsync(() -> {
@@ -508,7 +482,7 @@ class CompletableFutureUtilsTest {
         ).get());
 
         // wait/success then success
-        assertEquals(n, anyOfSuccessWithType(
+        assertEquals(n, anyOfSuccess(
                 CompletableFuture.supplyAsync(() -> {
                     sleep(300);
                     return anotherN;
@@ -521,7 +495,7 @@ class CompletableFutureUtilsTest {
         ).get());
 
         // success then failed
-        assertEquals(n, anyOfSuccessWithType(
+        assertEquals(n, anyOfSuccess(
                 createIncompleteFuture(),
                 createIncompleteFuture(),
                 CompletableFuture.supplyAsync(() -> {
@@ -532,7 +506,7 @@ class CompletableFutureUtilsTest {
         ).get());
 
         // failed then success
-        assertEquals(n, anyOfSuccessWithType(
+        assertEquals(n, anyOfSuccess(
                 CompletableFuture.supplyAsync(() -> {
                     sleep(100);
                     return n;

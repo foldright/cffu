@@ -1261,7 +1261,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws ExecutionException    if the computation threw an exception
      * @throws InterruptedException  if the current thread was interrupted while waiting
      * @see #join()
-     * @see #cffuJoin(long, TimeUnit)
+     * @see #join(long, TimeUnit)
      * @see #getNow(Object)
      * @see #resultNow()
      * @see #get(long, TimeUnit)
@@ -1286,7 +1286,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws ExecutionException    if the computation threw an exception
      * @throws InterruptedException  if the current thread was interrupted while waiting
      * @throws TimeoutException      if the wait timed out
-     * @see #cffuJoin(long, TimeUnit)
+     * @see #join(long, TimeUnit)
      * @see #getNow(Object)
      * @see #resultNow()
      * @see #join()
@@ -1312,7 +1312,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws CancellationException if the computation was cancelled
      * @throws CompletionException   if this future completed exceptionally
      *                               or a completion computation threw an exception
-     * @see #cffuJoin(long, TimeUnit)
+     * @see #join(long, TimeUnit)
      * @see #getNow(Object)
      * @see #resultNow()
      * @see #get(long, TimeUnit)
@@ -1363,7 +1363,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Blocking
     @Nullable
-    public T cffuJoin(long timeout, TimeUnit unit) {
+    public T join(long timeout, TimeUnit unit) {
         checkMinimalStage();
 
         return CompletableFutureUtils.join(cf, timeout, unit);
@@ -1379,7 +1379,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws CompletionException   if this future completed exceptionally
      *                               or a completion computation threw an exception
      * @see #resultNow()
-     * @see #cffuJoin(long, TimeUnit)
+     * @see #join(long, TimeUnit)
      * @see #join()
      * @see #get(long, TimeUnit)
      * @see #get()

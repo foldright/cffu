@@ -70,19 +70,19 @@ private const val ERROR_MSG_FOR_ARRAY = "no cffuFactory argument provided when t
  * also does so, with a CompletionException holding this exception as its cause.
  * If no Cffus are provided, returns a Cffu completed with the value empty list.
  *
- * Same as [allOfCffuVoid], but the returned Cffu contains the results of input Cffus.
- * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
+ * Same as [allOfCffu], but the returned Cffu contains the results of input Cffus.
+ * Same as [CffuFactory.allResultsOf], providing this method is convenient for method chaining.
  *
  * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
  *
- * @see allOfCffuVoid
- * @see CffuFactory.cffuAllOf
+ * @see allOfCffu
+ * @see CffuFactory.allResultsOf
  */
-fun <T> Collection<Cffu<T>>.allOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> {
+fun <T> Collection<Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.cffuAllOf(*this.toTypedArray())
+    return factory.allResultsOf(*this.toTypedArray())
 }
 
 /**
@@ -92,19 +92,19 @@ fun <T> Collection<Cffu<T>>.allOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<L
  * also does so, with a CompletionException holding this exception as its cause.
  * If no Cffus are provided, returns a Cffu completed with the value empty list.
  *
- * Same as [allOfCffuVoid], but the returned Cffu contains the results of input Cffus.
- * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
+ * Same as [allOfCffu], but the returned Cffu contains the results of input Cffus.
+ * Same as [CffuFactory.allResultsOf], providing this method is convenient for method chaining.
  *
  * If this array is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this array is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
  *
- * @see allOfCffuVoid
- * @see CffuFactory.cffuAllOf
+ * @see allOfCffu
+ * @see CffuFactory.allResultsOf
  */
-fun <T> Array<Cffu<T>>.allOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> {
+fun <T> Array<out Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
-    return factory.cffuAllOf(*this)
+    return factory.allResultsOf(*this)
 }
 
 /**
@@ -114,15 +114,15 @@ fun <T> Array<Cffu<T>>.allOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T
  * also does so, with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
  *
- * Same as [allOfCffuVoid], but the returned Cffu contains the results of input CompletableFutures.
- * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
+ * Same as [allOfCffu], but the returned Cffu contains the results of input CompletableFutures.
+ * Same as [CffuFactory.allResultsOf], providing this method is convenient for method chaining.
  *
- * @see allOfCffuVoid
- * @see CffuFactory.cffuAllOf
+ * @see allOfCffu
+ * @see CffuFactory.allResultsOf
  */
-@JvmName("allOfCffuCf")
-fun <T> Collection<CompletableFuture<T>>.allOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
-    cffuFactory.cffuAllOf(*this.toTypedArray())
+@JvmName("allResultsOfCffuCf")
+fun <T> Collection<CompletableFuture<out T>>.allResultsOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+    cffuFactory.allResultsOf(*this.toTypedArray())
 
 /**
  * Returns a new Cffu with the results in the <strong>same order</strong> of all the given CompletableFutures,
@@ -131,14 +131,14 @@ fun <T> Collection<CompletableFuture<T>>.allOfCffu(cffuFactory: CffuFactory): Cf
  * also does so, with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
  *
- * Same as [allOfCffuVoid], but the returned Cffu contains the results of input CompletableFutures.
- * Same as [CffuFactory.cffuAllOf], providing this method is convenient for method chaining.
+ * Same as [allOfCffu], but the returned Cffu contains the results of input CompletableFutures.
+ * Same as [CffuFactory.allResultsOf], providing this method is convenient for method chaining.
  *
- * @see allOfCffuVoid
- * @see CffuFactory.cffuAllOf
+ * @see allOfCffu
+ * @see CffuFactory.allResultsOf
  */
-fun <T> Array<CompletableFuture<T>>.allOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
-    cffuFactory.cffuAllOf(*this)
+fun <T> Array<out CompletableFuture<out T>>.allResultsOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+    cffuFactory.allResultsOf(*this)
 
 /**
  * Returns a new Cffu that is completed when all the given Cffus complete.
@@ -153,10 +153,10 @@ fun <T> Array<CompletableFuture<T>>.allOfCffu(cffuFactory: CffuFactory): Cffu<Li
  * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
  *
- * @see allOfCffu
+ * @see allResultsOfCffu
  * @see CffuFactory.allOf
  */
-fun Collection<Cffu<*>>.allOfCffuVoid(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
+fun Collection<Cffu<*>>.allOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
     return factory.allOf(*this.toTypedArray())
@@ -175,11 +175,11 @@ fun Collection<Cffu<*>>.allOfCffuVoid(cffuFactory: CffuFactory = ABSENT): Cffu<V
  * If this array is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this array is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
  *
- * @see allOfCffu
+ * @see allResultsOfCffu
  * @see CffuFactory.allOf
  */
 
-fun Array<out Cffu<*>>.allOfCffuVoid(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
+fun Array<out Cffu<*>>.allOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
     return factory.allOf(*this)
@@ -195,11 +195,11 @@ fun Array<out Cffu<*>>.allOfCffuVoid(cffuFactory: CffuFactory = ABSENT): Cffu<Vo
  *
  * Same as [CffuFactory.allOf], providing this method is convenient for method chaining.
  *
- * @see allOfCffu
+ * @see allResultsOfCffu
  * @see CffuFactory.allOf
  */
-@JvmName("allOfCffuVoidCf")
-fun Collection<CompletableFuture<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
+@JvmName("allOfCffuCf")
+fun Collection<CompletableFuture<*>>.allOfCffu(cffuFactory: CffuFactory): Cffu<Void> =
     cffuFactory.allOf(*this.toTypedArray())
 
 /**
@@ -212,10 +212,10 @@ fun Collection<CompletableFuture<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cf
  *
  * Same as [CffuFactory.allOf], providing this method is convenient for method chaining.
  *
- * @see allOfCffu
+ * @see allResultsOfCffu
  * @see CffuFactory.allOf
  */
-fun Array<out CompletableFuture<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
+fun Array<out CompletableFuture<*>>.allOfCffu(cffuFactory: CffuFactory): Cffu<Void> =
     cffuFactory.allOf(*this)
 
 /**
@@ -226,19 +226,19 @@ fun Array<out CompletableFuture<*>>.allOfCffuVoid(cffuFactory: CffuFactory): Cff
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
  *
- * Same as [allOfFastFailCffuVoid], but the returned Cffu contains the results of input Cffus.
- * Same as [CffuFactory.cffuAllOfFastFail], providing this method is convenient for method chaining.
+ * Same as [allOfFastFailCffu], but the returned Cffu contains the results of input Cffus.
+ * Same as [CffuFactory.allResultsOfFastFail], providing this method is convenient for method chaining.
  *
  * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
  *
- * @see allOfFastFailCffuVoid
- * @see CffuFactory.cffuAllOfFastFail
+ * @see allOfFastFailCffu
+ * @see CffuFactory.allResultsOfFastFail
  */
-fun <T> Collection<Cffu<T>>.allOfFastFailCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> {
+fun <T> Collection<Cffu<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.cffuAllOfFastFail(*this.toTypedArray())
+    return factory.allResultsOfFastFail(*this.toTypedArray())
 }
 
 /**
@@ -249,19 +249,19 @@ fun <T> Collection<Cffu<T>>.allOfFastFailCffu(cffuFactory: CffuFactory = ABSENT)
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
  *
- * Same as [allOfFastFailCffuVoid], but the returned Cffu contains the results of input Cffus.
- * Same as [CffuFactory.cffuAllOfFastFail], providing this method is convenient for method chaining.
+ * Same as [allOfFastFailCffu], but the returned Cffu contains the results of input Cffus.
+ * Same as [CffuFactory.allResultsOfFastFail], providing this method is convenient for method chaining.
  *
  * If this array is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this array is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
  *
- * @see allOfFastFailCffuVoid
- * @see CffuFactory.cffuAllOfFastFail
+ * @see allOfFastFailCffu
+ * @see CffuFactory.allResultsOfFastFail
  */
-fun <T> Array<Cffu<T>>.allOfFastFailCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> {
+fun <T> Array<out Cffu<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
-    return factory.cffuAllOfFastFail(*this)
+    return factory.allResultsOfFastFail(*this)
 }
 
 /**
@@ -272,15 +272,15 @@ fun <T> Array<Cffu<T>>.allOfFastFailCffu(cffuFactory: CffuFactory = ABSENT): Cff
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
  *
- * Same as [allOfFastFailCffuVoid], but the returned Cffu contains the results of input Cffus.
- * Same as [CffuFactory.cffuAllOfFastFail], providing this method is convenient for method chaining.
+ * Same as [allOfFastFailCffu], but the returned Cffu contains the results of input Cffus.
+ * Same as [CffuFactory.allResultsOfFastFail], providing this method is convenient for method chaining.
  *
- * @see allOfFastFailCffuVoid
- * @see CffuFactory.cffuAllOfFastFail
+ * @see allOfFastFailCffu
+ * @see CffuFactory.allResultsOfFastFail
  */
-@JvmName("allOfFastFailCffuCf")
-fun <T> Collection<CompletableFuture<T>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
-    cffuFactory.cffuAllOfFastFail(*this.toTypedArray())
+@JvmName("allResultsOfFastFailCffuCf")
+fun <T> Collection<CompletableFuture<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+    cffuFactory.allResultsOfFastFail(*this.toTypedArray())
 
 /**
  * Returns a new Cffu with the results in the <strong>same order</strong> of all the given CompletableFutures,
@@ -290,14 +290,14 @@ fun <T> Collection<CompletableFuture<T>>.allOfFastFailCffu(cffuFactory: CffuFact
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
  *
- * Same as [allOfFastFailCffuVoid], but the returned Cffu contains the results of input Cffus.
- * Same as [CffuFactory.cffuAllOfFastFail], providing this method is convenient for method chaining.
+ * Same as [allOfFastFailCffu], but the returned Cffu contains the results of input Cffus.
+ * Same as [CffuFactory.allResultsOfFastFail], providing this method is convenient for method chaining.
  *
- * @see allOfFastFailCffuVoid
- * @see CffuFactory.cffuAllOfFastFail
+ * @see allOfFastFailCffu
+ * @see CffuFactory.allResultsOfFastFail
  */
-fun <T> Array<out CompletableFuture<T>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
-    cffuFactory.cffuAllOfFastFail(*this)
+fun <T> Array<out CompletableFuture<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+    cffuFactory.allResultsOfFastFail(*this)
 
 /**
  * Returns a new Cffu that is successful when all the given Cffus success,
@@ -313,10 +313,10 @@ fun <T> Array<out CompletableFuture<T>>.allOfFastFailCffu(cffuFactory: CffuFacto
  * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
  *
- * @see allOfFastFailCffu
+ * @see allResultsOfFastFailCffu
  * @see CffuFactory.allOfFastFail
  */
-fun Collection<Cffu<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
+fun Collection<Cffu<*>>.allOfFastFailCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
     return factory.allOfFastFail(*this.toTypedArray())
@@ -336,10 +336,10 @@ fun Collection<Cffu<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFactory = ABSENT)
  * If this array is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this array is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
  *
- * @see allOfFastFailCffu
+ * @see allResultsOfFastFailCffu
  * @see CffuFactory.allOfFastFail
  */
-fun Array<out Cffu<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
+fun Array<out Cffu<*>>.allOfFastFailCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
     return factory.allOfFastFail(*this)
@@ -356,11 +356,11 @@ fun Array<out Cffu<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFactory = ABSENT):
  *
  * Same as [CffuFactory.allOfFastFail], providing this method is convenient for method chaining.
  *
- * @see allOfFastFailCffu
+ * @see allResultsOfFastFailCffu
  * @see CffuFactory.allOfFastFail
  */
-@JvmName("allOfFastFailCffuVoidCf")
-fun Collection<CompletableFuture<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
+@JvmName("allOfFastFailCffuCf")
+fun Collection<CompletableFuture<*>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<Void> =
     cffuFactory.allOfFastFail(*this.toTypedArray())
 
 /**
@@ -374,10 +374,10 @@ fun Collection<CompletableFuture<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFact
  *
  * Same as [CffuFactory.allOfFastFail], providing this method is convenient for method chaining.
  *
- * @see allOfFastFailCffu
+ * @see allResultsOfFastFailCffu
  * @see CffuFactory.allOfFastFail
  */
-fun Array<out CompletableFuture<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFactory): Cffu<Void> =
+fun Array<out CompletableFuture<*>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<Void> =
     cffuFactory.allOfFastFail(*this)
 
 ////////////////////////////////////////
@@ -392,76 +392,14 @@ fun Array<out CompletableFuture<*>>.allOfFastFailCffuVoid(cffuFactory: CffuFacto
 /**
  * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.
  *
- * Same as [anyOfCffuAny], but return result type is specified type instead of type `Any`.
- * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
- *
- * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
- * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
- *
- * @see anyOfCffuAny
- * @see CffuFactory.cffuAnyOf
- */
-fun <T> Collection<Cffu<T>>.anyOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.cffuAnyOf(*this.toTypedArray())
-}
-
-/**
- * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.
- *
- * Same as [anyOfCffuAny], but return result type is specified type instead of type `Any`.
- * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
- *
- * If this array is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
- * If this array is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
- *
- * @see anyOfCffuAny
- * @see CffuFactory.cffuAnyOf
- */
-fun <T> Array<Cffu<T>>.anyOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
-    return factory.cffuAnyOf(*this)
-}
-
-/**
- * Returns a new Cffu that is completed when any of the given CompletableFutures complete, with the same result.
- *
- * Same as [anyOfCffuAny], but return result type is specified type instead of type `Any`.
- * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
- *
- * @see anyOfCffuAny
- * @see CffuFactory.cffuAnyOf
- */
-@JvmName("anyOfCffuCf")
-fun <T> Collection<CompletableFuture<T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T> =
-    cffuFactory.cffuAnyOf(*this.toTypedArray())
-
-/**
- * Returns a new Cffu that is completed when any of the given CompletableFutures complete, with the same result.
- *
- * Same as [anyOfCffuAny], but return result type is specified type instead of type `Any`.
- * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
- *
- * @see anyOfCffuAny
- * @see CffuFactory.cffuAnyOf
- */
-fun <T> Array<CompletableFuture<T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T> =
-    cffuFactory.cffuAnyOf(*this)
-
-/**
- * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.
- *
  * Same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
  *
  * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
  *
- * @see anyOfCffu
  * @see CffuFactory.anyOf
  */
-fun Collection<Cffu<*>>.anyOfCffuAny(cffuFactory: CffuFactory = ABSENT): Cffu<Any> {
+fun <T> Collection<Cffu<out T>>.anyOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
     return factory.anyOf(*this.toTypedArray())
@@ -475,10 +413,9 @@ fun Collection<Cffu<*>>.anyOfCffuAny(cffuFactory: CffuFactory = ABSENT): Cffu<An
  * If this array is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this array is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
  *
- * @see anyOfCffu
  * @see CffuFactory.anyOf
  */
-fun Array<out Cffu<*>>.anyOfCffuAny(cffuFactory: CffuFactory = ABSENT): Cffu<Any> {
+fun <T> Array<out Cffu<out T>>.anyOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
     return factory.anyOf(*this)
@@ -489,11 +426,10 @@ fun Array<out Cffu<*>>.anyOfCffuAny(cffuFactory: CffuFactory = ABSENT): Cffu<Any
  *
  * Same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
  *
- * @see anyOfCffu
  * @see CffuFactory.anyOf
  */
-@JvmName("anyOfCffuAnyCf")
-fun Collection<CompletableFuture<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
+@JvmName("anyOfCffuCf")
+fun <T> Collection<CompletableFuture<out T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.anyOf(*this.toTypedArray())
 
 /**
@@ -501,10 +437,9 @@ fun Collection<CompletableFuture<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cff
  *
  * Same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
  *
- * @see anyOfCffu
  * @see CffuFactory.anyOf
  */
-fun Array<out CompletableFuture<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
+fun <T> Array<out CompletableFuture<out T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.anyOf(*this)
 
 /**
@@ -515,18 +450,18 @@ fun Array<out CompletableFuture<*>>.anyOfCffuAny(cffuFactory: CffuFactory): Cffu
  * returns a new Cffu that is already completed exceptionally with a CompletionException
  * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
- * Same as [CffuFactory.cffuAnyOfSuccess], providing this method is convenient for method chaining.
+ * Same as [CffuFactory.anyOfSuccess], providing this method is convenient for method chaining.
  *
  * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
  *
  * @see anyOfCffu
- * @see CffuFactory.cffuAnyOfSuccess
+ * @see CffuFactory.anyOfSuccess
  */
-fun <T> Collection<Cffu<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> {
+fun <T> Collection<Cffu<out T>>.anyOfSuccessCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.cffuAnyOfSuccess(*this.toTypedArray())
+    return factory.anyOfSuccess(*this.toTypedArray())
 }
 
 /**
@@ -537,92 +472,15 @@ fun <T> Collection<Cffu<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory = ABSENT):
  * returns a new Cffu that is already completed exceptionally with a CompletionException
  * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
- * Same as [CffuFactory.cffuAnyOfSuccess], providing this method is convenient for method chaining.
- *
- * If this array is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
- * If this array is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
- *
- * @see anyOfCffu
- * @see CffuFactory.cffuAnyOfSuccess
- */
-fun <T> Array<Cffu<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
-    return factory.cffuAnyOfSuccess(*this)
-}
-
-/**
- * Returns a new Cffu that is successful when any of the given CompletableFutures success,
- * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
- * the returned Cffu also does so, with a CompletionException holding
- * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
- * returns a new Cffu that is already completed exceptionally with a CompletionException
- * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
- *
- * Same as [CffuFactory.cffuAnyOfSuccess], providing this method is convenient for method chaining.
- *
- * @see anyOfCffu
- * @see CffuFactory.cffuAnyOfSuccess
- */
-@JvmName("anyOfSuccessCffuCf")
-fun <T> Collection<CompletableFuture<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
-    cffuFactory.cffuAnyOfSuccess(*this.toTypedArray())
-
-/**
- * Returns a new Cffu that is successful when any of the given CompletableFutures success,
- * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
- * the returned Cffu also does so, with a CompletionException holding
- * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
- * returns a new Cffu that is already completed exceptionally with a CompletionException
- * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
- *
- * Same as [CffuFactory.cffuAnyOfSuccess], providing this method is convenient for method chaining.
- *
- * @see anyOfCffu
- * @see CffuFactory.cffuAnyOfSuccess
- */
-fun <T> Array<CompletableFuture<T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
-    cffuFactory.cffuAnyOfSuccess(*this)
-
-/**
- * Returns a new Cffu that is successful when any of the given CompletableFutures success,
- * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
- * the returned Cffu also does so, with a CompletionException holding
- * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
- * returns a new Cffu that is already completed exceptionally with a CompletionException
- * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
- *
- * Same as [CffuFactory.anyOfSuccess], providing this method is convenient for method chaining.
- *
- * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
- * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
- *
- * @see anyOfSuccessCffu
- * @see CffuFactory.anyOfSuccess
- */
-fun Collection<Cffu<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory = ABSENT): Cffu<Any> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.anyOfSuccess(*this.toTypedArray())
-}
-
-/**
- * Returns a new Cffu that is successful when any of the given CompletableFutures success,
- * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
- * the returned Cffu also does so, with a CompletionException holding
- * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
- * returns a new Cffu that is already completed exceptionally with a CompletionException
- * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
- *
  * Same as [CffuFactory.anyOfSuccess], providing this method is convenient for method chaining.
  *
  * If this array is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this array is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
  *
- * @see anyOfSuccessCffu
+ * @see anyOfCffu
  * @see CffuFactory.anyOfSuccess
  */
-fun Array<out Cffu<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory = ABSENT): Cffu<Any> {
+fun <T> Array<out Cffu<out T>>.anyOfSuccessCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
     return factory.anyOfSuccess(*this)
@@ -638,11 +496,11 @@ fun Array<out Cffu<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory = ABSENT): C
  *
  * Same as [CffuFactory.anyOfSuccess], providing this method is convenient for method chaining.
  *
- * @see anyOfSuccessCffu
+ * @see anyOfCffu
  * @see CffuFactory.anyOfSuccess
  */
-@JvmName("anyOfSuccessCffuAnyCf")
-fun Collection<CompletableFuture<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
+@JvmName("anyOfSuccessCffuCf")
+fun <T> Collection<CompletableFuture<out T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.anyOfSuccess(*this.toTypedArray())
 
 /**
@@ -655,10 +513,10 @@ fun Collection<CompletableFuture<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactor
  *
  * Same as [CffuFactory.anyOfSuccess], providing this method is convenient for method chaining.
  *
- * @see anyOfSuccessCffu
+ * @see anyOfCffu
  * @see CffuFactory.anyOfSuccess
  */
-fun Array<out CompletableFuture<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory): Cffu<Any> =
+fun <T> Array<out CompletableFuture<out T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.anyOfSuccess(*this)
 
 ////////////////////////////////////////
@@ -668,7 +526,7 @@ fun Array<out CompletableFuture<*>>.anyOfSuccessCffuAny(cffuFactory: CffuFactory
 /**
  * Convert [Cffu] collection elements to [CompletableFuture] by [Cffu.toCompletableFuture].
  *
- * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
+ * Same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
  *
  * @see CffuFactory.toCompletableFutureArray
  */
@@ -678,7 +536,7 @@ fun <T> Collection<CompletionStage<T>>.toCompletableFuture(): List<CompletableFu
 /**
  * Convert [Cffu] array elements to [CompletableFuture] by [Cffu.toCompletableFuture].
  *
- * Same as [CffuFactory.cffuAnyOf], providing this method is convenient for method chaining.
+ * Same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
  *
  * @see CffuFactory.toCompletableFutureArray
  */
@@ -706,5 +564,5 @@ fun <T> Collection<Cffu<T>>.cffuUnwrap(): List<CompletableFuture<T>> =
  *
  * @see CffuFactory.cffuArrayUnwrap
  */
-fun <T> Array<Cffu<T>>.cffuUnwrap(): Array<CompletableFuture<T>> =
+fun <T> Array<out Cffu<T>>.cffuUnwrap(): Array<CompletableFuture<T>> =
     CffuFactory.cffuArrayUnwrap(*this)

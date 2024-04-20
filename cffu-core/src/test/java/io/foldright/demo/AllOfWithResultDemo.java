@@ -18,7 +18,7 @@ public class AllOfWithResultDemo {
 
     public static void main(String[] args) throws Exception {
         //////////////////////////////////////////////////
-        // CffuFactory#cffuAllOf
+        // CffuFactory#allResultsOf
         //////////////////////////////////////////////////
         Cffu<Integer> cffu1 = cffuFactory.completedFuture(21);
         Cffu<Integer> cffu2 = cffuFactory.completedFuture(42);
@@ -29,11 +29,11 @@ public class AllOfWithResultDemo {
         // the result can be got by input argument `cf1.get()`, but it's cumbersome.
         // so we can see a lot the util methods to enhance allOf with result in our project.
 
-        Cffu<List<Integer>> allOfWithResult = cffuFactory.cffuAllOf(cffu1, cffu2);
-        System.out.println(allOfWithResult.get());
+        Cffu<List<Integer>> allResults = cffuFactory.allResultsOf(cffu1, cffu2);
+        System.out.println(allResults.get());
 
         //////////////////////////////////////////////////
-        // or CompletableFutureUtils#allOfWithResult
+        // or CompletableFutureUtils#allResultsOf
         //////////////////////////////////////////////////
         CompletableFuture<Integer> cf1 = CompletableFuture.completedFuture(21);
         CompletableFuture<Integer> cf2 = CompletableFuture.completedFuture(42);
@@ -41,8 +41,8 @@ public class AllOfWithResultDemo {
         CompletableFuture<Void> allOf2 = CompletableFuture.allOf(cf1, cf2);
         // Result type is Void!!
 
-        CompletableFuture<List<Integer>> allOfWithResult2 = CompletableFutureUtils.allOfWithResult(cf1, cf2);
-        System.out.println(allOfWithResult2.get());
+        CompletableFuture<List<Integer>> allResults2 = CompletableFutureUtils.allResultsOf(cf1, cf2);
+        System.out.println(allResults2.get());
 
         ////////////////////////////////////////
         // cleanup
