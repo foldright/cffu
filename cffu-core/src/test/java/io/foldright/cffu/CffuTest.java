@@ -8,6 +8,9 @@ import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 
 import java.util.concurrent.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
 import static io.foldright.test_utils.TestUtils.*;
@@ -24,6 +27,106 @@ class CffuTest {
     private static CffuFactory cffuFactory;
 
     private static CffuFactory forbidObtrudeMethodsCffuFactory;
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# both methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void both_fastFail() throws Exception {
+        Cffu<Integer> cf = cffuFactory.supplyAsync(() -> {
+            sleep(2_000);
+            return n;
+        });
+        final Cffu<Integer> failed = cffuFactory.failedFuture(rte);
+
+        final Runnable runnable = () -> {
+        };
+        try {
+            cf.runAfterBothFastFail(failed, runnable).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            cf.runAfterBothFastFailAsync(failed, runnable).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            cf.runAfterBothFastFailAsync(failed, runnable, executorService).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+
+        BiConsumer<Integer, Integer> bc = (i1, i2) -> {
+        };
+        try {
+            cf.thenAcceptBothFastFail(failed, bc).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            cf.thenAcceptBothFastFailAsync(failed, bc).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            cf.thenAcceptBothFastFailAsync(failed, bc, executorService).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+
+        try {
+            cf.thenCombineFastFail(failed, Integer::sum).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            cf.thenCombineFastFailAsync(failed, Integer::sum).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            cf.thenCombineFastFailAsync(failed, Integer::sum, executorService).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# either methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void test_either_success() throws Exception {
+        final Cffu<Integer> failed = cffuFactory.failedFuture(rte);
+        Cffu<Integer> cf = cffuFactory.completedFuture(n);
+
+        final Runnable runnable = () -> {
+        };
+        assertNull(failed.runAfterEitherSuccess(cf, runnable).get());
+        assertNull(failed.runAfterEitherSuccessAsync(cf, runnable).get());
+        assertNull(failed.runAfterEitherSuccessAsync(cf, runnable, executorService).get());
+
+        Consumer<Integer> c = i -> {
+        };
+        assertNull(failed.acceptEitherSuccess(cf, c).get());
+        assertNull(failed.acceptEitherSuccessAsync(cf, c).get());
+        assertNull(failed.acceptEitherSuccessAsync(cf, c, executorService).get());
+
+        assertEquals(n, failed.applyToEitherSuccess(cf, Function.identity()).get());
+        assertEquals(n, failed.applyToEitherSuccessAsync(cf, Function.identity()).get());
+        assertEquals(n, failed.applyToEitherSuccessAsync(cf, Function.identity(), executorService).get());
+    }
 
     ////////////////////////////////////////
     // timeout control
