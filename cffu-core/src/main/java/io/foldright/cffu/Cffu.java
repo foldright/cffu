@@ -220,8 +220,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu that, when this and the other given stage
-     * both complete normally, executes the given action.
+     * Returns a new Cffu that, when this and the other given stage both complete normally, executes the given action.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
@@ -267,6 +266,60 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
+     * Returns a new Cffu that, when this and the other given stage both complete normally, executes the given action.
+     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #runAfterBoth(CompletionStage, Runnable)}
+     * except for the fast-fail behavior.
+     *
+     * @param other  the other CompletionStage
+     * @param action the action to perform before completing the returned Cffu
+     * @return the new Cffu
+     */
+    public Cffu<Void> runAfterBothFastFail(CompletionStage<?> other, Runnable action) {
+        return reset0(CompletableFutureUtils.runAfterBothFastFail(this, other, action));
+    }
+
+    /**
+     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * executes the given action using {@link #defaultExecutor()}.
+     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #runAfterBothAsync(CompletionStage, Runnable)}
+     * except for the fast-fail behavior.
+     *
+     * @param other  the other CompletionStage
+     * @param action the action to perform before completing the returned Cffu
+     * @return the new Cffu
+     */
+    public Cffu<Void> runAfterBothFastFailAsync(CompletionStage<?> other, Runnable action) {
+        return runAfterBothFastFailAsync(other, action, fac.defaultExecutor());
+    }
+
+    /**
+     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * executes the given action using the supplied executor.
+     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #runAfterBothAsync(CompletionStage, Runnable, Executor)}
+     * except for the fast-fail behavior.
+     *
+     * @param other    the other CompletionStage
+     * @param action   the action to perform before completing the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @return the new Cffu
+     */
+    public Cffu<Void> runAfterBothFastFailAsync(CompletionStage<?> other, Runnable action, Executor executor) {
+        return reset0(CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action, executor));
+    }
+
+    /**
      * Returns a new Cffu that, when this and the other given stage both complete normally,
      * is executed with the two results as arguments to the supplied action.
      * <p>
@@ -285,8 +338,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when this and the other given stage both complete normally,
-     * is executed using {@link #defaultExecutor()},
-     * with the two results as arguments to the supplied action.
+     * is executed using {@link #defaultExecutor()}, with the two results as arguments to the supplied action.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
@@ -323,6 +375,68 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * is executed with the two results as arguments to the supplied action.
+     * if any of the given stage complete exceptionally, then the returned Cffu
+     * also does so *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #thenAcceptBoth(CompletionStage, BiConsumer)}
+     * except for the fast-fail behavior.
+     *
+     * @param other  the other CompletionStage
+     * @param action the action to perform before completing the returned Cffu
+     * @param <U>    the type of the other CompletionStage's result
+     * @return the new Cffu
+     */
+    public <U> Cffu<Void> thenAcceptBothFastFail(
+            CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
+        return reset0(CompletableFutureUtils.thenAcceptBothFastFail(this, other, action));
+    }
+
+    /**
+     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * is executed using {@link #defaultExecutor()}, with the two results as arguments to the supplied action.
+     * if any of the given stage complete exceptionally, then the returned Cffu
+     * also does so *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #thenAcceptBothAsync(CompletionStage, BiConsumer)}
+     * except for the fast-fail behavior.
+     *
+     * @param other  the other CompletionStage
+     * @param action the action to perform before completing the returned Cffu
+     * @param <U>    the type of the other CompletionStage's result
+     * @return the new Cffu
+     */
+    public <U> Cffu<Void> thenAcceptBothFastFailAsync(
+            CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
+        return thenAcceptBothFastFailAsync(other, action, fac.defaultExecutor());
+    }
+
+    /**
+     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * is executed using the supplied executor, with the two results as arguments to the supplied action.
+     * if any of the given stage complete exceptionally, then the returned Cffu
+     * also does so *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #thenAcceptBothAsync(CompletionStage, BiConsumer, Executor)}
+     * except for the fast-fail behavior.
+     *
+     * @param other    the other CompletionStage
+     * @param action   the action to perform before completing the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @param <U>      the type of the other CompletionStage's result
+     * @return the new Cffu
+     */
+    public <U> Cffu<Void> thenAcceptBothFastFailAsync(CompletionStage<? extends U> other,
+                                                      BiConsumer<? super T, ? super U> action,
+                                                      Executor executor) {
+        return reset0(CompletableFutureUtils.thenAcceptBothFastFailAsync(this, other, action, executor));
+    }
+
+    /**
+     * Returns a new Cffu that, when this and the other given stage both complete normally,
      * is executed with the two results as arguments to the supplied function.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
@@ -342,8 +456,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when this and the other given stage both complete normally,
-     * is executed using {@link #defaultExecutor()},
-     * with the two results as arguments to the supplied function.
+     * is executed using {@link #defaultExecutor()}, with the two results as arguments to the supplied function.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
@@ -379,6 +492,75 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
                                            BiFunction<? super T, ? super U, ? extends V> fn,
                                            Executor executor) {
         return reset0(cf.thenCombineAsync(other, fn, executor));
+    }
+
+
+    /**
+     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * is executed with the two results as arguments to the supplied function.
+     * if any of the given stage complete exceptionally, then the returned Cffu
+     * also does so *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #thenCombine(CompletionStage, BiFunction)}
+     * except for the fast-fail behavior.
+     *
+     * @param other the other CompletionStage
+     * @param fn    the function to use to compute the value of the returned Cffu
+     * @param <U>   the type of the other CompletionStage's result
+     * @param <V>   the function's return type
+     * @return the new Cffu
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothFastFail`")
+    public <U, V> Cffu<V> thenCombineFastFail(
+            CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
+        return reset0(CompletableFutureUtils.thenCombineFastFail(this, other, fn));
+    }
+
+    /**
+     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * is executed using {@link #defaultExecutor()}, with the two results as arguments to the supplied function.
+     * if any of the given stage complete exceptionally, then the returned Cffu
+     * also does so *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #thenCombineAsync(CompletionStage, BiFunction)}
+     * except for the fast-fail behavior.
+     *
+     * @param other the other CompletionStage
+     * @param fn    the function to use to compute the value of the returned Cffu
+     * @param <U>   the type of the other CompletionStage's result
+     * @param <V>   the function's return type
+     * @return the new Cffu
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothFastFailAsync`")
+    public <U, V> Cffu<V> thenCombineFastFailAsync(
+            CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
+        return thenCombineFastFailAsync(other, fn, fac.defaultExecutor());
+    }
+
+    /**
+     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * is executed using the supplied executor, with the two results as arguments to the supplied function.
+     * if any of the given stage complete exceptionally, then the returned Cffu
+     * also does so *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #thenCombineAsync(CompletionStage, BiFunction, Executor)}
+     * except for the fast-fail behavior.
+     *
+     * @param other    the other CompletionStage
+     * @param fn       the function to use to compute the value of the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @param <U>      the type of the other CompletionStage's result
+     * @param <V>      the function's return type
+     * @return the new Cffu
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothFastFailAsync`")
+    public <U, V> Cffu<V> thenCombineFastFailAsync(CompletionStage<? extends U> other,
+                                                   BiFunction<? super T, ? super U, ? extends V> fn,
+                                                   Executor executor) {
+        return reset0(CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn, executor));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -773,6 +955,52 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
+     * Returns a new Cffu that, when either this or the other given stage complete normally, executes the given action.
+     * Otherwise, all two complete exceptionally, the returned CompletableFuture also does so,
+     * with a CompletionException holding an exception from any of as its cause.
+     * <p>
+     * This method is the same as {@link #runAfterEither(CompletionStage, Runnable)}
+     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     *
+     * @param other  the other CompletionStage
+     * @param action the action to perform before completing the returned Cffu
+     * @return the new Cffu
+     */
+    public Cffu<Void> runAfterEitherSuccess(CompletionStage<?> other, Runnable action) {
+        return reset0(CompletableFutureUtils.runAfterEitherSuccess(this, other, action));
+    }
+
+    /**
+     * Returns a new Cffu that, when either this or the other given stage complete normally,
+     * executes the given action using {@link #defaultExecutor()}.
+     * <p>
+     * See the {@link CompletionStage} documentation for rules covering exceptional completion.
+     *
+     * @param other  the other CompletionStage
+     * @param action the action to perform before completing the returned Cffu
+     * @return the new Cffu
+     */
+    public Cffu<Void> runAfterEitherSuccessAsync(CompletionStage<?> other, Runnable action) {
+        return runAfterEitherSuccessAsync(other, action, fac.defaultExecutor());
+    }
+
+    /**
+     * Returns a new Cffu that, when either this or the other given stage complete normally,
+     * executes the given action using the supplied executor.
+     * <p>
+     * See the {@link CompletionStage} documentation for rules covering exceptional completion.
+     *
+     * @param other    the other CompletionStage
+     * @param action   the action to perform before completing the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @return the new Cffu
+     */
+    public Cffu<Void> runAfterEitherSuccessAsync(
+            CompletionStage<?> other, Runnable action, Executor executor) {
+        return reset0(CompletableFutureUtils.runAfterEitherSuccessAsync(this, other, action, executor));
+    }
+
+    /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
      * is executed with the corresponding result as argument to the supplied action.
      * <p>
@@ -821,6 +1049,57 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
                                         Consumer<? super T> action,
                                         Executor executor) {
         return reset0(cf.acceptEitherAsync(other, action, executor));
+    }
+
+    /**
+     * Returns a new Cffu that, when either this or the other given stage complete normally,
+     * is executed with the corresponding result as argument to the supplied action.
+     * <p>
+     * This method is the same as {@link #acceptEither(CompletionStage, Consumer)}
+     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     *
+     * @param other  the other CompletionStage
+     * @param action the action to perform before completing the returned Cffu
+     * @return the new Cffu
+     */
+    public Cffu<Void> acceptEitherSuccess(
+            CompletionStage<? extends T> other, Consumer<? super T> action) {
+        return reset0(CompletableFutureUtils.acceptEitherSuccess(this, other, action));
+    }
+
+    /**
+     * Returns a new Cffu that, when either this or the other given stage complete normally,
+     * is executed using {@link #defaultExecutor()},
+     * with the corresponding result as argument to the supplied action.
+     * <p>
+     * This method is the same as {@link #acceptEitherAsync(CompletionStage, Consumer)}
+     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     *
+     * @param other  the other CompletionStage
+     * @param action the action to perform before completing the returned Cffu
+     * @return the new Cffu
+     */
+    public Cffu<Void> acceptEitherSuccessAsync(
+            CompletionStage<? extends T> other, Consumer<? super T> action) {
+        return acceptEitherSuccessAsync(other, action, fac.defaultExecutor());
+    }
+
+    /**
+     * Returns a new Cffu that, when either this or the other given stage complete normally,
+     * is executed using the supplied executor, with the corresponding result as argument to the supplied action.
+     * <p>
+     * This method is the same as {@link #acceptEitherAsync(CompletionStage, Consumer, Executor)}
+     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     *
+     * @param other    the other CompletionStage
+     * @param action   the action to perform before completing the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @return the new Cffu
+     */
+    public Cffu<Void> acceptEitherSuccessAsync(CompletionStage<? extends T> other,
+                                               Consumer<? super T> action,
+                                               Executor executor) {
+        return reset0(CompletableFutureUtils.acceptEitherSuccessAsync(this, other, action, executor));
     }
 
     /**
@@ -878,6 +1157,63 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
                                           Function<? super T, U> fn,
                                           Executor executor) {
         return reset0(cf.applyToEitherAsync(other, fn, executor));
+    }
+
+    /**
+     * Returns a new Cffu that, when either this or the other given stage complete normally,
+     * is executed with the corresponding result as argument to the supplied function.
+     * <p>
+     * This method is the same as {@link #applyToEither(CompletionStage, Function)}
+     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     *
+     * @param other the other CompletionStage
+     * @param fn    the function to use to compute the value of the returned Cffu
+     * @param <U>   the function's return type
+     * @return the new Cffu
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherSuccess`")
+    public <U> Cffu<U> applyToEitherSuccess(
+            CompletionStage<? extends T> other, Function<? super T, U> fn) {
+        return reset0(CompletableFutureUtils.applyToEitherSuccess(this, other, fn));
+    }
+
+    /**
+     * Returns a new Cffu that, when either this or the other given stage complete normally,
+     * is executed using {@link #defaultExecutor()},
+     * with the corresponding result as argument to the supplied function.
+     * <p>
+     * This method is the same as {@link #applyToEitherAsync(CompletionStage, Function)}
+     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     *
+     * @param other the other CompletionStage
+     * @param fn    the function to use to compute the value of the returned Cffu
+     * @param <U>   the function's return type
+     * @return the new Cffu
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherSuccessAsync`")
+    public <U> Cffu<U> applyToEitherSuccessAsync(
+            CompletionStage<? extends T> other, Function<? super T, U> fn) {
+        return applyToEitherSuccessAsync(other, fn, fac.defaultExecutor());
+    }
+
+    /**
+     * Returns a new Cffu that, when either this or the other given stage complete normally,
+     * is executed using the supplied executor, with the corresponding result as argument to the supplied function.
+     * <p>
+     * This method is the same as {@link #applyToEitherAsync(CompletionStage, Function, Executor)}
+     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     *
+     * @param other    the other CompletionStage
+     * @param fn       the function to use to compute the value of the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @param <U>      the function's return type
+     * @return the new Cffu
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherSuccessAsync`")
+    public <U> Cffu<U> applyToEitherSuccessAsync(CompletionStage<? extends T> other,
+                                                 Function<? super T, U> fn,
+                                                 Executor executor) {
+        return reset0(CompletableFutureUtils.applyToEitherSuccessAsync(this, other, fn, executor));
     }
 
     ////////////////////////////////////////////////////////////////////////////////

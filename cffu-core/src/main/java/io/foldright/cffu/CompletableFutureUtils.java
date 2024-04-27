@@ -14,8 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 import static java.util.Objects.requireNonNull;
 
@@ -213,6 +212,9 @@ public final class CompletableFutureUtils {
      * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
      * returns a new CompletableFuture that is already completed exceptionally
      * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
+     * <p>
+     * This method is the same as {@link #anyOf(CompletableFuture[])}
+     * except for the any-<strong>success</strong> behavior(not any-<strong>complete</strong>).
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that is successful
@@ -239,6 +241,256 @@ public final class CompletableFutureUtils {
         successOrBeIncomplete[size] = CompletableFuture.allOf(failedOrBeIncomplete);
 
         return (CompletableFuture) CompletableFuture.anyOf(successOrBeIncomplete);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# `then both(binary input)` methods with fast-fail support:
+    //
+    //    - runAfterBothFastFail*(Runnable):     Void, Void -> Void
+    //    - thenAcceptBothFastFail*(BiConsumer): (T1, T2) -> Void
+    //    - thenCombineFastFail*(BiFunction):    (T1, T2) -> U
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new CompletableFuture that, when two given stages both complete normally, executes the given action.
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
+     * *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link CompletableFuture#runAfterBoth(CompletionStage, Runnable)}
+     * except for the fast-fail behavior.
+     *
+     * @param action the action to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#runAfterBoth(CompletionStage, Runnable)
+     */
+    public static CompletableFuture<Void> runAfterBothFastFail(
+            CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(action, "action is null");
+
+        return allOfFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenRun(action);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when two given stages both complete normally,
+     * executes the given action using CompletableFuture's default asynchronous execution facility.
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
+     * *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link CompletableFuture#runAfterBothAsync(CompletionStage, Runnable)}
+     * except for the fast-fail behavior.
+     *
+     * @param action the action to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#runAfterBothAsync(CompletionStage, Runnable)
+     */
+    public static CompletableFuture<Void> runAfterBothFastFailAsync(
+            CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(action, "action is null");
+
+        return allOfFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenRunAsync(action);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when two given stages both complete normally,
+     * executes the given action using the supplied executor.
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link CompletableFuture#runAfterBothAsync(CompletionStage, Runnable, Executor)}
+     * except for the fast-fail behavior.
+     *
+     * @param action the action to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#runAfterBothAsync(CompletionStage, Runnable, Executor)
+     */
+    public static CompletableFuture<Void> runAfterBothFastFailAsync(
+            CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action, Executor executor) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
+        return allOfFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenRunAsync(action, executor);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when tow given stage both complete normally,
+     * is executed with the two results as arguments to the supplied action.
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link CompletableFuture#thenAcceptBoth(CompletionStage, BiConsumer)}
+     * except for the fast-fail behavior.
+     *
+     * @param action the action to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#thenAcceptBoth(CompletionStage, BiConsumer)
+     */
+    @SuppressWarnings("unchecked")
+    public static <T, U> CompletableFuture<Void> thenAcceptBothFastFail(
+            CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
+            BiConsumer<? super T, ? super U> action) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(action, "action is null");
+
+        final Object[] result = new Object[2];
+        return allOfFastFail(
+                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
+                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2)
+        ).thenAccept(unused -> action.accept((T) result[0], (U) result[1]));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when tow given stage both complete normally,
+     * is executed using CompletableFuture's default asynchronous execution facility,
+     * with the two results as arguments to the supplied action.
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link CompletableFuture#thenAcceptBothAsync(CompletionStage, BiConsumer)}
+     * except for the fast-fail behavior.
+     *
+     * @param action the action to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#thenAcceptBothAsync(CompletionStage, BiConsumer)
+     */
+    @SuppressWarnings("unchecked")
+    public static <T, U> CompletableFuture<Void> thenAcceptBothFastFailAsync(
+            CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
+            BiConsumer<? super T, ? super U> action) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(action, "action is null");
+
+        final Object[] result = new Object[2];
+        return allOfFastFail(
+                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
+                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2)
+        ).thenAcceptAsync(unused -> action.accept((T) result[0], (U) result[1]));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when tow given stage both complete normally,
+     * is executed using the supplied executor,
+     * with the two results as arguments to the supplied action.
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link CompletableFuture#thenAcceptBothAsync(CompletionStage, BiConsumer, Executor)}
+     * except for the fast-fail behavior.
+     *
+     * @param action the action to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#thenAcceptBothAsync(CompletionStage, BiConsumer, Executor)
+     */
+    @SuppressWarnings("unchecked")
+    public static <T, U> CompletableFuture<Void> thenAcceptBothFastFailAsync(
+            CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
+            BiConsumer<? super T, ? super U> action, Executor executor) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
+        final Object[] result = new Object[2];
+        return allOfFastFail(
+                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
+                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2)
+        ).thenAcceptAsync(unused -> action.accept((T) result[0], (U) result[1]), executor);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when tow given stage both complete normally,
+     * is executed with the two results as arguments to the supplied function.
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link CompletableFuture#thenCombine(CompletionStage, BiFunction)}
+     * except for the fast-fail behavior.
+     *
+     * @param fn the function to use to compute the value of the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#thenCombine(CompletionStage, BiFunction)
+     */
+    @SuppressWarnings("unchecked")
+    public static <T, U, V> CompletableFuture<V> thenCombineFastFail(
+            CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
+            BiFunction<? super T, ? super U, ? extends V> fn) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(fn, "fn is null");
+
+        final Object[] result = new Object[2];
+        return allOfFastFail(
+                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
+                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2)
+        ).thenApply(unused -> fn.apply((T) result[0], (U) result[1]));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when tow given stage both complete normally,
+     * is executed using CompletableFuture's default asynchronous execution facility,
+     * with the two results as arguments to the supplied function.
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link CompletableFuture#thenCombineAsync(CompletionStage, BiFunction)}
+     * except for the fast-fail behavior.
+     *
+     * @param fn the function to use to compute the value of the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#thenCombineAsync(CompletionStage, BiFunction)
+     */
+    @SuppressWarnings("unchecked")
+    public static <T, U, V> CompletableFuture<V> thenCombineFastFailAsync(
+            CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
+            BiFunction<? super T, ? super U, ? extends V> fn
+    ) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(fn, "fn is null");
+
+        final Object[] result = new Object[2];
+        return allOfFastFail(
+                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
+                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2)
+        ).thenApplyAsync(unused -> fn.apply((T) result[0], (U) result[1]));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when tow given stage both complete normally,
+     * is executed using the supplied executor,
+     * with the two results as arguments to the supplied function.
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
+     * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link CompletableFuture#thenCombineAsync(CompletionStage, BiFunction, Executor)}
+     * except for the fast-fail behavior.
+     *
+     * @param fn the function to use to compute the value of the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#thenCombineAsync(CompletionStage, BiFunction, Executor)
+     */
+    @SuppressWarnings("unchecked")
+    public static <T, U, V> CompletableFuture<V> thenCombineFastFailAsync(
+            CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
+            BiFunction<? super T, ? super U, ? extends V> fn, Executor executor
+    ) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(fn, "fn is null");
+        requireNonNull(executor, "executor is null");
+
+        final Object[] result = new Object[2];
+        return allOfFastFail(
+                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
+                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2)
+        ).thenApplyAsync(unused -> fn.apply((T) result[0], (U) result[1]), executor);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -475,6 +727,205 @@ public final class CompletableFutureUtils {
         ).thenApply(unused ->
                 Tuple5.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3], (T5) result[4])
         );
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# `then either(binary input)` methods with either(any)-success support:
+    //
+    //    - runAfterEitherSuccess*(Runnable):  Void, Void -> Void
+    //    - acceptEitherSuccess*(Consumer):  (T, T) -> Void
+    //    - applyToEitherSuccess*(Function): (T, T) -> U
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new CompletableFuture that, when either given stage success, executes the given action.
+     * Otherwise, all two given CompletionStage complete exceptionally,
+     * the returned CompletableFuture also does so, with a CompletionException holding
+     * an exception from any of the given CompletionStage as its cause.
+     * <p>
+     * This method is the same as {@link CompletableFuture#runAfterEither(CompletionStage, Runnable)}
+     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     *
+     * @param action the action to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#runAfterEither(CompletionStage, Runnable)
+     */
+    public static CompletableFuture<Void> runAfterEitherSuccess(
+            CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(action, "action is null");
+
+        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenRun(action);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when either given stage success, executes the given action
+     * using CompletableFuture's default asynchronous execution facility.
+     * Otherwise, all two given CompletionStage complete exceptionally,
+     * the returned CompletableFuture also does so, with a CompletionException holding
+     * an exception from any of the given CompletionStage as its cause.
+     * <p>
+     * This method is the same as {@link CompletableFuture#runAfterEitherAsync(CompletionStage, Runnable)}
+     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     *
+     * @param action the action to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#runAfterEitherAsync(CompletionStage, Runnable)
+     */
+    public static CompletableFuture<Void> runAfterEitherSuccessAsync(
+            CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(action, "action is null");
+
+        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenRunAsync(action);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when either given stage success, executes the given action
+     * using the supplied executor.
+     * Otherwise, all two given CompletionStage complete exceptionally,
+     * the returned CompletableFuture also does so, with a CompletionException holding
+     * an exception from any of the given CompletionStage as its cause.
+     * <p>
+     * This method is the same as {@link CompletableFuture#runAfterEitherAsync(CompletionStage, Runnable, Executor)}
+     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     *
+     * @param action the action to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#runAfterEitherAsync(CompletionStage, Runnable, Executor)
+     */
+    public static CompletableFuture<Void> runAfterEitherSuccessAsync(
+            CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action, Executor executor) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
+        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenRunAsync(action, executor);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when either given stage success,
+     * is executed with the corresponding result as argument to the supplied action.
+     * <p>
+     * This method is the same as {@link CompletableFuture#acceptEither(CompletionStage, Consumer)}
+     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     *
+     * @param action the action to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#acceptEither(CompletionStage, Consumer)
+     */
+    public static <T> CompletableFuture<Void> acceptEitherSuccess(
+            CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Consumer<? super T> action) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(action, "action is null");
+
+        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenAccept(action);
+    }
+
+    /**
+     * Returns a new CompletionStage that, when either given stage success,
+     * is executed using this stage's default asynchronous execution facility,
+     * with the corresponding result as argument to the supplied action.
+     * <p>
+     * This method is the same as {@link CompletableFuture#acceptEitherAsync(CompletionStage, Consumer)}
+     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     *
+     * @param action the action to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#acceptEitherAsync(CompletionStage, Consumer)
+     */
+    public static <T> CompletableFuture<Void> acceptEitherSuccessAsync(
+            CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Consumer<? super T> action) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(action, "action is null");
+
+        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenAcceptAsync(action);
+    }
+
+    /**
+     * Returns a new CompletionStage that, when either given stage success,
+     * is executed using the supplied executor, with the corresponding result as argument to the supplied action.
+     * <p>
+     * This method is the same as {@link CompletableFuture#acceptEitherAsync(CompletionStage, Consumer, Executor)}
+     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     *
+     * @param action   the action to perform before completing the returned CompletableFuture
+     * @param executor the executor to use for asynchronous execution
+     * @return the new CompletableFuture
+     * @see CompletableFuture#acceptEitherAsync(CompletionStage, Consumer, Executor)
+     */
+    public static <T> CompletableFuture<Void> acceptEitherSuccessAsync(
+            CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2,
+            Consumer<? super T> action, Executor executor) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
+        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenAcceptAsync(action, executor);
+    }
+
+    /**
+     * Returns a new CompletionStage that, when either given stage success,
+     * is executed with the corresponding result as argument to the supplied function.
+     * <p>
+     * This method is the same as {@link CompletableFuture#applyToEither(CompletionStage, Function)}
+     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     *
+     * @param fn  the function to use to compute the value of the returned CompletableFuture
+     * @param <U> the function's return type
+     * @return the new CompletableFuture
+     * @see CompletableFuture#applyToEither(CompletionStage, Function)
+     */
+    public static <T, U> CompletableFuture<U> applyToEitherSuccess(
+            CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Function<? super T, U> fn) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(fn, "fn is null");
+
+        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenApply(fn);
+    }
+
+    /**
+     * Returns a new CompletionStage that, when either given stage success,
+     * is executed using this stage's default asynchronous execution facility,
+     * with the corresponding result as argument to the supplied function.
+     * <p>
+     * This method is the same as {@link CompletableFuture#applyToEitherAsync(CompletionStage, Function)}
+     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     *
+     * @param fn  the function to use to compute the value of the returned CompletableFuture
+     * @param <U> the function's return type
+     * @return the new CompletableFuture
+     * @see CompletableFuture#applyToEitherAsync(CompletionStage, Function)
+     */
+    public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
+            CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Function<? super T, U> fn) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(fn, "fn is null");
+
+        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenApplyAsync(fn);
+    }
+
+    /**
+     * Returns a new CompletionStage that, when either given stage success,
+     * is executed using the supplied executor, with the corresponding result as argument to the supplied function.
+     * <p>
+     * This method is the same as {@link CompletableFuture#applyToEitherAsync(CompletionStage, Function, Executor)}
+     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     *
+     * @param fn       the function to use to compute the value of the returned CompletableFuture
+     * @param executor the executor to use for asynchronous execution
+     * @param <U>      the function's return type
+     * @return the new CompletableFuture
+     * @see CompletableFuture#applyToEitherAsync(CompletionStage, Function, Executor)
+     */
+    public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
+            CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2,
+            Function<? super T, U> fn, Executor executor) {
+        requireCfsAndEleNonNull(cf1, cf2);
+        requireNonNull(fn, "fn is null");
+        requireNonNull(executor, "executor is null");
+
+        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenApplyAsync(fn, executor);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
