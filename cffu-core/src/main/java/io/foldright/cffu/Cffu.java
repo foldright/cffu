@@ -1288,7 +1288,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public Cffu<T> orTimeout(long timeout, TimeUnit unit) {
         checkMinimalStage();
-
         CompletableFutureUtils.orTimeout(cf, timeout, unit);
         return this;
     }
@@ -1304,7 +1303,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public Cffu<T> completeOnTimeout(@Nullable T value, long timeout, TimeUnit unit) {
         checkMinimalStage();
-
         CompletableFutureUtils.completeOnTimeout(cf, value, timeout, unit);
         return this;
     }
@@ -1434,6 +1432,64 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public Cffu<T> exceptionallyComposeAsync(
             Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
         return reset0(CompletableFutureUtils.exceptionallyComposeAsync(cf, fn, executor));
+    }
+
+    /**
+     * Returns a new Cffu that, when this cffu completes either normally or exceptionally,
+     * is executed with this cffu's result and exception as arguments to the supplied function.
+     * <p>
+     * When this cffu is complete, the given function is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of this cffu as arguments,
+     * and the function's result is used to complete the returned cffu.
+     *
+     * @param fn  the function to use to compute the value of the returned Cffu
+     * @param <U> the function's return type
+     * @return the new Cffu
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `whenComplete`")
+    @Override
+    public <U> Cffu<U> handle(BiFunction<? super T, Throwable, ? extends U> fn) {
+        return reset0(cf.handle(fn));
+    }
+
+    /**
+     * Returns a new Cffu that, when this cffu completes either normally or exceptionally,
+     * is executed using {@link #defaultExecutor()},
+     * with this cffu's result and exception as arguments to the supplied function.
+     * <p>
+     * When this Cffu is complete, the given function is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of this Cffu as arguments,
+     * and the function's result is used to complete the returned Cffu.
+     *
+     * @param fn  the function to use to compute the value of the returned Cffu
+     * @param <U> the function's return type
+     * @return the new Cffu
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `whenCompleteAsync`")
+    @Override
+    public <U> Cffu<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn) {
+        return handleAsync(fn, fac.defaultExecutor());
+    }
+
+    /**
+     * Returns a new Cffu that, when this cffu completes either normally or exceptionally,
+     * is executed using the supplied executor, with this cffu's result and exception
+     * as arguments to the supplied function.
+     * <p>
+     * When this cffu is complete, the given function is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of this cffu as arguments,
+     * and the function's result is used to complete the returned cffu.
+     *
+     * @param fn       the function to use to compute the value of the returned cffu
+     * @param executor the executor to use for asynchronous execution
+     * @param <U>      the function's return type
+     * @return the new Cffu
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `whenCompleteAsync`")
+    @Override
+    public <U> Cffu<U> handleAsync(
+            BiFunction<? super T, Throwable, ? extends U> fn, Executor executor) {
+        return reset0(cf.handleAsync(fn, executor));
     }
 
     /**
@@ -1573,64 +1629,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         return this;
     }
 
-    /**
-     * Returns a new Cffu that, when this cffu completes either normally or exceptionally,
-     * is executed with this cffu's result and exception as arguments to the supplied function.
-     * <p>
-     * When this cffu is complete, the given function is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this cffu as arguments,
-     * and the function's result is used to complete the returned cffu.
-     *
-     * @param fn  the function to use to compute the value of the returned Cffu
-     * @param <U> the function's return type
-     * @return the new Cffu
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `whenComplete`")
-    @Override
-    public <U> Cffu<U> handle(BiFunction<? super T, Throwable, ? extends U> fn) {
-        return reset0(cf.handle(fn));
-    }
-
-    /**
-     * Returns a new Cffu that, when this cffu completes either normally or exceptionally,
-     * is executed using {@link #defaultExecutor()},
-     * with this cffu's result and exception as arguments to the supplied function.
-     * <p>
-     * When this Cffu is complete, the given function is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this Cffu as arguments,
-     * and the function's result is used to complete the returned Cffu.
-     *
-     * @param fn  the function to use to compute the value of the returned Cffu
-     * @param <U> the function's return type
-     * @return the new Cffu
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `whenCompleteAsync`")
-    @Override
-    public <U> Cffu<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn) {
-        return handleAsync(fn, fac.defaultExecutor());
-    }
-
-    /**
-     * Returns a new Cffu that, when this cffu completes either normally or exceptionally,
-     * is executed using the supplied executor, with this cffu's result and exception
-     * as arguments to the supplied function.
-     * <p>
-     * When this cffu is complete, the given function is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this cffu as arguments,
-     * and the function's result is used to complete the returned cffu.
-     *
-     * @param fn       the function to use to compute the value of the returned cffu
-     * @param executor the executor to use for asynchronous execution
-     * @param <U>      the function's return type
-     * @return the new Cffu
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `whenCompleteAsync`")
-    @Override
-    public <U> Cffu<U> handleAsync(
-            BiFunction<? super T, Throwable, ? extends U> fn, Executor executor) {
-        return reset0(cf.handleAsync(fn, executor));
-    }
-
     ////////////////////////////////////////////////////////////////////////////////
     //# Read(explicitly) methods of CompletableFuture
     //
@@ -1673,7 +1671,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public T get() throws InterruptedException, ExecutionException {
         checkMinimalStage();
-
         return cf.get();
     }
 
@@ -1699,7 +1696,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         checkMinimalStage();
-
         return cf.get(timeout, unit);
     }
 
@@ -1724,7 +1720,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Nullable
     public T join() {
         checkMinimalStage();
-
         return cf.join();
     }
 
@@ -1767,7 +1762,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Nullable
     public T join(long timeout, TimeUnit unit) {
         checkMinimalStage();
-
         return CompletableFutureUtils.join(cf, timeout, unit);
     }
 
@@ -1790,7 +1784,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Nullable
     public T getNow(T valueIfAbsent) {
         checkMinimalStage();
-
         return cf.getNow(valueIfAbsent);
     }
 
@@ -1814,7 +1807,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public T resultNow() {
         checkMinimalStage();
-
         return CompletableFutureUtils.resultNow(cf);
     }
 
@@ -1832,7 +1824,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public Throwable exceptionNow() {
         checkMinimalStage();
-
         return CompletableFutureUtils.exceptionNow(cf);
     }
 
@@ -1848,7 +1839,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public boolean isDone() {
         checkMinimalStage();
-
         return cf.isDone();
     }
 
@@ -1862,7 +1852,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Contract(pure = true)
     public boolean isCompletedExceptionally() {
         checkMinimalStage();
-
         return cf.isCompletedExceptionally();
     }
 
@@ -1876,7 +1865,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public boolean isCancelled() {
         checkMinimalStage();
-
         return cf.isCancelled();
     }
 
@@ -1899,7 +1887,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public Future.State state() {
         checkMinimalStage();
-
         return cf.state();
     }
 
@@ -1916,7 +1903,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Contract(pure = true)
     public CffuState cffuState() {
         checkMinimalStage();
-
         return CompletableFutureUtils.state(cf);
     }
 
@@ -1938,7 +1924,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public boolean complete(@Nullable T value) {
         checkMinimalStage();
-
         return cf.complete(value);
     }
 
@@ -1963,7 +1948,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public Cffu<T> completeAsync(Supplier<? extends T> supplier, Executor executor) {
         checkMinimalStage();
-
         CompletableFutureUtils.completeAsync(cf, supplier, executor);
         return this;
     }
@@ -1976,7 +1960,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public boolean completeExceptionally(Throwable ex) {
         checkMinimalStage();
-
         return cf.completeExceptionally(ex);
     }
 
@@ -1992,7 +1975,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
         checkMinimalStage();
-
         return cf.cancel(mayInterruptIfRunning);
     }
 
@@ -2188,7 +2170,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Contract(pure = true)
     public int getNumberOfDependents() {
         checkMinimalStage();
-
         return cf.getNumberOfDependents();
     }
 
@@ -2216,7 +2197,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public void obtrudeValue(@Nullable T value) {
         checkMinimalStage();
         checkForbidObtrudeMethods();
-
         cf.obtrudeValue(value);
     }
 
@@ -2233,7 +2213,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public void obtrudeException(Throwable ex) {
         checkMinimalStage();
         checkForbidObtrudeMethods();
-
         cf.obtrudeException(ex);
     }
 

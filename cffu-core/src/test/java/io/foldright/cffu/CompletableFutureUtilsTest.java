@@ -518,102 +518,6 @@ class CompletableFutureUtilsTest {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# both methods
-    ////////////////////////////////////////////////////////////////////////////////
-
-    @Test
-    void test_both() throws Exception {
-        final CompletableFuture<Integer> cf_n = completedFuture(n);
-        final CompletableFuture<Integer> cf_nn = completedFuture(n + n);
-
-        final Runnable runnable = () -> {
-        };
-        assertNull(runAfterBothFastFail(cf_n, cf_nn, runnable).get());
-        assertNull(runAfterBothFastFailAsync(cf_n, cf_nn, runnable).get());
-        assertNull(runAfterBothFastFailAsync(cf_n, cf_nn, runnable, executorService).get());
-
-        BiConsumer<Integer, Integer> bc = (i1, i2) -> {
-        };
-        assertNull(thenAcceptBothFastFail(cf_n, cf_nn, bc).get());
-        assertNull(thenAcceptBothFastFailAsync(cf_n, cf_nn, bc).get());
-        assertNull(thenAcceptBothFastFailAsync(cf_n, cf_nn, bc, executorService).get());
-
-        assertEquals(3 * n, thenCombineFastFail(cf_n, cf_nn, Integer::sum).get());
-        assertEquals(3 * n, thenCombineFastFailAsync(cf_n, cf_nn, Integer::sum).get());
-        assertEquals(3 * n, thenCombineFastFailAsync(cf_n, cf_nn, Integer::sum, executorService).get());
-    }
-
-    @Test
-    void both_fastFail() throws Exception {
-        CompletableFuture<Integer> cf_n = CompletableFuture.supplyAsync(() -> {
-            sleep(2_000);
-            return n;
-        });
-        final CompletableFuture<Integer> failed = failedFuture(rte);
-
-        final Runnable runnable = () -> {
-        };
-        try {
-            runAfterBothFastFail(cf_n, failed, runnable).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-        try {
-            runAfterBothFastFailAsync(cf_n, failed, runnable).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-        try {
-            runAfterBothFastFailAsync(cf_n, failed, runnable, executorService).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-
-        BiConsumer<Integer, Integer> bc = (i1, i2) -> {
-        };
-        try {
-            thenAcceptBothFastFail(cf_n, failed, bc).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-        try {
-            thenAcceptBothFastFailAsync(cf_n, failed, bc).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-        try {
-            thenAcceptBothFastFailAsync(cf_n, failed, bc, executorService).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-
-        try {
-            thenCombineFastFail(cf_n, failed, Integer::sum).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-        try {
-            thenCombineFastFailAsync(cf_n, failed, Integer::sum).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-        try {
-            thenCombineFastFailAsync(cf_n, failed, Integer::sum, executorService).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
     //# allTupleOf methods
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -741,6 +645,102 @@ class CompletableFutureUtilsTest {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
+    //# both methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void test_both() throws Exception {
+        final CompletableFuture<Integer> cf_n = completedFuture(n);
+        final CompletableFuture<Integer> cf_nn = completedFuture(n + n);
+
+        final Runnable runnable = () -> {
+        };
+        assertNull(runAfterBothFastFail(cf_n, cf_nn, runnable).get());
+        assertNull(runAfterBothFastFailAsync(cf_n, cf_nn, runnable).get());
+        assertNull(runAfterBothFastFailAsync(cf_n, cf_nn, runnable, executorService).get());
+
+        BiConsumer<Integer, Integer> bc = (i1, i2) -> {
+        };
+        assertNull(thenAcceptBothFastFail(cf_n, cf_nn, bc).get());
+        assertNull(thenAcceptBothFastFailAsync(cf_n, cf_nn, bc).get());
+        assertNull(thenAcceptBothFastFailAsync(cf_n, cf_nn, bc, executorService).get());
+
+        assertEquals(3 * n, thenCombineFastFail(cf_n, cf_nn, Integer::sum).get());
+        assertEquals(3 * n, thenCombineFastFailAsync(cf_n, cf_nn, Integer::sum).get());
+        assertEquals(3 * n, thenCombineFastFailAsync(cf_n, cf_nn, Integer::sum, executorService).get());
+    }
+
+    @Test
+    void both_fastFail() throws Exception {
+        CompletableFuture<Integer> cf_n = CompletableFuture.supplyAsync(() -> {
+            sleep(2_000);
+            return n;
+        });
+        final CompletableFuture<Integer> failed = failedFuture(rte);
+
+        final Runnable runnable = () -> {
+        };
+        try {
+            runAfterBothFastFail(cf_n, failed, runnable).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            runAfterBothFastFailAsync(cf_n, failed, runnable).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            runAfterBothFastFailAsync(cf_n, failed, runnable, executorService).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+
+        BiConsumer<Integer, Integer> bc = (i1, i2) -> {
+        };
+        try {
+            thenAcceptBothFastFail(cf_n, failed, bc).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            thenAcceptBothFastFailAsync(cf_n, failed, bc).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            thenAcceptBothFastFailAsync(cf_n, failed, bc, executorService).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+
+        try {
+            thenCombineFastFail(cf_n, failed, Integer::sum).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            thenCombineFastFailAsync(cf_n, failed, Integer::sum).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            thenCombineFastFailAsync(cf_n, failed, Integer::sum, executorService).get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
     //# either methods
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -789,7 +789,7 @@ class CompletableFutureUtilsTest {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# More new enhanced methods
+    //# New enhanced methods
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test

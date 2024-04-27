@@ -292,13 +292,10 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# allOf / anyOf methods
-    //  - allOf*, return Cffu<Void>, equivalent to same name methods:
-    //    - CompletableFuture.allOf()
-    //    - CompletableFutureUtils.allOfFastFail()
-    //  - anyOf*, equivalent to same name methods:
-    //    - CompletableFuture.anyOf()
-    //    - CompletableFutureUtils.anyOfSuccess()
+    //# allOf* methods
+    //
+    //  - allOf / allOfFastFail
+    //  - allResultsOf / allResultsOfFastFail
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -439,138 +436,6 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.<br>
-     * Otherwise, if it completed exceptionally, the returned Cffu also does so,
-     * with a CompletionException holding this exception as its cause.<br>
-     * If no Cffus are provided, returns an incomplete Cffu.
-     *
-     * @param cfs the Cffus
-     * @return a new Cffu that is completed with the result
-     * or exception from any of the given Cffus when one completes
-     * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see CompletableFuture#anyOf(CompletableFuture[])
-     */
-    @Contract(pure = true)
-    @SuppressWarnings("unchecked")
-    @SafeVarargs
-    public final <T> Cffu<T> anyOf(Cffu<? extends T>... cfs) {
-        return anyOf(toCompletableFutureArray((Cffu<T>[]) cfs));
-    }
-
-    /**
-     * This method is the same as {@link #anyOf(Cffu[])} except with overloaded argument type {@link CompletableFuture}.
-     *
-     * @param cfs the CompletableFutures
-     * @return a new Cffu that is completed with the result
-     * or exception from any of the given CompletableFutures when one completes
-     * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see #anyOf(Cffu[])
-     * @see CompletableFuture#anyOf(CompletableFuture[])
-     */
-    @Contract(pure = true)
-    @SuppressWarnings("unchecked")
-    @SafeVarargs
-    public final <T> Cffu<T> anyOf(CompletableFuture<? extends T>... cfs) {
-        return (Cffu<T>) new0(CompletableFuture.anyOf(cfs));
-    }
-
-    /**
-     * Provided this overloaded method just for resolving "anyOf is ambiguous" problem
-     * when call {@code anyOf} with empty arguments: {@code cffuFactory.anyOf()}.
-     *
-     * @see #anyOf(Cffu[])
-     * @see #anyOf(CompletableFuture[])
-     */
-    @Contract(pure = true)
-    public <T> Cffu<T> anyOf() {
-        return newIncompleteCffu();
-    }
-
-    /**
-     * Returns a new Cffu that is successful when any of the given Cffus success,
-     * with the same result. Otherwise, all the given Cffus complete exceptionally,
-     * the returned Cffu also does so, with a CompletionException holding
-     * an exception from any of the given Cffu as its cause. If no Cffu are provided,
-     * returns a new Cffu that is already completed exceptionally
-     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
-     *
-     * @param cfs the Cffus
-     * @return a new Cffu
-     * @throws NullPointerException if the array or any of its elements are {@code null}
-     */
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    @SafeVarargs
-    public final <T> Cffu<T> anyOfSuccess(Cffu<? extends T>... cfs) {
-        return (Cffu<T>) anyOfSuccess(toCompletableFutureArray((Cffu[]) cfs));
-    }
-
-    /**
-     * Returns a new Cffu that is successful when any of the given CompletableFutures success,
-     * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
-     * the returned Cffu also does so, with a CompletionException holding
-     * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
-     * returns a new Cffu that is already completed exceptionally
-     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
-     *
-     * @param cfs the CompletableFutures
-     * @return a new Cffu
-     * @throws NullPointerException if the array or any of its elements are {@code null}
-     */
-    @SafeVarargs
-    public final <T> Cffu<T> anyOfSuccess(CompletableFuture<? extends T>... cfs) {
-        return new0(CompletableFutureUtils.anyOfSuccess(cfs));
-    }
-
-    /**
-     * Provided this overloaded method just for resolving "anyOfSuccess is ambiguous" problem
-     * when call {@code anyOfSuccess} with empty arguments: {@code cffuFactory.anyOfSuccess()}.
-     */
-    public <T> Cffu<T> anyOfSuccess() {
-        return new0(CompletableFutureUtils.anyOfSuccess());
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    //# Delay Execution, equivalent to same name static methods of CompletableFuture
-    //
-    //    - delayedExecutor
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Returns a new Executor that submits a task to the default executor
-     * after the given delay (or no delay if non-positive).
-     * Each delay commences upon invocation of the returned executor's {@code execute} method.
-     *
-     * @param delay how long to delay, in units of {@code unit}
-     * @param unit  a {@code TimeUnit} determining how to interpret the
-     *              {@code delay} parameter
-     * @return the new delayed executor
-     */
-    @Contract(pure = true)
-    public Executor delayedExecutor(long delay, TimeUnit unit) {
-        return CompletableFutureUtils.delayedExecutor(delay, unit, defaultExecutor);
-    }
-
-    /**
-     * Returns a new Executor that submits a task to the given base executor
-     * after the given delay (or no delay if non-positive).
-     * Each delay commences upon invocation of the returned executor's {@code execute} method.
-     *
-     * @param delay    how long to delay, in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the
-     *                 {@code delay} parameter
-     * @param executor the base executor
-     * @return the new delayed executor
-     */
-    @Contract(pure = true)
-    public Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
-        return CompletableFutureUtils.delayedExecutor(delay, unit, executor);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    //# New allResultsOf* Factory Methods
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /**
      * Returns a new Cffu with the results in the <strong>same order</strong> of all the given Cffus,
      * the new Cffu is completed when all the given Cffus complete.
      * Returns a new Cffu that is completed when all the given Cffus complete.
@@ -682,8 +547,108 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# New type-safe allTupleOf Factory Methods
-    //  support 2~5 input arguments, method name prefix with `cffu`
+    //# anyOf* methods:
+    //
+    //  - anyOf
+    //  - anyOfSuccess
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.<br>
+     * Otherwise, if it completed exceptionally, the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.<br>
+     * If no Cffus are provided, returns an incomplete Cffu.
+     *
+     * @param cfs the Cffus
+     * @return a new Cffu that is completed with the result
+     * or exception from any of the given Cffus when one completes
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see CompletableFuture#anyOf(CompletableFuture[])
+     */
+    @Contract(pure = true)
+    @SuppressWarnings("unchecked")
+    @SafeVarargs
+    public final <T> Cffu<T> anyOf(Cffu<? extends T>... cfs) {
+        return anyOf(toCompletableFutureArray((Cffu<T>[]) cfs));
+    }
+
+    /**
+     * This method is the same as {@link #anyOf(Cffu[])} except with overloaded argument type {@link CompletableFuture}.
+     *
+     * @param cfs the CompletableFutures
+     * @return a new Cffu that is completed with the result
+     * or exception from any of the given CompletableFutures when one completes
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #anyOf(Cffu[])
+     * @see CompletableFuture#anyOf(CompletableFuture[])
+     */
+    @Contract(pure = true)
+    @SuppressWarnings("unchecked")
+    @SafeVarargs
+    public final <T> Cffu<T> anyOf(CompletableFuture<? extends T>... cfs) {
+        return (Cffu<T>) new0(CompletableFuture.anyOf(cfs));
+    }
+
+    /**
+     * Provided this overloaded method just for resolving "anyOf is ambiguous" problem
+     * when call {@code anyOf} with empty arguments: {@code cffuFactory.anyOf()}.
+     *
+     * @see #anyOf(Cffu[])
+     * @see #anyOf(CompletableFuture[])
+     */
+    @Contract(pure = true)
+    public <T> Cffu<T> anyOf() {
+        return newIncompleteCffu();
+    }
+
+    /**
+     * Returns a new Cffu that is successful when any of the given Cffus success,
+     * with the same result. Otherwise, all the given Cffus complete exceptionally,
+     * the returned Cffu also does so, with a CompletionException holding
+     * an exception from any of the given Cffu as its cause. If no Cffu are provided,
+     * returns a new Cffu that is already completed exceptionally
+     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
+     *
+     * @param cfs the Cffus
+     * @return a new Cffu
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SafeVarargs
+    public final <T> Cffu<T> anyOfSuccess(Cffu<? extends T>... cfs) {
+        return (Cffu<T>) anyOfSuccess(toCompletableFutureArray((Cffu[]) cfs));
+    }
+
+    /**
+     * Returns a new Cffu that is successful when any of the given CompletableFutures success,
+     * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
+     * the returned Cffu also does so, with a CompletionException holding
+     * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
+     * returns a new Cffu that is already completed exceptionally
+     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
+     *
+     * @param cfs the CompletableFutures
+     * @return a new Cffu
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     */
+    @SafeVarargs
+    public final <T> Cffu<T> anyOfSuccess(CompletableFuture<? extends T>... cfs) {
+        return new0(CompletableFutureUtils.anyOfSuccess(cfs));
+    }
+
+    /**
+     * Provided this overloaded method just for resolving "anyOfSuccess is ambiguous" problem
+     * when call {@code anyOfSuccess} with empty arguments: {@code cffuFactory.anyOfSuccess()}.
+     */
+    public <T> Cffu<T> anyOfSuccess() {
+        return new0(CompletableFutureUtils.anyOfSuccess());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# New type-safe allTupleOf Factory Methods, support 2~5 input arguments
+    //
+    //  - allTupleOf
+    //  - allTupleOfFastFail
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -999,6 +964,43 @@ public final class CffuFactory {
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
             CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
         return new0(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3, cf4, cf5));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Delay Execution, equivalent to same name static methods of CompletableFuture
+    //
+    //    - delayedExecutor
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new Executor that submits a task to the default executor
+     * after the given delay (or no delay if non-positive).
+     * Each delay commences upon invocation of the returned executor's {@code execute} method.
+     *
+     * @param delay how long to delay, in units of {@code unit}
+     * @param unit  a {@code TimeUnit} determining how to interpret the
+     *              {@code delay} parameter
+     * @return the new delayed executor
+     */
+    @Contract(pure = true)
+    public Executor delayedExecutor(long delay, TimeUnit unit) {
+        return CompletableFutureUtils.delayedExecutor(delay, unit, defaultExecutor);
+    }
+
+    /**
+     * Returns a new Executor that submits a task to the given base executor
+     * after the given delay (or no delay if non-positive).
+     * Each delay commences upon invocation of the returned executor's {@code execute} method.
+     *
+     * @param delay    how long to delay, in units of {@code unit}
+     * @param unit     a {@code TimeUnit} determining how to interpret the
+     *                 {@code delay} parameter
+     * @param executor the base executor
+     * @return the new delayed executor
+     */
+    @Contract(pure = true)
+    public Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
+        return CompletableFutureUtils.delayedExecutor(delay, unit, executor);
     }
 
     ////////////////////////////////////////////////////////////////////////////////

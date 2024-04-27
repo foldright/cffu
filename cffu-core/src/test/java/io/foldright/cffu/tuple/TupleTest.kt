@@ -18,8 +18,14 @@ class TupleTest : FunSpec({
         val tuple2 = Tuple2.of(e1, e2)
         tuple2._1 shouldBe e1
         tuple2._2 shouldBe e2
+
         tuple2 shouldBe Tuple2.of(e1, e2)
+        tuple2 shouldBe tuple2
+
         tuple2 shouldNotBe Tuple2.of(e1, e2 + "X")
+        tuple2 shouldNotBe null
+        tuple2 shouldNotBe "foo"
+
         mapOf(tuple2 to value, pair2)[tuple2] shouldBe value
         tuple2.toString() shouldBe "Tuple2(1, 2)"
     }
@@ -29,8 +35,14 @@ class TupleTest : FunSpec({
         tuple3._1 shouldBe e1
         tuple3._2 shouldBe e2
         tuple3._3 shouldBe e3
+
         tuple3 shouldBe Tuple3.of(e1, e2, e3)
+        tuple3 shouldBe tuple3
+
         tuple3 shouldNotBe Tuple3.of(e1, e2, e3 + 1.0)
+        tuple3 shouldNotBe null
+        tuple3 shouldNotBe "foo"
+
         mapOf(tuple3 to value, pair2)[tuple3] shouldBe value
         tuple3.toString() shouldBe "Tuple3(1, 2, 3.14)"
     }
@@ -41,8 +53,14 @@ class TupleTest : FunSpec({
         tuple4._2 shouldBe e2
         tuple4._3 shouldBe e3
         tuple4._4 shouldBe e4
+
         tuple4 shouldBe Tuple4.of(e1, e2, e3, e4)
+        tuple4 shouldBe tuple4
+
         tuple4 shouldNotBe Tuple4.of(e1, e2, e3, e4 + 1)
+        tuple4 shouldNotBe null
+        tuple4 shouldNotBe "foo"
+
         mapOf(tuple4 to value, pair2)[tuple4] shouldBe value
         tuple4.toString() shouldBe "Tuple4(1, 2, 3.14, 4)"
     }
@@ -54,8 +72,14 @@ class TupleTest : FunSpec({
         tuple5._3 shouldBe e3
         tuple5._4 shouldBe e4
         tuple5._5 shouldBe e5
+
         tuple5 shouldBe Tuple5.of(e1, e2, e3, e4, e5)
+        tuple5 shouldBe tuple5
+
         tuple5 shouldNotBe Tuple5.of(e1, e2, e3, e4, '6')
+        tuple5 shouldNotBe null
+        tuple5 shouldNotBe "foo"
+
         mapOf(tuple5 to value, pair2)[tuple5] shouldBe value
         tuple5.toString() shouldBe "Tuple5(1, 2, 3.14, 4, 5)"
     }

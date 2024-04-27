@@ -22,51 +22,11 @@ import java.util.function.Function
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////
-//# allOf* methods
+//# allOf* methods for Array/Collection
 //
-//    - allResultsOfCompletableFuture
-//    - allOfCompletableFuture
-//    - allResultsOfFastFailCompletableFuture
-//    - allOfFastFailCompletableFuture
+//    - allOfCompletableFuture / allOfFastFailCompletableFuture
+//    - allResultsOfCompletableFuture / allResultsOfFastFailCompletableFuture
 ////////////////////////////////////////
-
-/**
- * Returns a new CompletableFuture with the results in the **same order** of all the given
- * CompletableFutures, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
- * also does so, with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
- *
- * This method is the same as [allOfCompletableFuture],
- * except the returned CompletableFuture contains the results of input CompletableFutures.
- *
- * This method is the same as [CompletableFutureUtils.allResultsOf],
- * providing this method is convenient for method chaining.
- *
- * @see allResultsOfCffu
- * @see allOfCompletableFuture
- */
-fun <T> Collection<CompletableFuture<out T>>.allResultsOfCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allResultsOf(*this.toTypedArray())
-
-/**
- * Returns a new CompletableFuture with the results in the **same order** of all the given
- * CompletableFutures, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
- * also does so, with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
- *
- * This method is the same as [allOfCompletableFuture],
- * except the returned CompletableFuture contains the results of input CompletableFutures.
- *
- * This method is the same as [CompletableFutureUtils.allResultsOf],
- * providing this method is convenient for method chaining.
- *
- * @see allResultsOfCffu
- * @see allOfCompletableFuture
- */
-fun <T> Array<out CompletableFuture<out T>>.allResultsOfCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allResultsOf(*this)
 
 /**
  * Returns a new CompletableFuture that is completed when all the given CompletableFutures complete.
@@ -113,46 +73,6 @@ fun Array<out CompletableFuture<*>>.allOfCompletableFuture(): CompletableFuture<
     CompletableFuture.allOf(*this)
 
 /**
- * Returns a new CompletableFuture with the results in the **same order** of all the given
- * CompletableFutures, the new CompletableFuture success when all the given CompletableFutures success.
- * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
- * also does so *without* waiting other incomplete given CompletableFutures,
- * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
- *
- * This method is the same as [allOfFastFailCompletableFuture],
- * except the returned CompletableFuture contains the results of input CompletableFutures.
- *
- * This method is the same as [CompletableFutureUtils.allResultsOfFastFail],
- * providing this method is convenient for method chaining.
- *
- * @see allResultsOfFastFailCffu
- * @see allOfFastFailCompletableFuture
- */
-fun <T> Collection<CompletableFuture<out T>>.allResultsOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allResultsOfFastFail(*this.toTypedArray())
-
-/**
- * Returns a new CompletableFuture with the results in the **same order** of all the given
- * CompletableFutures, the new CompletableFuture success when all the given CompletableFutures success.
- * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
- * also does so *without* waiting other incomplete given CompletableFutures,
- * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
- *
- * This method is the same as [allOfFastFailCompletableFuture],
- * except the returned CompletableFuture contains the results of input CompletableFutures.
- *
- * This method is the same as [CompletableFutureUtils.allResultsOfFastFail],
- * providing this method is convenient for method chaining.
- *
- * @see allResultsOfFastFailCffu
- * @see allOfFastFailCompletableFuture
- */
-fun <T> Array<out CompletableFuture<out T>>.allResultsOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allResultsOfFastFail(*this)
-
-/**
  * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
  * the results(`CompletableFuture<Void>`) of the given CompletableFutures are not reflected in the returned CompletableFuture,
  * but may be obtained by inspecting them individually.
@@ -191,6 +111,84 @@ fun Collection<CompletableFuture<*>>.allOfFastFailCompletableFuture(): Completab
  */
 fun Array<out CompletableFuture<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
     CompletableFutureUtils.allOfFastFail(*this)
+
+/**
+ * Returns a new CompletableFuture with the results in the **same order** of all the given
+ * CompletableFutures, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
+ * also does so, with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
+ *
+ * This method is the same as [allOfCompletableFuture],
+ * except the returned CompletableFuture contains the results of input CompletableFutures.
+ *
+ * This method is the same as [CompletableFutureUtils.allResultsOf],
+ * providing this method is convenient for method chaining.
+ *
+ * @see allResultsOfCffu
+ * @see allOfCompletableFuture
+ */
+fun <T> Collection<CompletableFuture<out T>>.allResultsOfCompletableFuture(): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allResultsOf(*this.toTypedArray())
+
+/**
+ * Returns a new CompletableFuture with the results in the **same order** of all the given
+ * CompletableFutures, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
+ * also does so, with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
+ *
+ * This method is the same as [allOfCompletableFuture],
+ * except the returned CompletableFuture contains the results of input CompletableFutures.
+ *
+ * This method is the same as [CompletableFutureUtils.allResultsOf],
+ * providing this method is convenient for method chaining.
+ *
+ * @see allResultsOfCffu
+ * @see allOfCompletableFuture
+ */
+fun <T> Array<out CompletableFuture<out T>>.allResultsOfCompletableFuture(): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allResultsOf(*this)
+
+/**
+ * Returns a new CompletableFuture with the results in the **same order** of all the given
+ * CompletableFutures, the new CompletableFuture success when all the given CompletableFutures success.
+ * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
+ * also does so *without* waiting other incomplete given CompletableFutures,
+ * with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
+ *
+ * This method is the same as [allOfFastFailCompletableFuture],
+ * except the returned CompletableFuture contains the results of input CompletableFutures.
+ *
+ * This method is the same as [CompletableFutureUtils.allResultsOfFastFail],
+ * providing this method is convenient for method chaining.
+ *
+ * @see allResultsOfFastFailCffu
+ * @see allOfFastFailCompletableFuture
+ */
+fun <T> Collection<CompletableFuture<out T>>.allResultsOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allResultsOfFastFail(*this.toTypedArray())
+
+/**
+ * Returns a new CompletableFuture with the results in the **same order** of all the given
+ * CompletableFutures, the new CompletableFuture success when all the given CompletableFutures success.
+ * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
+ * also does so *without* waiting other incomplete given CompletableFutures,
+ * with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
+ *
+ * This method is the same as [allOfFastFailCompletableFuture],
+ * except the returned CompletableFuture contains the results of input CompletableFutures.
+ *
+ * This method is the same as [CompletableFutureUtils.allResultsOfFastFail],
+ * providing this method is convenient for method chaining.
+ *
+ * @see allResultsOfFastFailCffu
+ * @see allOfFastFailCompletableFuture
+ */
+fun <T> Array<out CompletableFuture<out T>>.allResultsOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allResultsOfFastFail(*this)
 
 ////////////////////////////////////////
 //# anyOf* methods
@@ -260,140 +258,6 @@ fun <T> Collection<CompletableFuture<out T>>.anyOfSuccessCompletableFuture(): Co
  */
 fun <T> Array<out CompletableFuture<out T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
     CompletableFutureUtils.anyOfSuccess(*this)
-
-////////////////////////////////////////
-//# allTupleOf/allTupleOfFastFail methods
-////////////////////////////////////////
-
-/**
- * Returns a new CompletableFuture that is completed when the given two CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is completed when the given 2 CompletableFutures complete
- * @throws NullPointerException if any input CompletableFutures are `null`
- * @see CompletableFutureUtils.allTupleOf
- * @see allResultsOfCompletableFuture
- * @see CompletableFuture.allOf
- */
-fun <T1, T2> CompletableFuture<T1>.allTupleOf(cf2: CompletableFuture<T2>): CompletableFuture<Tuple2<T1, T2>> =
-    CompletableFutureUtils.allTupleOf(this, cf2)
-
-/**
- * Returns a new CompletableFuture that is successful when the given two CompletableFutures success.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
- * with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is successful when the given two CompletableFutures success
- * @throws NullPointerException if any of the given CompletableFutures are {@code null}
- * @see CompletableFutureUtils.allTupleOfFastFail
- * @see allResultsOfFastFailCompletableFuture
- * @see CompletableFutureUtils.allOfFastFail
- */
-fun <T1, T2> CompletableFuture<T1>.allTupleOfFastFail(cf2: CompletableFuture<T2>): CompletableFuture<Tuple2<T1, T2>> =
-    CompletableFutureUtils.allTupleOfFastFail(this, cf2)
-
-/**
- * Returns a new CompletableFuture that is completed when the given three CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is completed when the given 3 CompletableFutures complete
- * @throws NullPointerException if any input CompletableFutures are `null`
- * @see CompletableFutureUtils.allTupleOf
- * @see allResultsOfCompletableFuture
- * @see CompletableFuture.allOf
- */
-fun <T1, T2, T3> CompletableFuture<T1>.allTupleOf(
-    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>
-): CompletableFuture<Tuple3<T1, T2, T3>> =
-    CompletableFutureUtils.allTupleOf(this, cf2, cf3)
-
-/**
- * Returns a new CompletableFuture that is successful when the given three CompletableFutures success.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
- * with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is successful when the given three CompletableFutures success
- * @throws NullPointerException if any of the given CompletableFutures are {@code null}
- * @see CompletableFutureUtils.allTupleOfFastFail
- * @see allResultsOfFastFailCompletableFuture
- * @see CompletableFutureUtils.allOfFastFail
- */
-fun <T1, T2, T3> CompletableFuture<T1>.allTupleOfFastFail(
-    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>
-): CompletableFuture<Tuple3<T1, T2, T3>> =
-    CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3)
-
-/**
- * Returns a new CompletableFuture that is completed when the given 4 CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is completed when the given 4 CompletableFutures complete
- * @throws NullPointerException if any input CompletableFutures are `null`
- * @see CompletableFutureUtils.allTupleOf
- * @see allResultsOfCompletableFuture
- * @see CompletableFuture.allOf
- */
-fun <T1, T2, T3, T4> CompletableFuture<T1>.allTupleOf(
-    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>, cf4: CompletableFuture<T4>
-): CompletableFuture<Tuple4<T1, T2, T3, T4>> =
-    CompletableFutureUtils.allTupleOf(this, cf2, cf3, cf4)
-
-/**
- * Returns a new CompletableFuture that is successful when the given 4 CompletableFutures success.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
- * with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is successful when the given 4 CompletableFutures success
- * @throws NullPointerException if any of the given CompletableFutures are {@code null}
- * @see CompletableFutureUtils.allTupleOfFastFail
- * @see allResultsOfFastFailCompletableFuture
- * @see CompletableFutureUtils.allOfFastFail
- */
-fun <T1, T2, T3, T4> CompletableFuture<T1>.allTupleOfFastFail(
-    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>, cf4: CompletableFuture<T4>
-): CompletableFuture<Tuple4<T1, T2, T3, T4>> =
-    CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3, cf4)
-
-/**
- * Returns a new CompletableFuture that is completed when the given 5 CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is completed when the given 5 CompletableFutures complete
- * @throws NullPointerException if any input CompletableFutures are `null`
- * @see CompletableFutureUtils.allTupleOf
- * @see allResultsOfCompletableFuture
- * @see CompletableFuture.allOf
- */
-fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.allTupleOf(
-    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>,
-    cf4: CompletableFuture<T4>, cf5: CompletableFuture<T5>
-): CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> =
-    CompletableFutureUtils.allTupleOf(this, cf2, cf3, cf4, cf5)
-
-/**
- * Returns a new CompletableFuture that is successful when the given 5 CompletableFutures success.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
- * with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is successful when the given 5 CompletableFutures success
- * @throws NullPointerException if any of the given CompletableFutures are {@code null}
- * @see CompletableFutureUtils.allTupleOfFastFail
- * @see allResultsOfFastFailCompletableFuture
- * @see CompletableFutureUtils.allOfFastFail
- */
-fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.allTupleOfFastFail(
-    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>,
-    cf4: CompletableFuture<T4>, cf5: CompletableFuture<T5>
-): CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> =
-    CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3, cf4, cf5)
 
 ////////////////////////////////////////////////////////////////////////////////
 //# `then both(binary input)` methods with fast-fail support:
@@ -564,6 +428,143 @@ fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
 ): CompletableFuture<V> =
     CompletableFutureUtils.thenCombineFastFailAsync(this, cf2, fn, executor)
 
+////////////////////////////////////////
+//# allTupleOf* methods
+//
+//  - allTupleOf
+//  - allTupleOfFastFail
+////////////////////////////////////////
+
+/**
+ * Returns a new CompletableFuture that is completed when the given two CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned
+ * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
+ *
+ * @return a new CompletableFuture that is completed when the given 2 CompletableFutures complete
+ * @throws NullPointerException if any input CompletableFutures are `null`
+ * @see CompletableFutureUtils.allTupleOf
+ * @see allResultsOfCompletableFuture
+ * @see CompletableFuture.allOf
+ */
+fun <T1, T2> CompletableFuture<T1>.allTupleOf(cf2: CompletableFuture<T2>): CompletableFuture<Tuple2<T1, T2>> =
+    CompletableFutureUtils.allTupleOf(this, cf2)
+
+/**
+ * Returns a new CompletableFuture that is successful when the given two CompletableFutures success.
+ * If any of the given CompletableFutures complete exceptionally, then the returned
+ * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * @return a new CompletableFuture that is successful when the given two CompletableFutures success
+ * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+ * @see CompletableFutureUtils.allTupleOfFastFail
+ * @see allResultsOfFastFailCompletableFuture
+ * @see CompletableFutureUtils.allOfFastFail
+ */
+fun <T1, T2> CompletableFuture<T1>.allTupleOfFastFail(cf2: CompletableFuture<T2>): CompletableFuture<Tuple2<T1, T2>> =
+    CompletableFutureUtils.allTupleOfFastFail(this, cf2)
+
+/**
+ * Returns a new CompletableFuture that is completed when the given three CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned
+ * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
+ *
+ * @return a new CompletableFuture that is completed when the given 3 CompletableFutures complete
+ * @throws NullPointerException if any input CompletableFutures are `null`
+ * @see CompletableFutureUtils.allTupleOf
+ * @see allResultsOfCompletableFuture
+ * @see CompletableFuture.allOf
+ */
+fun <T1, T2, T3> CompletableFuture<T1>.allTupleOf(
+    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>
+): CompletableFuture<Tuple3<T1, T2, T3>> =
+    CompletableFutureUtils.allTupleOf(this, cf2, cf3)
+
+/**
+ * Returns a new CompletableFuture that is successful when the given three CompletableFutures success.
+ * If any of the given CompletableFutures complete exceptionally, then the returned
+ * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * @return a new CompletableFuture that is successful when the given three CompletableFutures success
+ * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+ * @see CompletableFutureUtils.allTupleOfFastFail
+ * @see allResultsOfFastFailCompletableFuture
+ * @see CompletableFutureUtils.allOfFastFail
+ */
+fun <T1, T2, T3> CompletableFuture<T1>.allTupleOfFastFail(
+    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>
+): CompletableFuture<Tuple3<T1, T2, T3>> =
+    CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3)
+
+/**
+ * Returns a new CompletableFuture that is completed when the given 4 CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned
+ * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
+ *
+ * @return a new CompletableFuture that is completed when the given 4 CompletableFutures complete
+ * @throws NullPointerException if any input CompletableFutures are `null`
+ * @see CompletableFutureUtils.allTupleOf
+ * @see allResultsOfCompletableFuture
+ * @see CompletableFuture.allOf
+ */
+fun <T1, T2, T3, T4> CompletableFuture<T1>.allTupleOf(
+    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>, cf4: CompletableFuture<T4>
+): CompletableFuture<Tuple4<T1, T2, T3, T4>> =
+    CompletableFutureUtils.allTupleOf(this, cf2, cf3, cf4)
+
+/**
+ * Returns a new CompletableFuture that is successful when the given 4 CompletableFutures success.
+ * If any of the given CompletableFutures complete exceptionally, then the returned
+ * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * @return a new CompletableFuture that is successful when the given 4 CompletableFutures success
+ * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+ * @see CompletableFutureUtils.allTupleOfFastFail
+ * @see allResultsOfFastFailCompletableFuture
+ * @see CompletableFutureUtils.allOfFastFail
+ */
+fun <T1, T2, T3, T4> CompletableFuture<T1>.allTupleOfFastFail(
+    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>, cf4: CompletableFuture<T4>
+): CompletableFuture<Tuple4<T1, T2, T3, T4>> =
+    CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3, cf4)
+
+/**
+ * Returns a new CompletableFuture that is completed when the given 5 CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned
+ * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
+ *
+ * @return a new CompletableFuture that is completed when the given 5 CompletableFutures complete
+ * @throws NullPointerException if any input CompletableFutures are `null`
+ * @see CompletableFutureUtils.allTupleOf
+ * @see allResultsOfCompletableFuture
+ * @see CompletableFuture.allOf
+ */
+fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.allTupleOf(
+    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>,
+    cf4: CompletableFuture<T4>, cf5: CompletableFuture<T5>
+): CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> =
+    CompletableFutureUtils.allTupleOf(this, cf2, cf3, cf4, cf5)
+
+/**
+ * Returns a new CompletableFuture that is successful when the given 5 CompletableFutures success.
+ * If any of the given CompletableFutures complete exceptionally, then the returned
+ * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * @return a new CompletableFuture that is successful when the given 5 CompletableFutures success
+ * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+ * @see CompletableFutureUtils.allTupleOfFastFail
+ * @see allResultsOfFastFailCompletableFuture
+ * @see CompletableFutureUtils.allOfFastFail
+ */
+fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.allTupleOfFastFail(
+    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>,
+    cf4: CompletableFuture<T4>, cf5: CompletableFuture<T5>
+): CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> =
+    CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3, cf4, cf5)
+
 ////////////////////////////////////////////////////////////////////////////////
 //# `then either(binary input)` methods with either(any)-success support:
 //
@@ -728,7 +729,7 @@ fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
     CompletableFutureUtils.applyToEitherSuccessAsync(this, cf2, fn, executor)
 
 ////////////////////////////////////////////////////////////////////////////////
-//# More new enhanced methods
+//# New enhanced methods
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
