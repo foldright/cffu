@@ -1,11 +1,5 @@
 # <div align="center"><a href="#dummy"><img src="https://github.com/foldright/cffu/assets/1063891/124658cd-025f-471e-8da1-7eea0e482915" alt="🦝 CompletableFuture Fu (CF-Fu)"></a></div>
 
-> 🚧 项目还在开发中，发布了`v0.x`版本： [![Maven Central](https://img.shields.io/maven-central/v/io.foldright/cffu?logo=apache-maven&label=cffu&logoColor=white)](https://central.sonatype.com/artifact/io.foldright/cffu/0.9.0/versions)
->
-> 工作项列表及其进展，参见 [issue 6](https://github.com/foldright/cffu/issues/6)。
-
-----------------------------------------
-
 <p align="center">
 <a href="https://github.com/foldright/cffu/actions/workflows/fast_ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/fast_ci.yaml?branch=main&logo=github&logoColor=white&label=fast ci" alt="Github Workflow Build Status"></a>
 <a href="https://github.com/foldright/cffu/actions/workflows/ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/ci.yaml?branch=main&logo=github&logoColor=white&label=strong ci" alt="Github Workflow Build Status"></a>
@@ -567,18 +561,18 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>0.9.9</version>
+      <version>1.0.0-Alpha1</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu:0.9.9")
+    implementation("io.foldright:cffu:1.0.0-Alpha1")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu:0.9.9'
+    implementation 'io.foldright:cffu:1.0.0-Alpha1'
     ```
 - `cffu Kotlin`支持库:
   - For `Maven` projects:
@@ -587,18 +581,18 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-kotlin</artifactId>
-      <version>0.9.9</version>
+      <version>1.0.0-Alpha1</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu-kotlin:0.9.9")
+    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha1")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu-kotlin:0.9.9'
+    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha1'
     ```
 - `cffu bom`:
   - For `Maven` projects:
@@ -607,7 +601,7 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-bom</artifactId>
-      <version>0.9.9</version>
+      <version>1.0.0-Alpha1</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -616,11 +610,11 @@ public class ConcurrencyStrategyDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation(platform("io.foldright:cffu-bom:0.9.9"))
+    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha1"))
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation platform('io.foldright:cffu-bom:0.9.9')
+    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha1')
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local)的[`cffu executor wrapper SPI`实现](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -629,7 +623,7 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>0.9.9</version>
+      <version>1.0.0-Alpha1</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -637,11 +631,11 @@ public class ConcurrencyStrategyDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:0.9.9")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha1")
     ```
     ```groovy
     // Gradle Groovy DSL
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:0.9.9'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha1'
     ```
 
 # 📚 更多资料

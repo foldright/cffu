@@ -10,7 +10,7 @@
 	-->
 	<groupId>io.foldright</groupId>
 	<artifactId>cffu-bom</artifactId>
-	<version>0.9.x-SNAPSHOT</version>
+	<version>1.x-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
 	<description>${parent.artifactId}</description>
