@@ -1,15 +1,15 @@
 package io.foldright.cffu;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 
 /**
  * Exception indicates that NO cfs({@link Cffu} / {@link CompletableFuture}) are provided
  * for methods require cf arguments.
  *
- * @see CffuFactory#anyOfSuccess(Cffu[])
- * @see CffuFactory#anyOfSuccess(CompletableFuture[])
- * @see CompletableFutureUtils#anyOfSuccess(CompletableFuture[])
+ * @see CffuFactory#anyOfSuccess(CompletionStage[])
+ * @see CompletableFutureUtils#anyOfSuccess(CompletionStage[])
  */
 @SuppressWarnings("serial")
 public class NoCfsProvidedException extends RuntimeException {

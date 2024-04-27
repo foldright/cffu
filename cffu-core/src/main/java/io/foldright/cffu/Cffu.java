@@ -567,34 +567,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //# convenient `allTupleOf` methods:
     //  providing these method is convenient for method chaining
     //
-    //    - allTupleOf(Cffu...)
-    //    - allTupleOf(CompletableFuture...)
-    //    - allTupleOfFastFail(Cffu...)
-    //    - allTupleOfFastFail(CompletableFuture...)
+    //    - allTupleOf(CompletionStage...)
+    //    - allTupleOfFastFail(CompletionStage...)
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * This method is the same as {@link CffuFactory#allTupleOf(Cffu, Cffu)},
-     * providing this method is convenient for method chaining.
-     * <p>
-     * Calling this method
-     * <p>
-     * {@code allTuple = cffu.allTupleOf(cffu2);}
-     * <p>
-     * is the same as:
-     * <p>
-     * {@code allTuple  = cffu.cffuFactory().allTupleOf(cffu, cffu2);}
-     *
-     * @return the new Cffu
-     * @see CffuFactory#allTupleOf(Cffu, Cffu)
-     */
-    @Contract(pure = true)
-    public <T2> Cffu<Tuple2<T, T2>> allTupleOf(Cffu<T2> cf2) {
-        return fac.allTupleOf(this, cf2);
-    }
-
-    /**
-     * This method is the same as {@link CffuFactory#allTupleOf(CompletableFuture, CompletableFuture)},
+     * This method is the same as {@link CffuFactory#allTupleOf(CompletionStage, CompletionStage)},
      * providing this method is convenient for method chaining.
      * <p>
      * Calling this method
@@ -603,38 +581,18 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * is the same as:
      * <p>
-     * {@code allTuple = cffu.cffuFactory().allTupleOf(cffu.toCompletableFuture(), cf2);}
+     * {@code allTuple = cffu.cffuFactory().allTupleOf(cffu, cf2);}
      *
      * @return the new Cffu
-     * @see CffuFactory#allTupleOf(CompletableFuture, CompletableFuture)
+     * @see CffuFactory#allTupleOf(CompletionStage, CompletionStage)
      */
     @Contract(pure = true)
-    public <T2> Cffu<Tuple2<T, T2>> allTupleOf(CompletableFuture<T2> cf2) {
-        return fac.allTupleOf(toCompletableFuture(), cf2);
+    public <T2> Cffu<Tuple2<T, T2>> allTupleOf(CompletionStage<? extends T2> cf2) {
+        return fac.allTupleOf(cf, cf2);
     }
 
     /**
-     * This method is the same as {@link CffuFactory#allTupleOfFastFail(Cffu, Cffu)},
-     * providing this method is convenient for method chaining.
-     * <p>
-     * Calling this method
-     * <p>
-     * {@code allTuple = cffu.allTupleOfFastFail(cffu2);}
-     * <p>
-     * is the same as:
-     * <p>
-     * {@code allTuple = cffu.cffuFactory().allTupleOfFastFail(cffu, cffu2);}
-     *
-     * @return the new Cffu
-     * @see CffuFactory#allTupleOfFastFail(Cffu, Cffu)
-     */
-    @Contract(pure = true)
-    public <T2> Cffu<Tuple2<T, T2>> allTupleOfFastFail(Cffu<T2> cf2) {
-        return fac.allTupleOfFastFail(this, cf2);
-    }
-
-    /**
-     * This method is the same as {@link CffuFactory#allTupleOfFastFail(CompletableFuture, CompletableFuture)},
+     * This method is the same as {@link CffuFactory#allTupleOfFastFail(CompletionStage, CompletionStage)},
      * providing this method is convenient for method chaining.
      * <p>
      * Calling this method
@@ -643,38 +601,18 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * is the same as:
      * <p>
-     * {@code allTuple = cffu.cffuFactory().allTupleOfFastFail(cffu.toCompletableFuture(), cf2);}
+     * {@code allTuple = cffu.cffuFactory().allTupleOfFastFail(cffu, cf2);}
      *
      * @return the new Cffu
-     * @see CffuFactory#allTupleOfFastFail(CompletableFuture, CompletableFuture)
+     * @see CffuFactory#allTupleOfFastFail(CompletionStage, CompletionStage)
      */
     @Contract(pure = true)
-    public <T2> Cffu<Tuple2<T, T2>> allTupleOfFastFail(CompletableFuture<T2> cf2) {
-        return fac.allTupleOfFastFail(toCompletableFuture(), cf2);
+    public <T2> Cffu<Tuple2<T, T2>> allTupleOfFastFail(CompletionStage<? extends T2> cf2) {
+        return fac.allTupleOfFastFail(cf, cf2);
     }
 
     /**
-     * This method is the same as {@link CffuFactory#allTupleOf(Cffu, Cffu, Cffu)},
-     * providing this method is convenient for method chaining.
-     * <p>
-     * Calling this method
-     * <p>
-     * {@code allTuple = cffu.allTupleOf(cffu2, cffu3);}
-     * <p>
-     * is the same as:
-     * <p>
-     * {@code allTuple = cffu.cffuFactory().allTupleOf(cffu, cffu2, cffu3);}
-     *
-     * @return the new Cffu
-     * @see CffuFactory#allTupleOf(Cffu, Cffu, Cffu)
-     */
-    @Contract(pure = true)
-    public <T2, T3> Cffu<Tuple3<T, T2, T3>> allTupleOf(Cffu<T2> cf2, Cffu<T3> cf3) {
-        return fac.allTupleOf(this, cf2, cf3);
-    }
-
-    /**
-     * This method is the same as {@link CffuFactory#allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture)},
+     * This method is the same as {@link CffuFactory#allTupleOf(CompletionStage, CompletionStage, CompletionStage)},
      * providing this method is convenient for method chaining.
      * <p>
      * Calling this method
@@ -683,38 +621,19 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * is the same as:
      * <p>
-     * {@code allTuple = cffu.cffuFactory().allTupleOf(cffu.toCompletableFuture(), cf2, cf3);}
+     * {@code allTuple = cffu.cffuFactory().allTupleOf(cffu, cf2, cf3);}
      *
      * @return the new Cffu
-     * @see CffuFactory#allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see CffuFactory#allTupleOf(CompletionStage, CompletionStage, CompletionStage)
      */
     @Contract(pure = true)
-    public <T2, T3> Cffu<Tuple3<T, T2, T3>> allTupleOf(CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
-        return fac.allTupleOf(toCompletableFuture(), cf2, cf3);
+    public <T2, T3> Cffu<Tuple3<T, T2, T3>> allTupleOf(
+            CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
+        return fac.allTupleOf(cf, cf2, cf3);
     }
 
     /**
-     * This method is the same as {@link CffuFactory#allTupleOfFastFail(Cffu, Cffu, Cffu)},
-     * providing this method is convenient for method chaining.
-     * <p>
-     * Calling this method
-     * <p>
-     * {@code allTuple = cffu.allTupleOfFastFail(cffu2, cffu3);}
-     * <p>
-     * is the same as:
-     * <p>
-     * {@code allTuple = cffu.cffuFactory().allTupleOfFastFail(cffu, cffu2, cffu3);}
-     *
-     * @return the new Cffu
-     * @see CffuFactory#allTupleOfFastFail(Cffu, Cffu, Cffu)
-     */
-    @Contract(pure = true)
-    public <T2, T3> Cffu<Tuple3<T, T2, T3>> allTupleOfFastFail(Cffu<T2> cf2, Cffu<T3> cf3) {
-        return fac.allTupleOfFastFail(this, cf2, cf3);
-    }
-
-    /**
-     * This method is the same as {@link CffuFactory#allTupleOfFastFail(CompletableFuture, CompletableFuture, CompletableFuture)},
+     * This method is the same as {@link CffuFactory#allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage)},
      * providing this method is convenient for method chaining.
      * <p>
      * Calling this method
@@ -723,38 +642,19 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * is the same as:
      * <p>
-     * {@code allTuple = cffu.cffuFactory().allTupleOfFastFail(cffu.toCompletableFuture(), cf2, cf3);}
+     * {@code allTuple = cffu.cffuFactory().allTupleOfFastFail(cffu, cf2, cf3);}
      *
      * @return the new Cffu
-     * @see CffuFactory#allTupleOfFastFail(CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see CffuFactory#allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage)
      */
     @Contract(pure = true)
-    public <T2, T3> Cffu<Tuple3<T, T2, T3>> allTupleOfFastFail(CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
-        return fac.allTupleOfFastFail(toCompletableFuture(), cf2, cf3);
+    public <T2, T3> Cffu<Tuple3<T, T2, T3>> allTupleOfFastFail(
+            CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
+        return fac.allTupleOfFastFail(cf, cf2, cf3);
     }
 
     /**
-     * This method is the same as {@link CffuFactory#allTupleOf(Cffu, Cffu, Cffu, Cffu)},
-     * providing this method is convenient for method chaining.
-     * <p>
-     * Calling this method
-     * <p>
-     * {@code allTuple = cffu.allTupleOf(cffu2, cffu3, cffu4);}
-     * <p>
-     * is the same as:
-     * <p>
-     * {@code allTuple = cffu.cffuFactory().allTupleOf(cffu, cffu2, cffu3, cffu4);}
-     *
-     * @return the new Cffu
-     * @see CffuFactory#allTupleOf(Cffu, Cffu, Cffu, Cffu)
-     */
-    @Contract(pure = true)
-    public <T2, T3, T4> Cffu<Tuple4<T, T2, T3, T4>> allTupleOf(Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4) {
-        return fac.allTupleOf(this, cf2, cf3, cf4);
-    }
-
-    /**
-     * This method is the same as {@link CffuFactory#allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)},
+     * This method is the same as {@link CffuFactory#allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage)},
      * providing this method is convenient for method chaining.
      * <p>
      * Calling this method
@@ -763,39 +663,19 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * is the same as:
      * <p>
-     * {@code allTuple = cffu.cffuFactory().allTupleOf(cffu.toCompletableFuture(), cf2, cf3, cf4);}
+     * {@code allTuple = cffu.cffuFactory().allTupleOf(cffu, cf2, cf3, cf4);}
      *
      * @return the new Cffu
-     * @see CffuFactory#allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see CffuFactory#allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage)
      */
     @Contract(pure = true)
     public <T2, T3, T4> Cffu<Tuple4<T, T2, T3, T4>> allTupleOf(
-            CompletableFuture<T2> cf2, CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
-        return fac.allTupleOf(toCompletableFuture(), cf2, cf3, cf4);
+            CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
+        return fac.allTupleOf(cf, cf2, cf3, cf4);
     }
 
     /**
-     * This method is the same as {@link CffuFactory#allTupleOfFastFail(Cffu, Cffu, Cffu, Cffu)},
-     * providing this method is convenient for method chaining.
-     * <p>
-     * Calling this method
-     * <p>
-     * {@code allTuple = cffu.allTupleOfFastFail(cffu2, cffu3, cffu4);}
-     * <p>
-     * is the same as:
-     * <p>
-     * {@code allTuple = cffu.cffuFactory().allTupleOfFastFail(cffu, cffu2, cffu3, cffu4);}
-     *
-     * @return the new Cffu
-     * @see CffuFactory#allTupleOfFastFail(Cffu, Cffu, Cffu, Cffu)
-     */
-    @Contract(pure = true)
-    public <T2, T3, T4> Cffu<Tuple4<T, T2, T3, T4>> allTupleOfFastFail(Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4) {
-        return fac.allTupleOfFastFail(this, cf2, cf3, cf4);
-    }
-
-    /**
-     * This method is the same as {@link CffuFactory#allTupleOfFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)},
+     * This method is the same as {@link CffuFactory#allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage)},
      * providing this method is convenient for method chaining.
      * <p>
      * Calling this method
@@ -804,40 +684,19 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * is the same as:
      * <p>
-     * {@code allTuple = cffu.cffuFactory().allTupleOfFastFail(cffu.toCompletableFuture(), cf2, cf3, cf4);}
+     * {@code allTuple = cffu.cffuFactory().allTupleOfFastFail(cffu, cf2, cf3, cf4);}
      *
      * @return the new Cffu
-     * @see CffuFactory#allTupleOfFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see CffuFactory#allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage)
      */
     @Contract(pure = true)
     public <T2, T3, T4> Cffu<Tuple4<T, T2, T3, T4>> allTupleOfFastFail(
-            CompletableFuture<T2> cf2, CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
-        return fac.allTupleOfFastFail(toCompletableFuture(), cf2, cf3, cf4);
+            CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
+        return fac.allTupleOfFastFail(cf, cf2, cf3, cf4);
     }
 
     /**
-     * This method is the same as {@link CffuFactory#allTupleOf(Cffu, Cffu, Cffu, Cffu, Cffu)},
-     * providing this method is convenient for method chaining.
-     * <p>
-     * Calling this method
-     * <p>
-     * {@code allTuple = cffu.allTupleOf(cffu2, cffu3, cffu4, cffu5);}
-     * <p>
-     * is the same as:
-     * <p>
-     * {@code allTuple = cffu.cffuFactory().allTupleOf(cffu, cffu2, cffu3, cffu4, cffu5);}
-     *
-     * @return the new Cffu
-     * @see CffuFactory#allTupleOf(Cffu, Cffu, Cffu, Cffu, Cffu)
-     */
-    @Contract(pure = true)
-    public <T2, T3, T4, T5> Cffu<Tuple5<T, T2, T3, T4, T5>> allTupleOf(
-            Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4, Cffu<T5> cf5) {
-        return fac.allTupleOf(this, cf2, cf3, cf4, cf5);
-    }
-
-    /**
-     * This method is the same as {@link CffuFactory#allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)},
+     * This method is the same as {@link CffuFactory#allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)},
      * providing this method is convenient for method chaining.
      * <p>
      * Calling this method
@@ -846,40 +705,20 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * is the same as:
      * <p>
-     * {@code allTuple = cffu.cffuFactory().allTupleOf(cffu.toCompletableFuture(), cf2, cf3, cf4, cf5);}
+     * {@code allTuple = cffu.cffuFactory().allTupleOf(cffu, cf2, cf3, cf4, cf5);}
      *
      * @return the new Cffu
-     * @see CffuFactory#allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see CffuFactory#allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
      */
     @Contract(pure = true)
     public <T2, T3, T4, T5> Cffu<Tuple5<T, T2, T3, T4, T5>> allTupleOf(
-            CompletableFuture<T2> cf2, CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
-        return fac.allTupleOf(toCompletableFuture(), cf2, cf3, cf4, cf5);
+            CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
+            CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
+        return fac.allTupleOf(cf, cf2, cf3, cf4, cf5);
     }
 
     /**
-     * This method is the same as {@link CffuFactory#allTupleOfFastFail(Cffu, Cffu, Cffu, Cffu, Cffu)},
-     * providing this method is convenient for method chaining.
-     * <p>
-     * Calling this method
-     * <p>
-     * {@code allTuple = cffu.allTupleOfFastFail(cffu2, cffu3, cffu4, cffu5);}
-     * <p>
-     * is the same as:
-     * <p>
-     * {@code allTuple = cffu.cffuFactory().allTupleOfFastFail(cffu, cffu2, cffu3, cffu4, cffu5);}
-     *
-     * @return the new Cffu
-     * @see CffuFactory#allTupleOfFastFail(Cffu, Cffu, Cffu, Cffu, Cffu)
-     */
-    @Contract(pure = true)
-    public <T2, T3, T4, T5> Cffu<Tuple5<T, T2, T3, T4, T5>> allTupleOfFastFail(
-            Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4, Cffu<T5> cf5) {
-        return fac.allTupleOfFastFail(this, cf2, cf3, cf4, cf5);
-    }
-
-    /**
-     * This method is the same as {@link CffuFactory#allTupleOfFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)},
+     * This method is the same as {@link CffuFactory#allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)},
      * providing this method is convenient for method chaining.
      * <p>
      * Calling this method
@@ -888,15 +727,16 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * is the same as:
      * <p>
-     * {@code allTuple = cffu.cffuFactory().allTupleOfFastFail(cffu.toCompletableFuture(), cf2, cf3, cf4, cf5);}
+     * {@code allTuple = cffu.cffuFactory().allTupleOfFastFail(cffu, cf2, cf3, cf4, cf5);}
      *
      * @return the new Cffu
-     * @see CffuFactory#allTupleOfFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see CffuFactory#allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
      */
     @Contract(pure = true)
     public <T2, T3, T4, T5> Cffu<Tuple5<T, T2, T3, T4, T5>> allTupleOfFastFail(
-            CompletableFuture<T2> cf2, CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
-        return fac.allTupleOfFastFail(toCompletableFuture(), cf2, cf3, cf4, cf5);
+            CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
+            CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
+        return fac.allTupleOfFastFail(cf, cf2, cf3, cf4, cf5);
     }
 
     ////////////////////////////////////////////////////////////////////////////////

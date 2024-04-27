@@ -47,8 +47,8 @@ import java.util.function.Function
  * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
-fun Collection<CompletableFuture<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
-    CompletableFuture.allOf(*this.toTypedArray())
+fun Collection<CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
+    CompletableFuture.allOf(*this.map { it.toCompletableFuture() }.toTypedArray())
 
 /**
  * Returns a new CompletableFuture that is completed when all the given CompletableFutures complete.
@@ -69,8 +69,10 @@ fun Collection<CompletableFuture<*>>.allOfCompletableFuture(): CompletableFuture
  * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
-fun Array<out CompletableFuture<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
-    CompletableFuture.allOf(*this)
+@Suppress("UNCHECKED_CAST")
+fun Array<out CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
+    CompletableFuture.allOf(*(this as Array<CompletionStage<Any>>).toCompletableFuture())
+
 
 /**
  * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
@@ -89,7 +91,7 @@ fun Array<out CompletableFuture<*>>.allOfCompletableFuture(): CompletableFuture<
  * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
-fun Collection<CompletableFuture<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
+fun Collection<CompletionStage<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
     CompletableFutureUtils.allOfFastFail(*this.toTypedArray())
 
 /**
@@ -109,7 +111,7 @@ fun Collection<CompletableFuture<*>>.allOfFastFailCompletableFuture(): Completab
  * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
-fun Array<out CompletableFuture<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
+fun Array<out CompletionStage<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
     CompletableFutureUtils.allOfFastFail(*this)
 
 /**
@@ -128,7 +130,7 @@ fun Array<out CompletableFuture<*>>.allOfFastFailCompletableFuture(): Completabl
  * @see allResultsOfCffu
  * @see allOfCompletableFuture
  */
-fun <T> Collection<CompletableFuture<out T>>.allResultsOfCompletableFuture(): CompletableFuture<List<T>> =
+fun <T> Collection<CompletionStage<out T>>.allResultsOfCompletableFuture(): CompletableFuture<List<T>> =
     CompletableFutureUtils.allResultsOf(*this.toTypedArray())
 
 /**
@@ -147,7 +149,7 @@ fun <T> Collection<CompletableFuture<out T>>.allResultsOfCompletableFuture(): Co
  * @see allResultsOfCffu
  * @see allOfCompletableFuture
  */
-fun <T> Array<out CompletableFuture<out T>>.allResultsOfCompletableFuture(): CompletableFuture<List<T>> =
+fun <T> Array<out CompletionStage<out T>>.allResultsOfCompletableFuture(): CompletableFuture<List<T>> =
     CompletableFutureUtils.allResultsOf(*this)
 
 /**
@@ -167,7 +169,7 @@ fun <T> Array<out CompletableFuture<out T>>.allResultsOfCompletableFuture(): Com
  * @see allResultsOfFastFailCffu
  * @see allOfFastFailCompletableFuture
  */
-fun <T> Collection<CompletableFuture<out T>>.allResultsOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
+fun <T> Collection<CompletionStage<out T>>.allResultsOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
     CompletableFutureUtils.allResultsOfFastFail(*this.toTypedArray())
 
 /**
@@ -187,7 +189,7 @@ fun <T> Collection<CompletableFuture<out T>>.allResultsOfFastFailCompletableFutu
  * @see allResultsOfFastFailCffu
  * @see allOfFastFailCompletableFuture
  */
-fun <T> Array<out CompletableFuture<out T>>.allResultsOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
+fun <T> Array<out CompletionStage<out T>>.allResultsOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
     CompletableFutureUtils.allResultsOfFastFail(*this)
 
 ////////////////////////////////////////
@@ -208,7 +210,7 @@ fun <T> Array<out CompletableFuture<out T>>.allResultsOfFastFailCompletableFutur
  *
  * @see anyOfCffu
  */
-fun <T> Collection<CompletableFuture<out T>>.anyOfCompletableFuture(): CompletableFuture<T> =
+fun <T> Collection<CompletionStage<out T>>.anyOfCompletableFuture(): CompletableFuture<T> =
     CompletableFutureUtils.anyOf(*this.toTypedArray())
 
 /**
@@ -222,7 +224,7 @@ fun <T> Collection<CompletableFuture<out T>>.anyOfCompletableFuture(): Completab
  *
  * @see anyOfCffu
  */
-fun <T> Array<out CompletableFuture<out T>>.anyOfCompletableFuture(): CompletableFuture<T> =
+fun <T> Array<out CompletionStage<out T>>.anyOfCompletableFuture(): CompletableFuture<T> =
     CompletableFutureUtils.anyOf(*this)
 
 /**
@@ -239,7 +241,7 @@ fun <T> Array<out CompletableFuture<out T>>.anyOfCompletableFuture(): Completabl
  * @see anyOfCompletableFuture
  * @see CompletableFutureUtils.anyOfSuccess
  */
-fun <T> Collection<CompletableFuture<out T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
+fun <T> Collection<CompletionStage<out T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
     CompletableFutureUtils.anyOfSuccess(*this.toTypedArray())
 
 /**
@@ -256,7 +258,7 @@ fun <T> Collection<CompletableFuture<out T>>.anyOfSuccessCompletableFuture(): Co
  * @see anyOfCompletableFuture
  * @see CompletableFutureUtils.anyOfSuccess
  */
-fun <T> Array<out CompletableFuture<out T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
+fun <T> Array<out CompletionStage<out T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
     CompletableFutureUtils.anyOfSuccess(*this)
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -446,7 +448,7 @@ fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
  * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
-fun <T1, T2> CompletableFuture<T1>.allTupleOf(cf2: CompletableFuture<T2>): CompletableFuture<Tuple2<T1, T2>> =
+fun <T1, T2> CompletionStage<T1>.allTupleOf(cf2: CompletionStage<T2>): CompletableFuture<Tuple2<T1, T2>> =
     CompletableFutureUtils.allTupleOf(this, cf2)
 
 /**
@@ -461,7 +463,7 @@ fun <T1, T2> CompletableFuture<T1>.allTupleOf(cf2: CompletableFuture<T2>): Compl
  * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
-fun <T1, T2> CompletableFuture<T1>.allTupleOfFastFail(cf2: CompletableFuture<T2>): CompletableFuture<Tuple2<T1, T2>> =
+fun <T1, T2> CompletionStage<T1>.allTupleOfFastFail(cf2: CompletionStage<T2>): CompletableFuture<Tuple2<T1, T2>> =
     CompletableFutureUtils.allTupleOfFastFail(this, cf2)
 
 /**
@@ -475,8 +477,8 @@ fun <T1, T2> CompletableFuture<T1>.allTupleOfFastFail(cf2: CompletableFuture<T2>
  * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
-fun <T1, T2, T3> CompletableFuture<T1>.allTupleOf(
-    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>
+fun <T1, T2, T3> CompletionStage<T1>.allTupleOf(
+    cf2: CompletionStage<T2>, cf3: CompletionStage<T3>
 ): CompletableFuture<Tuple3<T1, T2, T3>> =
     CompletableFutureUtils.allTupleOf(this, cf2, cf3)
 
@@ -492,8 +494,8 @@ fun <T1, T2, T3> CompletableFuture<T1>.allTupleOf(
  * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
-fun <T1, T2, T3> CompletableFuture<T1>.allTupleOfFastFail(
-    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>
+fun <T1, T2, T3> CompletionStage<T1>.allTupleOfFastFail(
+    cf2: CompletionStage<T2>, cf3: CompletionStage<T3>
 ): CompletableFuture<Tuple3<T1, T2, T3>> =
     CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3)
 
@@ -508,8 +510,8 @@ fun <T1, T2, T3> CompletableFuture<T1>.allTupleOfFastFail(
  * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
-fun <T1, T2, T3, T4> CompletableFuture<T1>.allTupleOf(
-    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>, cf4: CompletableFuture<T4>
+fun <T1, T2, T3, T4> CompletionStage<T1>.allTupleOf(
+    cf2: CompletionStage<T2>, cf3: CompletionStage<T3>, cf4: CompletionStage<T4>
 ): CompletableFuture<Tuple4<T1, T2, T3, T4>> =
     CompletableFutureUtils.allTupleOf(this, cf2, cf3, cf4)
 
@@ -525,8 +527,8 @@ fun <T1, T2, T3, T4> CompletableFuture<T1>.allTupleOf(
  * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
-fun <T1, T2, T3, T4> CompletableFuture<T1>.allTupleOfFastFail(
-    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>, cf4: CompletableFuture<T4>
+fun <T1, T2, T3, T4> CompletionStage<T1>.allTupleOfFastFail(
+    cf2: CompletionStage<T2>, cf3: CompletionStage<T3>, cf4: CompletionStage<T4>
 ): CompletableFuture<Tuple4<T1, T2, T3, T4>> =
     CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3, cf4)
 
@@ -541,9 +543,9 @@ fun <T1, T2, T3, T4> CompletableFuture<T1>.allTupleOfFastFail(
  * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
-fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.allTupleOf(
-    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>,
-    cf4: CompletableFuture<T4>, cf5: CompletableFuture<T5>
+fun <T1, T2, T3, T4, T5> CompletionStage<T1>.allTupleOf(
+    cf2: CompletionStage<T2>, cf3: CompletionStage<T3>,
+    cf4: CompletionStage<T4>, cf5: CompletionStage<T5>
 ): CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> =
     CompletableFutureUtils.allTupleOf(this, cf2, cf3, cf4, cf5)
 
@@ -559,9 +561,9 @@ fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.allTupleOf(
  * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
-fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.allTupleOfFastFail(
-    cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>,
-    cf4: CompletableFuture<T4>, cf5: CompletableFuture<T5>
+fun <T1, T2, T3, T4, T5> CompletionStage<T1>.allTupleOfFastFail(
+    cf2: CompletionStage<T2>, cf3: CompletionStage<T3>,
+    cf4: CompletionStage<T4>, cf5: CompletionStage<T5>
 ): CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> =
     CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3, cf4, cf5)
 

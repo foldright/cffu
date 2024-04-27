@@ -299,251 +299,93 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu that is completed when all the given Cffus complete.
-     * If any of the given Cffu complete exceptionally, then the returned
+     * Returns a new Cffu that is completed when all the given stages complete.
+     * If any of the given stages complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.<br>
-     * Otherwise, the results, if any, of the given Cffus are not reflected in
+     * Otherwise, the results, if any, of the given stages are not reflected in
      * the returned Cffu({@code Cffu<Void>}), but may be obtained by inspecting them individually.<br>
-     * If no Cffus are provided, returns a Cffu completed with the value {@code null}.
+     * If no stages are provided, returns a Cffu completed with the value {@code null}.
      * <p>
-     * if you need the results of given Cffus, prefer below methods:
+     * if you need the results of given stages, prefer below methods:
      * <ol>
-     * <li>{@link #allResultsOf(Cffu[])}
-     * <li>{@link #allTupleOf(Cffu, Cffu)} / {@link #allTupleOf(Cffu, Cffu, Cffu, Cffu, Cffu)}
-     *     (provided overloaded methods with 2~5 input)
-     * </ol>
-     * <p>
-     * Among the applications of this method is to await completion of a set of
-     * independent Cffus before continuing a program,
-     * as in: {@code CffuFactory.allOf(c1, c2, c3).join();}.
-     *
-     * @param cfs the Cffus
-     * @return a new Cffu that is completed when all the given Cffus complete
-     * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see #allResultsOf(Cffu[])
-     * @see #allTupleOf(Cffu, Cffu)
-     * @see #allTupleOf(Cffu, Cffu, Cffu)
-     * @see #allTupleOf(Cffu, Cffu, Cffu, Cffu)
-     * @see #allTupleOf(Cffu, Cffu, Cffu, Cffu, Cffu)
-     * @see CompletableFuture#allOf(CompletableFuture[])
-     */
-    @Contract(pure = true)
-    @SuppressWarnings("unchecked")
-    public Cffu<Void> allOf(Cffu<?>... cfs) {
-        return allOf(toCompletableFutureArray((Cffu<Object>[]) cfs));
-    }
-
-    /**
-     * Returns a new Cffu that is completed when all the given CompletableFutures complete.
-     * If any of the given CompletableFuture complete exceptionally, then the returned
-     * Cffu also does so, with a CompletionException holding this exception as its cause.<br>
-     * Otherwise, the results, if any, of the given CompletableFutures are not reflected in
-     * the returned Cffu({@code Cffu<Void>}), but may be obtained by inspecting them individually.<br>
-     * If no CompletableFutures are provided, returns a Cffu completed with the value {@code null}.
-     * <p>
-     * This method is the same as {@link #allOf(Cffu[])} with overloaded argument type {@link CompletableFuture}.
-     * <p>
-     * if you need the results of given CompletableFutures, prefer below methods:
-     * <ol>
-     * <li>{@link #allResultsOf(CompletableFuture[])}
-     * <li>{@link #allTupleOf(CompletableFuture, CompletableFuture)} /
-     *     {@link #allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
+     * <li>{@link #allResultsOf(CompletionStage[])}
+     * <li>{@link #allTupleOf(CompletionStage, CompletionStage)} /
+     *     {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      *     (provided overloaded methods with 2~5 input)
      * </ol>
      *
-     * @param cfs the CompletableFutures
-     * @return a new Cffu that is completed when all the given CompletableFutures complete
+     * @param cfs the stages
+     * @return a new Cffu that is completed when all the given stages complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see #allOf(Cffu[])
-     * @see #allResultsOf(CompletableFuture[])
-     * @see #allTupleOf(CompletableFuture, CompletableFuture)
-     * @see #allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture)
-     * @see #allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
-     * @see #allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see #allResultsOf(CompletionStage[])
+     * @see #allTupleOf(CompletionStage, CompletionStage)
+     * @see #allTupleOf(CompletionStage, CompletionStage, CompletionStage)
+     * @see #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage)
+     * @see #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
-    public Cffu<Void> allOf(CompletableFuture<?>... cfs) {
-        return new0(CompletableFuture.allOf(cfs));
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public Cffu<Void> allOf(CompletionStage<?>... cfs) {
+        return new0(CompletableFuture.allOf(toCompletableFutureArray((CompletionStage[]) cfs)));
     }
 
     /**
-     * Provided this overloaded method just for resolving "allOf is ambiguous" problem
-     * when call {@code allOf} with empty arguments: {@code cffuFactory.allOf()}.
-     *
-     * @see #allOf(Cffu[])
-     * @see #allOf(CompletableFuture[])
-     */
-    @Contract(pure = true)
-    public Cffu<Void> allOf() {
-        return dummy();
-    }
-
-    /**
-     * Returns a new Cffu that is successful when all the given Cffus success,
-     * the results({@code Cffu<Void>}) of the given Cffus are not reflected
+     * Returns a new Cffu that is successful when all the given stages success,
+     * the results({@code Cffu<Void>}) of the given stages are not reflected
      * in the returned Cffu, but may be obtained by inspecting them individually.
-     * If any of the given Cffus complete exceptionally, then the returned Cffu
-     * also does so *without* waiting other incomplete given Cffus,
+     * If any of the given stages complete exceptionally, then the returned Cffu
+     * also does so *without* waiting other incomplete given stages,
      * with a CompletionException holding this exception as its cause.
-     * If no Cffus are provided, returns a Cffu completed with the value {@code null}.
+     * If no stages are provided, returns a Cffu completed with the value {@code null}.
      *
-     * @param cfs the Cffus
-     * @return a new Cffu that is successful when all the given Cffus success
+     * @param cfs the stages
+     * @return a new Cffu that is successful when all the given stages success
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see CompletableFutureUtils#allOfFastFail(CompletableFuture[])
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see CompletableFutureUtils#allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
-    @SuppressWarnings("unchecked")
-    public Cffu<Void> allOfFastFail(Cffu<?>... cfs) {
-        return allOfFastFail(toCompletableFutureArray((Cffu<Object>[]) cfs));
-    }
-
-    /**
-     * Returns a new Cffu that is successful when all the given CompletableFutures success,
-     * the results({@code Cffu<Void>}) of the given CompletableFutures are not reflected
-     * in the returned Cffu, but may be obtained by inspecting them individually.
-     * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
-     * also does so *without* waiting other incomplete given CompletableFutures,
-     * with a CompletionException holding this exception as its cause.
-     * If no CompletableFutures are provided, returns a Cffu completed with the value {@code null}.
-     * <p>
-     * This method is the same as {@link #allOfFastFail(Cffu[])}
-     * except with overloaded argument type {@link CompletableFuture}.
-     *
-     * @param cfs the CompletableFutures
-     * @return a new Cffu that is successful when all the given CompletableFutures success
-     * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see #allOfFastFail(Cffu[])
-     * @see #allResultsOfFastFail(CompletableFuture[])
-     * @see CompletableFutureUtils#allOfFastFail(CompletableFuture[])
-     */
-    @Contract(pure = true)
-    public Cffu<Void> allOfFastFail(CompletableFuture<?>... cfs) {
+    public Cffu<Void> allOfFastFail(CompletionStage<?>... cfs) {
         return new0(CompletableFutureUtils.allOfFastFail(cfs));
     }
 
     /**
-     * Provided this overloaded method just for resolving "allOfFastFail is ambiguous" problem
-     * when call {@code allOfFastFail} with empty arguments: {@code cffuFactory.allOfFastFail()}.
-     *
-     * @see #allOfFastFail(Cffu[])
-     * @see #allOfFastFail(CompletableFuture[])
-     */
-    @Contract(pure = true)
-    public Cffu<Void> allOfFastFail() {
-        return new0(CompletableFutureUtils.allOfFastFail());
-    }
-
-    /**
-     * Returns a new Cffu with the results in the <strong>same order</strong> of all the given Cffus,
-     * the new Cffu is completed when all the given Cffus complete.
-     * Returns a new Cffu that is completed when all the given Cffus complete.
-     * If any of the given Cffus complete exceptionally, then the returned Cffu
+     * Returns a new Cffu with the results in the <strong>same order</strong> of all the given stages,
+     * the new Cffu is completed when all the given stages complete.
+     * If any of the given stages complete exceptionally, then the returned Cffu
      * also does so, with a CompletionException holding this exception as its cause.
-     * If no Cffus are provided, returns a Cffu completed with the value empty list.
-     * <p>
-     * This method is the same as {@link #allOf(Cffu[])}, except the returned Cffu contains the results of input Cffus.
+     * If no stages are provided, returns a Cffu completed with the value empty list.
      *
-     * @param cfs the Cffus
-     * @return a new Cffu that is completed when all the given Cffus complete
+     * @param cfs the stages
+     * @return a new Cffu that is completed when all the given stages complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see #allOf(Cffu[])
+     * @see #allResultsOf(CompletionStage[])
      */
     @Contract(pure = true)
     @SafeVarargs
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public final <T> Cffu<List<T>> allResultsOf(Cffu<? extends T>... cfs) {
-        return allResultsOf(toCompletableFutureArray((Cffu[]) cfs));
-    }
-
-    /**
-     * Returns a new Cffu with the results in the <strong>same order</strong> of all the given CompletableFutures,
-     * the new Cffu is completed when all the given CompletableFutures complete.
-     * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
-     * also does so, with a CompletionException holding this exception as its cause.
-     * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
-     * <p>
-     * This method is the same as {@link #allResultsOf(Cffu[])}
-     * except with overloaded argument type {@link CompletableFuture}.
-     *
-     * @param cfs the CompletableFutures
-     * @return a new Cffu that is completed when all the given CompletableFutures complete
-     * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see #allResultsOf(Cffu[])
-     */
-    @Contract(pure = true)
-    @SafeVarargs
-    public final <T> Cffu<List<T>> allResultsOf(CompletableFuture<? extends T>... cfs) {
+    public final <T> Cffu<List<T>> allResultsOf(CompletionStage<? extends T>... cfs) {
         return new0(CompletableFutureUtils.allResultsOf(cfs));
     }
 
     /**
-     * Provided this overloaded method just for resolving "allResultsOf is ambiguous" problem
-     * when call {@code allResultsOf} with empty arguments: {@code cffuFactory.allResultsOf()}.
-     *
-     * @see #allResultsOf(Cffu[])
-     * @see #allResultsOf(CompletableFuture[])
-     */
-    @Contract(pure = true)
-    public <T> Cffu<List<T>> allResultsOf() {
-        return new0(CompletableFutureUtils.allResultsOf());
-    }
-
-    /**
-     * Returns a new Cffu with the results in the <strong>same order</strong> of all the given Cffus,
-     * the new Cffu success when all the given Cffus success.
-     * If any of the given Cffus complete exceptionally, then the returned Cffu
-     * also does so *without* waiting other incomplete given Cffus,
+     * Returns a new Cffu with the results in the <strong>same order</strong> of all the given stages,
+     * the new Cffu success when all the given stages success.
+     * If any of the given stages complete exceptionally, then the returned Cffu
+     * also does so *without* waiting other incomplete given stages,
      * with a CompletionException holding this exception as its cause.
-     * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
+     * If no stages are provided, returns a Cffu completed with the value empty list.
      *
-     * @param cfs the CompletableFutures
-     * @return a new CompletableFuture that is successful when all the given CompletableFutures success
+     * @param cfs the stages
+     * @return a new Cffu that is successful when all the given stages success
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see CompletableFutureUtils#allOfFastFail(CompletableFuture[])
-     * @see #allResultsOfFastFail(Cffu[])
+     * @see CompletableFutureUtils#allOfFastFail(CompletionStage[])
+     * @see #allResultsOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     @SafeVarargs
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public final <T> Cffu<List<T>> allResultsOfFastFail(Cffu<? extends T>... cfs) {
-        return allResultsOfFastFail(toCompletableFutureArray((Cffu[]) cfs));
-    }
-
-    /**
-     * Returns a new Cffu with the results in the <strong>same order</strong> of all the given CompletableFutures,
-     * the new Cffu success when all the given CompletableFutures success.
-     * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
-     * also does so *without* waiting other incomplete given CompletableFutures,
-     * with a CompletionException holding this exception as its cause.
-     * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
-     * <p>
-     * This method is the same as {@link #allResultsOfFastFail(Cffu[])}
-     * except with overloaded argument type {@link CompletableFuture}.
-     *
-     * @param cfs the CompletableFutures
-     * @return a new CompletableFuture that is successful when all the given CompletableFutures success
-     * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see CompletableFutureUtils#allOfFastFail(CompletableFuture[])
-     * @see #allResultsOfFastFail(Cffu[])
-     */
-    @Contract(pure = true)
-    @SafeVarargs
-    public final <T> Cffu<List<T>> allResultsOfFastFail(CompletableFuture<? extends T>... cfs) {
+    public final <T> Cffu<List<T>> allResultsOfFastFail(CompletionStage<? extends T>... cfs) {
         return new0(CompletableFutureUtils.allResultsOfFastFail(cfs));
-    }
-
-    /**
-     * Provided this overloaded method just for resolving "allResultsOfFastFail is ambiguous" problem
-     * when call {@code allResultsOfFastFail} with empty arguments: {@code cffuFactory.allResultsOfFastFail()}.
-     *
-     * @see #allResultsOfFastFail(Cffu[])
-     * @see #allResultsOfFastFail(CompletableFuture[])
-     */
-    @Contract(pure = true)
-    public <T> Cffu<List<T>> allResultsOfFastFail() {
-        return new0(CompletableFutureUtils.allResultsOfFastFail());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -554,94 +396,39 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.<br>
+     * Returns a new Cffu that is completed when any of the given stages complete, with the same result.<br>
      * Otherwise, if it completed exceptionally, the returned Cffu also does so,
      * with a CompletionException holding this exception as its cause.<br>
-     * If no Cffus are provided, returns an incomplete Cffu.
+     * If no stages are provided, returns an incomplete Cffu.
      *
-     * @param cfs the Cffus
+     * @param cfs the stages
      * @return a new Cffu that is completed with the result
-     * or exception from any of the given Cffus when one completes
+     * or exception from any of the given stages when one completes
      * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #anyOf(CompletionStage[])
      * @see CompletableFuture#anyOf(CompletableFuture[])
      */
     @Contract(pure = true)
-    @SuppressWarnings("unchecked")
     @SafeVarargs
-    public final <T> Cffu<T> anyOf(Cffu<? extends T>... cfs) {
-        return anyOf(toCompletableFutureArray((Cffu<T>[]) cfs));
+    public final <T> Cffu<T> anyOf(CompletionStage<? extends T>... cfs) {
+        return new0(CompletableFutureUtils.anyOf(cfs));
     }
 
     /**
-     * This method is the same as {@link #anyOf(Cffu[])} except with overloaded argument type {@link CompletableFuture}.
-     *
-     * @param cfs the CompletableFutures
-     * @return a new Cffu that is completed with the result
-     * or exception from any of the given CompletableFutures when one completes
-     * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see #anyOf(Cffu[])
-     * @see CompletableFuture#anyOf(CompletableFuture[])
-     */
-    @Contract(pure = true)
-    @SuppressWarnings("unchecked")
-    @SafeVarargs
-    public final <T> Cffu<T> anyOf(CompletableFuture<? extends T>... cfs) {
-        return (Cffu<T>) new0(CompletableFuture.anyOf(cfs));
-    }
-
-    /**
-     * Provided this overloaded method just for resolving "anyOf is ambiguous" problem
-     * when call {@code anyOf} with empty arguments: {@code cffuFactory.anyOf()}.
-     *
-     * @see #anyOf(Cffu[])
-     * @see #anyOf(CompletableFuture[])
-     */
-    @Contract(pure = true)
-    public <T> Cffu<T> anyOf() {
-        return newIncompleteCffu();
-    }
-
-    /**
-     * Returns a new Cffu that is successful when any of the given Cffus success,
-     * with the same result. Otherwise, all the given Cffus complete exceptionally,
+     * Returns a new Cffu that is successful when any of the given stages success,
+     * with the same result. Otherwise, all the given stages complete exceptionally,
      * the returned Cffu also does so, with a CompletionException holding
-     * an exception from any of the given Cffu as its cause. If no Cffu are provided,
+     * an exception from any of the given stages as its cause. If no stages are provided,
      * returns a new Cffu that is already completed exceptionally
      * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
      *
-     * @param cfs the Cffus
-     * @return a new Cffu
-     * @throws NullPointerException if the array or any of its elements are {@code null}
-     */
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    @SafeVarargs
-    public final <T> Cffu<T> anyOfSuccess(Cffu<? extends T>... cfs) {
-        return (Cffu<T>) anyOfSuccess(toCompletableFutureArray((Cffu[]) cfs));
-    }
-
-    /**
-     * Returns a new Cffu that is successful when any of the given CompletableFutures success,
-     * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
-     * the returned Cffu also does so, with a CompletionException holding
-     * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
-     * returns a new Cffu that is already completed exceptionally
-     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
-     *
-     * @param cfs the CompletableFutures
+     * @param cfs the stages
      * @return a new Cffu
      * @throws NullPointerException if the array or any of its elements are {@code null}
      */
     @SafeVarargs
-    public final <T> Cffu<T> anyOfSuccess(CompletableFuture<? extends T>... cfs) {
+    public final <T> Cffu<T> anyOfSuccess(CompletionStage<? extends T>... cfs) {
         return new0(CompletableFutureUtils.anyOfSuccess(cfs));
-    }
-
-    /**
-     * Provided this overloaded method just for resolving "anyOfSuccess is ambiguous" problem
-     * when call {@code anyOfSuccess} with empty arguments: {@code cffuFactory.anyOfSuccess()}.
-     */
-    public <T> Cffu<T> anyOfSuccess() {
-        return new0(CompletableFutureUtils.anyOfSuccess());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -652,59 +439,19 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu that is completed when the given two Cffus complete.
-     * If any of the given Cffu complete exceptionally, then the returned
-     * Cffu also does so, with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #allResultsOf(Cffu[])}
-     * except with two inputs and return results as {@code Tuple2}.
-     *
-     * @return a new Cffu that is completed when the given two Cffus complete
-     * @throws NullPointerException if any input Cffus are {@code null}
-     * @see Cffu#allTupleOf(Cffu)
-     * @see #allResultsOf(Cffu[])
-     * @see #allOf(Cffu[])
-     */
-    @Contract(pure = true)
-    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOf(Cffu<T1> cf1, Cffu<T2> cf2) {
-        return allTupleOf(cf1.toCompletableFuture(), cf2.toCompletableFuture());
-    }
-
-    /**
      * Returns a new Cffu that is completed when the given two CompletableFutures complete.
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #allTupleOf(Cffu, Cffu)}
-     * except with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 2 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#allTupleOf(CompletableFuture)
-     * @see #allTupleOf(Cffu, Cffu)
-     * @see #allResultsOf(CompletableFuture[])
-     * @see #allOf(CompletableFuture[])
+     * @see Cffu#allTupleOf(CompletionStage)
+     * @see #allResultsOf(CompletionStage[])
+     * @see #allOf(CompletionStage[])
      */
     @Contract(pure = true)
-    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOf(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
+    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOf(CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
         return new0(CompletableFutureUtils.allTupleOf(cf1, cf2));
-    }
-
-    /**
-     * Returns a new Cffu that is successful when the given two Cffus success.
-     * If any of the given Cffus complete exceptionally, then the returned
-     * Cffu also does so *without* waiting other incomplete given Cffus,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new Cffu that is successful when the given two Cffus success
-     * @throws NullPointerException if any of the given Cffus are {@code null}
-     * @see Cffu#allTupleOfFastFail(Cffu)
-     * @see #allResultsOfFastFail(Cffu[])
-     * @see #allOfFastFail(Cffu[])
-     */
-    @Contract(pure = true)
-    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOfFastFail(Cffu<T1> cf1, Cffu<T2> cf2) {
-        return allTupleOfFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture());
     }
 
     /**
@@ -715,71 +462,30 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is successful when the given two CompletableFutures success
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#allTupleOfFastFail(CompletableFuture)
-     * @see #allTupleOfFastFail(Cffu, Cffu)
-     * @see #allResultsOfFastFail(CompletableFuture[])
-     * @see #allOfFastFail(CompletableFuture[])
+     * @see Cffu#allTupleOfFastFail(CompletionStage)
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
-    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOfFastFail(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
+    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOfFastFail(CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
         return new0(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2));
-    }
-
-    /**
-     * Returns a new Cffu that is completed when the given three Cffus complete.
-     * If any of the given Cffu complete exceptionally, then the returned
-     * Cffu also does so, with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #allResultsOf(Cffu[])}
-     * except with three inputs and return results as {@code Tuple3}.
-     *
-     * @return a new Cffu that is completed when the given three Cffus complete
-     * @throws NullPointerException if any input Cffus are {@code null}
-     * @see Cffu#allTupleOf(Cffu, Cffu)
-     * @see #allResultsOf(Cffu[])
-     * @see #allOf(Cffu[])
-     */
-    @Contract(pure = true)
-    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOf(Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3) {
-        return allTupleOf(cf1.toCompletableFuture(), cf2.toCompletableFuture(), cf3.toCompletableFuture());
     }
 
     /**
      * Returns a new Cffu that is completed when the given three CompletableFutures complete.
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #allTupleOf(Cffu, Cffu, Cffu)}
-     * except with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 3 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#allTupleOf(CompletableFuture, CompletableFuture)
-     * @see #allTupleOf(Cffu, Cffu, Cffu)
-     * @see #allResultsOf(CompletableFuture[])
-     * @see #allOf(CompletableFuture[])
+     * @see Cffu#allTupleOf(CompletionStage, CompletionStage)
+     * @see #allResultsOf(CompletionStage[])
+     * @see #allOf(CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOf(
-            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
         return new0(CompletableFutureUtils.allTupleOf(cf1, cf2, cf3));
-    }
-
-    /**
-     * Returns a new Cffu that is successful when the given three Cffus success.
-     * If any of the given Cffus complete exceptionally, then the returned
-     * Cffu also does so *without* waiting other incomplete given Cffus,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new Cffu that is successful when the given three Cffus success
-     * @throws NullPointerException if any of the given Cffus are {@code null}
-     * @see Cffu#allTupleOfFastFail(Cffu, Cffu)
-     * @see #allResultsOfFastFail(Cffu[])
-     * @see #allOfFastFail(Cffu[])
-     */
-    @Contract(pure = true)
-    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOfFastFail(Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3) {
-        return allTupleOfFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture(), cf3.toCompletableFuture());
     }
 
     /**
@@ -790,79 +496,34 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is successful when the given three CompletableFutures success
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#allTupleOfFastFail(CompletableFuture, CompletableFuture)
-     * @see #allTupleOfFastFail(Cffu, Cffu)
-     * @see #allResultsOfFastFail(CompletableFuture[])
-     * @see #allOfFastFail(CompletableFuture[])
+     * @see Cffu#allTupleOfFastFail(CompletionStage, CompletionStage)
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOfFastFail(
-            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
         return new0(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3));
-    }
-
-    /**
-     * Returns a new Cffu that is completed when the given 4 Cffus complete.
-     * If any of the given Cffu complete exceptionally, then the returned
-     * Cffu also does so, with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #allResultsOf(Cffu[])}
-     * except with 4 inputs and return results as {@code Tuple4}.
-     *
-     * @return a new Cffu that is completed when the given 4 Cffus complete
-     * @throws NullPointerException if any input Cffus are {@code null}
-     * @see Cffu#allTupleOf(Cffu, Cffu, Cffu)
-     * @see #allResultsOf(Cffu[])
-     * @see #allOf(Cffu[])
-     */
-    @Contract(pure = true)
-    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOf(
-            Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4) {
-        return allTupleOf(cf1.toCompletableFuture(), cf2.toCompletableFuture(),
-                cf3.toCompletableFuture(), cf4.toCompletableFuture());
     }
 
     /**
      * Returns a new Cffu that is completed when the given 4 CompletableFutures complete.
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #allTupleOf(Cffu, Cffu, Cffu, Cffu)}
-     * except with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 4 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture)
-     * @see #allTupleOf(Cffu, Cffu, Cffu, Cffu)
-     * @see #allResultsOf(CompletableFuture[])
-     * @see #allOf(CompletableFuture[])
+     * @see Cffu#allTupleOf(CompletionStage, CompletionStage, CompletionStage)
+     * @see #allResultsOf(CompletionStage[])
+     * @see #allOf(CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOf(
-            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
-            CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
         return new0(CompletableFutureUtils.allTupleOf(cf1, cf2, cf3, cf4));
     }
 
-
-    /**
-     * Returns a new Cffu that is successful when the given four Cffus success.
-     * If any of the given Cffus complete exceptionally, then the returned
-     * Cffu also does so *without* waiting other incomplete given Cffus,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new Cffu that is successful when the given four Cffus success
-     * @throws NullPointerException if any of the given Cffus are {@code null}
-     * @see Cffu#allTupleOfFastFail(Cffu, Cffu, Cffu)
-     * @see #allResultsOfFastFail(Cffu[])
-     * @see #allOfFastFail(Cffu[])
-     */
-    @Contract(pure = true)
-    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOfFastFail(
-            Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4) {
-        return allTupleOfFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture(),
-                cf3.toCompletableFuture(), cf4.toCompletableFuture());
-    }
 
     /**
      * Returns a new Cffu that is successful when the given four CompletableFutures success.
@@ -872,78 +533,33 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is successful when the given four CompletableFutures success
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#allTupleOfFastFail(CompletableFuture, CompletableFuture, CompletableFuture)
-     * @see #allTupleOfFastFail(Cffu, Cffu)
-     * @see #allResultsOfFastFail(CompletableFuture[])
-     * @see #allOfFastFail(CompletableFuture[])
+     * @see Cffu#allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage)
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOfFastFail(
-            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
-            CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
         return new0(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3, cf4));
-    }
-
-    /**
-     * Returns a new Cffu that is completed when the given 5 Cffus complete.
-     * If any of the given Cffu complete exceptionally, then the returned
-     * Cffu also does so, with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #allResultsOf(Cffu[])}
-     * except with 5 inputs and return results as {@code Tuple5}.
-     *
-     * @return a new Cffu that is completed when the given 5 Cffus complete
-     * @throws NullPointerException if any input Cffus are {@code null}
-     * @see Cffu#allTupleOf(Cffu, Cffu, Cffu, Cffu)
-     * @see #allResultsOf(Cffu[])
-     * @see #allOf(Cffu[])
-     */
-    @Contract(pure = true)
-    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
-            Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4, Cffu<T5> cf5) {
-        return allTupleOf(cf1.toCompletableFuture(), cf2.toCompletableFuture(),
-                cf3.toCompletableFuture(), cf4.toCompletableFuture(), cf5.toCompletableFuture());
     }
 
     /**
      * Returns a new Cffu that is completed when the given 5 CompletableFutures complete.
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #allTupleOf(Cffu, Cffu, Cffu, Cffu, Cffu)}
-     * except with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 5 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
-     * @see #allTupleOf(Cffu, Cffu, Cffu, Cffu, Cffu)
-     * @see #allResultsOf(CompletableFuture[])
-     * @see #allOf(CompletableFuture[])
+     * @see Cffu#allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage)
+     * @see #allResultsOf(CompletionStage[])
+     * @see #allOf(CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
-            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
-            CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
         return new0(CompletableFutureUtils.allTupleOf(cf1, cf2, cf3, cf4, cf5));
-    }
-
-    /**
-     * Returns a new Cffu that is successful when the given five Cffus success.
-     * If any of the given Cffus complete exceptionally, then the returned
-     * Cffu also does so *without* waiting other incomplete given Cffus,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new Cffu that is successful when the given five Cffus success
-     * @throws NullPointerException if any of the given Cffus are {@code null}
-     * @see Cffu#allTupleOfFastFail(Cffu, Cffu, Cffu, Cffu)
-     * @see #allResultsOfFastFail(Cffu[])
-     * @see #allOfFastFail(Cffu[])
-     */
-    @Contract(pure = true)
-    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOfFastFail(
-            Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4, Cffu<T5> cf5) {
-        return allTupleOfFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture(),
-                cf3.toCompletableFuture(), cf4.toCompletableFuture(), cf5.toCompletableFuture());
     }
 
     /**
@@ -954,15 +570,15 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is successful when the given five CompletableFutures success
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#allTupleOfFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
-     * @see #allTupleOfFastFail(Cffu, Cffu)
-     * @see #allResultsOfFastFail(CompletableFuture[])
-     * @see #allOfFastFail(CompletableFuture[])
+     * @see Cffu#allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage)
+     * @see #allTupleOfFastFail(CompletionStage, CompletionStage)
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOfFastFail(
-            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
-            CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
         return new0(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3, cf4, cf5));
     }
 

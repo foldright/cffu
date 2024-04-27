@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.*;
 
+import static io.foldright.cffu.CffuFactory.toCompletableFutureArray;
 import static java.util.Objects.requireNonNull;
 
 
@@ -48,19 +49,19 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SafeVarargs
-    @SuppressWarnings("unchecked")
-    public static <T> CompletableFuture<List<T>> allResultsOf(CompletableFuture<? extends T>... cfs) {
+    @SuppressWarnings({"unchecked"})
+    public static <T> CompletableFuture<List<T>> allResultsOf(CompletionStage<? extends T>... cfs) {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return CompletableFuture.completedFuture(arrayList());
-        if (size == 1) return cfs[0].thenApply(CompletableFutureUtils::arrayList);
+        if (size == 1) return csToListCf(cfs[0]);
 
         final Object[] result = new Object[size];
 
         final CompletableFuture<?>[] collectResultCfs = new CompletableFuture[size];
         for (int i = 0; i < size; i++) {
             final int index = i;
-            collectResultCfs[index] = cfs[index].thenAccept(v -> result[index] = v);
+            collectResultCfs[index] = cfs[index].thenAccept(v -> result[index] = v).toCompletableFuture();
         }
 
         return CompletableFuture.allOf(collectResultCfs)
@@ -85,11 +86,11 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static CompletableFuture<Void> allOfFastFail(CompletableFuture<?>... cfs) {
+    public static CompletableFuture<Void> allOfFastFail(CompletionStage<?>... cfs) {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return CompletableFuture.completedFuture(null);
-        if (size == 1) return cfs[0].thenApply(v -> null);
+        if (size == 1) return (CompletableFuture) cfs[0].thenApply(v -> null).toCompletableFuture();
 
         final CompletableFuture[] successOrBeIncomplete = new CompletableFuture[size];
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
@@ -111,24 +112,24 @@ public final class CompletableFutureUtils {
      * with a CompletionException holding this exception as its cause.
      * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
      * <p>
-     * This method is the same as {@link #allOfFastFail(CompletableFuture[])},
+     * This method is the same as {@link #allOfFastFail(CompletionStage[])},
      * except the returned CompletableFuture contains the results of the given CompletableFutures.
      * <p>
-     * This method is the same as {@link #allResultsOf(CompletableFuture[])} except for the fast-fail behavior.
+     * This method is the same as {@link #allResultsOf(CompletionStage[])} except for the fast-fail behavior.
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that is successful when all the given CompletableFutures success
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see #allOfFastFail(CompletableFuture[])
+     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     @SafeVarargs
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <T> CompletableFuture<List<T>> allResultsOfFastFail(CompletableFuture<? extends T>... cfs) {
+    public static <T> CompletableFuture<List<T>> allResultsOfFastFail(CompletionStage<? extends T>... cfs) {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return CompletableFuture.completedFuture(arrayList());
-        if (size == 1) return cfs[0].thenApply(CompletableFutureUtils::arrayList);
+        if (size == 1) return csToListCf(cfs[0]);
 
         final CompletableFuture[] successOrBeIncomplete = new CompletableFuture[size];
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
@@ -161,19 +162,24 @@ public final class CompletableFutureUtils {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static void fill(CompletableFuture[] cfs,
+    private static <T> CompletableFuture<List<T>> csToListCf(CompletionStage<? extends T> s) {
+        return (CompletableFuture) s.thenApply(CompletableFutureUtils::arrayList).toCompletableFuture();
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void fill(CompletionStage[] cfs,
                              CompletableFuture[] successOrBeIncomplete,
                              CompletableFuture[] failedOrBeIncomplete) {
         final CompletableFuture incomplete = new CompletableFuture();
 
         for (int i = 0; i < cfs.length; i++) {
-            final CompletableFuture cf = cfs[i];
+            final CompletionStage cf = cfs[i];
 
             successOrBeIncomplete[i] = cf.handle((v, ex) -> ex == null ? cf : incomplete)
-                    .thenCompose(Function.identity());
+                    .thenCompose(Function.identity()).toCompletableFuture();
 
             failedOrBeIncomplete[i] = cf.handle((v, ex) -> ex == null ? incomplete : cf)
-                    .thenCompose(Function.identity());
+                    .thenCompose(Function.identity()).toCompletableFuture();
         }
     }
 
@@ -195,14 +201,14 @@ public final class CompletableFutureUtils {
      * @return a new CompletableFuture that is completed with the result
      * or exception from any of the given CompletableFutures when one completes
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see #anyOfSuccess(CompletableFuture[])
+     * @see #anyOfSuccess(CompletionStage[])
      * @see CompletableFuture#anyOf(CompletableFuture[])
      */
     @Contract(pure = true)
     @SafeVarargs
-    @SuppressWarnings("unchecked")
-    public static <T> CompletableFuture<T> anyOf(CompletableFuture<? extends T>... cfs) {
-        return (CompletableFuture<T>) CompletableFuture.anyOf(cfs);
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T> CompletableFuture<T> anyOf(CompletionStage<? extends T>... cfs) {
+        return (CompletableFuture<T>) CompletableFuture.anyOf(toCompletableFutureArray((CompletionStage[]) cfs));
     }
 
     /**
@@ -213,23 +219,23 @@ public final class CompletableFutureUtils {
      * returns a new CompletableFuture that is already completed exceptionally
      * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
      * <p>
-     * This method is the same as {@link #anyOf(CompletableFuture[])}
+     * This method is the same as {@link #anyOf(CompletionStage[])}
      * except for the any-<strong>success</strong> behavior(not any-<strong>complete</strong>).
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that is successful
      * when any of the given CompletableFutures success, with the same result
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see #anyOf(CompletableFuture[])
+     * @see #anyOf(CompletionStage[])
      */
     @Contract(pure = true)
     @SafeVarargs
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <T> CompletableFuture<T> anyOfSuccess(CompletableFuture<? extends T>... cfs) {
+    public static <T> CompletableFuture<T> anyOfSuccess(CompletionStage<? extends T>... cfs) {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return failedFuture(new NoCfsProvidedException());
-        if (size == 1) return (CompletableFuture) copy(cfs[0]);
+        if (size == 1) return (CompletableFuture) copy(cfs[0].toCompletableFuture());
 
         // NOTE: fill ONE MORE element of successOrBeIncompleteCfs LATER
         final CompletableFuture[] successOrBeIncomplete = new CompletableFuture[size + 1];
@@ -254,19 +260,19 @@ public final class CompletableFutureUtils {
      *
      * @return a new CompletableFuture that is completed when the given 2 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see #allResultsOf(CompletableFuture[])
+     * @see #allResultsOf(CompletionStage[])
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOf(
-            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
         requireCfsAndEleNonNull(cf1, cf2);
 
         final Object[] result = new Object[2];
         return CompletableFuture.allOf(
-                cf1.thenAccept(t1 -> result[0] = t1),
-                cf2.thenAccept(t2 -> result[1] = t2)
+                cf1.thenAccept(t1 -> result[0] = t1).toCompletableFuture(),
+                cf2.thenAccept(t2 -> result[1] = t2).toCompletableFuture()
         ).thenApply(unused ->
                 Tuple2.of((T1) result[0], (T2) result[1])
         );
@@ -278,18 +284,18 @@ public final class CompletableFutureUtils {
      * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link #allTupleOf(CompletableFuture, CompletableFuture)}
+     * This method is the same as {@link #allTupleOf(CompletionStage, CompletionStage)}
      * except for the fast-fail behavior.
      *
      * @return a new CompletableFuture that is successful when the given two CompletableFutures success
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see #allResultsOfFastFail(CompletableFuture[])
-     * @see #allOfFastFail(CompletableFuture[])
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOfFastFail(
-            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
         requireCfsAndEleNonNull(cf1, cf2);
 
         final Object[] result = new Object[2];
@@ -308,20 +314,20 @@ public final class CompletableFutureUtils {
      *
      * @return a new CompletableFuture that is completed when the given 3 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see #allResultsOf(CompletableFuture[])
+     * @see #allResultsOf(CompletionStage[])
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOf(
-            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
         requireCfsAndEleNonNull(cf1, cf2, cf3);
 
         final Object[] result = new Object[3];
         return CompletableFuture.allOf(
-                cf1.thenAccept(t1 -> result[0] = t1),
-                cf2.thenAccept(t2 -> result[1] = t2),
-                cf3.thenAccept(t3 -> result[2] = t3)
+                cf1.thenAccept(t1 -> result[0] = t1).toCompletableFuture(),
+                cf2.thenAccept(t2 -> result[1] = t2).toCompletableFuture(),
+                cf3.thenAccept(t3 -> result[2] = t3).toCompletableFuture()
         ).thenApply(unused ->
                 Tuple3.of((T1) result[0], (T2) result[1], (T3) result[2])
         );
@@ -333,18 +339,18 @@ public final class CompletableFutureUtils {
      * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link #allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture)}
+     * This method is the same as {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage)}
      * except for the fast-fail behavior.
      *
      * @return a new CompletableFuture that is successful when the given three CompletableFutures success
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see #allResultsOfFastFail(CompletableFuture[])
-     * @see #allOfFastFail(CompletableFuture[])
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOfFastFail(
-            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
         requireCfsAndEleNonNull(cf1, cf2, cf3);
 
         final Object[] result = new Object[3];
@@ -364,22 +370,22 @@ public final class CompletableFutureUtils {
      *
      * @return a new CompletableFuture that is completed when the given 4 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see #allResultsOf(CompletableFuture[])
+     * @see #allResultsOf(CompletionStage[])
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOf(
-            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
-            CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
         requireCfsAndEleNonNull(cf1, cf2, cf3, cf4);
 
         final Object[] result = new Object[4];
         return CompletableFuture.allOf(
-                cf1.thenAccept(t1 -> result[0] = t1),
-                cf2.thenAccept(t2 -> result[1] = t2),
-                cf3.thenAccept(t3 -> result[2] = t3),
-                cf4.thenAccept(t4 -> result[3] = t4)
+                cf1.thenAccept(t1 -> result[0] = t1).toCompletableFuture(),
+                cf2.thenAccept(t2 -> result[1] = t2).toCompletableFuture(),
+                cf3.thenAccept(t3 -> result[2] = t3).toCompletableFuture(),
+                cf4.thenAccept(t4 -> result[3] = t4).toCompletableFuture()
         ).thenApply(unused ->
                 Tuple4.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3])
         );
@@ -391,19 +397,19 @@ public final class CompletableFutureUtils {
      * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link #allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
+     * This method is the same as {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      * except for the fast-fail behavior.
      *
      * @return a new CompletableFuture that is successful when the given 4 CompletableFutures success
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see #allResultsOfFastFail(CompletableFuture[])
-     * @see #allOfFastFail(CompletableFuture[])
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOfFastFail(
-            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
-            CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
         requireCfsAndEleNonNull(cf1, cf2, cf3, cf4);
 
         final Object[] result = new Object[4];
@@ -424,23 +430,23 @@ public final class CompletableFutureUtils {
      *
      * @return a new CompletableFuture that is completed when the given 5 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see #allResultsOf(CompletableFuture[])
+     * @see #allResultsOf(CompletionStage[])
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
-            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
-            CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
         requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5);
 
         final Object[] result = new Object[5];
         return CompletableFuture.allOf(
-                cf1.thenAccept(t1 -> result[0] = t1),
-                cf2.thenAccept(t2 -> result[1] = t2),
-                cf3.thenAccept(t3 -> result[2] = t3),
-                cf4.thenAccept(t4 -> result[3] = t4),
-                cf5.thenAccept(t5 -> result[4] = t5)
+                cf1.thenAccept(t1 -> result[0] = t1).toCompletableFuture(),
+                cf2.thenAccept(t2 -> result[1] = t2).toCompletableFuture(),
+                cf3.thenAccept(t3 -> result[2] = t3).toCompletableFuture(),
+                cf4.thenAccept(t4 -> result[3] = t4).toCompletableFuture(),
+                cf5.thenAccept(t5 -> result[4] = t5).toCompletableFuture()
         ).thenApply(unused ->
                 Tuple5.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3], (T5) result[4])
         );
@@ -452,19 +458,19 @@ public final class CompletableFutureUtils {
      * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link #allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
+     * This method is the same as {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      * except for the fast-fail behavior.
      *
      * @return a new CompletableFuture that is successful when the given 5 CompletableFutures success
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see #allResultsOfFastFail(CompletableFuture[])
-     * @see #allOfFastFail(CompletableFuture[])
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOfFastFail(
-            CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
-            CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
         requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5);
 
         final Object[] result = new Object[5];
