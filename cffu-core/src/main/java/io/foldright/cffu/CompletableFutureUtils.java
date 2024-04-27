@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.*;
 
-import static io.foldright.cffu.CffuFactory.toCompletableFutureArray;
 import static java.util.Objects.requireNonNull;
 import static java.util.function.Function.identity;
 
@@ -60,8 +59,7 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[size];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(cfs, result);
 
-        return CompletableFuture.allOf(resultSetterCfs)
-                .thenApply(unused -> (List<T>) arrayList(result));
+        return CompletableFuture.allOf(resultSetterCfs).thenApply(unused -> (List<T>) arrayList(result));
     }
 
     /**
@@ -218,7 +216,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> CompletableFuture<T> anyOf(CompletionStage<? extends T>... cfs) {
-        return (CompletableFuture<T>) CompletableFuture.anyOf(toCompletableFutureArray((CompletionStage[]) cfs));
+        return (CompletableFuture) CompletableFuture.anyOf(toCompletableFutureArray((CompletionStage[]) cfs));
     }
 
     /**
@@ -282,9 +280,7 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return CompletableFuture.allOf(resultSetterCfs).thenApply(unused ->
-                Tuple2.of((T1) result[0], (T2) result[1])
-        );
+        return CompletableFuture.allOf(resultSetterCfs).thenApply(unused -> Tuple2.of((T1) result[0], (T2) result[1]));
     }
 
     /**
@@ -310,9 +306,7 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return allOfFastFail(resultSetterCfs).thenApply(unused ->
-                Tuple2.of((T1) result[0], (T2) result[1])
-        );
+        return allOfFastFail(resultSetterCfs).thenApply(unused -> Tuple2.of((T1) result[0], (T2) result[1]));
     }
 
     /**
@@ -334,9 +328,8 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return CompletableFuture.allOf(resultSetterCfs).thenApply(unused ->
-                Tuple3.of((T1) result[0], (T2) result[1], (T3) result[2])
-        );
+        return CompletableFuture.allOf(resultSetterCfs)
+                .thenApply(unused -> Tuple3.of((T1) result[0], (T2) result[1], (T3) result[2]));
     }
 
     /**
@@ -362,9 +355,8 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return allOfFastFail(resultSetterCfs).thenApply(unused ->
-                Tuple3.of((T1) result[0], (T2) result[1], (T3) result[2])
-        );
+        return allOfFastFail(resultSetterCfs)
+                .thenApply(unused -> Tuple3.of((T1) result[0], (T2) result[1], (T3) result[2]));
     }
 
     /**
@@ -387,9 +379,8 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return CompletableFuture.allOf(resultSetterCfs).thenApply(unused ->
-                Tuple4.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3])
-        );
+        return CompletableFuture.allOf(resultSetterCfs)
+                .thenApply(unused -> Tuple4.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3]));
     }
 
     /**
@@ -416,9 +407,8 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return allOfFastFail(resultSetterCfs).thenApply(unused ->
-                Tuple4.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3])
-        );
+        return allOfFastFail(resultSetterCfs)
+                .thenApply(unused -> Tuple4.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3]));
     }
 
     /**
@@ -442,8 +432,7 @@ public final class CompletableFutureUtils {
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
         return CompletableFuture.allOf(resultSetterCfs).thenApply(unused ->
-                Tuple5.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3], (T5) result[4])
-        );
+                Tuple5.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3], (T5) result[4]));
     }
 
     /**
@@ -471,8 +460,7 @@ public final class CompletableFutureUtils {
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
         return allOfFastFail(resultSetterCfs).thenApply(unused ->
-                Tuple5.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3], (T5) result[4])
-        );
+                Tuple5.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3], (T5) result[4]));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -573,8 +561,7 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return allOfFastFail(resultSetterCfs)
-                .thenAccept(unused -> action.accept((T) result[0], (U) result[1]));
+        return allOfFastFail(resultSetterCfs).thenAccept(unused -> action.accept((T) result[0], (U) result[1]));
     }
 
     /**
@@ -602,8 +589,7 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return allOfFastFail(resultSetterCfs)
-                .thenAcceptAsync(unused -> action.accept((T) result[0], (U) result[1]));
+        return allOfFastFail(resultSetterCfs).thenAcceptAsync(unused -> action.accept((T) result[0], (U) result[1]));
     }
 
     /**
@@ -660,8 +646,7 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return allOfFastFail(resultSetterCfs)
-                .thenApply(unused -> fn.apply((T) result[0], (U) result[1]));
+        return allOfFastFail(resultSetterCfs).thenApply(unused -> fn.apply((T) result[0], (U) result[1]));
     }
 
     /**
@@ -690,8 +675,7 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return allOfFastFail(resultSetterCfs)
-                .thenApplyAsync(unused -> fn.apply((T) result[0], (U) result[1]));
+        return allOfFastFail(resultSetterCfs).thenApplyAsync(unused -> fn.apply((T) result[0], (U) result[1]));
     }
 
     /**
@@ -1428,7 +1412,6 @@ public final class CompletableFutureUtils {
         if (IS_JAVA9_PLUS) {
             return cf.completeAsync(supplier, executor);
         }
-
         requireNonNull(supplier, "supplier is null");
         requireNonNull(executor, "executor is null");
         // below code is copied from CompletableFuture#completeAsync with small adoption
@@ -1502,6 +1485,43 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static Executor defaultExecutor() {
         return AsyncPoolHolder.ASYNC_POOL;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# Conversion (Static) Methods
+    //
+    //    - toCompletableFutureArray:     Cffu -> CF
+    //    - cffuArrayUnwrap:              Cffu -> CF
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * A convenient util method for converting input {@link Cffu} / {@link CompletableFuture} / {@link CompletionStage}
+     * array element by {@link Cffu#toCompletableFuture()} / {@link CompletableFuture#toCompletableFuture()} /
+     * {@link CompletionStage#toCompletableFuture()}.
+     *
+     * @see Cffu#toCompletableFuture()
+     * @see CompletableFuture#toCompletableFuture()
+     * @see CompletionStage#toCompletableFuture()
+     * @see CffuFactory#toCffuArray(CompletionStage[])
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    public static <T> CompletableFuture<T>[] toCompletableFutureArray(CompletionStage<T>... stages) {
+        @SuppressWarnings("unchecked")
+        CompletableFuture<T>[] ret = new CompletableFuture[stages.length];
+        for (int i = 0; i < stages.length; i++) {
+            ret[i] = requireNonNull(stages[i], "stage" + (i + 1) + " is null").toCompletableFuture();
+        }
+        return ret;
+    }
+
+    /**
+     * Convert CompletableFuture list to CompletableFuture array.
+     */
+    @Contract(pure = true)
+    @SuppressWarnings("unchecked")
+    public static <T> CompletableFuture<T>[] completableFutureListToArray(List<CompletableFuture<T>> cfList) {
+        return cfList.toArray(new CompletableFuture[0]);
     }
 
     ////////////////////////////////////////////////////////////////////////////////

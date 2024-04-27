@@ -3,6 +3,7 @@ package io.foldright.cffu.kotlin
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
 import io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder
+import io.foldright.cffu.CompletableFutureUtils
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
@@ -536,7 +537,7 @@ fun <T> Array<out CompletableFuture<out T>>.anyOfSuccessCffu(cffuFactory: CffuFa
  *
  * This method is the same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
  *
- * @see CffuFactory.toCompletableFutureArray
+ * @see CompletableFutureUtils.toCompletableFutureArray
  */
 fun <T> Collection<CompletionStage<T>>.toCompletableFuture(): List<CompletableFuture<T>> =
     map { it.toCompletableFuture() }
@@ -546,10 +547,10 @@ fun <T> Collection<CompletionStage<T>>.toCompletableFuture(): List<CompletableFu
  *
  * This method is the same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
  *
- * @see CffuFactory.toCompletableFutureArray
+ * @see CompletableFutureUtils.toCompletableFutureArray
  */
 fun <T> Array<out CompletionStage<T>>.toCompletableFuture(): Array<CompletableFuture<T>> =
-    CffuFactory.toCompletableFutureArray(*this)
+    CompletableFutureUtils.toCompletableFutureArray(*this)
 
 ////////////////////////////////////////
 // cffuUnwrap methods

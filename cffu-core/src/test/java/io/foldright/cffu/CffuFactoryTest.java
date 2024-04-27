@@ -17,6 +17,7 @@ import java.util.concurrent.*;
 
 import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
 import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
+import static io.foldright.cffu.CompletableFutureUtils.toCompletableFutureArray;
 import static io.foldright.test_utils.TestUtils.*;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;
@@ -737,9 +738,9 @@ class CffuFactoryTest {
                 cffuFactory.toCffu(cfArray[1]),
         };
 
-        assertArrayEquals(cfArray, CffuFactory.toCompletableFutureArray(cfArray));
-        assertArrayEquals(cfArray, CffuFactory.toCompletableFutureArray(csArray));
-        assertArrayEquals(cfArray, CffuFactory.toCompletableFutureArray(cffuArray));
+        assertArrayEquals(cfArray, toCompletableFutureArray(cfArray));
+        assertArrayEquals(cfArray, toCompletableFutureArray(csArray));
+        assertArrayEquals(cfArray, toCompletableFutureArray(cffuArray));
     }
 
     @Test
@@ -774,7 +775,7 @@ class CffuFactoryTest {
         @SuppressWarnings("unchecked")
         CompletableFuture<Integer>[] input = new CompletableFuture[]{completedFuture(n), completedFuture(anotherN)};
 
-        assertArrayEquals(input, CffuFactory.completableFutureListToArray(Arrays.asList(input)));
+        assertArrayEquals(input, CompletableFutureUtils.completableFutureListToArray(Arrays.asList(input)));
     }
 
     ////////////////////////////////////////////////////////////////////////////////

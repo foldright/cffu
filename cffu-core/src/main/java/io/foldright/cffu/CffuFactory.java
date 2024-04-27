@@ -19,6 +19,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+import static io.foldright.cffu.CompletableFutureUtils.toCompletableFutureArray;
 import static java.util.Objects.requireNonNull;
 
 
@@ -35,7 +36,7 @@ import static java.util.Objects.requireNonNull;
  * <li>factory methods return {@link Cffu} instead of {@link CompletableFuture}.
  * <li>only provide varargs methods for multiply Cffu/CF input arguments;
  *     if you have {@code List} input, use static util methods {@link #cffuListToArray(List)}
- *     or {@link #completableFutureListToArray(List)} to convert it to array first.
+ *     or {@link CompletableFutureUtils#completableFutureListToArray(List)} to convert it to array first.
  * </ul>
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
@@ -621,33 +622,9 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
     //# Conversion (Static) Methods
     //
-    //    - toCompletableFutureArray:     Cffu -> CF
-    //    - cffuArrayUnwrap:              Cffu -> CF
-    //
     //    - cffuListToArray:              List<Cffu> -> Cffu[]
     //    - completableFutureListToArray: List<CF> -> CF[]
     ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * A convenient util method for converting input {@link Cffu} / {@link CompletableFuture} / {@link CompletionStage}
-     * array element by {@link Cffu#toCompletableFuture()} / {@link CompletableFuture#toCompletableFuture()} /
-     * {@link CompletionStage#toCompletableFuture()}.
-     *
-     * @see Cffu#toCompletableFuture()
-     * @see CompletableFuture#toCompletableFuture()
-     * @see CompletionStage#toCompletableFuture()
-     * @see #toCffuArray(CompletionStage[])
-     */
-    @Contract(pure = true)
-    @SafeVarargs
-    public static <T> CompletableFuture<T>[] toCompletableFutureArray(CompletionStage<T>... stages) {
-        @SuppressWarnings("unchecked")
-        CompletableFuture<T>[] ret = new CompletableFuture[stages.length];
-        for (int i = 0; i < stages.length; i++) {
-            ret[i] = requireNonNull(stages[i], "stage" + (i + 1) + " is null").toCompletableFuture();
-        }
-        return ret;
-    }
 
     /**
      * A convenient util method for unwrap input {@link Cffu} array elements by {@link Cffu#cffuUnwrap()}.
@@ -673,15 +650,6 @@ public final class CffuFactory {
     @SuppressWarnings("unchecked")
     public static <T> Cffu<T>[] cffuListToArray(List<Cffu<T>> cffuList) {
         return cffuList.toArray(new Cffu[0]);
-    }
-
-    /**
-     * Convert CompletableFuture list to CompletableFuture array.
-     */
-    @Contract(pure = true)
-    @SuppressWarnings("unchecked")
-    public static <T> CompletableFuture<T>[] completableFutureListToArray(List<CompletableFuture<T>> cfList) {
-        return cfList.toArray(new CompletableFuture[0]);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
