@@ -58,14 +58,9 @@ public final class CompletableFutureUtils {
         if (size == 1) return csToListCf(cfs[0]);
 
         final Object[] result = new Object[size];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(cfs, result);
 
-        final CompletableFuture<?>[] collectResultCfs = new CompletableFuture[size];
-        for (int i = 0; i < size; i++) {
-            final int index = i;
-            collectResultCfs[index] = cfs[index].toCompletableFuture().thenAccept(v -> result[index] = v);
-        }
-
-        return CompletableFuture.allOf(collectResultCfs)
+        return CompletableFuture.allOf(resultSetterCfs)
                 .thenApply(unused -> (List<T>) arrayList(result));
     }
 
@@ -144,11 +139,13 @@ public final class CompletableFutureUtils {
         return (CompletableFuture) CompletableFuture.anyOf(failedOrBeIncomplete);
     }
 
-    private static void requireCfsAndEleNonNull(CompletionStage<?>... cfs) {
-        requireNonNull(cfs, "cfs is null");
-        for (int i = 0; i < cfs.length; i++) {
-            requireNonNull(cfs[i], "cf" + (i + 1) + " is null");
+    @SafeVarargs
+    private static <T> CompletionStage<? extends T>[] requireCfsAndEleNonNull(CompletionStage<? extends T>... css) {
+        requireNonNull(css, "cfs is null");
+        for (int i = 0; i < css.length; i++) {
+            requireNonNull(css[i], "cf" + (i + 1) + " is null");
         }
+        return css;
     }
 
     /**
@@ -164,6 +161,19 @@ public final class CompletableFutureUtils {
 
     private static <T> CompletableFuture<List<T>> csToListCf(CompletionStage<? extends T> s) {
         return s.toCompletableFuture().thenApply(CompletableFutureUtils::arrayList);
+    }
+
+    /**
+     * Returns a cf array whose elements do the result collection.
+     */
+    private static <T> CompletableFuture<Void>[] createResultSetterCfs(CompletionStage<? extends T>[] css, T[] result) {
+        @SuppressWarnings("unchecked")
+        final CompletableFuture<Void>[] resultSetterCfs = new CompletableFuture[result.length];
+        for (int i = 0; i < result.length; i++) {
+            final int index = i;
+            resultSetterCfs[index] = css[index].toCompletableFuture().thenAccept(v -> result[index] = v);
+        }
+        return resultSetterCfs;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -267,13 +277,12 @@ public final class CompletableFutureUtils {
     @SuppressWarnings("unchecked")
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
 
-        final Object[] result = new Object[2];
-        return CompletableFuture.allOf(
-                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
-                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2)
-        ).thenApply(unused ->
+        final Object[] result = new Object[css.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
+
+        return CompletableFuture.allOf(resultSetterCfs).thenApply(unused ->
                 Tuple2.of((T1) result[0], (T2) result[1])
         );
     }
@@ -296,13 +305,12 @@ public final class CompletableFutureUtils {
     @SuppressWarnings("unchecked")
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOfFastFail(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
 
-        final Object[] result = new Object[2];
-        return allOfFastFail(
-                cf1.thenAccept(t1 -> result[0] = t1),
-                cf2.thenAccept(t2 -> result[1] = t2)
-        ).thenApply(unused ->
+        final Object[] result = new Object[css.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
+
+        return allOfFastFail(resultSetterCfs).thenApply(unused ->
                 Tuple2.of((T1) result[0], (T2) result[1])
         );
     }
@@ -321,14 +329,12 @@ public final class CompletableFutureUtils {
     @SuppressWarnings("unchecked")
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        requireCfsAndEleNonNull(cf1, cf2, cf3);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2, cf3);
 
-        final Object[] result = new Object[3];
-        return CompletableFuture.allOf(
-                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
-                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2),
-                cf3.toCompletableFuture().thenAccept(t3 -> result[2] = t3)
-        ).thenApply(unused ->
+        final Object[] result = new Object[css.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
+
+        return CompletableFuture.allOf(resultSetterCfs).thenApply(unused ->
                 Tuple3.of((T1) result[0], (T2) result[1], (T3) result[2])
         );
     }
@@ -351,14 +357,12 @@ public final class CompletableFutureUtils {
     @SuppressWarnings("unchecked")
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOfFastFail(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        requireCfsAndEleNonNull(cf1, cf2, cf3);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2, cf3);
 
-        final Object[] result = new Object[3];
-        return allOfFastFail(
-                cf1.thenAccept(t1 -> result[0] = t1),
-                cf2.thenAccept(t2 -> result[1] = t2),
-                cf3.thenAccept(t3 -> result[2] = t3)
-        ).thenApply(unused ->
+        final Object[] result = new Object[css.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
+
+        return allOfFastFail(resultSetterCfs).thenApply(unused ->
                 Tuple3.of((T1) result[0], (T2) result[1], (T3) result[2])
         );
     }
@@ -378,15 +382,12 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        requireCfsAndEleNonNull(cf1, cf2, cf3, cf4);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2, cf3, cf4);
 
-        final Object[] result = new Object[4];
-        return CompletableFuture.allOf(
-                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
-                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2),
-                cf3.toCompletableFuture().thenAccept(t3 -> result[2] = t3),
-                cf4.toCompletableFuture().thenAccept(t4 -> result[3] = t4)
-        ).thenApply(unused ->
+        final Object[] result = new Object[css.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
+
+        return CompletableFuture.allOf(resultSetterCfs).thenApply(unused ->
                 Tuple4.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3])
         );
     }
@@ -410,15 +411,12 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOfFastFail(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        requireCfsAndEleNonNull(cf1, cf2, cf3, cf4);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2, cf3, cf4);
 
-        final Object[] result = new Object[4];
-        return allOfFastFail(
-                cf1.thenAccept(t1 -> result[0] = t1),
-                cf2.thenAccept(t2 -> result[1] = t2),
-                cf3.thenAccept(t3 -> result[2] = t3),
-                cf4.thenAccept(t4 -> result[3] = t4)
-        ).thenApply(unused ->
+        final Object[] result = new Object[css.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
+
+        return allOfFastFail(resultSetterCfs).thenApply(unused ->
                 Tuple4.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3])
         );
     }
@@ -438,16 +436,12 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5);
 
-        final Object[] result = new Object[5];
-        return CompletableFuture.allOf(
-                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
-                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2),
-                cf3.toCompletableFuture().thenAccept(t3 -> result[2] = t3),
-                cf4.toCompletableFuture().thenAccept(t4 -> result[3] = t4),
-                cf5.toCompletableFuture().thenAccept(t5 -> result[4] = t5)
-        ).thenApply(unused ->
+        final Object[] result = new Object[css.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
+
+        return CompletableFuture.allOf(resultSetterCfs).thenApply(unused ->
                 Tuple5.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3], (T5) result[4])
         );
     }
@@ -471,16 +465,12 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOfFastFail(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5);
 
-        final Object[] result = new Object[5];
-        return allOfFastFail(
-                cf1.thenAccept(t1 -> result[0] = t1),
-                cf2.thenAccept(t2 -> result[1] = t2),
-                cf3.thenAccept(t3 -> result[2] = t3),
-                cf4.thenAccept(t4 -> result[3] = t4),
-                cf5.thenAccept(t5 -> result[4] = t5)
-        ).thenApply(unused ->
+        final Object[] result = new Object[css.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
+
+        return allOfFastFail(resultSetterCfs).thenApply(unused ->
                 Tuple5.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3], (T5) result[4])
         );
     }
@@ -508,10 +498,10 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterBothFastFail(
             CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
 
-        return allOfFastFail(cf1, cf2).thenRun(action);
+        return allOfFastFail(css).thenRun(action);
     }
 
     /**
@@ -530,10 +520,10 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterBothFastFailAsync(
             CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
 
-        return allOfFastFail(cf1, cf2).thenRunAsync(action);
+        return allOfFastFail(css).thenRunAsync(action);
     }
 
     /**
@@ -552,11 +542,11 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterBothFastFailAsync(
             CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action, Executor executor) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return allOfFastFail(cf1, cf2).thenRunAsync(action, executor);
+        return allOfFastFail(css).thenRunAsync(action, executor);
     }
 
     /**
@@ -577,14 +567,14 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<Void> thenAcceptBothFastFail(
             CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
             BiConsumer<? super T, ? super U> action) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
 
-        final Object[] result = new Object[2];
-        return allOfFastFail(
-                cf1.thenAccept(t1 -> result[0] = t1),
-                cf2.thenAccept(t2 -> result[1] = t2)
-        ).thenAccept(unused -> action.accept((T) result[0], (U) result[1]));
+        final Object[] result = new Object[css.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
+
+        return allOfFastFail(resultSetterCfs)
+                .thenAccept(unused -> action.accept((T) result[0], (U) result[1]));
     }
 
     /**
@@ -606,14 +596,14 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<Void> thenAcceptBothFastFailAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
             BiConsumer<? super T, ? super U> action) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
 
-        final Object[] result = new Object[2];
-        return allOfFastFail(
-                cf1.thenAccept(t1 -> result[0] = t1),
-                cf2.thenAccept(t2 -> result[1] = t2)
-        ).thenAcceptAsync(unused -> action.accept((T) result[0], (U) result[1]));
+        final Object[] result = new Object[css.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
+
+        return allOfFastFail(resultSetterCfs)
+                .thenAcceptAsync(unused -> action.accept((T) result[0], (U) result[1]));
     }
 
     /**
@@ -635,15 +625,15 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<Void> thenAcceptBothFastFailAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
             BiConsumer<? super T, ? super U> action, Executor executor) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        final Object[] result = new Object[2];
-        return allOfFastFail(
-                cf1.thenAccept(t1 -> result[0] = t1),
-                cf2.thenAccept(t2 -> result[1] = t2)
-        ).thenAcceptAsync(unused -> action.accept((T) result[0], (U) result[1]), executor);
+        final Object[] result = new Object[css.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
+
+        return allOfFastFail(resultSetterCfs)
+                .thenAcceptAsync(unused -> action.accept((T) result[0], (U) result[1]), executor);
     }
 
     /**
@@ -664,14 +654,14 @@ public final class CompletableFutureUtils {
     public static <T, U, V> CompletableFuture<V> thenCombineFastFail(
             CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
             BiFunction<? super T, ? super U, ? extends V> fn) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(fn, "fn is null");
 
-        final Object[] result = new Object[2];
-        return allOfFastFail(
-                cf1.thenAccept(t1 -> result[0] = t1),
-                cf2.thenAccept(t2 -> result[1] = t2)
-        ).thenApply(unused -> fn.apply((T) result[0], (U) result[1]));
+        final Object[] result = new Object[css.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
+
+        return allOfFastFail(resultSetterCfs)
+                .thenApply(unused -> fn.apply((T) result[0], (U) result[1]));
     }
 
     /**
@@ -694,14 +684,14 @@ public final class CompletableFutureUtils {
             CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
             BiFunction<? super T, ? super U, ? extends V> fn
     ) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(fn, "fn is null");
 
-        final Object[] result = new Object[2];
-        return allOfFastFail(
-                cf1.thenAccept(t1 -> result[0] = t1),
-                cf2.thenAccept(t2 -> result[1] = t2)
-        ).thenApplyAsync(unused -> fn.apply((T) result[0], (U) result[1]));
+        final Object[] result = new Object[css.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
+
+        return allOfFastFail(resultSetterCfs)
+                .thenApplyAsync(unused -> fn.apply((T) result[0], (U) result[1]));
     }
 
     /**
@@ -724,15 +714,15 @@ public final class CompletableFutureUtils {
             CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
             BiFunction<? super T, ? super U, ? extends V> fn, Executor executor
     ) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
-        final Object[] result = new Object[2];
-        return allOfFastFail(
-                cf1.thenAccept(t1 -> result[0] = t1),
-                cf2.thenAccept(t2 -> result[1] = t2)
-        ).thenApplyAsync(unused -> fn.apply((T) result[0], (U) result[1]), executor);
+        final Object[] result = new Object[css.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
+
+        return allOfFastFail(resultSetterCfs)
+                .thenApplyAsync(unused -> fn.apply((T) result[0], (U) result[1]), executor);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -758,10 +748,10 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterEitherSuccess(
             CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
 
-        return anyOfSuccess(cf1, cf2).thenRun(action);
+        return anyOfSuccess(css).thenRun(action);
     }
 
     /**
@@ -780,10 +770,10 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterEitherSuccessAsync(
             CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
 
-        return anyOfSuccess(cf1, cf2).thenRunAsync(action);
+        return anyOfSuccess(css).thenRunAsync(action);
     }
 
     /**
@@ -802,11 +792,11 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterEitherSuccessAsync(
             CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action, Executor executor) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return anyOfSuccess(cf1, cf2).thenRunAsync(action, executor);
+        return anyOfSuccess(css).thenRunAsync(action, executor);
     }
 
     /**
@@ -822,10 +812,10 @@ public final class CompletableFutureUtils {
      */
     public static <T> CompletableFuture<Void> acceptEitherSuccess(
             CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Consumer<? super T> action) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<? extends T>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
 
-        return anyOfSuccess(cf1, cf2).thenAccept(action);
+        return anyOfSuccess(css).thenAccept(action);
     }
 
     /**
@@ -842,10 +832,10 @@ public final class CompletableFutureUtils {
      */
     public static <T> CompletableFuture<Void> acceptEitherSuccessAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Consumer<? super T> action) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<? extends T>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
 
-        return anyOfSuccess(cf1, cf2).thenAcceptAsync(action);
+        return anyOfSuccess(css).thenAcceptAsync(action);
     }
 
     /**
@@ -863,11 +853,11 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<Void> acceptEitherSuccessAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2,
             Consumer<? super T> action, Executor executor) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<? extends T>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return anyOfSuccess(cf1, cf2).thenAcceptAsync(action, executor);
+        return anyOfSuccess(css).thenAcceptAsync(action, executor);
     }
 
     /**
@@ -884,10 +874,10 @@ public final class CompletableFutureUtils {
      */
     public static <T, U> CompletableFuture<U> applyToEitherSuccess(
             CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Function<? super T, U> fn) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<? extends T>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(fn, "fn is null");
 
-        return anyOfSuccess(cf1, cf2).thenApply(fn);
+        return anyOfSuccess(css).thenApply(fn);
     }
 
     /**
@@ -905,10 +895,10 @@ public final class CompletableFutureUtils {
      */
     public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Function<? super T, U> fn) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<? extends T>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(fn, "fn is null");
 
-        return anyOfSuccess(cf1, cf2).thenApplyAsync(fn);
+        return anyOfSuccess(css).thenApplyAsync(fn);
     }
 
     /**
@@ -927,11 +917,11 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2,
             Function<? super T, U> fn, Executor executor) {
-        requireCfsAndEleNonNull(cf1, cf2);
+        final CompletionStage<? extends T>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
-        return anyOfSuccess(cf1, cf2).thenApplyAsync(fn, executor);
+        return anyOfSuccess(css).thenApplyAsync(fn, executor);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
