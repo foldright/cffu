@@ -1966,7 +1966,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <li>{@link CffuFactory#completedStage(Object)}
      * <li>{@link CffuFactory#failedStage(Throwable)}
      * <li>{@link #minimalCompletionStage()}
-     * <li>{@link CffuFactory#asCffu(CompletionStage)}, this method return a {@code minimal stage}
+     * <li>{@link CffuFactory#toCffu(CompletionStage)}, this method return a {@code minimal stage}
      *     when input a{@code minimal stage}, otherwise return a normal stage.
      * </ul>
      */
@@ -1985,11 +1985,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns the underlying CompletableFuture.
      * <p>
-     * {@link CffuFactory#asCffu(CompletionStage)} is inverse operation to this method.
+     * {@link CffuFactory#toCffu(CompletionStage)} is inverse operation to this method.
      * {@link CffuFactory#cffuArrayUnwrap(Cffu[])} is the batch operation to this method.
      *
      * @return the underlying CompletableFuture
-     * @see CffuFactory#asCffu(CompletionStage)
+     * @see CffuFactory#toCffu(CompletionStage)
      * @see CffuFactory#cffuArrayUnwrap(Cffu[])
      * @see #toCompletableFuture()
      */

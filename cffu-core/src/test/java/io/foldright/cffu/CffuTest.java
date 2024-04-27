@@ -10,7 +10,6 @@ import org.junit.jupiter.api.condition.JRE;
 import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
 import static io.foldright.test_utils.TestUtils.*;
@@ -278,7 +277,7 @@ class CffuTest {
     @Test
     void test_cffuUnwrap() {
         CompletableFuture<Integer> cf = CompletableFuture.completedFuture(n);
-        Cffu<Integer> cffu = cffuFactory.asCffu(cf);
+        Cffu<Integer> cffu = cffuFactory.toCffu(cf);
 
         assertSame(cf, cffu.cffuUnwrap());
     }
@@ -287,7 +286,7 @@ class CffuTest {
     @EnabledForJreRange(min = JRE.JAVA_9)
     void test_cffuUnwrap_9_completedStage() {
         CompletionStage<Integer> stage = CompletableFuture.completedStage(n);
-        Cffu<Integer> cffu = cffuFactory.asCffu(stage);
+        Cffu<Integer> cffu = cffuFactory.toCffu(stage);
 
         assertSame(stage, cffu.cffuUnwrap());
     }
@@ -295,7 +294,7 @@ class CffuTest {
     @Test
     void test_toString() {
         CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
-        Cffu<Integer> cffu = cffuFactory.asCffu(cf);
+        Cffu<Integer> cffu = cffuFactory.toCffu(cf);
 
         assertTrue(cffu.toString().contains(cf.toString()));
         assertTrue(cffu.toString().startsWith("Cffu@"));

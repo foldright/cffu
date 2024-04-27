@@ -217,8 +217,8 @@ public final class CffuFactory {
     //
     //    - newIncompleteCffu: equivalent to CompletableFuture constructor
     //
-    //    - asCffu:      CF/CompletionStage -> Cffu
-    //    - asCffuArray: CF/CompletionStage[] -> Cffu[]
+    //    - toCffu:      CF/CompletionStage -> Cffu
+    //    - toCffuArray: CF/CompletionStage[] -> Cffu[]
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -255,13 +255,13 @@ public final class CffuFactory {
      * <li>otherwise use input {@code stage.toCompletableFuture} as the underlying cf of returned cffu.
      * </ol>
      *
+     * @see #toCffuArray(CompletionStage[])
+     * @see CompletionStage#toCompletableFuture()
      * @see Cffu#cffuUnwrap()
      * @see Cffu#resetCffuFactory(CffuFactory)
-     * @see #asCffuArray(CompletionStage[])
-     * @see CompletionStage#toCompletableFuture()
      */
     @Contract(pure = true)
-    public <T> Cffu<T> asCffu(CompletionStage<T> stage) {
+    public <T> Cffu<T> toCffu(CompletionStage<T> stage) {
         requireNonNull(stage, "stage is null");
 
         if ("java.util.concurrent.CompletableFuture$MinimalStage".equals(stage.getClass().getName())) {
@@ -276,17 +276,17 @@ public final class CffuFactory {
 
     /**
      * A convenient util method for wrap input {@link CompletableFuture} / {@link CompletionStage} / {@link Cffu}
-     * array element by {@link #asCffu(CompletionStage)}.
+     * array element by {@link #toCffu(CompletionStage)}.
      *
-     * @see #asCffu(CompletionStage)
+     * @see #toCffu(CompletionStage)
      */
     @Contract(pure = true)
     @SafeVarargs
-    public final <T> Cffu<T>[] asCffuArray(CompletionStage<T>... stages) {
+    public final <T> Cffu<T>[] toCffuArray(CompletionStage<T>... stages) {
         @SuppressWarnings("unchecked")
         Cffu<T>[] ret = new Cffu[stages.length];
         for (int i = 0; i < stages.length; i++) {
-            ret[i] = asCffu(requireNonNull(stages[i], "stage" + (i + 1) + " is null"));
+            ret[i] = toCffu(requireNonNull(stages[i], "stage" + (i + 1) + " is null"));
         }
         return ret;
     }
@@ -636,7 +636,7 @@ public final class CffuFactory {
      * @see Cffu#toCompletableFuture()
      * @see CompletableFuture#toCompletableFuture()
      * @see CompletionStage#toCompletableFuture()
-     * @see #asCffuArray(CompletionStage[])
+     * @see #toCffuArray(CompletionStage[])
      */
     @Contract(pure = true)
     @SafeVarargs

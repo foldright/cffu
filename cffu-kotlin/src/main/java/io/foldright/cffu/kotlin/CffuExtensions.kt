@@ -13,39 +13,41 @@ import java.util.concurrent.CompletionStage
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////
-// asCffu methods
+// toCffu methods
 ////////////////////////////////////////
 
 /**
  * Wrap an existed [CompletableFuture]/[CompletionStage] to [Cffu].
  *
- * This method is the same as [CffuFactory.asCffu], providing this method is convenient for method chaining.
+ * This method is the same as [CffuFactory.toCffu], providing this method is convenient for method chaining.
  *
- * @see CffuFactory.asCffu
+ * @see CffuFactory.toCffu
+ * @see CompletionStage.toCompletableFuture
  */
-fun <T> CompletionStage<T>.asCffu(cffuFactory: CffuFactory): Cffu<T> =
-    cffuFactory.asCffu(this)
+fun <T> CompletionStage<T>.toCffu(cffuFactory: CffuFactory): Cffu<T> =
+    cffuFactory.toCffu(this)
 
 /**
- * Wrap input [CompletableFuture]/[CompletionStage] collection elements to [Cffu] by [CffuFactory.asCffu].
+ * Wrap input [CompletableFuture]/[CompletionStage] collection elements to [Cffu] by [CffuFactory.toCffu].
  *
- * This method is the same as [CffuFactory.asCffuArray], providing this method is convenient for method chaining.
+ * This method is the same as [CffuFactory.toCffuArray], providing this method is convenient for method chaining.
  *
- * @see CffuFactory.asCffu
+ * @see CffuFactory.toCffuArray
+ * @see CffuFactory.toCffu
  */
-fun <T> Collection<CompletionStage<T>>.asCffu(cffuFactory: CffuFactory): List<Cffu<T>> =
-    map { it.asCffu(cffuFactory) }
+fun <T> Collection<CompletionStage<T>>.toCffu(cffuFactory: CffuFactory): List<Cffu<T>> =
+    map { it.toCffu(cffuFactory) }
 
 /**
- * Wrap input [CompletableFuture]/[CompletionStage] array elements to [Cffu] by [CffuFactory.asCffu].
+ * Wrap input [CompletableFuture]/[CompletionStage] array elements to [Cffu] by [CffuFactory.toCffu].
  *
- * This method is the same as [CffuFactory.asCffuArray], providing this method is convenient for method chaining.
+ * This method is the same as [CffuFactory.toCffuArray], providing this method is convenient for method chaining.
  *
- * @see CffuFactory.asCffuArray
- * @see CffuFactory.asCffu
+ * @see CffuFactory.toCffuArray
+ * @see CffuFactory.toCffu
  */
-fun <T> Array<out CompletionStage<T>>.asCffu(cffuFactory: CffuFactory): Array<Cffu<T>> =
-    cffuFactory.asCffuArray(*this)
+fun <T> Array<out CompletionStage<T>>.toCffu(cffuFactory: CffuFactory): Array<Cffu<T>> =
+    cffuFactory.toCffuArray(*this)
 
 ////////////////////////////////////////
 // allOf* methods

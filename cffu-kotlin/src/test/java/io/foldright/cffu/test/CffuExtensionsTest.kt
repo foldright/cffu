@@ -29,10 +29,10 @@ val rte = RuntimeException("Bang")
 
 class CffuExtensionsTest : FunSpec({
     ////////////////////////////////////////
-    // asCffu
+    // toCffu
     ////////////////////////////////////////
 
-    suspend fun checkAsCffu(cffu: Cffu<Int>, n: Int) {
+    suspend fun checkToCffu(cffu: Cffu<Int>, n: Int) {
         cffu.await() shouldBe n
 
         cffu.defaultExecutor() shouldBeSameInstanceAs testThreadPoolExecutor
@@ -45,31 +45,31 @@ class CffuExtensionsTest : FunSpec({
         }
     }
 
-    test("asCffu for CompletableFuture") {
+    test("toCffu for CompletableFuture") {
         val cf = CompletableFuture.completedFuture(n)
-        checkAsCffu(cf.asCffu(testCffuFactory), n)
+        checkToCffu(cf.toCffu(testCffuFactory), n)
     }
 
-    test("asCffu for CompletableFuture collection") {
+    test("toCffu for CompletableFuture collection") {
         val range = 0 until 10
         val cfs: List<CompletableFuture<Int>> = range.map {
             CompletableFuture.completedFuture(it)
         }
 
-        cfs.asCffu(testCffuFactory).forEachIndexed { index, cffu ->
-            checkAsCffu(cffu, index)
+        cfs.toCffu(testCffuFactory).forEachIndexed { index, cffu ->
+            checkToCffu(cffu, index)
         }
-        cfs.toSet().asCffu(testCffuFactory).forEachIndexed { index, cffu ->
-            checkAsCffu(cffu, index)
+        cfs.toSet().toCffu(testCffuFactory).forEachIndexed { index, cffu ->
+            checkToCffu(cffu, index)
         }
     }
 
-    test("asCffu for CompletableFuture array") {
+    test("toCffu for CompletableFuture array") {
         val cfArray: Array<CompletableFuture<Int>> = Array(10) { CompletableFuture.completedFuture(it) }
-        cfArray.asCffu(testCffuFactory).forEachIndexed { index, cffu -> checkAsCffu(cffu, index) }
+        cfArray.toCffu(testCffuFactory).forEachIndexed { index, cffu -> checkToCffu(cffu, index) }
 
         val csArray: Array<CompletionStage<Int>> = Array(10) { CompletableFuture.completedFuture(it) }
-        csArray.asCffu(testCffuFactory).forEachIndexed { index, cffu -> checkAsCffu(cffu, index) }
+        csArray.toCffu(testCffuFactory).forEachIndexed { index, cffu -> checkToCffu(cffu, index) }
     }
 
     test("allOf*") {
@@ -460,7 +460,7 @@ class CffuExtensionsTest : FunSpec({
         cfArray::class shouldNotBe csArray::class
         cfArray shouldBe csArray // shouldBe ignore the array type!
 
-        val cffus: List<Cffu<Int>> = cfs.asCffu(testCffuFactory)
+        val cffus: List<Cffu<Int>> = cfs.toCffu(testCffuFactory)
         cffus.toCompletableFuture() shouldBe cfs
         cffus.toSet().toCompletableFuture() shouldBe cfs
 
@@ -493,7 +493,7 @@ class CffuExtensionsTest : FunSpec({
         }
         val cfArray = cfs.toTypedArray()
 
-        val cffus: List<Cffu<Int>> = cfs.asCffu(testCffuFactory)
+        val cffus: List<Cffu<Int>> = cfs.toCffu(testCffuFactory)
         cffus.cffuUnwrap() shouldBe cfs
         cffus.toSet().cffuUnwrap() shouldBe cfs
 
