@@ -195,6 +195,31 @@ class CffuTest {
         assertEquals(CffuState.CANCELLED, incomplete.cffuState());
     }
 
+    @Test
+    void test_peek() throws Exception {
+        BiConsumer<Object, Throwable> c = (v, ex) -> {
+        };
+        BiConsumer<Object, Throwable> ec = (v, ex) -> {
+            throw anotherRte;
+        };
+
+        Cffu<Object> failed = cffuFactory.failedFuture(rte);
+        assertSame(failed.peek(c), failed);
+        assertSame(failed.peekAsync(c), failed);
+        assertSame(failed.peekAsync(c, executorService), failed);
+        assertSame(failed.peek(ec), failed);
+        assertSame(failed.peekAsync(ec), failed);
+        assertSame(failed.peekAsync(ec, executorService), failed);
+
+        Cffu<Integer> success = cffuFactory.completedFuture(n);
+        assertEquals(n, success.peek(c).get());
+        assertEquals(n, success.peekAsync(c).get());
+        assertEquals(n, success.peekAsync(c).get());
+        assertEquals(n, success.peek(ec).get());
+        assertEquals(n, success.peekAsync(ec).get());
+        assertEquals(n, success.peekAsync(ec).get());
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# Cffu Re-Config methods
     //

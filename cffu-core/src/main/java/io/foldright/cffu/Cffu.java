@@ -88,7 +88,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Cffu<Void> thenRunAsync(Runnable action) {
-        return reset0(cf.thenRunAsync(action, fac.defaultExecutor()));
+        return thenRunAsync(action, fac.defaultExecutor());
     }
 
     /**
@@ -1315,8 +1315,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //    - thenCompose*:          T -> CompletionStage<T>
     //    - exceptionallyCompose*: throwable -> CompletionStage<T>
     //
-    //    - whenComplete*:         (T, throwable) -> Void
-    //    - handle*:               (T, throwable) -> U
+    //    - handle*:       (T, throwable) -> U
+    //    - whenComplete*: (T, throwable) -> Void
+    //    - peek*:         (T, throwable) -> Void
     //
     // NOTE about advanced meaning:
     //   - `compose` methods, input function argument return CompletionStage
@@ -1504,18 +1505,81 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      */
     @Override
-    public Cffu<T> whenCompleteAsync(
-            BiConsumer<? super T, ? super Throwable> action, Executor executor) {
+    public Cffu<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action, Executor executor) {
         return reset0(cf.whenCompleteAsync(action, executor));
     }
 
     /**
-     * Returns a new Cffu that, when this stage completes either normally or exceptionally,
-     * is executed with this stage's result and exception as arguments to the supplied function.
+     * Peeks the result by executing the given action when this cffu completes, returns this cffu.
      * <p>
-     * When this stage is complete, the given function is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this stage as arguments,
-     * and the function's result is used to complete the returned stage.
+     * When this cffu is complete, the given action is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of this cffu as arguments.
+     * Whether the supplied action throws an exception or not, do <strong>NOT</strong> affect this cffu.
+     * <p>
+     * Unlike method {@link CompletionStage#handle handle} and like method
+     * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
+     * this method is not designed to translate completion outcomes.
+     *
+     * @param action the action to perform
+     * @return this Cffu
+     * @see CompletionStage#whenComplete(BiConsumer)
+     * @see java.util.stream.Stream#peek(Consumer)
+     */
+    public Cffu<T> peek(BiConsumer<? super T, ? super Throwable> action) {
+        cf.whenComplete(action);
+        return this;
+    }
+
+    /**
+     * Peeks the result by executing the given action when this cffu completes,
+     * executes the given action using {@link #defaultExecutor()}, returns this cffu.
+     * <p>
+     * When this cffu is complete, the given action is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of this cffu as arguments.
+     * Whether the supplied action throws an exception or not, do <strong>NOT</strong> affect this cffu.
+     * <p>
+     * Unlike method {@link CompletionStage#handle handle} and like method
+     * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
+     * this method is not designed to translate completion outcomes.
+     *
+     * @param action the action to perform
+     * @return this Cffu
+     * @see CompletionStage#whenCompleteAsync(BiConsumer)
+     * @see java.util.stream.Stream#peek(Consumer)
+     */
+    public Cffu<T> peekAsync(BiConsumer<? super T, ? super Throwable> action) {
+        return peekAsync(action, fac.defaultExecutor());
+    }
+
+    /**
+     * Peeks the result by executing the given action when this cffu completes,
+     * that executes the given action using the supplied Executor when this cffu completes, returns this cffu.
+     * <p>
+     * When this cffu is complete, the given action is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of this cffu as arguments.
+     * Whether the supplied action throws an exception or not, do <strong>NOT</strong> affect this cffu.
+     * <p>
+     * Unlike method {@link CompletionStage#handle handle} and like method
+     * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
+     * this method is not designed to translate completion outcomes.
+     *
+     * @param action the action to perform
+     * @return this Cffu
+     * @see CompletionStage#whenCompleteAsync(BiConsumer)
+     * @see java.util.stream.Stream#peek(Consumer)
+     */
+    public Cffu<T> peekAsync(BiConsumer<? super T, ? super Throwable> action, Executor executor) {
+        cf.whenCompleteAsync(action, executor);
+        return this;
+    }
+
+    /**
+     * Returns a new Cffu that, when this cffu completes either normally or exceptionally,
+     * is executed with this cffu's result and exception as arguments to the supplied function.
+     * <p>
+     * When this cffu is complete, the given function is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of this cffu as arguments,
+     * and the function's result is used to complete the returned cffu.
      *
      * @param fn  the function to use to compute the value of the returned Cffu
      * @param <U> the function's return type
@@ -1528,13 +1592,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this stage completes either normally or exceptionally,
+     * Returns a new Cffu that, when this cffu completes either normally or exceptionally,
      * is executed using {@link #defaultExecutor()},
-     * with this stage's result and exception as arguments to the supplied function.
+     * with this cffu's result and exception as arguments to the supplied function.
      * <p>
-     * When this stage is complete, the given function is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this stage as arguments,
-     * and the function's result is used to complete the returned stage.
+     * When this Cffu is complete, the given function is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of this Cffu as arguments,
+     * and the function's result is used to complete the returned Cffu.
      *
      * @param fn  the function to use to compute the value of the returned Cffu
      * @param <U> the function's return type
@@ -1547,15 +1611,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this stage completes either normally or exceptionally,
-     * is executed using the supplied executor, with this stage's result and exception
+     * Returns a new Cffu that, when this cffu completes either normally or exceptionally,
+     * is executed using the supplied executor, with this cffu's result and exception
      * as arguments to the supplied function.
      * <p>
-     * When this stage is complete, the given function is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this stage as arguments,
-     * and the function's result is used to complete the returned stage.
+     * When this cffu is complete, the given function is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of this cffu as arguments,
+     * and the function's result is used to complete the returned cffu.
      *
-     * @param fn       the function to use to compute the value of the returned Cffu
+     * @param fn       the function to use to compute the value of the returned cffu
      * @param executor the executor to use for asynchronous execution
      * @param <U>      the function's return type
      * @return the new Cffu

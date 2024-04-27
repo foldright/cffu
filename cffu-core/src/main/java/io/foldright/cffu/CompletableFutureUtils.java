@@ -929,6 +929,79 @@ public final class CompletableFutureUtils {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
+    //# More new enhanced methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Peeks the result by executing the given action when given stage completes, returns the given stage.
+     * <p>
+     * When the given stage is complete, the given action is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of given stage as arguments.
+     * Whether the supplied action throws an exception or not, do <strong>NOT</strong> affect this cffu.
+     * <p>
+     * Unlike method {@link CompletionStage#handle handle} and like method
+     * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
+     * this method is not designed to translate completion outcomes.
+     *
+     * @param action the action to perform
+     * @return the given stage
+     * @see CompletionStage#whenComplete(BiConsumer)
+     * @see java.util.stream.Stream#peek(Consumer)
+     */
+    public static <T, C extends CompletionStage<? extends T>> C peek(
+            C cf, BiConsumer<? super T, ? super Throwable> action) {
+        cf.whenComplete(action);
+        return cf;
+    }
+
+    /**
+     * Peeks the result by executing the given action when given stage completes,
+     * executes the given action using given stage's default asynchronous execution facility,
+     * returns the given stage.
+     * <p>
+     * When the given stage is complete, the given action is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of given stage as arguments.
+     * Whether the supplied action throws an exception or not, do <strong>NOT</strong> affect this cffu.
+     * <p>
+     * Unlike method {@link CompletionStage#handle handle} and like method
+     * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
+     * this method is not designed to translate completion outcomes.
+     *
+     * @param action the action to perform
+     * @return the given stage
+     * @see CompletionStage#whenCompleteAsync(BiConsumer)
+     * @see java.util.stream.Stream#peek(Consumer)
+     */
+    public static <T, C extends CompletionStage<? extends T>> C peekAsync(
+            C cf, BiConsumer<? super T, ? super Throwable> action) {
+        cf.whenCompleteAsync(action);
+        return cf;
+    }
+
+    /**
+     * Peeks the result by executing the given action when given stage completes,
+     * executes the given action using the supplied Executor, returns the given stage.
+     * <p>
+     * When the given stage is complete, the given action is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of given stage as arguments.
+     * Whether the supplied action throws an exception or not, do <strong>NOT</strong> affect this cffu.
+     * <p>
+     * Unlike method {@link CompletionStage#handle handle} and like method
+     * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
+     * this method is not designed to translate completion outcomes.
+     *
+     * @param action the action to perform
+     * @return the given stage
+     * @see CompletionStage#whenCompleteAsync(BiConsumer, Executor)
+     * @see java.util.stream.Stream#peek(Consumer)
+     */
+    public static <T, C extends CompletionStage<? extends T>> C peekAsync(
+            C cf, BiConsumer<? super T, ? super Throwable> action, Executor executor) {
+        cf.whenCompleteAsync(action, executor);
+        return cf;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
     //# Backport CF static methods
     //  compatibility for low Java versions
     ////////////////////////////////////////////////////////////////////////////////

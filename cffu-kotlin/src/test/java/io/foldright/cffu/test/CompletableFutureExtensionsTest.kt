@@ -332,6 +332,31 @@ class CompletableFutureExtensionsTest : FunSpec({
     }
 
     ////////////////////////////////////////////////////////////////////////////////
+    //# More new enhanced methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    test("peek") {
+        val c = BiConsumer<Any, Throwable> { _: Any, _: Throwable -> }
+        val ec = BiConsumer<Any, Throwable> { _: Any, _: Throwable -> throw rte }
+
+        val failed = CompletableFutureUtils.failedFuture<Any>(rte)
+        failed.peek(c) shouldBeSameInstanceAs failed
+        failed.peekAsync(c) shouldBeSameInstanceAs failed
+        failed.peekAsync(c, testThreadPoolExecutor) shouldBeSameInstanceAs failed
+        failed.peek(ec) shouldBeSameInstanceAs failed
+        failed.peekAsync(ec) shouldBeSameInstanceAs failed
+        failed.peekAsync(ec, testThreadPoolExecutor) shouldBeSameInstanceAs failed
+
+        val success = CompletableFuture.completedFuture(n)
+        success.peek(c).get() shouldBe n
+        success.peekAsync(c).get() shouldBe n
+        success.peekAsync(c).get() shouldBe n
+        success.peek(ec).get() shouldBe n
+        success.peekAsync(ec).get() shouldBe n
+        success.peekAsync(ec).get() shouldBe n
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
     //# Backport CF instance methods
     //  compatibility for low Java version
     ////////////////////////////////////////////////////////////////////////////////

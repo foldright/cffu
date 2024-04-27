@@ -728,6 +728,66 @@ fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
     CompletableFutureUtils.applyToEitherSuccessAsync(this, cf2, fn, executor)
 
 ////////////////////////////////////////////////////////////////////////////////
+//# More new enhanced methods
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Peeks the result by executing the given action when this stage completes, returns this stage.
+ *
+ * When this stage is complete, the given action is invoked with the result (or `null` if none)
+ * and the exception (or `null` if none) of this stage as arguments.
+ * Whether the supplied action throws an exception or not, do **NOT** affect this cffu.
+ *
+ * Unlike method [handle][CompletionStage.handle] and like method [whenComplete][CompletionStage.whenComplete],
+ * this method is not designed to translate completion outcomes.
+ *
+ * @param action the action to perform
+ * @return this stage
+ * @see CompletionStage.whenComplete
+ * @see java.util.stream.Stream.peek
+ */
+fun <T, C : CompletionStage<out T>> C.peek(action: BiConsumer<in T, in Throwable>): C =
+    CompletableFutureUtils.peek(this, action)
+
+/**
+ * Peeks the result by executing the given action when this stage completes,
+ * executes the given action using this stage's default asynchronous execution facility, returns this stage.
+ *
+ * When this stage is complete, the given action is invoked with the result (or `null` if none)
+ * and the exception (or `null` if none) of this stage as arguments.
+ * Whether the supplied action throws an exception or not, do **NOT** affect this cffu.
+ *
+ * Unlike method [handle][CompletionStage.handle] and like method [whenComplete][CompletionStage.whenComplete],
+ * this method is not designed to translate completion outcomes.
+ *
+ * @param action the action to perform
+ * @return this stage
+ * @see CompletionStage.whenCompleteAsync
+ * @see java.util.stream.Stream.peek
+ */
+fun <T, C : CompletionStage<out T>> C.peekAsync(action: BiConsumer<in T, in Throwable>): C =
+    CompletableFutureUtils.peekAsync(this, action)
+
+/**
+ * Peeks the result by executing the given action when this stage completes,
+ * executes the given action using the supplied Executor, returns this stage.
+ *
+ * When this stage is complete, the given action is invoked with the result (or `null` if none)
+ * and the exception (or `null` if none) of this stage as arguments.
+ * Whether the supplied action throws an exception or not, do **NOT** affect this cffu.
+ *
+ * Unlike method [handle][CompletionStage.handle] and like method [whenComplete][CompletionStage.whenComplete],
+ * this method is not designed to translate completion outcomes.
+ *
+ * @param action the action to perform
+ * @return this stage
+ * @see CompletionStage.whenCompleteAsync
+ * @see java.util.stream.Stream.peek
+ */
+fun <T, C : CompletionStage<out T>> C.peekAsync(action: BiConsumer<in T, in Throwable>, executor: Executor): C =
+    CompletableFutureUtils.peekAsync(this, action, executor)
+
+////////////////////////////////////////////////////////////////////////////////
 //# Backport CF instance methods
 //  compatibility for low Java version
 ////////////////////////////////////////////////////////////////////////////////

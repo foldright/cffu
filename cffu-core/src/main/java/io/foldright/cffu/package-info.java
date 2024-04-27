@@ -3,7 +3,7 @@
  * <p>
  * The core class is {@link io.foldright.cffu.Cffu}. And utils for {@link java.util.concurrent.CompletableFuture},
  * the key user class is {@link io.foldright.cffu.CompletableFutureUtils}
- * which contains the enhanced methods for {@link java.util.concurrent.CompletableFuture}.
+ * which contains the enhanced and backport methods for {@link java.util.concurrent.CompletableFuture}.
  *
  * @see io.foldright.cffu.Cffu
  * @see io.foldright.cffu.CffuFactory

@@ -789,6 +789,35 @@ class CompletableFutureUtilsTest {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
+    //# More new enhanced methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void test_peek() throws Exception {
+        BiConsumer<Object, Throwable> c = (v, ex) -> {
+        };
+        BiConsumer<Object, Throwable> ec = (v, ex) -> {
+            throw anotherRte;
+        };
+
+        CompletableFuture<Object> failed = failedFuture(rte);
+        assertSame(peek(failed, c), failed);
+        assertSame(peekAsync(failed, c), failed);
+        assertSame(peekAsync(failed, c, executorService), failed);
+        assertSame(peek(failed, ec), failed);
+        assertSame(peekAsync(failed, ec), failed);
+        assertSame(peekAsync(failed, ec, executorService), failed);
+
+        CompletableFuture<Integer> success = completedFuture(n);
+        assertEquals(n, peek(success, c).get());
+        assertEquals(n, peekAsync(success, c).get());
+        assertEquals(n, peekAsync(success, c).get());
+        assertEquals(n, peek(success, ec).get());
+        assertEquals(n, peekAsync(success, ec).get());
+        assertEquals(n, peekAsync(success, ec).get());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
     //# Backport CF methods
     //  compatibility for low Java version
     ////////////////////////////////////////////////////////////////////////////////
