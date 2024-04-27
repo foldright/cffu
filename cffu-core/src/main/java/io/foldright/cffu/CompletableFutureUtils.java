@@ -33,6 +33,34 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
+     * Returns a new CompletableFuture that is completed when all the given stages complete.
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
+     * with a CompletionException holding this exception as its cause.
+     * Otherwise, the results, if any, of the given stages are not reflected
+     * in the returned CompletableFuture, but may be obtained by inspecting them individually.
+     * If no stages are provided, returns a CompletableFuture completed with the value {@code null}.
+     * <p>
+     * if you need the results of given stages, prefer below methods:
+     * <ul>
+     * <li>{@link #allResultsOf(CompletionStage[])}
+     * <li>{@link #allTupleOf(CompletionStage, CompletionStage)} /
+     *     {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     *     (provided overloaded methods with 2~5 input)
+     * </ul>
+     * <p>
+     * This method is the same as {@link CompletableFuture#allOf(CompletableFuture[])},
+     * except the parameter type is more generic({@link CompletionStage}).
+     *
+     * @param cfs the stages
+     * @return a new CompletableFuture that is completed when all the given stages complete
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static CompletableFuture<Void> allOf(CompletionStage<?>... cfs) {
+        return CompletableFuture.allOf(toCompletableFutureArray((CompletionStage[]) cfs));
+    }
+
+    /**
      * Returns a new CompletableFuture with the results in the <strong>same order</strong> of all the given
      * CompletableFutures, the new CompletableFuture is completed when all the given CompletableFutures complete.
      * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
@@ -197,13 +225,14 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is completed
-     * when any of the given CompletableFutures complete, with the same result.
+     * when any of the given CompletableFutures(stages) complete, with the same result.
      * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so,
      * with a CompletionException holding this exception as its cause.
      * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
      * <p>
      * This method is the same as {@link CompletableFuture#anyOf(CompletableFuture[])},
-     * except the return result type is generic type instead of {@code Object}.
+     * except the parameter type is more generic type {@link CompletionStage}.
+     * and the return result type is generic type instead of {@code Object}.
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that is completed with the result

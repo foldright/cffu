@@ -29,49 +29,52 @@ import java.util.function.Function
 ////////////////////////////////////////
 
 /**
- * Returns a new CompletableFuture that is completed when all the given CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
- * also does so, with a CompletionException holding this exception as its cause.
- * Otherwise, the results, if any, of the given CompletableFutures are not reflected in the returned
- * CompletableFuture, but may be obtained by inspecting them individually.
- * If no CompletableFutures are provided, returns a CompletableFuture completed with the value `null`.
+ * Returns a new CompletableFuture that is completed when all the given stages complete.
+ * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
+ * with a CompletionException holding this exception as its cause.
+ * Otherwise, the results, if any, of the given stages are not reflected
+ * in the returned CompletableFuture, but may be obtained by inspecting them individually.
+ * If no stages are provided, returns a CompletableFuture completed with the value `null`.
  *
- * Among the applications of this method is to await completion of a set of independent CompletableFutures
- * before continuing a program, as in: `CompletableFuture.allOf(c1, c2, c3).join();`.
- * Returns a new CompletableFuture that is completed when all the given CompletableFutures complete.
+ * If you need the results of given stages, prefer below methods:
  *
- * This method is the same as [CompletableFuture.allOf], providing this method is convenient for method chaining.
+ *  - [allResultsOfCompletableFuture]
+ *  - [allTupleOf] (provided overloaded methods with 2~5 input)
  *
+ * This method is the same as [CompletableFutureUtils.allOf], providing this method is convenient for method chaining.
+ *
+ * @see allResultsOfCompletableFuture
  * @see allResultsOfCffu
  * @see allOfCffu
- * @see allResultsOfCompletableFuture
+ * @see CompletableFutureUtils.allOf
  * @see CompletableFuture.allOf
  */
 fun Collection<CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
-    CompletableFuture.allOf(*this.map { it.toCompletableFuture() }.toTypedArray())
+    CompletableFutureUtils.allOf(*this.toTypedArray())
 
 /**
- * Returns a new CompletableFuture that is completed when all the given CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
- * also does so, with a CompletionException holding this exception as its cause.
- * Otherwise, the results, if any, of the given CompletableFutures are not reflected in the returned
- * CompletableFuture, but may be obtained by inspecting them individually.
- * If no CompletableFutures are provided, returns a CompletableFuture completed with the value `null`.
+ * Returns a new CompletableFuture that is completed when all the given stages complete.
+ * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
+ * with a CompletionException holding this exception as its cause.
+ * Otherwise, the results, if any, of the given stages are not reflected
+ * in the returned CompletableFuture, but may be obtained by inspecting them individually.
+ * If no stages are provided, returns a CompletableFuture completed with the value `null`.
  *
- * Among the applications of this method is to await completion of a set of independent CompletableFutures
- * before continuing a program, as in: `CompletableFuture.allOf(c1, c2, c3).join();`.
- * Returns a new CompletableFuture that is completed when all the given CompletableFutures complete.
+ * If you need the results of given stages, prefer below methods:
  *
- * This method is the same as [CompletableFuture.allOf], providing this method is convenient for method chaining.
+ *  - [allResultsOfCompletableFuture]
+ *  - [allTupleOf] (provided overloaded methods with 2~5 input)
  *
+ * This method is the same as [CompletableFutureUtils.allOf], providing this method is convenient for method chaining.
+ *
+ * @see allResultsOfCompletableFuture
  * @see allResultsOfCffu
  * @see allOfCffu
- * @see allResultsOfCompletableFuture
+ * @see CompletableFutureUtils.allOf
  * @see CompletableFuture.allOf
  */
-@Suppress("UNCHECKED_CAST")
 fun Array<out CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
-    CompletableFuture.allOf(*(this as Array<CompletionStage<Any>>).toCompletableFuture())
+    CompletableFutureUtils.allOf(*this)
 
 /**
  * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
@@ -81,6 +84,11 @@ fun Array<out CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Vo
  * also does so *without* waiting other incomplete given CompletableFutures,
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value `null`.
+ *
+ * If you need the results of given stages, prefer below methods:
+ *
+ *  - [allResultsOfFastFailCompletableFuture]
+ *  - [allTupleOfFastFail] (provided overloaded methods with 2~5 input)
  *
  * This method is the same as [CompletableFutureUtils.allOfFastFail],
  * providing this method is convenient for method chaining.
@@ -101,6 +109,11 @@ fun Collection<CompletionStage<*>>.allOfFastFailCompletableFuture(): Completable
  * also does so *without* waiting other incomplete given CompletableFutures,
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value `null`.
+ *
+ * If you need the results of given stages, prefer below methods:
+ *
+ *  - [allResultsOfFastFailCompletableFuture]
+ *  - [allTupleOfFastFail] (provided overloaded methods with 2~5 input)
  *
  * This method is the same as [CompletableFutureUtils.allOfFastFail],
  * providing this method is convenient for method chaining.

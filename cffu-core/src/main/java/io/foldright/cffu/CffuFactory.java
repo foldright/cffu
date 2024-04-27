@@ -19,7 +19,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-import static io.foldright.cffu.CompletableFutureUtils.toCompletableFutureArray;
 import static java.util.Objects.requireNonNull;
 
 
@@ -301,8 +300,8 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is completed when all the given stages complete.
-     * If any of the given stages complete exceptionally, then the returned
-     * Cffu also does so, with a CompletionException holding this exception as its cause.<br>
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.<br>
      * Otherwise, the results, if any, of the given stages are not reflected in
      * the returned Cffu({@code Cffu<Void>}), but may be obtained by inspecting them individually.<br>
      * If no stages are provided, returns a Cffu completed with the value {@code null}.
@@ -323,12 +322,11 @@ public final class CffuFactory {
      * @see #allTupleOf(CompletionStage, CompletionStage, CompletionStage)
      * @see #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage)
      * @see #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
-     * @see CompletableFuture#allOf(CompletableFuture[])
+     * @see CompletableFutureUtils#allOf(CompletionStage[])
      */
     @Contract(pure = true)
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public Cffu<Void> allOf(CompletionStage<?>... cfs) {
-        return new0(CompletableFuture.allOf(toCompletableFutureArray((CompletionStage[]) cfs)));
+        return new0(CompletableFutureUtils.allOf(cfs));
     }
 
     /**
