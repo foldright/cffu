@@ -8,6 +8,7 @@ import io.foldright.cffu.tuple.Tuple2
 import io.foldright.cffu.tuple.Tuple3
 import io.foldright.cffu.tuple.Tuple4
 import io.foldright.cffu.tuple.Tuple5
+import io.foldright.test_utils.sleep
 import io.foldright.test_utils.testThreadPoolExecutor
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -21,6 +22,9 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import java.util.function.BiConsumer
+import java.util.function.Consumer
+import java.util.function.Function
 
 class CompletableFutureExtensionsTest : FunSpec({
     test("allOf*") {
@@ -206,7 +210,6 @@ class CompletableFutureExtensionsTest : FunSpec({
         shouldThrow<NoCfsProvidedException> {
             arrayOf<CompletableFuture<*>>().anyOfSuccessCompletableFuture().await()
         }
-
     }
 
     ////////////////////////////////////////
@@ -259,6 +262,73 @@ class CompletableFutureExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(anotherN),
             CompletableFuture.completedFuture(n + n)
         ).get() shouldBe Tuple5.of(n, s, d, anotherN, n + n)
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# both methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    test("both fastFail") {
+        val cf = CompletableFuture.supplyAsync {
+            sleep(2_000)
+            n
+        }
+        val failed = CompletableFutureUtils.failedFuture<Int>(rte)
+
+        val runnable = Runnable {}
+        shouldThrow<ExecutionException> {
+            cf.runAfterBothFastFail(failed, runnable)[1, TimeUnit.MILLISECONDS]
+        }.cause shouldBeSameInstanceAs rte
+        shouldThrow<ExecutionException> {
+            cf.runAfterBothFastFailAsync(failed, runnable)[1, TimeUnit.MILLISECONDS]
+        }.cause shouldBeSameInstanceAs rte
+        shouldThrow<ExecutionException> {
+            cf.runAfterBothFastFailAsync(failed, runnable, testThreadPoolExecutor)[1, TimeUnit.MILLISECONDS]
+        }.cause shouldBeSameInstanceAs rte
+
+        val bc = BiConsumer { _: Int, _: Int -> }
+        shouldThrow<ExecutionException> {
+            cf.thenAcceptBothFastFail(failed, bc)[1, TimeUnit.MILLISECONDS]
+        }.cause shouldBeSameInstanceAs rte
+        shouldThrow<ExecutionException> {
+            cf.thenAcceptBothFastFailAsync(failed, bc)[1, TimeUnit.MILLISECONDS]
+        }.cause shouldBeSameInstanceAs rte
+        shouldThrow<ExecutionException> {
+            cf.thenAcceptBothFastFailAsync(failed, bc, testThreadPoolExecutor)[1, TimeUnit.MILLISECONDS]
+        }.cause shouldBeSameInstanceAs rte
+
+        shouldThrow<ExecutionException> {
+            cf.thenCombineFastFail(failed, Integer::sum)[1, TimeUnit.MILLISECONDS]
+        }.cause shouldBeSameInstanceAs rte
+        shouldThrow<ExecutionException> {
+            cf.thenCombineFastFailAsync(failed, Integer::sum)[1, TimeUnit.MILLISECONDS]
+        }.cause shouldBeSameInstanceAs rte
+        shouldThrow<ExecutionException> {
+            cf.thenCombineFastFailAsync(failed, Integer::sum, testThreadPoolExecutor)[1, TimeUnit.MILLISECONDS]
+        }.cause shouldBeSameInstanceAs rte
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# either methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    test("either success") {
+        val failed = CompletableFutureUtils.failedFuture<Int>(rte)
+        val cf = CompletableFuture.completedFuture(n)
+
+        val runnable = Runnable {}
+        failed.runAfterEitherSuccess(cf, runnable).get().shouldBeNull()
+        failed.runAfterEitherSuccessAsync(cf, runnable).get().shouldBeNull()
+        failed.runAfterEitherSuccessAsync(cf, runnable, testThreadPoolExecutor).get().shouldBeNull()
+
+        val c = Consumer<Int> {}
+        failed.acceptEitherSuccess(cf, c).get().shouldBeNull()
+        failed.acceptEitherSuccessAsync(cf, c).get().shouldBeNull()
+        failed.acceptEitherSuccessAsync(cf, c, testThreadPoolExecutor).get().shouldBeNull()
+
+        failed.applyToEitherSuccess(cf, Function.identity()).get() shouldBe n
+        failed.applyToEitherSuccessAsync(cf, Function.identity()).get() shouldBe n
+        failed.applyToEitherSuccessAsync(cf, Function.identity(), testThreadPoolExecutor).get() shouldBe n
     }
 
     ////////////////////////////////////////////////////////////////////////////////

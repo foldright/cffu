@@ -12,8 +12,8 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
+import java.util.function.*
 import java.util.function.Function
-import java.util.function.Supplier
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -191,7 +191,6 @@ fun Collection<CompletableFuture<*>>.allOfFastFailCompletableFuture(): Completab
  */
 fun Array<out CompletableFuture<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
     CompletableFutureUtils.allOfFastFail(*this)
-
 
 ////////////////////////////////////////
 //# anyOf* methods
@@ -397,6 +396,338 @@ fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.combineFastFail(
     CompletableFutureUtils.combineFastFail(this, cf2, cf3, cf4, cf5)
 
 ////////////////////////////////////////////////////////////////////////////////
+//# `then both(binary input)` methods with fast-fail support:
+//
+//    - runAfterBothFastFail*(Runnable):     Void, Void -> Void
+//    - thenAcceptBothFastFail*(BiConsumer): (T1, T2) -> Void
+//    - thenCombineFastFail*(BiFunction):    (T1, T2) -> U
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Returns a new CompletableFuture that, when two given stages both complete normally, executes the given action.
+ * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
+ * **without** waiting other incomplete given CompletionStage,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * This method is the same as [CompletableFuture.runAfterBoth] except for the fast-fail behavior.
+ *
+ * @param action the action to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.runAfterBoth
+ */
+fun CompletionStage<*>.runAfterBothFastFail(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
+    CompletableFutureUtils.runAfterBothFastFail(this, other, action)
+
+/**
+ * Returns a new CompletableFuture that, when two given stages both complete normally,
+ * executes the given action using CompletableFuture's default asynchronous execution facility.
+ * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
+ * **without** waiting other incomplete given CompletionStage,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * This method is the same as [CompletableFuture.runAfterBothAsync] except for the fast-fail behavior.
+ *
+ * @param action the action to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.runAfterBothAsync
+ */
+fun CompletionStage<*>.runAfterBothFastFailAsync(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
+    CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action)
+
+/**
+ * Returns a new CompletableFuture that, when two given stages both complete normally,
+ * executes the given action using the supplied executor.
+ * if any of the given stage complete exceptionally, then the returned CompletableFuture
+ * also does so **without** waiting other incomplete given CompletionStage,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * This method is the same as [CompletableFuture.runAfterBothAsync] except for the fast-fail behavior.
+ *
+ * @param action the action to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.runAfterBothAsync
+ */
+fun CompletionStage<*>.runAfterBothFastFailAsync(
+    other: CompletionStage<*>, action: Runnable, executor: Executor
+): CompletableFuture<Void> =
+    CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action, executor)
+
+/**
+ * Returns a new CompletableFuture that, when tow given stage both complete normally,
+ * is executed with the two results as arguments to the supplied action.
+ * if any of the given stage complete exceptionally, then the returned CompletableFuture
+ * also does so *without* waiting other incomplete given CompletionStage,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * This method is the same as [CompletableFuture.thenAcceptBoth] except for the fast-fail behavior.
+ *
+ * @param action the action to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.thenAcceptBoth
+ */
+fun <T, U> CompletionStage<out T>.thenAcceptBothFastFail(
+    cf2: CompletionStage<out U>, action: BiConsumer<in T, in U>
+): CompletableFuture<Void> =
+    CompletableFutureUtils.thenAcceptBothFastFail(this, cf2, action)
+
+/**
+ * Returns a new CompletableFuture that, when tow given stage both complete normally,
+ * is executed using CompletableFuture's default asynchronous execution facility,
+ * with the two results as arguments to the supplied action.
+ * if any of the given stage complete exceptionally, then the returned CompletableFuture
+ * also does so *without* waiting other incomplete given CompletionStage,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * This method is the same as [CompletableFuture.thenAcceptBothAsync] except for the fast-fail behavior.
+ *
+ * @param action the action to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.thenAcceptBothAsync
+ */
+fun <T, U> CompletionStage<out T>.thenAcceptBothFastFailAsync(
+    cf2: CompletionStage<out U>, action: BiConsumer<in T, in U>
+): CompletableFuture<Void> =
+    CompletableFutureUtils.thenAcceptBothFastFailAsync(this, cf2, action)
+
+/**
+ * Returns a new CompletableFuture that, when tow given stage both complete normally,
+ * is executed using the supplied executor,
+ * with the two results as arguments to the supplied action.
+ * if any of the given stage complete exceptionally, then the returned CompletableFuture
+ * also does so *without* waiting other incomplete given CompletionStage,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * This method is the same as [CompletableFuture.thenAcceptBothAsync] except for the fast-fail behavior.
+ *
+ * @param action the action to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.thenAcceptBothAsync
+ */
+fun <T, U> CompletionStage<out T>.thenAcceptBothFastFailAsync(
+    cf2: CompletionStage<out U>, action: BiConsumer<in T, in U>, executor: Executor
+): CompletableFuture<Void> =
+    CompletableFutureUtils.thenAcceptBothFastFailAsync(this, cf2, action, executor)
+
+/**
+ * Returns a new CompletableFuture that, when tow given stage both complete normally,
+ * is executed with the two results as arguments to the supplied function.
+ * if any of the given stage complete exceptionally, then the returned CompletableFuture
+ * also does so *without* waiting other incomplete given CompletionStage,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * This method is the same as [CompletableFuture.thenCombine] except for the fast-fail behavior.
+ *
+ * @param fn the function to use to compute the value of the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.thenCombine
+ */
+fun <T, U, V> CompletionStage<out T>.thenCombineFastFail(
+    cf2: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
+): CompletableFuture<V> =
+    CompletableFutureUtils.thenCombineFastFail(this, cf2, fn)
+
+/**
+ * Returns a new CompletableFuture that, when tow given stage both complete normally,
+ * is executed using CompletableFuture's default asynchronous execution facility,
+ * with the two results as arguments to the supplied function.
+ * if any of the given stage complete exceptionally, then the returned CompletableFuture
+ * also does so *without* waiting other incomplete given CompletionStage,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * This method is the same as [CompletableFuture.thenCombineAsync] except for the fast-fail behavior.
+ *
+ * @param fn the function to use to compute the value of the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.thenCombineAsync
+ */
+fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
+    cf2: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
+): CompletableFuture<V> =
+    CompletableFutureUtils.thenCombineFastFailAsync(this, cf2, fn)
+
+/**
+ * Returns a new CompletableFuture that, when tow given stage both complete normally,
+ * is executed using the supplied executor,
+ * with the two results as arguments to the supplied function.
+ * if any of the given stage complete exceptionally, then the returned CompletableFuture
+ * also does so *without* waiting other incomplete given CompletionStage,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * This method is the same as [CompletableFuture.thenCombineAsync] except for the fast-fail behavior.
+ *
+ * @param fn the function to use to compute the value of the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.thenCombineAsync
+ */
+fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
+    cf2: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>, executor: Executor
+): CompletableFuture<V> =
+    CompletableFutureUtils.thenCombineFastFailAsync(this, cf2, fn, executor)
+
+////////////////////////////////////////////////////////////////////////////////
+//# `then either(binary input)` methods with either(any)-success support:
+//
+//    - runAfterEitherSuccess*(Runnable):  Void, Void -> Void
+//    - acceptEitherSuccess*(Consumer):  (T, T) -> Void
+//    - applyToEitherSuccess*(Function): (T, T) -> U
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Returns a new CompletableFuture that, when either given stage success, executes the given action.
+ * Otherwise, all two given CompletionStage complete exceptionally,
+ * the returned CompletableFuture also does so, with a CompletionException holding
+ * an exception from any of the given CompletionStage as its cause.
+ *
+ * This method is the same as [CompletableFuture.runAfterEither]
+ * except for the either-**success** behavior(not either-**complete**).
+ *
+ * @param action the action to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.runAfterEither
+ */
+fun CompletionStage<*>.runAfterEitherSuccess(cf2: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
+    CompletableFutureUtils.runAfterEitherSuccess(this, cf2, action)
+
+/**
+ * Returns a new CompletableFuture that, when either given stage success, executes the given action
+ * using CompletableFuture's default asynchronous execution facility.
+ * Otherwise, all two given CompletionStage complete exceptionally,
+ * the returned CompletableFuture also does so, with a CompletionException holding
+ * an exception from any of the given CompletionStage as its cause.
+ *
+ * This method is the same as [CompletableFuture.runAfterEitherAsync]
+ * except for the either-**success** behavior(not either-**complete**).
+ *
+ * @param action the action to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.runAfterEitherAsync
+ */
+fun CompletionStage<*>.runAfterEitherSuccessAsync(cf2: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
+    CompletableFutureUtils.runAfterEitherSuccessAsync(this, cf2, action)
+
+/**
+ * Returns a new CompletableFuture that, when either given stage success, executes the given action
+ * using the supplied executor.
+ * Otherwise, all two given CompletionStage complete exceptionally,
+ * the returned CompletableFuture also does so, with a CompletionException holding
+ * an exception from any of the given CompletionStage as its cause.
+ *
+ * This method is the same as [CompletableFuture.runAfterEitherAsync]
+ * except for the either-**success** behavior(not either-**complete**).
+ *
+ * @param action the action to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.runAfterEitherAsync
+ */
+fun CompletionStage<*>.runAfterEitherSuccessAsync(
+    cf2: CompletionStage<*>, action: Runnable, executor: Executor
+): CompletableFuture<Void> =
+    CompletableFutureUtils.runAfterEitherSuccessAsync(this, cf2, action, executor)
+
+/**
+ * Returns a new CompletableFuture that, when either given stage success,
+ * is executed with the corresponding result as argument to the supplied action.
+ *
+ * This method is the same as [CompletableFuture.acceptEither]
+ * except for the either-**success** behavior(not either-**complete**).
+ *
+ * @param action the action to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.acceptEither
+ */
+fun <T> CompletionStage<out T>.acceptEitherSuccess(
+    cf2: CompletionStage<out T>, action: Consumer<in T>
+): CompletableFuture<Void> =
+    CompletableFutureUtils.acceptEitherSuccess(this, cf2, action)
+
+/**
+ * Returns a new CompletionStage that, when either given stage success,
+ * is executed using this stage's default asynchronous execution facility,
+ * with the corresponding result as argument to the supplied action.
+ *
+ * This method is the same as [CompletableFuture.acceptEitherAsync]
+ * except for the either-**success** behavior(not either-**complete**).
+ *
+ * @param action the action to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.acceptEitherAsync
+ */
+fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
+    cf2: CompletionStage<out T>, action: Consumer<in T>
+): CompletableFuture<Void> =
+    CompletableFutureUtils.acceptEitherSuccessAsync(this, cf2, action)
+
+/**
+ * Returns a new CompletionStage that, when either given stage success,
+ * is executed using the supplied executor, with the corresponding result as argument to the supplied action.
+ *
+ * This method is the same as [CompletableFuture.acceptEitherAsync]
+ * except for the either-**success** behavior(not either-**complete**).
+ *
+ * @param action   the action to perform before completing the returned CompletableFuture
+ * @param executor the executor to use for asynchronous execution
+ * @return the new CompletableFuture
+ * @see CompletableFuture.acceptEitherAsync
+ */
+fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
+    cf2: CompletionStage<out T>, action: Consumer<in T>, executor: Executor
+): CompletableFuture<Void> =
+    CompletableFutureUtils.acceptEitherSuccessAsync(this, cf2, action, executor)
+
+/**
+ * Returns a new CompletionStage that, when either given stage success,
+ * is executed with the corresponding result as argument to the supplied function.
+ *
+ * This method is the same as [CompletableFuture.applyToEither]
+ * except for the either-**success** behavior(not either-**complete**).
+ *
+ * @param fn  the function to use to compute the value of the returned CompletableFuture
+ * @param <U> the function's return type
+ * @return the new CompletableFuture
+ * @see CompletableFuture.applyToEither
+ */
+fun <T, U> CompletionStage<out T>.applyToEitherSuccess(
+    cf2: CompletionStage<out T>, fn: Function<in T, U>
+): CompletableFuture<U> =
+    CompletableFutureUtils.applyToEitherSuccess(this, cf2, fn)
+
+/**
+ * Returns a new CompletionStage that, when either given stage success,
+ * is executed using this stage's default asynchronous execution facility,
+ * with the corresponding result as argument to the supplied function.
+ *
+ * This method is the same as [CompletableFuture.applyToEitherAsync]
+ * except for the either-**success** behavior(not either-**complete**).
+ *
+ * @param fn  the function to use to compute the value of the returned CompletableFuture
+ * @param <U> the function's return type
+ * @return the new CompletableFuture
+ * @see CompletableFuture.applyToEitherAsync
+ */
+fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
+    cf2: CompletionStage<out T>, fn: Function<in T, U>
+): CompletableFuture<U> =
+    CompletableFutureUtils.applyToEitherSuccessAsync(this, cf2, fn)
+
+/**
+ * Returns a new CompletionStage that, when either given stage success,
+ * is executed using the supplied executor, with the corresponding result as argument to the supplied function.
+ *
+ * This method is the same as [CompletableFuture.applyToEitherAsync]
+ * except for the either-**success** behavior(not either-**complete**).
+ *
+ * @param fn       the function to use to compute the value of the returned CompletableFuture
+ * @param executor the executor to use for asynchronous execution
+ * @param <U>      the function's return type
+ * @return the new CompletableFuture
+ * @see CompletableFuture.applyToEitherAsync
+ */
+fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
+    cf2: CompletionStage<out T>, fn: Function<in T, U>, executor: Executor
+): CompletableFuture<U> =
+    CompletableFutureUtils.applyToEitherSuccessAsync(this, cf2, fn, executor)
+
+////////////////////////////////////////////////////////////////////////////////
 //# Backport CF instance methods
 //  compatibility for low Java version
 ////////////////////////////////////////////////////////////////////////////////
@@ -554,7 +885,7 @@ fun <T> CompletableFuture<T>.resultNow(): T =
  * @return the exception thrown by the task
  * @throws IllegalStateException if the task has not completed, the task completed normally,
  *                               or the task was cancelled
- * @see CompletableFuture#resultNow()
+ * @see CompletableFuture.resultNow
  */
 fun <T> CompletableFuture<T>.exceptionNow(): Throwable =
     CompletableFutureUtils.exceptionNow(this)
