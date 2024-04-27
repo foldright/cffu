@@ -312,7 +312,7 @@ public final class CffuFactory {
      * if you need the results of given Cffus, prefer below methods:
      * <ol>
      * <li>{@link #allResultsOf(Cffu[])}
-     * <li>{@link #cffuCombine(Cffu, Cffu)} / {@link #cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)}
+     * <li>{@link #allTupleOf(Cffu, Cffu)} / {@link #allTupleOf(Cffu, Cffu, Cffu, Cffu, Cffu)}
      *     (provided overloaded methods with 2~5 input)
      * </ol>
      * <p>
@@ -324,10 +324,10 @@ public final class CffuFactory {
      * @return a new Cffu that is completed when all the given Cffus complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #allResultsOf(Cffu[])
-     * @see #cffuCombine(Cffu, Cffu)
-     * @see #cffuCombine(Cffu, Cffu, Cffu)
-     * @see #cffuCombine(Cffu, Cffu, Cffu, Cffu)
-     * @see #cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)
+     * @see #allTupleOf(Cffu, Cffu)
+     * @see #allTupleOf(Cffu, Cffu, Cffu)
+     * @see #allTupleOf(Cffu, Cffu, Cffu, Cffu)
+     * @see #allTupleOf(Cffu, Cffu, Cffu, Cffu, Cffu)
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
@@ -349,8 +349,8 @@ public final class CffuFactory {
      * if you need the results of given CompletableFutures, prefer below methods:
      * <ol>
      * <li>{@link #allResultsOf(CompletableFuture[])}
-     * <li>{@link #cffuCombine(CompletableFuture, CompletableFuture)} /
-     *     {@link #cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
+     * <li>{@link #allTupleOf(CompletableFuture, CompletableFuture)} /
+     *     {@link #allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
      *     (provided overloaded methods with 2~5 input)
      * </ol>
      *
@@ -359,10 +359,10 @@ public final class CffuFactory {
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #allOf(Cffu[])
      * @see #allResultsOf(CompletableFuture[])
-     * @see #cffuCombine(CompletableFuture, CompletableFuture)
-     * @see #cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture)
-     * @see #cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
-     * @see #cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see #allTupleOf(CompletableFuture, CompletableFuture)
+     * @see #allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see #allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see #allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
@@ -682,7 +682,7 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# New type-safe cffuCombine Factory Methods
+    //# New type-safe allTupleOf Factory Methods
     //  support 2~5 input arguments, method name prefix with `cffu`
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -696,13 +696,13 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is completed when the given two Cffus complete
      * @throws NullPointerException if any input Cffus are {@code null}
-     * @see Cffu#cffuCombine(Cffu)
+     * @see Cffu#allTupleOf(Cffu)
      * @see #allResultsOf(Cffu[])
      * @see #allOf(Cffu[])
      */
     @Contract(pure = true)
-    public <T1, T2> Cffu<Tuple2<T1, T2>> cffuCombine(Cffu<T1> cf1, Cffu<T2> cf2) {
-        return cffuCombine(cf1.toCompletableFuture(), cf2.toCompletableFuture());
+    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOf(Cffu<T1> cf1, Cffu<T2> cf2) {
+        return allTupleOf(cf1.toCompletableFuture(), cf2.toCompletableFuture());
     }
 
     /**
@@ -710,19 +710,19 @@ public final class CffuFactory {
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link #cffuCombine(Cffu, Cffu)}
+     * This method is the same as {@link #allTupleOf(Cffu, Cffu)}
      * except with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 2 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#cffuCombine(CompletableFuture)
-     * @see #cffuCombine(Cffu, Cffu)
+     * @see Cffu#allTupleOf(CompletableFuture)
+     * @see #allTupleOf(Cffu, Cffu)
      * @see #allResultsOf(CompletableFuture[])
      * @see #allOf(CompletableFuture[])
      */
     @Contract(pure = true)
-    public <T1, T2> Cffu<Tuple2<T1, T2>> cffuCombine(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
-        return new0(CompletableFutureUtils.combine(cf1, cf2));
+    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOf(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
+        return new0(CompletableFutureUtils.allTupleOf(cf1, cf2));
     }
 
     /**
@@ -733,13 +733,13 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is successful when the given two Cffus success
      * @throws NullPointerException if any of the given Cffus are {@code null}
-     * @see Cffu#cffuCombineFastFail(Cffu)
+     * @see Cffu#allTupleOfFastFail(Cffu)
      * @see #allResultsOfFastFail(Cffu[])
      * @see #allOfFastFail(Cffu[])
      */
     @Contract(pure = true)
-    public <T1, T2> Cffu<Tuple2<T1, T2>> cffuCombineFastFail(Cffu<T1> cf1, Cffu<T2> cf2) {
-        return cffuCombineFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture());
+    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOfFastFail(Cffu<T1> cf1, Cffu<T2> cf2) {
+        return allTupleOfFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture());
     }
 
     /**
@@ -750,14 +750,14 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is successful when the given two CompletableFutures success
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#cffuCombineFastFail(CompletableFuture)
-     * @see #cffuCombineFastFail(Cffu, Cffu)
+     * @see Cffu#allTupleOfFastFail(CompletableFuture)
+     * @see #allTupleOfFastFail(Cffu, Cffu)
      * @see #allResultsOfFastFail(CompletableFuture[])
      * @see #allOfFastFail(CompletableFuture[])
      */
     @Contract(pure = true)
-    public <T1, T2> Cffu<Tuple2<T1, T2>> cffuCombineFastFail(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
-        return new0(CompletableFutureUtils.combineFastFail(cf1, cf2));
+    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOfFastFail(CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
+        return new0(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2));
     }
 
     /**
@@ -770,13 +770,13 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is completed when the given three Cffus complete
      * @throws NullPointerException if any input Cffus are {@code null}
-     * @see Cffu#cffuCombine(Cffu, Cffu)
+     * @see Cffu#allTupleOf(Cffu, Cffu)
      * @see #allResultsOf(Cffu[])
      * @see #allOf(Cffu[])
      */
     @Contract(pure = true)
-    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> cffuCombine(Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3) {
-        return cffuCombine(cf1.toCompletableFuture(), cf2.toCompletableFuture(), cf3.toCompletableFuture());
+    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOf(Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3) {
+        return allTupleOf(cf1.toCompletableFuture(), cf2.toCompletableFuture(), cf3.toCompletableFuture());
     }
 
     /**
@@ -784,20 +784,20 @@ public final class CffuFactory {
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link #cffuCombine(Cffu, Cffu, Cffu)}
+     * This method is the same as {@link #allTupleOf(Cffu, Cffu, Cffu)}
      * except with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 3 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#cffuCombine(CompletableFuture, CompletableFuture)
-     * @see #cffuCombine(Cffu, Cffu, Cffu)
+     * @see Cffu#allTupleOf(CompletableFuture, CompletableFuture)
+     * @see #allTupleOf(Cffu, Cffu, Cffu)
      * @see #allResultsOf(CompletableFuture[])
      * @see #allOf(CompletableFuture[])
      */
     @Contract(pure = true)
-    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> cffuCombine(
+    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOf(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
-        return new0(CompletableFutureUtils.combine(cf1, cf2, cf3));
+        return new0(CompletableFutureUtils.allTupleOf(cf1, cf2, cf3));
     }
 
     /**
@@ -808,13 +808,13 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is successful when the given three Cffus success
      * @throws NullPointerException if any of the given Cffus are {@code null}
-     * @see Cffu#cffuCombineFastFail(Cffu, Cffu)
+     * @see Cffu#allTupleOfFastFail(Cffu, Cffu)
      * @see #allResultsOfFastFail(Cffu[])
      * @see #allOfFastFail(Cffu[])
      */
     @Contract(pure = true)
-    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> cffuCombineFastFail(Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3) {
-        return cffuCombineFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture(), cf3.toCompletableFuture());
+    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOfFastFail(Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3) {
+        return allTupleOfFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture(), cf3.toCompletableFuture());
     }
 
     /**
@@ -825,15 +825,15 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is successful when the given three CompletableFutures success
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#cffuCombineFastFail(CompletableFuture, CompletableFuture)
-     * @see #cffuCombineFastFail(Cffu, Cffu)
+     * @see Cffu#allTupleOfFastFail(CompletableFuture, CompletableFuture)
+     * @see #allTupleOfFastFail(Cffu, Cffu)
      * @see #allResultsOfFastFail(CompletableFuture[])
      * @see #allOfFastFail(CompletableFuture[])
      */
     @Contract(pure = true)
-    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> cffuCombineFastFail(
+    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOfFastFail(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
-        return new0(CompletableFutureUtils.combineFastFail(cf1, cf2, cf3));
+        return new0(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3));
     }
 
     /**
@@ -846,14 +846,14 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is completed when the given 4 Cffus complete
      * @throws NullPointerException if any input Cffus are {@code null}
-     * @see Cffu#cffuCombine(Cffu, Cffu, Cffu)
+     * @see Cffu#allTupleOf(Cffu, Cffu, Cffu)
      * @see #allResultsOf(Cffu[])
      * @see #allOf(Cffu[])
      */
     @Contract(pure = true)
-    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> cffuCombine(
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOf(
             Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4) {
-        return cffuCombine(cf1.toCompletableFuture(), cf2.toCompletableFuture(),
+        return allTupleOf(cf1.toCompletableFuture(), cf2.toCompletableFuture(),
                 cf3.toCompletableFuture(), cf4.toCompletableFuture());
     }
 
@@ -862,21 +862,21 @@ public final class CffuFactory {
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link #cffuCombine(Cffu, Cffu, Cffu, Cffu)}
+     * This method is the same as {@link #allTupleOf(Cffu, Cffu, Cffu, Cffu)}
      * except with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 4 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture)
-     * @see #cffuCombine(Cffu, Cffu, Cffu, Cffu)
+     * @see Cffu#allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see #allTupleOf(Cffu, Cffu, Cffu, Cffu)
      * @see #allResultsOf(CompletableFuture[])
      * @see #allOf(CompletableFuture[])
      */
     @Contract(pure = true)
-    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> cffuCombine(
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOf(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
             CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
-        return new0(CompletableFutureUtils.combine(cf1, cf2, cf3, cf4));
+        return new0(CompletableFutureUtils.allTupleOf(cf1, cf2, cf3, cf4));
     }
 
 
@@ -888,14 +888,14 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is successful when the given four Cffus success
      * @throws NullPointerException if any of the given Cffus are {@code null}
-     * @see Cffu#cffuCombineFastFail(Cffu, Cffu, Cffu)
+     * @see Cffu#allTupleOfFastFail(Cffu, Cffu, Cffu)
      * @see #allResultsOfFastFail(Cffu[])
      * @see #allOfFastFail(Cffu[])
      */
     @Contract(pure = true)
-    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> cffuCombineFastFail(
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOfFastFail(
             Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4) {
-        return cffuCombineFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture(),
+        return allTupleOfFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture(),
                 cf3.toCompletableFuture(), cf4.toCompletableFuture());
     }
 
@@ -907,16 +907,16 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is successful when the given four CompletableFutures success
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture)
-     * @see #cffuCombineFastFail(Cffu, Cffu)
+     * @see Cffu#allTupleOfFastFail(CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see #allTupleOfFastFail(Cffu, Cffu)
      * @see #allResultsOfFastFail(CompletableFuture[])
      * @see #allOfFastFail(CompletableFuture[])
      */
     @Contract(pure = true)
-    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> cffuCombineFastFail(
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOfFastFail(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
             CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
-        return new0(CompletableFutureUtils.combineFastFail(cf1, cf2, cf3, cf4));
+        return new0(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3, cf4));
     }
 
     /**
@@ -929,14 +929,14 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is completed when the given 5 Cffus complete
      * @throws NullPointerException if any input Cffus are {@code null}
-     * @see Cffu#cffuCombine(Cffu, Cffu, Cffu, Cffu)
+     * @see Cffu#allTupleOf(Cffu, Cffu, Cffu, Cffu)
      * @see #allResultsOf(Cffu[])
      * @see #allOf(Cffu[])
      */
     @Contract(pure = true)
-    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> cffuCombine(
+    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
             Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4, Cffu<T5> cf5) {
-        return cffuCombine(cf1.toCompletableFuture(), cf2.toCompletableFuture(),
+        return allTupleOf(cf1.toCompletableFuture(), cf2.toCompletableFuture(),
                 cf3.toCompletableFuture(), cf4.toCompletableFuture(), cf5.toCompletableFuture());
     }
 
@@ -945,21 +945,21 @@ public final class CffuFactory {
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link #cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)}
+     * This method is the same as {@link #allTupleOf(Cffu, Cffu, Cffu, Cffu, Cffu)}
      * except with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 5 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
-     * @see #cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)
+     * @see Cffu#allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see #allTupleOf(Cffu, Cffu, Cffu, Cffu, Cffu)
      * @see #allResultsOf(CompletableFuture[])
      * @see #allOf(CompletableFuture[])
      */
     @Contract(pure = true)
-    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> cffuCombine(
+    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
             CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
-        return new0(CompletableFutureUtils.combine(cf1, cf2, cf3, cf4, cf5));
+        return new0(CompletableFutureUtils.allTupleOf(cf1, cf2, cf3, cf4, cf5));
     }
 
     /**
@@ -970,14 +970,14 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is successful when the given five Cffus success
      * @throws NullPointerException if any of the given Cffus are {@code null}
-     * @see Cffu#cffuCombineFastFail(Cffu, Cffu, Cffu, Cffu)
+     * @see Cffu#allTupleOfFastFail(Cffu, Cffu, Cffu, Cffu)
      * @see #allResultsOfFastFail(Cffu[])
      * @see #allOfFastFail(Cffu[])
      */
     @Contract(pure = true)
-    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> cffuCombineFastFail(
+    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOfFastFail(
             Cffu<T1> cf1, Cffu<T2> cf2, Cffu<T3> cf3, Cffu<T4> cf4, Cffu<T5> cf5) {
-        return cffuCombineFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture(),
+        return allTupleOfFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture(),
                 cf3.toCompletableFuture(), cf4.toCompletableFuture(), cf5.toCompletableFuture());
     }
 
@@ -989,16 +989,16 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is successful when the given five CompletableFutures success
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
-     * @see #cffuCombineFastFail(Cffu, Cffu)
+     * @see Cffu#allTupleOfFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)
+     * @see #allTupleOfFastFail(Cffu, Cffu)
      * @see #allResultsOfFastFail(CompletableFuture[])
      * @see #allOfFastFail(CompletableFuture[])
      */
     @Contract(pure = true)
-    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> cffuCombineFastFail(
+    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOfFastFail(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
             CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
-        return new0(CompletableFutureUtils.combineFastFail(cf1, cf2, cf3, cf4, cf5));
+        return new0(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3, cf4, cf5));
     }
 
     ////////////////////////////////////////////////////////////////////////////////

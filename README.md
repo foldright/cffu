@@ -71,7 +71,7 @@
 - ☘️ **补全业务使用中缺失的功能**
   - 更方便的功能，如
     - `allResultsOf`方法：返回多个`CF`的结果，而不是无返回结果`Void`（`CompletableFuture#allOf()`）
-    - `cffuCombine`/`combine`方法：返回多个`CF`不同类型的结果，而不是同一类型（`allResultsOf`）
+    - `allTupleOf`方法：返回多个`CF`不同类型的结果，而不是同一类型（`allResultsOf`）
   - 更高效灵活的并发执行策略，如
     - `allOfFastFail`方法：有`CF`失败时快速返回，而不再等待所有`CF`运行完成（`allOf`）
     - `anyOfSuccess`方法：返回首个成功的`CF`结果，而不是首个完成（但可能失败）的`CF`（`anyOf`）
@@ -323,39 +323,39 @@ public class AllResultsOfDemo {
 
 > \# 完整可运行的Demo代码参见[`AllResultsOfDemo.java`](cffu-core/src/test/java/io/foldright/demo/AllResultsOfDemo.java)。
 
-上面多个相同结果类型的`CF`，`cffu`还提供了返回多个不同类型`CF`结果的方法，`cffuCombine`/`CompletableFutureUtils#combine`方法。
+上面多个相同结果类型的`CF`，`cffu`还提供了返回多个不同类型`CF`结果的方法，`allTupleOf`方法。
 
 示例代码如下：
 
 ```java
-public class CffuCombineDemo {
+public class AllTupleOfDemo {
   public static final Executor myBizExecutor = Executors.newCachedThreadPool();
   public static final CffuFactory cffuFactory = newCffuFactoryBuilder(myBizExecutor).build();
 
   public static void main(String[] args) throws Exception {
     //////////////////////////////////////////////////
-    // cffuCombine
+    // allTupleOf
     //////////////////////////////////////////////////
     Cffu<String> cffu1 = cffuFactory.completedFuture("21");
     Cffu<Integer> cffu2 = cffuFactory.completedFuture(42);
 
-    Cffu<Tuple2<String, Integer>> combined = cffu1.cffuCombine(cffu2);
-    // or: cffuFactory.cffuCombine(cffu1, cffu2);
-    System.out.println(combined.get());
+    Cffu<Tuple2<String, Integer>> allTuple = cffu1.allTupleOf(cffu2);
+    // or: cffuFactory.allTupleOf(cffu1, cffu2);
+    System.out.println(allTuple.get());
 
     //////////////////////////////////////////////////
-    // or CompletableFutureUtils.combine
+    // or CompletableFutureUtils.allTupleOf
     //////////////////////////////////////////////////
     CompletableFuture<String> cf1 = CompletableFuture.completedFuture("21");
     CompletableFuture<Integer> cf2 = CompletableFuture.completedFuture(42);
 
-    CompletableFuture<Tuple2<String, Integer>> combined2 = CompletableFutureUtils.combine(cf1, cf2);
-    System.out.println(combined2.get());
+    CompletableFuture<Tuple2<String, Integer>> allTuple2 = CompletableFutureUtils.allTupleOf(cf1, cf2);
+    System.out.println(allTuple2.get());
   }
 }
 ```
 
-> \# 完整可运行的Demo代码参见[`CffuCombineDemo.java`](cffu-core/src/test/java/io/foldright/demo/CffuCombineDemo.java)。
+> \# 完整可运行的Demo代码参见[`AllTupleOfDemo.java`](cffu-core/src/test/java/io/foldright/demo/AllTupleOfDemo.java)。
 
 ### 2.2 支持设置缺省的业务线程池
 

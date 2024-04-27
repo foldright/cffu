@@ -262,7 +262,7 @@ fun <T> Array<out CompletableFuture<out T>>.anyOfSuccessCompletableFuture(): Com
     CompletableFutureUtils.anyOfSuccess(*this)
 
 ////////////////////////////////////////
-//# combine/combineFastFail methods
+//# allTupleOf/allTupleOfFastFail methods
 ////////////////////////////////////////
 
 /**
@@ -272,12 +272,12 @@ fun <T> Array<out CompletableFuture<out T>>.anyOfSuccessCompletableFuture(): Com
  *
  * @return a new CompletableFuture that is completed when the given 2 CompletableFutures complete
  * @throws NullPointerException if any input CompletableFutures are `null`
- * @see CompletableFutureUtils.combine
+ * @see CompletableFutureUtils.allTupleOf
  * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
-fun <T1, T2> CompletableFuture<T1>.combine(cf2: CompletableFuture<T2>): CompletableFuture<Tuple2<T1, T2>> =
-    CompletableFutureUtils.combine(this, cf2)
+fun <T1, T2> CompletableFuture<T1>.allTupleOf(cf2: CompletableFuture<T2>): CompletableFuture<Tuple2<T1, T2>> =
+    CompletableFutureUtils.allTupleOf(this, cf2)
 
 /**
  * Returns a new CompletableFuture that is successful when the given two CompletableFutures success.
@@ -287,12 +287,12 @@ fun <T1, T2> CompletableFuture<T1>.combine(cf2: CompletableFuture<T2>): Completa
  *
  * @return a new CompletableFuture that is successful when the given two CompletableFutures success
  * @throws NullPointerException if any of the given CompletableFutures are {@code null}
- * @see CompletableFutureUtils.combineFastFail
+ * @see CompletableFutureUtils.allTupleOfFastFail
  * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
-fun <T1, T2> CompletableFuture<T1>.combineFastFail(cf2: CompletableFuture<T2>): CompletableFuture<Tuple2<T1, T2>> =
-    CompletableFutureUtils.combineFastFail(this, cf2)
+fun <T1, T2> CompletableFuture<T1>.allTupleOfFastFail(cf2: CompletableFuture<T2>): CompletableFuture<Tuple2<T1, T2>> =
+    CompletableFutureUtils.allTupleOfFastFail(this, cf2)
 
 /**
  * Returns a new CompletableFuture that is completed when the given three CompletableFutures complete.
@@ -301,14 +301,14 @@ fun <T1, T2> CompletableFuture<T1>.combineFastFail(cf2: CompletableFuture<T2>): 
  *
  * @return a new CompletableFuture that is completed when the given 3 CompletableFutures complete
  * @throws NullPointerException if any input CompletableFutures are `null`
- * @see CompletableFutureUtils.combine
+ * @see CompletableFutureUtils.allTupleOf
  * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
-fun <T1, T2, T3> CompletableFuture<T1>.combine(
+fun <T1, T2, T3> CompletableFuture<T1>.allTupleOf(
     cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>
 ): CompletableFuture<Tuple3<T1, T2, T3>> =
-    CompletableFutureUtils.combine(this, cf2, cf3)
+    CompletableFutureUtils.allTupleOf(this, cf2, cf3)
 
 /**
  * Returns a new CompletableFuture that is successful when the given three CompletableFutures success.
@@ -318,14 +318,14 @@ fun <T1, T2, T3> CompletableFuture<T1>.combine(
  *
  * @return a new CompletableFuture that is successful when the given three CompletableFutures success
  * @throws NullPointerException if any of the given CompletableFutures are {@code null}
- * @see CompletableFutureUtils.combineFastFail
+ * @see CompletableFutureUtils.allTupleOfFastFail
  * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
-fun <T1, T2, T3> CompletableFuture<T1>.combineFastFail(
+fun <T1, T2, T3> CompletableFuture<T1>.allTupleOfFastFail(
     cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>
 ): CompletableFuture<Tuple3<T1, T2, T3>> =
-    CompletableFutureUtils.combineFastFail(this, cf2, cf3)
+    CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3)
 
 /**
  * Returns a new CompletableFuture that is completed when the given 4 CompletableFutures complete.
@@ -334,14 +334,14 @@ fun <T1, T2, T3> CompletableFuture<T1>.combineFastFail(
  *
  * @return a new CompletableFuture that is completed when the given 4 CompletableFutures complete
  * @throws NullPointerException if any input CompletableFutures are `null`
- * @see CompletableFutureUtils.combine
+ * @see CompletableFutureUtils.allTupleOf
  * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
-fun <T1, T2, T3, T4> CompletableFuture<T1>.combine(
+fun <T1, T2, T3, T4> CompletableFuture<T1>.allTupleOf(
     cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>, cf4: CompletableFuture<T4>
 ): CompletableFuture<Tuple4<T1, T2, T3, T4>> =
-    CompletableFutureUtils.combine(this, cf2, cf3, cf4)
+    CompletableFutureUtils.allTupleOf(this, cf2, cf3, cf4)
 
 /**
  * Returns a new CompletableFuture that is successful when the given 4 CompletableFutures success.
@@ -351,14 +351,14 @@ fun <T1, T2, T3, T4> CompletableFuture<T1>.combine(
  *
  * @return a new CompletableFuture that is successful when the given 4 CompletableFutures success
  * @throws NullPointerException if any of the given CompletableFutures are {@code null}
- * @see CompletableFutureUtils.combineFastFail
+ * @see CompletableFutureUtils.allTupleOfFastFail
  * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
-fun <T1, T2, T3, T4> CompletableFuture<T1>.combineFastFail(
+fun <T1, T2, T3, T4> CompletableFuture<T1>.allTupleOfFastFail(
     cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>, cf4: CompletableFuture<T4>
 ): CompletableFuture<Tuple4<T1, T2, T3, T4>> =
-    CompletableFutureUtils.combineFastFail(this, cf2, cf3, cf4)
+    CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3, cf4)
 
 /**
  * Returns a new CompletableFuture that is completed when the given 5 CompletableFutures complete.
@@ -367,15 +367,15 @@ fun <T1, T2, T3, T4> CompletableFuture<T1>.combineFastFail(
  *
  * @return a new CompletableFuture that is completed when the given 5 CompletableFutures complete
  * @throws NullPointerException if any input CompletableFutures are `null`
- * @see CompletableFutureUtils.combine
+ * @see CompletableFutureUtils.allTupleOf
  * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
-fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.combine(
+fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.allTupleOf(
     cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>,
     cf4: CompletableFuture<T4>, cf5: CompletableFuture<T5>
 ): CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> =
-    CompletableFutureUtils.combine(this, cf2, cf3, cf4, cf5)
+    CompletableFutureUtils.allTupleOf(this, cf2, cf3, cf4, cf5)
 
 /**
  * Returns a new CompletableFuture that is successful when the given 5 CompletableFutures success.
@@ -385,15 +385,15 @@ fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.combine(
  *
  * @return a new CompletableFuture that is successful when the given 5 CompletableFutures success
  * @throws NullPointerException if any of the given CompletableFutures are {@code null}
- * @see CompletableFutureUtils.combineFastFail
+ * @see CompletableFutureUtils.allTupleOfFastFail
  * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
-fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.combineFastFail(
+fun <T1, T2, T3, T4, T5> CompletableFuture<T1>.allTupleOfFastFail(
     cf2: CompletableFuture<T2>, cf3: CompletableFuture<T3>,
     cf4: CompletableFuture<T4>, cf5: CompletableFuture<T5>
 ): CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> =
-    CompletableFutureUtils.combineFastFail(this, cf2, cf3, cf4, cf5)
+    CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3, cf4, cf5)
 
 ////////////////////////////////////////////////////////////////////////////////
 //# `then both(binary input)` methods with fast-fail support:

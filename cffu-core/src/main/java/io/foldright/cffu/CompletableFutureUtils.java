@@ -257,12 +257,12 @@ public final class CompletableFutureUtils {
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link CompletableFuture#runAfterBoth(CompletionStage, Runnable)}
+     * This method is the same as {@link CompletionStage#runAfterBoth(CompletionStage, Runnable)}
      * except for the fast-fail behavior.
      *
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
-     * @see CompletableFuture#runAfterBoth(CompletionStage, Runnable)
+     * @see CompletionStage#runAfterBoth(CompletionStage, Runnable)
      */
     public static CompletableFuture<Void> runAfterBothFastFail(
             CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action) {
@@ -279,12 +279,12 @@ public final class CompletableFutureUtils {
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link CompletableFuture#runAfterBothAsync(CompletionStage, Runnable)}
+     * This method is the same as {@link CompletionStage#runAfterBothAsync(CompletionStage, Runnable)}
      * except for the fast-fail behavior.
      *
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
-     * @see CompletableFuture#runAfterBothAsync(CompletionStage, Runnable)
+     * @see CompletionStage#runAfterBothAsync(CompletionStage, Runnable)
      */
     public static CompletableFuture<Void> runAfterBothFastFailAsync(
             CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action) {
@@ -301,12 +301,12 @@ public final class CompletableFutureUtils {
      * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link CompletableFuture#runAfterBothAsync(CompletionStage, Runnable, Executor)}
+     * This method is the same as {@link CompletionStage#runAfterBothAsync(CompletionStage, Runnable, Executor)}
      * except for the fast-fail behavior.
      *
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
-     * @see CompletableFuture#runAfterBothAsync(CompletionStage, Runnable, Executor)
+     * @see CompletionStage#runAfterBothAsync(CompletionStage, Runnable, Executor)
      */
     public static CompletableFuture<Void> runAfterBothFastFailAsync(
             CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action, Executor executor) {
@@ -324,12 +324,12 @@ public final class CompletableFutureUtils {
      * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link CompletableFuture#thenAcceptBoth(CompletionStage, BiConsumer)}
+     * This method is the same as {@link CompletionStage#thenAcceptBoth(CompletionStage, BiConsumer)}
      * except for the fast-fail behavior.
      *
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
-     * @see CompletableFuture#thenAcceptBoth(CompletionStage, BiConsumer)
+     * @see CompletionStage#thenAcceptBoth(CompletionStage, BiConsumer)
      */
     @SuppressWarnings("unchecked")
     public static <T, U> CompletableFuture<Void> thenAcceptBothFastFail(
@@ -353,12 +353,12 @@ public final class CompletableFutureUtils {
      * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link CompletableFuture#thenAcceptBothAsync(CompletionStage, BiConsumer)}
+     * This method is the same as {@link CompletionStage#thenAcceptBothAsync(CompletionStage, BiConsumer)}
      * except for the fast-fail behavior.
      *
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
-     * @see CompletableFuture#thenAcceptBothAsync(CompletionStage, BiConsumer)
+     * @see CompletionStage#thenAcceptBothAsync(CompletionStage, BiConsumer)
      */
     @SuppressWarnings("unchecked")
     public static <T, U> CompletableFuture<Void> thenAcceptBothFastFailAsync(
@@ -382,12 +382,12 @@ public final class CompletableFutureUtils {
      * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link CompletableFuture#thenAcceptBothAsync(CompletionStage, BiConsumer, Executor)}
+     * This method is the same as {@link CompletionStage#thenAcceptBothAsync(CompletionStage, BiConsumer, Executor)}
      * except for the fast-fail behavior.
      *
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
-     * @see CompletableFuture#thenAcceptBothAsync(CompletionStage, BiConsumer, Executor)
+     * @see CompletionStage#thenAcceptBothAsync(CompletionStage, BiConsumer, Executor)
      */
     @SuppressWarnings("unchecked")
     public static <T, U> CompletableFuture<Void> thenAcceptBothFastFailAsync(
@@ -411,12 +411,12 @@ public final class CompletableFutureUtils {
      * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link CompletableFuture#thenCombine(CompletionStage, BiFunction)}
+     * This method is the same as {@link CompletionStage#thenCombine(CompletionStage, BiFunction)}
      * except for the fast-fail behavior.
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
      * @return the new CompletableFuture
-     * @see CompletableFuture#thenCombine(CompletionStage, BiFunction)
+     * @see CompletionStage#thenCombine(CompletionStage, BiFunction)
      */
     @SuppressWarnings("unchecked")
     public static <T, U, V> CompletableFuture<V> thenCombineFastFail(
@@ -440,12 +440,12 @@ public final class CompletableFutureUtils {
      * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link CompletableFuture#thenCombineAsync(CompletionStage, BiFunction)}
+     * This method is the same as {@link CompletionStage#thenCombineAsync(CompletionStage, BiFunction)}
      * except for the fast-fail behavior.
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
      * @return the new CompletableFuture
-     * @see CompletableFuture#thenCombineAsync(CompletionStage, BiFunction)
+     * @see CompletionStage#thenCombineAsync(CompletionStage, BiFunction)
      */
     @SuppressWarnings("unchecked")
     public static <T, U, V> CompletableFuture<V> thenCombineFastFailAsync(
@@ -470,12 +470,12 @@ public final class CompletableFutureUtils {
      * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link CompletableFuture#thenCombineAsync(CompletionStage, BiFunction, Executor)}
+     * This method is the same as {@link CompletionStage#thenCombineAsync(CompletionStage, BiFunction, Executor)}
      * except for the fast-fail behavior.
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
      * @return the new CompletableFuture
-     * @see CompletableFuture#thenCombineAsync(CompletionStage, BiFunction, Executor)
+     * @see CompletionStage#thenCombineAsync(CompletionStage, BiFunction, Executor)
      */
     @SuppressWarnings("unchecked")
     public static <T, U, V> CompletableFuture<V> thenCombineFastFailAsync(
@@ -494,7 +494,7 @@ public final class CompletableFutureUtils {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# combine/combineFastFail methods
+    //# allTupleOf/allTupleOfFastFail methods
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -509,7 +509,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> combine(
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOf(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
         requireCfsAndEleNonNull(cf1, cf2);
 
@@ -528,7 +528,7 @@ public final class CompletableFutureUtils {
      * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link #combine(CompletableFuture, CompletableFuture)}
+     * This method is the same as {@link #allTupleOf(CompletableFuture, CompletableFuture)}
      * except for the fast-fail behavior.
      *
      * @return a new CompletableFuture that is successful when the given two CompletableFutures success
@@ -538,7 +538,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> combineFastFail(
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOfFastFail(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2) {
         requireCfsAndEleNonNull(cf1, cf2);
 
@@ -563,7 +563,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
-    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> combine(
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOf(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
         requireCfsAndEleNonNull(cf1, cf2, cf3);
 
@@ -583,7 +583,7 @@ public final class CompletableFutureUtils {
      * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link #combine(CompletableFuture, CompletableFuture, CompletableFuture)}
+     * This method is the same as {@link #allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture)}
      * except for the fast-fail behavior.
      *
      * @return a new CompletableFuture that is successful when the given three CompletableFutures success
@@ -593,7 +593,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
-    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> combineFastFail(
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOfFastFail(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2, CompletableFuture<T3> cf3) {
         requireCfsAndEleNonNull(cf1, cf2, cf3);
 
@@ -619,7 +619,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
-    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> combine(
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOf(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
             CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
         requireCfsAndEleNonNull(cf1, cf2, cf3, cf4);
@@ -641,7 +641,7 @@ public final class CompletableFutureUtils {
      * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link #combine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
+     * This method is the same as {@link #allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
      * except for the fast-fail behavior.
      *
      * @return a new CompletableFuture that is successful when the given 4 CompletableFutures success
@@ -651,7 +651,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
-    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> combineFastFail(
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOfFastFail(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
             CompletableFuture<T3> cf3, CompletableFuture<T4> cf4) {
         requireCfsAndEleNonNull(cf1, cf2, cf3, cf4);
@@ -679,7 +679,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
-    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> combine(
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
             CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
         requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5);
@@ -702,7 +702,7 @@ public final class CompletableFutureUtils {
      * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
      * <p>
-     * This method is the same as {@link #combine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
+     * This method is the same as {@link #allTupleOf(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
      * except for the fast-fail behavior.
      *
      * @return a new CompletableFuture that is successful when the given 5 CompletableFutures success
@@ -712,7 +712,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
-    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> combineFastFail(
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOfFastFail(
             CompletableFuture<T1> cf1, CompletableFuture<T2> cf2,
             CompletableFuture<T3> cf3, CompletableFuture<T4> cf4, CompletableFuture<T5> cf5) {
         requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5);
@@ -765,12 +765,12 @@ public final class CompletableFutureUtils {
      * the returned CompletableFuture also does so, with a CompletionException holding
      * an exception from any of the given CompletionStage as its cause.
      * <p>
-     * This method is the same as {@link CompletableFuture#runAfterEitherAsync(CompletionStage, Runnable)}
+     * This method is the same as {@link CompletionStage#runAfterEitherAsync(CompletionStage, Runnable)}
      * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
      *
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
-     * @see CompletableFuture#runAfterEitherAsync(CompletionStage, Runnable)
+     * @see CompletionStage#runAfterEitherAsync(CompletionStage, Runnable)
      */
     public static CompletableFuture<Void> runAfterEitherSuccessAsync(
             CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action) {
@@ -787,12 +787,12 @@ public final class CompletableFutureUtils {
      * the returned CompletableFuture also does so, with a CompletionException holding
      * an exception from any of the given CompletionStage as its cause.
      * <p>
-     * This method is the same as {@link CompletableFuture#runAfterEitherAsync(CompletionStage, Runnable, Executor)}
+     * This method is the same as {@link CompletionStage#runAfterEitherAsync(CompletionStage, Runnable, Executor)}
      * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
      *
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
-     * @see CompletableFuture#runAfterEitherAsync(CompletionStage, Runnable, Executor)
+     * @see CompletionStage#runAfterEitherAsync(CompletionStage, Runnable, Executor)
      */
     public static CompletableFuture<Void> runAfterEitherSuccessAsync(
             CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action, Executor executor) {
@@ -807,12 +807,12 @@ public final class CompletableFutureUtils {
      * Returns a new CompletableFuture that, when either given stage success,
      * is executed with the corresponding result as argument to the supplied action.
      * <p>
-     * This method is the same as {@link CompletableFuture#acceptEither(CompletionStage, Consumer)}
+     * This method is the same as {@link CompletionStage#acceptEither(CompletionStage, Consumer)}
      * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
      *
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
-     * @see CompletableFuture#acceptEither(CompletionStage, Consumer)
+     * @see CompletionStage#acceptEither(CompletionStage, Consumer)
      */
     public static <T> CompletableFuture<Void> acceptEitherSuccess(
             CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Consumer<? super T> action) {
@@ -827,12 +827,12 @@ public final class CompletableFutureUtils {
      * is executed using this stage's default asynchronous execution facility,
      * with the corresponding result as argument to the supplied action.
      * <p>
-     * This method is the same as {@link CompletableFuture#acceptEitherAsync(CompletionStage, Consumer)}
+     * This method is the same as {@link CompletionStage#acceptEitherAsync(CompletionStage, Consumer)}
      * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
      *
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
-     * @see CompletableFuture#acceptEitherAsync(CompletionStage, Consumer)
+     * @see CompletionStage#acceptEitherAsync(CompletionStage, Consumer)
      */
     public static <T> CompletableFuture<Void> acceptEitherSuccessAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Consumer<? super T> action) {
@@ -846,13 +846,13 @@ public final class CompletableFutureUtils {
      * Returns a new CompletionStage that, when either given stage success,
      * is executed using the supplied executor, with the corresponding result as argument to the supplied action.
      * <p>
-     * This method is the same as {@link CompletableFuture#acceptEitherAsync(CompletionStage, Consumer, Executor)}
+     * This method is the same as {@link CompletionStage#acceptEitherAsync(CompletionStage, Consumer, Executor)}
      * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
      *
      * @param action   the action to perform before completing the returned CompletableFuture
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
-     * @see CompletableFuture#acceptEitherAsync(CompletionStage, Consumer, Executor)
+     * @see CompletionStage#acceptEitherAsync(CompletionStage, Consumer, Executor)
      */
     public static <T> CompletableFuture<Void> acceptEitherSuccessAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2,
@@ -868,13 +868,13 @@ public final class CompletableFutureUtils {
      * Returns a new CompletionStage that, when either given stage success,
      * is executed with the corresponding result as argument to the supplied function.
      * <p>
-     * This method is the same as {@link CompletableFuture#applyToEither(CompletionStage, Function)}
+     * This method is the same as {@link CompletionStage#applyToEither(CompletionStage, Function)}
      * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
      *
      * @param fn  the function to use to compute the value of the returned CompletableFuture
      * @param <U> the function's return type
      * @return the new CompletableFuture
-     * @see CompletableFuture#applyToEither(CompletionStage, Function)
+     * @see CompletionStage#applyToEither(CompletionStage, Function)
      */
     public static <T, U> CompletableFuture<U> applyToEitherSuccess(
             CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Function<? super T, U> fn) {
@@ -889,13 +889,13 @@ public final class CompletableFutureUtils {
      * is executed using this stage's default asynchronous execution facility,
      * with the corresponding result as argument to the supplied function.
      * <p>
-     * This method is the same as {@link CompletableFuture#applyToEitherAsync(CompletionStage, Function)}
+     * This method is the same as {@link CompletionStage#applyToEitherAsync(CompletionStage, Function)}
      * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
      *
      * @param fn  the function to use to compute the value of the returned CompletableFuture
      * @param <U> the function's return type
      * @return the new CompletableFuture
-     * @see CompletableFuture#applyToEitherAsync(CompletionStage, Function)
+     * @see CompletionStage#applyToEitherAsync(CompletionStage, Function)
      */
     public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Function<? super T, U> fn) {
@@ -909,14 +909,14 @@ public final class CompletableFutureUtils {
      * Returns a new CompletionStage that, when either given stage success,
      * is executed using the supplied executor, with the corresponding result as argument to the supplied function.
      * <p>
-     * This method is the same as {@link CompletableFuture#applyToEitherAsync(CompletionStage, Function, Executor)}
+     * This method is the same as {@link CompletionStage#applyToEitherAsync(CompletionStage, Function, Executor)}
      * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
      *
      * @param fn       the function to use to compute the value of the returned CompletableFuture
      * @param executor the executor to use for asynchronous execution
      * @param <U>      the function's return type
      * @return the new CompletableFuture
-     * @see CompletableFuture#applyToEitherAsync(CompletionStage, Function, Executor)
+     * @see CompletionStage#applyToEitherAsync(CompletionStage, Function, Executor)
      */
     public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2,

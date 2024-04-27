@@ -213,26 +213,26 @@ class CompletableFutureExtensionsTest : FunSpec({
     }
 
     ////////////////////////////////////////
-    // combine
+    // allTupleOf
     ////////////////////////////////////////
 
-    test("combine - CompletableFuture") {
-        CompletableFuture.completedFuture(n).combine(
+    test("allTupleOf - CompletableFuture") {
+        CompletableFuture.completedFuture(n).allTupleOf(
             CompletableFuture.completedFuture(s)
         ).get() shouldBe Tuple2.of(n, s)
 
-        CompletableFuture.completedFuture(n).combine(
+        CompletableFuture.completedFuture(n).allTupleOf(
             CompletableFuture.completedFuture(s),
             CompletableFuture.completedFuture(d)
         ).get() shouldBe Tuple3.of(n, s, d)
 
-        CompletableFuture.completedFuture(n).combine(
+        CompletableFuture.completedFuture(n).allTupleOf(
             CompletableFuture.completedFuture(s),
             CompletableFuture.completedFuture(d),
             CompletableFuture.completedFuture(anotherN)
         ).get() shouldBe Tuple4.of(n, s, d, anotherN)
 
-        CompletableFuture.completedFuture(n).combine(
+        CompletableFuture.completedFuture(n).allTupleOf(
             CompletableFuture.completedFuture(s),
             CompletableFuture.completedFuture(d),
             CompletableFuture.completedFuture(anotherN),
@@ -240,23 +240,23 @@ class CompletableFutureExtensionsTest : FunSpec({
         ).get() shouldBe Tuple5.of(n, s, d, anotherN, n + n)
     }
 
-    test("combineFastFail - CompletableFuture") {
-        CompletableFuture.completedFuture(n).combineFastFail(
+    test("allTupleOfFastFail - CompletableFuture") {
+        CompletableFuture.completedFuture(n).allTupleOfFastFail(
             CompletableFuture.completedFuture(s)
         ).get() shouldBe Tuple2.of(n, s)
 
-        CompletableFuture.completedFuture(n).combineFastFail(
+        CompletableFuture.completedFuture(n).allTupleOfFastFail(
             CompletableFuture.completedFuture(s),
             CompletableFuture.completedFuture(d)
         ).get() shouldBe Tuple3.of(n, s, d)
 
-        CompletableFuture.completedFuture(n).combineFastFail(
+        CompletableFuture.completedFuture(n).allTupleOfFastFail(
             CompletableFuture.completedFuture(s),
             CompletableFuture.completedFuture(d),
             CompletableFuture.completedFuture(anotherN)
         ).get() shouldBe Tuple4.of(n, s, d, anotherN)
 
-        CompletableFuture.completedFuture(n).combineFastFail(
+        CompletableFuture.completedFuture(n).allTupleOfFastFail(
             CompletableFuture.completedFuture(s),
             CompletableFuture.completedFuture(d),
             CompletableFuture.completedFuture(anotherN),

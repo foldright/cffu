@@ -614,32 +614,32 @@ class CompletableFutureUtilsTest {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# combine methods
+    //# allTupleOf methods
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
-    void test_combine() throws Exception {
+    void test_allTupleOf() throws Exception {
         final CompletableFuture<Integer> cf_n = completedFuture(n);
         final CompletableFuture<String> cf_s = completedFuture(s);
         final CompletableFuture<Double> cf_d = completedFuture(d);
         final CompletableFuture<Integer> cf_an = completedFuture(anotherN);
         final CompletableFuture<Integer> cf_nn = completedFuture(n + n);
 
-        assertEquals(Tuple2.of(n, s), combine(cf_n, cf_s).get());
-        assertEquals(Tuple2.of(n, s), combineFastFail(cf_n, cf_s).get());
+        assertEquals(Tuple2.of(n, s), allTupleOf(cf_n, cf_s).get());
+        assertEquals(Tuple2.of(n, s), allTupleOfFastFail(cf_n, cf_s).get());
 
-        assertEquals(Tuple3.of(n, s, d), combine(cf_n, cf_s, cf_d).get());
-        assertEquals(Tuple3.of(n, s, d), combineFastFail(cf_n, cf_s, cf_d).get());
+        assertEquals(Tuple3.of(n, s, d), allTupleOf(cf_n, cf_s, cf_d).get());
+        assertEquals(Tuple3.of(n, s, d), allTupleOfFastFail(cf_n, cf_s, cf_d).get());
 
-        assertEquals(Tuple4.of(n, s, d, anotherN), combine(cf_n, cf_s, cf_d, cf_an).get());
-        assertEquals(Tuple4.of(n, s, d, anotherN), combineFastFail(cf_n, cf_s, cf_d, cf_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), allTupleOf(cf_n, cf_s, cf_d, cf_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), allTupleOfFastFail(cf_n, cf_s, cf_d, cf_an).get());
 
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), combine(cf_n, cf_s, cf_d, cf_an, cf_nn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), combineFastFail(cf_n, cf_s, cf_d, cf_an, cf_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), allTupleOf(cf_n, cf_s, cf_d, cf_an, cf_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), allTupleOfFastFail(cf_n, cf_s, cf_d, cf_an, cf_nn).get());
     }
 
     @Test
-    void test_combine_exceptionally() throws Exception {
+    void test_allTupleOf_exceptionally() throws Exception {
         final CompletableFuture<Object> incomplete = new CompletableFuture<>();
         final CompletableFuture<Object> fail = failedFuture(rte);
 
@@ -649,29 +649,14 @@ class CompletableFutureUtilsTest {
         final CompletableFuture<Integer> cf_an = completedFuture(anotherN);
 
         try {
-            combine(cf_n, fail).get();
+            allTupleOf(cf_n, fail).get();
 
             fail();
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
         try {
-            combineFastFail(incomplete, fail).get();
-
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-
-        try {
-            combine(cf_n, fail, cf_s).get();
-
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-        try {
-            combineFastFail(incomplete, fail, cf_s).get();
+            allTupleOfFastFail(incomplete, fail).get();
 
             fail();
         } catch (ExecutionException expected) {
@@ -679,14 +664,14 @@ class CompletableFutureUtilsTest {
         }
 
         try {
-            combine(cf_n, fail, cf_d, cf_s).get();
+            allTupleOf(cf_n, fail, cf_s).get();
 
             fail();
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
         try {
-            combineFastFail(incomplete, fail, cf_d, cf_s).get();
+            allTupleOfFastFail(incomplete, fail, cf_s).get();
 
             fail();
         } catch (ExecutionException expected) {
@@ -694,14 +679,29 @@ class CompletableFutureUtilsTest {
         }
 
         try {
-            combine(cf_n, cf_d, fail, cf_s, cf_an).get();
+            allTupleOf(cf_n, fail, cf_d, cf_s).get();
 
             fail();
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
         try {
-            combineFastFail(incomplete, cf_d, fail, cf_s, cf_an).get();
+            allTupleOfFastFail(incomplete, fail, cf_d, cf_s).get();
+
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+
+        try {
+            allTupleOf(cf_n, cf_d, fail, cf_s, cf_an).get();
+
+            fail();
+        } catch (ExecutionException expected) {
+            assertSame(rte, expected.getCause());
+        }
+        try {
+            allTupleOfFastFail(incomplete, cf_d, fail, cf_s, cf_an).get();
 
             fail();
         } catch (ExecutionException expected) {
@@ -710,7 +710,7 @@ class CompletableFutureUtilsTest {
     }
 
     @Test
-    void test_combine_NotFastFail() throws Exception {
+    void test_allTupleOf_NotFastFail() throws Exception {
         final CompletableFuture<Object> incomplete = new CompletableFuture<>();
         final CompletableFuture<Object> fail = failedFuture(rte);
 
@@ -719,22 +719,22 @@ class CompletableFutureUtilsTest {
         final CompletableFuture<Integer> cf_an = completedFuture(anotherN);
 
         try {
-            combine(incomplete, fail).get(100, TimeUnit.MILLISECONDS);
+            allTupleOf(incomplete, fail).get(100, TimeUnit.MILLISECONDS);
             fail();
         } catch (TimeoutException expected) {
         }
         try {
-            combine(incomplete, fail, cf_s).get(100, TimeUnit.MILLISECONDS);
+            allTupleOf(incomplete, fail, cf_s).get(100, TimeUnit.MILLISECONDS);
             fail();
         } catch (TimeoutException expected) {
         }
         try {
-            combine(incomplete, fail, cf_d, cf_s).get(100, TimeUnit.MILLISECONDS);
+            allTupleOf(incomplete, fail, cf_d, cf_s).get(100, TimeUnit.MILLISECONDS);
             fail();
         } catch (TimeoutException expected) {
         }
         try {
-            combine(incomplete, cf_d, fail, cf_s, cf_an).get(100, TimeUnit.MILLISECONDS);
+            allTupleOf(incomplete, cf_d, fail, cf_s, cf_an).get(100, TimeUnit.MILLISECONDS);
             fail();
         } catch (TimeoutException expected) {
         }
