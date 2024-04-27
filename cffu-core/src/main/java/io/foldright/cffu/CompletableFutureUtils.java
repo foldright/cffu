@@ -61,7 +61,7 @@ public final class CompletableFutureUtils {
         final CompletableFuture<?>[] collectResultCfs = new CompletableFuture[size];
         for (int i = 0; i < size; i++) {
             final int index = i;
-            collectResultCfs[index] = cfs[index].thenAccept(v -> result[index] = v).toCompletableFuture();
+            collectResultCfs[index] = cfs[index].toCompletableFuture().thenAccept(v -> result[index] = v);
         }
 
         return CompletableFuture.allOf(collectResultCfs)
@@ -90,7 +90,7 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return CompletableFuture.completedFuture(null);
-        if (size == 1) return (CompletableFuture) cfs[0].thenApply(v -> null).toCompletableFuture();
+        if (size == 1) return cfs[0].toCompletableFuture().thenApply(v -> null);
 
         final CompletableFuture[] successOrBeIncomplete = new CompletableFuture[size];
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
@@ -154,6 +154,7 @@ public final class CompletableFutureUtils {
      * Returns normal array list instead of unmodifiable or fixed-size list.
      * Safer for application code which may reuse the returned list as normal collection.
      */
+    @SafeVarargs
     @SuppressWarnings("unchecked")
     private static <T> List<T> arrayList(T... elements) {
         List<T> ret = new ArrayList<>(elements.length);
@@ -161,9 +162,8 @@ public final class CompletableFutureUtils {
         return ret;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     private static <T> CompletableFuture<List<T>> csToListCf(CompletionStage<? extends T> s) {
-        return (CompletableFuture) s.thenApply(CompletableFutureUtils::arrayList).toCompletableFuture();
+        return s.toCompletableFuture().thenApply(CompletableFutureUtils::arrayList);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -175,11 +175,11 @@ public final class CompletableFutureUtils {
         for (int i = 0; i < cfs.length; i++) {
             final CompletionStage cf = cfs[i];
 
-            successOrBeIncomplete[i] = cf.handle((v, ex) -> ex == null ? cf : incomplete)
-                    .thenCompose(Function.identity()).toCompletableFuture();
+            successOrBeIncomplete[i] = cf.toCompletableFuture()
+                    .handle((v, ex) -> ex == null ? cf : incomplete).thenCompose(Function.identity());
 
-            failedOrBeIncomplete[i] = cf.handle((v, ex) -> ex == null ? incomplete : cf)
-                    .thenCompose(Function.identity()).toCompletableFuture();
+            failedOrBeIncomplete[i] = cf.toCompletableFuture()
+                    .handle((v, ex) -> ex == null ? incomplete : cf).thenCompose(Function.identity());
         }
     }
 
@@ -271,8 +271,8 @@ public final class CompletableFutureUtils {
 
         final Object[] result = new Object[2];
         return CompletableFuture.allOf(
-                cf1.thenAccept(t1 -> result[0] = t1).toCompletableFuture(),
-                cf2.thenAccept(t2 -> result[1] = t2).toCompletableFuture()
+                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
+                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2)
         ).thenApply(unused ->
                 Tuple2.of((T1) result[0], (T2) result[1])
         );
@@ -325,9 +325,9 @@ public final class CompletableFutureUtils {
 
         final Object[] result = new Object[3];
         return CompletableFuture.allOf(
-                cf1.thenAccept(t1 -> result[0] = t1).toCompletableFuture(),
-                cf2.thenAccept(t2 -> result[1] = t2).toCompletableFuture(),
-                cf3.thenAccept(t3 -> result[2] = t3).toCompletableFuture()
+                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
+                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2),
+                cf3.toCompletableFuture().thenAccept(t3 -> result[2] = t3)
         ).thenApply(unused ->
                 Tuple3.of((T1) result[0], (T2) result[1], (T3) result[2])
         );
@@ -382,10 +382,10 @@ public final class CompletableFutureUtils {
 
         final Object[] result = new Object[4];
         return CompletableFuture.allOf(
-                cf1.thenAccept(t1 -> result[0] = t1).toCompletableFuture(),
-                cf2.thenAccept(t2 -> result[1] = t2).toCompletableFuture(),
-                cf3.thenAccept(t3 -> result[2] = t3).toCompletableFuture(),
-                cf4.thenAccept(t4 -> result[3] = t4).toCompletableFuture()
+                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
+                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2),
+                cf3.toCompletableFuture().thenAccept(t3 -> result[2] = t3),
+                cf4.toCompletableFuture().thenAccept(t4 -> result[3] = t4)
         ).thenApply(unused ->
                 Tuple4.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3])
         );
@@ -442,11 +442,11 @@ public final class CompletableFutureUtils {
 
         final Object[] result = new Object[5];
         return CompletableFuture.allOf(
-                cf1.thenAccept(t1 -> result[0] = t1).toCompletableFuture(),
-                cf2.thenAccept(t2 -> result[1] = t2).toCompletableFuture(),
-                cf3.thenAccept(t3 -> result[2] = t3).toCompletableFuture(),
-                cf4.thenAccept(t4 -> result[3] = t4).toCompletableFuture(),
-                cf5.thenAccept(t5 -> result[4] = t5).toCompletableFuture()
+                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
+                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2),
+                cf3.toCompletableFuture().thenAccept(t3 -> result[2] = t3),
+                cf4.toCompletableFuture().thenAccept(t4 -> result[3] = t4),
+                cf5.toCompletableFuture().thenAccept(t5 -> result[4] = t5)
         ).thenApply(unused ->
                 Tuple5.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3], (T5) result[4])
         );
@@ -511,7 +511,7 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
 
-        return allOfFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenRun(action);
+        return allOfFastFail(cf1, cf2).thenRun(action);
     }
 
     /**
@@ -533,7 +533,7 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
 
-        return allOfFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenRunAsync(action);
+        return allOfFastFail(cf1, cf2).thenRunAsync(action);
     }
 
     /**
@@ -556,7 +556,7 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return allOfFastFail(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenRunAsync(action, executor);
+        return allOfFastFail(cf1, cf2).thenRunAsync(action, executor);
     }
 
     /**
@@ -582,8 +582,8 @@ public final class CompletableFutureUtils {
 
         final Object[] result = new Object[2];
         return allOfFastFail(
-                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
-                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2)
+                cf1.thenAccept(t1 -> result[0] = t1),
+                cf2.thenAccept(t2 -> result[1] = t2)
         ).thenAccept(unused -> action.accept((T) result[0], (U) result[1]));
     }
 
@@ -611,8 +611,8 @@ public final class CompletableFutureUtils {
 
         final Object[] result = new Object[2];
         return allOfFastFail(
-                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
-                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2)
+                cf1.thenAccept(t1 -> result[0] = t1),
+                cf2.thenAccept(t2 -> result[1] = t2)
         ).thenAcceptAsync(unused -> action.accept((T) result[0], (U) result[1]));
     }
 
@@ -641,8 +641,8 @@ public final class CompletableFutureUtils {
 
         final Object[] result = new Object[2];
         return allOfFastFail(
-                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
-                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2)
+                cf1.thenAccept(t1 -> result[0] = t1),
+                cf2.thenAccept(t2 -> result[1] = t2)
         ).thenAcceptAsync(unused -> action.accept((T) result[0], (U) result[1]), executor);
     }
 
@@ -669,8 +669,8 @@ public final class CompletableFutureUtils {
 
         final Object[] result = new Object[2];
         return allOfFastFail(
-                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
-                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2)
+                cf1.thenAccept(t1 -> result[0] = t1),
+                cf2.thenAccept(t2 -> result[1] = t2)
         ).thenApply(unused -> fn.apply((T) result[0], (U) result[1]));
     }
 
@@ -699,8 +699,8 @@ public final class CompletableFutureUtils {
 
         final Object[] result = new Object[2];
         return allOfFastFail(
-                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
-                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2)
+                cf1.thenAccept(t1 -> result[0] = t1),
+                cf2.thenAccept(t2 -> result[1] = t2)
         ).thenApplyAsync(unused -> fn.apply((T) result[0], (U) result[1]));
     }
 
@@ -730,8 +730,8 @@ public final class CompletableFutureUtils {
 
         final Object[] result = new Object[2];
         return allOfFastFail(
-                cf1.toCompletableFuture().thenAccept(t1 -> result[0] = t1),
-                cf2.toCompletableFuture().thenAccept(t2 -> result[1] = t2)
+                cf1.thenAccept(t1 -> result[0] = t1),
+                cf2.thenAccept(t2 -> result[1] = t2)
         ).thenApplyAsync(unused -> fn.apply((T) result[0], (U) result[1]), executor);
     }
 
@@ -761,7 +761,7 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
 
-        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenRun(action);
+        return anyOfSuccess(cf1, cf2).thenRun(action);
     }
 
     /**
@@ -783,7 +783,7 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
 
-        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenRunAsync(action);
+        return anyOfSuccess(cf1, cf2).thenRunAsync(action);
     }
 
     /**
@@ -806,7 +806,7 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenRunAsync(action, executor);
+        return anyOfSuccess(cf1, cf2).thenRunAsync(action, executor);
     }
 
     /**
@@ -825,7 +825,7 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
 
-        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenAccept(action);
+        return anyOfSuccess(cf1, cf2).thenAccept(action);
     }
 
     /**
@@ -845,7 +845,7 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(action, "action is null");
 
-        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenAcceptAsync(action);
+        return anyOfSuccess(cf1, cf2).thenAcceptAsync(action);
     }
 
     /**
@@ -867,7 +867,7 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenAcceptAsync(action, executor);
+        return anyOfSuccess(cf1, cf2).thenAcceptAsync(action, executor);
     }
 
     /**
@@ -887,7 +887,7 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(fn, "fn is null");
 
-        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenApply(fn);
+        return anyOfSuccess(cf1, cf2).thenApply(fn);
     }
 
     /**
@@ -908,7 +908,7 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(fn, "fn is null");
 
-        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenApplyAsync(fn);
+        return anyOfSuccess(cf1, cf2).thenApplyAsync(fn);
     }
 
     /**
@@ -931,7 +931,7 @@ public final class CompletableFutureUtils {
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
-        return anyOfSuccess(cf1.toCompletableFuture(), cf2.toCompletableFuture()).thenApplyAsync(fn, executor);
+        return anyOfSuccess(cf1, cf2).thenApplyAsync(fn, executor);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
