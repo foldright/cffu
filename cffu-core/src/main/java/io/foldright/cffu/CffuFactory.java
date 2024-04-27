@@ -24,7 +24,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * This class {@link CffuFactory} is equivalent to {@link CompletableFuture},
- * contains the static factory methods of {@link CompletableFuture}.
+ * contains the static (factory) methods of {@link CompletableFuture}.
  * <p>
  * The methods that equivalent to the instance methods of {@link CompletableFuture} is in {@link Cffu} class.
  * <p>
@@ -32,8 +32,8 @@ import static java.util.Objects.requireNonNull;
  * <p>
  * About factory methods conventions of {@link CffuFactory}:
  * <ul>
- *   <li>factory methods return {@link Cffu} instead of {@link CompletableFuture}.
- *   <li>only provide varargs methods for multiply Cffu/CF input arguments;
+ * <li>factory methods return {@link Cffu} instead of {@link CompletableFuture}.
+ * <li>only provide varargs methods for multiply Cffu/CF input arguments;
  *     if you have {@code List} input, use static util methods {@link #cffuListToArray(List)}
  *     or {@link #completableFutureListToArray(List)} to convert it to array first.
  * </ul>
@@ -227,8 +227,8 @@ public final class CffuFactory {
      * In general, should not use this method in biz code, prefer below factory methods of Cffu:
      *
      * <ol>
-     *     <li>{@link #runAsync(Runnable)}
-     *     <li>{@link #supplyAsync(Supplier, Executor)}
+     * <li>{@link #runAsync(Runnable)}
+     * <li>{@link #supplyAsync(Supplier, Executor)}
      * </ol>
      *
      * @see #runAsync(Runnable)
@@ -311,9 +311,9 @@ public final class CffuFactory {
      * <p>
      * if you need the results of given Cffus, prefer below methods:
      * <ol>
-     *   <li>{@link #allResultsOf(Cffu[])}
-     *   <li>{@link #cffuCombine(Cffu, Cffu)} / {@link #cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)}
-     *       (provided overloaded methods with 2~5 input)
+     * <li>{@link #allResultsOf(Cffu[])}
+     * <li>{@link #cffuCombine(Cffu, Cffu)} / {@link #cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)}
+     *     (provided overloaded methods with 2~5 input)
      * </ol>
      * <p>
      * Among the applications of this method is to await completion of a set of
@@ -344,14 +344,14 @@ public final class CffuFactory {
      * the returned Cffu({@code Cffu<Void>}), but may be obtained by inspecting them individually.<br>
      * If no CompletableFutures are provided, returns a Cffu completed with the value {@code null}.
      * <p>
-     * Same as {@link #allOf(Cffu[])} with overloaded argument type {@link CompletableFuture}.
+     * This method is the same as {@link #allOf(Cffu[])} with overloaded argument type {@link CompletableFuture}.
      * <p>
      * if you need the results of given CompletableFutures, prefer below methods:
      * <ol>
-     *   <li>{@link #allResultsOf(CompletableFuture[])}
-     *   <li>{@link #cffuCombine(CompletableFuture, CompletableFuture)} /
-     *       {@link #cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
-     *       (provided overloaded methods with 2~5 input)
+     * <li>{@link #allResultsOf(CompletableFuture[])}
+     * <li>{@link #cffuCombine(CompletableFuture, CompletableFuture)} /
+     *     {@link #cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
+     *     (provided overloaded methods with 2~5 input)
      * </ol>
      *
      * @param cfs the CompletableFutures
@@ -411,7 +411,8 @@ public final class CffuFactory {
      * with a CompletionException holding this exception as its cause.
      * If no CompletableFutures are provided, returns a Cffu completed with the value {@code null}.
      * <p>
-     * Same as {@link #allOfFastFail(Cffu[])} with overloaded argument type {@link CompletableFuture}.
+     * This method is the same as {@link #allOfFastFail(Cffu[])}
+     * except with overloaded argument type {@link CompletableFuture}.
      *
      * @param cfs the CompletableFutures
      * @return a new Cffu that is successful when all the given CompletableFutures success
@@ -457,7 +458,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Same as {@link #anyOf(Cffu[])} with overloaded argument type {@link CompletableFuture}.
+     * This method is the same as {@link #anyOf(Cffu[])} except with overloaded argument type {@link CompletableFuture}.
      *
      * @param cfs the CompletableFutures
      * @return a new Cffu that is completed with the result
@@ -577,8 +578,7 @@ public final class CffuFactory {
      * also does so, with a CompletionException holding this exception as its cause.
      * If no Cffus are provided, returns a Cffu completed with the value empty list.
      * <p>
-     * Same to {@link #allOf(Cffu[])}, but the returned Cffu
-     * contains the results of input Cffus.
+     * This method is the same as {@link #allOf(Cffu[])}, except the returned Cffu contains the results of input Cffus.
      *
      * @param cfs the Cffus
      * @return a new Cffu that is completed when all the given Cffus complete
@@ -599,7 +599,8 @@ public final class CffuFactory {
      * also does so, with a CompletionException holding this exception as its cause.
      * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
      * <p>
-     * Same as {@link #allResultsOf(Cffu[])} with overloaded argument type {@link CompletableFuture}.
+     * This method is the same as {@link #allResultsOf(Cffu[])}
+     * except with overloaded argument type {@link CompletableFuture}.
      *
      * @param cfs the CompletableFutures
      * @return a new Cffu that is completed when all the given CompletableFutures complete
@@ -653,7 +654,8 @@ public final class CffuFactory {
      * with a CompletionException holding this exception as its cause.
      * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
      * <p>
-     * Same as {@link #allResultsOfFastFail(Cffu[])} with overloaded argument type {@link CompletableFuture}.
+     * This method is the same as {@link #allResultsOfFastFail(Cffu[])}
+     * except with overloaded argument type {@link CompletableFuture}.
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that is successful when all the given CompletableFutures success
@@ -689,7 +691,8 @@ public final class CffuFactory {
      * If any of the given Cffu complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.
      * <p>
-     * Same as {@link #allResultsOf(Cffu[])} but with two inputs and return results as {@code Tuple2}.
+     * This method is the same as {@link #allResultsOf(Cffu[])}
+     * except with two inputs and return results as {@code Tuple2}.
      *
      * @return a new Cffu that is completed when the given two Cffus complete
      * @throws NullPointerException if any input Cffus are {@code null}
@@ -707,7 +710,8 @@ public final class CffuFactory {
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.
      * <p>
-     * Same as {@link #cffuCombine(Cffu, Cffu)} with overloaded argument type {@link CompletableFuture}.
+     * This method is the same as {@link #cffuCombine(Cffu, Cffu)}
+     * except with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 2 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
@@ -761,7 +765,8 @@ public final class CffuFactory {
      * If any of the given Cffu complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.
      * <p>
-     * Same as {@link #allResultsOf(Cffu[])} but with three inputs and return results as {@code Tuple3}.
+     * This method is the same as {@link #allResultsOf(Cffu[])}
+     * except with three inputs and return results as {@code Tuple3}.
      *
      * @return a new Cffu that is completed when the given three Cffus complete
      * @throws NullPointerException if any input Cffus are {@code null}
@@ -779,7 +784,8 @@ public final class CffuFactory {
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.
      * <p>
-     * Same as {@link #cffuCombine(Cffu, Cffu, Cffu)} with overloaded argument type {@link CompletableFuture}.
+     * This method is the same as {@link #cffuCombine(Cffu, Cffu, Cffu)}
+     * except with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 3 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
@@ -835,7 +841,8 @@ public final class CffuFactory {
      * If any of the given Cffu complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.
      * <p>
-     * Same as {@link #allResultsOf(Cffu[])} but with 4 inputs and return results as {@code Tuple4}.
+     * This method is the same as {@link #allResultsOf(Cffu[])}
+     * except with 4 inputs and return results as {@code Tuple4}.
      *
      * @return a new Cffu that is completed when the given 4 Cffus complete
      * @throws NullPointerException if any input Cffus are {@code null}
@@ -855,7 +862,8 @@ public final class CffuFactory {
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.
      * <p>
-     * Same as {@link #cffuCombine(Cffu, Cffu, Cffu, Cffu)} with overloaded argument type {@link CompletableFuture}.
+     * This method is the same as {@link #cffuCombine(Cffu, Cffu, Cffu, Cffu)}
+     * except with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 4 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
@@ -916,7 +924,8 @@ public final class CffuFactory {
      * If any of the given Cffu complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.
      * <p>
-     * Same as {@link #allResultsOf(Cffu[])} but with 5 inputs and return results as {@code Tuple5}.
+     * This method is the same as {@link #allResultsOf(Cffu[])}
+     * except with 5 inputs and return results as {@code Tuple5}.
      *
      * @return a new Cffu that is completed when the given 5 Cffus complete
      * @throws NullPointerException if any input Cffus are {@code null}
@@ -936,8 +945,8 @@ public final class CffuFactory {
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * Cffu also does so, with a CompletionException holding this exception as its cause.
      * <p>
-     * Same as {@link #cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)}
-     * with overloaded argument type {@link CompletableFuture}.
+     * This method is the same as {@link #cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)}
+     * except with overloaded argument type {@link CompletableFuture}.
      *
      * @return a new Cffu that is completed when the given 5 CompletableFutures complete
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}

@@ -392,13 +392,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Same as {@link CffuFactory#cffuCombine(Cffu, Cffu)}, providing this method is convenient for method chaining.
+     * This method is the same as {@link CffuFactory#cffuCombine(Cffu, Cffu)},
+     * providing this method is convenient for method chaining.
      * <p>
-     * call this method
+     * Calling this method
      * <p>
      * {@code combinedCffu = cffu.cffuCombine(cffu2);}
      * <p>
-     * is same as:
+     * is the same as:
      * <p>
      * {@code combinedCffu = cffu.cffuFactory().cffuCombine(cffu, cffu2);}
      *
@@ -411,14 +412,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Same as {@link CffuFactory#cffuCombine(CompletableFuture, CompletableFuture)},
+     * This method is the same as {@link CffuFactory#cffuCombine(CompletableFuture, CompletableFuture)},
      * providing this method is convenient for method chaining.
      * <p>
-     * call this method
+     * Calling this method
      * <p>
      * {@code combinedCffu = cffu.cffuCombine(cf2);}
      * <p>
-     * is same as:
+     * is the same as:
      * <p>
      * {@code combinedCffu = cffu.cffuFactory().cffuCombine(cffu.toCompletableFuture(), cf2);}
      *
@@ -431,13 +432,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Same as {@link CffuFactory#cffuCombineFastFail(Cffu, Cffu)}, providing this method is convenient for method chaining.
+     * This method is the same as {@link CffuFactory#cffuCombineFastFail(Cffu, Cffu)},
+     * providing this method is convenient for method chaining.
      * <p>
-     * call this method
+     * Calling this method
      * <p>
      * {@code combinedCffu = cffu.cffuCombineFastFail(cffu2);}
      * <p>
-     * is same as:
+     * is the same as:
      * <p>
      * {@code combinedCffu = cffu.cffuFactory().cffuCombineFastFail(cffu, cffu2);}
      *
@@ -450,14 +452,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Same as {@link CffuFactory#cffuCombineFastFail(CompletableFuture, CompletableFuture)},
+     * This method is the same as {@link CffuFactory#cffuCombineFastFail(CompletableFuture, CompletableFuture)},
      * providing this method is convenient for method chaining.
      * <p>
-     * call this method
+     * Calling this method
      * <p>
      * {@code combinedCffu = cffu.cffuCombineFastFail(cf2);}
      * <p>
-     * is same as:
+     * is the same as:
      * <p>
      * {@code combinedCffu = cffu.cffuFactory().cffuCombineFastFail(cffu.toCompletableFuture(), cf2);}
      *
@@ -470,14 +472,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Same as {@link CffuFactory#cffuCombine(Cffu, Cffu, Cffu)},
+     * This method is the same as {@link CffuFactory#cffuCombine(Cffu, Cffu, Cffu)},
      * providing this method is convenient for method chaining.
      * <p>
-     * call this method
+     * Calling this method
      * <p>
      * {@code combinedCffu = cffu.cffuCombine(cffu2, cffu3);}
      * <p>
-     * is same as:
+     * is the same as:
      * <p>
      * {@code combinedCffu = cffu.cffuFactory().cffuCombine(cffu, cffu2, cffu3);}
      *
@@ -490,14 +492,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Same as {@link CffuFactory#cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture)},
+     * This method is the same as {@link CffuFactory#cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture)},
      * providing this method is convenient for method chaining.
      * <p>
-     * call this method
+     * Calling this method
      * <p>
      * {@code combinedCffu = cffu.cffuCombine(cf2, cf3);}
      * <p>
-     * is same as:
+     * is the same as:
      * <p>
      * {@code combinedCffu = cffu.cffuFactory().cffuCombine(cffu.toCompletableFuture(), cf2, cf3);}
      *
@@ -510,14 +512,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Same as {@link CffuFactory#cffuCombineFastFail(Cffu, Cffu, Cffu)},
+     * This method is the same as {@link CffuFactory#cffuCombineFastFail(Cffu, Cffu, Cffu)},
      * providing this method is convenient for method chaining.
      * <p>
-     * call this method
+     * Calling this method
      * <p>
      * {@code combinedCffu = cffu.cffuCombineFastFail(cffu2, cffu3);}
      * <p>
-     * is same as:
+     * is the same as:
      * <p>
      * {@code combinedCffu = cffu.cffuFactory().cffuCombineFastFail(cffu, cffu2, cffu3);}
      *
@@ -530,14 +532,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Same as {@link CffuFactory#cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture)},
+     * This method is the same as {@link CffuFactory#cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture)},
      * providing this method is convenient for method chaining.
      * <p>
-     * call this method
+     * Calling this method
      * <p>
      * {@code combinedCffu = cffu.cffuCombineFastFail(cf2, cf3);}
      * <p>
-     * is same as:
+     * is the same as:
      * <p>
      * {@code combinedCffu = cffu.cffuFactory().cffuCombineFastFail(cffu.toCompletableFuture(), cf2, cf3);}
      *
@@ -550,14 +552,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Same as {@link CffuFactory#cffuCombine(Cffu, Cffu, Cffu, Cffu)},
+     * This method is the same as {@link CffuFactory#cffuCombine(Cffu, Cffu, Cffu, Cffu)},
      * providing this method is convenient for method chaining.
      * <p>
-     * call this method
+     * Calling this method
      * <p>
      * {@code combinedCffu = cffu.cffuCombine(cffu2, cffu3, cffu4);}
      * <p>
-     * is same as:
+     * is the same as:
      * <p>
      * {@code combinedCffu = cffu.cffuFactory().cffuCombine(cffu, cffu2, cffu3, cffu4);}
      *
@@ -570,14 +572,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Same as {@link CffuFactory#cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)},
+     * This method is the same as {@link CffuFactory#cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)},
      * providing this method is convenient for method chaining.
      * <p>
-     * call this method
+     * Calling this method
      * <p>
      * {@code combinedCffu = cffu.cffuCombine(cf2, cf3, cf4);}
      * <p>
-     * is same as:
+     * is the same as:
      * <p>
      * {@code combinedCffu = cffu.cffuFactory().cffuCombine(cffu.toCompletableFuture(), cf2, cf3, cf4);}
      *
@@ -591,14 +593,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Same as {@link CffuFactory#cffuCombineFastFail(Cffu, Cffu, Cffu, Cffu)},
+     * This method is the same as {@link CffuFactory#cffuCombineFastFail(Cffu, Cffu, Cffu, Cffu)},
      * providing this method is convenient for method chaining.
      * <p>
-     * call this method
+     * Calling this method
      * <p>
      * {@code combinedCffu = cffu.cffuCombineFastFail(cffu2, cffu3, cffu4);}
      * <p>
-     * is same as:
+     * is the same as:
      * <p>
      * {@code combinedCffu = cffu.cffuFactory().cffuCombineFastFail(cffu, cffu2, cffu3, cffu4);}
      *
@@ -611,14 +613,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Same as {@link CffuFactory#cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)},
+     * This method is the same as {@link CffuFactory#cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)},
      * providing this method is convenient for method chaining.
      * <p>
-     * call this method
+     * Calling this method
      * <p>
      * {@code combinedCffu = cffu.cffuCombineFastFail(cf2, cf3, cf4);}
      * <p>
-     * is same as:
+     * is the same as:
      * <p>
      * {@code combinedCffu = cffu.cffuFactory().cffuCombineFastFail(cffu.toCompletableFuture(), cf2, cf3, cf4);}
      *
@@ -632,14 +634,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Same as {@link CffuFactory#cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)},
+     * This method is the same as {@link CffuFactory#cffuCombine(Cffu, Cffu, Cffu, Cffu, Cffu)},
      * providing this method is convenient for method chaining.
      * <p>
-     * call this method
+     * Calling this method
      * <p>
      * {@code combinedCffu = cffu.cffuCombine(cffu2, cffu3, cffu4, cffu5);}
      * <p>
-     * is same as:
+     * is the same as:
      * <p>
      * {@code combinedCffu = cffu.cffuFactory().cffuCombine(cffu, cffu2, cffu3, cffu4, cffu5);}
      *
@@ -653,14 +655,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Same as {@link CffuFactory#cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)},
+     * This method is the same as {@link CffuFactory#cffuCombine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)},
      * providing this method is convenient for method chaining.
      * <p>
-     * call this method
+     * Calling this method
      * <p>
      * {@code combinedCffu = cffu.cffuCombine(cf2, cf3, cf4, cf5);}
      * <p>
-     * is same as:
+     * is the same as:
      * <p>
      * {@code combinedCffu = cffu.cffuFactory().cffuCombine(cffu.toCompletableFuture(), cf2, cf3, cf4, cf5);}
      *
@@ -674,14 +676,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Same as {@link CffuFactory#cffuCombineFastFail(Cffu, Cffu, Cffu, Cffu, Cffu)},
+     * This method is the same as {@link CffuFactory#cffuCombineFastFail(Cffu, Cffu, Cffu, Cffu, Cffu)},
      * providing this method is convenient for method chaining.
      * <p>
-     * call this method
+     * Calling this method
      * <p>
      * {@code combinedCffu = cffu.cffuCombineFastFail(cffu2, cffu3, cffu4, cffu5);}
      * <p>
-     * is same as:
+     * is the same as:
      * <p>
      * {@code combinedCffu = cffu.cffuFactory().cffuCombineFastFail(cffu, cffu2, cffu3, cffu4, cffu5);}
      *
@@ -695,14 +697,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Same as {@link CffuFactory#cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)},
+     * This method is the same as {@link CffuFactory#cffuCombineFastFail(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)},
      * providing this method is convenient for method chaining.
      * <p>
-     * call this method
+     * Calling this method
      * <p>
      * {@code combinedCffu = cffu.cffuCombineFastFail(cf2, cf3, cf4, cf5);}
      * <p>
-     * is same as:
+     * is the same as:
      * <p>
      * {@code combinedCffu = cffu.cffuFactory().cffuCombineFastFail(cffu.toCompletableFuture(), cf2, cf3, cf4, cf5);}
      *
@@ -719,8 +721,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //# `then either(binary input)` methods of CompletionStage:
     //
     //    - runAfterEither*(Runnable):  Void, Void -> Void
-    //    - acceptEither*(BiConsumer):  (T1, T2) -> Void
-    //    - applyToEither*(BiFunction): (T1, T2) -> U
+    //    - acceptEither*(Consumer):  (T, T) -> Void
+    //    - applyToEither*(Function): (T, T) -> U
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -1331,11 +1333,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * and then retrieves its result value when complete, or throws an (unchecked) exception if completed exceptionally.
      * <p>
      * <strong>NOTE:<br></strong>
-     * call this method
+     * Calling this method
      * <p>
      * {@code result = cffu.join(timeout, unit);}
      * <p>
-     * is same as:
+     * is the same as:
      *
      * <pre>{@code result = cffu.copy() // defensive copy to avoid writing this cffu unexpectedly
      *     .orTimeout(timeout, unit)
@@ -1479,8 +1481,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns the computation state, this method just invoke without java version compatibility logic,
-     * if you need this function backport into old {@code java 18-}, use {@link #cffuState()} instead.
+     * Returns the computation state, this method contains <strong>NO</strong> java version compatibility logic,
+     * if you need this function in old {@code java 18-}, use {@link #cffuState()} instead.
      * <p>
      * <strong>NOTE:<br></strong>
      * {@link CompletableFuture#state} is new method since Java 19,
@@ -1502,7 +1504,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns the computation state({@link CffuState}).
+     * Returns the computation state({@link CffuState}), this method  is equivalent to {@link CompletableFuture#state()}
+     * with java version compatibility logic, so you can invoke in old {@code java 18-}.
      *
      * @return the computation state
      * @see CffuState
@@ -1739,10 +1742,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * create a {@code minimal stage} by below methods:
      * <ul>
-     *   <li>{@link CffuFactory#completedStage(Object)}
-     *   <li>{@link CffuFactory#failedStage(Throwable)}
-     *   <li>{@link #minimalCompletionStage()}
-     *   <li>{@link CffuFactory#asCffu(CompletionStage)}, this method return a {@code minimal stage}
+     * <li>{@link CffuFactory#completedStage(Object)}
+     * <li>{@link CffuFactory#failedStage(Throwable)}
+     * <li>{@link #minimalCompletionStage()}
+     * <li>{@link CffuFactory#asCffu(CompletionStage)}, this method return a {@code minimal stage}
      *     when input a{@code minimal stage}, otherwise return a normal stage.
      * </ul>
      */

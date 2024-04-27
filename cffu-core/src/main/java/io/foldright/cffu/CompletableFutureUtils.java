@@ -39,8 +39,8 @@ public final class CompletableFutureUtils {
      * also does so, with a CompletionException holding this exception as its cause.
      * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
      * <p>
-     * Same to {@link CompletableFuture#allOf(CompletableFuture[])},
-     * but the returned CompletableFuture contains the results of the given CompletableFutures.
+     * This method is the same as {@link CompletableFuture#allOf(CompletableFuture[])},
+     * except the returned CompletableFuture contains the results of the given CompletableFutures.
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that is completed when all the given CompletableFutures complete
@@ -76,6 +76,8 @@ public final class CompletableFutureUtils {
      * also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
      * If no CompletableFutures are provided, returns a CompletableFuture completed with the value {@code null}.
+     * <p>
+     * This method is the same as {@link CompletableFuture#allOf(CompletableFuture[])} except for the fast-fail behavior.
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that is successful when all the given CompletableFutures success
@@ -110,8 +112,10 @@ public final class CompletableFutureUtils {
      * with a CompletionException holding this exception as its cause.
      * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
      * <p>
-     * Same to {@link #allOfFastFail(CompletableFuture[])},
-     * but the returned CompletableFuture contains the results of the given CompletableFutures.
+     * This method is the same as {@link #allOfFastFail(CompletableFuture[])},
+     * except the returned CompletableFuture contains the results of the given CompletableFutures.
+     * <p>
+     * This method is the same as {@link #allResultsOf(CompletableFuture[])} except for the fast-fail behavior.
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that is successful when all the given CompletableFutures success
@@ -139,7 +143,7 @@ public final class CompletableFutureUtils {
         return (CompletableFuture) CompletableFuture.anyOf(failedOrBeIncomplete);
     }
 
-    private static void requireCfsAndEleNonNull(CompletableFuture<?>... cfs) {
+    private static void requireCfsAndEleNonNull(CompletionStage<?>... cfs) {
         requireNonNull(cfs, "cfs is null");
         for (int i = 0; i < cfs.length; i++) {
             requireNonNull(cfs[i], "cf" + (i + 1) + " is null");
@@ -185,8 +189,8 @@ public final class CompletableFutureUtils {
      * with a CompletionException holding this exception as its cause.
      * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
      * <p>
-     * Same as {@link CompletableFuture#anyOf(CompletableFuture[])},
-     * but return result type is specified type instead of {@code Object}.
+     * This method is the same as {@link CompletableFuture#anyOf(CompletableFuture[])},
+     * except the return result type is generic type instead of {@code Object}.
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that is completed with the result
@@ -271,6 +275,9 @@ public final class CompletableFutureUtils {
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #combine(CompletableFuture, CompletableFuture)}
+     * except for the fast-fail behavior.
      *
      * @return a new CompletableFuture that is successful when the given two CompletableFutures success
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
@@ -323,6 +330,9 @@ public final class CompletableFutureUtils {
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #combine(CompletableFuture, CompletableFuture, CompletableFuture)}
+     * except for the fast-fail behavior.
      *
      * @return a new CompletableFuture that is successful when the given three CompletableFutures success
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
@@ -378,6 +388,9 @@ public final class CompletableFutureUtils {
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #combine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
+     * except for the fast-fail behavior.
      *
      * @return a new CompletableFuture that is successful when the given 4 CompletableFutures success
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
@@ -436,6 +449,9 @@ public final class CompletableFutureUtils {
      * If any of the given CompletableFutures complete exceptionally, then the returned
      * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
      * with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #combine(CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture, CompletableFuture)}
+     * except for the fast-fail behavior.
      *
      * @return a new CompletableFuture that is successful when the given 5 CompletableFutures success
      * @throws NullPointerException if any of the given CompletableFutures are {@code null}
@@ -532,8 +548,7 @@ public final class CompletableFutureUtils {
      * if non-positive). Each delay commences upon invocation of the returned executor's {@code execute} method.
      *
      * @param delay how long to delay, in units of {@code unit}
-     * @param unit  a {@code TimeUnit} determining how to interpret the
-     *              {@code delay} parameter
+     * @param unit  a {@code TimeUnit} determining how to interpret the {@code delay} parameter
      * @return the new delayed executor
      */
     @Contract(pure = true)
@@ -546,8 +561,7 @@ public final class CompletableFutureUtils {
      * if non-positive). Each delay commences upon invocation of the returned executor's {@code execute} method.
      *
      * @param delay    how long to delay, in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the
-     *                 {@code delay} parameter
+     * @param unit     a {@code TimeUnit} determining how to interpret the {@code delay} parameter
      * @param executor the base executor
      * @return the new delayed executor
      */
@@ -573,9 +587,9 @@ public final class CompletableFutureUtils {
      * default asynchronous execution facility. Otherwise, if given stage completes normally,
      * then the returned stage also completes normally with the same value.
      *
-     * @param fn the function to use to compute the value of the returned CompletionStage
+     * @param fn the function to use to compute the value of the returned CompletableFuture
      *           if given CompletionStage completed exceptionally
-     * @return the new CompletionStage
+     * @return the new CompletableFuture
      */
     public static <T> CompletableFuture<T> exceptionallyAsync(
             CompletableFuture<T> cf, Function<Throwable, ? extends T> fn) {
@@ -587,10 +601,10 @@ public final class CompletableFutureUtils {
      * stage's exception as the argument to the supplied function, using the supplied Executor. Otherwise,
      * if given stage completes normally, then the returned stage also completes normally with the same value.
      *
-     * @param fn       the function to use to compute the value of the returned CompletionStage
+     * @param fn       the function to use to compute the value of the returned CompletableFuture
      *                 if given CompletionStage completed exceptionally
      * @param executor the executor to use for asynchronous execution
-     * @return the new CompletionStage
+     * @return the new CompletableFuture
      */
     public static <T> CompletableFuture<T> exceptionallyAsync(
             CompletableFuture<T> cf, Function<Throwable, ? extends T> fn, Executor executor) {
@@ -598,8 +612,9 @@ public final class CompletableFutureUtils {
             return cf.exceptionallyAsync(fn, executor);
         }
 
+        requireNonNull(fn, "fn is null");
+        requireNonNull(executor, "executor is null");
         // below code is copied from CompletionStage#exceptionallyAsync
-
         return cf.handle((r, ex) -> (ex == null) ? cf :
                 cf.<T>handleAsync((r1, ex1) -> fn.apply(ex1), executor)
         ).thenCompose(Function.identity());
@@ -620,9 +635,8 @@ public final class CompletableFutureUtils {
             return cf.orTimeout(timeout, unit);
         }
 
-        // below code is copied from CompletableFuture#orTimeout with small adoption
-
         requireNonNull(unit, "unit is null");
+        // below code is copied from CompletableFuture#orTimeout with small adoption
         if (!cf.isDone()) {
             ScheduledFuture<?> f = Delayer.delayToTimoutCf(cf, timeout, unit);
             cf.whenComplete(new FutureCanceller(f));
@@ -644,9 +658,8 @@ public final class CompletableFutureUtils {
             return cf.completeOnTimeout(value, timeout, unit);
         }
 
-        // below code is copied from CompletableFuture#completeOnTimeout with small adoption
-
         requireNonNull(unit, "unit is null");
+        // below code is copied from CompletableFuture#completeOnTimeout with small adoption
         if (!cf.isDone()) {
             ScheduledFuture<?> f = Delayer.delayToCompleteCf(cf, value, timeout, unit);
             cf.whenComplete(new FutureCanceller(f));
@@ -660,9 +673,9 @@ public final class CompletableFutureUtils {
      * Returns a new CompletionStage that, when given stage completes exceptionally,
      * is composed using the results of the supplied function applied to given stage's exception.
      *
-     * @param fn the function to use to compute the returned
-     *           CompletionStage if given CompletionStage completed exceptionally
-     * @return the new CompletionStage
+     * @param fn the function to use to compute the returned CompletableFuture
+     *           if given CompletionStage completed exceptionally
+     * @return the new CompletableFuture
      */
     public static <T> CompletableFuture<T> exceptionallyCompose(
             CompletableFuture<T> cf, Function<Throwable, ? extends CompletionStage<T>> fn) {
@@ -670,8 +683,8 @@ public final class CompletableFutureUtils {
             return cf.exceptionallyCompose(fn);
         }
 
+        requireNonNull(fn, "fn is null");
         // below code is copied from CompletionStage.exceptionallyCompose
-
         return cf.handle((r, ex) -> (ex == null) ? cf : fn.apply(ex))
                 .thenCompose(Function.identity());
     }
@@ -681,9 +694,9 @@ public final class CompletableFutureUtils {
      * is composed using the results of the supplied function applied to given stage's exception,
      * using given stage's default asynchronous execution facility.
      *
-     * @param fn the function to use to compute the returned
-     *           CompletionStage if given CompletionStage completed exceptionally
-     * @return the new CompletionStage
+     * @param fn the function to use to compute the returned CompletableFuture
+     *           if given CompletionStage completed exceptionally
+     * @return the new CompletableFuture
      */
     public static <T> CompletableFuture<T> exceptionallyComposeAsync(
             CompletableFuture<T> cf, Function<Throwable, ? extends CompletionStage<T>> fn) {
@@ -694,10 +707,10 @@ public final class CompletableFutureUtils {
      * Returns a new CompletionStage that, when given stage completes exceptionally, is composed using
      * the results of the supplied function applied to given stage's exception, using the supplied Executor.
      *
-     * @param fn       the function to use to compute the returned CompletionStage
+     * @param fn       the function to use to compute the returned CompletableFuture
      *                 if given CompletionStage completed exceptionally
      * @param executor the executor to use for asynchronous execution
-     * @return the new CompletionStage
+     * @return the new CompletableFuture
      */
     public static <T> CompletableFuture<T> exceptionallyComposeAsync(
             CompletableFuture<T> cf, Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
@@ -705,8 +718,9 @@ public final class CompletableFutureUtils {
             return cf.exceptionallyComposeAsync(fn, executor);
         }
 
+        requireNonNull(fn, "fn is null");
+        requireNonNull(executor, "executor is null");
         // below code is copied from CompletionStage.exceptionallyComposeAsync
-
         return cf.handle((r, ex) -> (ex == null) ? cf :
                 cf.handleAsync((r1, ex1) -> fn.apply(ex1), executor).thenCompose(Function.identity())
         ).thenCompose(Function.identity());
@@ -719,11 +733,11 @@ public final class CompletableFutureUtils {
      * and then retrieves its result value when complete, or throws an (unchecked) exception if completed exceptionally.
      * <p>
      * <strong>NOTE:<br></strong>
-     * call this method
+     * Calling this method
      * <p>
      * {@code result = CompletableFutureUtils.join(cf, timeout, unit);}
      * <p>
-     * is same as:
+     * is the same as:
      *
      * <pre>{@code result = cf.copy() // defensive copy to avoid writing this cf unexpectedly
      *     .orTimeout(timeout, unit)
@@ -832,8 +846,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns the computation state({@link CffuState}), this method has java version compatibility logic,
-     * so you can invoke in old {@code java 18-}.
+     * Returns the computation state({@link CffuState}), this method  is equivalent to {@link CompletableFuture#state()}
+     * with java version compatibility logic, so you can invoke in old {@code java 18-}.
      *
      * @return the computation state
      * @see Future#state()
@@ -896,10 +910,9 @@ public final class CompletableFutureUtils {
             return cf.completeAsync(supplier, executor);
         }
 
-        // below code is copied from CompletableFuture#completeAsync with small adoption
-
         requireNonNull(supplier, "supplier is null");
         requireNonNull(executor, "executor is null");
+        // below code is copied from CompletableFuture#completeAsync with small adoption
         executor.execute(new CfCompleterBySupplier<>(cf, supplier));
         return cf;
     }

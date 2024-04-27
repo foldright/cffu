@@ -11,11 +11,12 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * Same as {@link Future.State}, existed for
- * java version compatibility({@link Cffu#cffuState state} to {@link Future#state()}).
+ * This class is the same as {@link Future.State}, existed for java version compatibility.
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @see Future.State
+ * @see CompletableFutureUtils#state(CompletableFuture)
+ * @see Cffu#cffuState()
  */
 @ParametersAreNonnullByDefault
 @ReturnValuesAreNonnullByDefault
