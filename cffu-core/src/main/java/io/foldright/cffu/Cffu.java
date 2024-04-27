@@ -494,7 +494,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         return reset0(cf.thenCombineAsync(other, fn, executor));
     }
 
-
     /**
      * Returns a new Cffu that, when this and the other given stage both complete normally,
      * is executed with the two results as arguments to the supplied function.

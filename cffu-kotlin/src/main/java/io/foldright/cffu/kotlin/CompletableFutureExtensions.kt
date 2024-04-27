@@ -73,7 +73,6 @@ fun Collection<CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<V
 fun Array<out CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
     CompletableFuture.allOf(*(this as Array<CompletionStage<Any>>).toCompletableFuture())
 
-
 /**
  * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
  * the results(`CompletableFuture<Void>`) of the given CompletableFutures are not reflected in the returned CompletableFuture,

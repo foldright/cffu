@@ -499,7 +499,6 @@ private fun <T> Cffu<T>.shouldNotMinCffu(recursive: Boolean = false) {
 
     if (recursive) newIncompleteFuture<T>().shouldNotMinCffu()
 
-
     ////////////////////////////////////////////////////////////
     // Cffu specified methods
     ////////////////////////////////////////////////////////////

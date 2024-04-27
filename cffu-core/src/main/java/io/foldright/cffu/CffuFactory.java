@@ -524,7 +524,6 @@ public final class CffuFactory {
         return new0(CompletableFutureUtils.allTupleOf(cf1, cf2, cf3, cf4));
     }
 
-
     /**
      * Returns a new Cffu that is successful when the given four CompletableFutures success.
      * If any of the given CompletableFutures complete exceptionally, then the returned

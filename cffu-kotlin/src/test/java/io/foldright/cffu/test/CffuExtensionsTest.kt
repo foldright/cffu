@@ -380,7 +380,6 @@ class CffuExtensionsTest : FunSpec({
         ).anyOfSuccessCffu(testCffuFactory).await() shouldBe 42
     }
 
-
     val cffuFactoryForOptional = newCffuFactoryBuilder(Executors.newCachedThreadPool()).build()
     fun assertCffuFactoryForOptional(cffu: Cffu<*>) {
         cffu.cffuFactory() shouldBeSameInstanceAs cffuFactoryForOptional

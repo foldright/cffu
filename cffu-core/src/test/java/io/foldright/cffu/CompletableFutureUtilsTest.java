@@ -21,6 +21,7 @@ import static io.foldright.cffu.CompletableFutureUtils.*;
 import static io.foldright.test_utils.TestUtils.*;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;
+import static java.util.function.Function.identity;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -761,9 +762,9 @@ class CompletableFutureUtilsTest {
         assertNull(acceptEitherSuccessAsync(cf_n, incomplete, c).get());
         assertNull(acceptEitherSuccessAsync(cf_n, incomplete, c, executorService).get());
 
-        assertEquals(n, applyToEitherSuccess(cf_n, incomplete, Function.identity()).get());
-        assertEquals(n, applyToEitherSuccessAsync(cf_n, incomplete, Function.identity()).get());
-        assertEquals(n, applyToEitherSuccessAsync(cf_n, incomplete, Function.identity(), executorService).get());
+        assertEquals(n, applyToEitherSuccess(cf_n, incomplete, identity()).get());
+        assertEquals(n, applyToEitherSuccessAsync(cf_n, incomplete, identity()).get());
+        assertEquals(n, applyToEitherSuccessAsync(cf_n, incomplete, identity(), executorService).get());
     }
 
     @Test
@@ -783,9 +784,9 @@ class CompletableFutureUtilsTest {
         assertNull(acceptEitherSuccessAsync(failed, cf, c).get());
         assertNull(acceptEitherSuccessAsync(failed, cf, c, executorService).get());
 
-        assertEquals(n, applyToEitherSuccess(failed, cf, Function.identity()).get());
-        assertEquals(n, applyToEitherSuccessAsync(failed, cf, Function.identity()).get());
-        assertEquals(n, applyToEitherSuccessAsync(failed, cf, Function.identity(), executorService).get());
+        assertEquals(n, applyToEitherSuccess(failed, cf, identity()).get());
+        assertEquals(n, applyToEitherSuccessAsync(failed, cf, identity()).get());
+        assertEquals(n, applyToEitherSuccessAsync(failed, cf, identity(), executorService).get());
     }
 
     ////////////////////////////////////////////////////////////////////////////////

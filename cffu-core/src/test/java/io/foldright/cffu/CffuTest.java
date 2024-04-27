@@ -14,6 +14,7 @@ import java.util.function.Function;
 
 import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
 import static io.foldright.test_utils.TestUtils.*;
+import static java.util.function.Function.identity;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -123,9 +124,9 @@ class CffuTest {
         assertNull(failed.acceptEitherSuccessAsync(cf, c).get());
         assertNull(failed.acceptEitherSuccessAsync(cf, c, executorService).get());
 
-        assertEquals(n, failed.applyToEitherSuccess(cf, Function.identity()).get());
-        assertEquals(n, failed.applyToEitherSuccessAsync(cf, Function.identity()).get());
-        assertEquals(n, failed.applyToEitherSuccessAsync(cf, Function.identity(), executorService).get());
+        assertEquals(n, failed.applyToEitherSuccess(cf, identity()).get());
+        assertEquals(n, failed.applyToEitherSuccessAsync(cf, identity()).get());
+        assertEquals(n, failed.applyToEitherSuccessAsync(cf, identity(), executorService).get());
     }
 
     ////////////////////////////////////////
@@ -237,7 +238,6 @@ class CffuTest {
 
         assertSame(forbidObtrudeMethodsCffuFactory, cf.resetCffuFactory(forbidObtrudeMethodsCffuFactory).cffuFactory());
     }
-
 
     ////////////////////////////////////////////////////////////////////////////////
     //# Getter methods of Cffu properties

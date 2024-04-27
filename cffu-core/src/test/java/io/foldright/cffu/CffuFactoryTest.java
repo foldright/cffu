@@ -21,6 +21,7 @@ import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
 import static io.foldright.test_utils.TestUtils.*;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;
+import static java.util.function.Function.identity;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -44,7 +45,7 @@ class CffuFactoryTest {
     @Test
     void test_completedStage() throws Exception {
         CompletionStage<Integer> stage = cffuFactory.completedStage(n);
-        CompletionStage<Integer> sa = stage.thenApply(Function.identity());
+        CompletionStage<Integer> sa = stage.thenApply(identity());
 
         assertEquals(n, stage.toCompletableFuture().get());
         assertEquals(n, sa.toCompletableFuture().get());
@@ -72,7 +73,7 @@ class CffuFactoryTest {
     @Test
     void test_failedStage() throws Exception {
         CompletionStage<Integer> stage = cffuFactory.failedStage(rte);
-        CompletionStage<Integer> sa = stage.thenApply(Function.identity());
+        CompletionStage<Integer> sa = stage.thenApply(identity());
         CompletionStage<Integer> se = stage.exceptionally(throwable -> n);
 
         try {

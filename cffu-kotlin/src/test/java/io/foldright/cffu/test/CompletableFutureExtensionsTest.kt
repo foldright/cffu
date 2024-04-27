@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 import java.util.function.BiConsumer
 import java.util.function.Consumer
-import java.util.function.Function
+import java.util.function.Function.identity
 
 class CompletableFutureExtensionsTest : FunSpec({
     test("allOf*") {
@@ -326,9 +326,9 @@ class CompletableFutureExtensionsTest : FunSpec({
         failed.acceptEitherSuccessAsync(cf, c).get().shouldBeNull()
         failed.acceptEitherSuccessAsync(cf, c, testThreadPoolExecutor).get().shouldBeNull()
 
-        failed.applyToEitherSuccess(cf, Function.identity()).get() shouldBe n
-        failed.applyToEitherSuccessAsync(cf, Function.identity()).get() shouldBe n
-        failed.applyToEitherSuccessAsync(cf, Function.identity(), testThreadPoolExecutor).get() shouldBe n
+        failed.applyToEitherSuccess(cf, identity()).get() shouldBe n
+        failed.applyToEitherSuccessAsync(cf, identity()).get() shouldBe n
+        failed.applyToEitherSuccessAsync(cf, identity(), testThreadPoolExecutor).get() shouldBe n
     }
 
     ////////////////////////////////////////////////////////////////////////////////

@@ -18,6 +18,7 @@ import java.util.function.*;
 
 import static io.foldright.cffu.CffuFactory.toCompletableFutureArray;
 import static java.util.Objects.requireNonNull;
+import static java.util.function.Function.identity;
 
 
 /**
@@ -155,7 +156,6 @@ public final class CompletableFutureUtils {
      * Safer for application code which may reuse the returned list as normal collection.
      */
     @SafeVarargs
-    @SuppressWarnings("unchecked")
     private static <T> List<T> arrayList(T... elements) {
         List<T> ret = new ArrayList<>(elements.length);
         ret.addAll(Arrays.asList(elements));
@@ -176,10 +176,10 @@ public final class CompletableFutureUtils {
             final CompletionStage cf = cfs[i];
 
             successOrBeIncomplete[i] = cf.toCompletableFuture()
-                    .handle((v, ex) -> ex == null ? cf : incomplete).thenCompose(Function.identity());
+                    .handle((v, ex) -> ex == null ? cf : incomplete).thenCompose(identity());
 
             failedOrBeIncomplete[i] = cf.toCompletableFuture()
-                    .handle((v, ex) -> ex == null ? incomplete : cf).thenCompose(Function.identity());
+                    .handle((v, ex) -> ex == null ? incomplete : cf).thenCompose(identity());
         }
     }
 
@@ -1147,7 +1147,7 @@ public final class CompletableFutureUtils {
         // below code is copied from CompletionStage#exceptionallyAsync
         return cf.handle((r, ex) -> (ex == null) ? cf :
                 cf.<T>handleAsync((r1, ex1) -> fn.apply(ex1), executor)
-        ).thenCompose(Function.identity());
+        ).thenCompose(identity());
     }
 
     //# Timeout Control methods
@@ -1215,8 +1215,7 @@ public final class CompletableFutureUtils {
 
         requireNonNull(fn, "fn is null");
         // below code is copied from CompletionStage.exceptionallyCompose
-        return cf.handle((r, ex) -> (ex == null) ? cf : fn.apply(ex))
-                .thenCompose(Function.identity());
+        return cf.handle((r, ex) -> (ex == null) ? cf : fn.apply(ex)).thenCompose(identity());
     }
 
     /**
@@ -1252,8 +1251,8 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         // below code is copied from CompletionStage.exceptionallyComposeAsync
         return cf.handle((r, ex) -> (ex == null) ? cf :
-                cf.handleAsync((r1, ex1) -> fn.apply(ex1), executor).thenCompose(Function.identity())
-        ).thenCompose(Function.identity());
+                cf.handleAsync((r1, ex1) -> fn.apply(ex1), executor).thenCompose(identity())
+        ).thenCompose(identity());
     }
 
     //# Read(explicitly) methods of CompletableFuture
@@ -1466,7 +1465,7 @@ public final class CompletableFutureUtils {
         if (IS_JAVA9_PLUS) {
             return cf.minimalCompletionStage();
         }
-        return cf.thenApply(Function.identity());
+        return cf.thenApply(identity());
     }
 
     /**
@@ -1483,7 +1482,7 @@ public final class CompletableFutureUtils {
         if (IS_JAVA9_PLUS) {
             return cf.copy();
         }
-        return cf.thenApply(Function.identity());
+        return cf.thenApply(identity());
     }
 
     /**

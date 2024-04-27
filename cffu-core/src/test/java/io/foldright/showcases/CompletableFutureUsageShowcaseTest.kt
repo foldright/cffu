@@ -392,7 +392,6 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
             42
         }.toCompletableFuture().await() shouldBe 42
 
-
         cf.thenApply { it }.handle { _, t ->
             t.shouldBeTypeOf<CompletionException>()
             t.cause shouldBeSameInstanceAs rte
