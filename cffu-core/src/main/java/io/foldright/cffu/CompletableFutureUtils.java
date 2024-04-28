@@ -1029,6 +1029,7 @@ public final class CompletableFutureUtils {
         if (IS_JAVA9_PLUS) {
             return CompletableFuture.failedFuture(ex);
         }
+        requireNonNull(ex, "ex is null");
         final CompletableFuture<T> cf = new CompletableFuture<>();
         cf.completeExceptionally(ex);
         return cf;
@@ -1215,7 +1216,6 @@ public final class CompletableFutureUtils {
         if (IS_JAVA12_PLUS) {
             return cf.exceptionallyCompose(fn);
         }
-
         requireNonNull(fn, "fn is null");
         // below code is copied from CompletionStage.exceptionallyCompose
         return cf.handle((r, ex) -> (ex == null) ? cf : fn.apply(ex)).thenCompose(identity());
@@ -1249,7 +1249,6 @@ public final class CompletableFutureUtils {
         if (IS_JAVA12_PLUS) {
             return cf.exceptionallyComposeAsync(fn, executor);
         }
-
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
         // below code is copied from CompletionStage.exceptionallyComposeAsync
@@ -1294,7 +1293,6 @@ public final class CompletableFutureUtils {
     @Nullable
     public static <T> T join(CompletableFuture<T> cf, long timeout, TimeUnit unit) {
         if (cf.isDone()) return cf.join();
-
         return orTimeout(copy(cf), timeout, unit).join();
     }
 
@@ -1536,6 +1534,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<T>[] toCompletableFutureArray(CompletionStage<T>... stages) {
+        requireNonNull(stages, "stages is null");
         @SuppressWarnings("unchecked")
         CompletableFuture<T>[] ret = new CompletableFuture[stages.length];
         for (int i = 0; i < stages.length; i++) {

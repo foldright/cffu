@@ -255,6 +255,7 @@ public final class CffuFactory {
      * <li>otherwise use input {@code stage.toCompletableFuture} as the underlying cf of returned cffu.
      * </ol>
      *
+     * @throws NullPointerException if the given stage is null
      * @see #toCffuArray(CompletionStage[])
      * @see CompletionStage#toCompletableFuture()
      * @see Cffu#cffuUnwrap()
@@ -278,11 +279,13 @@ public final class CffuFactory {
      * A convenient util method for wrap input {@link CompletableFuture} / {@link CompletionStage} / {@link Cffu}
      * array element by {@link #toCffu(CompletionStage)}.
      *
+     * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #toCffu(CompletionStage)
      */
     @Contract(pure = true)
     @SafeVarargs
     public final <T> Cffu<T>[] toCffuArray(CompletionStage<T>... stages) {
+        requireNonNull(stages, "stages is null");
         @SuppressWarnings("unchecked")
         Cffu<T>[] ret = new Cffu[stages.length];
         for (int i = 0; i < stages.length; i++) {
