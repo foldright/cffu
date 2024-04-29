@@ -55,9 +55,8 @@ public final class CompletableFutureUtils {
      * @return a new CompletableFuture that is completed when all the given stages complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public static CompletableFuture<Void> allOf(CompletionStage<?>... cfs) {
-        return CompletableFuture.allOf(toCompletableFutureArray((CompletionStage[]) cfs));
+        return CompletableFuture.allOf(f_toCfArray(cfs));
     }
 
     /**
@@ -77,7 +76,6 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SafeVarargs
-    @SuppressWarnings({"unchecked"})
     public static <T> CompletableFuture<List<T>> allResultsOf(CompletionStage<? extends T>... cfs) {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
@@ -87,7 +85,7 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[size];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(cfs, result);
 
-        return CompletableFuture.allOf(resultSetterCfs).thenApply(unused -> (List<T>) arrayList(result));
+        return f_cast(CompletableFuture.allOf(resultSetterCfs).thenApply(unused -> arrayList(result)));
     }
 
     /**
@@ -107,23 +105,22 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public static CompletableFuture<Void> allOfFastFail(CompletionStage<?>... cfs) {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return CompletableFuture.completedFuture(null);
         if (size == 1) return cfs[0].toCompletableFuture().thenApply(v -> null);
 
-        final CompletableFuture[] successOrBeIncomplete = new CompletableFuture[size];
+        final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[size];
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
-        final CompletableFuture[] failedOrBeIncomplete = new CompletableFuture[size + 1];
+        final CompletableFuture<?>[] failedOrBeIncomplete = new CompletableFuture[size + 1];
         fill(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of failedOrBeIncomplete HERE:
         //       a cf that is successful when all given cfs success, otherwise be incomplete
         failedOrBeIncomplete[size] = CompletableFuture.allOf(successOrBeIncomplete);
 
-        return (CompletableFuture) CompletableFuture.anyOf(failedOrBeIncomplete);
+        return f_cast(CompletableFuture.anyOf(failedOrBeIncomplete));
     }
 
     /**
@@ -146,27 +143,26 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SafeVarargs
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> CompletableFuture<List<T>> allResultsOfFastFail(CompletionStage<? extends T>... cfs) {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return CompletableFuture.completedFuture(arrayList());
         if (size == 1) return csToListCf(cfs[0]);
 
-        final CompletableFuture[] successOrBeIncomplete = new CompletableFuture[size];
+        final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[size];
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
-        final CompletableFuture[] failedOrBeIncomplete = new CompletableFuture[size + 1];
+        final CompletableFuture<?>[] failedOrBeIncomplete = new CompletableFuture[size + 1];
         fill(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of failedOrBeIncomplete HERE:
         //       a cf that is successful when all given cfs success, otherwise be incomplete
         failedOrBeIncomplete[size] = allResultsOf(successOrBeIncomplete);
 
-        return (CompletableFuture) CompletableFuture.anyOf(failedOrBeIncomplete);
+        return f_cast(CompletableFuture.anyOf(failedOrBeIncomplete));
     }
 
     @SafeVarargs
-    private static <T> CompletionStage<? extends T>[] requireCfsAndEleNonNull(CompletionStage<? extends T>... css) {
+    private static <S extends CompletionStage<?>> S[] requireCfsAndEleNonNull(S... css) {
         requireNonNull(css, "cfs is null");
         for (int i = 0; i < css.length; i++) {
             requireNonNull(css[i], "cf" + (i + 1) + " is null");
@@ -202,21 +198,38 @@ public final class CompletableFutureUtils {
         return resultSetterCfs;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private static void fill(CompletionStage[] cfs,
-                             CompletableFuture[] successOrBeIncomplete,
-                             CompletableFuture[] failedOrBeIncomplete) {
-        final CompletableFuture incomplete = new CompletableFuture();
+    private static <T> void fill(CompletionStage<? extends T>[] cfs,
+                                 CompletableFuture<? extends T>[] successOrBeIncomplete,
+                                 CompletableFuture<? extends T>[] failedOrBeIncomplete) {
+        final CompletableFuture<T> incomplete = new CompletableFuture<>();
 
         for (int i = 0; i < cfs.length; i++) {
-            final CompletionStage cf = cfs[i];
+            final CompletionStage<? extends T> cf = cfs[i];
 
             successOrBeIncomplete[i] = cf.toCompletableFuture()
-                    .handle((v, ex) -> ex == null ? cf : incomplete).thenCompose(identity());
+                    .handle((v, ex) -> ex == null ? cf : incomplete).thenCompose(x -> x);
 
             failedOrBeIncomplete[i] = cf.toCompletableFuture()
-                    .handle((v, ex) -> ex == null ? incomplete : cf).thenCompose(identity());
+                    .handle((v, ex) -> ex == null ? incomplete : cf).thenCompose(x -> x);
         }
+    }
+
+    /**
+     * Force cast CompletableFuture with the value type,
+     * IGNORE the compile-time type check.
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static <T> CompletableFuture<T> f_cast(CompletableFuture<?> f) {
+        return (CompletableFuture) f;
+    }
+
+    /**
+     * Force converts {@link CompletionStage} array to {@link CompletableFuture} array,
+     * IGNORE the compile-time type check.
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static <T> CompletableFuture<T>[] f_toCfArray(CompletionStage<? extends T>[] cfs) {
+        return toCompletableFutureArray((CompletionStage[]) cfs);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -243,9 +256,8 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SafeVarargs
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> CompletableFuture<T> anyOf(CompletionStage<? extends T>... cfs) {
-        return (CompletableFuture) CompletableFuture.anyOf(toCompletableFutureArray((CompletionStage[]) cfs));
+        return f_cast(CompletableFuture.anyOf(f_toCfArray(cfs)));
     }
 
     /**
@@ -267,23 +279,22 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SafeVarargs
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> CompletableFuture<T> anyOfSuccess(CompletionStage<? extends T>... cfs) {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return failedFuture(new NoCfsProvidedException());
-        if (size == 1) return (CompletableFuture) copy(cfs[0].toCompletableFuture());
+        if (size == 1) return f_cast(copy(cfs[0].toCompletableFuture()));
 
         // NOTE: fill ONE MORE element of successOrBeIncompleteCfs LATER
-        final CompletableFuture[] successOrBeIncomplete = new CompletableFuture[size + 1];
-        final CompletableFuture[] failedOrBeIncomplete = new CompletableFuture[size];
+        final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[size + 1];
+        final CompletableFuture<?>[] failedOrBeIncomplete = new CompletableFuture[size];
         fill(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of successOrBeIncompleteCfs HERE
         //       a cf that is failed when all given cfs fail, otherwise be incomplete
         successOrBeIncomplete[size] = CompletableFuture.allOf(failedOrBeIncomplete);
 
-        return (CompletableFuture) CompletableFuture.anyOf(successOrBeIncomplete);
+        return f_cast(CompletableFuture.anyOf(successOrBeIncomplete));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -886,7 +897,7 @@ public final class CompletableFutureUtils {
      * @see CompletionStage#applyToEither(CompletionStage, Function)
      */
     public static <T, U> CompletableFuture<U> applyToEitherSuccess(
-            CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Function<? super T, U> fn) {
+            CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Function<? super T, ? extends U> fn) {
         final CompletionStage<? extends T>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(fn, "fn is null");
 
@@ -907,7 +918,7 @@ public final class CompletableFutureUtils {
      * @see CompletionStage#applyToEitherAsync(CompletionStage, Function)
      */
     public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
-            CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Function<? super T, U> fn) {
+            CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Function<? super T, ? extends U> fn) {
         final CompletionStage<? extends T>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(fn, "fn is null");
 
@@ -929,7 +940,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2,
-            Function<? super T, U> fn, Executor executor) {
+            Function<? super T, ? extends U> fn, Executor executor) {
         final CompletionStage<? extends T>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
@@ -1164,16 +1175,16 @@ public final class CompletableFutureUtils {
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return given CompletableFuture
      */
-    public static <T> CompletableFuture<T> orTimeout(CompletableFuture<T> cf, long timeout, TimeUnit unit) {
+    public static <C extends CompletableFuture<?>> C orTimeout(C cf, long timeout, TimeUnit unit) {
         if (IS_JAVA9_PLUS) {
-            return cf.orTimeout(timeout, unit);
-        }
-
-        requireNonNull(unit, "unit is null");
-        // below code is copied from CompletableFuture#orTimeout with small adoption
-        if (!cf.isDone()) {
-            ScheduledFuture<?> f = Delayer.delayToTimoutCf(cf, timeout, unit);
-            cf.whenComplete(new FutureCanceller(f));
+            cf.orTimeout(timeout, unit);
+        } else {
+            requireNonNull(unit, "unit is null");
+            // below code is copied from CompletableFuture#orTimeout with small adoption
+            if (!cf.isDone()) {
+                ScheduledFuture<?> f = Delayer.delayToTimoutCf(cf, timeout, unit);
+                cf.whenComplete(new FutureCanceller(f));
+            }
         }
         return cf;
     }
@@ -1186,17 +1197,17 @@ public final class CompletableFutureUtils {
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return given CompletableFuture
      */
-    public static <T> CompletableFuture<T> completeOnTimeout(
-            CompletableFuture<T> cf, @Nullable T value, long timeout, TimeUnit unit) {
+    public static <T, C extends CompletableFuture<? super T>> C completeOnTimeout(
+            C cf, @Nullable T value, long timeout, TimeUnit unit) {
         if (IS_JAVA9_PLUS) {
-            return cf.completeOnTimeout(value, timeout, unit);
-        }
-
-        requireNonNull(unit, "unit is null");
-        // below code is copied from CompletableFuture#completeOnTimeout with small adoption
-        if (!cf.isDone()) {
-            ScheduledFuture<?> f = Delayer.delayToCompleteCf(cf, value, timeout, unit);
-            cf.whenComplete(new FutureCanceller(f));
+            cf.completeOnTimeout(value, timeout, unit);
+        } else {
+            requireNonNull(unit, "unit is null");
+            // below code is copied from CompletableFuture#completeOnTimeout with small adoption
+            if (!cf.isDone()) {
+                ScheduledFuture<?> f = Delayer.delayToCompleteCf(cf, value, timeout, unit);
+                cf.whenComplete(new FutureCanceller(f));
+            }
         }
         return cf;
     }
@@ -1311,7 +1322,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @Nullable
-    public static <T> T resultNow(CompletableFuture<T> cf) {
+    public static <T> T resultNow(CompletableFuture<? extends T> cf) {
         if (IS_JAVA19_PLUS) {
             return cf.resultNow();
         }
@@ -1348,7 +1359,7 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#resultNow()
      */
     @Contract(pure = true)
-    public static <T> Throwable exceptionNow(CompletableFuture<T> cf) {
+    public static Throwable exceptionNow(CompletableFuture<?> cf) {
         if (IS_JAVA19_PLUS) {
             return cf.exceptionNow();
         }
@@ -1386,7 +1397,7 @@ public final class CompletableFutureUtils {
      * @see Future.State
      */
     @Contract(pure = true)
-    public static <T> CffuState state(CompletableFuture<T> cf) {
+    public static CffuState state(CompletableFuture<?> cf) {
         if (IS_JAVA19_PLUS) {
             return CffuState.toCffuState(cf.state());
         }
@@ -1422,7 +1433,7 @@ public final class CompletableFutureUtils {
      * @param supplier a function returning the value to be used to complete given CompletableFuture
      * @return given CompletableFuture
      */
-    public static <T> CompletableFuture<T> completeAsync(CompletableFuture<T> cf, Supplier<? extends T> supplier) {
+    public static <T, C extends CompletableFuture<? super T>> C completeAsync(C cf, Supplier<? extends T> supplier) {
         return completeAsync(cf, supplier, AsyncPoolHolder.ASYNC_POOL);
     }
 
@@ -1434,15 +1445,16 @@ public final class CompletableFutureUtils {
      * @param executor the executor to use for asynchronous execution
      * @return given CompletableFuture
      */
-    public static <T> CompletableFuture<T> completeAsync(
-            CompletableFuture<T> cf, Supplier<? extends T> supplier, Executor executor) {
+    public static <T, C extends CompletableFuture<? super T>> C completeAsync(
+            C cf, Supplier<? extends T> supplier, Executor executor) {
         if (IS_JAVA9_PLUS) {
-            return cf.completeAsync(supplier, executor);
+            cf.completeAsync(supplier, executor);
+        } else {
+            requireNonNull(supplier, "supplier is null");
+            requireNonNull(executor, "executor is null");
+            // below code is copied from CompletableFuture#completeAsync with small adoption
+            executor.execute(new CfCompleterBySupplier<>(cf, supplier));
         }
-        requireNonNull(supplier, "supplier is null");
-        requireNonNull(executor, "executor is null");
-        // below code is copied from CompletableFuture#completeAsync with small adoption
-        executor.execute(new CfCompleterBySupplier<>(cf, supplier));
         return cf;
     }
 
@@ -1488,11 +1500,11 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new incomplete CompletableFuture of the type to be returned by a CompletionStage method.
      *
-     * @param <T> the type of the value
+     * @param <U> the type of the value
      * @return a new CompletableFuture
      */
     @Contract(pure = true)
-    public static <T, U> CompletableFuture<U> newIncompleteFuture(CompletableFuture<T> cf) {
+    public static <U> CompletableFuture<U> newIncompleteFuture(CompletableFuture<?> cf) {
         if (IS_JAVA9_PLUS) {
             return cf.newIncompleteFuture();
         }
@@ -1547,9 +1559,10 @@ public final class CompletableFutureUtils {
      * Convert CompletableFuture list to CompletableFuture array.
      */
     @Contract(pure = true)
-    @SuppressWarnings("unchecked")
     public static <T> CompletableFuture<T>[] completableFutureListToArray(List<CompletableFuture<T>> cfList) {
-        return cfList.toArray(new CompletableFuture[0]);
+        @SuppressWarnings("unchecked")
+        final CompletableFuture<T>[] a = new CompletableFuture[0];
+        return cfList.toArray(a);
     }
 
     ////////////////////////////////////////////////////////////////////////////////

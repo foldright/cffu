@@ -702,7 +702,7 @@ fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
  * @see CompletableFuture.applyToEither
  */
 fun <T, U> CompletionStage<out T>.applyToEitherSuccess(
-    cf2: CompletionStage<out T>, fn: Function<in T, U>
+    cf2: CompletionStage<out T>, fn: Function<in T, out U>
 ): CompletableFuture<U> =
     CompletableFutureUtils.applyToEitherSuccess(this, cf2, fn)
 
@@ -720,7 +720,7 @@ fun <T, U> CompletionStage<out T>.applyToEitherSuccess(
  * @see CompletableFuture.applyToEitherAsync
  */
 fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
-    cf2: CompletionStage<out T>, fn: Function<in T, U>
+    cf2: CompletionStage<out T>, fn: Function<in T, out U>
 ): CompletableFuture<U> =
     CompletableFutureUtils.applyToEitherSuccessAsync(this, cf2, fn)
 
@@ -738,7 +738,7 @@ fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
  * @see CompletableFuture.applyToEitherAsync
  */
 fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
-    cf2: CompletionStage<out T>, fn: Function<in T, U>, executor: Executor
+    cf2: CompletionStage<out T>, fn: Function<in T, out U>, executor: Executor
 ): CompletableFuture<U> =
     CompletableFutureUtils.applyToEitherSuccessAsync(this, cf2, fn, executor)
 
@@ -847,7 +847,7 @@ fun <T> CompletableFuture<T>.exceptionallyAsync(
  * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
  * @return this CompletableFuture
  */
-fun <T> CompletableFuture<T>.orTimeout(timeout: Long, unit: TimeUnit): CompletableFuture<T> =
+fun <T, C : CompletableFuture<out T>> C.orTimeout(timeout: Long, unit: TimeUnit): C =
     CompletableFutureUtils.orTimeout(this, timeout, unit)
 
 /**
@@ -858,7 +858,7 @@ fun <T> CompletableFuture<T>.orTimeout(timeout: Long, unit: TimeUnit): Completab
  * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
  * @return given CompletableFuture
  */
-fun <T> CompletableFuture<T>.completeOnTimeout(value: T, timeout: Long, unit: TimeUnit): CompletableFuture<T> =
+fun <T, C : CompletableFuture<in T>> C.completeOnTimeout(value: T, timeout: Long, unit: TimeUnit): C =
     CompletableFutureUtils.completeOnTimeout(this, value, timeout, unit)
 
 //# Advanced methods of CompletionStage
@@ -949,7 +949,7 @@ fun <T> CompletableFuture<T>.join(timeout: Long, unit: TimeUnit): T =
  * ```
  */
 @Suppress("UNCHECKED_CAST")
-fun <T> CompletableFuture<T>.resultNow(): T =
+fun <T> CompletableFuture<out T>.resultNow(): T =
     CompletableFutureUtils.resultNow(this) as T
 
 /**
@@ -962,7 +962,7 @@ fun <T> CompletableFuture<T>.resultNow(): T =
  *                               or the task was cancelled
  * @see CompletableFuture.resultNow
  */
-fun <T> CompletableFuture<T>.exceptionNow(): Throwable =
+fun CompletableFuture<*>.exceptionNow(): Throwable =
     CompletableFutureUtils.exceptionNow(this)
 
 /**
@@ -973,7 +973,7 @@ fun <T> CompletableFuture<T>.exceptionNow(): Throwable =
  * @see java.util.concurrent.Future.state
  * @see CompletableFuture.state
  */
-fun <T> CompletableFuture<T>.cffuState(): CffuState =
+fun CompletableFuture<*>.cffuState(): CffuState =
     CompletableFutureUtils.state(this)
 
 //# Write methods of CompletableFuture
@@ -985,7 +985,7 @@ fun <T> CompletableFuture<T>.cffuState(): CffuState =
  * @param supplier a function returning the value to be used to complete given CompletableFuture
  * @return given CompletableFuture
  */
-fun <T> CompletableFuture<T>.completeAsync(supplier: Supplier<out T>): CompletableFuture<T> =
+fun <T, C : CompletableFuture<in T>> C.completeAsync(supplier: Supplier<out T>): C =
     CompletableFutureUtils.completeAsync(this, supplier)
 
 /**
@@ -996,7 +996,7 @@ fun <T> CompletableFuture<T>.completeAsync(supplier: Supplier<out T>): Completab
  * @param executor the executor to use for asynchronous execution
  * @return given CompletableFuture
  */
-fun <T> CompletableFuture<T>.completeAsync(supplier: Supplier<out T>, executor: Executor): CompletableFuture<T> =
+fun <T, C : CompletableFuture<in T>> C.completeAsync(supplier: Supplier<out T>, executor: Executor): C =
     CompletableFutureUtils.completeAsync(this, supplier, executor)
 
 //# Re-Config methods
@@ -1034,5 +1034,5 @@ fun <T> CompletableFuture<T>.copy(): CompletableFuture<T> =
  * @param <T> the type of the value
  * @return a new CompletableFuture
  */
-fun <T, U> CompletableFuture<T>.newIncompleteFuture(): CompletableFuture<U> =
+fun <U> CompletableFuture<*>.newIncompleteFuture(): CompletableFuture<U> =
     CompletableFutureUtils.newIncompleteFuture(this)

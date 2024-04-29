@@ -46,7 +46,8 @@ final class Delayer {
      * @return a Future can be used to cancel the delayed task(complete CF)
      * @see FutureCanceller
      */
-    public static <T> ScheduledFuture<?> delayToCompleteCf(CompletableFuture<T> cf, T value, long delay, TimeUnit unit) {
+    public static <T> ScheduledFuture<?> delayToCompleteCf(
+            CompletableFuture<? super T> cf, T value, long delay, TimeUnit unit) {
         return delay(new CfCompleter<>(cf, value), delay, unit);
     }
 
@@ -128,11 +129,10 @@ final class CfTimeout implements Runnable {
  * Action to complete cf
  */
 final class CfCompleter<T> implements Runnable {
-    private final CompletableFuture<T> cf;
+    private final CompletableFuture<? super T> cf;
     private final T value;
 
-    @SuppressWarnings("BoundedWildcard")
-    CfCompleter(CompletableFuture<T> cf, T value) {
+    CfCompleter(CompletableFuture<? super T> cf, T value) {
         this.cf = cf;
         this.value = value;
     }
@@ -171,10 +171,10 @@ final class FutureCanceller implements BiConsumer<Object, Throwable> {
 @SuppressFBWarnings("SE_BAD_FIELD")
 final class CfCompleterBySupplier<T> extends ForkJoinTask<Void>
         implements Runnable, CompletableFuture.AsynchronousCompletionTask {
-    CompletableFuture<T> dep;
-    Supplier<? extends T> fn;
+    private CompletableFuture<? super T> dep;
+    private Supplier<? extends T> fn;
 
-    CfCompleterBySupplier(CompletableFuture<T> dep, Supplier<? extends T> fn) {
+    CfCompleterBySupplier(CompletableFuture<? super T> dep, Supplier<? extends T> fn) {
         this.dep = dep;
         this.fn = fn;
     }
@@ -196,7 +196,7 @@ final class CfCompleterBySupplier<T> extends ForkJoinTask<Void>
 
     @Override
     public void run() {
-        CompletableFuture<T> d;
+        CompletableFuture<? super T> d;
         Supplier<? extends T> f;
         if ((d = dep) != null && (f = fn) != null) {
             dep = null;

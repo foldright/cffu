@@ -15,7 +15,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static io.foldright.cffu.CompletableFutureUtils.*;
 import static io.foldright.test_utils.TestUtils.*;
@@ -1003,6 +1003,34 @@ class CompletableFutureUtilsTest {
 
         ExecutorService e = Executors.newCachedThreadPool();
         assertSame(e, screenExecutor(e));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# check type parameter declaration, Variance(covariance/contravariance)
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    @SuppressWarnings("UnnecessaryLocalVariable")
+    void checkTypeParameterDeclaration() throws Exception {
+        final CompletableFuture<Integer> f = completedFuture(42);
+
+        final CompletableFuture<? extends Integer> fe = f;
+        final BiConsumer<? super Integer, Throwable> c = (v, ex) -> {
+        };
+        CompletableFutureUtils.peek(fe, c).get();
+        CompletableFutureUtils.peekAsync(fe, c).get();
+        CompletableFutureUtils.peekAsync(fe, c, executorService).get();
+
+        final CompletableFuture<? super Integer> fs = f;
+        final Supplier<? extends Integer> s = () -> 0;
+        fs.complete(0);
+        CompletableFutureUtils.completeAsync(fs, s).complete(1);
+        CompletableFutureUtils.completeAsync(fs, s, executorService).complete(1);
+
+        CompletableFuture<?> fq = f;
+        orTimeout(fq, 1, TimeUnit.MILLISECONDS);
+        orTimeout(fs, 1, TimeUnit.MILLISECONDS);
+        orTimeout(fe, 1, TimeUnit.MILLISECONDS);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
