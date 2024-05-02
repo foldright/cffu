@@ -345,9 +345,9 @@ fun CompletionStage<*>.runAfterBothFastFailAsync(
  * @see CompletableFuture.thenAcceptBoth
  */
 fun <T, U> CompletionStage<out T>.thenAcceptBothFastFail(
-    cf2: CompletionStage<out U>, action: BiConsumer<in T, in U>
+    other: CompletionStage<out U>, action: BiConsumer<in T, in U>
 ): CompletableFuture<Void> =
-    CompletableFutureUtils.thenAcceptBothFastFail(this, cf2, action)
+    CompletableFutureUtils.thenAcceptBothFastFail(this, other, action)
 
 /**
  * Returns a new CompletableFuture that, when tow given stage both complete normally,
@@ -364,9 +364,9 @@ fun <T, U> CompletionStage<out T>.thenAcceptBothFastFail(
  * @see CompletableFuture.thenAcceptBothAsync
  */
 fun <T, U> CompletionStage<out T>.thenAcceptBothFastFailAsync(
-    cf2: CompletionStage<out U>, action: BiConsumer<in T, in U>
+    other: CompletionStage<out U>, action: BiConsumer<in T, in U>
 ): CompletableFuture<Void> =
-    CompletableFutureUtils.thenAcceptBothFastFailAsync(this, cf2, action)
+    CompletableFutureUtils.thenAcceptBothFastFailAsync(this, other, action)
 
 /**
  * Returns a new CompletableFuture that, when tow given stage both complete normally,
@@ -383,9 +383,9 @@ fun <T, U> CompletionStage<out T>.thenAcceptBothFastFailAsync(
  * @see CompletableFuture.thenAcceptBothAsync
  */
 fun <T, U> CompletionStage<out T>.thenAcceptBothFastFailAsync(
-    cf2: CompletionStage<out U>, action: BiConsumer<in T, in U>, executor: Executor
+    other: CompletionStage<out U>, action: BiConsumer<in T, in U>, executor: Executor
 ): CompletableFuture<Void> =
-    CompletableFutureUtils.thenAcceptBothFastFailAsync(this, cf2, action, executor)
+    CompletableFutureUtils.thenAcceptBothFastFailAsync(this, other, action, executor)
 
 /**
  * Returns a new CompletableFuture that, when tow given stage both complete normally,
@@ -401,9 +401,9 @@ fun <T, U> CompletionStage<out T>.thenAcceptBothFastFailAsync(
  * @see CompletableFuture.thenCombine
  */
 fun <T, U, V> CompletionStage<out T>.thenCombineFastFail(
-    cf2: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
+    other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
 ): CompletableFuture<V> =
-    CompletableFutureUtils.thenCombineFastFail(this, cf2, fn)
+    CompletableFutureUtils.thenCombineFastFail(this, other, fn)
 
 /**
  * Returns a new CompletableFuture that, when tow given stage both complete normally,
@@ -420,9 +420,9 @@ fun <T, U, V> CompletionStage<out T>.thenCombineFastFail(
  * @see CompletableFuture.thenCombineAsync
  */
 fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
-    cf2: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
+    other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
 ): CompletableFuture<V> =
-    CompletableFutureUtils.thenCombineFastFailAsync(this, cf2, fn)
+    CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn)
 
 /**
  * Returns a new CompletableFuture that, when tow given stage both complete normally,
@@ -439,9 +439,9 @@ fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
  * @see CompletableFuture.thenCombineAsync
  */
 fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
-    cf2: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>, executor: Executor
+    other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>, executor: Executor
 ): CompletableFuture<V> =
-    CompletableFutureUtils.thenCombineFastFailAsync(this, cf2, fn, executor)
+    CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn, executor)
 
 ////////////////////////////////////////
 //# allTupleOf* methods
@@ -601,8 +601,8 @@ fun <T1, T2, T3, T4, T5> CompletionStage<T1>.allTupleOfFastFail(
  * @return the new CompletableFuture
  * @see CompletableFuture.runAfterEither
  */
-fun CompletionStage<*>.runAfterEitherSuccess(cf2: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
-    CompletableFutureUtils.runAfterEitherSuccess(this, cf2, action)
+fun CompletionStage<*>.runAfterEitherSuccess(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
+    CompletableFutureUtils.runAfterEitherSuccess(this, other, action)
 
 /**
  * Returns a new CompletableFuture that, when either given stage success, executes the given action
@@ -618,8 +618,10 @@ fun CompletionStage<*>.runAfterEitherSuccess(cf2: CompletionStage<*>, action: Ru
  * @return the new CompletableFuture
  * @see CompletableFuture.runAfterEitherAsync
  */
-fun CompletionStage<*>.runAfterEitherSuccessAsync(cf2: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
-    CompletableFutureUtils.runAfterEitherSuccessAsync(this, cf2, action)
+fun CompletionStage<*>.runAfterEitherSuccessAsync(
+    other: CompletionStage<*>, action: Runnable
+): CompletableFuture<Void> =
+    CompletableFutureUtils.runAfterEitherSuccessAsync(this, other, action)
 
 /**
  * Returns a new CompletableFuture that, when either given stage success, executes the given action
@@ -636,9 +638,9 @@ fun CompletionStage<*>.runAfterEitherSuccessAsync(cf2: CompletionStage<*>, actio
  * @see CompletableFuture.runAfterEitherAsync
  */
 fun CompletionStage<*>.runAfterEitherSuccessAsync(
-    cf2: CompletionStage<*>, action: Runnable, executor: Executor
+    other: CompletionStage<*>, action: Runnable, executor: Executor
 ): CompletableFuture<Void> =
-    CompletableFutureUtils.runAfterEitherSuccessAsync(this, cf2, action, executor)
+    CompletableFutureUtils.runAfterEitherSuccessAsync(this, other, action, executor)
 
 /**
  * Returns a new CompletableFuture that, when either given stage success,
@@ -652,9 +654,9 @@ fun CompletionStage<*>.runAfterEitherSuccessAsync(
  * @see CompletableFuture.acceptEither
  */
 fun <T> CompletionStage<out T>.acceptEitherSuccess(
-    cf2: CompletionStage<out T>, action: Consumer<in T>
+    other: CompletionStage<out T>, action: Consumer<in T>
 ): CompletableFuture<Void> =
-    CompletableFutureUtils.acceptEitherSuccess(this, cf2, action)
+    CompletableFutureUtils.acceptEitherSuccess(this, other, action)
 
 /**
  * Returns a new CompletionStage that, when either given stage success,
@@ -669,9 +671,9 @@ fun <T> CompletionStage<out T>.acceptEitherSuccess(
  * @see CompletableFuture.acceptEitherAsync
  */
 fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
-    cf2: CompletionStage<out T>, action: Consumer<in T>
+    other: CompletionStage<out T>, action: Consumer<in T>
 ): CompletableFuture<Void> =
-    CompletableFutureUtils.acceptEitherSuccessAsync(this, cf2, action)
+    CompletableFutureUtils.acceptEitherSuccessAsync(this, other, action)
 
 /**
  * Returns a new CompletionStage that, when either given stage success,
@@ -686,9 +688,9 @@ fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
  * @see CompletableFuture.acceptEitherAsync
  */
 fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
-    cf2: CompletionStage<out T>, action: Consumer<in T>, executor: Executor
+    other: CompletionStage<out T>, action: Consumer<in T>, executor: Executor
 ): CompletableFuture<Void> =
-    CompletableFutureUtils.acceptEitherSuccessAsync(this, cf2, action, executor)
+    CompletableFutureUtils.acceptEitherSuccessAsync(this, other, action, executor)
 
 /**
  * Returns a new CompletionStage that, when either given stage success,
@@ -703,9 +705,9 @@ fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
  * @see CompletableFuture.applyToEither
  */
 fun <T, U> CompletionStage<out T>.applyToEitherSuccess(
-    cf2: CompletionStage<out T>, fn: Function<in T, out U>
+    other: CompletionStage<out T>, fn: Function<in T, out U>
 ): CompletableFuture<U> =
-    CompletableFutureUtils.applyToEitherSuccess(this, cf2, fn)
+    CompletableFutureUtils.applyToEitherSuccess(this, other, fn)
 
 /**
  * Returns a new CompletionStage that, when either given stage success,
@@ -721,9 +723,9 @@ fun <T, U> CompletionStage<out T>.applyToEitherSuccess(
  * @see CompletableFuture.applyToEitherAsync
  */
 fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
-    cf2: CompletionStage<out T>, fn: Function<in T, out U>
+    other: CompletionStage<out T>, fn: Function<in T, out U>
 ): CompletableFuture<U> =
-    CompletableFutureUtils.applyToEitherSuccessAsync(this, cf2, fn)
+    CompletableFutureUtils.applyToEitherSuccessAsync(this, other, fn)
 
 /**
  * Returns a new CompletionStage that, when either given stage success,
@@ -739,9 +741,9 @@ fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
  * @see CompletableFuture.applyToEitherAsync
  */
 fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
-    cf2: CompletionStage<out T>, fn: Function<in T, out U>, executor: Executor
+    other: CompletionStage<out T>, fn: Function<in T, out U>, executor: Executor
 ): CompletableFuture<U> =
-    CompletableFutureUtils.applyToEitherSuccessAsync(this, cf2, fn, executor)
+    CompletableFutureUtils.applyToEitherSuccessAsync(this, other, fn, executor)
 
 ////////////////////////////////////////////////////////////////////////////////
 //# New enhanced methods
