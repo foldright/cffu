@@ -90,7 +90,8 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[size];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(cfs, result);
 
-        CompletableFuture<List<Object>> ret = CompletableFuture.allOf(resultSetterCfs).thenApply(unused -> arrayList(result));
+        CompletableFuture<List<Object>> ret = CompletableFuture.allOf(resultSetterCfs)
+                .thenApply(unused -> arrayList(result));
         return f_cast(ret);
     }
 
@@ -128,7 +129,7 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return CompletableFuture.completedFuture(null);
-        if (size == 1) return cfs[0].toCompletableFuture().thenApply(v -> null);
+        if (size == 1) return cfs[0].toCompletableFuture().thenApply(unused -> null);
 
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[size];
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
@@ -587,7 +588,7 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return allOfFastFail(resultSetterCfs).thenAccept(unused -> action.accept((T) result[0], (U) result[1]));
+        return allOfFastFail(resultSetterCfs).thenRun(() -> action.accept((T) result[0], (U) result[1]));
     }
 
     /**
@@ -615,7 +616,7 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return allOfFastFail(resultSetterCfs).thenAcceptAsync(unused -> action.accept((T) result[0], (U) result[1]));
+        return allOfFastFail(resultSetterCfs).thenRunAsync(() -> action.accept((T) result[0], (U) result[1]));
     }
 
     /**
@@ -644,8 +645,7 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return allOfFastFail(resultSetterCfs)
-                .thenAcceptAsync(unused -> action.accept((T) result[0], (U) result[1]), executor);
+        return allOfFastFail(resultSetterCfs).thenRunAsync(() -> action.accept((T) result[0], (U) result[1]), executor);
     }
 
     /**
