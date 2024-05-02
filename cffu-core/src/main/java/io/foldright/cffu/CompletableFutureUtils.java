@@ -311,15 +311,9 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
-    @SuppressWarnings("unchecked")
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
-
-        final Object[] result = new Object[css.length];
-        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
-
-        return CompletableFuture.allOf(resultSetterCfs).thenApply(unused -> Tuple2.of((T1) result[0], (T2) result[1]));
+        return allTupleOf0(requireCfsAndEleNonNull(cf1, cf2), false);
     }
 
     /**
@@ -337,15 +331,9 @@ public final class CompletableFutureUtils {
      * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
-    @SuppressWarnings("unchecked")
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOfFastFail(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
-
-        final Object[] result = new Object[css.length];
-        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
-
-        return allOfFastFail(resultSetterCfs).thenApply(unused -> Tuple2.of((T1) result[0], (T2) result[1]));
+        return allTupleOf0(requireCfsAndEleNonNull(cf1, cf2), true);
     }
 
     /**
@@ -359,16 +347,9 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
-    @SuppressWarnings("unchecked")
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2, cf3);
-
-        final Object[] result = new Object[css.length];
-        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
-
-        return CompletableFuture.allOf(resultSetterCfs)
-                .thenApply(unused -> Tuple3.of((T1) result[0], (T2) result[1], (T3) result[2]));
+        return allTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3), false);
     }
 
     /**
@@ -386,16 +367,9 @@ public final class CompletableFutureUtils {
      * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
-    @SuppressWarnings("unchecked")
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOfFastFail(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2, cf3);
-
-        final Object[] result = new Object[css.length];
-        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
-
-        return allOfFastFail(resultSetterCfs)
-                .thenApply(unused -> Tuple3.of((T1) result[0], (T2) result[1], (T3) result[2]));
+        return allTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3), true);
     }
 
     /**
@@ -409,17 +383,10 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
-    @SuppressWarnings("unchecked")
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2, cf3, cf4);
-
-        final Object[] result = new Object[css.length];
-        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
-
-        return CompletableFuture.allOf(resultSetterCfs)
-                .thenApply(unused -> Tuple4.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3]));
+        return allTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3, cf4), false);
     }
 
     /**
@@ -437,17 +404,10 @@ public final class CompletableFutureUtils {
      * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
-    @SuppressWarnings("unchecked")
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOfFastFail(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2, cf3, cf4);
-
-        final Object[] result = new Object[css.length];
-        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
-
-        return allOfFastFail(resultSetterCfs)
-                .thenApply(unused -> Tuple4.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3]));
+        return allTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3, cf4), true);
     }
 
     /**
@@ -461,17 +421,10 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
-    @SuppressWarnings("unchecked")
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5);
-
-        final Object[] result = new Object[css.length];
-        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
-
-        return CompletableFuture.allOf(resultSetterCfs).thenApply(unused ->
-                Tuple5.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3], (T5) result[4]));
+        return allTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5), false);
     }
 
     /**
@@ -489,17 +442,28 @@ public final class CompletableFutureUtils {
      * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
-    @SuppressWarnings("unchecked")
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOfFastFail(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5);
+        return allTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5), true);
+    }
 
-        final Object[] result = new Object[css.length];
+    private static <T> CompletableFuture<T> allTupleOf0(CompletionStage<?>[] css, boolean fastFail) {
+        final int length = css.length;
+        final Object[] result = new Object[length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return allOfFastFail(resultSetterCfs).thenApply(unused ->
-                Tuple5.of((T1) result[0], (T2) result[1], (T3) result[2], (T4) result[3], (T5) result[4]));
+        final CompletableFuture<Void> resultSetter;
+        if (fastFail) resultSetter = allOfFastFail(resultSetterCfs);
+        else resultSetter = CompletableFuture.allOf(resultSetterCfs);
+
+        final CompletableFuture<Object> ret = resultSetter.thenApply(unused -> {
+            if (length == 2) return Tuple2.of(result[0], result[1]);
+            if (length == 3) return Tuple3.of(result[0], result[1], result[2]);
+            if (length == 4) return Tuple4.of(result[0], result[1], result[2], result[3]);
+            return Tuple5.of(result[0], result[1], result[2], result[3], result[4]);
+        });
+        return f_cast(ret);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
