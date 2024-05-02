@@ -528,30 +528,6 @@ fun <T> Array<out CompletableFuture<out T>>.anyOfSuccessCffu(cffuFactory: CffuFa
     cffuFactory.anyOfSuccess(*this)
 
 ////////////////////////////////////////
-// toCompletableFuture methods
-////////////////////////////////////////
-
-/**
- * Convert [Cffu] collection elements to [CompletableFuture] by [Cffu.toCompletableFuture].
- *
- * This method is the same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
- *
- * @see CompletableFutureUtils.toCompletableFutureArray
- */
-fun <T> Collection<CompletionStage<T>>.toCompletableFuture(): List<CompletableFuture<T>> =
-    map { it.toCompletableFuture() }
-
-/**
- * Convert [Cffu] array elements to [CompletableFuture] by [Cffu.toCompletableFuture].
- *
- * This method is the same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
- *
- * @see CompletableFutureUtils.toCompletableFutureArray
- */
-fun <T> Array<out CompletionStage<T>>.toCompletableFuture(): Array<CompletableFuture<T>> =
-    CompletableFutureUtils.toCompletableFutureArray(*this)
-
-////////////////////////////////////////
 // cffuUnwrap methods
 ////////////////////////////////////////
 

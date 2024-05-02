@@ -1006,6 +1006,25 @@ class CompletableFutureUtilsTest {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
+    //# Conversion (Static) Methods
+    //
+    //    - toCompletableFutureArray:     CompletionStage[](including Cffu) -> CF[]
+    //    - completableFutureListToArray: List<CF> -> CF[]
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * {@link CompletableFutureUtils#toCompletableFutureArray}
+     * is tested in {@link CffuFactoryTest#test_toCompletableFutureArray()}
+     */
+    @Test
+    void test_completableFutureListToArray() {
+        @SuppressWarnings("unchecked")
+        CompletableFuture<Integer>[] input = new CompletableFuture[]{completedFuture(n), completedFuture(anotherN)};
+
+        assertArrayEquals(input, CompletableFutureUtils.completableFutureListToArray(Arrays.asList(input)));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
     //# check type parameter declaration, Variance(covariance/contravariance)
     ////////////////////////////////////////////////////////////////////////////////
 

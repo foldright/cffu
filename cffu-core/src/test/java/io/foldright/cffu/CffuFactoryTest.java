@@ -712,11 +712,11 @@ class CffuFactoryTest {
     ////////////////////////////////////////////////////////////////////////////////
     //# Conversion (Static) Methods
     //
-    //    - toCompletableFutureArray:     Cffu -> CF
-    //    - cffuArrayUnwrap:              Cffu -> CF
-    //
-    //    - cffuListToArray:              List<Cffu> -> Cffu[]
+    //    - toCompletableFutureArray:     CompletionStage[](including Cffu) -> CF[]
     //    - completableFutureListToArray: List<CF> -> CF[]
+
+    //    - cffuArrayUnwrap:              Cffu -> CF
+    //    - cffuListToArray:              List<Cffu> -> Cffu[]
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
@@ -767,14 +767,6 @@ class CffuFactoryTest {
         };
 
         assertArrayEquals(input, CffuFactory.cffuListToArray(Arrays.asList(input)));
-    }
-
-    @Test
-    void test_completableFutureListToArray() {
-        @SuppressWarnings("unchecked")
-        CompletableFuture<Integer>[] input = new CompletableFuture[]{completedFuture(n), completedFuture(anotherN)};
-
-        assertArrayEquals(input, CompletableFutureUtils.completableFutureListToArray(Arrays.asList(input)));
     }
 
     ////////////////////////////////////////////////////////////////////////////////

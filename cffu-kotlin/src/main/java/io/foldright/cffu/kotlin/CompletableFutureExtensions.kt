@@ -2,6 +2,7 @@
 
 package io.foldright.cffu.kotlin
 
+import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuState
 import io.foldright.cffu.CompletableFutureUtils
 import io.foldright.cffu.tuple.Tuple2
@@ -801,6 +802,32 @@ fun <T, C : CompletionStage<out T>> C.peekAsync(action: BiConsumer<in T, in Thro
  */
 fun <T, C : CompletionStage<out T>> C.peekAsync(action: BiConsumer<in T, in Throwable>, executor: Executor): C =
     CompletableFutureUtils.peekAsync(this, action, executor)
+
+////////////////////////////////////////
+// toCompletableFuture methods
+////////////////////////////////////////
+
+/**
+ * Convert [CompletionStage] (including [Cffu]) collection elements to [CompletableFuture].
+ *
+ * This method is the same as [CompletableFutureUtils.toCompletableFutureArray],
+ * providing this method is convenient for method chaining.
+ *
+ * @see CompletableFutureUtils.toCompletableFutureArray
+ */
+fun <T> Collection<CompletionStage<T>>.toCompletableFuture(): List<CompletableFuture<T>> =
+    map { it.toCompletableFuture() }
+
+/**
+ * Convert [CompletionStage] (including [Cffu]) array elements to [CompletableFuture].
+ *
+ * This method is the same as [CompletableFutureUtils.toCompletableFutureArray],
+ * providing this method is convenient for method chaining.
+ *
+ * @see CompletableFutureUtils.toCompletableFutureArray
+ */
+fun <T> Array<out CompletionStage<T>>.toCompletableFuture(): Array<CompletableFuture<T>> =
+    CompletableFutureUtils.toCompletableFutureArray(*this)
 
 ////////////////////////////////////////////////////////////////////////////////
 //# Backport CF instance methods

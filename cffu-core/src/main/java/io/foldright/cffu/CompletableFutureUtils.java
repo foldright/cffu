@@ -1525,8 +1525,8 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
     //# Conversion Methods
     //
-    //    - toCompletableFutureArray:     Cffu -> CF
-    //    - cffuArrayUnwrap:              Cffu -> CF
+    //    - toCompletableFutureArray:     CompletionStage[](including Cffu) -> CF[]
+    //    - completableFutureListToArray: List<CF> -> CF[]
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -1551,8 +1551,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * A convenient util method for converting input {@link CompletionStage} (including
-     * {@link Cffu}/{@link CompletableFuture}) list to CompletableFuture array.
+     * A convenient util method for converting input {@link CompletableFuture} list to CompletableFuture array.
      *
      * @see #toCompletableFutureArray(CompletionStage[])
      */
