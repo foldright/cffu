@@ -17,7 +17,6 @@ import java.util.concurrent.*;
 import java.util.function.*;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.function.Function.identity;
 
 
 /**
@@ -464,8 +463,8 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
-            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
-            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
+            CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
         final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5);
 
         final Object[] result = new Object[css.length];
@@ -492,8 +491,8 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOfFastFail(
-            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
-            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
+            CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
         final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5);
 
         final Object[] result = new Object[css.length];
@@ -707,8 +706,7 @@ public final class CompletableFutureUtils {
     @SuppressWarnings("unchecked")
     public static <T, U, V> CompletableFuture<V> thenCombineFastFailAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
-            BiFunction<? super T, ? super U, ? extends V> fn
-    ) {
+            BiFunction<? super T, ? super U, ? extends V> fn) {
         final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(fn, "fn is null");
 
@@ -736,8 +734,7 @@ public final class CompletableFutureUtils {
     @SuppressWarnings("unchecked")
     public static <T, U, V> CompletableFuture<V> thenCombineFastFailAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
-            BiFunction<? super T, ? super U, ? extends V> fn, Executor executor
-    ) {
+            BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
         final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
@@ -1156,13 +1153,12 @@ public final class CompletableFutureUtils {
         if (IS_JAVA12_PLUS) {
             return cf.exceptionallyAsync(fn, executor);
         }
-
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
         // below code is copied from CompletionStage#exceptionallyAsync
         return cf.handle((r, ex) -> (ex == null) ? cf :
                 cf.<T>handleAsync((r1, ex1) -> fn.apply(ex1), executor)
-        ).thenCompose(identity());
+        ).thenCompose(x -> x);
     }
 
     //# Timeout Control methods
@@ -1197,8 +1193,8 @@ public final class CompletableFutureUtils {
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return given CompletableFuture
      */
-    public static <T, C extends CompletableFuture<? super T>> C completeOnTimeout(
-            C cf, @Nullable T value, long timeout, TimeUnit unit) {
+    public static <T, C extends CompletableFuture<? super T>>
+    C completeOnTimeout(C cf, @Nullable T value, long timeout, TimeUnit unit) {
         if (IS_JAVA9_PLUS) {
             cf.completeOnTimeout(value, timeout, unit);
         } else {
@@ -1229,7 +1225,7 @@ public final class CompletableFutureUtils {
         }
         requireNonNull(fn, "fn is null");
         // below code is copied from CompletionStage.exceptionallyCompose
-        return cf.handle((r, ex) -> (ex == null) ? cf : fn.apply(ex)).thenCompose(identity());
+        return cf.handle((r, ex) -> (ex == null) ? cf : fn.apply(ex)).thenCompose(x -> x);
     }
 
     /**
@@ -1264,8 +1260,8 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         // below code is copied from CompletionStage.exceptionallyComposeAsync
         return cf.handle((r, ex) -> (ex == null) ? cf :
-                cf.handleAsync((r1, ex1) -> fn.apply(ex1), executor).thenCompose(identity())
-        ).thenCompose(identity());
+                cf.handleAsync((r1, ex1) -> fn.apply(ex1), executor).thenCompose(x -> x)
+        ).thenCompose(x -> x);
     }
 
     //# Read(explicitly) methods of CompletableFuture
@@ -1445,8 +1441,8 @@ public final class CompletableFutureUtils {
      * @param executor the executor to use for asynchronous execution
      * @return given CompletableFuture
      */
-    public static <T, C extends CompletableFuture<? super T>> C completeAsync(
-            C cf, Supplier<? extends T> supplier, Executor executor) {
+    public static <T, C extends CompletableFuture<? super T>>
+    C completeAsync(C cf, Supplier<? extends T> supplier, Executor executor) {
         if (IS_JAVA9_PLUS) {
             cf.completeAsync(supplier, executor);
         } else {
@@ -1477,7 +1473,7 @@ public final class CompletableFutureUtils {
         if (IS_JAVA9_PLUS) {
             return cf.minimalCompletionStage();
         }
-        return cf.thenApply(identity());
+        return cf.thenApply(x -> x);
     }
 
     /**
@@ -1494,7 +1490,7 @@ public final class CompletableFutureUtils {
         if (IS_JAVA9_PLUS) {
             return cf.copy();
         }
-        return cf.thenApply(identity());
+        return cf.thenApply(x -> x);
     }
 
     /**
@@ -1527,16 +1523,15 @@ public final class CompletableFutureUtils {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# Conversion (Static) Methods
+    //# Conversion Methods
     //
     //    - toCompletableFutureArray:     Cffu -> CF
     //    - cffuArrayUnwrap:              Cffu -> CF
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * A convenient util method for converting input {@link Cffu} / {@link CompletableFuture} / {@link CompletionStage}
-     * array element by {@link Cffu#toCompletableFuture()} / {@link CompletableFuture#toCompletableFuture()} /
-     * {@link CompletionStage#toCompletableFuture()}.
+     * A convenient util method for converting input {@link CompletionStage} (including
+     * {@link Cffu}/{@link CompletableFuture}) array element by {@link CompletionStage#toCompletableFuture()}.
      *
      * @see Cffu#toCompletableFuture()
      * @see CompletableFuture#toCompletableFuture()
@@ -1556,12 +1551,15 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Convert CompletableFuture list to CompletableFuture array.
+     * A convenient util method for converting input {@link CompletionStage} (including
+     * {@link Cffu}/{@link CompletableFuture}) list to CompletableFuture array.
+     *
+     * @see #toCompletableFutureArray(CompletionStage[])
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] completableFutureListToArray(List<CompletableFuture<T>> cfList) {
         @SuppressWarnings("unchecked")
-        final CompletableFuture<T>[] a = new CompletableFuture[0];
+        final CompletableFuture<T>[] a = new CompletableFuture[cfList.size()];
         return cfList.toArray(a);
     }
 

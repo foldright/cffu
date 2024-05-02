@@ -34,7 +34,7 @@ public final class CffuFactoryBuilder {
     private volatile boolean forbidObtrudeMethods = false;
 
     CffuFactoryBuilder(Executor defaultExecutor) {
-        this.defaultExecutor = defaultExecutor;
+        this.defaultExecutor = wrapExecutor(requireNonNull(defaultExecutor, "defaultExecutor is null"));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ public final class CffuFactoryBuilder {
         return new CffuFactory(defaultExecutor, forbidObtrudeMethods);
     }
 
-    static Executor wrapExecutor(Executor executor) {
+    private static Executor wrapExecutor(Executor executor) {
         for (ExecutorWrapperProvider provider : EXECUTOR_WRAPPER_PROVIDERS) {
             Supplier<String> msg = () -> provider + "(class: " + provider.getClass().getName() + ") return null";
             executor = requireNonNull(provider.wrap(executor), msg);

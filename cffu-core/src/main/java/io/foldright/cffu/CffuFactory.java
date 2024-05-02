@@ -74,8 +74,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public static CffuFactoryBuilder builder(Executor defaultExecutor) {
-        Executor executor = CffuFactoryBuilder.wrapExecutor(requireNonNull(defaultExecutor, "defaultExecutor is null"));
-        return new CffuFactoryBuilder(executor);
+        return new CffuFactoryBuilder(defaultExecutor);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -632,7 +631,7 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# Conversion Methods
+    //# Conversion (Static) Methods
     //
     //    - cffuListToArray:              List<Cffu> -> Cffu[]
     //    - completableFutureListToArray: List<CF> -> CF[]
@@ -659,9 +658,10 @@ public final class CffuFactory {
      * Convert Cffu list to Cffu array.
      */
     @Contract(pure = true)
-    @SuppressWarnings("unchecked")
     public static <T> Cffu<T>[] cffuListToArray(List<Cffu<T>> cffuList) {
-        return cffuList.toArray(new Cffu[0]);
+        @SuppressWarnings("unchecked")
+        final Cffu<T>[] a = new Cffu[cffuList.size()];
+        return cffuList.toArray(a);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
