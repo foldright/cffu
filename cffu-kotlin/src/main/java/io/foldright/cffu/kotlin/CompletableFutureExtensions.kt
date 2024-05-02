@@ -461,7 +461,7 @@ fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
  * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
-fun <T1, T2> CompletionStage<T1>.allTupleOf(cf2: CompletionStage<T2>): CompletableFuture<Tuple2<T1, T2>> =
+fun <T1, T2> CompletionStage<out T1>.allTupleOf(cf2: CompletionStage<out T2>): CompletableFuture<Tuple2<T1, T2>> =
     CompletableFutureUtils.allTupleOf(this, cf2)
 
 /**
@@ -476,7 +476,7 @@ fun <T1, T2> CompletionStage<T1>.allTupleOf(cf2: CompletionStage<T2>): Completab
  * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
-fun <T1, T2> CompletionStage<T1>.allTupleOfFastFail(cf2: CompletionStage<T2>): CompletableFuture<Tuple2<T1, T2>> =
+fun <T1, T2> CompletionStage<out T1>.allTupleOfFastFail(cf2: CompletionStage<out T2>): CompletableFuture<Tuple2<T1, T2>> =
     CompletableFutureUtils.allTupleOfFastFail(this, cf2)
 
 /**
@@ -490,8 +490,8 @@ fun <T1, T2> CompletionStage<T1>.allTupleOfFastFail(cf2: CompletionStage<T2>): C
  * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
-fun <T1, T2, T3> CompletionStage<T1>.allTupleOf(
-    cf2: CompletionStage<T2>, cf3: CompletionStage<T3>
+fun <T1, T2, T3> CompletionStage<out T1>.allTupleOf(
+    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>
 ): CompletableFuture<Tuple3<T1, T2, T3>> =
     CompletableFutureUtils.allTupleOf(this, cf2, cf3)
 
@@ -507,8 +507,8 @@ fun <T1, T2, T3> CompletionStage<T1>.allTupleOf(
  * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
-fun <T1, T2, T3> CompletionStage<T1>.allTupleOfFastFail(
-    cf2: CompletionStage<T2>, cf3: CompletionStage<T3>
+fun <T1, T2, T3> CompletionStage<out T1>.allTupleOfFastFail(
+    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>
 ): CompletableFuture<Tuple3<T1, T2, T3>> =
     CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3)
 
@@ -523,8 +523,8 @@ fun <T1, T2, T3> CompletionStage<T1>.allTupleOfFastFail(
  * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
-fun <T1, T2, T3, T4> CompletionStage<T1>.allTupleOf(
-    cf2: CompletionStage<T2>, cf3: CompletionStage<T3>, cf4: CompletionStage<T4>
+fun <T1, T2, T3, T4> CompletionStage<out T1>.allTupleOf(
+    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>, cf4: CompletionStage<out T4>
 ): CompletableFuture<Tuple4<T1, T2, T3, T4>> =
     CompletableFutureUtils.allTupleOf(this, cf2, cf3, cf4)
 
@@ -540,8 +540,8 @@ fun <T1, T2, T3, T4> CompletionStage<T1>.allTupleOf(
  * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
-fun <T1, T2, T3, T4> CompletionStage<T1>.allTupleOfFastFail(
-    cf2: CompletionStage<T2>, cf3: CompletionStage<T3>, cf4: CompletionStage<T4>
+fun <T1, T2, T3, T4> CompletionStage<out T1>.allTupleOfFastFail(
+    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>, cf4: CompletionStage<out T4>
 ): CompletableFuture<Tuple4<T1, T2, T3, T4>> =
     CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3, cf4)
 
@@ -556,9 +556,9 @@ fun <T1, T2, T3, T4> CompletionStage<T1>.allTupleOfFastFail(
  * @see allResultsOfCompletableFuture
  * @see CompletableFuture.allOf
  */
-fun <T1, T2, T3, T4, T5> CompletionStage<T1>.allTupleOf(
-    cf2: CompletionStage<T2>, cf3: CompletionStage<T3>,
-    cf4: CompletionStage<T4>, cf5: CompletionStage<T5>
+fun <T1, T2, T3, T4, T5> CompletionStage<out T1>.allTupleOf(
+    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>,
+    cf4: CompletionStage<out T4>, cf5: CompletionStage<out T5>
 ): CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> =
     CompletableFutureUtils.allTupleOf(this, cf2, cf3, cf4, cf5)
 
@@ -574,9 +574,9 @@ fun <T1, T2, T3, T4, T5> CompletionStage<T1>.allTupleOf(
  * @see allResultsOfFastFailCompletableFuture
  * @see CompletableFutureUtils.allOfFastFail
  */
-fun <T1, T2, T3, T4, T5> CompletionStage<T1>.allTupleOfFastFail(
-    cf2: CompletionStage<T2>, cf3: CompletionStage<T3>,
-    cf4: CompletionStage<T4>, cf5: CompletionStage<T5>
+fun <T1, T2, T3, T4, T5> CompletionStage<out T1>.allTupleOfFastFail(
+    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>,
+    cf4: CompletionStage<out T4>, cf5: CompletionStage<out T5>
 ): CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> =
     CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3, cf4, cf5)
 
