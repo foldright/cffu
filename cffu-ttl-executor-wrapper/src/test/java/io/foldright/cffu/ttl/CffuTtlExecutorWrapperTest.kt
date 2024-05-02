@@ -1,7 +1,7 @@
 package io.foldright.cffu.ttl
 
 import com.alibaba.ttl.TransmittableThreadLocal
-import io.foldright.cffu.CffuFactoryBuilder
+import io.foldright.cffu.CffuFactory
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
@@ -19,7 +19,7 @@ class CffuTtlExecutorWrapperTest : FunSpec({
     val ttl = TransmittableThreadLocal<String>()
 
     test("CffuTtlExecutorWrapper") {
-        val factory = CffuFactoryBuilder.newCffuFactoryBuilder(executorService).build()
+        val factory = CffuFactory.builder(executorService).build()
 
         val v1 = "v1: ${Random.nextULong()}"
         ttl.set(v1)

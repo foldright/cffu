@@ -18,7 +18,7 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * {@link CffuFactoryBuilder} is the builder of {@link CffuFactory}.
+ * {@link CffuFactoryBuilder} is the builder of {@link CffuFactory}, creates by {@link CffuFactory#builder(Executor)}.
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @see CffuFactory
@@ -33,25 +33,13 @@ public final class CffuFactoryBuilder {
 
     private volatile boolean forbidObtrudeMethods = false;
 
-    private CffuFactoryBuilder(Executor defaultExecutor) {
+    CffuFactoryBuilder(Executor defaultExecutor) {
         this.defaultExecutor = defaultExecutor;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
     // Builder Methods
     ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Returns a {@link CffuFactoryBuilder} with {@code defaultExecutor} setting.
-     *
-     * @see CffuFactory#defaultExecutor()
-     * @see Cffu#defaultExecutor()
-     */
-    @Contract(pure = true)
-    public static CffuFactoryBuilder newCffuFactoryBuilder(Executor defaultExecutor) {
-        Executor executor = wrapExecutor(requireNonNull(defaultExecutor, "defaultExecutor is null"));
-        return new CffuFactoryBuilder(executor);
-    }
 
     /**
      * Sets {@code forbidObtrudeMethods} or not.
@@ -75,7 +63,7 @@ public final class CffuFactoryBuilder {
         return new CffuFactory(defaultExecutor, forbidObtrudeMethods);
     }
 
-    private static Executor wrapExecutor(Executor executor) {
+    static Executor wrapExecutor(Executor executor) {
         for (ExecutorWrapperProvider provider : EXECUTOR_WRAPPER_PROVIDERS) {
             Supplier<String> msg = () -> provider + "(class: " + provider.getClass().getName() + ") return null";
             executor = requireNonNull(provider.wrap(executor), msg);

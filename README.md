@@ -70,7 +70,7 @@
     - `allOfFastFail`方法：有`CF`失败时快速返回，而不再等待所有`CF`运行完成（`allOf`）
     - `anyOfSuccess`方法：返回首个成功的`CF`结果，而不是首个完成（但可能失败）的`CF`（`anyOf`）
   - 更安全的使用方式，如
-    - 支持设置缺省的业务线程池（`CffuFactoryBuilder#newCffuFactoryBuilder(executor)`方法）
+    - 支持设置缺省的业务线程池（`CffuFactory#builder(executor)`方法）
     - `join(timeout, unit)`方法：支持超时的`join`的方法
     - 支持禁止强制篡改（`CffuFactoryBuilder#forbidObtrudeMethods`方法）
     - 在类方法附加完善的代码质量注解（如`@NonNull`、`@Nullable`、`@CheckReturnValue`、`@Contract`等），在编码时`IDE`能尽早提示出问题
@@ -148,7 +148,7 @@
 public class CffuDemo {
   private static final ExecutorService myBizThreadPool = Executors.newCachedThreadPool();
   // Create a CffuFactory with configuration of the customized thread pool
-  private static final CffuFactory cffuFactory = newCffuFactoryBuilder(myBizThreadPool).build();
+  private static final CffuFactory cffuFactory = CffuFactory.builder(myBizThreadPool).build();
 
   public static void main(String[] args) throws Exception {
     final Cffu<Integer> cf42 = cffuFactory
@@ -232,7 +232,7 @@ public class CompletableFutureUtilsDemo {
 private val myBizThreadPool: ExecutorService = Executors.newCachedThreadPool()
 
 // Create a CffuFactory with configuration of the customized thread pool
-private val cffuFactory: CffuFactory = newCffuFactoryBuilder(myBizThreadPool).build()
+private val cffuFactory: CffuFactory = CffuFactory.builder(myBizThreadPool).build()
 
 fun main() {
   val cf42 = cffuFactory
@@ -282,7 +282,7 @@ fun main() {
 ```java
 public class AllResultsOfDemo {
   public static final Executor myBizExecutor = Executors.newCachedThreadPool();
-  public static final CffuFactory cffuFactory = newCffuFactoryBuilder(myBizExecutor).build();
+  public static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
 
   public static void main(String[] args) throws Exception {
     //////////////////////////////////////////////////
@@ -324,7 +324,7 @@ public class AllResultsOfDemo {
 ```java
 public class AllTupleOfDemo {
   public static final Executor myBizExecutor = Executors.newCachedThreadPool();
-  public static final CffuFactory cffuFactory = newCffuFactoryBuilder(myBizExecutor).build();
+  public static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
 
   public static void main(String[] args) throws Exception {
     //////////////////////////////////////////////////
@@ -393,7 +393,7 @@ public class NoDefaultExecutorSettingForCompletableFuture {
 ```java
 public class DefaultExecutorSettingForCffu {
   public static final Executor myBizExecutor = Executors.newCachedThreadPool();
-  public static final CffuFactory cffuFactory = newCffuFactoryBuilder(myBizExecutor).build();
+  public static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
 
   public static void main(String[] args) {
     Cffu<Void> cf1 = cffuFactory.runAsync(() -> System.out.println("doing a long time work!"));
@@ -439,7 +439,7 @@ public class DefaultExecutorSettingForCffu {
 ```java
 public class ConcurrencyStrategyDemo {
   public static final Executor myBizExecutor = Executors.newCachedThreadPool();
-  public static final CffuFactory cffuFactory = newCffuFactoryBuilder(myBizExecutor).build();
+  public static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
 
   public static void main(String[] args) throws Exception {
     ////////////////////////////////////////////////////////////////////////

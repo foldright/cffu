@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.*;
 
-import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
 import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
 import static io.foldright.cffu.CompletableFutureUtils.toCompletableFutureArray;
 import static io.foldright.test_utils.TestUtils.*;
@@ -123,7 +122,7 @@ class CffuFactoryTest {
         assertEquals(n, cf.get());
         shouldNotBeMinimalStage(cf);
 
-        CffuFactory fac = newCffuFactoryBuilder(anotherExecutorService).forbidObtrudeMethods(true).build();
+        CffuFactory fac = CffuFactory.builder(anotherExecutorService).forbidObtrudeMethods(true).build();
         Cffu<Integer> cffu = fac.toCffu(cffuFactory.completedFuture(42));
         assertSame(anotherExecutorService, cffu.defaultExecutor());
         assertSame(fac, cffu.cffuFactory());
@@ -787,14 +786,14 @@ class CffuFactoryTest {
         assertSame(executorService, cffuFactory.defaultExecutor());
         assertFalse(cffuFactory.forbidObtrudeMethods());
 
-        CffuFactory fac = newCffuFactoryBuilder(anotherExecutorService).forbidObtrudeMethods(true).build();
+        CffuFactory fac = CffuFactory.builder(anotherExecutorService).forbidObtrudeMethods(true).build();
         assertSame(anotherExecutorService, fac.defaultExecutor());
         assertTrue(fac.forbidObtrudeMethods());
     }
 
     @Test
     void test_forbidObtrudeMethods_property() {
-        CffuFactory fac2 = newCffuFactoryBuilder(executorService).forbidObtrudeMethods(true).build();
+        CffuFactory fac2 = CffuFactory.builder(executorService).forbidObtrudeMethods(true).build();
 
         Cffu<Object> cf = fac2.newIncompleteCffu();
         try {
@@ -813,9 +812,9 @@ class CffuFactoryTest {
 
     @Test
     void test_executorSetting_MayBe_ThreadPerTaskExecutor() throws Exception {
-        final boolean USE_COMMON_POOL = (ForkJoinPool.getCommonPoolParallelism() > 1);
+        final boolean USE_COMMON_POOL = ForkJoinPool.getCommonPoolParallelism() > 1;
 
-        CffuFactory fac = newCffuFactoryBuilder(commonPool()).build();
+        CffuFactory fac = CffuFactory.builder(commonPool()).build();
         if (USE_COMMON_POOL) {
             assertSame(commonPool(), fac.defaultExecutor());
         } else {
@@ -841,7 +840,7 @@ class CffuFactoryTest {
         executorService = TestThreadPoolManager.createThreadPool("CffuFactoryTest");
         anotherExecutorService = TestThreadPoolManager.createThreadPool("CffuFactoryTest-Another", true);
 
-        cffuFactory = newCffuFactoryBuilder(executorService).build();
+        cffuFactory = CffuFactory.builder(executorService).build();
     }
 
     @AfterAll

@@ -28,7 +28,7 @@ import static java.util.Objects.requireNonNull;
  * <p>
  * The methods that equivalent to the instance methods of {@link CompletableFuture} is in {@link Cffu} class.
  * <p>
- * Use {@link CffuFactoryBuilder} to config and build {@link CffuFactory}.
+ * Use {@link #builder(Executor)} to config and build {@link CffuFactory}.
  * <p>
  * About factory methods conventions of {@link CffuFactory}:
  * <ul>
@@ -39,7 +39,6 @@ import static java.util.Objects.requireNonNull;
  * </ul>
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
- * @see CffuFactoryBuilder
  * @see Cffu
  * @see CompletableFuture
  */
@@ -65,6 +64,18 @@ public final class CffuFactory {
     @Contract(pure = true)
     private <T> Cffu<T> newMin(CompletableFuture<T> cf) {
         return new Cffu<>(this, true, cf);
+    }
+
+    /**
+     * Returns a {@link CffuFactoryBuilder} with {@code defaultExecutor} setting.
+     *
+     * @see Cffu#defaultExecutor()
+     * @see CffuFactory#defaultExecutor()
+     */
+    @Contract(pure = true)
+    public static CffuFactoryBuilder builder(Executor defaultExecutor) {
+        Executor executor = CffuFactoryBuilder.wrapExecutor(requireNonNull(defaultExecutor, "defaultExecutor is null"));
+        return new CffuFactoryBuilder(executor);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -250,7 +261,7 @@ public final class CffuFactory {
      * <strong>NOTE</strong>, keep input stage unchanged if possible when wrap:<br>
      * <ol>
      * <li>if input stage is a {@link Cffu}, re-wrapped with the config of
-     *     this {@link CffuFactory} from {@link CffuFactoryBuilder} by {@link Cffu#resetCffuFactory(CffuFactory)}.
+     *     this {@link CffuFactory} by {@link Cffu#resetCffuFactory(CffuFactory)}.
      * <li>if input stage is a CompletableFuture, wrap it by setting it as the underlying cf of returned cffu.
      * <li>otherwise use input {@code stage.toCompletableFuture} as the underlying cf of returned cffu.
      * </ol>
@@ -621,7 +632,7 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# Conversion (Static) Methods
+    //# Conversion Methods
     //
     //    - cffuListToArray:              List<Cffu> -> Cffu[]
     //    - completableFutureListToArray: List<CF> -> CF[]
@@ -659,11 +670,11 @@ public final class CffuFactory {
 
     /**
      * Returns the default Executor used for async methods that do not specify an Executor.
-     * Configured by {@link CffuFactoryBuilder#newCffuFactoryBuilder(Executor)}.
+     * Configured by {@link CffuFactory#builder(Executor)}.
      *
      * @return the default executor
      * @see Cffu#defaultExecutor()
-     * @see CffuFactoryBuilder#newCffuFactoryBuilder(Executor)
+     * @see CffuFactory#builder(Executor)
      */
     @Contract(pure = true)
     public Executor defaultExecutor() {

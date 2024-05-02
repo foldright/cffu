@@ -3,7 +3,7 @@
 package io.foldright.test_utils
 
 import io.foldright.cffu.Cffu
-import io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder
+import io.foldright.cffu.CffuFactory
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.test.TestCase
@@ -75,7 +75,7 @@ fun <T> safeNewFailedCompletableFuture(executorService: ExecutorService, t: Thro
  * safe means works under java 8
  */
 fun <T> safeNewFailedCffu(executorService: ExecutorService, t: Throwable): Cffu<T> {
-    return newCffuFactoryBuilder(executorService).build().failedFuture(t)
+    return CffuFactory.builder(executorService).build().failedFuture(t)
 }
 
 @Suppress("UNUSED_PARAMETER")
@@ -413,7 +413,7 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
 
     //# Cffu Re-Config methods
     if (recursive)
-        resetCffuFactory(newCffuFactoryBuilder(blackHoleExecutor).build()).shouldMinCffu()
+        resetCffuFactory(CffuFactory.builder(blackHoleExecutor).build()).shouldMinCffu()
 
     //# Getter methods of properties
     cffuFactory()
@@ -508,7 +508,7 @@ private fun <T> Cffu<T>.shouldNotMinCffu(recursive: Boolean = false) {
 
     //# Cffu Re-Config methods
     if (recursive)
-        resetCffuFactory(newCffuFactoryBuilder(blackHoleExecutor).build()).shouldNotMinCffu()
+        resetCffuFactory(CffuFactory.builder(blackHoleExecutor).build()).shouldNotMinCffu()
 
     //# Getter methods of properties
     cffuFactory()

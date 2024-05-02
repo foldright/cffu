@@ -2,7 +2,6 @@ package io.foldright.cffu.kotlin
 
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
-import io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder
 import io.foldright.cffu.CompletableFutureUtils
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
@@ -62,7 +61,7 @@ fun <T> Array<out CompletionStage<T>>.toCffu(cffuFactory: CffuFactory): Array<Cf
 /**
  * Placeholder for optional [CffuFactory] argument.
  */
-private val ABSENT: CffuFactory = newCffuFactoryBuilder { }.build()
+private val ABSENT: CffuFactory = CffuFactory.builder { }.build()
 private const val ERROR_MSG_FOR_COLL = "no cffuFactory argument provided when this collection is empty"
 private const val ERROR_MSG_FOR_ARRAY = "no cffuFactory argument provided when this array is empty"
 

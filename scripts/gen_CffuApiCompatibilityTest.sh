@@ -14,7 +14,7 @@ sed -r '/^import /,${
   /\bGEN_MARK_KEEP\b/b
 
   # adjust imports
-  s/import io\.foldright\.test_utils\.TestThreadPoolManager;/import io.foldright.cffu.Cffu;\nimport io.foldright.cffu.CffuFactory;\nimport io.foldright.cffu.CffuFactoryBuilder;\nimport io.foldright.test_utils.TestThreadPoolManager;/
+  s/import io\.foldright\.test_utils\.TestThreadPoolManager;/import io.foldright.cffu.Cffu;\nimport io.foldright.cffu.CffuFactory;\nimport io.foldright.test_utils.TestThreadPoolManager;/
   /import java.util.concurrent.CompletableFuture;/d
 
   # replace JUnit test class name
@@ -36,6 +36,6 @@ sed -r '/^import /,${
 
   # generate new contents
   s/^(\s*).*\bGEN_MARK_FACTORY_FIELD\b.*$/\1private static CffuFactory cffuFactory;/
-  s/^(\s*).*\bGEN_MARK_FACTORY_INIT\b.*$/\1cffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder\(executorService\).build\(\);/
+  s/^(\s*).*\bGEN_MARK_FACTORY_INIT\b.*$/\1cffuFactory = CffuFactory.builder\(executorService\).build\(\);/
 
 }' "$source_file" >"$target_file"

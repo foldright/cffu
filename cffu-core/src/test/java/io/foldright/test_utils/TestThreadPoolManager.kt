@@ -3,7 +3,6 @@
 package io.foldright.test_utils
 
 import io.foldright.cffu.CffuFactory
-import io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder
 import io.kotest.core.annotation.AutoScan
 import io.kotest.core.listeners.AfterProjectListener
 import io.kotest.core.listeners.BeforeProjectListener
@@ -93,7 +92,7 @@ fun shutdownExecutorService(vararg executors: ExecutorService) {
 val testThreadPoolExecutor: ExecutorService =
     createThreadPool("CompletableFutureUseTest_ThreadPool")
 
-val testCffuFactory: CffuFactory = newCffuFactoryBuilder(testThreadPoolExecutor).build()
+val testCffuFactory: CffuFactory = CffuFactory.builder(testThreadPoolExecutor).build()
 
 val testForkJoinPoolExecutor: ExecutorService =
     createThreadPool("CompletableFutureUseTest_ForkJoinPool", true)

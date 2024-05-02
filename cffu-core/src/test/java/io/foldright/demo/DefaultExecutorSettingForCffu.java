@@ -6,12 +6,10 @@ import io.foldright.cffu.CffuFactory;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
-
 
 public class DefaultExecutorSettingForCffu {
     public static final ExecutorService myBizExecutor = Executors.newCachedThreadPool();
-    public static final CffuFactory cffuFactory = newCffuFactoryBuilder(myBizExecutor).build();
+    public static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
 
     public static void main(String[] args) {
         Cffu<Void> cf1 = cffuFactory.runAsync(() -> System.out.println("doing a long time work!"));

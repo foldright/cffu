@@ -11,7 +11,6 @@ import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
 import static io.foldright.test_utils.TestUtils.*;
 import static java.util.function.Function.identity;
 import static org.junit.jupiter.api.Assertions.*;
@@ -310,9 +309,8 @@ class CffuTest {
     static void beforeAll() {
         executorService = TestThreadPoolManager.createThreadPool("CffuTest");
 
-        cffuFactory = newCffuFactoryBuilder(executorService).build();
-        forbidObtrudeMethodsCffuFactory = newCffuFactoryBuilder(executorService)
-                .forbidObtrudeMethods(true).build();
+        cffuFactory = CffuFactory.builder(executorService).build();
+        forbidObtrudeMethodsCffuFactory = CffuFactory.builder(executorService).forbidObtrudeMethods(true).build();
     }
 
     @AfterAll

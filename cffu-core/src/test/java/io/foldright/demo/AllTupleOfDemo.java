@@ -9,12 +9,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
-
 
 public class AllTupleOfDemo {
     public static final ExecutorService myBizExecutor = Executors.newCachedThreadPool();
-    public static final CffuFactory cffuFactory = newCffuFactoryBuilder(myBizExecutor).build();
+    public static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
 
     public static void main(String[] args) throws Exception {
         //////////////////////////////////////////////////

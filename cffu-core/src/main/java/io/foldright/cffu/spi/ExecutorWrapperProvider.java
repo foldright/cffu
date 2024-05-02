@@ -11,7 +11,7 @@ import java.util.concurrent.Executor;
  * An SPI for wrapping the executor when {@link CffuFactoryBuilder}
  * {@link CffuFactoryBuilder#build() build} {@link CffuFactory}.
  *
- * @see CffuFactoryBuilder#newCffuFactoryBuilder(Executor)
+ * @see CffuFactory#builder(Executor)
  * @see CffuFactoryBuilder#build()
  */
 @FunctionalInterface

@@ -1924,7 +1924,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @return the default executor
      * @see CffuFactory#defaultExecutor()
-     * @see CffuFactoryBuilder#newCffuFactoryBuilder(Executor)
+     * @see CffuFactory#builder(Executor)
      * @see #cffuFactory()
      */
     @Contract(pure = true)

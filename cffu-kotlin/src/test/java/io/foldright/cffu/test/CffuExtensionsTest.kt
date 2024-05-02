@@ -1,7 +1,7 @@
 package io.foldright.cffu.test
 
 import io.foldright.cffu.Cffu
-import io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder
+import io.foldright.cffu.CffuFactory
 import io.foldright.cffu.NoCfsProvidedException
 import io.foldright.cffu.kotlin.*
 import io.foldright.test_utils.testCffuFactory
@@ -38,7 +38,7 @@ class CffuExtensionsTest : FunSpec({
         cffu.defaultExecutor() shouldBeSameInstanceAs testThreadPoolExecutor
         cffu.cffuFactory() shouldBeSameInstanceAs testCffuFactory
 
-        val fac2 = newCffuFactoryBuilder(testForkJoinPoolExecutor).build()
+        val fac2 = CffuFactory.builder(testForkJoinPoolExecutor).build()
         cffu.resetCffuFactory(fac2).let {
             it.defaultExecutor() shouldBeSameInstanceAs testForkJoinPoolExecutor
             it.cffuFactory() shouldBeSameInstanceAs fac2
@@ -380,7 +380,8 @@ class CffuExtensionsTest : FunSpec({
         ).anyOfSuccessCffu(testCffuFactory).await() shouldBe 42
     }
 
-    val cffuFactoryForOptional = newCffuFactoryBuilder(Executors.newCachedThreadPool()).build()
+    val cffuFactoryForOptional = CffuFactory.builder(Executors.newCachedThreadPool()).build()
+
     fun assertCffuFactoryForOptional(cffu: Cffu<*>) {
         cffu.cffuFactory() shouldBeSameInstanceAs cffuFactoryForOptional
     }

@@ -2,7 +2,6 @@ package io.foldright.demo.cffu.kotlin
 
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
-import io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder
 import io.foldright.cffu.kotlin.anyOfSuccessCffu
 import java.lang.Thread.sleep
 import java.util.concurrent.ExecutorService
@@ -13,7 +12,7 @@ import java.util.concurrent.TimeUnit
 private val myBizThreadPool: ExecutorService = Executors.newCachedThreadPool()
 
 // Create a CffuFactory with configuration of the customized thread pool
-private val cffuFactory: CffuFactory = newCffuFactoryBuilder(myBizThreadPool).build()
+private val cffuFactory: CffuFactory = CffuFactory.builder(myBizThreadPool).build()
 
 fun main() {
     val cf42 = cffuFactory

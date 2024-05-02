@@ -7,13 +7,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static io.foldright.cffu.CffuFactoryBuilder.newCffuFactoryBuilder;
-
 
 public class CffuDemo {
     private static final ExecutorService myBizThreadPool = Executors.newCachedThreadPool();
     // Create a CffuFactory with configuration of the customized thread pool
-    private static final CffuFactory cffuFactory = newCffuFactoryBuilder(myBizThreadPool).build();
+    private static final CffuFactory cffuFactory = CffuFactory.builder(myBizThreadPool).build();
 
     public static void main(String[] args) throws Exception {
         final Cffu<Integer> cf42 = cffuFactory

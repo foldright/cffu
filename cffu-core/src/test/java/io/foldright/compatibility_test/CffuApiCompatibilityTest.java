@@ -11,7 +11,6 @@ package io.foldright.compatibility_test;
 
 import io.foldright.cffu.Cffu;
 import io.foldright.cffu.CffuFactory;
-import io.foldright.cffu.CffuFactoryBuilder;
 import io.foldright.test_utils.TestThreadPoolManager;
 import io.foldright.test_utils.TestUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -881,7 +880,7 @@ class CffuApiCompatibilityTest {
     @BeforeAll
     static void beforeAll() {
         executorService = TestThreadPoolManager.createThreadPool(hello);
-        cffuFactory = CffuFactoryBuilder.newCffuFactoryBuilder(executorService).build();
+        cffuFactory = CffuFactory.builder(executorService).build();
 
         anotherExecutorService = TestThreadPoolManager.createThreadPool(hello, true);
     }
