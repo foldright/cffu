@@ -7,8 +7,8 @@
 <a href="https://openjdk.java.net/"><img src="https://img.shields.io/badge/Java-8+-339933?logo=openjdk&logoColor=white" alt="Java support"></a>
 <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-1.6+-7F52FF.svg?logo=kotlin&logoColor=white" alt="Kotlin"></a>
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/foldright/cffu?color=4D7A97&logo=apache" alt="License"></a>
-<a href="https://foldright.io/cffu/apidocs/"><img src="https://img.shields.io/github/release/foldright/cffu?label=javadoc&color=339933&logo=microsoft-academic&logoColor=white" alt="Javadocs"></a>
-<a href="https://foldright.io/cffu/dokka/"><img src="https://img.shields.io/github/release/foldright/cffu?label=dokka&color=339933&logo=kotlin&logoColor=white" alt="dokka"></a>
+<a href="https://foldright.io/api-docs/cffu/"><img src="https://img.shields.io/github/release/foldright/cffu?label=javadoc&color=339933&logo=microsoft-academic&logoColor=white" alt="Javadocs"></a>
+<a href="https://foldright.io/api-docs/cffu-kotlin/"><img src="https://img.shields.io/github/release/foldright/cffu?label=dokka&color=339933&logo=kotlin&logoColor=white" alt="dokka"></a>
 <a href="https://central.sonatype.com/artifact/io.foldright/cffu/0.9.0/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
 <a href="https://github.com/foldright/cffu/releases"><img src="https://img.shields.io/github/release/foldright/cffu.svg" alt="GitHub Releases"></a>
 <a href="https://github.com/foldright/cffu/stargazers"><img src="https://img.shields.io/github/stars/foldright/cffu?style=flat" alt="GitHub Stars"></a>
@@ -70,9 +70,9 @@
     - `allOfFastFail`方法：有`CF`失败时快速返回，而不再等待所有`CF`运行完成（`allOf`）
     - `anyOfSuccess`方法：返回首个成功的`CF`结果，而不是首个完成（但可能失败）的`CF`（`anyOf`）
   - 更安全的使用方式，如
-    - 支持设置缺省的业务线程池（`CffuFactory#builder(executor)`方法）
-    - `join(timeout, unit)`方法：支持超时的`join`的方法
-    - 支持禁止强制篡改（`CffuFactoryBuilder#forbidObtrudeMethods`方法）
+    - 支持设置缺省的业务线程池，`CffuFactory#builder(executor)`方法
+    - 支持超时的`join`的方法，`join(timeout, unit)`方法
+    - 支持禁止强制篡改，`CffuFactoryBuilder#forbidObtrudeMethods`方法
     - 在类方法附加完善的代码质量注解（如`@NonNull`、`@Nullable`、`@CheckReturnValue`、`@Contract`等），在编码时`IDE`能尽早提示出问题
 - 💪 **已有功能的增强**，如
   - `anyOf`方法：返回类型是`T`（类型安全），而不是返回`Object`（`CompletableFuture#anyOf()`）
@@ -524,8 +524,8 @@ public class ConcurrencyStrategyDemo {
 可以参见：
 
 - `API`文档
-  - [`Java API`文档](https://foldright.io/cffu/apidocs/)
-  - [`Kotlin API`文档](https://foldright.io/cffu/dokka/)
+  - [`Java API`文档](https://foldright.io/api-docs/cffu/)
+  - [`Kotlin API`文档](https://foldright.io/api-docs/cffu-kotlin/)
 - 实现源码
   - `cffu`：[`Cffu.java`](cffu-core/src/main/java/io/foldright/cffu/Cffu.java)、[`CffuFactory.java`](cffu-core/src/main/java/io/foldright/cffu/CffuFactory.java)
   - `CompletableFuture utils`：[`CompletableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu/CompletableFutureUtils.java)
@@ -545,8 +545,8 @@ public class ConcurrencyStrategyDemo {
 
 # 🔌 API Docs
 
-- 当前版本的`Java API`文档： https://foldright.io/cffu/apidocs/
-- 当前版本的`Kotlin API`文档： https://foldright.io/cffu/dokka/
+- 当前版本的`Java API`文档： https://foldright.io/api-docs/cffu/
+- 当前版本的`Kotlin API`文档： https://foldright.io/api-docs/cffu-kotlin/
 
 代码示例：
 
@@ -561,18 +561,18 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>1.0.0-Alpha3</version>
+      <version>1.0.0-Alpha4</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu:1.0.0-Alpha3")
+    implementation("io.foldright:cffu:1.0.0-Alpha4")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu:1.0.0-Alpha3'
+    implementation 'io.foldright:cffu:1.0.0-Alpha4'
     ```
 - `cffu Kotlin`支持库:
   - For `Maven` projects:
@@ -581,18 +581,18 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-kotlin</artifactId>
-      <version>1.0.0-Alpha3</version>
+      <version>1.0.0-Alpha4</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha3")
+    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha4")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha3'
+    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha4'
     ```
 - `cffu bom`:
   - For `Maven` projects:
@@ -601,7 +601,7 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-bom</artifactId>
-      <version>1.0.0-Alpha3</version>
+      <version>1.0.0-Alpha4</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -610,11 +610,11 @@ public class ConcurrencyStrategyDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha3"))
+    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha4"))
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha3')
+    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha4')
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local)的[`cffu executor wrapper SPI`实现](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -623,7 +623,7 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>1.0.0-Alpha3</version>
+      <version>1.0.0-Alpha4</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -631,11 +631,11 @@ public class ConcurrencyStrategyDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha3")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha4")
     ```
     ```groovy
     // Gradle Groovy DSL
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha3'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha4'
     ```
 
 # 📚 更多资料

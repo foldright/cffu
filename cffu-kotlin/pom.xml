@@ -135,7 +135,7 @@
 							</documentedVisibilities>
 							<externalDocumentationLinks>
 								<link>
-									<url>https://foldright.io/cffu/apidocs/${project.version}/</url>
+									<url>https://foldright.io/api-docs/cffu/${project.version}/</url>
 									<packageListUrl>file://${javadoc.package.list.dir}/cffu/package-list</packageListUrl>
 								</link>
 								<link>

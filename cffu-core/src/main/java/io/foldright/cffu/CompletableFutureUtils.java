@@ -53,6 +53,12 @@ public final class CompletableFutureUtils {
      * @param cfs the stages
      * @return a new CompletableFuture that is completed when all the given stages complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #allResultsOf(CompletionStage[])
+     * @see #allTupleOf(CompletionStage, CompletionStage)
+     * @see #allTupleOf(CompletionStage, CompletionStage, CompletionStage)
+     * @see #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage)
+     * @see #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
+     * @see CompletableFuture#allOf(CompletableFuture[])
      */
     public static CompletableFuture<Void> allOf(CompletionStage<?>... cfs) {
         return CompletableFuture.allOf(f_toCfArray(cfs));
@@ -65,13 +71,13 @@ public final class CompletableFutureUtils {
      * also does so, with a CompletionException holding this exception as its cause.
      * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
      * <p>
-     * This method is the same as {@link CompletableFuture#allOf(CompletableFuture[])},
+     * This method is the same as {@link #allOf(CompletionStage[])},
      * except the returned CompletableFuture contains the results of the given CompletableFutures.
      *
-     * @param cfs the CompletableFutures
+     * @param cfs the stages
      * @return a new CompletableFuture that is completed when all the given CompletableFutures complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see CompletableFuture#allOf(CompletableFuture[])
+     * @see #allOf(CompletionStage[])
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -97,12 +103,25 @@ public final class CompletableFutureUtils {
      * with a CompletionException holding this exception as its cause.
      * If no CompletableFutures are provided, returns a CompletableFuture completed with the value {@code null}.
      * <p>
-     * This method is the same as {@link CompletableFuture#allOf(CompletableFuture[])} except for the fast-fail behavior.
+     * If you need the results of given stages, prefer below methods:
+     * <ol>
+     * <li>{@link #allResultsOfFastFail(CompletionStage[])}
+     * <li>{@link #allTupleOfFastFail(CompletionStage, CompletionStage)} /
+     *     {@link #allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     *     (provided overloaded methods with 2~5 input)
+     * </ol>
+     * <p>
+     * This method is the same as {@link #allOf(CompletionStage[])} except for the fast-fail behavior.
      *
-     * @param cfs the CompletableFutures
+     * @param cfs the stages
      * @return a new CompletableFuture that is successful when all the given CompletableFutures success
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see CompletableFuture#allOf(CompletableFuture[])
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allTupleOfFastFail(CompletionStage, CompletionStage)
+     * @see #allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage)
+     * @see #allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage)
+     * @see #allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
+     * @see #allOf(CompletionStage[])
      */
     @Contract(pure = true)
     public static CompletableFuture<Void> allOfFastFail(CompletionStage<?>... cfs) {
@@ -137,10 +156,9 @@ public final class CompletableFutureUtils {
      * <p>
      * This method is the same as {@link #allResultsOf(CompletionStage[])} except for the fast-fail behavior.
      *
-     * @param cfs the CompletableFutures
+     * @param cfs the stages
      * @return a new CompletableFuture that is successful when all the given CompletableFutures success
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -249,7 +267,7 @@ public final class CompletableFutureUtils {
      * except the parameter type is more generic type {@link CompletionStage}.
      * and the return result type is generic type instead of {@code Object}.
      *
-     * @param cfs the CompletableFutures
+     * @param cfs the stages
      * @return a new CompletableFuture that is completed with the result
      * or exception from any of the given CompletableFutures when one completes
      * @throws NullPointerException if the array or any of its elements are {@code null}
@@ -274,7 +292,7 @@ public final class CompletableFutureUtils {
      * This method is the same as {@link #anyOf(CompletionStage[])}
      * except for the any-<strong>success</strong> behavior(not any-<strong>complete</strong>).
      *
-     * @param cfs the CompletableFutures
+     * @param cfs the stages
      * @return a new CompletableFuture that is successful
      * when any of the given CompletableFutures success, with the same result
      * @throws NullPointerException if the array or any of its elements are {@code null}

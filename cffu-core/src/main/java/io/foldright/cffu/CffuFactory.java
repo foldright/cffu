@@ -254,7 +254,7 @@ public final class CffuFactory {
 
     /**
      * Wrap an existed {@link CompletableFuture} / {@link CompletionStage} / {@link Cffu} to {@link Cffu}.
-     * for {@link CompletableFuture} class instances,
+     * For {@link CompletableFuture} class instances,
      * {@link Cffu#cffuUnwrap()} is the inverse operation to this method.
      * <p>
      * <strong>NOTE</strong>, keep input stage unchanged if possible when wrap:<br>
@@ -326,6 +326,9 @@ public final class CffuFactory {
      *     {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      *     (provided overloaded methods with 2~5 input)
      * </ol>
+     * <p>
+     * This method is the same as {@link CompletableFuture#allOf(CompletableFuture[])},
+     * except the parameter type is more generic({@link CompletionStage}).
      *
      * @param cfs the stages
      * @return a new Cffu that is completed when all the given stages complete
@@ -343,6 +346,27 @@ public final class CffuFactory {
     }
 
     /**
+     * Returns a new Cffu with the results in the <strong>same order</strong> of all the given stages,
+     * the new Cffu is completed when all the given stages complete.
+     * If any of the given stages complete exceptionally, then the returned Cffu
+     * also does so, with a CompletionException holding this exception as its cause.
+     * If no stages are provided, returns a Cffu completed with the value empty list.
+     * <p>
+     * This method is the same as {@link #allOf(CompletionStage[])},
+     * except the returned Cffu contains the results of the given CompletableFutures.
+     *
+     * @param cfs the stages
+     * @return a new Cffu that is completed when all the given stages complete
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #allOf(CompletionStage[])
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    public final <T> Cffu<List<T>> allResultsOf(CompletionStage<? extends T>... cfs) {
+        return new0(CompletableFutureUtils.allResultsOf(cfs));
+    }
+
+    /**
      * Returns a new Cffu that is successful when all the given stages success,
      * the results({@code Cffu<Void>}) of the given stages are not reflected
      * in the returned Cffu, but may be obtained by inspecting them individually.
@@ -350,34 +374,30 @@ public final class CffuFactory {
      * also does so *without* waiting other incomplete given stages,
      * with a CompletionException holding this exception as its cause.
      * If no stages are provided, returns a Cffu completed with the value {@code null}.
+     * <p>
+     * If you need the results of given stages, prefer below methods:
+     * <ol>
+     * <li>{@link #allResultsOfFastFail(CompletionStage[])}
+     * <li>{@link #allTupleOfFastFail(CompletionStage, CompletionStage)} /
+     *     {@link #allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     *     (provided overloaded methods with 2~5 input)
+     * </ol>
+     * <p>
+     * This method is the same as {@link #allOf(CompletionStage[])} except for the fast-fail behavior.
      *
      * @param cfs the stages
      * @return a new Cffu that is successful when all the given stages success
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #allResultsOfFastFail(CompletionStage[])
-     * @see CompletableFutureUtils#allOfFastFail(CompletionStage[])
+     * @see #allTupleOfFastFail(CompletionStage, CompletionStage)
+     * @see #allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage)
+     * @see #allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage)
+     * @see #allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
+     * @see #allOf(CompletionStage[])
      */
     @Contract(pure = true)
     public Cffu<Void> allOfFastFail(CompletionStage<?>... cfs) {
         return new0(CompletableFutureUtils.allOfFastFail(cfs));
-    }
-
-    /**
-     * Returns a new Cffu with the results in the <strong>same order</strong> of all the given stages,
-     * the new Cffu is completed when all the given stages complete.
-     * If any of the given stages complete exceptionally, then the returned Cffu
-     * also does so, with a CompletionException holding this exception as its cause.
-     * If no stages are provided, returns a Cffu completed with the value empty list.
-     *
-     * @param cfs the stages
-     * @return a new Cffu that is completed when all the given stages complete
-     * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see #allResultsOf(CompletionStage[])
-     */
-    @Contract(pure = true)
-    @SafeVarargs
-    public final <T> Cffu<List<T>> allResultsOf(CompletionStage<? extends T>... cfs) {
-        return new0(CompletableFutureUtils.allResultsOf(cfs));
     }
 
     /**
@@ -387,12 +407,15 @@ public final class CffuFactory {
      * also does so *without* waiting other incomplete given stages,
      * with a CompletionException holding this exception as its cause.
      * If no stages are provided, returns a Cffu completed with the value empty list.
+     * <p>
+     * This method is the same as {@link #allOfFastFail(CompletionStage[])},
+     * except the returned Cffu contains the results of the given CompletableFutures.
+     * <p>
+     * This method is the same as {@link #allResultsOf(CompletionStage[])} except for the fast-fail behavior.
      *
      * @param cfs the stages
      * @return a new Cffu that is successful when all the given stages success
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see CompletableFutureUtils#allOfFastFail(CompletionStage[])
-     * @see #allResultsOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -462,7 +485,8 @@ public final class CffuFactory {
      * @see #allOf(CompletionStage[])
      */
     @Contract(pure = true)
-    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOf(CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
+    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOf(
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
         return new0(CompletableFutureUtils.allTupleOf(cf1, cf2));
     }
 
@@ -479,7 +503,8 @@ public final class CffuFactory {
      * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
-    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOfFastFail(CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
+    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOfFastFail(
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
         return new0(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2));
     }
 
@@ -568,8 +593,8 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
-            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
-            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
+            CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
         return new0(CompletableFutureUtils.allTupleOf(cf1, cf2, cf3, cf4, cf5));
     }
 
@@ -588,8 +613,8 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOfFastFail(
-            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
-            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
+            CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
         return new0(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3, cf4, cf5));
     }
 

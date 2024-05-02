@@ -949,7 +949,6 @@ fun <T> CompletableFuture<T>.exceptionallyComposeAsync(
  * val result = cf.copy() // defensive copy to avoid writing this cf unexpectedly
  *     .orTimeout(timeout, unit)
  *     .join();
- * }
  * ```
  *
  * **CAUTION:** if the wait timed out, this method throws an (unchecked) CompletionException with the TimeoutException as its cause;
