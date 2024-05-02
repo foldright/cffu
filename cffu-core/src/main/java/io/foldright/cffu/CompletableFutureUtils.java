@@ -84,7 +84,8 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[size];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(cfs, result);
 
-        return f_cast(CompletableFuture.allOf(resultSetterCfs).thenApply(unused -> arrayList(result)));
+        CompletableFuture<List<Object>> ret = CompletableFuture.allOf(resultSetterCfs).thenApply(unused -> arrayList(result));
+        return f_cast(ret);
     }
 
     /**
@@ -119,7 +120,8 @@ public final class CompletableFutureUtils {
         //       a cf that is successful when all given cfs success, otherwise be incomplete
         failedOrBeIncomplete[size] = CompletableFuture.allOf(successOrBeIncomplete);
 
-        return f_cast(CompletableFuture.anyOf(failedOrBeIncomplete));
+        CompletableFuture<Object> ret = CompletableFuture.anyOf(failedOrBeIncomplete);
+        return f_cast(ret);
     }
 
     /**
@@ -157,7 +159,8 @@ public final class CompletableFutureUtils {
         //       a cf that is successful when all given cfs success, otherwise be incomplete
         failedOrBeIncomplete[size] = allResultsOf(successOrBeIncomplete);
 
-        return f_cast(CompletableFuture.anyOf(failedOrBeIncomplete));
+        CompletableFuture<Object> ret = CompletableFuture.anyOf(failedOrBeIncomplete);
+        return f_cast(ret);
     }
 
     @SafeVarargs
@@ -214,7 +217,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Force cast CompletableFuture with the value type,
+     * Force casts CompletableFuture with the value type,
      * IGNORE the compile-time type check.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -256,7 +259,8 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<T> anyOf(CompletionStage<? extends T>... cfs) {
-        return f_cast(CompletableFuture.anyOf(f_toCfArray(cfs)));
+        CompletableFuture<Object> ret = CompletableFuture.anyOf(f_toCfArray(cfs));
+        return f_cast(ret);
     }
 
     /**
@@ -293,7 +297,8 @@ public final class CompletableFutureUtils {
         //       a cf that is failed when all given cfs fail, otherwise be incomplete
         successOrBeIncomplete[size] = CompletableFuture.allOf(failedOrBeIncomplete);
 
-        return f_cast(CompletableFuture.anyOf(successOrBeIncomplete));
+        CompletableFuture<Object> ret = CompletableFuture.anyOf(successOrBeIncomplete);
+        return f_cast(ret);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
