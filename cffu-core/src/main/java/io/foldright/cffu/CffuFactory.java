@@ -52,7 +52,7 @@ public final class CffuFactory {
     private final boolean forbidObtrudeMethods;
 
     CffuFactory(Executor defaultExecutor, boolean forbidObtrudeMethods) {
-        this.defaultExecutor = CompletableFutureUtils.screenExecutor(defaultExecutor);
+        this.defaultExecutor = defaultExecutor;
         this.forbidObtrudeMethods = forbidObtrudeMethods;
     }
 
@@ -74,7 +74,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public static CffuFactoryBuilder builder(Executor defaultExecutor) {
-        return new CffuFactoryBuilder(defaultExecutor);
+        return new CffuFactoryBuilder(CompletableFutureUtils.screenExecutor(defaultExecutor));
     }
 
     ////////////////////////////////////////////////////////////////////////////////

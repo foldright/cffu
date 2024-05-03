@@ -34,7 +34,7 @@ public final class CffuFactoryBuilder {
     private volatile boolean forbidObtrudeMethods = false;
 
     CffuFactoryBuilder(Executor defaultExecutor) {
-        this.defaultExecutor = wrapExecutor(requireNonNull(defaultExecutor, "defaultExecutor is null"));
+        this.defaultExecutor = wrapExecutor(defaultExecutor);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
