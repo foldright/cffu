@@ -70,11 +70,11 @@
 		<maven.enforcer.pom.version.regex>^\d(\.\d+)?\.(\d+|x)-SNAPSHOT$</maven.enforcer.pom.version.regex>
 		<release.pom.version.regex>^\d\.\d+\.\d+(-(Alpha|Beta|RC)\d+)?$</release.pom.version.regex>
 
-		<spotbugs.annotations.version>4.8.4</spotbugs.annotations.version>
+		<spotbugs.annotations.version>4.8.5</spotbugs.annotations.version>
 		<jsr305.version>3.0.2</jsr305.version>
 		<jetbrains.annotations.version>24.1.0</jetbrains.annotations.version>
 
-		<kotlin.version>1.9.23</kotlin.version>
+		<kotlin.version>1.9.24</kotlin.version>
 		<kotlin.compiler.jvmTarget>${maven.compiler.source}</kotlin.compiler.jvmTarget>
 		<!-- https://kotlinlang.org/docs/maven.html#specifying-compiler-options -->
 		<kotlin.compiler.apiVersion>1.6</kotlin.compiler.apiVersion>
@@ -458,7 +458,7 @@
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.8.4.0</version>
+					<version>4.8.5.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
