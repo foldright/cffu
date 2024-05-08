@@ -376,8 +376,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that, when this and the other given stage both complete normally,
      * is executed with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned Cffu
-     * also does so *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
      * This method is the same as {@link #thenAcceptBoth(CompletionStage, BiConsumer)}
@@ -396,8 +396,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that, when this and the other given stage both complete normally,
      * is executed using {@link #defaultExecutor()}, with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned Cffu
-     * also does so *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
      * This method is the same as {@link #thenAcceptBothAsync(CompletionStage, BiConsumer)}
@@ -416,8 +416,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that, when this and the other given stage both complete normally,
      * is executed using the supplied executor, with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned Cffu
-     * also does so *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
      * This method is the same as {@link #thenAcceptBothAsync(CompletionStage, BiConsumer, Executor)}
@@ -497,8 +497,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that, when this and the other given stage both complete normally,
      * is executed with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned Cffu
-     * also does so *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
      * This method is the same as {@link #thenCombine(CompletionStage, BiFunction)}
@@ -519,8 +519,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that, when this and the other given stage both complete normally,
      * is executed using {@link #defaultExecutor()}, with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned Cffu
-     * also does so *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
      * This method is the same as {@link #thenCombineAsync(CompletionStage, BiFunction)}
@@ -541,8 +541,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that, when this and the other given stage both complete normally,
      * is executed using the supplied executor, with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned Cffu
-     * also does so *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
      * This method is the same as {@link #thenCombineAsync(CompletionStage, BiFunction, Executor)}
@@ -795,11 +795,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally, executes the given action.
-     * Otherwise, all two complete exceptionally, the returned CompletableFuture also does so,
+     * Otherwise, all two complete exceptionally, the returned Cffu also does so,
      * with a CompletionException holding an exception from any of as its cause.
      * <p>
      * This method is the same as {@link #runAfterEither(CompletionStage, Runnable)}
-     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
@@ -812,8 +812,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
      * executes the given action using {@link #defaultExecutor()}.
+     * Otherwise, all two complete exceptionally, the returned Cffu also does so,
+     * with a CompletionException holding an exception from any of as its cause.
      * <p>
-     * See the {@link CompletionStage} documentation for rules covering exceptional completion.
+     * This method is the same as {@link #runAfterEitherAsync(CompletionStage, Runnable)}
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
@@ -826,8 +829,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
      * executes the given action using the supplied executor.
+     * Otherwise, all two complete exceptionally, the returned Cffu also does so,
+     * with a CompletionException holding an exception from any of as its cause.
      * <p>
-     * See the {@link CompletionStage} documentation for rules covering exceptional completion.
+     * This method is the same as {@link #runAfterEitherAsync(CompletionStage, Runnable, Executor)}
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other    the other CompletionStage
      * @param action   the action to perform before completing the returned Cffu
@@ -895,7 +901,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * is executed with the corresponding result as argument to the supplied action.
      * <p>
      * This method is the same as {@link #acceptEither(CompletionStage, Consumer)}
-     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
@@ -912,7 +918,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the corresponding result as argument to the supplied action.
      * <p>
      * This method is the same as {@link #acceptEitherAsync(CompletionStage, Consumer)}
-     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
@@ -928,7 +934,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * is executed using the supplied executor, with the corresponding result as argument to the supplied action.
      * <p>
      * This method is the same as {@link #acceptEitherAsync(CompletionStage, Consumer, Executor)}
-     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other    the other CompletionStage
      * @param action   the action to perform before completing the returned Cffu
@@ -1003,7 +1009,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * is executed with the corresponding result as argument to the supplied function.
      * <p>
      * This method is the same as {@link #applyToEither(CompletionStage, Function)}
-     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other the other CompletionStage
      * @param fn    the function to use to compute the value of the returned Cffu
@@ -1022,7 +1028,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the corresponding result as argument to the supplied function.
      * <p>
      * This method is the same as {@link #applyToEitherAsync(CompletionStage, Function)}
-     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other the other CompletionStage
      * @param fn    the function to use to compute the value of the returned Cffu
@@ -1040,7 +1046,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * is executed using the supplied executor, with the corresponding result as argument to the supplied function.
      * <p>
      * This method is the same as {@link #applyToEitherAsync(CompletionStage, Function, Executor)}
-     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other    the other CompletionStage
      * @param fn       the function to use to compute the value of the returned Cffu
@@ -1829,9 +1835,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new CompletionStage that is completed normally with the same value
-     * as this CompletableFuture when it completes normally, and cannot be independently completed
+     * as this Cffu when it completes normally, and cannot be independently completed
      * or otherwise used in ways not defined by the methods of interface {@link CompletionStage}.
-     * If this CompletableFuture completes exceptionally, then the returned CompletionStage completes
+     * If this Cffu completes exceptionally, then the returned CompletionStage completes
      * exceptionally with a CompletionException with this exception as cause.
      * <p>
      * <strong>CAUTION:<br></strong>
@@ -1876,18 +1882,18 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a {@link CompletableFuture} maintaining the same completion properties as this stage.
+     * Returns a {@link CompletableFuture} maintaining the same completion properties as this Cffu.
      * <p>
-     * call {@link CompletableFuture#toCompletableFuture()} method of the underlying CompletableFuture:
-     * {@code underlyingCf.toCompletableFuture()}; if you need the underlying CompletableFuture instance,
+     * Call {@link CompletableFuture#toCompletableFuture()} method of the underlying CompletableFuture:
+     * {@code underlyingCf.toCompletableFuture()}; If you need the underlying CompletableFuture instance,
      * call method {@link #cffuUnwrap()}.
      * <p>
      * {@link CompletableFutureUtils#toCompletableFutureArray(CompletionStage[])} is the batch operation to this method.
      *
      * @return the CompletableFuture
-     * @see CompletionStage#toCompletableFuture()
      * @see #cffuUnwrap()
      * @see CompletableFutureUtils#toCompletableFutureArray(CompletionStage[])
+     * @see CompletionStage#toCompletableFuture()
      */
     @Contract(pure = true)
     @Override
@@ -2057,15 +2063,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new incomplete Cffu with CompletableFuture of the type to be returned by a CompletionStage method.
-     * Subclasses of CompletableFuture should normally override this method to return an instance of the same class
-     * as this CompletableFuture. The default implementation returns an instance of class CompletableFuture.
      * <p>
      * <strong>NOTE:<br></strong>
-     * this method existed mainly for API compatibility to {@code CompletableFuture},
+     * This method existed mainly for API compatibility to {@code CompletableFuture},
      * prefer {@link CffuFactory#newIncompleteCffu()}.
      * <p>
      * <strong>CAUTION:<br></strong>
-     * for minimal stage instance({@link #isMinimalStage()}), if run on old Java 8,
+     * For minimal stage instance({@link #isMinimalStage()}), if run on old Java 8,
      * just return a Cffu with a *normal* underlying CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @see CffuFactory#newIncompleteCffu()

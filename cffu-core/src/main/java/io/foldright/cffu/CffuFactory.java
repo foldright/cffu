@@ -312,11 +312,11 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu that is completed when all the given stages complete.
+     * Returns a new Cffu that is completed when all the given stages complete;
      * If any of the given stages complete exceptionally, then the returned Cffu also does so,
-     * with a CompletionException holding this exception as its cause.<br>
-     * Otherwise, the results, if any, of the given stages are not reflected in
-     * the returned Cffu({@code Cffu<Void>}), but may be obtained by inspecting them individually.<br>
+     * with a CompletionException holding this exception as its cause.
+     * Otherwise, the results, if any, of the given stages are not reflected in the returned
+     * Cffu({@code Cffu<Void>}), but may be obtained by inspecting them individually.
      * If no stages are provided, returns a Cffu completed with the value {@code null}.
      * <p>
      * if you need the results of given stages, prefer below methods:
@@ -328,7 +328,7 @@ public final class CffuFactory {
      * </ol>
      * <p>
      * This method is the same as {@link CompletableFuture#allOf(CompletableFuture[])},
-     * except the parameter type is more generic({@link CompletionStage}).
+     * except that the parameter type is more generic {@link CompletionStage} instead of {@link CompletableFuture}.
      *
      * @param cfs the stages
      * @return a new Cffu that is completed when all the given stages complete
@@ -347,17 +347,18 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu with the results in the <strong>same order</strong> of all the given stages,
-     * the new Cffu is completed when all the given stages complete.
-     * If any of the given stages complete exceptionally, then the returned Cffu
-     * also does so, with a CompletionException holding this exception as its cause.
+     * the new Cffu is completed when all the given stages complete;
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
      * If no stages are provided, returns a Cffu completed with the value empty list.
      * <p>
      * This method is the same as {@link #allOf(CompletionStage[])},
-     * except the returned Cffu contains the results of the given CompletableFutures.
+     * except that the returned Cffu contains the results of the given stages.
      *
      * @param cfs the stages
      * @return a new Cffu that is completed when all the given stages complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #allResultsOfFastFail(CompletionStage[])
      * @see #allOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -367,12 +368,11 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is successful when all the given stages success,
-     * the results({@code Cffu<Void>}) of the given stages are not reflected
-     * in the returned Cffu, but may be obtained by inspecting them individually.
-     * If any of the given stages complete exceptionally, then the returned Cffu
-     * also does so *without* waiting other incomplete given stages,
-     * with a CompletionException holding this exception as its cause.
+     * Returns a new Cffu that is successful when all the given stages success;
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * Otherwise, the results of the given stages are not reflected in the returned Cffu({@code Cffu<Void>}),
+     * but may be obtained by inspecting them individually.
      * If no stages are provided, returns a Cffu completed with the value {@code null}.
      * <p>
      * If you need the results of given stages, prefer below methods:
@@ -401,21 +401,23 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the results in the <strong>same order</strong> of all the given stages,
-     * the new Cffu success when all the given stages success.
-     * If any of the given stages complete exceptionally, then the returned Cffu
-     * also does so *without* waiting other incomplete given stages,
-     * with a CompletionException holding this exception as its cause.
+     * Returns a new Cffu that is successful with the results in the <strong>same order</strong>
+     * of all the given stages when all the given stages success;
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      * If no stages are provided, returns a Cffu completed with the value empty list.
      * <p>
-     * This method is the same as {@link #allOfFastFail(CompletionStage[])},
-     * except the returned Cffu contains the results of the given CompletableFutures.
-     * <p>
      * This method is the same as {@link #allResultsOf(CompletionStage[])} except for the fast-fail behavior.
+     * <p>
+     * This method is the same as {@link #allOfFastFail(CompletionStage[])},
+     * except that the returned Cffu contains the results of the given stages.
      *
      * @param cfs the stages
      * @return a new Cffu that is successful when all the given stages success
      * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #allResultsOf(CompletionStage[])
+     * @see #allOfFastFail(CompletionStage[])
+     * @see #allOf(CompletionStage[])
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -435,12 +437,16 @@ public final class CffuFactory {
      * Otherwise, if it completed exceptionally, the returned Cffu also does so,
      * with a CompletionException holding this exception as its cause.<br>
      * If no stages are provided, returns an incomplete Cffu.
+     * <p>
+     * This method is the same as {@link CompletableFuture#anyOf(CompletableFuture[])},
+     * except that the parameter type is more generic {@link CompletionStage} instead of {@link CompletableFuture},
+     * and the return type is more specific {@code T} instead of {@code Object}.
      *
      * @param cfs the stages
-     * @return a new Cffu that is completed with the result
-     * or exception from any of the given stages when one completes
+     * @return a new Cffu that is completed with the result or exception
+     * from any of the given stages when one completes
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see #anyOf(CompletionStage[])
+     * @see #anyOfSuccess(CompletionStage[])
      * @see CompletableFuture#anyOf(CompletableFuture[])
      */
     @Contract(pure = true)
@@ -456,10 +462,14 @@ public final class CffuFactory {
      * an exception from any of the given stages as its cause. If no stages are provided,
      * returns a new Cffu that is already completed exceptionally
      * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
+     * <p>
+     * This method is the same as {@link #anyOf(CompletionStage[])}
+     * except for the any-<strong>success</strong> behavior instead of any-<strong>complete</strong>.
      *
      * @param cfs the stages
-     * @return a new Cffu
+     * @return a new Cffu that is successful when any of the given stages success, with the same result
      * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #anyOf(CompletionStage[])
      */
     @SafeVarargs
     public final <T> Cffu<T> anyOfSuccess(CompletionStage<? extends T>... cfs) {
@@ -474,15 +484,13 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu that is completed when the given two CompletableFutures complete.
-     * If any of the given CompletableFutures complete exceptionally, then the returned
-     * Cffu also does so, with a CompletionException holding this exception as its cause.
+     * Returns a new Cffu that is completed when the given two stages complete.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
      *
-     * @return a new Cffu that is completed when the given 2 CompletableFutures complete
-     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#allTupleOf(CompletionStage)
+     * @return a new Cffu that is completed when the given two stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOf(CompletionStage[])
-     * @see #allOf(CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOf(
@@ -491,16 +499,16 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is successful when the given two CompletableFutures success.
-     * If any of the given CompletableFutures complete exceptionally, then the returned
-     * Cffu also does so *without* waiting other incomplete given CompletableFutures,
-     * with a CompletionException holding this exception as its cause.
+     * Returns a new Cffu that is successful when the given two stages success.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #allTupleOf(CompletionStage, CompletionStage)}
+     * except for the fast-fail behavior.
      *
-     * @return a new Cffu that is successful when the given two CompletableFutures success
-     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#allTupleOfFastFail(CompletionStage)
+     * @return a new Cffu that is successful when the given two stages success
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOfFastFail(CompletionStage[])
-     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOfFastFail(
@@ -509,15 +517,13 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is completed when the given three CompletableFutures complete.
-     * If any of the given CompletableFutures complete exceptionally, then the returned
-     * Cffu also does so, with a CompletionException holding this exception as its cause.
+     * Returns a new Cffu that is completed when the given three stages complete.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
      *
-     * @return a new Cffu that is completed when the given 3 CompletableFutures complete
-     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#allTupleOf(CompletionStage, CompletionStage)
+     * @return a new Cffu that is completed when the given three stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOf(CompletionStage[])
-     * @see #allOf(CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOf(
@@ -526,16 +532,16 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is successful when the given three CompletableFutures success.
-     * If any of the given CompletableFutures complete exceptionally, then the returned
-     * Cffu also does so *without* waiting other incomplete given CompletableFutures,
-     * with a CompletionException holding this exception as its cause.
+     * Returns a new Cffu that is successful when the given three stages success.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage)}
+     * except for the fast-fail behavior.
      *
-     * @return a new Cffu that is successful when the given three CompletableFutures success
-     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#allTupleOfFastFail(CompletionStage, CompletionStage)
+     * @return a new Cffu that is successful when the given three stages success
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOfFastFail(CompletionStage[])
-     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOfFastFail(
@@ -544,15 +550,13 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is completed when the given 4 CompletableFutures complete.
-     * If any of the given CompletableFutures complete exceptionally, then the returned
-     * Cffu also does so, with a CompletionException holding this exception as its cause.
+     * Returns a new Cffu that is completed when the given four stages complete.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
      *
-     * @return a new Cffu that is completed when the given 4 CompletableFutures complete
-     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#allTupleOf(CompletionStage, CompletionStage, CompletionStage)
+     * @return a new Cffu that is completed when the given four stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOf(CompletionStage[])
-     * @see #allOf(CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOf(
@@ -562,16 +566,16 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is successful when the given four CompletableFutures success.
-     * If any of the given CompletableFutures complete exceptionally, then the returned
-     * Cffu also does so *without* waiting other incomplete given CompletableFutures,
-     * with a CompletionException holding this exception as its cause.
+     * Returns a new Cffu that is successful when the given four stages success.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * except for the fast-fail behavior.
      *
-     * @return a new Cffu that is successful when the given four CompletableFutures success
-     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage)
+     * @return a new Cffu that is successful when the given four stages success
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOfFastFail(CompletionStage[])
-     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOfFastFail(
@@ -581,15 +585,13 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is completed when the given 5 CompletableFutures complete.
-     * If any of the given CompletableFutures complete exceptionally, then the returned
-     * Cffu also does so, with a CompletionException holding this exception as its cause.
+     * Returns a new Cffu that is completed when the given five stages complete.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
      *
-     * @return a new Cffu that is completed when the given 5 CompletableFutures complete
-     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage)
+     * @return a new Cffu that is completed when the given five stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOf(CompletionStage[])
-     * @see #allOf(CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
@@ -599,17 +601,16 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is successful when the given five CompletableFutures success.
-     * If any of the given CompletableFutures complete exceptionally, then the returned
-     * Cffu also does so *without* waiting other incomplete given CompletableFutures,
-     * with a CompletionException holding this exception as its cause.
+     * Returns a new Cffu that is successful when the given five stages success.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * except for the fast-fail behavior.
      *
-     * @return a new Cffu that is successful when the given five CompletableFutures success
-     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
-     * @see Cffu#allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage)
-     * @see #allTupleOfFastFail(CompletionStage, CompletionStage)
+     * @return a new Cffu that is successful when the given five stages success
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOfFastFail(CompletionStage[])
-     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOfFastFail(

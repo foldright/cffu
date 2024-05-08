@@ -32,11 +32,11 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture that is completed when all the given stages complete.
+     * Returns a new CompletableFuture that is completed when all the given stages complete;
      * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
      * with a CompletionException holding this exception as its cause.
-     * Otherwise, the results, if any, of the given stages are not reflected
-     * in the returned CompletableFuture, but may be obtained by inspecting them individually.
+     * Otherwise, the results, if any, of the given stages are not reflected in the returned
+     * CompletableFuture({@code CompletableFuture<Void>}), but may be obtained by inspecting them individually.
      * If no stages are provided, returns a CompletableFuture completed with the value {@code null}.
      * <p>
      * if you need the results of given stages, prefer below methods:
@@ -48,7 +48,7 @@ public final class CompletableFutureUtils {
      * </ul>
      * <p>
      * This method is the same as {@link CompletableFuture#allOf(CompletableFuture[])},
-     * except the parameter type is more generic({@link CompletionStage}).
+     * except that the parameter type is more generic {@link CompletionStage} instead of {@link CompletableFuture}.
      *
      * @param cfs the stages
      * @return a new CompletableFuture that is completed when all the given stages complete
@@ -65,18 +65,19 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture with the results in the <strong>same order</strong> of all the given
-     * CompletableFutures, the new CompletableFuture is completed when all the given CompletableFutures complete.
-     * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
-     * also does so, with a CompletionException holding this exception as its cause.
-     * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
+     * Returns a new CompletableFuture with the results in the <strong>same order</strong> of all the given stages,
+     * the new CompletableFuture is completed when all the given stages complete;
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
+     * with a CompletionException holding this exception as its cause.
+     * If no stages are provided, returns a CompletableFuture completed with the value empty list.
      * <p>
      * This method is the same as {@link #allOf(CompletionStage[])},
-     * except the returned CompletableFuture contains the results of the given CompletableFutures.
+     * except that the returned CompletableFuture contains the results of the given stages.
      *
      * @param cfs the stages
-     * @return a new CompletableFuture that is completed when all the given CompletableFutures complete
+     * @return a new CompletableFuture that is completed when all the given stages complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #allResultsOfFastFail(CompletionStage[])
      * @see #allOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -96,13 +97,13 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
-     * the results({@code CompletableFuture<Void>}) of the given CompletableFutures are not reflected
-     * in the returned CompletableFuture, but may be obtained by inspecting them individually.
-     * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
-     * also does so *without* waiting other incomplete given CompletableFutures,
-     * with a CompletionException holding this exception as its cause.
-     * If no CompletableFutures are provided, returns a CompletableFuture completed with the value {@code null}.
+     * Returns a new CompletableFuture that is successful when all the given stages success;
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * Otherwise, the results, if any, of the given stages are not reflected
+     * in the returned CompletableFuture({@code CompletableFuture<Void>}),
+     * but may be obtained by inspecting them individually.
+     * If no stages are provided, returns a CompletableFuture completed with the value {@code null}.
      * <p>
      * If you need the results of given stages, prefer below methods:
      * <ol>
@@ -115,7 +116,7 @@ public final class CompletableFutureUtils {
      * This method is the same as {@link #allOf(CompletionStage[])} except for the fast-fail behavior.
      *
      * @param cfs the stages
-     * @return a new CompletableFuture that is successful when all the given CompletableFutures success
+     * @return a new CompletableFuture that is successful when all the given stages success
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #allResultsOfFastFail(CompletionStage[])
      * @see #allTupleOfFastFail(CompletionStage, CompletionStage)
@@ -145,21 +146,23 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture with the results in the <strong>same order</strong> of all the given
-     * CompletableFutures, the new CompletableFuture success when all the given CompletableFutures success.
-     * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
-     * also does so *without* waiting other incomplete given CompletableFutures,
-     * with a CompletionException holding this exception as its cause.
-     * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
-     * <p>
-     * This method is the same as {@link #allOfFastFail(CompletionStage[])},
-     * except the returned CompletableFuture contains the results of the given CompletableFutures.
+     * Returns a new CompletableFuture that is successful with the results in the <strong>same order</strong>
+     * of all the given stages when all the given stages success;
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * If no stages are provided, returns a CompletableFuture completed with the value empty list.
      * <p>
      * This method is the same as {@link #allResultsOf(CompletionStage[])} except for the fast-fail behavior.
+     * <p>
+     * This method is the same as {@link #allOfFastFail(CompletionStage[])},
+     * except that the returned CompletableFuture contains the results of the given stages.
      *
      * @param cfs the stages
-     * @return a new CompletableFuture that is successful when all the given CompletableFutures success
+     * @return a new CompletableFuture that is successful when all the given stages success
      * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #allResultsOf(CompletionStage[])
+     * @see #allOfFastFail(CompletionStage[])
+     * @see #allOf(CompletionStage[])
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -258,19 +261,18 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture that is completed
-     * when any of the given CompletableFutures(stages) complete, with the same result.
+     * Returns a new CompletableFuture that is completed when any of the given stages complete, with the same result.
      * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so,
      * with a CompletionException holding this exception as its cause.
-     * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
+     * If no stages are provided, returns an incomplete CompletableFuture.
      * <p>
      * This method is the same as {@link CompletableFuture#anyOf(CompletableFuture[])},
-     * except the parameter type is more generic type {@link CompletionStage}.
-     * and the return result type is generic type instead of {@code Object}.
+     * except that the parameter type is more generic {@link CompletionStage} instead of {@link CompletableFuture},
+     * and the return type is more specific {@code T} instead of {@code Object}.
      *
      * @param cfs the stages
-     * @return a new CompletableFuture that is completed with the result
-     * or exception from any of the given CompletableFutures when one completes
+     * @return a new CompletableFuture that is completed with the result or exception
+     * from any of the given stages when one completes
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #anyOfSuccess(CompletionStage[])
      * @see CompletableFuture#anyOf(CompletableFuture[])
@@ -283,19 +285,18 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is successful when any of the given CompletableFutures success,
-     * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
+     * Returns a new CompletableFuture that is successful when any of the given stages success,
+     * with the same result. Otherwise, all the given stages complete exceptionally,
      * the returned CompletableFuture also does so, with a CompletionException holding
-     * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
-     * returns a new CompletableFuture that is already completed exceptionally
+     * an exception from any of the given stages as its cause.
+     * If no stages are provided, returns a new CompletableFuture that is already completed exceptionally
      * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
      * <p>
      * This method is the same as {@link #anyOf(CompletionStage[])}
-     * except for the any-<strong>success</strong> behavior(not any-<strong>complete</strong>).
+     * except for the any-<strong>success</strong> behavior instead of any-<strong>complete</strong>.
      *
      * @param cfs the stages
-     * @return a new CompletableFuture that is successful
-     * when any of the given CompletableFutures success, with the same result
+     * @return a new CompletableFuture that is successful when any of the given stages success, with the same result
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #anyOf(CompletionStage[])
      */
@@ -325,14 +326,13 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture that is completed when the given two CompletableFutures complete.
-     * If any of the given CompletableFutures complete exceptionally, then the returned
-     * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
+     * Returns a new CompletableFuture that is completed when the given two stages complete.
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
+     * with a CompletionException holding this exception as its cause.
      *
-     * @return a new CompletableFuture that is completed when the given 2 CompletableFutures complete
-     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+     * @return a new CompletableFuture that is completed when the given two stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOf(CompletionStage[])
-     * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOf(
@@ -341,18 +341,16 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is successful when the given two CompletableFutures success.
-     * If any of the given CompletableFutures complete exceptionally, then the returned
-     * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
-     * with a CompletionException holding this exception as its cause.
+     * Returns a new CompletableFuture that is successful when the given two stages success.
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      * <p>
      * This method is the same as {@link #allTupleOf(CompletionStage, CompletionStage)}
      * except for the fast-fail behavior.
      *
-     * @return a new CompletableFuture that is successful when the given two CompletableFutures success
-     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+     * @return a new CompletableFuture that is successful when the given two stages success
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOfFastFail(CompletionStage[])
-     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOfFastFail(
@@ -361,14 +359,13 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is completed when the given three CompletableFutures complete.
-     * If any of the given CompletableFutures complete exceptionally, then the returned
-     * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
+     * Returns a new CompletableFuture that is completed when the given three stages complete.
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
+     * with a CompletionException holding this exception as its cause.
      *
-     * @return a new CompletableFuture that is completed when the given 3 CompletableFutures complete
-     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+     * @return a new CompletableFuture that is completed when the given three stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOf(CompletionStage[])
-     * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOf(
@@ -377,18 +374,16 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is successful when the given three CompletableFutures success.
-     * If any of the given CompletableFutures complete exceptionally, then the returned
-     * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
-     * with a CompletionException holding this exception as its cause.
+     * Returns a new CompletableFuture that is successful when the given three stages success.
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      * <p>
      * This method is the same as {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage)}
      * except for the fast-fail behavior.
      *
-     * @return a new CompletableFuture that is successful when the given three CompletableFutures success
-     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+     * @return a new CompletableFuture that is successful when the given three stages success
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOfFastFail(CompletionStage[])
-     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOfFastFail(
@@ -397,14 +392,13 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is completed when the given 4 CompletableFutures complete.
-     * If any of the given CompletableFutures complete exceptionally, then the returned
-     * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
+     * Returns a new CompletableFuture that is completed when the given four stages complete.
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
+     * with a CompletionException holding this exception as its cause.
      *
-     * @return a new CompletableFuture that is completed when the given 4 CompletableFutures complete
-     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+     * @return a new CompletableFuture that is completed when the given four stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOf(CompletionStage[])
-     * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOf(
@@ -414,18 +408,16 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is successful when the given 4 CompletableFutures success.
-     * If any of the given CompletableFutures complete exceptionally, then the returned
-     * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
-     * with a CompletionException holding this exception as its cause.
+     * Returns a new CompletableFuture that is successful when the given four stages success.
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      * <p>
      * This method is the same as {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      * except for the fast-fail behavior.
      *
-     * @return a new CompletableFuture that is successful when the given 4 CompletableFutures success
-     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+     * @return a new CompletableFuture that is successful when the given four stages success
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOfFastFail(CompletionStage[])
-     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOfFastFail(
@@ -435,14 +427,13 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is completed when the given 5 CompletableFutures complete.
-     * If any of the given CompletableFutures complete exceptionally, then the returned
-     * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
+     * Returns a new CompletableFuture that is completed when the given five stages complete.
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
+     * with a CompletionException holding this exception as its cause.
      *
-     * @return a new CompletableFuture that is completed when the given 5 CompletableFutures complete
-     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+     * @return a new CompletableFuture that is completed when the given five stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOf(CompletionStage[])
-     * @see CompletableFuture#allOf(CompletableFuture[])
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
@@ -452,18 +443,16 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is successful when the given 5 CompletableFutures success.
-     * If any of the given CompletableFutures complete exceptionally, then the returned
-     * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
-     * with a CompletionException holding this exception as its cause.
+     * Returns a new CompletableFuture that is successful when the given five stages success.
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      * <p>
      * This method is the same as {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      * except for the fast-fail behavior.
      *
-     * @return a new CompletableFuture that is successful when the given 5 CompletableFutures success
-     * @throws NullPointerException if any of the given CompletableFutures are {@code null}
+     * @return a new CompletableFuture that is successful when the given five stages success
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOfFastFail(CompletionStage[])
-     * @see #allOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOfFastFail(
@@ -544,8 +533,8 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when two given stages both complete normally,
      * executes the given action using the supplied executor.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture
-     * also does so *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
+     * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
      * This method is the same as {@link CompletionStage#runAfterBothAsync(CompletionStage, Runnable, Executor)}
@@ -567,8 +556,8 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture
-     * also does so *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
+     * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
      * This method is the same as {@link CompletionStage#thenAcceptBoth(CompletionStage, BiConsumer)}
@@ -595,8 +584,8 @@ public final class CompletableFutureUtils {
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed using CompletableFuture's default asynchronous execution facility,
      * with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture
-     * also does so *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
+     * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
      * This method is the same as {@link CompletionStage#thenAcceptBothAsync(CompletionStage, BiConsumer)}
@@ -623,8 +612,8 @@ public final class CompletableFutureUtils {
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed using the supplied executor,
      * with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture
-     * also does so *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
+     * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
      * This method is the same as {@link CompletionStage#thenAcceptBothAsync(CompletionStage, BiConsumer, Executor)}
@@ -651,8 +640,8 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture
-     * also does so *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
+     * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
      * This method is the same as {@link CompletionStage#thenCombine(CompletionStage, BiFunction)}
@@ -679,8 +668,8 @@ public final class CompletableFutureUtils {
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed using CompletableFuture's default asynchronous execution facility,
      * with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture
-     * also does so *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
+     * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
      * This method is the same as {@link CompletionStage#thenCombineAsync(CompletionStage, BiFunction)}
@@ -707,8 +696,8 @@ public final class CompletableFutureUtils {
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed using the supplied executor,
      * with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture
-     * also does so *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
+     * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      * <p>
      * This method is the same as {@link CompletionStage#thenCombineAsync(CompletionStage, BiFunction, Executor)}
@@ -747,12 +736,12 @@ public final class CompletableFutureUtils {
      * the returned CompletableFuture also does so, with a CompletionException holding
      * an exception from any of the given CompletionStage as its cause.
      * <p>
-     * This method is the same as {@link CompletableFuture#runAfterEither(CompletionStage, Runnable)}
-     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     * This method is the same as {@link CompletionStage#runAfterEither(CompletionStage, Runnable)}
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
-     * @see CompletableFuture#runAfterEither(CompletionStage, Runnable)
+     * @see CompletionStage#runAfterEither(CompletionStage, Runnable)
      */
     public static CompletableFuture<Void> runAfterEitherSuccess(
             CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action) {
@@ -770,7 +759,7 @@ public final class CompletableFutureUtils {
      * an exception from any of the given CompletionStage as its cause.
      * <p>
      * This method is the same as {@link CompletionStage#runAfterEitherAsync(CompletionStage, Runnable)}
-     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
@@ -792,7 +781,7 @@ public final class CompletableFutureUtils {
      * an exception from any of the given CompletionStage as its cause.
      * <p>
      * This method is the same as {@link CompletionStage#runAfterEitherAsync(CompletionStage, Runnable, Executor)}
-     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
@@ -812,7 +801,7 @@ public final class CompletableFutureUtils {
      * is executed with the corresponding result as argument to the supplied action.
      * <p>
      * This method is the same as {@link CompletionStage#acceptEither(CompletionStage, Consumer)}
-     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
@@ -827,12 +816,12 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletionStage that, when either given stage success,
-     * is executed using this stage's default asynchronous execution facility,
+     * Returns a new CompletableFuture that, when either given stage success,
+     * is executed using this CompletableFuture's default asynchronous execution facility,
      * with the corresponding result as argument to the supplied action.
      * <p>
      * This method is the same as {@link CompletionStage#acceptEitherAsync(CompletionStage, Consumer)}
-     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
@@ -847,11 +836,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletionStage that, when either given stage success,
+     * Returns a new CompletableFuture that, when either given stage success,
      * is executed using the supplied executor, with the corresponding result as argument to the supplied action.
      * <p>
      * This method is the same as {@link CompletionStage#acceptEitherAsync(CompletionStage, Consumer, Executor)}
-     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param action   the action to perform before completing the returned CompletableFuture
      * @param executor the executor to use for asynchronous execution
@@ -869,11 +858,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletionStage that, when either given stage success,
+     * Returns a new CompletableFuture that, when either given stage success,
      * is executed with the corresponding result as argument to the supplied function.
      * <p>
      * This method is the same as {@link CompletionStage#applyToEither(CompletionStage, Function)}
-     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param fn  the function to use to compute the value of the returned CompletableFuture
      * @param <U> the function's return type
@@ -889,12 +878,12 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletionStage that, when either given stage success,
-     * is executed using this stage's default asynchronous execution facility,
+     * Returns a new CompletableFuture that, when either given stage success,
+     * is executed using this CompletableFuture's default asynchronous execution facility,
      * with the corresponding result as argument to the supplied function.
      * <p>
      * This method is the same as {@link CompletionStage#applyToEitherAsync(CompletionStage, Function)}
-     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param fn  the function to use to compute the value of the returned CompletableFuture
      * @param <U> the function's return type
@@ -910,11 +899,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletionStage that, when either given stage success,
+     * Returns a new CompletableFuture that, when either given stage success,
      * is executed using the supplied executor, with the corresponding result as argument to the supplied function.
      * <p>
      * This method is the same as {@link CompletionStage#applyToEitherAsync(CompletionStage, Function, Executor)}
-     * except for the either-<strong>success</strong> behavior(not either-<strong>complete</strong>).
+     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param fn       the function to use to compute the value of the returned CompletableFuture
      * @param executor the executor to use for asynchronous execution
@@ -1156,7 +1145,7 @@ public final class CompletableFutureUtils {
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return given CompletableFuture
+     * @return the given CompletableFuture
      */
     public static <C extends CompletableFuture<?>> C orTimeout(C cf, long timeout, TimeUnit unit) {
         if (IS_JAVA9_PLUS) {
@@ -1178,7 +1167,7 @@ public final class CompletableFutureUtils {
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return given CompletableFuture
+     * @return the given CompletableFuture
      */
     public static <T, C extends CompletableFuture<? super T>>
     C completeOnTimeout(C cf, @Nullable T value, long timeout, TimeUnit unit) {
@@ -1198,7 +1187,7 @@ public final class CompletableFutureUtils {
     //# Advanced methods of CompletionStage
 
     /**
-     * Returns a new CompletionStage that, when given stage completes exceptionally,
+     * Returns a new CompletableFuture that, when given CompletableFuture completes exceptionally,
      * is composed using the results of the supplied function applied to given stage's exception.
      *
      * @param fn the function to use to compute the returned CompletableFuture
@@ -1216,9 +1205,9 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletionStage that, when given stage completes exceptionally,
+     * Returns a new CompletableFuture that, when given CompletableFuture completes exceptionally,
      * is composed using the results of the supplied function applied to given stage's exception,
-     * using given stage's default asynchronous execution facility.
+     * using given CompletableFuture's default asynchronous execution facility.
      *
      * @param fn the function to use to compute the returned CompletableFuture
      *           if given CompletionStage completed exceptionally
@@ -1230,7 +1219,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletionStage that, when given stage completes exceptionally, is composed using
+     * Returns a new CompletableFuture that, when given CompletableFuture completes exceptionally, is composed using
      * the results of the supplied function applied to given stage's exception, using the supplied Executor.
      *
      * @param fn       the function to use to compute the returned CompletableFuture
@@ -1305,7 +1294,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @Nullable
-    public static <T> T resultNow(CompletableFuture<? extends T> cf) {
+    public static <T> T resultNow(CompletableFuture<T> cf) {
         if (IS_JAVA19_PLUS) {
             return cf.resultNow();
         }
@@ -1414,7 +1403,7 @@ public final class CompletableFutureUtils {
      * from an asynchronous task using the default executor.
      *
      * @param supplier a function returning the value to be used to complete given CompletableFuture
-     * @return given CompletableFuture
+     * @return the given CompletableFuture
      */
     public static <T, C extends CompletableFuture<? super T>> C completeAsync(C cf, Supplier<? extends T> supplier) {
         return completeAsync(cf, supplier, AsyncPoolHolder.ASYNC_POOL);
@@ -1426,7 +1415,7 @@ public final class CompletableFutureUtils {
      *
      * @param supplier a function returning the value to be used to complete given CompletableFuture
      * @param executor the executor to use for asynchronous execution
-     * @return given CompletableFuture
+     * @return the given CompletableFuture
      */
     public static <T, C extends CompletableFuture<? super T>>
     C completeAsync(C cf, Supplier<? extends T> supplier, Executor executor) {
