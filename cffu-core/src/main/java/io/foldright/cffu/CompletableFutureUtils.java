@@ -941,8 +941,8 @@ public final class CompletableFutureUtils {
      * @see CompletionStage#whenComplete(BiConsumer)
      * @see java.util.stream.Stream#peek(Consumer)
      */
-    public static <T, C extends CompletionStage<? extends T>> C peek(
-            C cf, BiConsumer<? super T, ? super Throwable> action) {
+    public static <T, C extends CompletionStage<? extends T>>
+    C peek(C cf, BiConsumer<? super T, ? super Throwable> action) {
         cf.whenComplete(action);
         return cf;
     }
@@ -965,8 +965,8 @@ public final class CompletableFutureUtils {
      * @see CompletionStage#whenCompleteAsync(BiConsumer)
      * @see java.util.stream.Stream#peek(Consumer)
      */
-    public static <T, C extends CompletionStage<? extends T>> C peekAsync(
-            C cf, BiConsumer<? super T, ? super Throwable> action) {
+    public static <T, C extends CompletionStage<? extends T>>
+    C peekAsync(C cf, BiConsumer<? super T, ? super Throwable> action) {
         cf.whenCompleteAsync(action);
         return cf;
     }
@@ -988,8 +988,8 @@ public final class CompletableFutureUtils {
      * @see CompletionStage#whenCompleteAsync(BiConsumer, Executor)
      * @see java.util.stream.Stream#peek(Consumer)
      */
-    public static <T, C extends CompletionStage<? extends T>> C peekAsync(
-            C cf, BiConsumer<? super T, ? super Throwable> action, Executor executor) {
+    public static <T, C extends CompletionStage<? extends T>>
+    C peekAsync(C cf, BiConsumer<? super T, ? super Throwable> action, Executor executor) {
         cf.whenCompleteAsync(action, executor);
         return cf;
     }
@@ -1109,8 +1109,8 @@ public final class CompletableFutureUtils {
      *           if given CompletionStage completed exceptionally
      * @return the new CompletableFuture
      */
-    public static <T> CompletableFuture<T> exceptionallyAsync(
-            CompletableFuture<T> cf, Function<Throwable, ? extends T> fn) {
+    public static <T, C extends CompletionStage<? super T>>
+    C exceptionallyAsync(C cf, Function<Throwable, ? extends T> fn) {
         return exceptionallyAsync(cf, fn, AsyncPoolHolder.ASYNC_POOL);
     }
 
@@ -1124,15 +1124,16 @@ public final class CompletableFutureUtils {
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
      */
-    public static <T> CompletableFuture<T> exceptionallyAsync(
-            CompletableFuture<T> cf, Function<Throwable, ? extends T> fn, Executor executor) {
+    @SuppressWarnings("unchecked")
+    public static <T, C extends CompletionStage<? super T>>
+    C exceptionallyAsync(C cf, Function<Throwable, ? extends T> fn, Executor executor) {
         if (IS_JAVA12_PLUS) {
-            return cf.exceptionallyAsync(fn, executor);
+            return (C) cf.exceptionallyAsync(fn, executor);
         }
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
         // below code is copied from CompletionStage#exceptionallyAsync
-        return cf.handle((r, ex) -> (ex == null) ? cf :
+        return (C) cf.handle((r, ex) -> (ex == null) ? cf :
                 cf.<T>handleAsync((r1, ex1) -> fn.apply(ex1), executor)
         ).thenCompose(x -> x);
     }
@@ -1194,14 +1195,15 @@ public final class CompletableFutureUtils {
      *           if given CompletionStage completed exceptionally
      * @return the new CompletableFuture
      */
-    public static <T> CompletableFuture<T> exceptionallyCompose(
-            CompletableFuture<T> cf, Function<Throwable, ? extends CompletionStage<T>> fn) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T, C extends CompletionStage<? super T>>
+    C exceptionallyCompose(C cf, Function<Throwable, ? extends CompletionStage<T>> fn) {
         if (IS_JAVA12_PLUS) {
-            return cf.exceptionallyCompose(fn);
+            return (C) cf.exceptionallyCompose((Function) fn);
         }
         requireNonNull(fn, "fn is null");
         // below code is copied from CompletionStage.exceptionallyCompose
-        return cf.handle((r, ex) -> (ex == null) ? cf : fn.apply(ex)).thenCompose(x -> x);
+        return (C) cf.handle((r, ex) -> (ex == null) ? cf : fn.apply(ex)).thenCompose(x -> x);
     }
 
     /**
@@ -1213,8 +1215,8 @@ public final class CompletableFutureUtils {
      *           if given CompletionStage completed exceptionally
      * @return the new CompletableFuture
      */
-    public static <T> CompletableFuture<T> exceptionallyComposeAsync(
-            CompletableFuture<T> cf, Function<Throwable, ? extends CompletionStage<T>> fn) {
+    public static <T, C extends CompletionStage<? super T>>
+    C exceptionallyComposeAsync(C cf, Function<Throwable, ? extends CompletionStage<T>> fn) {
         return exceptionallyComposeAsync(cf, fn, AsyncPoolHolder.ASYNC_POOL);
     }
 
@@ -1227,15 +1229,16 @@ public final class CompletableFutureUtils {
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
      */
-    public static <T> CompletableFuture<T> exceptionallyComposeAsync(
-            CompletableFuture<T> cf, Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T, C extends CompletionStage<? super T>>
+    C exceptionallyComposeAsync(C cf, Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
         if (IS_JAVA12_PLUS) {
-            return cf.exceptionallyComposeAsync(fn, executor);
+            return (C) cf.exceptionallyComposeAsync((Function) fn, executor);
         }
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
         // below code is copied from CompletionStage.exceptionallyComposeAsync
-        return cf.handle((r, ex) -> (ex == null) ? cf :
+        return (C) cf.handle((r, ex) -> (ex == null) ? cf :
                 cf.handleAsync((r1, ex1) -> fn.apply(ex1), executor).thenCompose(x -> x)
         ).thenCompose(x -> x);
     }
@@ -1405,7 +1408,8 @@ public final class CompletableFutureUtils {
      * @param supplier a function returning the value to be used to complete given CompletableFuture
      * @return the given CompletableFuture
      */
-    public static <T, C extends CompletableFuture<? super T>> C completeAsync(C cf, Supplier<? extends T> supplier) {
+    public static <T, C extends CompletableFuture<? super T>>
+    C completeAsync(C cf, Supplier<? extends T> supplier) {
         return completeAsync(cf, supplier, AsyncPoolHolder.ASYNC_POOL);
     }
 
