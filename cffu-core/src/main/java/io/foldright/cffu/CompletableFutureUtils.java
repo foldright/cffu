@@ -130,7 +130,7 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return CompletableFuture.completedFuture(null);
-        if (size == 1) return cfs[0].toCompletableFuture().thenApply(unused -> null);
+        if (size == 1) return toCf(cfs[0]).thenApply(unused -> null);
 
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[size];
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
@@ -206,7 +206,7 @@ public final class CompletableFutureUtils {
     }
 
     private static <T> CompletableFuture<List<T>> csToListCf(CompletionStage<? extends T> s) {
-        return s.toCompletableFuture().thenApply(CompletableFutureUtils::arrayList);
+        return toCf(s).thenApply(CompletableFutureUtils::arrayList);
     }
 
     /**
@@ -217,24 +217,19 @@ public final class CompletableFutureUtils {
         final CompletableFuture<Void>[] resultSetterCfs = new CompletableFuture[result.length];
         for (int i = 0; i < result.length; i++) {
             final int index = i;
-            resultSetterCfs[index] = css[index].toCompletableFuture().thenAccept(v -> result[index] = v);
+            resultSetterCfs[index] = toCf(css[index]).thenAccept(v -> result[index] = v);
         }
         return resultSetterCfs;
     }
 
-    private static <T> void fill(CompletionStage<? extends T>[] cfs,
+    private static <T> void fill(CompletionStage<? extends T>[] css,
                                  CompletableFuture<? extends T>[] successOrBeIncomplete,
                                  CompletableFuture<? extends T>[] failedOrBeIncomplete) {
         final CompletableFuture<T> incomplete = new CompletableFuture<>();
-
-        for (int i = 0; i < cfs.length; i++) {
-            final CompletionStage<? extends T> cf = cfs[i];
-
-            successOrBeIncomplete[i] = cf.toCompletableFuture()
-                    .handle((v, ex) -> ex == null ? cf : incomplete).thenCompose(x -> x);
-
-            failedOrBeIncomplete[i] = cf.toCompletableFuture()
-                    .handle((v, ex) -> ex == null ? incomplete : cf).thenCompose(x -> x);
+        for (int i = 0; i < css.length; i++) {
+            final CompletableFuture<T> f = toCf(css[i]);
+            successOrBeIncomplete[i] = f.handle((v, ex) -> ex == null ? f : incomplete).thenCompose(x -> x);
+            failedOrBeIncomplete[i] = f.handle((v, ex) -> ex == null ? incomplete : f).thenCompose(x -> x);
         }
     }
 
@@ -251,9 +246,28 @@ public final class CompletableFutureUtils {
      * Force converts {@link CompletionStage} array to {@link CompletableFuture} array,
      * IGNORE the compile-time type check.
      */
+    private static <T> CompletableFuture<T>[] f_toCfArray(CompletionStage<? extends T>[] stages) {
+        requireNonNull(stages, "cfs is null");
+        @SuppressWarnings("unchecked")
+        CompletableFuture<T>[] ret = new CompletableFuture[stages.length];
+        for (int i = 0; i < stages.length; i++) {
+            ret[i] = toCf(requireNonNull(stages[i], "cf" + (i + 1) + " is null"));
+        }
+        return ret;
+    }
+
+    /**
+     * Converts CompletionStage to CompletableFuture, reuse cf instance as much as possible.
+     * <p>
+     * <strong>CAUTION:</strong> because reused the CF instances,
+     * so the returned CF instances MUST NOT be written(e.g. {@link CompletableFuture#complete(Object)}).
+     * Otherwise, the caller should defensive copy instead of writing it directly.
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <T> CompletableFuture<T>[] f_toCfArray(CompletionStage<? extends T>[] cfs) {
-        return toCompletableFutureArray((CompletionStage[]) cfs);
+    private static <T> CompletableFuture<T> toCf(CompletionStage<? extends T> s) {
+        if (s instanceof CompletableFuture) return (CompletableFuture<T>) s;
+        else if (s instanceof Cffu) return ((Cffu) s).cffuUnwrap();
+        else return (CompletableFuture) s.toCompletableFuture();
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -306,7 +320,7 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return failedFuture(new NoCfsProvidedException());
-        if (size == 1) return f_cast(copy(cfs[0].toCompletableFuture()));
+        if (size == 1) return copy(toCf(cfs[0]));
 
         // NOTE: fill ONE MORE element of successOrBeIncompleteCfs LATER
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[size + 1];
