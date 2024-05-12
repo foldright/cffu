@@ -1489,7 +1489,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //    - isCompletedExceptionally()
     //    - isCancelled()
     //    - state()
-    //    - state()
+    //    - cffuState()
     //
     // NOTE about ExecutionException or CompletionException when the computation threw an exception:
     //   - get methods throw ExecutionException(checked exception)
