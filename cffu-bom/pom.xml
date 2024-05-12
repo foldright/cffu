@@ -13,7 +13,7 @@
 	<version>1.x-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
-	<description>${parent.artifactId}</description>
+	<description>cffu bom</description>
 	<url>https://github.com/foldright/cffu</url>
 	<inceptionYear>2023</inceptionYear>
 
