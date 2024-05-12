@@ -964,6 +964,19 @@ fun <T> CompletableFuture<T>.join(timeout: Long, unit: TimeUnit): T =
     CompletableFutureUtils.join(this, timeout, unit) as T
 
 /**
+ * Returns the result value if completed successfully, else returns the given valueIfNotSuccess.
+ *
+ * This method will not throw exceptions
+ * (CancellationException/CompletionException/ExecutionException/IllegalStateException/...).
+ *
+ * @param valueIfNotSuccess the value to return if not completed successfully
+ * @return the result value, if completed successfully, else the given valueIfNotSuccess
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> CompletionStage<T>.getSuccessNow(valueIfNotSuccess: T): T =
+    CompletableFutureUtils.getSuccessNow(this, valueIfNotSuccess) as T
+
+/**
  * Returns the computed result, without waiting.
  *
  * This method is for cases where the caller knows that the task has already completed successfully,
@@ -977,7 +990,7 @@ fun <T> CompletableFuture<T>.join(timeout: Long, unit: TimeUnit): T =
  * ```
  */
 @Suppress("UNCHECKED_CAST")
-fun <T> CompletableFuture<out T>.resultNow(): T =
+fun <T> CompletableFuture<T>.resultNow(): T =
     CompletableFutureUtils.resultNow(this) as T
 
 /**

@@ -390,6 +390,7 @@ class CompletableFutureExtensionsTest : FunSpec({
         val ff = CompletableFutureUtils.failedFuture<Int>(rte)
 
         cf.join(1, TimeUnit.MILLISECONDS) shouldBe n
+        cf.getSuccessNow(null) shouldBe n
         cf.resultNow() shouldBe n
         ff.exceptionNow() shouldBeSameInstanceAs rte
 

@@ -1297,6 +1297,22 @@ public final class CompletableFutureUtils {
     }
 
     /**
+     * Returns the result value if the given stage is completed successfully, else returns the given valueIfNotSuccess.
+     * <p>
+     * This method will not throw exceptions
+     * (CancellationException/CompletionException/ExecutionException/IllegalStateException/...).
+     *
+     * @param valueIfNotSuccess the value to return if not completed successfully
+     * @return the result value, if completed successfully, else the given valueIfNotSuccess
+     */
+    @Contract(pure = true)
+    @Nullable
+    public static <T> T getSuccessNow(CompletionStage<? extends T> cf, @Nullable T valueIfNotSuccess) {
+        final CompletableFuture<T> f = toCf(cf);
+        return f.isDone() && !f.isCompletedExceptionally() ? f.join() : valueIfNotSuccess;
+    }
+
+    /**
      * Returns the computed result, without waiting.
      * <p>
      * This method is for cases where the caller knows that the task has already completed successfully,
