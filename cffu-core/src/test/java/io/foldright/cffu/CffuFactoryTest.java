@@ -14,6 +14,7 @@ import org.junit.jupiter.api.condition.JRE;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.*;
+import java.util.function.Function;
 
 import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
 import static io.foldright.cffu.CompletableFutureUtils.toCompletableFutureArray;
@@ -292,6 +293,30 @@ class CffuFactoryTest {
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
+    }
+
+    @Test
+    void test_mostOf() throws Exception {
+        final Cffu<Integer> completed = cffuFactory.completedFuture(n);
+        final Cffu<Integer> failed = cffuFactory.failedFuture(rte);
+        final Cffu<Integer> cancelled = cffuFactory.toCffu(createCancelledFuture());
+        final Cffu<Integer> incomplete = cffuFactory.toCffu(createIncompleteFuture());
+
+        assertEquals(Arrays.asList(n, null, null, null), cffuFactory.mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, null, completed, failed, cancelled, incomplete
+        ).get());
+        assertEquals(Arrays.asList(n, anotherN, anotherN, anotherN), cffuFactory.mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, anotherN, completed, failed, cancelled, incomplete
+        ).get());
+
+        assertEquals(Arrays.asList(anotherN, anotherN, anotherN), cffuFactory.mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, anotherN, failed, cancelled, incomplete
+        ).get());
+
+        // do not wait for failed and cancelled
+        assertEquals(Arrays.asList(anotherN, anotherN), cffuFactory.mostResultsOfSuccess(
+                10, TimeUnit.DAYS, anotherN, failed, cancelled
+        ).get());
     }
 
     @Test

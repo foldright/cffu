@@ -113,7 +113,14 @@ class CompletableFutureExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(42.0),
         ).allOfFastFailCompletableFuture().await().shouldBeNull()
         arrayOf<CompletableFuture<*>>().allOfFastFailCompletableFuture().await().shouldBeNull()
+    }
 
+    test("mostOf") {
+        listOf(CompletableFuture(), CompletableFuture.completedFuture(42))
+            .mostResultsOfSuccessCompletableFuture(10, TimeUnit.MILLISECONDS, null).await() shouldBe listOf(null, 42)
+
+        arrayOf(CompletableFuture(), CompletableFuture.completedFuture(42))
+            .mostResultsOfSuccessCompletableFuture(10, TimeUnit.MILLISECONDS, null).await() shouldBe listOf(null, 42)
     }
 
     test("anyOf*") {

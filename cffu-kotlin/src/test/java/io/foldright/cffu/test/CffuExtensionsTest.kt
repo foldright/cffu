@@ -20,6 +20,7 @@ import kotlinx.coroutines.future.await
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 const val n = 42
 const val anotherN = 4242
@@ -125,6 +126,14 @@ class CffuExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(44),
         ).allResultsOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
 
+        // FIXME: java.lang.ClassCastException if not providing the type parameter explicitly:
+        //  class [Ljava.lang.Object; cannot be cast to class [Ljava.util.concurrent.CompletionStage;
+        arrayOf<CompletionStage<Int>>(
+            CompletableFuture.completedFuture(42),
+            testCffuFactory.completedFuture(43),
+            testCffuFactory.completedFuture(44),
+        ).allResultsOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+
         ////////////////////////////////////////
 
         // collection
@@ -286,6 +295,47 @@ class CffuExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(43),
             CompletableFuture.completedFuture(44),
         ).allOfFastFailCffu(testCffuFactory).await().shouldBeNull()
+    }
+
+    test("mostOf") {
+        // collection
+
+        listOf(
+            testCffuFactory.newIncompleteCffu(),
+            testCffuFactory.completedFuture(42),
+        ).mostResultsOfSuccessCffu(10, TimeUnit.MILLISECONDS, -1, testCffuFactory).await() shouldBe listOf(-1, 42)
+
+        setOf(
+            testCffuFactory.newIncompleteCffu(),
+            testCffuFactory.completedFuture(42),
+        ).mostResultsOfSuccessCffu(10, TimeUnit.MILLISECONDS, -1).await() shouldBe listOf(-1, 42)
+
+        listOf(
+            CompletableFuture(),
+            CompletableFuture.completedFuture(42),
+        ).mostResultsOfSuccessCffu(10, TimeUnit.MILLISECONDS, -1, testCffuFactory).await() shouldBe listOf(-1, 42)
+
+        // Array
+
+        arrayOf(
+            testCffuFactory.newIncompleteCffu(),
+            testCffuFactory.completedFuture(42),
+        ).mostResultsOfSuccessCffu(10, TimeUnit.MILLISECONDS, -1, testCffuFactory).await() shouldBe listOf(-1, 42)
+
+        arrayOf(
+            testCffuFactory.newIncompleteCffu(),
+            testCffuFactory.completedFuture(42),
+        ).mostResultsOfSuccessCffu(10, TimeUnit.MILLISECONDS, -1).await() shouldBe listOf(-1, 42)
+
+        arrayOf(
+            CompletableFuture(),
+            CompletableFuture.completedFuture(42),
+        ).mostResultsOfSuccessCffu(10, TimeUnit.MILLISECONDS, -1, testCffuFactory).await() shouldBe listOf(-1, 42)
+
+        // FIXME: java.lang.ClassCastException if not providing the type parameter explicitly:
+        //  class [Ljava.lang.Object; cannot be cast to class [Ljava.util.concurrent.CompletionStage;
+        arrayOf<CompletionStage<Int>>(CompletableFuture(), testCffuFactory.completedFuture(42))
+            .mostResultsOfSuccessCffu(10, TimeUnit.MILLISECONDS, -1, testCffuFactory).await() shouldBe listOf(-1, 42)
     }
 
     test("anyOf*") {

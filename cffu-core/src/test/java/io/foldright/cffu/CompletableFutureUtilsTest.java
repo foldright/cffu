@@ -316,6 +316,51 @@ class CompletableFutureUtilsTest {
         }
     }
 
+    @Test
+    void test_mostOf() throws Exception {
+        final CompletableFuture<Integer> completed = completedFuture(n);
+        final CompletableFuture<Integer> failed = failedFuture(rte);
+        final CompletableFuture<Integer> cancelled = createCancelledFuture();
+        final CompletableFuture<Integer> incomplete = createIncompleteFuture();
+
+        assertEquals(0, mostResultsOfSuccess(10, TimeUnit.MILLISECONDS, null).get().size());
+
+        assertEquals(Collections.singletonList(n), mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, null, completed).get());
+
+        assertEquals(Arrays.asList(n, null, null, null), mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, null, completed, failed, cancelled, incomplete
+        ).get());
+        assertEquals(Arrays.asList(n, anotherN, anotherN, anotherN), mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, anotherN, completed, failed, cancelled, incomplete
+        ).get());
+
+        assertEquals(Arrays.asList(anotherN, anotherN, anotherN), mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, anotherN, failed, cancelled, incomplete
+        ).get());
+
+        // do not wait for failed and cancelled
+        assertEquals(Arrays.asList(anotherN, anotherN), mostResultsOfSuccess(
+                10, TimeUnit.DAYS, anotherN, failed, cancelled
+        ).get());
+    }
+
+    @Test
+    void test_mostOf_wontModifyInputCf() throws Exception {
+        final CompletableFuture<Integer> incomplete = createIncompleteFuture();
+        final CompletableFuture<Integer> incomplete2 = createIncompleteFuture();
+
+        assertEquals(Collections.singletonList(null), mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, null, incomplete
+        ).get());
+        assertEquals(Arrays.asList(null, null), mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, null, incomplete, incomplete2
+        ).get());
+
+        assertEquals(CffuState.RUNNING, state(incomplete));
+        assertEquals(CffuState.RUNNING, state(incomplete2));
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# anyOf* methods
     ////////////////////////////////////////////////////////////////////////////////

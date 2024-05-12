@@ -28,7 +28,7 @@ import static java.util.Objects.requireNonNull;
 @ReturnValuesAreNonnullByDefault
 public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
-    //# allOf* methods
+    //# allOf*/mostResultsOfSuccess methods
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -183,6 +183,38 @@ public final class CompletableFutureUtils {
 
         CompletableFuture<Object> ret = CompletableFuture.anyOf(failedOrBeIncomplete);
         return f_cast(ret);
+    }
+
+    /**
+     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
+     * the given stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
+     * (aka the result extraction logic is {@link #getSuccessNow(CompletionStage, Object)}).
+     *
+     * @param timeout           how long to wait in units of {@code unit}
+     * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param valueIfNotSuccess the value to return if not completed successfully
+     * @param cfs               the stages
+     * @see #batchGetSuccessNow(Object, CompletionStage[])
+     * @see #getSuccessNow(CompletionStage, Object)
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    public static <T> CompletableFuture<List<T>> mostResultsOfSuccess(
+            long timeout, TimeUnit unit, @Nullable T valueIfNotSuccess, CompletionStage<? extends T>... cfs) {
+        requireNonNull(unit, "unit is null");
+        requireCfsAndEleNonNull(cfs);
+
+        if (cfs.length == 0) return CompletableFuture.completedFuture(arrayList());
+        if (cfs.length == 1) {
+            final CompletableFuture<T> f = copy(toCf(cfs[0]));
+            return orTimeout(f, timeout, unit).handle((unused, ex) -> arrayList(getSuccessNow(f, valueIfNotSuccess)));
+        }
+
+        final CompletableFuture<T>[] cfArray = f_toCfArray(cfs);
+        return orTimeout(CompletableFuture.allOf(cfArray), timeout, unit)
+                .handle((unused, ex) -> batchGetSuccessNow(valueIfNotSuccess, cfArray));
     }
 
     @SafeVarargs
@@ -1444,6 +1476,7 @@ public final class CompletableFutureUtils {
      * (aka the result extraction logic is {@link #getSuccessNow(CompletionStage, Object)}).
      *
      * @param cfs the stages
+     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
      * @see #getSuccessNow(CompletionStage, Object)
      */
     @Contract(pure = true)
