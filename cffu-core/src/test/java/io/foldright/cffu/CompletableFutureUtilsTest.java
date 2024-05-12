@@ -968,6 +968,24 @@ class CompletableFutureUtilsTest {
     }
 
     @Test
+    void test_gets() {
+        final CompletableFuture<Integer> completed = completedFuture(n);
+        final CompletableFuture<Integer> failed = failedFuture(rte);
+        final CompletableFuture<Integer> cancelled = createCancelledFuture();
+        final CompletableFuture<Integer> incomplete = createIncompleteFuture();
+
+        assertEquals(Arrays.asList(n, anotherN, anotherN, anotherN),
+                batchGetSuccessNow(anotherN, completed, incomplete, cancelled, failed));
+
+        assertEquals(Tuple2.of(n, null), tupleGetSuccessNow(completed, failed));
+        assertEquals(Tuple3.of(null, n, null), tupleGetSuccessNow(failed, completed, cancelled));
+        assertEquals(Tuple4.of(null, n, null, anotherN),
+                tupleGetSuccessNow(failed, completed, cancelled, completedFuture(anotherN)));
+        assertEquals(Tuple5.of(null, n, null, anotherN, null),
+                tupleGetSuccessNow(failed, completed, cancelled, completedFuture(anotherN), failed));
+    }
+
+    @Test
     void test_write() throws Exception {
         assertEquals(n, completeAsync(createIncompleteFuture(), () -> n).get());
         assertEquals(n, completeAsync(createIncompleteFuture(), () -> n, commonPool()).get());
