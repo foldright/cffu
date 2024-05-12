@@ -38,7 +38,7 @@ final class Delayer {
      * @return a Future can be used to cancel the delayed task(timeout CF)
      * @see FutureCanceller
      */
-    public static ScheduledFuture<?> delayToTimoutCf(CompletableFuture<?> cf, long delay, TimeUnit unit) {
+    static ScheduledFuture<?> delayToTimoutCf(CompletableFuture<?> cf, long delay, TimeUnit unit) {
         return delay(new CfTimeout(cf), delay, unit);
     }
 
@@ -46,7 +46,7 @@ final class Delayer {
      * @return a Future can be used to cancel the delayed task(complete CF)
      * @see FutureCanceller
      */
-    public static <T> ScheduledFuture<?> delayToCompleteCf(
+    static <T> ScheduledFuture<?> delayToCompleteCf(
             CompletableFuture<? super T> cf, T value, long delay, TimeUnit unit) {
         return delay(new CfCompleter<>(cf, value), delay, unit);
     }
@@ -112,16 +112,21 @@ final class TaskSubmitter implements Runnable {
  * Action to cf.completeExceptionally with TimeoutException
  */
 final class CfTimeout implements Runnable {
-    private final CompletableFuture<?> cf;
+    private final CompletableFuture<?>[] cfs;
 
-    CfTimeout(CompletableFuture<?> cf) {
-        this.cf = cf;
+    CfTimeout(CompletableFuture<?>... cfs) {
+        this.cfs = cfs;
     }
 
     @Override
     public void run() {
-        if (cf != null && !cf.isDone())
-            cf.completeExceptionally(new TimeoutException());
+        TimeoutException toe = null;
+        for (CompletableFuture<?> cf : cfs) {
+            if (!cf.isDone()) {
+                if (toe == null) toe = new TimeoutException();
+                cf.completeExceptionally(toe);
+            }
+        }
     }
 }
 
@@ -167,7 +172,6 @@ final class FutureCanceller implements BiConsumer<Object, Throwable> {
 /**
  * code is copied from {@code CompletableFuture#AsyncSupply} with small adoption.
  */
-@SuppressWarnings("serial")
 @SuppressFBWarnings("SE_BAD_FIELD")
 final class CfCompleterBySupplier<T> extends ForkJoinTask<Void>
         implements Runnable, CompletableFuture.AsynchronousCompletionTask {

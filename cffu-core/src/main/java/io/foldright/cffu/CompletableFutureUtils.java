@@ -185,8 +185,119 @@ public final class CompletableFutureUtils {
         return f_cast(ret);
     }
 
+    /**
+     * return the most result of the given {@code CompletableFuture}s in the given time({@code timeout}),
+     * aka. as many results as possible in the given time.
+     * <p>
+     * If the CompletableFuture is successful, the result is the value {@link CompletableFuture#resultNow()};
+     * Otherwise {@code null}.
+     *
+     * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param cfs     the stages
+     */
+    public static <T> CompletableFuture<List<T>> mostOf(
+            long timeout, TimeUnit unit, CompletionStage<? extends T>... cfs) {
+        final Function<CompletableFuture<T>, T> converter = cf -> {
+            if (cf.state() == Future.State.SUCCESS) return cf.resultNow();
+            else return null;
+        };
+        return mostOf(timeout, unit, converter, cfs);
+    }
+
+    /**
+     * return the most result of the given {@code CompletableFuture}s in the given time({@code timeout}),
+     * aka. as many results as possible in the given time.
+     *
+     * @param timeout   how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
+     * @param unit      a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param converter converts the CompletableFuture to its result
+     * @param cfs       the stages
+     */
+    public static <T, R> CompletableFuture<List<R>> mostOf(
+            long timeout, TimeUnit unit,
+            Function<CompletableFuture<T>, ? extends R> converter, CompletionStage<? extends T>... cfs) {
+        requireNonNull(unit, "unit is null");
+        requireNonNull(converter, "converter is null");
+        requireCfsAndEleNonNull(cfs);
+
+        final int size = cfs.length;
+        if (size == 0) return CompletableFuture.completedFuture(arrayList());
+        if (size == 1) {
+            CompletableFuture<T> cf = copy(toCf(cfs[0]));
+            return orTimeout(cf, timeout, unit).handle((unused, ex) -> arrayList(converter.apply(cf)));
+        }
+
+        final CompletableFuture<T>[] cfArray = f_toCfArray(cfs);
+        final BiFunction<Void, Throwable, List<Object>> fn = (unused, ex) -> {
+            Object[] results = new Object[cfArray.length];
+            for (int i = 0; i < cfArray.length; i++) {
+                results[i] = converter.apply(cfArray[i]);
+            }
+            return arrayList(results);
+        };
+        CompletableFuture<List<Object>> ret = orTimeout(CompletableFuture.allOf(cfArray), timeout, unit).handle(fn);
+        return f_cast(ret);
+    }
+    /**
+     * return the most result of the given {@code CompletableFuture}s in the given time({@code timeout}),
+     * aka. as many results as possible in the given time.
+     * <p>
+     * If the CompletableFuture is successful, the result is the value {@link CompletableFuture#resultNow()};
+     * Otherwise {@code null}.
+     *
+     * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param cfs     the stages
+     */
+    public static <T> CompletableFuture<List<T>> mostOf2(
+            long timeout, TimeUnit unit, CompletionStage<? extends T>... cfs) {
+        final Function<CompletableFuture<T>, T> converter = cf -> {
+            if (cf.state() == Future.State.SUCCESS) return cf.resultNow();
+            else return null;
+        };
+        @SuppressWarnings("unchecked")
+        final Function<List<CompletableFuture<T>>, List<T>> fn = (cfList) -> {
+            Object[] results = new Object[cfList.size()];
+            for (int i = 0; i < cfList.size(); i++) {
+                results[i] = converter.apply(cfList.get(i));
+            }
+            return (List<T>) arrayList(results);
+        };
+        return await(timeout, unit, cfs).thenApply(fn);
+    }
+
+    /**
+     * return the most result of the given {@code CompletableFuture}s in the given time({@code timeout}),
+     * aka. as many results as possible in the given time.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param cfs     the stages
+     */
+    public static <T> CompletableFuture<List<CompletableFuture<T>>> await(
+            long timeout, TimeUnit unit, CompletionStage<? extends T>... cfs) {
+        requireNonNull(unit, "unit is null");
+        requireCfsAndEleNonNull(cfs);
+
+        final int size = cfs.length;
+        if (size == 0) return CompletableFuture.completedFuture(arrayList());
+        if (size == 1) {
+            CompletableFuture<T> cf = copy(toCf(cfs[0]));
+            return orTimeout(cf, timeout, unit).handle((unused, ex) -> arrayList(cf));
+        }
+
+        final CompletableFuture<T>[] cfArray = f_toCfArray(cfs);
+        return orTimeout(CompletableFuture.allOf(cfArray), timeout, unit)
+                .handle((unused, throwable) -> arrayList(cfArray));
+    }
+
+    public static <T> List<T> results(Function<CompletableFuture<T>, T> converter, CompletionStage<? extends T>... cfs) {
+        return null;
+    }
+
     @SafeVarargs
-    private static <S extends CompletionStage<?>> S[] requireCfsAndEleNonNull(S... css) {
+    static <S extends CompletionStage<?>> S[] requireCfsAndEleNonNull(S... css) {
         requireNonNull(css, "cfs is null");
         for (int i = 0; i < css.length; i++) {
             requireNonNull(css[i], "cf" + (i + 1) + " is null");
@@ -199,7 +310,7 @@ public final class CompletableFutureUtils {
      * Safer for application code which may reuse the returned list as normal collection.
      */
     @SafeVarargs
-    private static <T> List<T> arrayList(T... elements) {
+    static <T> List<T> arrayList(T... elements) {
         List<T> ret = new ArrayList<>(elements.length);
         ret.addAll(Arrays.asList(elements));
         return ret;
@@ -246,7 +357,7 @@ public final class CompletableFutureUtils {
      * Force converts {@link CompletionStage} array to {@link CompletableFuture} array,
      * IGNORE the compile-time type check.
      */
-    private static <T> CompletableFuture<T>[] f_toCfArray(CompletionStage<? extends T>[] stages) {
+    static <T> CompletableFuture<T>[] f_toCfArray(CompletionStage<? extends T>[] stages) {
         requireNonNull(stages, "cfs is null");
         @SuppressWarnings("unchecked")
         CompletableFuture<T>[] ret = new CompletableFuture[stages.length];
@@ -264,7 +375,7 @@ public final class CompletableFutureUtils {
      * Otherwise, the caller should defensive copy instead of writing it directly.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <T> CompletableFuture<T> toCf(CompletionStage<? extends T> s) {
+    static <T> CompletableFuture<T> toCf(CompletionStage<? extends T> s) {
         if (s instanceof CompletableFuture) return (CompletableFuture<T>) s;
         else if (s instanceof Cffu) return ((Cffu) s).cffuUnwrap();
         else return (CompletableFuture) s.toCompletableFuture();
