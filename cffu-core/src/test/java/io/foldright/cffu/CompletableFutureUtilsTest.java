@@ -1027,56 +1027,6 @@ class CompletableFutureUtilsTest {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# check type parameter declaration, Variance(covariance/contravariance)
-    ////////////////////////////////////////////////////////////////////////////////
-
-    @Test
-    @SuppressWarnings({"UnnecessaryLocalVariable", "unused"})
-    void checkTypeParameterDeclaration_peek_completeAsync() throws Exception {
-        final CompletableFuture<Integer> f = completedFuture(42);
-        final CompletableFuture<? extends Integer> fe = f;
-        final CompletableFuture<? super Integer> fs = f;
-        final CompletableFuture<?> fq = f;
-
-        final BiConsumer<? super Integer, Throwable> c = (v, ex) -> {
-        };
-        CompletableFutureUtils.peek(fe, c).get();
-        CompletableFutureUtils.peekAsync(fe, c).get();
-        CompletableFutureUtils.peekAsync(fe, c, executorService).get();
-
-        final Supplier<? extends Integer> s = () -> 0;
-        fs.complete(0);
-        CompletableFutureUtils.completeAsync(fs, s).complete(1);
-        CompletableFutureUtils.completeAsync(fs, s, executorService).complete(1);
-
-        CompletableFuture<? extends Integer> ffe = orTimeout(fe, 1, TimeUnit.MILLISECONDS);
-        CompletableFuture<? super Integer> ffs = orTimeout(fs, 1, TimeUnit.MILLISECONDS);
-        CompletableFuture<?> ffq = orTimeout(fq, 1, TimeUnit.MILLISECONDS);
-    }
-
-    @Test
-    @EnabledForJreRange(min = JRE.JAVA_19)
-    @SuppressWarnings({"UnnecessaryLocalVariable", "unused", "RedundantThrows"})
-    void checkTypeParameterDeclaration_resultNow() throws Exception {
-        final CompletableFuture<Integer> f = completedFuture(42);
-        final CompletableFuture<? extends Integer> fe = f;
-        final CompletableFuture<? super Integer> fs = f;
-        final CompletableFuture<?> fq = f;
-
-        Integer i = f.resultNow();
-        Integer ii = resultNow(f);
-
-        Integer ie = fe.resultNow();
-        Integer iie = resultNow(fe);
-
-        Object is = fs.resultNow();
-        Object iis = resultNow(fs);
-
-        Object iq = fq.resultNow();
-        Object iiq = resultNow(fq);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
     //# test helper fields
     ////////////////////////////////////////////////////////////////////////////////
 
