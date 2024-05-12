@@ -2,7 +2,6 @@ package io.foldright.cffu.kotlin
 
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
-import io.foldright.cffu.CompletableFutureUtils
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
@@ -17,7 +16,7 @@ import java.util.concurrent.CompletionStage
 ////////////////////////////////////////
 
 /**
- * Wrap an existed [CompletableFuture]/[CompletionStage] to [Cffu].
+ * Wrap an existed [CompletionStage] (including [CompletableFuture]) to [Cffu].
  *
  * This method is the same as [CffuFactory.toCffu], providing this method is convenient for method chaining.
  *
@@ -28,7 +27,7 @@ fun <T> CompletionStage<T>.toCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.toCffu(this)
 
 /**
- * Wrap input [CompletableFuture]/[CompletionStage] collection elements to [Cffu] by [CffuFactory.toCffu].
+ * Wrap input [CompletionStage] (including [CompletableFuture]) collection elements to [Cffu] by [CffuFactory.toCffu].
  *
  * This method is the same as [CffuFactory.toCffuArray], providing this method is convenient for method chaining.
  *
@@ -39,7 +38,7 @@ fun <T> Collection<CompletionStage<T>>.toCffu(cffuFactory: CffuFactory): List<Cf
     map { it.toCffu(cffuFactory) }
 
 /**
- * Wrap input [CompletableFuture]/[CompletionStage] array elements to [Cffu] by [CffuFactory.toCffu].
+ * Wrap input [CompletionStage] (including [CompletableFuture]) array elements to [Cffu] by [CffuFactory.toCffu].
  *
  * This method is the same as [CffuFactory.toCffuArray], providing this method is convenient for method chaining.
  *
@@ -112,38 +111,38 @@ fun <T> Array<out Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSEN
 }
 
 /**
- * Returns a new Cffu with the results in the **same order** of all the given CompletableFutures,
- * the new Cffu is completed when all the given CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
+ * Returns a new Cffu with the results in the **same order** of all the given stages,
+ * the new Cffu is completed when all the given stages complete.
+ * If any of the given stages complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
+ * If no stages are provided, returns a Cffu completed with the value empty list.
  *
- * This method is the same as [allOfCffu], except the returned Cffu contains the results of input CompletableFutures.
+ * This method is the same as [allOfCffu], except the returned Cffu contains the results of input stages.
  *
  * This method is the same as [CffuFactory.allResultsOf], providing this method is convenient for method chaining.
  *
  * @see allOfCffu
  * @see CffuFactory.allResultsOf
  */
-@JvmName("allResultsOfCffuCf")
-fun <T> Collection<CompletableFuture<out T>>.allResultsOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+@JvmName("allResultsOfCffuCs")
+fun <T> Collection<CompletionStage<out T>>.allResultsOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
     cffuFactory.allResultsOf(*this.toTypedArray())
 
 /**
- * Returns a new Cffu with the results in the **same order** of all the given CompletableFutures,
- * the new Cffu is completed when all the given CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
+ * Returns a new Cffu with the results in the **same order** of all the given stages,
+ * the new Cffu is completed when all the given stages complete.
+ * If any of the given stages complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
+ * If no stages are provided, returns a Cffu completed with the value empty list.
  *
- * This method is the same as [allOfCffu], except the returned Cffu contains the results of input CompletableFutures.
+ * This method is the same as [allOfCffu], except the returned Cffu contains the results of input stages.
  *
  * This method is the same as [CffuFactory.allResultsOf], providing this method is convenient for method chaining.
  *
  * @see allOfCffu
  * @see CffuFactory.allResultsOf
  */
-fun <T> Array<out CompletableFuture<out T>>.allResultsOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+fun <T> Array<out CompletionStage<out T>>.allResultsOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
     cffuFactory.allResultsOf(*this)
 
 /**
@@ -192,36 +191,36 @@ fun Array<out Cffu<*>>.allOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> 
 }
 
 /**
- * Returns a new Cffu that is completed when all the given CompletableFutures complete.
+ * Returns a new Cffu that is completed when all the given stages complete.
  * If any of the given Cffu complete exceptionally, then the returned
  * Cffu also does so, with a CompletionException holding this exception as its cause.
- * Otherwise, the results, if any, of the given CompletableFutures are not reflected in
+ * Otherwise, the results, if any, of the given stages are not reflected in
  * the returned Cffu(`Cffu<Void>`), but may be obtained by inspecting them individually.
- * If no CompletableFutures are provided, returns a Cffu completed with the value `null`.
+ * If no stages are provided, returns a Cffu completed with the value `null`.
  *
  * This method is the same as [CffuFactory.allOf], providing this method is convenient for method chaining.
  *
  * @see allResultsOfCffu
  * @see CffuFactory.allOf
  */
-@JvmName("allOfCffuCf")
-fun Collection<CompletableFuture<*>>.allOfCffu(cffuFactory: CffuFactory): Cffu<Void> =
+@JvmName("allOfCffuCs")
+fun Collection<CompletionStage<*>>.allOfCffu(cffuFactory: CffuFactory): Cffu<Void> =
     cffuFactory.allOf(*this.toTypedArray())
 
 /**
- * Returns a new Cffu that is completed when all the given CompletableFutures complete.
+ * Returns a new Cffu that is completed when all the given stages complete.
  * If any of the given Cffu complete exceptionally, then the returned
  * Cffu also does so, with a CompletionException holding this exception as its cause.
- * Otherwise, the results, if any, of the given CompletableFutures are not reflected in
+ * Otherwise, the results, if any, of the given stages are not reflected in
  * the returned Cffu(`Cffu<Void>`), but may be obtained by inspecting them individually.
- * If no CompletableFutures are provided, returns a Cffu completed with the value `null`.
+ * If no stages are provided, returns a Cffu completed with the value `null`.
  *
  * This method is the same as [CffuFactory.allOf], providing this method is convenient for method chaining.
  *
  * @see allResultsOfCffu
  * @see CffuFactory.allOf
  */
-fun Array<out CompletableFuture<*>>.allOfCffu(cffuFactory: CffuFactory): Cffu<Void> =
+fun Array<out CompletionStage<*>>.allOfCffu(cffuFactory: CffuFactory): Cffu<Void> =
     cffuFactory.allOf(*this)
 
 /**
@@ -230,7 +229,7 @@ fun Array<out CompletableFuture<*>>.allOfCffu(cffuFactory: CffuFactory): Cffu<Vo
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given Cffus,
  * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
+ * If no Cffus are provided, returns a Cffu completed with the value empty list.
  *
  * This method is the same as [allOfFastFailCffu], except the returned Cffu contains the results of input Cffus.
  *
@@ -254,7 +253,7 @@ fun <T> Collection<Cffu<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactor
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given Cffus,
  * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
+ * If no Cffus are provided, returns a Cffu completed with the value empty list.
  *
  * This method is the same as [allOfFastFailCffu], except the returned Cffu contains the results of input Cffus.
  *
@@ -273,12 +272,12 @@ fun <T> Array<out Cffu<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactory
 }
 
 /**
- * Returns a new Cffu with the results in the **same order** of all the given CompletableFutures,
- * the new Cffu success when all the given CompletableFutures success.
- * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
- * also does so *without* waiting other incomplete given CompletableFutures,
+ * Returns a new Cffu with the results in the **same order** of all the given stages,
+ * the new Cffu success when all the given stages success.
+ * If any of the given stages complete exceptionally, then the returned Cffu
+ * also does so *without* waiting other incomplete given stages,
  * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
+ * If no stages are provided, returns a Cffu completed with the value empty list.
  *
  * This method is the same as [allOfFastFailCffu], except the returned Cffu contains the results of input Cffus.
  *
@@ -287,17 +286,17 @@ fun <T> Array<out Cffu<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactory
  * @see allOfFastFailCffu
  * @see CffuFactory.allResultsOfFastFail
  */
-@JvmName("allResultsOfFastFailCffuCf")
-fun <T> Collection<CompletableFuture<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+@JvmName("allResultsOfFastFailCffuCs")
+fun <T> Collection<CompletionStage<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
     cffuFactory.allResultsOfFastFail(*this.toTypedArray())
 
 /**
- * Returns a new Cffu with the results in the **same order** of all the given CompletableFutures,
- * the new Cffu success when all the given CompletableFutures success.
- * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
- * also does so *without* waiting other incomplete given CompletableFutures,
+ * Returns a new Cffu with the results in the **same order** of all the given stages,
+ * the new Cffu success when all the given stages success.
+ * If any of the given stages complete exceptionally, then the returned Cffu
+ * also does so *without* waiting other incomplete given stages,
  * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a Cffu completed with the value empty list.
+ * If no stages are provided, returns a Cffu completed with the value empty list.
  *
  * This method is the same as [allOfFastFailCffu], except the returned Cffu contains the results of input Cffus.
  *
@@ -306,7 +305,7 @@ fun <T> Collection<CompletableFuture<out T>>.allResultsOfFastFailCffu(cffuFactor
  * @see allOfFastFailCffu
  * @see CffuFactory.allResultsOfFastFail
  */
-fun <T> Array<out CompletableFuture<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+fun <T> Array<out CompletionStage<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
     cffuFactory.allResultsOfFastFail(*this)
 
 /**
@@ -356,38 +355,38 @@ fun Array<out Cffu<*>>.allOfFastFailCffu(cffuFactory: CffuFactory = ABSENT): Cff
 }
 
 /**
- * Returns a new Cffu that is successful when all the given CompletableFutures success,
- * the results(`Cffu<Void>`) of the given CompletableFutures are not reflected in the returned Cffu,
+ * Returns a new Cffu that is successful when all the given stages success,
+ * the results(`Cffu<Void>`) of the given stages are not reflected in the returned Cffu,
  * but may be obtained by inspecting them individually.
- * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
- * also does so *without* waiting other incomplete given CompletableFutures,
+ * If any of the given stages complete exceptionally, then the returned Cffu
+ * also does so *without* waiting other incomplete given stages,
  * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a Cffu completed with the value `null`.
+ * If no stages are provided, returns a Cffu completed with the value `null`.
  *
  * This method is the same as [CffuFactory.allOfFastFail], providing this method is convenient for method chaining.
  *
  * @see allResultsOfFastFailCffu
  * @see CffuFactory.allOfFastFail
  */
-@JvmName("allOfFastFailCffuCf")
-fun Collection<CompletableFuture<*>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<Void> =
+@JvmName("allOfFastFailCffuCs")
+fun Collection<CompletionStage<*>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<Void> =
     cffuFactory.allOfFastFail(*this.toTypedArray())
 
 /**
- * Returns a new Cffu that is successful when all the given CompletableFutures success,
- * the results(`Cffu<Void>`) of the given CompletableFutures are not reflected in the returned Cffu,
+ * Returns a new Cffu that is successful when all the given stages success,
+ * the results(`Cffu<Void>`) of the given stages are not reflected in the returned Cffu,
  * but may be obtained by inspecting them individually.
- * If any of the given CompletableFutures complete exceptionally, then the returned Cffu
- * also does so *without* waiting other incomplete given CompletableFutures,
+ * If any of the given stages complete exceptionally, then the returned Cffu
+ * also does so *without* waiting other incomplete given stages,
  * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a Cffu completed with the value `null`.
+ * If no stages are provided, returns a Cffu completed with the value `null`.
  *
  * This method is the same as [CffuFactory.allOfFastFail], providing this method is convenient for method chaining.
  *
  * @see allResultsOfFastFailCffu
  * @see CffuFactory.allOfFastFail
  */
-fun Array<out CompletableFuture<*>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<Void> =
+fun Array<out CompletionStage<*>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<Void> =
     cffuFactory.allOfFastFail(*this)
 
 ////////////////////////////////////////
@@ -430,24 +429,24 @@ fun <T> Array<out Cffu<out T>>.anyOfCffu(cffuFactory: CffuFactory = ABSENT): Cff
 }
 
 /**
- * Returns a new Cffu that is completed when any of the given CompletableFutures complete, with the same result.
+ * Returns a new Cffu that is completed when any of the given stages complete, with the same result.
  *
  * This method is the same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
  *
  * @see CffuFactory.anyOf
  */
-@JvmName("anyOfCffuCf")
-fun <T> Collection<CompletableFuture<out T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T> =
+@JvmName("anyOfCffuCs")
+fun <T> Collection<CompletionStage<out T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.anyOf(*this.toTypedArray())
 
 /**
- * Returns a new Cffu that is completed when any of the given CompletableFutures complete, with the same result.
+ * Returns a new Cffu that is completed when any of the given stages complete, with the same result.
  *
  * This method is the same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
  *
  * @see CffuFactory.anyOf
  */
-fun <T> Array<out CompletableFuture<out T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T> =
+fun <T> Array<out CompletionStage<out T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.anyOf(*this)
 
 /**
@@ -495,10 +494,10 @@ fun <T> Array<out Cffu<out T>>.anyOfSuccessCffu(cffuFactory: CffuFactory = ABSEN
 }
 
 /**
- * Returns a new Cffu that is successful when any of the given CompletableFutures success,
- * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
+ * Returns a new Cffu that is successful when any of the given stages success,
+ * with the same result. Otherwise, all the given stages complete exceptionally,
  * the returned Cffu also does so, with a CompletionException holding
- * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
+ * an exception from any of the given stages as its cause. If no stages are provided,
  * returns a new Cffu that is already completed exceptionally with a CompletionException
  * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
@@ -507,15 +506,15 @@ fun <T> Array<out Cffu<out T>>.anyOfSuccessCffu(cffuFactory: CffuFactory = ABSEN
  * @see anyOfCffu
  * @see CffuFactory.anyOfSuccess
  */
-@JvmName("anyOfSuccessCffuCf")
-fun <T> Collection<CompletableFuture<out T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
+@JvmName("anyOfSuccessCffuCs")
+fun <T> Collection<CompletionStage<out T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.anyOfSuccess(*this.toTypedArray())
 
 /**
- * Returns a new Cffu that is successful when any of the given CompletableFutures success,
- * with the same result. Otherwise, all the given CompletableFutures complete exceptionally,
+ * Returns a new Cffu that is successful when any of the given stages success,
+ * with the same result. Otherwise, all the given stages complete exceptionally,
  * the returned Cffu also does so, with a CompletionException holding
- * an exception from any of the given CompletableFutures as its cause. If no CompletableFutures are provided,
+ * an exception from any of the given stages as its cause. If no stages are provided,
  * returns a new Cffu that is already completed exceptionally with a CompletionException
  * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
@@ -524,7 +523,7 @@ fun <T> Collection<CompletableFuture<out T>>.anyOfSuccessCffu(cffuFactory: CffuF
  * @see anyOfCffu
  * @see CffuFactory.anyOfSuccess
  */
-fun <T> Array<out CompletableFuture<out T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
+fun <T> Array<out CompletionStage<out T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.anyOfSuccess(*this)
 
 ////////////////////////////////////////
