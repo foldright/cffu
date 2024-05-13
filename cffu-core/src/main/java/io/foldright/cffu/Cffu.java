@@ -1482,6 +1482,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //    - join()              // BLOCKING!
     //    - join(timeout, unit) // BLOCKING!
     //    - getNow(T valueIfAbsent)
+    //    - getSuccessNow(T valueIfAbsent)
     //    - resultNow()
     //    - exceptionNow()
     //
@@ -1508,6 +1509,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @see #join()
      * @see #join(long, TimeUnit)
      * @see #getNow(Object)
+     * @see #getSuccessNow(Object)
      * @see #resultNow()
      * @see #get(long, TimeUnit)
      */
@@ -1532,6 +1534,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws TimeoutException      if the wait timed out
      * @see #join(long, TimeUnit)
      * @see #getNow(Object)
+     * @see #getSuccessNow(Object)
      * @see #resultNow()
      * @see #join()
      * @see #get()
@@ -1557,6 +1560,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *                               or a completion computation threw an exception
      * @see #join(long, TimeUnit)
      * @see #getNow(Object)
+     * @see #getSuccessNow(Object)
      * @see #resultNow()
      * @see #get(long, TimeUnit)
      * @see #get()
@@ -1598,6 +1602,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *                               or the wait timed out(with the {@code TimeoutException} as its cause)
      * @see #join()
      * @see #getNow(Object)
+     * @see #getSuccessNow(Object)
      * @see #resultNow()
      * @see #get(long, TimeUnit)
      * @see #get()
@@ -1619,6 +1624,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws CancellationException if the computation was cancelled
      * @throws CompletionException   if this future completed exceptionally
      *                               or a completion computation threw an exception
+     * @see #getSuccessNow(Object)
      * @see #resultNow()
      * @see #join(long, TimeUnit)
      * @see #join()
@@ -1630,6 +1636,27 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public T getNow(T valueIfAbsent) {
         checkMinimalStage();
         return cf.getNow(valueIfAbsent);
+    }
+
+    /**
+     * Returns the result value if completed successfully, else returns the given valueIfAbsent.
+     * <p>
+     * This method will not throw exceptions
+     * (CancellationException/CompletionException/ExecutionException/IllegalStateException/...).
+     *
+     * @param valueIfAbsent the value to return if not completed successfully
+     * @return the result value, if completed successfully, else the given valueIfAbsent
+     * @see #getNow(Object)
+     * @see #resultNow()
+     * @see #join(long, TimeUnit)
+     * @see #join()
+     * @see #get(long, TimeUnit)
+     * @see #get()
+     */
+    @Contract(pure = true)
+    @Nullable
+    public T getSuccessNow(@Nullable T valueIfAbsent) {
+        return CompletableFutureUtils.getSuccessNow(cf, valueIfAbsent);
     }
 
     /**
@@ -1645,7 +1672,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *     .toList();
      * }</pre>
      *
+     * @return the computed result
+     * @throws IllegalStateException if the task has not completed or the task did not complete with a result
      * @see #getNow(Object)
+     * @see #getSuccessNow(Object)
+     * @see #exceptionNow()
      */
     @Contract(pure = true)
     @Nullable
@@ -1664,6 +1695,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws IllegalStateException if the task has not completed, the task completed normally,
      *                               or the task was cancelled
      * @see #resultNow()
+     * @see #getNow(Object)
+     * @see #getSuccessNow(Object)
      */
     @Contract(pure = true)
     @Override

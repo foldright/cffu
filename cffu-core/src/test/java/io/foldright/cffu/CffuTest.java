@@ -183,6 +183,23 @@ class CffuTest {
     }
 
     @Test
+    void test_getSuccessNow() {
+        final Consumer<Cffu<Integer>> check = (cf) -> {
+            assertNull(cf.getSuccessNow(null));
+            assertEquals(42, cf.getSuccessNow(42));
+        };
+
+        Cffu<Integer> incomplete = cffuFactory.newIncompleteCffu();
+        check.accept(incomplete);
+
+        Cffu<Integer> failed = cffuFactory.failedFuture(rte);
+        check.accept(failed);
+
+        incomplete.cancel(false);
+        check.accept(incomplete);
+    }
+
+    @Test
     void test_cffuState() {
         Cffu<Object> incomplete = cffuFactory.newIncompleteCffu();
 

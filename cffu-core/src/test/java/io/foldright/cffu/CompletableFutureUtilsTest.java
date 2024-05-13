@@ -8,8 +8,6 @@ import io.foldright.test_utils.TestThreadPoolManager;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,7 +15,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import static io.foldright.cffu.CompletableFutureUtils.*;
 import static io.foldright.test_utils.TestUtils.*;
@@ -890,6 +887,8 @@ class CompletableFutureUtilsTest {
         final CompletableFuture<Integer> completed = completedFuture(n);
 
         assertEquals(n, join(completed, 1, TimeUnit.MILLISECONDS));
+        assertEquals(n, getSuccessNow(completed, anotherN));
+        assertEquals(n, getSuccessNow(completed, null));
         assertEquals(n, resultNow(completed));
         try {
             exceptionNow(completed);
@@ -909,6 +908,8 @@ class CompletableFutureUtilsTest {
         } catch (CompletionException expected) {
             assertSame(rte, expected.getCause());
         }
+        assertEquals(anotherN, getSuccessNow(failed, anotherN));
+        assertNull(getSuccessNow(failed, null));
         try {
             resultNow(failed);
             fail();
@@ -945,6 +946,8 @@ class CompletableFutureUtilsTest {
         } catch (CompletionException expected) {
             assertInstanceOf(TimeoutException.class, expected.getCause());
         }
+        assertEquals(anotherN, getSuccessNow(incomplete, anotherN));
+        assertNull(getSuccessNow(incomplete, null));
         try {
             resultNow(incomplete);
             fail();
