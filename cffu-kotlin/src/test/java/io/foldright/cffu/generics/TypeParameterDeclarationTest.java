@@ -19,6 +19,8 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 
 /**
  * Checks type parameter declaration, Variance(covariance/contravariance)
+ *
+ * @see io.foldright.study.generics.GenericsStudyTest
  */
 @SuppressWarnings({"UnnecessaryLocalVariable", "unused", "RedundantThrows"})
 public class TypeParameterDeclarationTest {
