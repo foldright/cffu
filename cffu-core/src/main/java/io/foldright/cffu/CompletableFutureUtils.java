@@ -484,13 +484,19 @@ public final class CompletableFutureUtils {
         if (fastFail) resultSetter = allOfFastFail(resultSetterCfs);
         else resultSetter = CompletableFuture.allOf(resultSetterCfs);
 
-        final CompletableFuture<Object> ret = resultSetter.thenApply(unused -> {
-            if (length == 2) return Tuple2.of(result[0], result[1]);
-            if (length == 3) return Tuple3.of(result[0], result[1], result[2]);
-            if (length == 4) return Tuple4.of(result[0], result[1], result[2], result[3]);
-            return Tuple5.of(result[0], result[1], result[2], result[3], result[4]);
-        });
+        final CompletableFuture<Object> ret = resultSetter.thenApply(unused -> tupleOf0(result));
         return f_cast(ret);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T tupleOf0(Object... elements) {
+        final int length = elements.length;
+        final Object ret;
+        if (length == 2) ret = Tuple2.of(elements[0], elements[1]);
+        else if (length == 3) ret = Tuple3.of(elements[0], elements[1], elements[2]);
+        else if (length == 4) ret = Tuple4.of(elements[0], elements[1], elements[2], elements[3]);
+        else ret = Tuple5.of(elements[0], elements[1], elements[2], elements[3], elements[4]);
+        return (T) ret;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -1009,7 +1015,7 @@ public final class CompletableFutureUtils {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# Backport CF static methods
+    //# Backport CF static methods + related enhanced methods
     //  compatibility for low Java versions
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -1427,6 +1433,99 @@ public final class CompletableFutureUtils {
         } finally {
             if (interrupted) Thread.currentThread().interrupt();
         }
+    }
+
+    //# New enhanced batch read(explicitly) methods
+
+    /**
+     * Batch gets the results in the <strong>same order</strong> of the given cfs,
+     * use the result value if the given stage is completed successfully, else use the given valueIfAbsent
+     * (aka the result extraction logic is {@link #getSuccessNow(CompletionStage, Object)}).
+     * <p>
+     * The result extraction logic can be customized using method {@link #batchGet(Function, CompletionStage[])}.
+     *
+     * @param cfs the stages
+     * @see #batchGet(Function, CompletionStage[])
+     * @see #getSuccessNow(CompletionStage, Object)
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    public static <T> List<T> batchGetSuccessNow(@Nullable T valueIfAbsent, CompletionStage<? extends T>... cfs) {
+        return batchGet(cf -> getSuccessNow(cf, valueIfAbsent), cfs);
+    }
+
+    /**
+     * Batch gets results by {@code extractor} in the <strong>same order</strong> of the given cfs,
+     * use the result value if the given stage is completed successfully,
+     * else use {@code resultExtractor} to extract result from CompletableFuture.
+     *
+     * @param cfs             the stages
+     * @param resultExtractor the customized logic to extract result from CompletableFuture
+     * @see #batchGetSuccessNow(Object, CompletionStage[])
+     */
+    @SafeVarargs
+    public static <T> List<T> batchGet(Function<CompletableFuture<T>, ? extends T> resultExtractor,
+                                       CompletionStage<? extends T>... cfs) {
+        return arrayList(batchGet0(resultExtractor, cfs));
+    }
+
+    @SafeVarargs
+    @SuppressWarnings("unchecked")
+    private static <T> T[] batchGet0(Function<CompletableFuture<T>, ? extends T> resultExtractor,
+                                     CompletionStage<? extends T>... cfs) {
+        final CompletableFuture<T>[] cfArray = f_toCfArray(cfs);
+        Object[] ret = new Object[cfs.length];
+        for (int i = 0; i < cfArray.length; i++) {
+            CompletableFuture<T> cf = cfArray[i];
+            ret[i] = resultExtractor.apply(cf);
+        }
+        return (T[]) ret;
+    }
+
+    /**
+     * Batch gets the result value in the <strong>same order</strong> of the given cfs,
+     * use the result value if the cf is completed successfully, else use the value {@code null}
+     * (aka the result extraction logic is {@code getSuccessNow(cf, null)}).
+     */
+    public static <T1, T2> Tuple2<T1, T2> tupleGetSuccessNow(
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
+        return tupleGet0(requireCfsAndEleNonNull(cf1, cf2));
+    }
+
+    /**
+     * Batch gets the result value in the <strong>same order</strong> of the given cfs,
+     * use the result value if the cf is completed successfully, else use the value {@code null}
+     * (aka the result extraction logic is {@code getSuccessNow(cf, null)}).
+     */
+    public static <T1, T2, T3> Tuple3<T1, T2, T3> tupleGetSuccessNow(
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
+        return tupleGet0(requireCfsAndEleNonNull(cf1, cf2, cf3));
+    }
+
+    /**
+     * Batch gets the result value in the <strong>same order</strong> of the given cfs,
+     * use the result value if the cf is completed successfully, else use the value {@code null}
+     * (aka the result extraction logic is {@code getSuccessNow(cf, null)}).
+     */
+    public static <T1, T2, T3, T4> Tuple4<T1, T2, T3, T4> tupleGetSuccessNow(
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
+        return tupleGet0(requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
+    }
+
+    /**
+     * Batch gets the result value in the <strong>same order</strong> of the given cfs,
+     * use the result value if the cf is completed successfully, else the value {@code null}
+     * (aka the result extraction logic is {@code getSuccessNow(cf, null)}).
+     */
+    public static <T1, T2, T3, T4, T5> Tuple5<T1, T2, T3, T4, T5> tupleGetSuccessNow(
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
+            CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
+        return tupleGet0(requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
+    }
+
+    private static <T> T tupleGet0(CompletionStage<?>... css) {
+        return tupleOf0(batchGet0(cf -> getSuccessNow(cf, null), css));
     }
 
     //# Write methods of CompletableFuture
