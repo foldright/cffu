@@ -17,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
@@ -305,9 +306,10 @@ public final class CffuFactory {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# allOf* methods
+    //# allOf*/mostOf* methods
     //
     //  - allOf / allOfFastFail
+    //  - allResultsOf / allResultsOfFastFail
     //  - allResultsOf / allResultsOfFastFail
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -423,6 +425,50 @@ public final class CffuFactory {
     @SafeVarargs
     public final <T> Cffu<List<T>> allResultsOfFastFail(CompletionStage<? extends T>... cfs) {
         return new0(CompletableFutureUtils.allResultsOfFastFail(cfs));
+    }
+
+    /**
+     * Returns a new Cffu with the most results in the <strong>same order</strong> of
+     * the given stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value; Otherwise the given valueIfAbsent.
+     * (aka the result extraction logic is {@link Cffu#getSuccessNow(Object)}).
+     * <p>
+     * The result extraction logic can be customized using method {@link #mostResultsOf(long, TimeUnit, Function, CompletionStage[])}.
+     *
+     * @param timeout       how long to wait in units of {@code unit}
+     * @param unit          a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param valueIfAbsent the value to return if not completed successfully
+     * @param cfs           the stages
+     * @see Cffu#getSuccessNow(Object)
+     * @see CompletableFutureUtils#batchGetSuccessNow(Object, CompletionStage[])
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    public final <T> Cffu<List<T>> mostResultsOfSuccess(
+            long timeout, TimeUnit unit, @Nullable T valueIfAbsent,
+            CompletionStage<? extends T>... cfs) {
+        return new0(CompletableFutureUtils.mostResultsOfSuccess(timeout, unit, valueIfAbsent, cfs));
+    }
+
+    /**
+     * Returns a new Cffu with the most results in the <strong>same order</strong> of the given stages
+     * in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value;
+     * Otherwise use {@code resultExtractor} to extract result from CompletableFuture.
+     *
+     * @param timeout         how long to wait in units of {@code unit}
+     * @param unit            a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param resultExtractor the customized logic result extraction from CompletableFuture
+     * @param cfs             the stages
+     * @see CompletableFutureUtils#batchGet(Function, CompletionStage[])
+     */
+    @SafeVarargs
+    public final <T> Cffu<List<T>> mostResultsOf(
+            long timeout, TimeUnit unit, Function<CompletableFuture<T>, ? extends T> resultExtractor,
+            CompletionStage<? extends T>... cfs) {
+        return new0(CompletableFutureUtils.mostResultsOf(timeout, unit, resultExtractor, cfs));
     }
 
     ////////////////////////////////////////////////////////////////////////////////

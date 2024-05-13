@@ -14,6 +14,7 @@ import org.junit.jupiter.api.condition.JRE;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.*;
+import java.util.function.Function;
 
 import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
 import static io.foldright.cffu.CompletableFutureUtils.toCompletableFutureArray;
@@ -292,6 +293,52 @@ class CffuFactoryTest {
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
+    }
+
+    @Test
+    void test_mostOf() throws Exception {
+        final Cffu<Integer> completed = cffuFactory.completedFuture(n);
+        final Cffu<Integer> failed = cffuFactory.failedFuture(rte);
+        final Cffu<Integer> cancelled = cffuFactory.toCffu(createCancelledFuture());
+        final Cffu<Integer> incomplete = cffuFactory.toCffu(createIncompleteFuture());
+
+        assertEquals(Arrays.asList(n, null, null, null), cffuFactory.mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, null, completed, failed, cancelled, incomplete
+        ).get());
+        assertEquals(Arrays.asList(n, anotherN, anotherN, anotherN), cffuFactory.mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, anotherN, completed, failed, cancelled, incomplete
+        ).get());
+
+        assertEquals(Arrays.asList(anotherN, anotherN, anotherN), cffuFactory.mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, anotherN, failed, cancelled, incomplete
+        ).get());
+
+        // do not wait for failed and cancelled
+        assertEquals(Arrays.asList(anotherN, anotherN), cffuFactory.mostResultsOfSuccess(
+                10, TimeUnit.DAYS, anotherN, failed, cancelled
+        ).get());
+
+        ///////////////////
+
+        Function<CompletableFuture<Integer>, Integer> resultExtractor = cf -> {
+            if (!cf.isDone()) return -1;
+            if (cf.isCancelled()) return -2;
+            if (cf.isCompletedExceptionally()) return -3;
+            return cf.join();
+        };
+
+        assertEquals(Arrays.asList(n, -3, -2, -1), cffuFactory.mostResultsOf(
+                10, TimeUnit.MILLISECONDS, resultExtractor, completed, failed, cancelled, incomplete
+        ).get());
+
+        assertEquals(Arrays.asList(-3, -2, -1), cffuFactory.mostResultsOf(
+                10, TimeUnit.MILLISECONDS, resultExtractor, failed, cancelled, incomplete
+        ).get());
+
+        // do not wait for failed and cancelled
+        assertEquals(Arrays.asList(-3, -2), cffuFactory.mostResultsOf(
+                10, TimeUnit.DAYS, resultExtractor, failed, cancelled
+        ).get());
     }
 
     @Test

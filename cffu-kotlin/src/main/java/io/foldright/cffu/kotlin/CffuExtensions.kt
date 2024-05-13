@@ -2,8 +2,11 @@ package io.foldright.cffu.kotlin
 
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
+import io.foldright.cffu.CompletableFutureUtils
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
+import java.util.concurrent.TimeUnit
+import java.util.function.Function
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -49,7 +52,7 @@ fun <T> Array<out CompletionStage<T>>.toCffu(cffuFactory: CffuFactory): Array<Cf
     cffuFactory.toCffuArray(*this)
 
 ////////////////////////////////////////
-// allOf* methods
+//# allOf*/mostResultsOfSuccess* methods for Array/Collection
 //
 //   - allResultsOfCffu
 //   - allOfCffu
@@ -389,8 +392,97 @@ fun Collection<CompletionStage<*>>.allOfFastFailCffu(cffuFactory: CffuFactory): 
 fun Array<out CompletionStage<*>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<Void> =
     cffuFactory.allOfFastFail(*this)
 
+
+/**
+ * Returns a new Cffu with the most results in the **same order** of
+ * the given stages in the given time(`timeout`), aka as many results as possible in the given time.
+ *
+ * If the given stage is successful, its result is the completed value; Otherwise the given valueIfAbsent.
+ * (aka the result extraction logic is [Cffu.getSuccessNow]).
+ *
+ * The result extraction logic can be customized using another overloaded [mostResultsOfSuccessCffu] method.
+ *
+ * @param timeout       how long to wait in units of `unit`
+ * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param valueIfAbsent the value to return if not completed successfully
+ * @see Cffu.getSuccessNow
+ * @see CompletableFutureUtils.batchGetSuccessNow
+ */
+fun <T> Collection<Cffu<out T>>.mostResultsOfSuccessCffu(
+    timeout: Long, unit: TimeUnit, valueIfAbsent: T, cffuFactory: CffuFactory = ABSENT
+): Cffu<List<T>> {
+    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
+    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
+    return factory.mostResultsOfSuccess(timeout, unit, valueIfAbsent, *this.toTypedArray())
+}
+
+/**
+ * Returns a new Cffu with the most results in the **same order** of
+ * the given stages in the given time(`timeout`), aka as many results as possible in the given time.
+ *
+ * If the given stage is successful, its result is the completed value; Otherwise the given valueIfAbsent.
+ * (aka the result extraction logic is [Cffu.getSuccessNow]).
+ *
+ * The result extraction logic can be customized using another overloaded [mostResultsOfSuccessCffu] method.
+ *
+ * @param timeout       how long to wait in units of `unit`
+ * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param valueIfAbsent the value to return if not completed successfully
+ * @see Cffu.getSuccessNow
+ * @see CompletableFutureUtils.batchGetSuccessNow
+ */
+fun <T> Array<out Cffu<out T>>.mostResultsOfSuccessCffu(
+    timeout: Long, unit: TimeUnit, valueIfAbsent: T, cffuFactory: CffuFactory = ABSENT
+): Cffu<List<T>> {
+    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
+    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
+    return factory.mostResultsOfSuccess(timeout, unit, valueIfAbsent, *this)
+}
+
+/**
+ * Returns a new Cffu with the most results in the **same order** of the given stages
+ * in the given time(`timeout`), aka as many results as possible in the given time.
+ *
+ * If the given stage is successful, its result is the completed value;
+ * Otherwise use `resultExtractor` to extract result from CompletableFuture.
+ *
+ * @param timeout         how long to wait in units of `unit`
+ * @param unit            a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param resultExtractor the customized logic result extraction from CompletableFuture
+ * @see CompletableFutureUtils.batchGet
+ */
+fun <T> Collection<Cffu<out T>>.mostResultsOfCffu(
+    timeout: Long, unit: TimeUnit, resultExtractor: Function<CompletableFuture<T>, out T>,
+    cffuFactory: CffuFactory = ABSENT
+): Cffu<List<T>> {
+    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
+    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
+    return factory.mostResultsOf(timeout, unit, resultExtractor, *this.toTypedArray())
+}
+
+/**
+ * Returns a new Cffu with the most results in the **same order** of the given stages
+ * in the given time(`timeout`), aka as many results as possible in the given time.
+ *
+ * If the given stage is successful, its result is the completed value;
+ * Otherwise use `resultExtractor` to extract result from CompletableFuture.
+ *
+ * @param timeout         how long to wait in units of `unit`
+ * @param unit            a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param resultExtractor the customized logic result extraction from CompletableFuture
+ * @see CompletableFutureUtils.batchGet
+ */
+fun <T> Array<out Cffu<out T>>.mostResultsOfCffu(
+    timeout: Long, unit: TimeUnit, resultExtractor: Function<CompletableFuture<T>, out T>,
+    cffuFactory: CffuFactory = ABSENT
+): Cffu<List<T>> {
+    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
+    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
+    return factory.mostResultsOf(timeout, unit, resultExtractor, *this)
+}
+
 ////////////////////////////////////////
-// anyOf* methods
+//# anyOf* methods for Array/Collection
 //
 //   - anyOfCffu
 //   - anyOfSuccessCffu
@@ -527,7 +619,7 @@ fun <T> Array<out CompletionStage<out T>>.anyOfSuccessCffu(cffuFactory: CffuFact
     cffuFactory.anyOfSuccess(*this)
 
 ////////////////////////////////////////
-// cffuUnwrap methods
+// cffuUnwrap methods for Array/Collection
 ////////////////////////////////////////
 
 /**

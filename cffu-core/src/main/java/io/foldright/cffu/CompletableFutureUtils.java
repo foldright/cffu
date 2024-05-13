@@ -28,7 +28,7 @@ import static java.util.Objects.requireNonNull;
 @ReturnValuesAreNonnullByDefault
 public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
-    //# allOf* methods
+    //# allOf*/mostOf* methods
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -183,6 +183,73 @@ public final class CompletableFutureUtils {
 
         CompletableFuture<Object> ret = CompletableFuture.anyOf(failedOrBeIncomplete);
         return f_cast(ret);
+    }
+
+    /**
+     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
+     * the given stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value; Otherwise the given valueIfAbsent.
+     * (aka the result extraction logic is {@link #getSuccessNow(CompletionStage, Object)}).
+     * <p>
+     * The result extraction logic can be customized using method {@link #mostResultsOf(long, TimeUnit, Function, CompletionStage[])}.
+     *
+     * @param timeout           how long to wait in units of {@code unit}
+     * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param valueIfNotSuccess the value to return if not completed successfully
+     * @param cfs               the stages
+     * @see #getSuccessNow(CompletionStage, Object)
+     * @see #batchGetSuccessNow(Object, CompletionStage[])
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    public static <T> CompletableFuture<List<T>> mostResultsOfSuccess(
+            long timeout, TimeUnit unit, @Nullable T valueIfNotSuccess, CompletionStage<? extends T>... cfs) {
+        requireNonNull(unit, "unit is null");
+        requireCfsAndEleNonNull(cfs);
+
+        return mostResults0(timeout, unit, cfArray -> batchGetSuccessNow(valueIfNotSuccess, cfArray), cfs);
+    }
+
+    /**
+     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of the given stages
+     * in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value;
+     * Otherwise use {@code resultExtractor} to extract result from CompletableFuture.
+     *
+     * @param timeout         how long to wait in units of {@code unit}
+     * @param unit            a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param resultExtractor the customized logic result extraction from CompletableFuture
+     * @param cfs             the stages
+     * @see #batchGet(Function, CompletionStage[])
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<List<T>> mostResultsOf(
+            long timeout, TimeUnit unit, Function<CompletableFuture<T>, ? extends T> resultExtractor,
+            CompletionStage<? extends T>... cfs) {
+        requireNonNull(unit, "unit is null");
+        requireNonNull(resultExtractor, "resultExtractor is null");
+        requireCfsAndEleNonNull(cfs);
+
+        return mostResults0(timeout, unit, cfArray -> batchGet(resultExtractor, cfArray), cfs);
+    }
+
+    @SafeVarargs
+    private static <T> CompletableFuture<List<T>> mostResults0(
+            long timeout, TimeUnit unit, Function<CompletableFuture<T>[], List<T>> resultExtractor,
+            CompletionStage<? extends T>... cfs) {
+        if (cfs.length == 0) return CompletableFuture.completedFuture(arrayList());
+        if (cfs.length == 1) {
+            final CompletableFuture<T> cf = copy(toCf(cfs[0]));
+            @SuppressWarnings("unchecked")
+            final CompletableFuture<T>[] cfArray = new CompletableFuture[]{cf};
+            return orTimeout(cf, timeout, unit).handle((unused, ex) -> resultExtractor.apply(cfArray));
+        }
+
+        final CompletableFuture<T>[] cfArray = f_toCfArray(cfs);
+        return orTimeout(CompletableFuture.allOf(cfArray), timeout, unit)
+                .handle((unused, ex) -> resultExtractor.apply(cfArray));
     }
 
     @SafeVarargs
@@ -1445,6 +1512,7 @@ public final class CompletableFutureUtils {
      * The result extraction logic can be customized using method {@link #batchGet(Function, CompletionStage[])}.
      *
      * @param cfs the stages
+     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
      * @see #batchGet(Function, CompletionStage[])
      * @see #getSuccessNow(CompletionStage, Object)
      */
@@ -1461,6 +1529,7 @@ public final class CompletableFutureUtils {
      *
      * @param cfs             the stages
      * @param resultExtractor the customized logic to extract result from CompletableFuture
+     * @see #mostResultsOf(long, TimeUnit, Function, CompletionStage[])
      * @see #batchGetSuccessNow(Object, CompletionStage[])
      */
     @SafeVarargs

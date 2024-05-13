@@ -23,10 +23,12 @@ import java.util.function.Function
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////
-//# allOf* methods for Array/Collection
+//# allOf*/mostResultsOfSuccess* methods for Array/Collection
 //
-//    - allOfCompletableFuture / allOfFastFailCompletableFuture
-//    - allResultsOfCompletableFuture / allResultsOfFastFailCompletableFuture
+//    - allOfCompletableFuture
+//    - allOfFastFailCompletableFuture
+//    - allResultsOfCompletableFuture
+//    - allResultsOfFastFailCompletableFuture
 ////////////////////////////////////////
 
 /**
@@ -205,8 +207,82 @@ fun <T> Collection<CompletionStage<out T>>.allResultsOfFastFailCompletableFuture
 fun <T> Array<out CompletionStage<out T>>.allResultsOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
     CompletableFutureUtils.allResultsOfFastFail(*this)
 
+/**
+ * Returns a new CompletableFuture with the most results in the **same order** of
+ * the given stages in the given time(`timeout`), aka as many results as possible in the given time.
+ *
+ * If the given stage is successful, its result is the completed value; Otherwise the given valueIfAbsent.
+ * (aka the result extraction logic is [getSuccessNow]).
+ *
+ * The result extraction logic can be customized using method [mostResultsOfCompletableFuture].
+ *
+ * @param timeout       how long to wait in units of `unit`
+ * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param valueIfAbsent the value to return if not completed successfully
+ * @see getSuccessNow
+ * @see CompletableFutureUtils.batchGetSuccessNow
+ */
+fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
+    timeout: Long, unit: TimeUnit, valueIfAbsent: T
+): CompletableFuture<List<T>> =
+    CompletableFutureUtils.mostResultsOfSuccess(timeout, unit, valueIfAbsent, *this.toTypedArray())
+
+/**
+ * Returns a new CompletableFuture with the most results in the **same order** of
+ * the given stages in the given time(`timeout`), aka as many results as possible in the given time.
+ *
+ * If the given stage is successful, its result is the completed value; Otherwise the given valueIfAbsent.
+ * (aka the result extraction logic is [getSuccessNow]).
+ *
+ * The result extraction logic can be customized using method [mostResultsOfCompletableFuture].
+ *
+ * @param timeout       how long to wait in units of `unit`
+ * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param valueIfAbsent the value to return if not completed successfully
+ * @see getSuccessNow
+ * @see CompletableFutureUtils.batchGetSuccessNow
+ */
+fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
+    timeout: Long, unit: TimeUnit, valueIfAbsent: T
+): CompletableFuture<List<T>> =
+    CompletableFutureUtils.mostResultsOfSuccess(timeout, unit, valueIfAbsent, *this)
+
+/**
+ * Returns a new CompletableFuture with the most results in the **same order** of the given stages
+ * in the given time(`timeout`), aka as many results as possible in the given time.
+ *
+ * If the given stage is successful, its result is the completed value;
+ * Otherwise use `resultExtractor` to extract result from CompletableFuture.
+ *
+ * @param timeout         how long to wait in units of `unit`
+ * @param unit            a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param resultExtractor the customized logic result extraction from CompletableFuture
+ * @see CompletableFutureUtils.batchGet
+ */
+fun <T> Collection<CompletionStage<out T>>.mostResultsOfCompletableFuture(
+    timeout: Long, unit: TimeUnit, resultExtractor: Function<CompletableFuture<T>, out T>
+): CompletableFuture<List<T>> =
+    CompletableFutureUtils.mostResultsOf(timeout, unit, resultExtractor, *this.toTypedArray())
+
+/**
+ * Returns a new CompletableFuture with the most results in the **same order** of the given stages
+ * in the given time(`timeout`), aka as many results as possible in the given time.
+ *
+ * If the given stage is successful, its result is the completed value;
+ * Otherwise use `resultExtractor` to extract result from CompletableFuture.
+ *
+ * @param timeout         how long to wait in units of `unit`
+ * @param unit            a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param resultExtractor the customized logic result extraction from CompletableFuture
+ * @see CompletableFutureUtils.batchGet
+ */
+fun <T> Array<out CompletionStage<out T>>.mostResultsOfCompletableFuture(
+    timeout: Long, unit: TimeUnit, resultExtractor: Function<CompletableFuture<T>, out T>
+): CompletableFuture<List<T>> =
+    CompletableFutureUtils.mostResultsOf(timeout, unit, resultExtractor, *this)
+
 ////////////////////////////////////////
-//# anyOf* methods
+//# anyOf* methods for Array/Collection
 //
 //    - anyOfCompletableFuture
 //    - anyOfSuccessCompletableFuture

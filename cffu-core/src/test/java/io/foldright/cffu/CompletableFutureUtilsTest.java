@@ -316,6 +316,30 @@ class CompletableFutureUtilsTest {
         }
     }
 
+    @Test
+    void test_mostOf() throws Exception {
+        final CompletableFuture<Integer> completed = completedFuture(n);
+        final CompletableFuture<Integer> failed = failedFuture(rte);
+        final CompletableFuture<Integer> cancelled = createCancelledFuture();
+        final CompletableFuture<Integer> incomplete = createIncompleteFuture();
+
+        assertEquals(Arrays.asList(n, null, null, null), mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, null, completed, failed, cancelled, incomplete
+        ).get());
+        assertEquals(Arrays.asList(n, anotherN, anotherN, anotherN), mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, anotherN, completed, failed, cancelled, incomplete
+        ).get());
+
+        assertEquals(Arrays.asList(anotherN, anotherN, anotherN), mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, anotherN, failed, cancelled, incomplete
+        ).get());
+
+        // do not wait for failed and cancelled
+        assertEquals(Arrays.asList(anotherN, anotherN), mostResultsOfSuccess(
+                10, TimeUnit.DAYS, anotherN, failed, cancelled
+        ).get());
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# anyOf* methods
     ////////////////////////////////////////////////////////////////////////////////
