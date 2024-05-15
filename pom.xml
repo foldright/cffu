@@ -132,6 +132,16 @@
 			<artifactId>kotest-property-jvm</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!--
+			In order to run JUnit 5 test cases in IntelliJ IDEA, need include below dependencies. more info see:
+			https://junit.org/junit5/docs/current/user-guide/#running-tests-ide-intellij-idea
+			https://github.com/junit-team/junit5-samples/blob/main/junit5-jupiter-starter-maven/pom.xml#L29
+		-->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
