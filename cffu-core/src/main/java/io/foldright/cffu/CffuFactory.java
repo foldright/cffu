@@ -275,7 +275,7 @@ public final class CffuFactory {
     public <T> Cffu<T> toCffu(CompletionStage<T> stage) {
         requireNonNull(stage, "stage is null");
 
-        if ("java.util.concurrent.CompletableFuture$MinimalStage".equals(stage.getClass().getName())) {
+        if (CompletableFutureUtils.isMinStageCf(stage)) {
             return newMin((CompletableFuture<T>) stage);
         } else if (stage instanceof CompletableFuture) {
             return new0((CompletableFuture<T>) stage);
@@ -433,10 +433,10 @@ public final class CffuFactory {
      * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
      * (aka the result extraction logic is {@link Cffu#getSuccessNow(Object)}).
      *
-     * @param timeout       how long to wait in units of {@code unit}
-     * @param unit          a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param timeout           how long to wait in units of {@code unit}
+     * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @param valueIfNotSuccess the value to return if not completed successfully
-     * @param cfs           the stages
+     * @param cfs               the stages
      * @see Cffu#getSuccessNow(Object)
      */
     // TODO * @see CompletableFutureUtils#MGetSuccessNow(Object, CompletionStage[])

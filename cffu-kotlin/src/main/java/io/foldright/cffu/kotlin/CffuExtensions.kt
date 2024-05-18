@@ -2,7 +2,6 @@ package io.foldright.cffu.kotlin
 
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
-import io.foldright.cffu.CompletableFutureUtils
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.TimeUnit

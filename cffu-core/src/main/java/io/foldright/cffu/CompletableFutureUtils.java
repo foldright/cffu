@@ -61,6 +61,9 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     public static CompletableFuture<Void> allOf(CompletionStage<?>... cfs) {
+        // Defensive copy input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
+        // in order to ensure that the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
+        if (cfs.length == 1) return toNonMinCfCopy(cfs[0]).thenApply(unused -> null);
         return CompletableFuture.allOf(f_toCfArray(cfs));
     }
 
@@ -130,7 +133,9 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return CompletableFuture.completedFuture(null);
-        if (size == 1) return toCf(cfs[0]).thenApply(unused -> null);
+        // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
+        // the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
+        if (size == 1) return toNonMinCfCopy(cfs[0]).thenApply(unused -> null);
 
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[size];
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
@@ -208,11 +213,15 @@ public final class CompletableFutureUtils {
 
         if (cfs.length == 0) return CompletableFuture.completedFuture(arrayList());
         if (cfs.length == 1) {
-            final CompletableFuture<T> f = copy(toCf(cfs[0]));
+            // Defensive copy input cf to non-minimal-stage instance in order to
+            // 1. avoid writing it by `completeOnTimeout` and is able to read its result(`getSuccessNow`)
+            // 2. ensure that the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
+            final CompletableFuture<T> f = toNonMinCfCopy(cfs[0]);
             return orTimeout(f, timeout, unit).handle((unused, ex) -> arrayList(getSuccessNow(f, valueIfNotSuccess)));
         }
 
-        final CompletableFuture<T>[] cfArray = f_toCfArray(cfs);
+        // MUST be non-minimal-stage CF instances in order to read results, otherwise UnsupportedOperationException
+        final CompletableFuture<T>[] cfArray = f_toNonMinCfArray(cfs);
         return orTimeout(CompletableFuture.allOf(cfArray), timeout, unit)
                 .handle((unused, ex) -> MGetSuccessNow(valueIfNotSuccess, cfArray));
     }
@@ -238,7 +247,9 @@ public final class CompletableFutureUtils {
     }
 
     private static <T> CompletableFuture<List<T>> csToListCf(CompletionStage<? extends T> s) {
-        return toCf(s).thenApply(CompletableFutureUtils::arrayList);
+        // Defensive copy input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
+        // in order to ensure that the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
+        return toNonMinCfCopy(s).thenApply(CompletableFutureUtils::arrayList);
     }
 
     /**
@@ -279,27 +290,70 @@ public final class CompletableFutureUtils {
      * IGNORE the compile-time type check.
      */
     private static <T> CompletableFuture<T>[] f_toCfArray(CompletionStage<? extends T>[] stages) {
+        return toCfArray0(stages, CompletableFutureUtils::toCf);
+    }
+
+    /**
+     * Force converts {@link CompletionStage} array to {@link CompletableFuture} array,
+     * IGNORE the compile-time type check.
+     */
+    private static <T> CompletableFuture<T>[] f_toNonMinCfArray(CompletionStage<? extends T>[] stages) {
+        return toCfArray0(stages, CompletableFutureUtils::toNonMinCf);
+    }
+
+    private static <T> CompletableFuture<T>[] toCfArray0(
+            CompletionStage<? extends T>[] stages,
+            Function<CompletionStage<? extends T>, CompletableFuture<T>> converter) {
         requireNonNull(stages, "cfs is null");
         @SuppressWarnings("unchecked")
         CompletableFuture<T>[] ret = new CompletableFuture[stages.length];
         for (int i = 0; i < stages.length; i++) {
-            ret[i] = toCf(requireNonNull(stages[i], "cf" + (i + 1) + " is null"));
+            ret[i] = converter.apply(requireNonNull(stages[i], "cf" + (i + 1) + " is null"));
         }
         return ret;
     }
 
     /**
-     * Converts CompletionStage to CompletableFuture, reuse cf instance as much as possible.
+     * Converts CompletionStage to CompletableFuture, reuse cf instance as many as possible.
      * <p>
      * <strong>CAUTION:</strong> because reused the CF instances,
      * so the returned CF instances MUST NOT be written(e.g. {@link CompletableFuture#complete(Object)}).
      * Otherwise, the caller should defensive copy instead of writing it directly.
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("unchecked")
     private static <T> CompletableFuture<T> toCf(CompletionStage<? extends T> s) {
         if (s instanceof CompletableFuture) return (CompletableFuture<T>) s;
-        else if (s instanceof Cffu) return ((Cffu) s).cffuUnwrap();
-        else return (CompletableFuture) s.toCompletableFuture();
+        else if (s instanceof Cffu) return ((Cffu<T>) s).cffuUnwrap();
+        else return (CompletableFuture<T>) s.toCompletableFuture();
+    }
+
+    /**
+     * Converts CompletionStage to non-minimal-stage CompletableFuture, reuse cf instance as many as possible.
+     * <p>
+     * <strong>CAUTION:</strong> because reused the CF instances,
+     * so the returned CF instances MUST NOT be written(e.g. {@link CompletableFuture#complete(Object)}).
+     * Otherwise, the caller should defensive copy instead of writing it directly.
+     */
+    private static <T> CompletableFuture<T> toNonMinCf(CompletionStage<? extends T> s) {
+        final CompletableFuture<T> f = toCf(s);
+        return isMinStageCf(f) ? f.toCompletableFuture() : f;
+    }
+
+    /**
+     * Converts CompletionStage to a non-minimal-stage CompletableFuture copy.
+     * <p>
+     * <strong>NOTE:</strong> The return of {@code copy} methods
+     * ({@link #copy(CompletableFuture)}/{@link CompletableFuture#copy()}) on {@code minimal-stage}
+     * is still a {@code minimal-stage}.<br>
+     * e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()}.
+     */
+    private static <T> CompletableFuture<T> toNonMinCfCopy(CompletionStage<? extends T> s) {
+        final CompletableFuture<T> f = toCf(s);
+        return isMinStageCf(f) ? f.toCompletableFuture() : copy(f);
+    }
+
+    static <T> boolean isMinStageCf(CompletionStage<? extends T> s) {
+        return "java.util.concurrent.CompletableFuture$MinimalStage".equals(s.getClass().getName());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -326,6 +380,10 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<T> anyOf(CompletionStage<? extends T>... cfs) {
+        // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
+        // 1. avoid writing the input cf unexpectedly it by caller code
+        // 2. the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
+        if (cfs.length == 1) return toNonMinCfCopy(cfs[0]);
         CompletableFuture<Object> ret = CompletableFuture.anyOf(f_toCfArray(cfs));
         return f_cast(ret);
     }
@@ -352,7 +410,9 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return failedFuture(new NoCfsProvidedException());
-        if (size == 1) return copy(toCf(cfs[0]));
+        // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
+        // the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
+        if (size == 1) return toNonMinCfCopy(cfs[0]);
 
         // NOTE: fill ONE MORE element of successOrBeIncompleteCfs LATER
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[size + 1];
