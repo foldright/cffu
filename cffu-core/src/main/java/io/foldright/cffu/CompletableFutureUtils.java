@@ -195,7 +195,6 @@ public final class CompletableFutureUtils {
      * the given stages in the given time({@code timeout}), aka as many results as possible in the given time.
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
-     * (aka the result extraction logic is {@link #getSuccessNow(CompletableFuture, Object)}).
      *
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -203,7 +202,6 @@ public final class CompletableFutureUtils {
      * @param cfs               the stages
      * @see #getSuccessNow(CompletableFuture, Object)
      */
-    // * @see #MGetSuccessNow(Object, CompletionStage[])
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mostResultsOfSuccess(
@@ -220,10 +218,27 @@ public final class CompletableFutureUtils {
             return orTimeout(f, timeout, unit).handle((unused, ex) -> arrayList(getSuccessNow(f, valueIfNotSuccess)));
         }
 
-        // MUST be non-minimal-stage CF instances in order to read results, otherwise UnsupportedOperationException
+        // MUST be non-minimal-stage CF instances in order to read results(`getSuccessNow`),
+        // otherwise UnsupportedOperationException
         final CompletableFuture<T>[] cfArray = f_toNonMinCfArray(cfs);
         return orTimeout(CompletableFuture.allOf(cfArray), timeout, unit)
-                .handle((unused, ex) -> MGetSuccessNow(valueIfNotSuccess, cfArray));
+                .handle((unused, ex) -> arrayList(MGetSuccessNow0(valueIfNotSuccess, cfArray)));
+    }
+
+    /**
+     * Multi-Gets(MGet) the results in the <strong>same order</strong> of the given cfs,
+     * use the result value if the given stage is completed successfully, else use the given valueIfNotSuccess
+     *
+     * @param cfs MUST be *Non-Minimal* CF instances in order to read results(`getSuccessNow`),
+     *            otherwise UnsupportedOperationException
+     */
+    @SuppressWarnings("unchecked")
+    private static <T> T[] MGetSuccessNow0(@Nullable Object valueIfNotSuccess, CompletableFuture<?>... cfs) {
+        Object[] ret = new Object[cfs.length];
+        for (int i = 0; i < cfs.length; i++) {
+            ret[i] = getSuccessNow(cfs[i], valueIfNotSuccess);
+        }
+        return (T[]) ret;
     }
 
     @SafeVarargs
@@ -411,7 +426,8 @@ public final class CompletableFutureUtils {
         final int size = cfs.length;
         if (size == 0) return failedFuture(new NoCfsProvidedException());
         // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
-        // the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
+        // 1. avoid writing the input cf unexpectedly it by caller code
+        // 2. the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
         if (size == 1) return toNonMinCfCopy(cfs[0]);
 
         // NOTE: fill ONE MORE element of successOrBeIncompleteCfs LATER
@@ -428,7 +444,7 @@ public final class CompletableFutureUtils {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# allTupleOf* methods
+    //# allTupleOf*/mostTupleOfSuccess methods
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -568,16 +584,14 @@ public final class CompletableFutureUtils {
     }
 
     private static <T> CompletableFuture<T> allTupleOf0(CompletionStage<?>[] css, boolean fastFail) {
-        final int length = css.length;
-        final Object[] result = new Object[length];
+        final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
         final CompletableFuture<Void> resultSetter;
         if (fastFail) resultSetter = allOfFastFail(resultSetterCfs);
         else resultSetter = CompletableFuture.allOf(resultSetterCfs);
 
-        final CompletableFuture<Object> ret = resultSetter.thenApply(unused -> tupleOf0(result));
-        return f_cast(ret);
+        return resultSetter.thenApply(unused -> tupleOf0(result));
     }
 
     @SuppressWarnings("unchecked")
@@ -589,6 +603,93 @@ public final class CompletableFutureUtils {
         else if (length == 4) ret = Tuple4.of(elements[0], elements[1], elements[2], elements[3]);
         else ret = Tuple5.of(elements[0], elements[1], elements[2], elements[3], elements[4]);
         return (T) ret;
+    }
+
+    /**
+     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
+     * the given two stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return a new CompletableFuture that is completed when the given two stages complete
+     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #getSuccessNow(CompletableFuture, Object)
+     */
+    @Contract(pure = true)
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mostTupleOfSuccess(
+            long timeout, TimeUnit unit, CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
+        return mostTupleOfSuccess0(timeout, unit, requireCfsAndEleNonNull(cf1, cf2));
+    }
+
+    /**
+     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
+     * the given three stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return a new CompletableFuture that is completed when the given three stages complete
+     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #getSuccessNow(CompletableFuture, Object)
+     */
+    @Contract(pure = true)
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mostTupleOfSuccess(
+            long timeout, TimeUnit unit,
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
+        return mostTupleOfSuccess0(timeout, unit, requireCfsAndEleNonNull(cf1, cf2, cf3));
+    }
+
+    /**
+     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
+     * the given four stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return a new CompletableFuture that is completed when the given four stages complete
+     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #getSuccessNow(CompletableFuture, Object)
+     */
+    @Contract(pure = true)
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mostTupleOfSuccess(
+            long timeout, TimeUnit unit,
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
+        return mostTupleOfSuccess0(timeout, unit, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
+    }
+
+    /**
+     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
+     * the given five stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return a new CompletableFuture that is completed when the given five stages complete
+     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #getSuccessNow(CompletableFuture, Object)
+     */
+    @Contract(pure = true)
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mostTupleOfSuccess(
+            long timeout, TimeUnit unit,
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
+            CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
+        return mostTupleOfSuccess0(timeout, unit, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
+    }
+
+    private static <T> CompletableFuture<T> mostTupleOfSuccess0(
+            long timeout, TimeUnit unit, CompletionStage<?>[] css) {
+        requireNonNull(unit, "unit is null");
+        // MUST be *Non-Minimal* CF instances in order to read results(`getSuccessNow`),
+        // otherwise UnsupportedOperationException
+        final CompletableFuture<Object>[] cfArray = f_toNonMinCfArray(css);
+        return orTimeout(CompletableFuture.allOf(cfArray), timeout, unit)
+                .handle((unused, ex) -> tupleOf0(MGetSuccessNow0(null, cfArray)));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -1391,6 +1492,7 @@ public final class CompletableFutureUtils {
     @Nullable
     public static <T> T join(CompletableFuture<T> cf, long timeout, TimeUnit unit) {
         if (cf.isDone()) return cf.join();
+        // defensive copy input cf to avoid writing it by `orTimeout`
         return orTimeout(copy(cf), timeout, unit).join();
     }
 
@@ -1403,7 +1505,6 @@ public final class CompletableFutureUtils {
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @return the result value, if completed successfully, else the given valueIfNotSuccess
      */
-    // * @see #MGetSuccessNow(Object, CompletionStage[])
     @Contract(pure = true)
     @Nullable
     public static <T> T getSuccessNow(CompletableFuture<? extends T> cf, @Nullable T valueIfNotSuccess) {
@@ -1525,82 +1626,6 @@ public final class CompletableFutureUtils {
         } finally {
             if (interrupted) Thread.currentThread().interrupt();
         }
-    }
-
-    //# New enhanced multi-read(explicitly) methods
-
-    /**
-     * Multi-Gets(MGet) the results in the <strong>same order</strong> of the given cfs,
-     * use the result value if the given stage is completed successfully, else use the given valueIfNotSuccess
-     * (aka the result extraction logic is {@link #getSuccessNow(CompletableFuture, Object)}).
-     *
-     * @param cfs the stages
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
-     * @see #getSuccessNow(CompletableFuture, Object)
-     */
-    @Contract(pure = true)
-    @SafeVarargs
-    static <T> List<T> MGetSuccessNow(@Nullable T valueIfNotSuccess, CompletionStage<? extends T>... cfs) {
-        return arrayList(MGet0(cf -> getSuccessNow(cf, valueIfNotSuccess), cfs));
-    }
-
-    @SafeVarargs
-    @SuppressWarnings("unchecked")
-    private static <T> T[] MGet0(Function<CompletableFuture<T>, ? extends T> resultGetter,
-                                 CompletionStage<? extends T>... cfs) {
-        final CompletableFuture<T>[] cfArray = f_toCfArray(cfs);
-        Object[] ret = new Object[cfs.length];
-        for (int i = 0; i < cfArray.length; i++) {
-            CompletableFuture<T> cf = cfArray[i];
-            ret[i] = resultGetter.apply(cf);
-        }
-        return (T[]) ret;
-    }
-
-    /**
-     * Multi-Gets(MGet) the result value in the <strong>same order</strong> of the given cfs,
-     * use the result value if the cf is completed successfully, else use the value {@code null}
-     * (aka the result extraction logic is {@code getSuccessNow(cf, null)}).
-     */
-    static <T1, T2> Tuple2<T1, T2> tupleGetSuccessNow(
-            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return tupleGet0(requireCfsAndEleNonNull(cf1, cf2));
-    }
-
-    /**
-     * Multi-Gets(MGet) the result value in the <strong>same order</strong> of the given cfs,
-     * use the result value if the cf is completed successfully, else use the value {@code null}
-     * (aka the result extraction logic is {@code getSuccessNow(cf, null)}).
-     */
-    static <T1, T2, T3> Tuple3<T1, T2, T3> tupleGetSuccessNow(
-            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return tupleGet0(requireCfsAndEleNonNull(cf1, cf2, cf3));
-    }
-
-    /**
-     * Multi-Gets(MGet) the result value in the <strong>same order</strong> of the given cfs,
-     * use the result value if the cf is completed successfully, else use the value {@code null}
-     * (aka the result extraction logic is {@code getSuccessNow(cf, null)}).
-     */
-    static <T1, T2, T3, T4> Tuple4<T1, T2, T3, T4> tupleGetSuccessNow(
-            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
-            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return tupleGet0(requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
-    }
-
-    /**
-     * Multi-Gets(MGet) the result value in the <strong>same order</strong> of the given cfs,
-     * use the result value if the cf is completed successfully, else the value {@code null}
-     * (aka the result extraction logic is {@code getSuccessNow(cf, null)}).
-     */
-    static <T1, T2, T3, T4, T5> Tuple5<T1, T2, T3, T4, T5> tupleGetSuccessNow(
-            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
-            CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return tupleGet0(requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
-    }
-
-    private static <T> T tupleGet0(CompletionStage<?>... css) {
-        return tupleOf0(MGet0(cf -> getSuccessNow(cf, null), css));
     }
 
     //# Write methods of CompletableFuture

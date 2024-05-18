@@ -395,16 +395,14 @@ fun Array<out CompletionStage<*>>.allOfFastFailCffu(cffuFactory: CffuFactory): C
  * the given Cffus in the given time(`timeout`), aka as many results as possible in the given time.
  *
  * If the given Cffu is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
- * (aka the result extraction logic is [Cffu.getSuccessNow]).
- *
- * The result extraction logic can be customized using another overloaded [mostResultsOfSuccessCffu] method.
  *
  * @param timeout       how long to wait in units of `unit`
  * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
+ * @see CffuFactory.mostResultsOfSuccess
+ * @see CffuFactory.mostTupleOfSuccess
  * @see Cffu.getSuccessNow
  */
-// * @see CompletableFutureUtils.MGetSuccessNow
 fun <T> Collection<Cffu<out T>>.mostResultsOfSuccessCffu(
     timeout: Long, unit: TimeUnit, valueIfNotSuccess: T, cffuFactory: CffuFactory = ABSENT
 ): Cffu<List<T>> {
@@ -418,19 +416,19 @@ fun <T> Collection<Cffu<out T>>.mostResultsOfSuccessCffu(
  * the given Cffus in the given time(`timeout`), aka as many results as possible in the given time.
  *
  * If the given Cffu is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
- * (aka the result extraction logic is [Cffu.getSuccessNow]).
  *
  * @param timeout       how long to wait in units of `unit`
  * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
+ * @see CffuFactory.mostResultsOfSuccess
+ * @see CffuFactory.mostTupleOfSuccess
  * @see Cffu.getSuccessNow
  */
-// * @see CompletableFutureUtils.MGetSuccessNow
 fun <T> Array<out Cffu<out T>>.mostResultsOfSuccessCffu(
     timeout: Long, unit: TimeUnit, valueIfNotSuccess: T, cffuFactory: CffuFactory = ABSENT
 ): Cffu<List<T>> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
+    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
     return factory.mostResultsOfSuccess(timeout, unit, valueIfNotSuccess, *this)
 }
 
@@ -439,16 +437,14 @@ fun <T> Array<out Cffu<out T>>.mostResultsOfSuccessCffu(
  * the given stages in the given time(`timeout`), aka as many results as possible in the given time.
  *
  * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
- * (aka the result extraction logic is [Cffu.getSuccessNow]).
- *
- * The result extraction logic can be customized using another overloaded [mostResultsOfSuccessCffu] method.
  *
  * @param timeout       how long to wait in units of `unit`
  * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
+ * @see CffuFactory.mostResultsOfSuccess
+ * @see CffuFactory.mostTupleOfSuccess
  * @see Cffu.getSuccessNow
  */
-// * @see CompletableFutureUtils.MGetSuccessNow
 @JvmName("mostResultsOfSuccessCffuCs")
 fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCffu(
     timeout: Long, unit: TimeUnit, valueIfNotSuccess: T, cffuFactory: CffuFactory
@@ -465,9 +461,10 @@ fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCffu(
  * @param timeout       how long to wait in units of `unit`
  * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
+ * @see CffuFactory.mostResultsOfSuccess
+ * @see CffuFactory.mostTupleOfSuccess
  * @see Cffu.getSuccessNow
  */
-// * @see CompletableFutureUtils.MGetSuccessNow
 fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCffu(
     timeout: Long, unit: TimeUnit, valueIfNotSuccess: T, cffuFactory: CffuFactory
 ): Cffu<List<T>> =

@@ -301,7 +301,7 @@ public final class CffuFactory {
     //
     //  - allOf / allOfFastFail
     //  - allResultsOf / allResultsOfFastFail
-    //  - allResultsOf / allResultsOfFastFail
+    //  - mostResultsOfSuccess
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -423,7 +423,6 @@ public final class CffuFactory {
      * the given stages in the given time({@code timeout}), aka as many results as possible in the given time.
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
-     * (aka the result extraction logic is {@link Cffu#getSuccessNow(Object)}).
      *
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -431,7 +430,6 @@ public final class CffuFactory {
      * @param cfs               the stages
      * @see Cffu#getSuccessNow(Object)
      */
-    // TODO * @see CompletableFutureUtils#MGetSuccessNow(Object, CompletionStage[])
     @Contract(pure = true)
     @SafeVarargs
     public final <T> Cffu<List<T>> mostResultsOfSuccess(
@@ -495,6 +493,7 @@ public final class CffuFactory {
     //
     //  - allTupleOf
     //  - allTupleOfFastFail
+    //  - mostTupleOfSuccess
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -631,6 +630,83 @@ public final class CffuFactory {
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
         return new0(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3, cf4, cf5));
+    }
+
+    /**
+     * Returns a new Cffu with the most results in the <strong>same order</strong> of
+     * the given two stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return a new Cffu that is completed when the given two stages complete
+     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see Cffu#getSuccessNow(Object)
+     */
+    @Contract(pure = true)
+    public <T1, T2> Cffu<Tuple2<T1, T2>> mostTupleOfSuccess(
+            long timeout, TimeUnit unit, CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
+        return new0(CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, cf1, cf2));
+    }
+
+    /**
+     * Returns a new Cffu with the most results in the <strong>same order</strong> of
+     * the given three stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return a new Cffu that is completed when the given three stages complete
+     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see Cffu#getSuccessNow(Object)
+     */
+    @Contract(pure = true)
+    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mostTupleOfSuccess(
+            long timeout, TimeUnit unit,
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
+        return new0(CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, cf1, cf2, cf3));
+    }
+
+    /**
+     * Returns a new Cffu with the most results in the <strong>same order</strong> of
+     * the given four stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return a new Cffu that is completed when the given four stages complete
+     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see Cffu#getSuccessNow(Object)
+     */
+    @Contract(pure = true)
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mostTupleOfSuccess(
+            long timeout, TimeUnit unit,
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
+        return new0(CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, cf1, cf2, cf3, cf4));
+    }
+
+    /**
+     * Returns a new Cffu with the most results in the <strong>same order</strong> of
+     * the given five stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return a new Cffu that is completed when the given five stages complete
+     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see Cffu#getSuccessNow(Object)
+     */
+    @Contract(pure = true)
+    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mostTupleOfSuccess(
+            long timeout, TimeUnit unit,
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
+            CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
+        return new0(CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, cf1, cf2, cf3, cf4, cf5));
     }
 
     ////////////////////////////////////////////////////////////////////////////////

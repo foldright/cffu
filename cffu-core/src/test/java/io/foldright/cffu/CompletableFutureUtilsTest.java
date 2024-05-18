@@ -332,13 +332,23 @@ class CompletableFutureUtilsTest {
         final CompletableFuture<Integer> cancelled = createCancelledFuture();
         final CompletableFuture<Integer> incomplete = createIncompleteFuture();
 
+        // 0 input cf
         assertEquals(0, mostResultsOfSuccess(10, TimeUnit.MILLISECONDS, null).get().size());
 
+        // 1 input cf
         assertEquals(Collections.singletonList(n), mostResultsOfSuccess(
                 10, TimeUnit.MILLISECONDS, null, completed).get());
         assertEquals(Collections.singletonList(n), mostResultsOfSuccess(
                 10, TimeUnit.MILLISECONDS, anotherN, completedStage).get());
 
+        assertEquals(Collections.singletonList(anotherN), mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, anotherN, failed).get());
+        assertEquals(Collections.singletonList(anotherN), mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, anotherN, cancelled).get());
+        assertEquals(Collections.singletonList(anotherN), mostResultsOfSuccess(
+                10, TimeUnit.MILLISECONDS, anotherN, incomplete).get());
+
+        // more input cf
         assertEquals(Arrays.asList(n, null, null, null), mostResultsOfSuccess(
                 10, TimeUnit.MILLISECONDS, null, completed, failed, cancelled, incomplete
         ).get());
@@ -729,6 +739,40 @@ class CompletableFutureUtilsTest {
         }
     }
 
+    @Test
+    void test_mostTupleOfSuccess() throws Exception {
+        final CompletableFuture<Integer> completed = completedFuture(n);
+        final CompletionStage<String> anotherCompleted = completedStage(s);
+        final CompletableFuture<Integer> failed = failedFuture(rte);
+        final CompletableFuture<Integer> cancelled = createCancelledFuture();
+        final CompletableFuture<Integer> incomplete = createIncompleteFuture();
+
+        assertEquals(Tuple2.of(n, s), mostTupleOfSuccess(
+                10, TimeUnit.MILLISECONDS, completed, anotherCompleted
+        ).get());
+        assertEquals(Tuple2.of(n, null), mostTupleOfSuccess(
+                10, TimeUnit.MILLISECONDS, completed, failed
+        ).get());
+
+        assertEquals(Tuple3.of(n, s, null), mostTupleOfSuccess(
+                10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled
+        ).get());
+        assertEquals(Tuple3.of(null, null, s), mostTupleOfSuccess(
+                10, TimeUnit.MILLISECONDS, incomplete, failed, anotherCompleted
+        ).get());
+
+        assertEquals(Tuple4.of(n, s, null, null), mostTupleOfSuccess(
+                10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled, incomplete
+        ).get());
+        assertEquals(Tuple4.of(null, null, null, null), mostTupleOfSuccess(
+                10, TimeUnit.MILLISECONDS, incomplete, failed, cancelled, incomplete
+        ).get());
+
+        assertEquals(Tuple5.of(null, n, s, null, null), mostTupleOfSuccess(
+                10, TimeUnit.MILLISECONDS, cancelled, completed, anotherCompleted, incomplete, failed
+        ).get());
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# both methods
     ////////////////////////////////////////////////////////////////////////////////
@@ -1050,24 +1094,6 @@ class CompletableFutureUtilsTest {
         // Incomplete Future -> join before timeout
         CompletableFuture<Integer> later = createFutureCompleteLater(n);
         assertEquals(n, join(later, 3, TimeUnit.SECONDS));
-    }
-
-    @Test
-    void test_gets() {
-        final CompletableFuture<Integer> completed = completedFuture(n);
-        final CompletableFuture<Integer> failed = failedFuture(rte);
-        final CompletableFuture<Integer> cancelled = createCancelledFuture();
-        final CompletableFuture<Integer> incomplete = createIncompleteFuture();
-
-        assertEquals(Arrays.asList(n, anotherN, anotherN, anotherN),
-                MGetSuccessNow(anotherN, completed, incomplete, cancelled, failed));
-
-        assertEquals(Tuple2.of(n, null), tupleGetSuccessNow(completed, failed));
-        assertEquals(Tuple3.of(null, n, null), tupleGetSuccessNow(failed, completed, cancelled));
-        assertEquals(Tuple4.of(null, n, null, anotherN),
-                tupleGetSuccessNow(failed, completed, cancelled, completedFuture(anotherN)));
-        assertEquals(Tuple5.of(null, n, null, anotherN, null),
-                tupleGetSuccessNow(failed, completed, cancelled, completedFuture(anotherN), failed));
     }
 
     @Test

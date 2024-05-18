@@ -15,8 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.*;
 
-import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
-import static io.foldright.cffu.CompletableFutureUtils.toCompletableFutureArray;
+import static io.foldright.cffu.CompletableFutureUtils.*;
 import static io.foldright.test_utils.TestUtils.*;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;
@@ -734,6 +733,40 @@ class CffuFactoryTest {
         } catch (ExecutionException expected) {
             assertSame(rte, expected.getCause());
         }
+    }
+
+    @Test
+    void test_mostTupleOfSuccess() throws Exception {
+        final Cffu<Integer> completed = cffuFactory.completedFuture(n);
+        final CompletionStage<String> anotherCompleted = cffuFactory.completedStage(s);
+        final Cffu<Integer> failed = cffuFactory.failedFuture(rte);
+        final Cffu<Integer> cancelled = cffuFactory.toCffu(createCancelledFuture());
+        final Cffu<Integer> incomplete = cffuFactory.toCffu(createIncompleteFuture());
+
+        assertEquals(Tuple2.of(n, s), cffuFactory.mostTupleOfSuccess(
+                10, TimeUnit.MILLISECONDS, completed, anotherCompleted
+        ).get());
+        assertEquals(Tuple2.of(n, null), cffuFactory.mostTupleOfSuccess(
+                10, TimeUnit.MILLISECONDS, completed, failed
+        ).get());
+
+        assertEquals(Tuple3.of(n, s, null), cffuFactory.mostTupleOfSuccess(
+                10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled
+        ).get());
+        assertEquals(Tuple3.of(null, null, s), cffuFactory.mostTupleOfSuccess(
+                10, TimeUnit.MILLISECONDS, incomplete, failed, anotherCompleted
+        ).get());
+
+        assertEquals(Tuple4.of(n, s, null, null), cffuFactory.mostTupleOfSuccess(
+                10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled, incomplete
+        ).get());
+        assertEquals(Tuple4.of(null, null, null, null), cffuFactory.mostTupleOfSuccess(
+                10, TimeUnit.MILLISECONDS, incomplete, failed, cancelled, incomplete
+        ).get());
+
+        assertEquals(Tuple5.of(null, n, s, null, null), cffuFactory.mostTupleOfSuccess(
+                10, TimeUnit.MILLISECONDS, cancelled, completed, anotherCompleted, incomplete, failed
+        ).get());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
