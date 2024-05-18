@@ -158,14 +158,6 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * a completed Cffu with the value {@code null}
-     */
-    @Contract(pure = true)
-    private Cffu<Void> dummy() {
-        return completedFuture(null);
-    }
-
-    /**
      * Returns a new Cffu that is asynchronously completed by a task running
      * in the {@link #defaultExecutor()} after it runs the given action.
      *
@@ -174,7 +166,7 @@ public final class CffuFactory {
      * @see CompletableFuture#runAsync(Runnable)
      */
     public Cffu<Void> runAsync(Runnable action) {
-        return dummy().thenRunAsync(action);
+        return runAsync(action, defaultExecutor);
     }
 
     /**
@@ -187,7 +179,7 @@ public final class CffuFactory {
      * @see CompletableFuture#runAsync(Runnable, Executor)
      */
     public Cffu<Void> runAsync(Runnable action, Executor executor) {
-        return dummy().thenRunAsync(action, executor);
+        return new0(CompletableFuture.runAsync(action, executor));
     }
 
     /**
@@ -203,7 +195,7 @@ public final class CffuFactory {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAsync`")
     @SuppressWarnings("BoundedWildcard")
     public <T> Cffu<T> supplyAsync(Supplier<T> supplier) {
-        return dummy().thenApplyAsync(unused -> supplier.get());
+        return supplyAsync(supplier, defaultExecutor);
     }
 
     /**
@@ -219,7 +211,7 @@ public final class CffuFactory {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAsync`")
     @SuppressWarnings("BoundedWildcard")
     public <T> Cffu<T> supplyAsync(Supplier<T> supplier, Executor executor) {
-        return dummy().thenApplyAsync(unused -> supplier.get(), executor);
+        return new0(CompletableFuture.supplyAsync(supplier, executor));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
