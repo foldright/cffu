@@ -56,6 +56,7 @@ mvu::mvn_cmd clean install
 readonly KT_VERSION_FOR_JAVA8=1.6.0
 readonly KT_VERSION_FOR_JAVA11=1.7.0
 readonly KT_VERSION_FOR_JAVA17=1.8.0
+readonly KT_VERSION_FOR_JAVA22=1.9.0
 
 # about CI env var
 #   https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
