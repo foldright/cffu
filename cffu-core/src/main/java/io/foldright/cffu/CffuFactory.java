@@ -56,16 +56,6 @@ public final class CffuFactory {
         this.forbidObtrudeMethods = forbidObtrudeMethods;
     }
 
-    @Contract(pure = true)
-    private <T> Cffu<T> new0(CompletableFuture<T> cf) {
-        return new Cffu<>(this, false, cf);
-    }
-
-    @Contract(pure = true)
-    private <T> Cffu<T> newMin(CompletableFuture<T> cf) {
-        return new Cffu<>(this, true, cf);
-    }
-
     /**
      * Returns a {@link CffuFactoryBuilder} with {@code defaultExecutor} setting.
      *
@@ -75,6 +65,16 @@ public final class CffuFactory {
     @Contract(pure = true)
     public static CffuFactoryBuilder builder(Executor defaultExecutor) {
         return new CffuFactoryBuilder(CompletableFutureUtils.screenExecutor(defaultExecutor));
+    }
+
+    @Contract(pure = true)
+    private <T> Cffu<T> create(CompletableFuture<T> cf) {
+        return new Cffu<>(this, false, cf);
+    }
+
+    @Contract(pure = true)
+    private <T> Cffu<T> createMin(CompletableFuture<T> cf) {
+        return new Cffu<>(this, true, cf);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -95,7 +95,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public <T> Cffu<T> completedFuture(@Nullable T value) {
-        return new0(CompletableFuture.completedFuture(value));
+        return create(CompletableFuture.completedFuture(value));
     }
 
     /**
@@ -114,7 +114,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public <T> CompletionStage<T> completedStage(@Nullable T value) {
-        return newMin((CompletableFuture<T>) CompletableFutureUtils.completedStage(value));
+        return createMin((CompletableFuture<T>) CompletableFutureUtils.completedStage(value));
     }
 
     /**
@@ -127,7 +127,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public <T> Cffu<T> failedFuture(Throwable ex) {
-        return new0(CompletableFutureUtils.failedFuture(ex));
+        return create(CompletableFutureUtils.failedFuture(ex));
     }
 
     /**
@@ -146,7 +146,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public <T> CompletionStage<T> failedStage(Throwable ex) {
-        return newMin((CompletableFuture<T>) CompletableFutureUtils.<T>failedStage(ex));
+        return createMin((CompletableFuture<T>) CompletableFutureUtils.<T>failedStage(ex));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -179,7 +179,7 @@ public final class CffuFactory {
      * @see CompletableFuture#runAsync(Runnable, Executor)
      */
     public Cffu<Void> runAsync(Runnable action, Executor executor) {
-        return new0(CompletableFuture.runAsync(action, executor));
+        return create(CompletableFuture.runAsync(action, executor));
     }
 
     /**
@@ -211,7 +211,7 @@ public final class CffuFactory {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAsync`")
     @SuppressWarnings("BoundedWildcard")
     public <T> Cffu<T> supplyAsync(Supplier<T> supplier, Executor executor) {
-        return new0(CompletableFuture.supplyAsync(supplier, executor));
+        return create(CompletableFuture.supplyAsync(supplier, executor));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -241,7 +241,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public <T> Cffu<T> newIncompleteCffu() {
-        return new0(new CompletableFuture<>());
+        return create(new CompletableFuture<>());
     }
 
     /**
@@ -268,13 +268,13 @@ public final class CffuFactory {
         requireNonNull(stage, "stage is null");
 
         if (CompletableFutureUtils.isMinStageCf(stage)) {
-            return newMin((CompletableFuture<T>) stage);
+            return createMin((CompletableFuture<T>) stage);
         } else if (stage instanceof CompletableFuture) {
-            return new0((CompletableFuture<T>) stage);
+            return create((CompletableFuture<T>) stage);
         } else if (stage instanceof Cffu) {
             return ((Cffu<T>) stage).resetCffuFactory(this);
         }
-        return new0(stage.toCompletableFuture());
+        return create(stage.toCompletableFuture());
     }
 
     /**
@@ -335,7 +335,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public Cffu<Void> allOf(CompletionStage<?>... cfs) {
-        return new0(CompletableFutureUtils.allOf(cfs));
+        return create(CompletableFutureUtils.allOf(cfs));
     }
 
     /**
@@ -357,7 +357,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     @SafeVarargs
     public final <T> Cffu<List<T>> allResultsOf(CompletionStage<? extends T>... cfs) {
-        return new0(CompletableFutureUtils.allResultsOf(cfs));
+        return create(CompletableFutureUtils.allResultsOf(cfs));
     }
 
     /**
@@ -390,7 +390,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public Cffu<Void> allOfFastFail(CompletionStage<?>... cfs) {
-        return new0(CompletableFutureUtils.allOfFastFail(cfs));
+        return create(CompletableFutureUtils.allOfFastFail(cfs));
     }
 
     /**
@@ -415,7 +415,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     @SafeVarargs
     public final <T> Cffu<List<T>> allResultsOfFastFail(CompletionStage<? extends T>... cfs) {
-        return new0(CompletableFutureUtils.allResultsOfFastFail(cfs));
+        return create(CompletableFutureUtils.allResultsOfFastFail(cfs));
     }
 
     /**
@@ -434,7 +434,7 @@ public final class CffuFactory {
     @SafeVarargs
     public final <T> Cffu<List<T>> mostResultsOfSuccess(
             long timeout, TimeUnit unit, @Nullable T valueIfNotSuccess, CompletionStage<? extends T>... cfs) {
-        return new0(CompletableFutureUtils.mostResultsOfSuccess(timeout, unit, valueIfNotSuccess, cfs));
+        return create(CompletableFutureUtils.mostResultsOfSuccess(timeout, unit, valueIfNotSuccess, cfs));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -464,7 +464,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     @SafeVarargs
     public final <T> Cffu<T> anyOf(CompletionStage<? extends T>... cfs) {
-        return new0(CompletableFutureUtils.anyOf(cfs));
+        return create(CompletableFutureUtils.anyOf(cfs));
     }
 
     /**
@@ -485,7 +485,7 @@ public final class CffuFactory {
      */
     @SafeVarargs
     public final <T> Cffu<T> anyOfSuccess(CompletionStage<? extends T>... cfs) {
-        return new0(CompletableFutureUtils.anyOfSuccess(cfs));
+        return create(CompletableFutureUtils.anyOfSuccess(cfs));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -508,7 +508,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return new0(CompletableFutureUtils.allTupleOf(cf1, cf2));
+        return create(CompletableFutureUtils.allTupleOf(cf1, cf2));
     }
 
     /**
@@ -526,7 +526,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOfFastFail(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return new0(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2));
+        return create(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2));
     }
 
     /**
@@ -541,7 +541,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return new0(CompletableFutureUtils.allTupleOf(cf1, cf2, cf3));
+        return create(CompletableFutureUtils.allTupleOf(cf1, cf2, cf3));
     }
 
     /**
@@ -559,7 +559,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOfFastFail(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return new0(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3));
+        return create(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3));
     }
 
     /**
@@ -575,7 +575,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return new0(CompletableFutureUtils.allTupleOf(cf1, cf2, cf3, cf4));
+        return create(CompletableFutureUtils.allTupleOf(cf1, cf2, cf3, cf4));
     }
 
     /**
@@ -594,7 +594,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOfFastFail(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return new0(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3, cf4));
+        return create(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3, cf4));
     }
 
     /**
@@ -610,7 +610,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return new0(CompletableFutureUtils.allTupleOf(cf1, cf2, cf3, cf4, cf5));
+        return create(CompletableFutureUtils.allTupleOf(cf1, cf2, cf3, cf4, cf5));
     }
 
     /**
@@ -629,7 +629,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOfFastFail(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return new0(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3, cf4, cf5));
+        return create(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3, cf4, cf5));
     }
 
     /**
@@ -647,7 +647,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> mostTupleOfSuccess(
             long timeout, TimeUnit unit, CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return new0(CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, cf1, cf2));
+        return create(CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, cf1, cf2));
     }
 
     /**
@@ -666,7 +666,7 @@ public final class CffuFactory {
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mostTupleOfSuccess(
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return new0(CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, cf1, cf2, cf3));
+        return create(CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, cf1, cf2, cf3));
     }
 
     /**
@@ -686,7 +686,7 @@ public final class CffuFactory {
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return new0(CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, cf1, cf2, cf3, cf4));
+        return create(CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, cf1, cf2, cf3, cf4));
     }
 
     /**
@@ -706,7 +706,7 @@ public final class CffuFactory {
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return new0(CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, cf1, cf2, cf3, cf4, cf5));
+        return create(CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, cf1, cf2, cf3, cf4, cf5));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -721,8 +721,7 @@ public final class CffuFactory {
      * Each delay commences upon invocation of the returned executor's {@code execute} method.
      *
      * @param delay how long to delay, in units of {@code unit}
-     * @param unit  a {@code TimeUnit} determining how to interpret the
-     *              {@code delay} parameter
+     * @param unit  a {@code TimeUnit} determining how to interpret the {@code delay} parameter
      * @return the new delayed executor
      */
     @Contract(pure = true)
@@ -736,8 +735,7 @@ public final class CffuFactory {
      * Each delay commences upon invocation of the returned executor's {@code execute} method.
      *
      * @param delay    how long to delay, in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the
-     *                 {@code delay} parameter
+     * @param unit     a {@code TimeUnit} determining how to interpret the {@code delay} parameter
      * @param executor the base executor
      * @return the new delayed executor
      */
@@ -749,8 +747,8 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
     //# Conversion (Static) Methods
     //
-    //    - cffuListToArray:              List<Cffu> -> Cffu[]
-    //    - completableFutureListToArray: List<CF> -> CF[]
+    //    - cffuArrayUnwrap: Cffu[] -> CompletableFuture[]
+    //    - cffuListToArray: List<Cffu> -> Cffu[]
     ////////////////////////////////////////////////////////////////////////////////
 
     /**

@@ -772,12 +772,37 @@ class CffuFactoryTest {
     ////////////////////////////////////////////////////////////////////////////////
     //# Conversion (Static) Methods
     //
-    //    - toCompletableFutureArray:     CompletionStage[](including Cffu) -> CF[]
-    //    - completableFutureListToArray: List<CF> -> CF[]
-
     //    - cffuArrayUnwrap:              Cffu -> CF
     //    - cffuListToArray:              List<Cffu> -> Cffu[]
+    //    - toCompletableFutureArray:     CompletionStage[](including Cffu) -> CF[]
     ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void test_cffuListToArray() {
+        @SuppressWarnings("unchecked")
+        Cffu<Integer>[] input = new Cffu[]{
+                cffuFactory.completedFuture(n),
+                cffuFactory.completedFuture(anotherN),
+                cffuFactory.newIncompleteCffu()
+        };
+
+        assertArrayEquals(input, CffuFactory.cffuListToArray(Arrays.asList(input)));
+    }
+
+    @Test
+    void test_cffuArrayUnwrap() {
+        @SuppressWarnings("unchecked")
+        CompletableFuture<Integer>[] cfArray = new CompletableFuture[]{
+                completedFuture(n),
+                completedFuture(anotherN)
+        };
+        @SuppressWarnings("unchecked")
+        Cffu<Integer>[] input = new Cffu[]{
+                cffuFactory.toCffu(cfArray[0]),
+                cffuFactory.toCffu(cfArray[1]),
+        };
+        assertArrayEquals(cfArray, CffuFactory.cffuArrayUnwrap(input));
+    }
 
     @Test
     void test_toCompletableFutureArray() {
@@ -800,33 +825,6 @@ class CffuFactoryTest {
         assertArrayEquals(cfArray, toCompletableFutureArray(cfArray));
         assertArrayEquals(cfArray, toCompletableFutureArray(csArray));
         assertArrayEquals(cfArray, toCompletableFutureArray(cffuArray));
-    }
-
-    @Test
-    void test_cffuArrayUnwrap() {
-        @SuppressWarnings("unchecked")
-        CompletableFuture<Integer>[] cfArray = new CompletableFuture[]{
-                completedFuture(n),
-                completedFuture(anotherN)
-        };
-        @SuppressWarnings("unchecked")
-        Cffu<Integer>[] input = new Cffu[]{
-                cffuFactory.toCffu(cfArray[0]),
-                cffuFactory.toCffu(cfArray[1]),
-        };
-        assertArrayEquals(cfArray, CffuFactory.cffuArrayUnwrap(input));
-    }
-
-    @Test
-    void test_cffuListToArray() {
-        @SuppressWarnings("unchecked")
-        Cffu<Integer>[] input = new Cffu[]{
-                cffuFactory.completedFuture(n),
-                cffuFactory.completedFuture(anotherN),
-                cffuFactory.newIncompleteCffu()
-        };
-
-        assertArrayEquals(input, CffuFactory.cffuListToArray(Arrays.asList(input)));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
