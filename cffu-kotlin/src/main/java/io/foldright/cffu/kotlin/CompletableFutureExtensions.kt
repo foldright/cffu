@@ -1011,7 +1011,7 @@ fun <T> CompletableFuture<T>.join(timeout: Long, unit: TimeUnit): T =
  * @return the result value, if completed successfully, else the given valueIfNotSuccess
  */
 @Suppress("UNCHECKED_CAST")
-fun <T> CompletionStage<T>.getSuccessNow(valueIfNotSuccess: T): T =
+fun <T> CompletableFuture<T>.getSuccessNow(valueIfNotSuccess: T): T =
     CompletableFutureUtils.getSuccessNow(this, valueIfNotSuccess) as T
 
 /**

@@ -190,13 +190,13 @@ public final class CompletableFutureUtils {
      * the given stages in the given time({@code timeout}), aka as many results as possible in the given time.
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
-     * (aka the result extraction logic is {@link #getSuccessNow(CompletionStage, Object)}).
+     * (aka the result extraction logic is {@link #getSuccessNow(CompletableFuture, Object)}).
      *
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param cfs               the stages
-     * @see #getSuccessNow(CompletionStage, Object)
+     * @see #getSuccessNow(CompletableFuture, Object)
      */
     // * @see #MGetSuccessNow(Object, CompletionStage[])
     @Contract(pure = true)
@@ -1346,9 +1346,8 @@ public final class CompletableFutureUtils {
     // * @see #MGetSuccessNow(Object, CompletionStage[])
     @Contract(pure = true)
     @Nullable
-    public static <T> T getSuccessNow(CompletionStage<? extends T> cf, @Nullable T valueIfNotSuccess) {
-        final CompletableFuture<T> f = toCf(cf);
-        return f.isDone() && !f.isCompletedExceptionally() ? f.join() : valueIfNotSuccess;
+    public static <T> T getSuccessNow(CompletableFuture<? extends T> cf, @Nullable T valueIfNotSuccess) {
+        return cf.isDone() && !cf.isCompletedExceptionally() ? cf.join() : valueIfNotSuccess;
     }
 
     /**
@@ -1473,11 +1472,11 @@ public final class CompletableFutureUtils {
     /**
      * Multi-Gets(MGet) the results in the <strong>same order</strong> of the given cfs,
      * use the result value if the given stage is completed successfully, else use the given valueIfNotSuccess
-     * (aka the result extraction logic is {@link #getSuccessNow(CompletionStage, Object)}).
+     * (aka the result extraction logic is {@link #getSuccessNow(CompletableFuture, Object)}).
      *
      * @param cfs the stages
      * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
-     * @see #getSuccessNow(CompletionStage, Object)
+     * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
     @SafeVarargs

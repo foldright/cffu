@@ -330,6 +330,9 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
         getNow(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrow<UnsupportedOperationException> {
+        getSuccessNow(null)
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrow<UnsupportedOperationException> {
         resultNow()
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrow<UnsupportedOperationException> {
@@ -456,6 +459,8 @@ private fun <T> Cffu<T>.shouldNotMinCffu(recursive: Boolean = false) {
     if (isCompletedExceptionally) shouldThrow<CompletionException> {
         getNow(null)
     } else getNow((null))
+
+    getSuccessNow(null)
 
     if (isCompletedExceptionally) shouldThrow<IllegalStateException> { resultNow() }
     else resultNow()
