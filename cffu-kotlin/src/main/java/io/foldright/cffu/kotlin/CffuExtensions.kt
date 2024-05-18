@@ -404,8 +404,8 @@ fun Array<out CompletionStage<*>>.allOfFastFailCffu(cffuFactory: CffuFactory): C
  * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see Cffu.getSuccessNow
- * @see CompletableFutureUtils.batchGetSuccessNow
  */
+// * @see CompletableFutureUtils.MGetSuccessNow
 fun <T> Collection<Cffu<out T>>.mostResultsOfSuccessCffu(
     timeout: Long, unit: TimeUnit, valueIfNotSuccess: T, cffuFactory: CffuFactory = ABSENT
 ): Cffu<List<T>> {
@@ -425,8 +425,8 @@ fun <T> Collection<Cffu<out T>>.mostResultsOfSuccessCffu(
  * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see Cffu.getSuccessNow
- * @see CompletableFutureUtils.batchGetSuccessNow
  */
+// * @see CompletableFutureUtils.MGetSuccessNow
 fun <T> Array<out Cffu<out T>>.mostResultsOfSuccessCffu(
     timeout: Long, unit: TimeUnit, valueIfNotSuccess: T, cffuFactory: CffuFactory = ABSENT
 ): Cffu<List<T>> {
@@ -448,8 +448,8 @@ fun <T> Array<out Cffu<out T>>.mostResultsOfSuccessCffu(
  * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see Cffu.getSuccessNow
- * @see CompletableFutureUtils.batchGetSuccessNow
  */
+// * @see CompletableFutureUtils.MGetSuccessNow
 @JvmName("mostResultsOfSuccessCffuCs")
 fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCffu(
     timeout: Long, unit: TimeUnit, valueIfNotSuccess: T, cffuFactory: CffuFactory
@@ -467,8 +467,8 @@ fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCffu(
  * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see Cffu.getSuccessNow
- * @see CompletableFutureUtils.batchGetSuccessNow
  */
+// * @see CompletableFutureUtils.MGetSuccessNow
 fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCffu(
     timeout: Long, unit: TimeUnit, valueIfNotSuccess: T, cffuFactory: CffuFactory
 ): Cffu<List<T>> =

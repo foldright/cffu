@@ -438,8 +438,8 @@ public final class CffuFactory {
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param cfs           the stages
      * @see Cffu#getSuccessNow(Object)
-     * @see CompletableFutureUtils#batchGetSuccessNow(Object, CompletionStage[])
      */
+    // TODO * @see CompletableFutureUtils#MGetSuccessNow(Object, CompletionStage[])
     @Contract(pure = true)
     @SafeVarargs
     public final <T> Cffu<List<T>> mostResultsOfSuccess(

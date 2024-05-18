@@ -1020,7 +1020,7 @@ class CompletableFutureUtilsTest {
         final CompletableFuture<Integer> incomplete = createIncompleteFuture();
 
         assertEquals(Arrays.asList(n, anotherN, anotherN, anotherN),
-                batchGetSuccessNow(anotherN, completed, incomplete, cancelled, failed));
+                MGetSuccessNow(anotherN, completed, incomplete, cancelled, failed));
 
         assertEquals(Tuple2.of(n, null), tupleGetSuccessNow(completed, failed));
         assertEquals(Tuple3.of(null, n, null), tupleGetSuccessNow(failed, completed, cancelled));

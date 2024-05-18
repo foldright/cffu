@@ -218,8 +218,8 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfFastFailCompletableFuture(
  * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see getSuccessNow
- * @see CompletableFutureUtils.batchGetSuccessNow
  */
+// * @see CompletableFutureUtils.MGetSuccessNow
 fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
     timeout: Long, unit: TimeUnit, valueIfNotSuccess: T
 ): CompletableFuture<List<T>> =
@@ -236,8 +236,8 @@ fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture
  * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see getSuccessNow
- * @see CompletableFutureUtils.batchGetSuccessNow
  */
+// * @see CompletableFutureUtils.MGetSuccessNow
 fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
     timeout: Long, unit: TimeUnit, valueIfNotSuccess: T
 ): CompletableFuture<List<T>> =
