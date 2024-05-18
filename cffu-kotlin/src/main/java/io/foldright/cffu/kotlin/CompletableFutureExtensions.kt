@@ -9,10 +9,7 @@ import io.foldright.cffu.tuple.Tuple2
 import io.foldright.cffu.tuple.Tuple3
 import io.foldright.cffu.tuple.Tuple4
 import io.foldright.cffu.tuple.Tuple5
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletionStage
-import java.util.concurrent.Executor
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.*
 import java.util.function.*
 import java.util.function.Function
 
@@ -943,20 +940,106 @@ fun <T> CompletableFuture<T>.exceptionallyAsync(
  * Exceptionally completes this CompletableFuture with a TimeoutException
  * if not otherwise completed before the given timeout.
  *
+ * Uses CompletableFuture's default asynchronous execution facility as `executorWhenTimeout`.
+ *
+ * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of `unit`
+ * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @return the new CompletableFuture
+ */
+fun <T, C : CompletableFuture<out T>> C.cffuOrTimeout(timeout: Long, unit: TimeUnit): C =
+    CompletableFutureUtils.cffuOrTimeout(this, timeout, unit)
+
+/**
+ * Exceptionally completes this CompletableFuture with a TimeoutException
+ * if not otherwise completed before the given timeout.
+ *
+ * @param executorWhenTimeout the async executor when triggered by timeout
+ * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of `unit`
+ * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @return the new CompletableFuture
+ */
+fun <T, C : CompletableFuture<out T>> C.cffuOrTimeout(executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit): C =
+    CompletableFutureUtils.cffuOrTimeout(this, executorWhenTimeout, timeout, unit)
+
+/**
+ * Exceptionally completes this CompletableFuture with a [TimeoutException]
+ * if not otherwise completed before the given timeout.
+ *
+ * **CAUTION:** This method and [CompletableFuture.orTimeout] is **UNSAFE**!
+ *
+ * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
+ * are performed in the **SINGLE thread builtin executor**
+ * of CompletableFuture for delay executions (including timeout function).
+ * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
+ * (including delay execution and timeout).
+ *
+ * **Strong recommend** using the safe methods [cffuOrTimeout]
+ * instead of this method and [CompletableFuture.orTimeout].
+ *
+ * Unless all subsequent actions of dependent CompletableFutures is ensured executing async
+ * (aka. the dependent CompletableFutures is created by async methods), using this method and [CompletableFuture.orTimeout]
+ * is one less thread switch of task execution when triggered by timeout.
+ *
  * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of `unit`
  * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
  * @return this CompletableFuture
+ * @see cffuOrTimeout
  */
 fun <T, C : CompletableFuture<out T>> C.orTimeout(timeout: Long, unit: TimeUnit): C =
     CompletableFutureUtils.orTimeout(this, timeout, unit)
 
 /**
- * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
+ * Completes this CompletableFuture with the given value if not otherwise completed before the given timeout.
+ *
+ * Uses CompletableFuture's default asynchronous execution facility as `executorWhenTimeout`.
  *
  * @param value   the value to use upon timeout
  * @param timeout how long to wait before completing normally with the given value, in units of `unit`
  * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
- * @return given CompletableFuture
+ * @return the new CompletableFuture
+ */
+fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
+    value: T, timeout: Long, unit: TimeUnit
+): C =
+    CompletableFutureUtils.cffuCompleteOnTimeout(this, value, timeout, unit)
+
+/**
+ * Completes this CompletableFuture with the given value if not otherwise completed before the given timeout.
+ *
+ * @param value   the value to use upon timeout
+ * @param executorWhenTimeout the async executor when triggered by timeout
+ * @param timeout how long to wait before completing normally with the given value, in units of `unit`
+ * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @return the new CompletableFuture
+ */
+fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
+    value: T, executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit
+): C =
+    CompletableFutureUtils.cffuCompleteOnTimeout(this, value, executorWhenTimeout, timeout, unit)
+
+/**
+ * Completes this CompletableFuture with the given value if not otherwise completed before the given timeout.
+ *
+ * **CAUTION:** This method and [CompletableFuture.completeOnTimeout] is **UNSAFE**!
+ *
+ * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
+ * are performed in the **SINGLE thread builtin executor**
+ * of CompletableFuture for delay executions (including timeout function).
+ * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
+ * (including delay execution and timeout).
+ *
+ * **Strong recommend** using the safe methods [cffuCompleteOnTimeout]
+ * instead of this method and [CompletableFuture.completeOnTimeout].
+ *
+ * Unless all subsequent actions of dependent CompletableFutures is ensured executing async
+ * (aka. the dependent CompletableFutures is created by async methods), using this method and [CompletableFuture.completeOnTimeout]
+ * is one less thread switch of task execution when triggered by timeout.
+ *
+ * @param value   the value to use upon timeout
+ * @param timeout how long to wait before completing normally with the given value, in units of `unit`
+ * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @return this CompletableFuture
+ * @see cffuCompleteOnTimeout
  */
 fun <T, C : CompletableFuture<in T>> C.completeOnTimeout(value: T, timeout: Long, unit: TimeUnit): C =
     CompletableFutureUtils.completeOnTimeout(this, value, timeout, unit)

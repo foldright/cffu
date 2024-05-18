@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.*;
 
+import static io.foldright.cffu.Delayer.IS_IN_CF_DELAYER_THREAD;
 import static java.util.Objects.requireNonNull;
 
 
@@ -1356,10 +1357,58 @@ public final class CompletableFutureUtils {
     /**
      * Exceptionally completes given CompletableFuture with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
+     * <p>
+     * Uses CompletableFuture's default asynchronous execution facility as {@code executorWhenTimeout}.
+     *
+     * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return a new CompletableFuture
+     * @see #cffuOrTimeout(CompletableFuture, Executor, long, TimeUnit)
+     */
+    public static <C extends CompletableFuture<?>> C cffuOrTimeout(
+            C cf, long timeout, TimeUnit unit) {
+        return cffuOrTimeout(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit);
+    }
+
+    /**
+     * Exceptionally completes given CompletableFuture with a {@link TimeoutException}
+     * if not otherwise completed before the given timeout.
+     *
+     * @param executorWhenTimeout the async executor when triggered by timeout
+     * @param timeout             how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
+     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return a new CompletableFuture
+     */
+    public static <C extends CompletableFuture<?>> C cffuOrTimeout(
+            C cf, Executor executorWhenTimeout, long timeout, TimeUnit unit) {
+        final C f = orTimeout(cf, timeout, unit);
+        return hopAsyncIf(f, IS_IN_CF_DELAYER_THREAD, executorWhenTimeout);
+    }
+
+    /**
+     * Exceptionally completes given CompletableFuture with a {@link TimeoutException}
+     * if not otherwise completed before the given timeout.
+     * <p>
+     * <strong>CAUTION:<br></strong> This method and {@link CompletableFuture#orTimeout(long, TimeUnit)}
+     * is <strong>UNSAFE</strong>!
+     * <p>
+     * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
+     * are performed in the <strong>SINGLE thread builtin executor</strong>
+     * of CompletableFuture for delay executions (including timeout function).
+     * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
+     * (including delay execution and timeout).
+     * <p>
+     * <strong>Strong recommend</strong> using the safe methods {@link #cffuOrTimeout(CompletableFuture, long, TimeUnit)}
+     * instead of this method and {@link CompletableFuture#orTimeout(long, TimeUnit)}.
+     * <p>
+     * Unless all subsequent actions of dependent CompletableFutures is ensured executing async
+     * (aka. the dependent CompletableFutures is created by async methods), using this method and {@link CompletableFuture#orTimeout(long, TimeUnit)}
+     * is one less thread switch of task execution when triggered by timeout.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the given CompletableFuture
+     * @see #cffuOrTimeout(CompletableFuture, long, TimeUnit)
      */
     public static <C extends CompletableFuture<?>> C orTimeout(C cf, long timeout, TimeUnit unit) {
         if (IS_JAVA9_PLUS) {
@@ -1377,11 +1426,59 @@ public final class CompletableFutureUtils {
 
     /**
      * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
+     * <p>
+     * Uses CompletableFuture's default asynchronous execution facility as {@code executorWhenTimeout}.
+     *
+     * @param value   the value to use upon timeout
+     * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return a new CompletableFuture
+     * @see #cffuCompleteOnTimeout(CompletableFuture, Object, Executor, long, TimeUnit)
+     */
+    public static <T, C extends CompletableFuture<? super T>>
+    C cffuCompleteOnTimeout(C cf, @Nullable T value, long timeout, TimeUnit unit) {
+        return cffuCompleteOnTimeout(cf, value, AsyncPoolHolder.ASYNC_POOL, timeout, unit);
+    }
+
+    /**
+     * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
+     *
+     * @param value               the value to use upon timeout
+     * @param executorWhenTimeout the async executor when triggered by timeout
+     * @param timeout             how long to wait before completing normally with the given value, in units of {@code unit}
+     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return a new CompletableFuture
+     */
+    public static <T, C extends CompletableFuture<? super T>>
+    C cffuCompleteOnTimeout(C cf, @Nullable T value, Executor executorWhenTimeout, long timeout, TimeUnit unit) {
+        final C f = completeOnTimeout(cf, value, timeout, unit);
+        return hopAsyncIf(f, IS_IN_CF_DELAYER_THREAD, executorWhenTimeout);
+    }
+
+    /**
+     * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
+     * <p>
+     * <strong>CAUTION:<br></strong> This method and {@link CompletableFuture#completeOnTimeout(Object, long, TimeUnit)}
+     * is <strong>UNSAFE</strong>!
+     * <p>
+     * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
+     * are performed in the <strong>SINGLE thread builtin executor</strong>
+     * of CompletableFuture for delay executions (including timeout function).
+     * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
+     * (including delay execution and timeout).
+     * <p>
+     * <strong>Strong recommend</strong> using the safe methods {@link #cffuCompleteOnTimeout(CompletableFuture, Object, long, TimeUnit)}
+     * instead of this method and {@link CompletableFuture#completeOnTimeout(Object, long, TimeUnit)}.
+     * <p>
+     * Unless all subsequent actions of dependent CompletableFutures is ensured executing async
+     * (aka. the dependent CompletableFutures is created by async methods), using this method and {@link CompletableFuture#completeOnTimeout(Object, long, TimeUnit)}
+     * is one less thread switch of task execution when triggered by timeout.
      *
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the given CompletableFuture
+     * @see #cffuCompleteOnTimeout(CompletableFuture, Object, long, TimeUnit)
      */
     public static <T, C extends CompletableFuture<? super T>>
     C completeOnTimeout(C cf, @Nullable T value, long timeout, TimeUnit unit) {
@@ -1396,6 +1493,15 @@ public final class CompletableFutureUtils {
             }
         }
         return cf;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T, C extends CompletionStage<? extends T>>
+    C hopAsyncIf(C cf, BooleanSupplier condition, Executor ayncExecutor) {
+        return (C) cf.handle((r, ex) -> condition.getAsBoolean()
+                ? cf.handleAsync((r1, ex1) -> cf, ayncExecutor).thenCompose(x -> (CompletionStage<T>) x)
+                : cf
+        ).thenCompose(x -> (CompletionStage<T>) x);
     }
 
     //# Advanced methods of CompletionStage

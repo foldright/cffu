@@ -130,8 +130,42 @@ class CffuTest {
     ////////////////////////////////////////
     // timeout control
     //
-    // tested in CffuApiCompatibilityTest
+    // also tested in CffuApiCompatibilityTest
     ////////////////////////////////////////
+
+    @Test
+    void test_timeout() throws Exception {
+        assertInstanceOf(TimeoutException.class,
+                assertThrows(ExecutionException.class, () ->
+                        cffuFactory.newIncompleteCffu().orTimeout(1, TimeUnit.MILLISECONDS).get()
+                ).getCause());
+        assertInstanceOf(TimeoutException.class,
+                assertThrows(ExecutionException.class, () ->
+                        cffuFactory.newIncompleteCffu().orTimeout(executorService, 1, TimeUnit.MILLISECONDS).get()
+                ).getCause());
+        assertInstanceOf(TimeoutException.class,
+                assertThrows(ExecutionException.class, () ->
+                        cffuFactory.newIncompleteCffu().unsafeOrTimeout(1, TimeUnit.MILLISECONDS).get()
+                ).getCause());
+
+        assertEquals(n, cffuFactory.completedFuture(n).orTimeout(1, TimeUnit.MILLISECONDS).get());
+        assertEquals(n, cffuFactory.completedFuture(n).orTimeout(executorService, 1, TimeUnit.MILLISECONDS).get());
+        assertEquals(n, cffuFactory.completedFuture(n).unsafeOrTimeout(1, TimeUnit.MILLISECONDS).get());
+
+        assertEquals(n, cffuFactory.newIncompleteCffu().completeOnTimeout(
+                n, 1, TimeUnit.MILLISECONDS).get());
+        assertEquals(n, cffuFactory.newIncompleteCffu().completeOnTimeout(
+                n, executorService, 1, TimeUnit.MILLISECONDS).get());
+        assertEquals(n, cffuFactory.newIncompleteCffu().unsafeCompleteOnTimeout(
+                n, 1, TimeUnit.MILLISECONDS).get());
+
+        assertEquals(n, cffuFactory.completedFuture(n).completeOnTimeout(
+                anotherN, 1, TimeUnit.MILLISECONDS).get());
+        assertEquals(n, cffuFactory.completedFuture(n).completeOnTimeout(
+                anotherN, executorService, 1, TimeUnit.MILLISECONDS).get());
+        assertEquals(n, cffuFactory.completedFuture(n).unsafeCompleteOnTimeout(
+                anotherN, 1, TimeUnit.MILLISECONDS).get());
+    }
 
     ////////////////////////////////////////////////////////////////////////////////
     //# Read(explicitly) methods

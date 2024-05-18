@@ -11,6 +11,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.util.concurrent.*;
 import java.util.function.BiConsumer;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 
@@ -54,15 +55,29 @@ final class Delayer {
         return delay(new CfCompleter<>(cf, value), delay, unit);
     }
 
+    private static final String THREAD_NAME_OF_CFFU_DELAY_SCHEDULER = "CffuDelayScheduler";
+
     private static final class DaemonThreadFactory implements ThreadFactory {
         @Override
         public Thread newThread(@NonNull Runnable r) {
             Thread t = new Thread(r);
             t.setDaemon(true);
-            t.setName("CffuDelayScheduler");
+            t.setName(THREAD_NAME_OF_CFFU_DELAY_SCHEDULER);
             return t;
         }
     }
+
+    /**
+     * Checks whether the action is executed in the thread of CompletableFuture/Cffu delayer.
+     * <p>
+     * The constant {@code "CompletableFutureDelayScheduler"} is defined
+     * at {@link CompletableFuture.Delayer.DaemonThreadFactory}.
+     */
+    @SuppressWarnings("JavadocReference")
+    static final BooleanSupplier IS_IN_CF_DELAYER_THREAD = () -> {
+        final String name = Thread.currentThread().getName();
+        return "CompletableFutureDelayScheduler".equals(name) || THREAD_NAME_OF_CFFU_DELAY_SCHEDULER.equals(name);
+    };
 
     private Delayer() {
     }

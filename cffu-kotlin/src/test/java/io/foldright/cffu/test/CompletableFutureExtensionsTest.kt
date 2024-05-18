@@ -410,13 +410,20 @@ class CompletableFutureExtensionsTest : FunSpec({
     }
 
     test("test_timeout") {
-        var cf = CompletableFuture<Int>()
         shouldThrow<ExecutionException> {
-            cf.orTimeout(1, TimeUnit.MILLISECONDS).get()
+            CompletableFuture<Int>().orTimeout(1, TimeUnit.MILLISECONDS).get()
+        }.cause.shouldBeTypeOf<TimeoutException>()
+        shouldThrow<ExecutionException> {
+            CompletableFuture<Int>().cffuOrTimeout(1, TimeUnit.MILLISECONDS).get()
+        }.cause.shouldBeTypeOf<TimeoutException>()
+        shouldThrow<ExecutionException> {
+            CompletableFuture<Int>().cffuOrTimeout(testThreadPoolExecutor, 1, TimeUnit.MILLISECONDS).get()
         }.cause.shouldBeTypeOf<TimeoutException>()
 
-        cf = CompletableFuture()
-        cf.completeOnTimeout(n, 1, TimeUnit.MILLISECONDS).get() shouldBe n
+        CompletableFuture<Int>().completeOnTimeout(n, 1, TimeUnit.MILLISECONDS).get() shouldBe n
+        CompletableFuture<Int>().cffuCompleteOnTimeout(n, 1, TimeUnit.MILLISECONDS).get() shouldBe n
+        CompletableFuture<Int>().cffuCompleteOnTimeout(n, testThreadPoolExecutor, 1, TimeUnit.MILLISECONDS)
+            .get() shouldBe n
     }
 
     test("exceptionallyCompose") {

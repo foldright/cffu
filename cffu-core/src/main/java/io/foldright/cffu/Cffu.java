@@ -1124,32 +1124,119 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Exceptionally completes this Cffu with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
+     * <p>
+     * Uses {@link #defaultExecutor()} as {@code executorWhenTimeout}.
      *
      * @param timeout how long to wait before completing exceptionally
      *                with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return this Cffu
-     * @see CffuFactory#delayedExecutor(long, TimeUnit)
+     * @return the new Cffu
+     * @see #orTimeout(Executor, long, TimeUnit)
      */
     public Cffu<T> orTimeout(long timeout, TimeUnit unit) {
+        return orTimeout(fac.defaultExecutor(), timeout, unit);
+    }
+
+    /**
+     * Exceptionally completes this Cffu with a {@link TimeoutException}
+     * if not otherwise completed before the given timeout.
+     *
+     * @param executorWhenTimeout the async executor when triggered by timeout
+     * @param timeout             how long to wait before completing exceptionally
+     *                            with a TimeoutException, in units of {@code unit}
+     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return the new Cffu
+     */
+    public Cffu<T> orTimeout(Executor executorWhenTimeout, long timeout, TimeUnit unit) {
         checkMinimalStage();
-        CompletableFutureUtils.orTimeout(cf, timeout, unit);
-        return this;
+        return reset0(CompletableFutureUtils.cffuOrTimeout(cf, executorWhenTimeout, timeout, unit));
+    }
+
+    /**
+     * Exceptionally completes given Cffu with a {@link TimeoutException}
+     * if not otherwise completed before the given timeout.
+     * <p>
+     * <strong>CAUTION:<br></strong> This method is <strong>UNSAFE</strong>!
+     * <p>
+     * When triggered by timeout, the subsequent non-async actions of the dependent cfs
+     * are performed in the <strong>SINGLE thread builtin executor</strong>
+     * of CompletableFuture for delay executions (including timeout function).
+     * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
+     * (including delay execution and timeout).
+     * <p>
+     * <strong>Strong recommend</strong> using the safe methods {@link #orTimeout(long, TimeUnit)}
+     * instead of this method.
+     * <p>
+     * Unless all subsequent actions of dependent cfs is ensured executing async
+     * (aka. the dependent cfs is created by async methods), using this method
+     * is one less thread switch of task execution when triggered by timeout.
+     *
+     * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return this Cffu
+     * @see #orTimeout(long, TimeUnit)
+     */
+    public Cffu<T> unsafeOrTimeout(long timeout, TimeUnit unit) {
+        checkMinimalStage();
+        return reset0(CompletableFutureUtils.orTimeout(cf, timeout, unit));
+    }
+
+    /**
+     * Completes this Cffu with the given value if not otherwise completed before the given timeout.
+     * <p>
+     * Uses {@link #defaultExecutor()} as {@code executorWhenTimeout}.
+     *
+     * @param value   the value to use upon timeout
+     * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return the new Cffu
+     * @see #completeOnTimeout(Object, Executor, long, TimeUnit)
+     */
+    public Cffu<T> completeOnTimeout(@Nullable T value, long timeout, TimeUnit unit) {
+        return completeOnTimeout(value, fac.defaultExecutor(), timeout, unit);
     }
 
     /**
      * Completes this Cffu with the given value if not otherwise completed before the given timeout.
      *
+     * @param value               the value to use upon timeout
+     * @param executorWhenTimeout the async executor when triggered by timeout
+     * @param timeout             how long to wait before completing normally with the given value, in units of {@code unit}
+     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return the new Cffu
+     */
+    public Cffu<T> completeOnTimeout(@Nullable T value, Executor executorWhenTimeout, long timeout, TimeUnit unit) {
+        checkMinimalStage();
+        return reset0(CompletableFutureUtils.cffuCompleteOnTimeout(cf, value, executorWhenTimeout, timeout, unit));
+    }
+
+    /**
+     * Completes given Cffu with the given value if not otherwise completed before the given timeout.
+     * <p>
+     * <strong>CAUTION:<br></strong> This method is <strong>UNSAFE</strong>!
+     * <p>
+     * When triggered by timeout, the subsequent non-async actions of the dependent cfs
+     * are performed in the <strong>SINGLE thread builtin executor</strong>
+     * of CompletableFuture for delay executions (including timeout function).
+     * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
+     * (including delay execution and timeout).
+     * <p>
+     * <strong>Strong recommend</strong> using the safe methods {@link #completeOnTimeout(Object, long, TimeUnit)}
+     * instead of this method.
+     * <p>
+     * Unless all subsequent actions of dependent cfs is ensured executing async
+     * (aka. the dependent cfs is created by async methods), using this method
+     * is one less thread switch of task execution when triggered by timeout.
+     *
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return this Cffu
-     * @see CffuFactory#delayedExecutor(long, TimeUnit)
+     * @see #completeOnTimeout(Object, long, TimeUnit)
      */
-    public Cffu<T> completeOnTimeout(@Nullable T value, long timeout, TimeUnit unit) {
+    public Cffu<T> unsafeCompleteOnTimeout(@Nullable T value, long timeout, TimeUnit unit) {
         checkMinimalStage();
-        CompletableFutureUtils.completeOnTimeout(cf, value, timeout, unit);
-        return this;
+        return reset0(CompletableFutureUtils.completeOnTimeout(cf, value, timeout, unit));
     }
 
     ////////////////////////////////////////////////////////////////////////////////

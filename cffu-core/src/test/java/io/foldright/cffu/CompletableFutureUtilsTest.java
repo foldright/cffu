@@ -982,21 +982,30 @@ class CompletableFutureUtilsTest {
 
     @Test
     void test_timeout() throws Exception {
-        CompletableFuture<Integer> cf = createIncompleteFuture();
-        try {
-            orTimeout(cf, 1, TimeUnit.MILLISECONDS).get();
-        } catch (ExecutionException expected) {
-            assertEquals(TimeoutException.class, expected.getCause().getClass());
-        }
+        assertInstanceOf(TimeoutException.class,
+                assertThrows(ExecutionException.class, () ->
+                        orTimeout(createIncompleteFuture(), 1, TimeUnit.MILLISECONDS).get()
+                ).getCause());
+        assertInstanceOf(TimeoutException.class,
+                assertThrows(ExecutionException.class, () ->
+                        cffuOrTimeout(createIncompleteFuture(), 1, TimeUnit.MILLISECONDS).get()
+                ).getCause());
+        assertInstanceOf(TimeoutException.class,
+                assertThrows(ExecutionException.class, () ->
+                        cffuOrTimeout(createIncompleteFuture(), defaultExecutor(), 1, TimeUnit.MILLISECONDS).get()
+                ).getCause());
 
-        cf = createIncompleteFuture();
-        assertEquals(n, completeOnTimeout(cf, n, 1, TimeUnit.MILLISECONDS).get());
+        assertEquals(n, orTimeout(completedFuture(n), 1, TimeUnit.MILLISECONDS).get());
+        assertEquals(n, cffuOrTimeout(completedFuture(n), 1, TimeUnit.MILLISECONDS).get());
+        assertEquals(n, cffuOrTimeout(completedFuture(n), defaultExecutor(), 1, TimeUnit.MILLISECONDS).get());
 
-        cf = completedFuture(n);
-        assertEquals(n, completeOnTimeout(cf, anotherN, 1, TimeUnit.MILLISECONDS).get());
+        assertEquals(n, completeOnTimeout(createIncompleteFuture(), n, 1, TimeUnit.MILLISECONDS).get());
+        assertEquals(n, cffuCompleteOnTimeout(createIncompleteFuture(), n, 1, TimeUnit.MILLISECONDS).get());
+        assertEquals(n, cffuCompleteOnTimeout(createIncompleteFuture(), n, defaultExecutor(), 1, TimeUnit.MILLISECONDS).get());
 
-        cf = completedFuture(n);
-        assertEquals(n, orTimeout(cf, 1, TimeUnit.MILLISECONDS).get());
+        assertEquals(n, completeOnTimeout(completedFuture(n), anotherN, 1, TimeUnit.MILLISECONDS).get());
+        assertEquals(n, cffuCompleteOnTimeout(completedFuture(n), anotherN, 1, TimeUnit.MILLISECONDS).get());
+        assertEquals(n, cffuCompleteOnTimeout(completedFuture(n), anotherN, defaultExecutor(), 1, TimeUnit.MILLISECONDS).get());
     }
 
     @Test
