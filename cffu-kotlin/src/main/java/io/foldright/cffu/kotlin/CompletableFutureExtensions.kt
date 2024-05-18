@@ -1072,7 +1072,6 @@ fun <T> CompletableFuture<T>.resultNow(): T =
  * @return the exception thrown by the task
  * @throws IllegalStateException if the task has not completed, the task completed normally,
  *                               or the task was cancelled
- * @see CompletableFuture.resultNow
  */
 fun CompletableFuture<*>.exceptionNow(): Throwable =
     CompletableFutureUtils.exceptionNow(this)
@@ -1110,6 +1109,29 @@ fun <T, C : CompletableFuture<in T>> C.completeAsync(supplier: Supplier<out T>):
  */
 fun <T, C : CompletableFuture<in T>> C.completeAsync(supplier: Supplier<out T>, executor: Executor): C =
     CompletableFutureUtils.completeAsync(this, supplier, executor)
+
+/**
+ * If not already completed, completes given CompletableFuture with the exception result
+ * of the given Supplier function invoked from an asynchronous task using the default executor.
+ *
+ * @param supplier a function returning the value to be used to complete given CompletableFuture
+ * @return the given CompletableFuture
+ * @see CompletableFuture.completeExceptionally
+ */
+fun <C : CompletableFuture<*>> C.completeExceptionallyAsync(supplier: Supplier<out Throwable>): C =
+    CompletableFutureUtils.completeExceptionallyAsync(this, supplier)
+
+/**
+ * If not already completed, completes given CompletableFuture with the exception result
+ * of the given Supplier function invoked from an asynchronous task using the given executor.
+ *
+ * @param supplier a function returning the value to be used to complete given CompletableFuture
+ * @param executor the executor to use for asynchronous execution
+ * @return the given CompletableFuture
+ * @see CompletableFuture.completeExceptionally
+ */
+fun <C : CompletableFuture<*>> C.completeExceptionallyAsync(supplier: Supplier<out Throwable>, executor: Executor): C =
+    CompletableFutureUtils.completeExceptionallyAsync(this, supplier, executor)
 
 //# Re-Config methods
 

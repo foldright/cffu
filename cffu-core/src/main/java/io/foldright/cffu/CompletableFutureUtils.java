@@ -1675,11 +1675,43 @@ public final class CompletableFutureUtils {
         if (IS_JAVA9_PLUS) {
             cf.completeAsync(supplier, executor);
         } else {
+            requireNonNull(cf, "cf is null");
             requireNonNull(supplier, "supplier is null");
             requireNonNull(executor, "executor is null");
             // below code is copied from CompletableFuture#completeAsync with small adoption
             executor.execute(new CfCompleterBySupplier<>(cf, supplier));
         }
+        return cf;
+    }
+
+    /**
+     * If not already completed, completes given CompletableFuture with the exception result
+     * of the given Supplier function invoked from an asynchronous task using the default executor.
+     *
+     * @param supplier a function returning the value to be used to complete given CompletableFuture
+     * @return the given CompletableFuture
+     * @see CompletableFuture#completeExceptionally(Throwable)
+     */
+    public static <C extends CompletableFuture<?>>
+    C completeExceptionallyAsync(C cf, Supplier<? extends Throwable> supplier) {
+        return completeExceptionallyAsync(cf, supplier, AsyncPoolHolder.ASYNC_POOL);
+    }
+
+    /**
+     * If not already completed, completes given CompletableFuture with the exception result
+     * of the given Supplier function invoked from an asynchronous task using the given executor.
+     *
+     * @param supplier a function returning the value to be used to complete given CompletableFuture
+     * @param executor the executor to use for asynchronous execution
+     * @return the given CompletableFuture
+     * @see CompletableFuture#completeExceptionally(Throwable)
+     */
+    public static <C extends CompletableFuture<?>>
+    C completeExceptionallyAsync(C cf, Supplier<? extends Throwable> supplier, Executor executor) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(supplier, "supplier is null");
+        requireNonNull(executor, "executor is null");
+        executor.execute(new CfExCompleterBySupplier(cf, supplier));
         return cf;
     }
 

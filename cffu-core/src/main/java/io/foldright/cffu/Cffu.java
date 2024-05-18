@@ -1843,6 +1843,31 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
+     * If not already completed, completes given Cffu with the exception result
+     * of the given Supplier function invoked from an asynchronous task using the default executor.
+     *
+     * @param supplier a function returning the value to be used to complete given Cffu
+     * @return the given Cffu
+     */
+    public Cffu<T> completeExceptionallyAsync(Supplier<? extends Throwable> supplier) {
+        return completeExceptionallyAsync(supplier, fac.defaultExecutor());
+    }
+
+    /**
+     * If not already completed, completes given Cffu with the exception result
+     * of the given Supplier function invoked from an asynchronous task using the given executor.
+     *
+     * @param supplier a function returning the value to be used to complete given Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @return the given Cffu
+     */
+    public Cffu<T> completeExceptionallyAsync(Supplier<? extends Throwable> supplier, Executor executor) {
+        checkMinimalStage();
+        CompletableFutureUtils.completeExceptionallyAsync(cf, supplier, executor);
+        return this;
+    }
+
+    /**
      * If not already completed, completes this Cffu with a {@link CancellationException}.
      * Dependent Cffus that have not already completed will also complete exceptionally,
      * with a {@link CompletionException} caused by this {@code CancellationException}.

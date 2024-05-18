@@ -1012,7 +1012,7 @@ class CompletableFutureUtilsTest {
     }
 
     @Test
-    @SuppressWarnings({"ResultOfMethodCallIgnored", "ThrowableNotThrown"})
+    @SuppressWarnings("ThrowableNotThrown")
     void test_read() {
         ////////////////////////////////////////////////////////////////////////////////
         // completed tasks
@@ -1131,17 +1131,21 @@ class CompletableFutureUtilsTest {
     void test_write() throws Exception {
         assertEquals(n, completeAsync(createIncompleteFuture(), () -> n).get());
         assertEquals(n, completeAsync(createIncompleteFuture(), () -> n, commonPool()).get());
-        try {
-            completeAsync(createIncompleteFuture(), () -> {
-                throw rte;
-            }).get();
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrows(ExecutionException.class, () ->
+                completeAsync(createIncompleteFuture(), () -> {
+                    throw rte;
+                }).get()
+        ).getCause());
 
         CompletableFuture<Integer> completed = completedFuture(n);
         assertEquals(n, completeAsync(completed, () -> anotherN).get());
+
+        ////////////////////////////////////////
+
+        assertSame(rte, assertThrows(ExecutionException.class, () ->
+                completeExceptionallyAsync(createIncompleteFuture(), () -> rte).get()
+        ).getCause());
+        assertEquals(n, completeExceptionallyAsync(completedFuture(n), () -> rte).get());
     }
 
     @Test

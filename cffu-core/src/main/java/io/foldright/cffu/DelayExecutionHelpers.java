@@ -16,7 +16,10 @@ import java.util.function.Supplier;
 
 /**
  * Singleton delay scheduler, used only for starting and cancelling tasks
+ * <p>
+ * code is copied from {@link CompletableFuture.Delayer} with small adoption.
  */
+@SuppressWarnings("JavadocReference")
 final class Delayer {
     private static final ScheduledThreadPoolExecutor delayer;
 
@@ -67,7 +70,10 @@ final class Delayer {
 
 /**
  * An executor wrapper with delayed execution.
+ * <p>
+ * code is copied from {@link CompletableFuture.DelayedExecutor} with small adoption.
  */
+@SuppressWarnings("JavadocReference")
 final class DelayedExecutor implements Executor {
     private final long delay;
     private final TimeUnit unit;
@@ -91,8 +97,11 @@ final class DelayedExecutor implements Executor {
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Action to submit task(Runnable) to executor
+ * Action to submit task(Runnable) to executor.
+ * <p>
+ * code is copied from {@link CompletableFuture.TaskSubmitter} with small adoption.
  */
+@SuppressWarnings("JavadocReference")
 final class TaskSubmitter implements Runnable {
     private final Executor executor;
     private final Runnable action;
@@ -109,8 +118,11 @@ final class TaskSubmitter implements Runnable {
 }
 
 /**
- * Action to cf.completeExceptionally with TimeoutException
+ * Action to cf.completeExceptionally with TimeoutException.
+ * <p>
+ * code is copied from {@link CompletableFuture.Timeout} with small adoption.
  */
+@SuppressWarnings("JavadocReference")
 final class CfTimeout implements Runnable {
     private final CompletableFuture<?> cf;
 
@@ -126,8 +138,11 @@ final class CfTimeout implements Runnable {
 }
 
 /**
- * Action to complete cf
+ * Action to complete cf.
+ * <p>
+ * code is copied from {@link CompletableFuture.DelayedCompleter} with small adoption.
  */
+@SuppressWarnings("JavadocReference")
 final class CfCompleter<T> implements Runnable {
     private final CompletableFuture<? super T> cf;
     private final T value;
@@ -144,12 +159,15 @@ final class CfCompleter<T> implements Runnable {
 }
 
 /**
- * Action to cancel unneeded scheduled task by Future (for example timeouts)
+ * Action to cancel unneeded scheduled task by Future (for example timeouts).
+ * <p>
+ * code is copied from {@link CompletableFuture.Canceller} with small adoption.
  *
  * @see Delayer#delay(Runnable, long, TimeUnit)
  * @see Delayer#delayToTimoutCf(CompletableFuture, long, TimeUnit)
  * @see Delayer#delayToCompleteCf(CompletableFuture, Object, long, TimeUnit)
  */
+@SuppressWarnings("JavadocReference")
 final class FutureCanceller implements BiConsumer<Object, Throwable> {
     private final Future<?> f;
 
@@ -165,9 +183,8 @@ final class FutureCanceller implements BiConsumer<Object, Throwable> {
 }
 
 /**
- * code is copied from {@code CompletableFuture#AsyncSupply} with small adoption.
+ * code is copied from {@code CompletableFuture.AsyncSupply} with small adoption.
  */
-@SuppressWarnings("serial")
 @SuppressFBWarnings("SE_BAD_FIELD")
 final class CfCompleterBySupplier<T> extends ForkJoinTask<Void>
         implements Runnable, CompletableFuture.AsynchronousCompletionTask {
@@ -204,6 +221,53 @@ final class CfCompleterBySupplier<T> extends ForkJoinTask<Void>
             if (!d.isDone()) {
                 try {
                     d.complete(f.get());
+                } catch (Throwable ex) {
+                    d.completeExceptionally(ex);
+                }
+            }
+        }
+    }
+}
+
+/**
+ * code is adopted from {@code CompletableFuture.AsyncSupply}.
+ */
+@SuppressFBWarnings("SE_BAD_FIELD")
+final class CfExCompleterBySupplier extends ForkJoinTask<Void>
+        implements Runnable, CompletableFuture.AsynchronousCompletionTask {
+    private CompletableFuture<?> dep;
+    private Supplier<? extends Throwable> fn;
+
+    CfExCompleterBySupplier(CompletableFuture<?> dep, Supplier<? extends Throwable> fn) {
+        this.dep = dep;
+        this.fn = fn;
+    }
+
+    @Override
+    public Void getRawResult() {
+        return null;
+    }
+
+    @Override
+    public void setRawResult(Void v) {
+    }
+
+    @Override
+    public boolean exec() {
+        run();
+        return false;
+    }
+
+    @Override
+    public void run() {
+        CompletableFuture<?> d;
+        Supplier<? extends Throwable> f;
+        if ((d = dep) != null && (f = fn) != null) {
+            dep = null;
+            fn = null;
+            if (!d.isDone()) {
+                try {
+                    d.completeExceptionally(f.get());
                 } catch (Throwable ex) {
                     d.completeExceptionally(ex);
                 }

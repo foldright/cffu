@@ -373,6 +373,14 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
         completeExceptionally(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrow<UnsupportedOperationException> {
+        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        completeExceptionallyAsync(null)
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrow<UnsupportedOperationException> {
+        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        completeExceptionallyAsync(null, null)
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrow<UnsupportedOperationException> {
         cancel(false)
     }.message shouldBe "unsupported because this is a minimal stage"
 
@@ -480,6 +488,8 @@ private fun <T> Cffu<T>.shouldNotMinCffu(recursive: Boolean = false) {
         completeAsync { null }.shouldNotMinCffu()
         completeAsync({ null }, blackHoleExecutor).shouldNotMinCffu()
         completeExceptionally(RuntimeException())
+        completeExceptionallyAsync { null }.shouldNotMinCffu()
+        completeExceptionallyAsync({ null }, blackHoleExecutor).shouldNotMinCffu()
         cancel(false)
     }
 

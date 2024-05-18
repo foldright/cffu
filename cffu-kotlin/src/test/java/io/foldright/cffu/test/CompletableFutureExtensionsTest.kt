@@ -441,9 +441,16 @@ class CompletableFutureExtensionsTest : FunSpec({
     }
 
     test("write methods") {
-        val cf = CompletableFuture<Int>()
-        cf.completeAsync { n }.get() shouldBe n
-        cf.completeAsync({ n }, testThreadPoolExecutor).get() shouldBe n
+        createIncompleteFuture<Int>().completeAsync { n }.get() shouldBe n
+        createIncompleteFuture<Int>().completeAsync({ n }, testThreadPoolExecutor).get() shouldBe n
+
+        shouldThrow<ExecutionException> {
+            createIncompleteFuture<Int>().completeExceptionallyAsync { rte }.get()
+        }.cause shouldBeSameInstanceAs rte
+
+        shouldThrow<ExecutionException> {
+            createIncompleteFuture<Int>().completeExceptionallyAsync({ rte }, testThreadPoolExecutor).get()
+        }.cause shouldBeSameInstanceAs rte
     }
 
     test("re_config") {
