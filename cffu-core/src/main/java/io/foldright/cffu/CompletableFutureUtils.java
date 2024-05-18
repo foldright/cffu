@@ -208,7 +208,7 @@ public final class CompletableFutureUtils {
 
         if (cfs.length == 0) return CompletableFuture.completedFuture(arrayList());
         if (cfs.length == 1) {
-            final CompletableFuture<T> f = copy(toNonMinCf(cfs[0]));
+            final CompletableFuture<T> f = toCfCopy(cfs[0]);
             return orTimeout(f, timeout, unit).handle((unused, ex) -> arrayList(getSuccessNow(f, valueIfNotSuccess)));
         }
 
@@ -310,11 +310,11 @@ public final class CompletableFutureUtils {
      * so the returned CF instances MUST NOT be written(e.g. {@link CompletableFuture#complete(Object)}).
      * Otherwise, the caller should defensive copy instead of writing it directly.
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("unchecked")
     private static <T> CompletableFuture<T> toCf(CompletionStage<? extends T> s) {
         if (s instanceof CompletableFuture) return (CompletableFuture<T>) s;
-        else if (s instanceof Cffu) return ((Cffu) s).cffuUnwrap();
-        else return (CompletableFuture) s.toCompletableFuture();
+        else if (s instanceof Cffu) return ((Cffu<T>) s).cffuUnwrap();
+        else return (CompletableFuture<T>) s.toCompletableFuture();
     }
 
     /**
@@ -324,15 +324,26 @@ public final class CompletableFutureUtils {
      * so the returned CF instances MUST NOT be written(e.g. {@link CompletableFuture#complete(Object)}).
      * Otherwise, the caller should defensive copy instead of writing it directly.
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("unchecked")
     private static <T> CompletableFuture<T> toNonMinCf(CompletionStage<? extends T> s) {
         final CompletableFuture<T> f;
         if (s instanceof CompletableFuture) f = (CompletableFuture<T>) s;
-        else if (s instanceof Cffu) f = ((Cffu) s).cffuUnwrap();
-        else return (CompletableFuture) s.toCompletableFuture();
+        else if (s instanceof Cffu) f = ((Cffu<T>) s).cffuUnwrap();
+        else return (CompletableFuture<T>) s.toCompletableFuture();
 
-        return "java.util.concurrent.CompletableFuture$MinimalStage".equals(s.getClass().getName())
-                ? f.toCompletableFuture() : f;
+        return isMinimalStageCf(s) ? f.toCompletableFuture() : f;
+    }
+
+    /**
+     * Converts CompletionStage to CompletableFuture copy.
+     */
+    private static <T> CompletableFuture<T> toCfCopy(CompletionStage<? extends T> s) {
+        final CompletableFuture<T> f = toCf(s);
+        return isMinimalStageCf(f) ? f.toCompletableFuture() : copy(f);
+    }
+
+    static <T> boolean isMinimalStageCf(CompletionStage<? extends T> s) {
+        return "java.util.concurrent.CompletableFuture$MinimalStage".equals(s.getClass().getName());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -385,7 +396,7 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
         if (size == 0) return failedFuture(new NoCfsProvidedException());
-        if (size == 1) return copy(toCf(cfs[0]));
+        if (size == 1) return toCfCopy(cfs[0]);
 
         // NOTE: fill ONE MORE element of successOrBeIncompleteCfs LATER
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[size + 1];
