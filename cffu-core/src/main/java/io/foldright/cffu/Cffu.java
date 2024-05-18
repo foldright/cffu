@@ -1656,6 +1656,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Contract(pure = true)
     @Nullable
     public T getSuccessNow(@Nullable T valueIfNotSuccess) {
+        checkMinimalStage();
         return CompletableFutureUtils.getSuccessNow(cf, valueIfNotSuccess);
     }
 
