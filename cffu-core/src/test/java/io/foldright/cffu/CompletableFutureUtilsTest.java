@@ -24,6 +24,7 @@ import static java.util.function.Function.identity;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+@SuppressWarnings("RedundantThrows")
 class CompletableFutureUtilsTest {
     ////////////////////////////////////////////////////////////////////////////////
     //# allOf* methods
@@ -1013,59 +1014,93 @@ class CompletableFutureUtilsTest {
     @Test
     @SuppressWarnings({"ResultOfMethodCallIgnored", "ThrowableNotThrown"})
     void test_read() {
+        ////////////////////////////////////////////////////////////////////////////////
+        // completed tasks
+        ////////////////////////////////////////////////////////////////////////////////
+
         final CompletableFuture<Integer> completed = completedFuture(n);
+        final FutureTask<Integer> completedTask = new FutureTask<>(() -> n);
+        completedTask.run();
+
+        final CffuFactory cffuFactory = CffuFactory.builder(Executors.newCachedThreadPool()).build();
+        final Cffu<Integer> completedCffu = cffuFactory.completedFuture(n);
 
         assertEquals(n, join(completed, 1, TimeUnit.MILLISECONDS));
         assertEquals(n, getSuccessNow(completed, anotherN));
         assertEquals(n, getSuccessNow(completed, null));
         assertEquals(n, resultNow(completed));
-        try {
-            exceptionNow(completed);
-            fail();
-        } catch (IllegalStateException expected) {
-            if (expected.getMessage() != null) assertEquals("Task completed with a result", expected.getMessage());
-        }
+        assertEquals(n, resultNow(completedTask));
+        assertEquals(n, resultNow(completedCffu));
+        final String m1 = assertThrows(IllegalStateException.class, () ->
+                exceptionNow(completed)
+        ).getMessage();
+        if (m1 != null) assertEquals("Task completed with a result", m1);
+        assertEquals("Task completed with a result",
+                assertThrows(IllegalStateException.class, () ->
+                        exceptionNow(completedTask)
+                ).getMessage());
+        final String m12 = assertThrows(IllegalStateException.class, () ->
+                exceptionNow(completedCffu)
+        ).getMessage();
+        if (m12 != null) assertEquals("Task completed with a result", m12);
         assertSame(CffuState.SUCCESS, state(completed));
+        assertSame(CffuState.SUCCESS, state(completedTask));
+        assertSame(CffuState.SUCCESS, state(completedCffu));
 
-        ////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////
+        // failed tasks
+        ////////////////////////////////////////////////////////////////////////////////
 
         final CompletableFuture<Object> failed = failedFuture(rte);
+        final FutureTask<Integer> failedTask = new FutureTask<>(() -> {
+            throw rte;
+        });
+        failedTask.run();
+        final Cffu<Object> failedCffu = cffuFactory.failedFuture(rte);
 
-        try {
-            join(failed, 1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (CompletionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte,
+                assertThrows(CompletionException.class, () ->
+                        join(failed, 1, TimeUnit.MILLISECONDS)
+                ).getCause());
         assertEquals(anotherN, getSuccessNow(failed, anotherN));
         assertNull(getSuccessNow(failed, null));
-        try {
-            resultNow(failed);
-            fail();
-        } catch (IllegalStateException expected) {
-            if (expected.getMessage() != null) assertEquals("Task completed with exception", expected.getMessage());
-        }
+        final String m2 = assertThrows(IllegalStateException.class, () ->
+                resultNow(failed)
+        ).getMessage();
+        if (m2 != null) assertEquals("Task completed with exception", m2);
+        assertNull(getSuccessNow(failed, null));
+        final String m22 = assertThrows(IllegalStateException.class, () ->
+                resultNow(failedTask)
+        ).getMessage();
+        final String m23 = assertThrows(IllegalStateException.class, () ->
+                resultNow(failedCffu)
+        ).getMessage();
+        if (m23 != null) assertEquals("Task completed with exception", m22);
         assertSame(rte, exceptionNow(failed));
+        assertSame(rte, exceptionNow(failedTask));
+        assertSame(rte, exceptionNow(failedCffu));
         assertSame(CffuState.FAILED, state(failed));
+        assertSame(CffuState.FAILED, state(failedTask));
+        assertSame(CffuState.FAILED, state(failedCffu));
 
-        ////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////
+        // cancelled tasks
+        ////////////////////////////////////////////////////////////////////////////////
 
         CompletableFuture<Object> cancelled = createCancelledFuture();
-        try {
-            resultNow(cancelled);
-            fail();
-        } catch (IllegalStateException expected) {
-            if (expected.getMessage() != null) assertEquals("Task was cancelled", expected.getMessage());
-        }
-        try {
-            exceptionNow(cancelled);
-            fail();
-        } catch (IllegalStateException expected) {
-            if (expected.getMessage() != null) assertEquals("Task was cancelled", expected.getMessage());
-        }
+        final String m3 = assertThrows(IllegalStateException.class, () ->
+                resultNow(cancelled)
+        ).getMessage();
+        if (m3 != null) assertEquals("Task was cancelled", m3);
+        final String m4 = assertThrows(IllegalStateException.class, () ->
+                exceptionNow(cancelled)
+        ).getMessage();
+        if (m4 != null) assertEquals("Task was cancelled", m4);
         assertSame(CffuState.CANCELLED, state(cancelled));
 
-        ////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////
+        // incomplete tasks
+        ////////////////////////////////////////////////////////////////////////////////
 
         final CompletableFuture<Object> incomplete = createIncompleteFuture();
 
@@ -1077,18 +1112,14 @@ class CompletableFutureUtilsTest {
         }
         assertEquals(anotherN, getSuccessNow(incomplete, anotherN));
         assertNull(getSuccessNow(incomplete, null));
-        try {
-            resultNow(incomplete);
-            fail();
-        } catch (IllegalStateException expected) {
-            if (expected.getMessage() != null) assertEquals("Task has not completed", expected.getMessage());
-        }
-        try {
-            exceptionNow(incomplete);
-            fail();
-        } catch (IllegalStateException expected) {
-            if (expected.getMessage() != null) assertEquals("Task has not completed", expected.getMessage());
-        }
+        final String m5 = assertThrows(IllegalStateException.class, () ->
+                resultNow(incomplete)
+        ).getMessage();
+        if (m5 != null) assertEquals("Task has not completed", m5);
+        final String m6 = assertThrows(IllegalStateException.class, () ->
+                exceptionNow(incomplete)
+        ).getMessage();
+        if (m6 != null) assertEquals("Task has not completed", m6);
         assertSame(CffuState.RUNNING, state(incomplete));
 
         // Incomplete Future -> join before timeout

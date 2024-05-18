@@ -4,7 +4,6 @@ import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import static java.util.Objects.requireNonNull;
@@ -15,7 +14,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @see Future.State
- * @see CompletableFutureUtils#state(CompletableFuture)
+ * @see CompletableFutureUtils#state(Future)
  * @see Cffu#cffuState()
  */
 @ParametersAreNonnullByDefault
@@ -35,7 +34,7 @@ public enum CffuState {
      *
      * @see Cffu#resultNow()
      * @see Future#resultNow()
-     * @see CompletableFutureUtils#resultNow(CompletableFuture)
+     * @see CompletableFutureUtils#resultNow(Future)
      */
     SUCCESS {
         @Override
@@ -48,7 +47,7 @@ public enum CffuState {
      *
      * @see Cffu#exceptionNow()
      * @see Future#exceptionNow()
-     * @see CompletableFutureUtils#exceptionNow(CompletableFuture)
+     * @see CompletableFutureUtils#exceptionNow(Future)
      */
     FAILED {
         @Override

@@ -1526,7 +1526,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @Nullable
-    public static <T> T resultNow(CompletableFuture<T> cf) {
+    public static <T> T resultNow(Future<T> cf) {
         if (IS_JAVA19_PLUS) {
             return cf.resultNow();
         }
@@ -1534,6 +1534,16 @@ public final class CompletableFutureUtils {
         // below code is copied from Future.resultNow
 
         if (!cf.isDone()) throw new IllegalStateException("Task has not completed");
+        if (cf.isCancelled()) throw new IllegalStateException("Task was cancelled");
+        // simple path for CompletableFuture/Cffu
+        if (cf instanceof CompletableFuture) {
+            if (((CompletableFuture<?>) cf).isCompletedExceptionally())
+                throw new IllegalStateException("Task completed with exception");
+        } else if (cf instanceof Cffu) {
+            if (((Cffu<?>) cf).isCompletedExceptionally())
+                throw new IllegalStateException("Task completed with exception");
+        }
+
         boolean interrupted = false;
         try {
             while (true) {
@@ -1563,7 +1573,7 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#resultNow()
      */
     @Contract(pure = true)
-    public static Throwable exceptionNow(CompletableFuture<?> cf) {
+    public static Throwable exceptionNow(Future<?> cf) {
         if (IS_JAVA19_PLUS) {
             return cf.exceptionNow();
         }
@@ -1601,7 +1611,7 @@ public final class CompletableFutureUtils {
      * @see Future.State
      */
     @Contract(pure = true)
-    public static CffuState state(CompletableFuture<?> cf) {
+    public static CffuState state(Future<?> cf) {
         if (IS_JAVA19_PLUS) {
             return CffuState.toCffuState(cf.state());
         }
@@ -1610,6 +1620,16 @@ public final class CompletableFutureUtils {
 
         if (!cf.isDone()) return CffuState.RUNNING;
         if (cf.isCancelled()) return CffuState.CANCELLED;
+        // simple path for CompletableFuture/Cffu
+        if (cf instanceof CompletableFuture) {
+            if (((CompletableFuture<?>) cf).isCompletedExceptionally())
+                return CffuState.FAILED;
+            else return CffuState.SUCCESS;
+        } else if (cf instanceof Cffu) {
+            if (((Cffu<?>) cf).isCompletedExceptionally())
+                return CffuState.FAILED;
+            else return CffuState.SUCCESS;
+        }
 
         boolean interrupted = false;
         try {
