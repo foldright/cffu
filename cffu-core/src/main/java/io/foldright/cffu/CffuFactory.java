@@ -434,7 +434,8 @@ public final class CffuFactory {
     @SafeVarargs
     public final <T> Cffu<List<T>> mostResultsOfSuccess(
             long timeout, TimeUnit unit, @Nullable T valueIfNotSuccess, CompletionStage<? extends T>... cfs) {
-        return create(CompletableFutureUtils.mostResultsOfSuccess(timeout, unit, valueIfNotSuccess, cfs));
+        return create(CompletableFutureUtils.mostResultsOfSuccess(
+                defaultExecutor, timeout, unit, valueIfNotSuccess, cfs));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -647,7 +648,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> mostTupleOfSuccess(
             long timeout, TimeUnit unit, CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return create(CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, cf1, cf2));
+        return create(CompletableFutureUtils.mostTupleOfSuccess(defaultExecutor, timeout, unit, cf1, cf2));
     }
 
     /**
@@ -666,7 +667,7 @@ public final class CffuFactory {
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mostTupleOfSuccess(
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return create(CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, cf1, cf2, cf3));
+        return create(CompletableFutureUtils.mostTupleOfSuccess(defaultExecutor, timeout, unit, cf1, cf2, cf3));
     }
 
     /**
@@ -686,7 +687,7 @@ public final class CffuFactory {
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return create(CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, cf1, cf2, cf3, cf4));
+        return create(CompletableFutureUtils.mostTupleOfSuccess(defaultExecutor, timeout, unit, cf1, cf2, cf3, cf4));
     }
 
     /**
@@ -706,7 +707,7 @@ public final class CffuFactory {
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return create(CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, cf1, cf2, cf3, cf4, cf5));
+        return create(CompletableFutureUtils.mostTupleOfSuccess(defaultExecutor, timeout, unit, cf1, cf2, cf3, cf4, cf5));
     }
 
     ////////////////////////////////////////////////////////////////////////////////

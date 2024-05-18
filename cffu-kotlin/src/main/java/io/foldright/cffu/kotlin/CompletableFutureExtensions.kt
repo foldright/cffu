@@ -218,6 +218,42 @@ fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
 ): CompletableFuture<List<T>> =
     CompletableFutureUtils.mostResultsOfSuccess(timeout, unit, valueIfNotSuccess, *this)
 
+/**
+ * Returns a new CompletableFuture with the most results in the **same order** of
+ * the given stages in the given time(`timeout`), aka as many results as possible in the given time.
+ *
+ * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
+ *
+ * @param executorWhenTimeout the async executor when triggered by timeout
+ * @param timeout       how long to wait in units of `unit`
+ * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param valueIfNotSuccess the value to return if not completed successfully
+ * @see getSuccessNow
+ */
+fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
+    executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit, valueIfNotSuccess: T
+): CompletableFuture<List<T>> =
+    CompletableFutureUtils.mostResultsOfSuccess(
+        executorWhenTimeout, timeout, unit, valueIfNotSuccess, *this.toTypedArray()
+    )
+
+/**
+ * Returns a new CompletableFuture with the most results in the **same order** of
+ * the given stages in the given time(`timeout`), aka as many results as possible in the given time.
+ *
+ * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
+ *
+ * @param executorWhenTimeout the async executor when triggered by timeout
+ * @param timeout       how long to wait in units of `unit`
+ * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param valueIfNotSuccess the value to return if not completed successfully
+ * @see getSuccessNow
+ */
+fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
+    executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit, valueIfNotSuccess: T
+): CompletableFuture<List<T>> =
+    CompletableFutureUtils.mostResultsOfSuccess(executorWhenTimeout, timeout, unit, valueIfNotSuccess, *this)
+
 ////////////////////////////////////////
 //# anyOf* methods for Array/Collection
 //
@@ -600,6 +636,24 @@ fun <T1, T2> CompletionStage<out T1>.mostTupleOfSuccess(
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of
+ * the given two stages in the given time(`timeout`), aka as many results as possible in the given time.
+ *
+ * If the given stage is successful, its result is the completed value; Otherwise the value `null`.
+ *
+ * @param executorWhenTimeout the async executor when triggered by timeout
+ * @param timeout how long to wait in units of `unit`
+ * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @return a new CompletableFuture that is completed when the given two stages complete
+ * @see mostResultsOfSuccessCompletableFuture
+ * @see getSuccessNow
+ */
+fun <T1, T2> CompletionStage<out T1>.mostTupleOfSuccess(
+    executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit, cf2: CompletionStage<out T2>
+): CompletableFuture<Tuple2<T1?, T2?>> =
+    CompletableFutureUtils.mostTupleOfSuccess(executorWhenTimeout, timeout, unit, this, cf2)
+
+/**
+ * Returns a new CompletableFuture with the most results in the **same order** of
  * the given three stages in the given time(`timeout`), aka as many results as possible in the given time.
  *
  * If the given stage is successful, its result is the completed value; Otherwise the value `null`.
@@ -614,6 +668,25 @@ fun <T1, T2, T3> CompletionStage<out T1>.mostTupleOfSuccess(
     timeout: Long, unit: TimeUnit, cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>
 ): CompletableFuture<Tuple3<T1?, T2?, T3?>> =
     CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, this, cf2, cf3)
+
+/**
+ * Returns a new CompletableFuture with the most results in the **same order** of
+ * the given three stages in the given time(`timeout`), aka as many results as possible in the given time.
+ *
+ * If the given stage is successful, its result is the completed value; Otherwise the value `null`.
+ *
+ * @param executorWhenTimeout the async executor when triggered by timeout
+ * @param timeout how long to wait in units of `unit`
+ * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @return a new CompletableFuture that is completed when the given three stages complete
+ * @see mostResultsOfSuccessCompletableFuture
+ * @see getSuccessNow
+ */
+fun <T1, T2, T3> CompletionStage<out T1>.mostTupleOfSuccess(
+    executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit,
+    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>
+): CompletableFuture<Tuple3<T1?, T2?, T3?>> =
+    CompletableFutureUtils.mostTupleOfSuccess(executorWhenTimeout, timeout, unit, this, cf2, cf3)
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of
@@ -635,6 +708,25 @@ fun <T1, T2, T3, T4> CompletionStage<out T1>.mostTupleOfSuccess(
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of
+ * the given four stages in the given time(`timeout`), aka as many results as possible in the given time.
+ *
+ * If the given stage is successful, its result is the completed value; Otherwise the value `null`.
+ *
+ * @param executorWhenTimeout the async executor when triggered by timeout
+ * @param timeout how long to wait in units of `unit`
+ * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @return a new CompletableFuture that is completed when the given four stages complete
+ * @see mostResultsOfSuccessCompletableFuture
+ * @see getSuccessNow
+ */
+fun <T1, T2, T3, T4> CompletionStage<out T1>.mostTupleOfSuccess(
+    executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit,
+    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>, cf4: CompletionStage<out T4>
+): CompletableFuture<Tuple4<T1?, T2?, T3?, T4?>> =
+    CompletableFutureUtils.mostTupleOfSuccess(executorWhenTimeout, timeout, unit, this, cf2, cf3, cf4)
+
+/**
+ * Returns a new CompletableFuture with the most results in the **same order** of
  * the given five stages in the given time(`timeout`), aka as many results as possible in the given time.
  *
  * If the given stage is successful, its result is the completed value; Otherwise the value `null`.
@@ -651,6 +743,26 @@ fun <T1, T2, T3, T4, T5> CompletionStage<out T1>.mostTupleOfSuccess(
     cf4: CompletionStage<out T4>, cf5: CompletionStage<out T5>
 ): CompletableFuture<Tuple5<T1?, T2?, T3?, T4?, T5?>> =
     CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, this, cf2, cf3, cf4, cf5)
+
+/**
+ * Returns a new CompletableFuture with the most results in the **same order** of
+ * the given five stages in the given time(`timeout`), aka as many results as possible in the given time.
+ *
+ * If the given stage is successful, its result is the completed value; Otherwise the value `null`.
+ *
+ * @param executorWhenTimeout the async executor when triggered by timeout
+ * @param timeout how long to wait in units of `unit`
+ * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @return a new CompletableFuture that is completed when the given five stages complete
+ * @see mostResultsOfSuccessCompletableFuture
+ * @see getSuccessNow
+ */
+fun <T1, T2, T3, T4, T5> CompletionStage<out T1>.mostTupleOfSuccess(
+    executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit,
+    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>,
+    cf4: CompletionStage<out T4>, cf5: CompletionStage<out T5>
+): CompletableFuture<Tuple5<T1?, T2?, T3?, T4?, T5?>> =
+    CompletableFutureUtils.mostTupleOfSuccess(executorWhenTimeout, timeout, unit, this, cf2, cf3, cf4, cf5)
 
 ////////////////////////////////////////////////////////////////////////////////
 //# `then either(binary input)` methods with either(any)-success support:

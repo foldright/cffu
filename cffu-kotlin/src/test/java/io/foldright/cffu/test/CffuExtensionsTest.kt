@@ -297,7 +297,7 @@ class CffuExtensionsTest : FunSpec({
         ).allOfFastFailCffu(testCffuFactory).await().shouldBeNull()
     }
 
-    test("mostOf") {
+    test("mostResultsOfSuccessCffu") {
         // collection
 
         listOf(
@@ -603,20 +603,15 @@ class CffuExtensionsTest : FunSpec({
         assertEmptyArray { emptyArray.allOfFastFailCffu() }
         assertCffuFactoryForOptional(array.allOfFastFailCffu())
 
-        assertEmptyCollection { emptyList.anyOfCffu() }
-        assertCffuFactoryForOptional(list.anyOfCffu())
-        assertEmptyArray { emptyArray.anyOfCffu() }
-        assertCffuFactoryForOptional(array.anyOfCffu())
+        assertEmptyCollection { emptyList.mostResultsOfSuccessCffu(1, TimeUnit.MILLISECONDS, 4) }
+        assertCffuFactoryForOptional(list.mostResultsOfSuccessCffu(1, TimeUnit.MILLISECONDS, 4))
+        assertEmptyArray { emptyArray.mostResultsOfSuccessCffu(1, TimeUnit.MILLISECONDS, 4) }
+        assertCffuFactoryForOptional(array.mostResultsOfSuccessCffu(1, TimeUnit.MILLISECONDS, 4))
 
         assertEmptyCollection { emptyList.anyOfCffu() }
         assertCffuFactoryForOptional(list.anyOfCffu())
         assertEmptyArray { emptyArray.anyOfCffu() }
         assertCffuFactoryForOptional(array.anyOfCffu())
-
-        assertEmptyCollection { emptyList.anyOfSuccessCffu() }
-        assertCffuFactoryForOptional(list.anyOfSuccessCffu())
-        assertEmptyArray { emptyArray.anyOfSuccessCffu() }
-        assertCffuFactoryForOptional(array.anyOfSuccessCffu())
 
         assertEmptyCollection { emptyList.anyOfSuccessCffu() }
         assertCffuFactoryForOptional(list.anyOfSuccessCffu())

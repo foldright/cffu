@@ -117,12 +117,18 @@ class CompletableFutureExtensionsTest : FunSpec({
         arrayOf<CompletableFuture<*>>().allOfFastFailCompletableFuture().await().shouldBeNull()
     }
 
-    test("mostOf") {
+    test("mostResultsOfSuccessCompletableFuture") {
         listOf(CompletableFuture(), CompletableFuture.completedFuture(42))
             .mostResultsOfSuccessCompletableFuture(10, TimeUnit.MILLISECONDS, null).await() shouldBe listOf(null, 42)
+        listOf(CompletableFuture(), CompletableFuture.completedFuture(42))
+            .mostResultsOfSuccessCompletableFuture(testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, null)
+            .await() shouldBe listOf(null, 42)
 
         arrayOf(CompletableFuture(), CompletableFuture.completedFuture(42))
             .mostResultsOfSuccessCompletableFuture(10, TimeUnit.MILLISECONDS, null).await() shouldBe listOf(null, 42)
+        arrayOf(CompletableFuture(), CompletableFuture.completedFuture(42))
+            .mostResultsOfSuccessCompletableFuture(testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, null)
+            .await() shouldBe listOf(null, 42)
     }
 
     test("anyOf*") {
@@ -303,6 +309,33 @@ class CompletableFutureExtensionsTest : FunSpec({
 
         cancelled.mostTupleOfSuccess(
             10, TimeUnit.MILLISECONDS, completed, anotherCompleted, incomplete, failed
+        ).await() shouldBe Tuple5.of(null, n, s, null, null)
+
+        // with `executorWhenTimeout`
+
+        completed.mostTupleOfSuccess(
+            testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, anotherCompleted
+        ).await() shouldBe Tuple2.of(n, s)
+        completed.mostTupleOfSuccess(
+            testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, failed
+        ).await() shouldBe Tuple2.of(n, null)
+
+        completed.mostTupleOfSuccess(
+            testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, anotherCompleted, cancelled
+        ).await() shouldBe Tuple3.of(n, s, null)
+        incomplete.mostTupleOfSuccess(
+            testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, failed, anotherCompleted
+        ).await() shouldBe Tuple3.of(null, null, s)
+
+        completed.mostTupleOfSuccess(
+            testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, anotherCompleted, cancelled, incomplete
+        ).await() shouldBe Tuple4.of(n, s, null, null)
+        incomplete.mostTupleOfSuccess(
+            testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, failed, cancelled, incomplete
+        ).await() shouldBe Tuple4.of(null, null, null, null)
+
+        cancelled.mostTupleOfSuccess(
+            testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, completed, anotherCompleted, incomplete, failed
         ).await() shouldBe Tuple5.of(null, n, s, null, null)
     }
 

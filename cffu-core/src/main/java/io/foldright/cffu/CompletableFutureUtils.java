@@ -207,6 +207,27 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mostResultsOfSuccess(
             long timeout, TimeUnit unit, @Nullable T valueIfNotSuccess, CompletionStage<? extends T>... cfs) {
+        return mostResultsOfSuccess(AsyncPoolHolder.ASYNC_POOL, timeout, unit, valueIfNotSuccess, cfs);
+    }
+
+    /**
+     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
+     * the given stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
+     *
+     * @param executorWhenTimeout the async executor when triggered by timeout
+     * @param timeout             how long to wait in units of {@code unit}
+     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param valueIfNotSuccess   the value to return if not completed successfully
+     * @param cfs                 the stages
+     * @see #getSuccessNow(CompletableFuture, Object)
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    public static <T> CompletableFuture<List<T>> mostResultsOfSuccess(
+            Executor executorWhenTimeout, long timeout, TimeUnit unit,
+            @Nullable T valueIfNotSuccess, CompletionStage<? extends T>... cfs) {
         requireNonNull(unit, "unit is null");
         requireCfsAndEleNonNull(cfs);
 
@@ -216,15 +237,17 @@ public final class CompletableFutureUtils {
             // 1. avoid writing it by `completeOnTimeout` and is able to read its result(`getSuccessNow`)
             // 2. ensure that the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
             final CompletableFuture<T> f = toNonMinCfCopy(cfs[0]);
-            return orTimeout(f, timeout, unit).handle((unused, ex) -> arrayList(getSuccessNow(f, valueIfNotSuccess)));
+            return cffuOrTimeout(f, executorWhenTimeout, timeout, unit)
+                    .handle((unused, ex) -> arrayList(getSuccessNow(f, valueIfNotSuccess)));
         }
 
         // MUST be non-minimal-stage CF instances in order to read results(`getSuccessNow`),
         // otherwise UnsupportedOperationException
         final CompletableFuture<T>[] cfArray = f_toNonMinCfArray(cfs);
-        return orTimeout(CompletableFuture.allOf(cfArray), timeout, unit)
+        return cffuOrTimeout(CompletableFuture.allOf(cfArray), executorWhenTimeout, timeout, unit)
                 .handle((unused, ex) -> arrayList(MGetSuccessNow0(valueIfNotSuccess, cfArray)));
     }
+
 
     /**
      * Multi-Gets(MGet) the results in the <strong>same order</strong> of the given cfs,
@@ -621,7 +644,27 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mostTupleOfSuccess(
             long timeout, TimeUnit unit, CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return mostTupleOfSuccess0(timeout, unit, requireCfsAndEleNonNull(cf1, cf2));
+        return mostTupleOfSuccess(AsyncPoolHolder.ASYNC_POOL, timeout, unit, cf1, cf2);
+    }
+
+    /**
+     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
+     * the given two stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
+     *
+     * @param executorWhenTimeout the async executor when triggered by timeout
+     * @param timeout             how long to wait in units of {@code unit}
+     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return a new CompletableFuture that is completed when the given two stages complete
+     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #getSuccessNow(CompletableFuture, Object)
+     */
+    @Contract(pure = true)
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mostTupleOfSuccess(
+            Executor executorWhenTimeout, long timeout, TimeUnit unit,
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
+        return mostTupleOfSuccess0(timeout, unit, executorWhenTimeout, requireCfsAndEleNonNull(cf1, cf2));
     }
 
     /**
@@ -640,7 +683,27 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mostTupleOfSuccess(
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return mostTupleOfSuccess0(timeout, unit, requireCfsAndEleNonNull(cf1, cf2, cf3));
+        return mostTupleOfSuccess(AsyncPoolHolder.ASYNC_POOL, timeout, unit, cf1, cf2, cf3);
+    }
+
+    /**
+     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
+     * the given three stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
+     *
+     * @param executorWhenTimeout the async executor when triggered by timeout
+     * @param timeout             how long to wait in units of {@code unit}
+     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return a new CompletableFuture that is completed when the given three stages complete
+     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #getSuccessNow(CompletableFuture, Object)
+     */
+    @Contract(pure = true)
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mostTupleOfSuccess(
+            Executor executorWhenTimeout, long timeout, TimeUnit unit,
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
+        return mostTupleOfSuccess0(timeout, unit, executorWhenTimeout, requireCfsAndEleNonNull(cf1, cf2, cf3));
     }
 
     /**
@@ -660,7 +723,28 @@ public final class CompletableFutureUtils {
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return mostTupleOfSuccess0(timeout, unit, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
+        return mostTupleOfSuccess(AsyncPoolHolder.ASYNC_POOL, timeout, unit, cf1, cf2, cf3, cf4);
+    }
+
+    /**
+     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
+     * the given four stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
+     *
+     * @param executorWhenTimeout the async executor when triggered by timeout
+     * @param timeout             how long to wait in units of {@code unit}
+     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return a new CompletableFuture that is completed when the given four stages complete
+     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #getSuccessNow(CompletableFuture, Object)
+     */
+    @Contract(pure = true)
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mostTupleOfSuccess(
+            Executor executorWhenTimeout, long timeout, TimeUnit unit,
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
+        return mostTupleOfSuccess0(timeout, unit, executorWhenTimeout, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
     }
 
     /**
@@ -680,16 +764,37 @@ public final class CompletableFutureUtils {
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return mostTupleOfSuccess0(timeout, unit, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
+        return mostTupleOfSuccess(AsyncPoolHolder.ASYNC_POOL, timeout, unit, cf1, cf2, cf3, cf4, cf5);
+    }
+
+    /**
+     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
+     * the given five stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * <p>
+     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
+     *
+     * @param executorWhenTimeout the async executor when triggered by timeout
+     * @param timeout             how long to wait in units of {@code unit}
+     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @return a new CompletableFuture that is completed when the given five stages complete
+     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #getSuccessNow(CompletableFuture, Object)
+     */
+    @Contract(pure = true)
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mostTupleOfSuccess(
+            Executor executorWhenTimeout, long timeout, TimeUnit unit,
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
+            CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
+        return mostTupleOfSuccess0(timeout, unit, executorWhenTimeout, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
     }
 
     private static <T> CompletableFuture<T> mostTupleOfSuccess0(
-            long timeout, TimeUnit unit, CompletionStage<?>[] css) {
+            long timeout, TimeUnit unit, Executor executorWhenTimeout, CompletionStage<?>[] css) {
         requireNonNull(unit, "unit is null");
         // MUST be *Non-Minimal* CF instances in order to read results(`getSuccessNow`),
         // otherwise UnsupportedOperationException
         final CompletableFuture<Object>[] cfArray = f_toNonMinCfArray(css);
-        return orTimeout(CompletableFuture.allOf(cfArray), timeout, unit)
+        return cffuOrTimeout(CompletableFuture.allOf(cfArray), executorWhenTimeout, timeout, unit)
                 .handle((unused, ex) -> tupleOf0(MGetSuccessNow0(null, cfArray)));
     }
 
