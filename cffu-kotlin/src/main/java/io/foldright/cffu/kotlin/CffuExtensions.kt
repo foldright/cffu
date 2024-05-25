@@ -85,7 +85,7 @@ private const val ERROR_MSG_FOR_ARRAY = "no cffuFactory argument provided when t
 fun <T> Collection<Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.allResultsOf(*this.toTypedArray())
+    return factory.allResultsOf(*toTypedArray())
 }
 
 /**
@@ -127,7 +127,7 @@ fun <T> Array<out Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSEN
  */
 @JvmName("allResultsOfCffuCs")
 fun <T> Collection<CompletionStage<out T>>.allResultsOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
-    cffuFactory.allResultsOf(*this.toTypedArray())
+    cffuFactory.allResultsOf(*toTypedArray())
 
 /**
  * Returns a new Cffu with the results in the **same order** of all the given stages,
@@ -165,7 +165,7 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfCffu(cffuFactory: CffuFact
 fun Collection<Cffu<*>>.allOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.allOf(*this.toTypedArray())
+    return factory.allOf(*toTypedArray())
 }
 
 /**
@@ -206,7 +206,7 @@ fun Array<out Cffu<*>>.allOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> 
  */
 @JvmName("allOfCffuCs")
 fun Collection<CompletionStage<*>>.allOfCffu(cffuFactory: CffuFactory): Cffu<Void> =
-    cffuFactory.allOf(*this.toTypedArray())
+    cffuFactory.allOf(*toTypedArray())
 
 /**
  * Returns a new Cffu that is completed when all the given stages complete.
@@ -245,7 +245,7 @@ fun Array<out CompletionStage<*>>.allOfCffu(cffuFactory: CffuFactory): Cffu<Void
 fun <T> Collection<Cffu<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.allResultsOfFastFail(*this.toTypedArray())
+    return factory.allResultsOfFastFail(*toTypedArray())
 }
 
 /**
@@ -289,7 +289,7 @@ fun <T> Array<out Cffu<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactory
  */
 @JvmName("allResultsOfFastFailCffuCs")
 fun <T> Collection<CompletionStage<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
-    cffuFactory.allResultsOfFastFail(*this.toTypedArray())
+    cffuFactory.allResultsOfFastFail(*toTypedArray())
 
 /**
  * Returns a new Cffu with the results in the **same order** of all the given stages,
@@ -329,7 +329,7 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfFastFailCffu(cffuFactory: 
 fun Collection<Cffu<*>>.allOfFastFailCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.allOfFastFail(*this.toTypedArray())
+    return factory.allOfFastFail(*toTypedArray())
 }
 
 /**
@@ -371,7 +371,7 @@ fun Array<out Cffu<*>>.allOfFastFailCffu(cffuFactory: CffuFactory = ABSENT): Cff
  */
 @JvmName("allOfFastFailCffuCs")
 fun Collection<CompletionStage<*>>.allOfFastFailCffu(cffuFactory: CffuFactory): Cffu<Void> =
-    cffuFactory.allOfFastFail(*this.toTypedArray())
+    cffuFactory.allOfFastFail(*toTypedArray())
 
 /**
  * Returns a new Cffu that is successful when all the given stages success,
@@ -408,7 +408,7 @@ fun <T> Collection<Cffu<out T>>.mostResultsOfSuccessCffu(
 ): Cffu<List<T>> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.mostResultsOfSuccess(timeout, unit, valueIfNotSuccess, *this.toTypedArray())
+    return factory.mostResultsOfSuccess(timeout, unit, valueIfNotSuccess, *toTypedArray())
 }
 
 /**
@@ -449,7 +449,7 @@ fun <T> Array<out Cffu<out T>>.mostResultsOfSuccessCffu(
 fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCffu(
     timeout: Long, unit: TimeUnit, valueIfNotSuccess: T, cffuFactory: CffuFactory
 ): Cffu<List<T>> =
-    cffuFactory.mostResultsOfSuccess(timeout, unit, valueIfNotSuccess, *this.toTypedArray())
+    cffuFactory.mostResultsOfSuccess(timeout, unit, valueIfNotSuccess, *toTypedArray())
 
 /**
  * Returns a new Cffu with the most results in the **same order** of
@@ -490,7 +490,7 @@ fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCffu(
 fun <T> Collection<Cffu<out T>>.anyOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.anyOf(*this.toTypedArray())
+    return factory.anyOf(*toTypedArray())
 }
 
 /**
@@ -518,7 +518,7 @@ fun <T> Array<out Cffu<out T>>.anyOfCffu(cffuFactory: CffuFactory = ABSENT): Cff
  */
 @JvmName("anyOfCffuCs")
 fun <T> Collection<CompletionStage<out T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T> =
-    cffuFactory.anyOf(*this.toTypedArray())
+    cffuFactory.anyOf(*toTypedArray())
 
 /**
  * Returns a new Cffu that is completed when any of the given stages complete, with the same result.
@@ -549,7 +549,7 @@ fun <T> Array<out CompletionStage<out T>>.anyOfCffu(cffuFactory: CffuFactory): C
 fun <T> Collection<Cffu<out T>>.anyOfSuccessCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.anyOfSuccess(*this.toTypedArray())
+    return factory.anyOfSuccess(*toTypedArray())
 }
 
 /**
@@ -589,7 +589,7 @@ fun <T> Array<out Cffu<out T>>.anyOfSuccessCffu(cffuFactory: CffuFactory = ABSEN
  */
 @JvmName("anyOfSuccessCffuCs")
 fun <T> Collection<CompletionStage<out T>>.anyOfSuccessCffu(cffuFactory: CffuFactory): Cffu<T> =
-    cffuFactory.anyOfSuccess(*this.toTypedArray())
+    cffuFactory.anyOfSuccess(*toTypedArray())
 
 /**
  * Returns a new Cffu that is successful when any of the given stages success,
