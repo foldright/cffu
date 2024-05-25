@@ -3,7 +3,7 @@
 package io.foldright.test_utils
 
 import io.foldright.cffu.CffuFactory
-import io.kotest.core.annotation.AutoScan
+import io.kotest.core.config.AbstractProjectConfig
 import io.kotest.core.listeners.AfterProjectListener
 import io.kotest.core.listeners.BeforeProjectListener
 import io.kotest.matchers.booleans.shouldBeFalse
@@ -98,14 +98,9 @@ val testForkJoinPoolExecutor: ExecutorService =
     createThreadPool("CompletableFutureUseTest_ForkJoinPool", true)
 
 /**
- * Introduction to Extensions of kotest
- * https://kotest.io/docs/framework/extensions/extensions-introduction.html
- *
- * To run an extension for every spec in the entire project:
- * mark the listener with @AutoScan
+ * https://kotest.io/docs/framework/project-config.html
  */
-@AutoScan
-object InitTestThreadPoolsProjectListener : BeforeProjectListener, AfterProjectListener {
+object CffuKotestProjectConfig : AbstractProjectConfig(), BeforeProjectListener, AfterProjectListener {
     override suspend fun beforeProject() {
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
         println("Env Infos:")
@@ -113,7 +108,7 @@ object InitTestThreadPoolsProjectListener : BeforeProjectListener, AfterProjectL
         println("Available Processors of Runtime: ${Runtime.getRuntime().availableProcessors()}")
         println("Java Home:                       ${System.getProperty("java.home")}")
         println("Java Version:                    ${System.getProperty("java.version")}")
-        println("CI env var:                      ${System.getenv("CI")} (${isCiEnv()})")
+        println("CI env var:                      ${System.getenv("CI")} (is ci env: ${isCiEnv()})")
         println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 
         warmupExecutorService(testThreadPoolExecutor, testForkJoinPoolExecutor)
