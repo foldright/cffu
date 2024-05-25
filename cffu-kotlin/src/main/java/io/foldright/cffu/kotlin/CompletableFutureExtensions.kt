@@ -5,10 +5,6 @@ package io.foldright.cffu.kotlin
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuState
 import io.foldright.cffu.CompletableFutureUtils
-import io.foldright.cffu.tuple.Tuple2
-import io.foldright.cffu.tuple.Tuple3
-import io.foldright.cffu.tuple.Tuple4
-import io.foldright.cffu.tuple.Tuple5
 import java.util.concurrent.*
 import java.util.function.*
 import java.util.function.Function
@@ -39,7 +35,6 @@ import java.util.function.Function
  * If you need the results of given stages, prefer below methods:
  *
  *  - [allResultsOfCompletableFuture]
- *  - [allTupleOf] (provided overloaded methods with 2~5 input)
  *
  * This method is the same as [CompletableFutureUtils.allOf], providing this method is convenient for method chaining.
  *
@@ -59,7 +54,6 @@ fun Collection<CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<V
  * If you need the results of given stages, prefer below methods:
  *
  *  - [allResultsOfCompletableFuture]
- *  - [allTupleOf] (provided overloaded methods with 2~5 input)
  *
  * This method is the same as [CompletableFutureUtils.allOf], providing this method is convenient for method chaining.
  *
@@ -80,7 +74,6 @@ fun Array<out CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Vo
  * If you need the results of given stages, prefer below methods:
  *
  *  - [allResultsOfFastFailCompletableFuture]
- *  - [allTupleOfFastFail] (provided overloaded methods with 2~5 input)
  *
  * This method is the same as [CompletableFutureUtils.allOfFastFail],
  * providing this method is convenient for method chaining.
@@ -102,7 +95,6 @@ fun Collection<CompletionStage<*>>.allOfFastFailCompletableFuture(): Completable
  * If you need the results of given stages, prefer below methods:
  *
  *  - [allResultsOfFastFailCompletableFuture]
- *  - [allTupleOfFastFail] (provided overloaded methods with 2~5 input)
  *
  * This method is the same as [CompletableFutureUtils.allOfFastFail],
  * providing this method is convenient for method chaining.
@@ -489,280 +481,6 @@ fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
     other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>, executor: Executor
 ): CompletableFuture<V> =
     CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn, executor)
-
-////////////////////////////////////////
-//# allTupleOf* methods
-//
-//  - allTupleOf
-//  - allTupleOfFastFail
-//  - mostTupleOfSuccess
-////////////////////////////////////////
-
-/**
- * Returns a new CompletableFuture that is completed when the given two CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is completed when the given 2 CompletableFutures complete
- * @throws NullPointerException if any input CompletableFutures are `null`
- * @see allResultsOfCompletableFuture
- * @see allOfCompletableFuture
- */
-fun <T1, T2> CompletionStage<out T1>.allTupleOf(cf2: CompletionStage<out T2>): CompletableFuture<Tuple2<T1, T2>> =
-    CompletableFutureUtils.allTupleOf(this, cf2)
-
-/**
- * Returns a new CompletableFuture that is successful when the given two CompletableFutures success.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
- * with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is successful when the given two CompletableFutures success
- * @throws NullPointerException if any of the given CompletableFutures are {@code null}
- * @see allResultsOfFastFailCompletableFuture
- */
-fun <T1, T2> CompletionStage<out T1>.allTupleOfFastFail(cf2: CompletionStage<out T2>): CompletableFuture<Tuple2<T1, T2>> =
-    CompletableFutureUtils.allTupleOfFastFail(this, cf2)
-
-/**
- * Returns a new CompletableFuture that is completed when the given three CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is completed when the given 3 CompletableFutures complete
- * @throws NullPointerException if any input CompletableFutures are `null`
- * @see allResultsOfCompletableFuture
- * @see allOfCompletableFuture
- */
-fun <T1, T2, T3> CompletionStage<out T1>.allTupleOf(
-    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>
-): CompletableFuture<Tuple3<T1, T2, T3>> =
-    CompletableFutureUtils.allTupleOf(this, cf2, cf3)
-
-/**
- * Returns a new CompletableFuture that is successful when the given three CompletableFutures success.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
- * with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is successful when the given three CompletableFutures success
- * @throws NullPointerException if any of the given CompletableFutures are {@code null}
- * @see allResultsOfFastFailCompletableFuture
- */
-fun <T1, T2, T3> CompletionStage<out T1>.allTupleOfFastFail(
-    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>
-): CompletableFuture<Tuple3<T1, T2, T3>> =
-    CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3)
-
-/**
- * Returns a new CompletableFuture that is completed when the given 4 CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is completed when the given 4 CompletableFutures complete
- * @throws NullPointerException if any input CompletableFutures are `null`
- * @see allResultsOfCompletableFuture
- * @see allOfCompletableFuture
- */
-fun <T1, T2, T3, T4> CompletionStage<out T1>.allTupleOf(
-    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>, cf4: CompletionStage<out T4>
-): CompletableFuture<Tuple4<T1, T2, T3, T4>> =
-    CompletableFutureUtils.allTupleOf(this, cf2, cf3, cf4)
-
-/**
- * Returns a new CompletableFuture that is successful when the given 4 CompletableFutures success.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
- * with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is successful when the given 4 CompletableFutures success
- * @throws NullPointerException if any of the given CompletableFutures are {@code null}
- * @see allResultsOfFastFailCompletableFuture
- * @see allOfFastFailCompletableFuture
- */
-fun <T1, T2, T3, T4> CompletionStage<out T1>.allTupleOfFastFail(
-    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>, cf4: CompletionStage<out T4>
-): CompletableFuture<Tuple4<T1, T2, T3, T4>> =
-    CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3, cf4)
-
-/**
- * Returns a new CompletableFuture that is completed when the given 5 CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so, with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is completed when the given 5 CompletableFutures complete
- * @throws NullPointerException if any input CompletableFutures are `null`
- * @see allResultsOfCompletableFuture
- * @see allOfCompletableFuture
- */
-fun <T1, T2, T3, T4, T5> CompletionStage<out T1>.allTupleOf(
-    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>,
-    cf4: CompletionStage<out T4>, cf5: CompletionStage<out T5>
-): CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> =
-    CompletableFutureUtils.allTupleOf(this, cf2, cf3, cf4, cf5)
-
-/**
- * Returns a new CompletableFuture that is successful when the given 5 CompletableFutures success.
- * If any of the given CompletableFutures complete exceptionally, then the returned
- * CompletableFuture also does so *without* waiting other incomplete given CompletableFutures,
- * with a CompletionException holding this exception as its cause.
- *
- * @return a new CompletableFuture that is successful when the given 5 CompletableFutures success
- * @throws NullPointerException if any of the given CompletableFutures are {@code null}
- * @see allResultsOfFastFailCompletableFuture
- */
-fun <T1, T2, T3, T4, T5> CompletionStage<out T1>.allTupleOfFastFail(
-    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>,
-    cf4: CompletionStage<out T4>, cf5: CompletionStage<out T5>
-): CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> =
-    CompletableFutureUtils.allTupleOfFastFail(this, cf2, cf3, cf4, cf5)
-
-/**
- * Returns a new CompletableFuture with the most results in the **same order** of
- * the given two stages in the given time(`timeout`), aka as many results as possible in the given time.
- *
- * If the given stage is successful, its result is the completed value; Otherwise the value `null`.
- *
- * @param timeout how long to wait in units of `unit`
- * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
- * @return a new CompletableFuture that is completed when the given two stages complete
- * @see mostResultsOfSuccessCompletableFuture
- * @see getSuccessNow
- */
-fun <T1, T2> CompletionStage<out T1>.mostTupleOfSuccess(
-    timeout: Long, unit: TimeUnit, cf2: CompletionStage<out T2>
-): CompletableFuture<Tuple2<T1?, T2?>> =
-    CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, this, cf2)
-
-/**
- * Returns a new CompletableFuture with the most results in the **same order** of
- * the given two stages in the given time(`timeout`), aka as many results as possible in the given time.
- *
- * If the given stage is successful, its result is the completed value; Otherwise the value `null`.
- *
- * @param executorWhenTimeout the async executor when triggered by timeout
- * @param timeout how long to wait in units of `unit`
- * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
- * @return a new CompletableFuture that is completed when the given two stages complete
- * @see mostResultsOfSuccessCompletableFuture
- * @see getSuccessNow
- */
-fun <T1, T2> CompletionStage<out T1>.mostTupleOfSuccess(
-    executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit, cf2: CompletionStage<out T2>
-): CompletableFuture<Tuple2<T1?, T2?>> =
-    CompletableFutureUtils.mostTupleOfSuccess(executorWhenTimeout, timeout, unit, this, cf2)
-
-/**
- * Returns a new CompletableFuture with the most results in the **same order** of
- * the given three stages in the given time(`timeout`), aka as many results as possible in the given time.
- *
- * If the given stage is successful, its result is the completed value; Otherwise the value `null`.
- *
- * @param timeout how long to wait in units of `unit`
- * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
- * @return a new CompletableFuture that is completed when the given three stages complete
- * @see mostResultsOfSuccessCompletableFuture
- * @see getSuccessNow
- */
-fun <T1, T2, T3> CompletionStage<out T1>.mostTupleOfSuccess(
-    timeout: Long, unit: TimeUnit, cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>
-): CompletableFuture<Tuple3<T1?, T2?, T3?>> =
-    CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, this, cf2, cf3)
-
-/**
- * Returns a new CompletableFuture with the most results in the **same order** of
- * the given three stages in the given time(`timeout`), aka as many results as possible in the given time.
- *
- * If the given stage is successful, its result is the completed value; Otherwise the value `null`.
- *
- * @param executorWhenTimeout the async executor when triggered by timeout
- * @param timeout how long to wait in units of `unit`
- * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
- * @return a new CompletableFuture that is completed when the given three stages complete
- * @see mostResultsOfSuccessCompletableFuture
- * @see getSuccessNow
- */
-fun <T1, T2, T3> CompletionStage<out T1>.mostTupleOfSuccess(
-    executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit,
-    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>
-): CompletableFuture<Tuple3<T1?, T2?, T3?>> =
-    CompletableFutureUtils.mostTupleOfSuccess(executorWhenTimeout, timeout, unit, this, cf2, cf3)
-
-/**
- * Returns a new CompletableFuture with the most results in the **same order** of
- * the given four stages in the given time(`timeout`), aka as many results as possible in the given time.
- *
- * If the given stage is successful, its result is the completed value; Otherwise the value `null`.
- *
- * @param timeout how long to wait in units of `unit`
- * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
- * @return a new CompletableFuture that is completed when the given four stages complete
- * @see mostResultsOfSuccessCompletableFuture
- * @see getSuccessNow
- */
-fun <T1, T2, T3, T4> CompletionStage<out T1>.mostTupleOfSuccess(
-    timeout: Long, unit: TimeUnit,
-    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>, cf4: CompletionStage<out T4>
-): CompletableFuture<Tuple4<T1?, T2?, T3?, T4?>> =
-    CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, this, cf2, cf3, cf4)
-
-/**
- * Returns a new CompletableFuture with the most results in the **same order** of
- * the given four stages in the given time(`timeout`), aka as many results as possible in the given time.
- *
- * If the given stage is successful, its result is the completed value; Otherwise the value `null`.
- *
- * @param executorWhenTimeout the async executor when triggered by timeout
- * @param timeout how long to wait in units of `unit`
- * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
- * @return a new CompletableFuture that is completed when the given four stages complete
- * @see mostResultsOfSuccessCompletableFuture
- * @see getSuccessNow
- */
-fun <T1, T2, T3, T4> CompletionStage<out T1>.mostTupleOfSuccess(
-    executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit,
-    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>, cf4: CompletionStage<out T4>
-): CompletableFuture<Tuple4<T1?, T2?, T3?, T4?>> =
-    CompletableFutureUtils.mostTupleOfSuccess(executorWhenTimeout, timeout, unit, this, cf2, cf3, cf4)
-
-/**
- * Returns a new CompletableFuture with the most results in the **same order** of
- * the given five stages in the given time(`timeout`), aka as many results as possible in the given time.
- *
- * If the given stage is successful, its result is the completed value; Otherwise the value `null`.
- *
- * @param timeout how long to wait in units of `unit`
- * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
- * @return a new CompletableFuture that is completed when the given five stages complete
- * @see mostResultsOfSuccessCompletableFuture
- * @see getSuccessNow
- */
-fun <T1, T2, T3, T4, T5> CompletionStage<out T1>.mostTupleOfSuccess(
-    timeout: Long, unit: TimeUnit,
-    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>,
-    cf4: CompletionStage<out T4>, cf5: CompletionStage<out T5>
-): CompletableFuture<Tuple5<T1?, T2?, T3?, T4?, T5?>> =
-    CompletableFutureUtils.mostTupleOfSuccess(timeout, unit, this, cf2, cf3, cf4, cf5)
-
-/**
- * Returns a new CompletableFuture with the most results in the **same order** of
- * the given five stages in the given time(`timeout`), aka as many results as possible in the given time.
- *
- * If the given stage is successful, its result is the completed value; Otherwise the value `null`.
- *
- * @param executorWhenTimeout the async executor when triggered by timeout
- * @param timeout how long to wait in units of `unit`
- * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
- * @return a new CompletableFuture that is completed when the given five stages complete
- * @see mostResultsOfSuccessCompletableFuture
- * @see getSuccessNow
- */
-fun <T1, T2, T3, T4, T5> CompletionStage<out T1>.mostTupleOfSuccess(
-    executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit,
-    cf2: CompletionStage<out T2>, cf3: CompletionStage<out T3>,
-    cf4: CompletionStage<out T4>, cf5: CompletionStage<out T5>
-): CompletableFuture<Tuple5<T1?, T2?, T3?, T4?, T5?>> =
-    CompletableFutureUtils.mostTupleOfSuccess(executorWhenTimeout, timeout, unit, this, cf2, cf3, cf4, cf5)
 
 ////////////////////////////////////////////////////////////////////////////////
 //# `then either(binary input)` methods with either(any)-success support:

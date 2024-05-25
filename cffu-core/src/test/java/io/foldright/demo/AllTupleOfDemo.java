@@ -21,8 +21,7 @@ public class AllTupleOfDemo {
         Cffu<String> cffu1 = cffuFactory.completedFuture("21");
         Cffu<Integer> cffu2 = cffuFactory.completedFuture(42);
 
-        Cffu<Tuple2<String, Integer>> allTuple = cffu1.allTupleOf(cffu2);
-        // or: cffuFactory.allTupleOf(cffu1, cffu2);
+        Cffu<Tuple2<String, Integer>> allTuple = cffuFactory.allTupleOf(cffu1, cffu2);
         System.out.println(allTuple.get());
 
         //////////////////////////////////////////////////

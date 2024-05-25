@@ -4,11 +4,6 @@ import io.foldright.cffu.CffuState
 import io.foldright.cffu.CompletableFutureUtils
 import io.foldright.cffu.NoCfsProvidedException
 import io.foldright.cffu.kotlin.*
-import io.foldright.cffu.tuple.Tuple2
-import io.foldright.cffu.tuple.Tuple3
-import io.foldright.cffu.tuple.Tuple4
-import io.foldright.cffu.tuple.Tuple5
-import io.foldright.test_utils.createCancelledFuture
 import io.foldright.test_utils.createIncompleteFuture
 import io.foldright.test_utils.sleep
 import io.foldright.test_utils.testThreadPoolExecutor
@@ -225,118 +220,6 @@ class CompletableFutureExtensionsTest : FunSpec({
         shouldThrow<NoCfsProvidedException> {
             arrayOf<CompletableFuture<*>>().anyOfSuccessCompletableFuture().await()
         }
-    }
-
-    ////////////////////////////////////////
-    // allTupleOf
-    ////////////////////////////////////////
-
-    test("allTupleOf - CompletableFuture") {
-        CompletableFuture.completedFuture(n).allTupleOf(
-            CompletableFuture.completedFuture(s)
-        ).get() shouldBe Tuple2.of(n, s)
-
-        CompletableFuture.completedFuture(n).allTupleOf(
-            CompletableFuture.completedFuture(s),
-            CompletableFuture.completedFuture(d)
-        ).get() shouldBe Tuple3.of(n, s, d)
-
-        CompletableFuture.completedFuture(n).allTupleOf(
-            CompletableFuture.completedFuture(s),
-            CompletableFuture.completedFuture(d),
-            CompletableFuture.completedFuture(anotherN)
-        ).get() shouldBe Tuple4.of(n, s, d, anotherN)
-
-        CompletableFuture.completedFuture(n).allTupleOf(
-            CompletableFuture.completedFuture(s),
-            CompletableFuture.completedFuture(d),
-            CompletableFuture.completedFuture(anotherN),
-            CompletableFuture.completedFuture(n + n)
-        ).get() shouldBe Tuple5.of(n, s, d, anotherN, n + n)
-    }
-
-    test("allTupleOfFastFail - CompletableFuture") {
-        CompletableFuture.completedFuture(n).allTupleOfFastFail(
-            CompletableFuture.completedFuture(s)
-        ).get() shouldBe Tuple2.of(n, s)
-
-        CompletableFuture.completedFuture(n).allTupleOfFastFail(
-            CompletableFuture.completedFuture(s),
-            CompletableFuture.completedFuture(d)
-        ).get() shouldBe Tuple3.of(n, s, d)
-
-        CompletableFuture.completedFuture(n).allTupleOfFastFail(
-            CompletableFuture.completedFuture(s),
-            CompletableFuture.completedFuture(d),
-            CompletableFuture.completedFuture(anotherN)
-        ).get() shouldBe Tuple4.of(n, s, d, anotherN)
-
-        CompletableFuture.completedFuture(n).allTupleOfFastFail(
-            CompletableFuture.completedFuture(s),
-            CompletableFuture.completedFuture(d),
-            CompletableFuture.completedFuture(anotherN),
-            CompletableFuture.completedFuture(n + n)
-        ).get() shouldBe Tuple5.of(n, s, d, anotherN, n + n)
-    }
-
-    test("mostTupleOfSuccess - CompletableFuture") {
-        val completed = CompletableFuture.completedFuture(n)
-        val anotherCompleted = CompletableFutureUtils.completedStage(s)
-        val failed = CompletableFutureUtils.failedFuture<Int>(rte)
-        val cancelled = createCancelledFuture<Int>()
-        val incomplete = createIncompleteFuture<Int>()
-
-        completed.mostTupleOfSuccess(
-            10, TimeUnit.MILLISECONDS, anotherCompleted
-        ).await() shouldBe Tuple2.of(n, s)
-        completed.mostTupleOfSuccess(
-            10, TimeUnit.MILLISECONDS, failed
-        ).await() shouldBe Tuple2.of(n, null)
-
-        completed.mostTupleOfSuccess(
-            10, TimeUnit.MILLISECONDS, anotherCompleted, cancelled
-        ).await() shouldBe Tuple3.of(n, s, null)
-        incomplete.mostTupleOfSuccess(
-            10, TimeUnit.MILLISECONDS, failed, anotherCompleted
-        ).await() shouldBe Tuple3.of(null, null, s)
-
-        completed.mostTupleOfSuccess(
-            10, TimeUnit.MILLISECONDS, anotherCompleted, cancelled, incomplete
-        ).await() shouldBe Tuple4.of(n, s, null, null)
-        incomplete.mostTupleOfSuccess(
-            10, TimeUnit.MILLISECONDS, failed, cancelled, incomplete
-        ).await() shouldBe Tuple4.of(null, null, null, null)
-
-        cancelled.mostTupleOfSuccess(
-            10, TimeUnit.MILLISECONDS, completed, anotherCompleted, incomplete, failed
-        ).await() shouldBe Tuple5.of(null, n, s, null, null)
-
-        // with `executorWhenTimeout`
-
-        completed.mostTupleOfSuccess(
-            testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, anotherCompleted
-        ).await() shouldBe Tuple2.of(n, s)
-        completed.mostTupleOfSuccess(
-            testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, failed
-        ).await() shouldBe Tuple2.of(n, null)
-
-        completed.mostTupleOfSuccess(
-            testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, anotherCompleted, cancelled
-        ).await() shouldBe Tuple3.of(n, s, null)
-        incomplete.mostTupleOfSuccess(
-            testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, failed, anotherCompleted
-        ).await() shouldBe Tuple3.of(null, null, s)
-
-        completed.mostTupleOfSuccess(
-            testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, anotherCompleted, cancelled, incomplete
-        ).await() shouldBe Tuple4.of(n, s, null, null)
-        incomplete.mostTupleOfSuccess(
-            testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, failed, cancelled, incomplete
-        ).await() shouldBe Tuple4.of(null, null, null, null)
-
-        cancelled.mostTupleOfSuccess(
-            testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, completed, anotherCompleted, incomplete, failed
-        ).await() shouldBe Tuple5.of(null, n, s, null, null)
     }
 
     ////////////////////////////////////////////////////////////////////////////////

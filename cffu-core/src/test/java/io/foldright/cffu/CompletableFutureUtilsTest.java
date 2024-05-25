@@ -772,6 +772,33 @@ class CompletableFutureUtilsTest {
         assertEquals(Tuple5.of(null, n, s, null, null), mostTupleOfSuccess(
                 10, TimeUnit.MILLISECONDS, cancelled, completed, anotherCompleted, incomplete, failed
         ).get());
+
+        // with `executorWhenTimeout`
+
+        assertEquals(Tuple2.of(n, s), mostTupleOfSuccess(
+                executorService, 10, TimeUnit.MILLISECONDS, completed, anotherCompleted
+        ).get());
+        assertEquals(Tuple2.of(n, null), mostTupleOfSuccess(
+                executorService, 10, TimeUnit.MILLISECONDS, completed, failed
+        ).get());
+
+        assertEquals(Tuple3.of(n, s, null), mostTupleOfSuccess(
+                executorService, 10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled
+        ).get());
+        assertEquals(Tuple3.of(null, null, s), mostTupleOfSuccess(
+                executorService, 10, TimeUnit.MILLISECONDS, incomplete, failed, anotherCompleted
+        ).get());
+
+        assertEquals(Tuple4.of(n, s, null, null), mostTupleOfSuccess(
+                executorService, 10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled, incomplete
+        ).get());
+        assertEquals(Tuple4.of(null, null, null, null), mostTupleOfSuccess(
+                executorService, 10, TimeUnit.MILLISECONDS, incomplete, failed, cancelled, incomplete
+        ).get());
+
+        assertEquals(Tuple5.of(null, n, s, null, null), mostTupleOfSuccess(
+                executorService, 10, TimeUnit.MILLISECONDS, cancelled, completed, anotherCompleted, incomplete, failed
+        ).get());
     }
 
     ////////////////////////////////////////////////////////////////////////////////

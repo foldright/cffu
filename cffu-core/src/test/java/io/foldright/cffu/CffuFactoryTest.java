@@ -15,7 +15,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.*;
 
-import static io.foldright.cffu.CompletableFutureUtils.*;
+import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
+import static io.foldright.cffu.CompletableFutureUtils.toCompletableFutureArray;
 import static io.foldright.test_utils.TestUtils.*;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;
@@ -514,54 +515,6 @@ class CffuFactoryTest {
                 cffuFactory.completedFuture(anotherN),
                 cffuFactory.completedFuture(n + n)
         ).get());
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        assertEquals(Tuple2.of(n, s), cffuFactory.completedFuture(n).allTupleOf(
-                completedFuture(s)
-        ).get());
-
-        assertEquals(Tuple3.of(n, s, d), cffuFactory.completedFuture(n).allTupleOf(
-                completedFuture(s),
-                completedFuture(d)
-        ).get());
-
-        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.completedFuture(n).allTupleOf(
-                completedFuture(s),
-                completedFuture(d),
-                completedFuture(anotherN)
-        ).get());
-
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.completedFuture(n).allTupleOf(
-                completedFuture(s),
-                completedFuture(d),
-                completedFuture(anotherN),
-                completedFuture(n + n)
-        ).get());
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        assertEquals(Tuple2.of(n, s), cffuFactory.completedFuture(n).allTupleOf(
-                cffuFactory.completedFuture(s)
-        ).get());
-
-        assertEquals(Tuple3.of(n, s, d), cffuFactory.completedFuture(n).allTupleOf(
-                cffuFactory.completedFuture(s),
-                cffuFactory.completedFuture(d)
-        ).get());
-
-        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.completedFuture(n).allTupleOf(
-                cffuFactory.completedFuture(s),
-                cffuFactory.completedFuture(d),
-                cffuFactory.completedFuture(anotherN)
-        ).get());
-
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.completedFuture(n).allTupleOf(
-                cffuFactory.completedFuture(s),
-                cffuFactory.completedFuture(d),
-                cffuFactory.completedFuture(anotherN),
-                cffuFactory.completedFuture(n + n)
-        ).get());
     }
 
     @Test
@@ -647,54 +600,6 @@ class CffuFactoryTest {
 
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.allTupleOfFastFail(
                 cffuFactory.completedFuture(n),
-                cffuFactory.completedFuture(s),
-                cffuFactory.completedFuture(d),
-                cffuFactory.completedFuture(anotherN),
-                cffuFactory.completedFuture(n + n)
-        ).get());
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        assertEquals(Tuple2.of(n, s), cffuFactory.completedFuture(n).allTupleOfFastFail(
-                completedFuture(s)
-        ).get());
-
-        assertEquals(Tuple3.of(n, s, d), cffuFactory.completedFuture(n).allTupleOfFastFail(
-                completedFuture(s),
-                completedFuture(d)
-        ).get());
-
-        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.completedFuture(n).allTupleOfFastFail(
-                completedFuture(s),
-                completedFuture(d),
-                completedFuture(anotherN)
-        ).get());
-
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.completedFuture(n).allTupleOfFastFail(
-                completedFuture(s),
-                completedFuture(d),
-                completedFuture(anotherN),
-                completedFuture(n + n)
-        ).get());
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        assertEquals(Tuple2.of(n, s), cffuFactory.completedFuture(n).allTupleOfFastFail(
-                cffuFactory.completedFuture(s)
-        ).get());
-
-        assertEquals(Tuple3.of(n, s, d), cffuFactory.completedFuture(n).allTupleOfFastFail(
-                cffuFactory.completedFuture(s),
-                cffuFactory.completedFuture(d)
-        ).get());
-
-        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.completedFuture(n).allTupleOfFastFail(
-                cffuFactory.completedFuture(s),
-                cffuFactory.completedFuture(d),
-                cffuFactory.completedFuture(anotherN)
-        ).get());
-
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.completedFuture(n).allTupleOfFastFail(
                 cffuFactory.completedFuture(s),
                 cffuFactory.completedFuture(d),
                 cffuFactory.completedFuture(anotherN),
