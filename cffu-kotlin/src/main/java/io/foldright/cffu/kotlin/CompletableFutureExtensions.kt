@@ -746,7 +746,7 @@ fun <T> Array<out CompletionStage<T>>.toCompletableFuture(): Array<CompletableFu
  * if given CompletionStage completed exceptionally
  * @return the new CompletionStage
  */
-fun <T> CompletableFuture<T>.exceptionallyAsync(fn: Function<Throwable, out T>): CompletableFuture<T> =
+fun <T, C : CompletionStage<in T>> C.exceptionallyAsync(fn: Function<Throwable, out T>): C =
     CompletableFutureUtils.exceptionallyAsync(this, fn)
 
 /**
@@ -759,9 +759,7 @@ fun <T> CompletableFuture<T>.exceptionallyAsync(fn: Function<Throwable, out T>):
  * @param executor the executor to use for asynchronous execution
  * @return the new CompletionStage
  */
-fun <T> CompletableFuture<T>.exceptionallyAsync(
-    fn: Function<Throwable, out T>, executor: Executor
-): CompletableFuture<T> =
+fun <T, C : CompletionStage<in T>> C.exceptionallyAsync(fn: Function<Throwable, out T>, executor: Executor): C =
     CompletableFutureUtils.exceptionallyAsync(this, fn, executor)
 
 //# Timeout Control methods
@@ -884,9 +882,7 @@ fun <T, C : CompletableFuture<in T>> C.completeOnTimeout(value: T, timeout: Long
  *           CompletionStage if given CompletionStage completed exceptionally
  * @return the new CompletionStage
  */
-fun <T> CompletableFuture<T>.exceptionallyCompose(
-    fn: Function<Throwable, out CompletionStage<T>>
-): CompletableFuture<T> =
+fun <T, C : CompletionStage<in T>> C.exceptionallyCompose(fn: Function<Throwable, out CompletionStage<T>>): C =
     CompletableFutureUtils.exceptionallyCompose(this, fn)
 
 /**
@@ -898,9 +894,7 @@ fun <T> CompletableFuture<T>.exceptionallyCompose(
  *           CompletionStage if given CompletionStage completed exceptionally
  * @return the new CompletionStage
  */
-fun <T> CompletableFuture<T>.exceptionallyComposeAsync(
-    fn: Function<Throwable, out CompletionStage<T>>
-): CompletableFuture<T> =
+fun <T, C : CompletionStage<in T>> C.exceptionallyComposeAsync(fn: Function<Throwable, out CompletionStage<T>>): C =
     CompletableFutureUtils.exceptionallyComposeAsync(this, fn)
 
 /**
@@ -912,9 +906,9 @@ fun <T> CompletableFuture<T>.exceptionallyComposeAsync(
  * @param executor the executor to use for asynchronous execution
  * @return the new CompletionStage
  */
-fun <T> CompletableFuture<T>.exceptionallyComposeAsync(
+fun <T, C : CompletionStage<in T>> C.exceptionallyComposeAsync(
     fn: Function<Throwable, out CompletionStage<T>>, executor: Executor
-): CompletableFuture<T> =
+): C =
     CompletableFutureUtils.exceptionallyComposeAsync(this, fn, executor)
 
 //# Read(explicitly) methods of CompletableFuture
@@ -974,7 +968,7 @@ fun <T> CompletableFuture<T>.getSuccessNow(valueIfNotSuccess: T): T =
  * ```
  */
 @Suppress("UNCHECKED_CAST")
-fun <T> CompletableFuture<T>.resultNow(): T =
+fun <T> Future<T>.resultNow(): T =
     CompletableFutureUtils.resultNow(this) as T
 
 /**
@@ -986,7 +980,7 @@ fun <T> CompletableFuture<T>.resultNow(): T =
  * @throws IllegalStateException if the task has not completed, the task completed normally,
  *                               or the task was cancelled
  */
-fun CompletableFuture<*>.exceptionNow(): Throwable =
+fun Future<*>.exceptionNow(): Throwable =
     CompletableFutureUtils.exceptionNow(this)
 
 /**
@@ -997,7 +991,7 @@ fun CompletableFuture<*>.exceptionNow(): Throwable =
  * @see java.util.concurrent.Future.state
  * @see CompletableFuture.state
  */
-fun CompletableFuture<*>.cffuState(): CffuState =
+fun Future<*>.cffuState(): CffuState =
     CompletableFutureUtils.state(this)
 
 //# Write methods of CompletableFuture
