@@ -1167,6 +1167,10 @@ class CompletableFutureUtilsTest {
     void test_write() throws Exception {
         assertEquals(n, completeAsync(createIncompleteFuture(), () -> n).get());
         assertEquals(n, completeAsync(createIncompleteFuture(), () -> n, commonPool()).get());
+        if (isJava9Plus()) {
+            CompletableFuture<Integer> f = (CompletableFuture<Integer>) completedStage(42);
+            assertThrows(UnsupportedOperationException.class, () -> completeAsync(f, () -> null));
+        }
         assertSame(rte, assertThrows(ExecutionException.class, () ->
                 completeAsync(createIncompleteFuture(), () -> {
                     throw rte;
@@ -1181,6 +1185,10 @@ class CompletableFutureUtilsTest {
         assertSame(rte, assertThrows(ExecutionException.class, () ->
                 completeExceptionallyAsync(createIncompleteFuture(), () -> rte).get()
         ).getCause());
+        if (isJava9Plus()) {
+            CompletableFuture<Integer> f = (CompletableFuture<Integer>) completedStage(42);
+            assertThrows(UnsupportedOperationException.class, () -> completeExceptionallyAsync(f, () -> rte));
+        }
         assertEquals(n, completeExceptionallyAsync(completedFuture(n), () -> rte).get());
     }
 

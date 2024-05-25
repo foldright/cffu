@@ -1532,6 +1532,7 @@ public final class CompletableFutureUtils {
     public static <C extends CompletableFuture<?>> C orTimeout(C cf, long timeout, TimeUnit unit) {
         requireNonNull(cf, "cf is null");
         requireNonNull(unit, "unit is null");
+        // NOTE: No need check minimal stage, since checked at cf.orTimeout() / cf.isDone()
         if (IS_JAVA9_PLUS) {
             cf.orTimeout(timeout, unit);
         } else {
@@ -1608,6 +1609,7 @@ public final class CompletableFutureUtils {
     C completeOnTimeout(C cf, @Nullable T value, long timeout, TimeUnit unit) {
         requireNonNull(cf, "cf is null");
         requireNonNull(unit, "unit is null");
+        // NOTE: No need check minimal stage, since checked at cf.completeOnTimeout() / cf.isDone()
         if (IS_JAVA9_PLUS) {
             cf.completeOnTimeout(value, timeout, unit);
         } else {
@@ -1745,6 +1747,7 @@ public final class CompletableFutureUtils {
     @Nullable
     public static <T> T getSuccessNow(CompletableFuture<? extends T> cf, @Nullable T valueIfNotSuccess) {
         requireNonNull(cf, "cf is null");
+        // NOTE: No need check minimal stage, since checked at cf.isDone()
         return cf.isDone() && !cf.isCompletedExceptionally() ? cf.join() : valueIfNotSuccess;
     }
 
@@ -1918,6 +1921,8 @@ public final class CompletableFutureUtils {
         if (IS_JAVA9_PLUS) {
             cf.completeAsync(supplier, executor);
         } else {
+            // NOTE: No need check minimal stage, because on Java 8(not Java 9+) NOT support minimal stage
+
             // below code is copied from CompletableFuture#completeAsync with small adoption
             executor.execute(new CfCompleterBySupplier<>(cf, supplier));
         }
@@ -1951,6 +1956,7 @@ public final class CompletableFutureUtils {
         requireNonNull(cf, "cf is null");
         requireNonNull(supplier, "supplier is null");
         requireNonNull(executor, "executor is null");
+        if (isMinStageCf(cf)) throw new UnsupportedOperationException();
 
         executor.execute(new CfExCompleterBySupplier(cf, supplier));
         return cf;
