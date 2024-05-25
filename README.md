@@ -19,7 +19,7 @@
 <a href="https://gitpod.io/#https://github.com/foldright/cffu"><img src="https://img.shields.io/badge/Gitpod-ready to code-339933?label=gitpod&logo=gitpod&logoColor=white" alt="gitpod: Ready to Code"></a>
 </p>
 
-👉 `cffu`（`CompletableFuture Fu` 🦝）是一个小小的[`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)辅助增强库，提升`CF`使用体验并减少误用，期望在业务中更方便高效安全地使用`CF`。
+👉 `cffu`（`CompletableFuture Fu` 🦝）是一个小小的[`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)辅助增强库，提升`CF`使用体验并减少误用，在业务中更方便高效安全地使用`CF`。
 
 欢迎 👏 💖
 
@@ -560,18 +560,18 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>1.0.0-Alpha6</version>
+      <version>1.0.0-Alpha7</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu:1.0.0-Alpha6")
+    implementation("io.foldright:cffu:1.0.0-Alpha7")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu:1.0.0-Alpha6'
+    implementation 'io.foldright:cffu:1.0.0-Alpha7'
     ```
 - `cffu Kotlin`支持库:
   - For `Maven` projects:
@@ -580,18 +580,18 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-kotlin</artifactId>
-      <version>1.0.0-Alpha6</version>
+      <version>1.0.0-Alpha7</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha6")
+    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha7")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha6'
+    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha7'
     ```
 - `cffu bom`:
   - For `Maven` projects:
@@ -600,7 +600,7 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-bom</artifactId>
-      <version>1.0.0-Alpha6</version>
+      <version>1.0.0-Alpha7</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -609,11 +609,11 @@ public class ConcurrencyStrategyDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha6"))
+    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha7"))
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha6')
+    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha7')
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local)的[`cffu executor wrapper SPI`实现](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -622,7 +622,7 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>1.0.0-Alpha6</version>
+      <version>1.0.0-Alpha7</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -630,11 +630,11 @@ public class ConcurrencyStrategyDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha6")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha7")
     ```
     ```groovy
     // Gradle Groovy DSL
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha6'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha7'
     ```
 
 # 📚 更多资料
@@ -645,7 +645,7 @@ public class ConcurrencyStrategyDemo {
 - [`CompletableFuture` Guide](docs/completable-future-guide.md)
   - 完备说明`CompletableFuture`的使用方式
   - 给出 最佳实践建议 与 使用陷阱注意
-  - 期望在业务中，更有效安全地使用`CompletableFuture`
+  - 在业务中，更有效安全地使用`CompletableFuture`
 
 # 👋 关于库名
 
