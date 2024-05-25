@@ -18,6 +18,7 @@ import java.util.function.Consumer;
 
 import static io.foldright.cffu.CompletableFutureUtils.*;
 import static io.foldright.test_utils.TestUtils.*;
+import static java.lang.Thread.currentThread;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static java.util.function.Function.identity;
@@ -1029,6 +1030,58 @@ class CompletableFutureUtilsTest {
         assertEquals(n, completeOnTimeout(completedFuture(n), anotherN, 1, TimeUnit.MILLISECONDS).get());
         assertEquals(n, cffuCompleteOnTimeout(completedFuture(n), anotherN, 1, TimeUnit.MILLISECONDS).get());
         assertEquals(n, cffuCompleteOnTimeout(completedFuture(n), anotherN, defaultExecutor(), 1, TimeUnit.MILLISECONDS).get());
+    }
+
+    @Test
+    void test_safeBehavior_orTimeout() {
+        final Thread testThread = currentThread();
+
+        assertEquals(n, orTimeout(createIncompleteFuture(), 5, TimeUnit.MILLISECONDS).handle((r, ex) -> {
+            assertInstanceOf(TimeoutException.class, ex);
+            assertTrue(Delayer.atCfDelayerThread());
+            return n;
+        }).join());
+
+        assertEquals(n, cffuOrTimeout(createIncompleteFuture(), 5, TimeUnit.MILLISECONDS).handle((r, ex) -> {
+            // FIXME: Not TimeoutException, not compatible with orTimeout method
+            assertInstanceOf(CompletionException.class, ex);
+            assertInstanceOf(TimeoutException.class, ex.getCause());
+            assertFalse(Delayer.atCfDelayerThread());
+            assertNotSame(testThread, currentThread());
+            return n;
+        }).join());
+        assertEquals(n, cffuOrTimeout(createIncompleteFuture(), executorService, 5, TimeUnit.MILLISECONDS).handle((r, ex) -> {
+            // FIXME: Not TimeoutException, not compatible with orTimeout method
+            assertInstanceOf(CompletionException.class, ex);
+            assertInstanceOf(TimeoutException.class, ex.getCause());
+            assertFalse(Delayer.atCfDelayerThread());
+            assertTrue(TestThreadPoolManager.isRunInExecutor(executorService));
+            return n;
+        }).join());
+    }
+
+    @Test
+    void test_safeBehavior_completeOnTimeout() {
+        final Thread testThread = currentThread();
+
+        assertEquals(n, completeOnTimeout(createIncompleteFuture(), n, 5, TimeUnit.MILLISECONDS).handle((r, ex) -> {
+            assertNull(ex);
+            assertTrue(Delayer.atCfDelayerThread());
+            return r;
+        }).join());
+
+        assertEquals(n, cffuCompleteOnTimeout(createIncompleteFuture(), n, 5, TimeUnit.MILLISECONDS).handle((r, ex) -> {
+            assertNull(ex);
+            assertFalse(Delayer.atCfDelayerThread());
+            assertNotSame(testThread, currentThread());
+            return r;
+        }).join());
+        assertEquals(n, cffuCompleteOnTimeout(createIncompleteFuture(), n, executorService, 5, TimeUnit.MILLISECONDS).handle((r, ex) -> {
+            assertNull(ex);
+            assertFalse(Delayer.atCfDelayerThread());
+            assertTrue(TestThreadPoolManager.isRunInExecutor(executorService));
+            return r;
+        }).join());
     }
 
     @Test

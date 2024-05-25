@@ -15,37 +15,39 @@ import kotlin.random.Random
 import kotlin.random.nextULong
 
 
-const val THREAD_COUNT_OF_POOL = 5
+val THREAD_COUNT_OF_POOL: Int = (Runtime.getRuntime().availableProcessors() * 2).coerceAtLeast(4).coerceAtMost(15)
 
 @JvmOverloads
 fun createThreadPool(threadNamePrefix: String, isForkJoin: Boolean = false): ExecutorService {
     val counter = AtomicLong()
-    val prefix = "${threadNamePrefix}_${Random.nextULong()}-"
+    val prefix = "${threadNamePrefix}_${Random.nextULong()}"
 
     val executorService = if (!isForkJoin)
         ThreadPoolExecutor(
-            THREAD_COUNT_OF_POOL, THREAD_COUNT_OF_POOL, 1, TimeUnit.DAYS,
-            ArrayBlockingQueue(5000)
+            /* corePoolSize = */ THREAD_COUNT_OF_POOL, /* maximumPoolSize = */ THREAD_COUNT_OF_POOL,
+            /* keepAliveTime = */ 1, /* unit = */ TimeUnit.DAYS,
+            /* workQueue = */ ArrayBlockingQueue(5000)
         ) { r ->
             Thread(r).apply {
-                name = "$prefix${counter.getAndIncrement()}"
+                name = "${prefix}_${counter.getAndIncrement()}"
                 isDaemon = true
             }
         }
     else
         ForkJoinPool(
-            THREAD_COUNT_OF_POOL, { fjPool ->
+            /* parallelism = */ THREAD_COUNT_OF_POOL,/* factory = */ { fjPool ->
                 ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(fjPool).apply {
-                    name = "$prefix${counter.getAndIncrement()}"
+                    name = "${prefix}_${counter.getAndIncrement()}"
                 }
-            },
-            null, false
+            }, /* handler = */ null, /* asyncMode = */ false
         )
 
     return object : ExecutorService by executorService, ThreadPoolAcquaintance {
         override fun isMyThread(thread: Thread): Boolean = thread.name.startsWith(prefix)
 
         override fun unwrap(): ExecutorService = executorService
+
+        override fun toString(): String = "test ${if (isForkJoin) "ForkJoinPool" else "ThreadPoolExecutor"} $prefix"
     }
 }
 
@@ -57,8 +59,11 @@ private interface ThreadPoolAcquaintance {
     fun unwrap(): ExecutorService
 }
 
+fun isRunInExecutor(executor: Executor): Boolean =
+    executor.doesOwnThread(currentThread())
+
 fun assertRunInExecutor(executor: Executor) {
-    executor.doesOwnThread(currentThread()).shouldBeTrue()
+    isRunInExecutor(executor).shouldBeTrue()
 }
 
 fun assertNotRunInExecutor(executor: Executor) {
