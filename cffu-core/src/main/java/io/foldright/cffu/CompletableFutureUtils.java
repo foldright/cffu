@@ -63,9 +63,11 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     public static CompletableFuture<Void> allOf(CompletionStage<?>... cfs) {
+        requireNonNull(cfs, "cfs is null");
+        if (cfs.length == 0) return completedFuture(null);
         // Defensive copy input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
         // in order to ensure that the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
-        if (cfs.length == 1) return toNonMinCfCopy(cfs[0]).thenApply(unused -> null);
+        if (cfs.length == 1) return toNonMinCfCopy(requireNonNull(cfs[0], "cf1 is null")).thenApply(unused -> null);
         return CompletableFuture.allOf(f_toCfArray(cfs));
     }
 
@@ -229,15 +231,16 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<List<T>> mostResultsOfSuccess(
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
             @Nullable T valueIfNotSuccess, CompletionStage<? extends T>... cfs) {
+        requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
         requireNonNull(unit, "unit is null");
-        requireCfsAndEleNonNull(cfs);
+        requireNonNull(cfs, "cfs is null");
 
         if (cfs.length == 0) return completedFuture(arrayList());
         if (cfs.length == 1) {
             // Defensive copy input cf to non-minimal-stage instance in order to
             // 1. avoid writing it by `completeOnTimeout` and is able to read its result(`getSuccessNow`)
             // 2. ensure that the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
-            final CompletableFuture<T> f = toNonMinCfCopy(cfs[0]);
+            final CompletableFuture<T> f = toNonMinCfCopy(requireNonNull(cfs[0], "cf1 is null"));
             return cffuOrTimeout(f, executorWhenTimeout, timeout, unit)
                     .handle((unused, ex) -> arrayList(getSuccessNow(f, valueIfNotSuccess)));
         }
@@ -420,10 +423,12 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<T> anyOf(CompletionStage<? extends T>... cfs) {
+        requireNonNull(cfs, "cfs is null");
+        if (cfs.length == 0) return new CompletableFuture<>();
         // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
         // 1. avoid writing the input cf unexpectedly it by caller code
         // 2. the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
-        if (cfs.length == 1) return toNonMinCfCopy(cfs[0]);
+        if (cfs.length == 1) return toNonMinCfCopy(requireNonNull(cfs[0], "cf1 is null"));
         CompletableFuture<Object> ret = CompletableFuture.anyOf(f_toCfArray(cfs));
         return f_cast(ret);
     }
@@ -665,7 +670,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mostTupleOfSuccess(
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return mostTupleOfSuccess0(executorWhenTimeout, timeout, unit, requireCfsAndEleNonNull(cf1, cf2));
+        return mostTupleOfSuccess0(executorWhenTimeout, timeout, unit, cf1, cf2);
     }
 
     /**
@@ -704,7 +709,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mostTupleOfSuccess(
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return mostTupleOfSuccess0(executorWhenTimeout, timeout, unit, requireCfsAndEleNonNull(cf1, cf2, cf3));
+        return mostTupleOfSuccess0(executorWhenTimeout, timeout, unit, cf1, cf2, cf3);
     }
 
     /**
@@ -745,7 +750,7 @@ public final class CompletableFutureUtils {
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return mostTupleOfSuccess0(executorWhenTimeout, timeout, unit, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
+        return mostTupleOfSuccess0(executorWhenTimeout, timeout, unit, cf1, cf2, cf3, cf4);
     }
 
     /**
@@ -786,11 +791,12 @@ public final class CompletableFutureUtils {
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return mostTupleOfSuccess0(executorWhenTimeout, timeout, unit, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
+        return mostTupleOfSuccess0(executorWhenTimeout, timeout, unit, cf1, cf2, cf3, cf4, cf5);
     }
 
     private static <T> CompletableFuture<T> mostTupleOfSuccess0(
-            Executor executorWhenTimeout, long timeout, TimeUnit unit, CompletionStage<?>[] css) {
+            Executor executorWhenTimeout, long timeout, TimeUnit unit, CompletionStage<?>... css) {
+        requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
         requireNonNull(unit, "unit is null");
         // MUST be *Non-Minimal* CF instances in order to read results(`getSuccessNow`),
         // otherwise UnsupportedOperationException
@@ -1263,6 +1269,9 @@ public final class CompletableFutureUtils {
      */
     public static <T, C extends CompletionStage<? extends T>>
     C peek(C cf, BiConsumer<? super T, ? super Throwable> action) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(action, "action is null");
+
         cf.whenComplete(action);
         return cf;
     }
@@ -1287,8 +1296,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, C extends CompletionStage<? extends T>>
     C peekAsync(C cf, BiConsumer<? super T, ? super Throwable> action) {
-        cf.whenCompleteAsync(action);
-        return cf;
+        return peekAsync(cf, action, AsyncPoolHolder.ASYNC_POOL);
     }
 
     /**
@@ -1310,6 +1318,10 @@ public final class CompletableFutureUtils {
      */
     public static <T, C extends CompletionStage<? extends T>>
     C peekAsync(C cf, BiConsumer<? super T, ? super Throwable> action, Executor executor) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
         cf.whenCompleteAsync(action, executor);
         return cf;
     }
@@ -1330,10 +1342,10 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T> failedFuture(Throwable ex) {
+        requireNonNull(ex, "ex is null");
         if (IS_JAVA9_PLUS) {
             return CompletableFuture.failedFuture(ex);
         }
-        requireNonNull(ex, "ex is null");
         final CompletableFuture<T> cf = new CompletableFuture<>();
         cf.completeExceptionally(ex);
         return cf;
@@ -1374,9 +1386,7 @@ public final class CompletableFutureUtils {
         if (IS_JAVA9_PLUS) {
             return CompletableFuture.failedStage(ex);
         }
-        CompletableFuture<T> cf = new CompletableFuture<>();
-        cf.completeExceptionally(ex);
-        return cf;
+        return failedFuture(ex);
     }
 
     //# Delay Execution
@@ -1405,11 +1415,11 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
+        requireNonNull(unit, "unit is null");
+        requireNonNull(executor, "executor is null");
         if (IS_JAVA9_PLUS) {
             return CompletableFuture.delayedExecutor(delay, unit, executor);
         }
-        requireNonNull(unit, "unit is null");
-        requireNonNull(executor, "executor is null");
         return new DelayedExecutor(delay, unit, executor);
     }
 
@@ -1447,11 +1457,12 @@ public final class CompletableFutureUtils {
     @SuppressWarnings("unchecked")
     public static <T, C extends CompletionStage<? super T>>
     C exceptionallyAsync(C cf, Function<Throwable, ? extends T> fn, Executor executor) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(fn, "fn is null");
+        requireNonNull(executor, "executor is null");
         if (IS_JAVA12_PLUS) {
             return (C) cf.exceptionallyAsync(fn, executor);
         }
-        requireNonNull(fn, "fn is null");
-        requireNonNull(executor, "executor is null");
         // below code is copied from CompletionStage#exceptionallyAsync
         return (C) cf.handle((r, ex) -> (ex == null) ? cf :
                 cf.<T>handleAsync((r1, ex1) -> fn.apply(ex1), executor)
@@ -1487,6 +1498,10 @@ public final class CompletableFutureUtils {
      */
     public static <C extends CompletableFuture<?>> C cffuOrTimeout(
             C cf, Executor executorWhenTimeout, long timeout, TimeUnit unit) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
+        requireNonNull(unit, "unit is null");
+
         final C f = orTimeout(cf, timeout, unit);
         return hopAsyncIf(f, IS_IN_CF_DELAYER_THREAD, executorWhenTimeout);
     }
@@ -1517,10 +1532,11 @@ public final class CompletableFutureUtils {
      * @see #cffuOrTimeout(CompletableFuture, long, TimeUnit)
      */
     public static <C extends CompletableFuture<?>> C orTimeout(C cf, long timeout, TimeUnit unit) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(unit, "unit is null");
         if (IS_JAVA9_PLUS) {
             cf.orTimeout(timeout, unit);
         } else {
-            requireNonNull(unit, "unit is null");
             // below code is copied from CompletableFuture#orTimeout with small adoption
             if (!cf.isDone()) {
                 ScheduledFuture<?> f = Delayer.delayToTimoutCf(cf, timeout, unit);
@@ -1557,6 +1573,10 @@ public final class CompletableFutureUtils {
      */
     public static <T, C extends CompletableFuture<? super T>>
     C cffuCompleteOnTimeout(C cf, @Nullable T value, Executor executorWhenTimeout, long timeout, TimeUnit unit) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
+        requireNonNull(unit, "unit is null");
+
         final C f = completeOnTimeout(cf, value, timeout, unit);
         return hopAsyncIf(f, IS_IN_CF_DELAYER_THREAD, executorWhenTimeout);
     }
@@ -1588,10 +1608,11 @@ public final class CompletableFutureUtils {
      */
     public static <T, C extends CompletableFuture<? super T>>
     C completeOnTimeout(C cf, @Nullable T value, long timeout, TimeUnit unit) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(unit, "unit is null");
         if (IS_JAVA9_PLUS) {
             cf.completeOnTimeout(value, timeout, unit);
         } else {
-            requireNonNull(unit, "unit is null");
             // below code is copied from CompletableFuture#completeOnTimeout with small adoption
             if (!cf.isDone()) {
                 ScheduledFuture<?> f = Delayer.delayToCompleteCf(cf, value, timeout, unit);
@@ -1623,10 +1644,11 @@ public final class CompletableFutureUtils {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T, C extends CompletionStage<? super T>>
     C exceptionallyCompose(C cf, Function<Throwable, ? extends CompletionStage<T>> fn) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(fn, "fn is null");
         if (IS_JAVA12_PLUS) {
             return (C) cf.exceptionallyCompose((Function) fn);
         }
-        requireNonNull(fn, "fn is null");
         // below code is copied from CompletionStage.exceptionallyCompose
         return (C) cf.handle((r, ex) -> (ex == null) ? cf : fn.apply(ex)).thenCompose(x -> x);
     }
@@ -1657,11 +1679,12 @@ public final class CompletableFutureUtils {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T, C extends CompletionStage<? super T>>
     C exceptionallyComposeAsync(C cf, Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(fn, "fn is null");
+        requireNonNull(executor, "executor is null");
         if (IS_JAVA12_PLUS) {
             return (C) cf.exceptionallyComposeAsync((Function) fn, executor);
         }
-        requireNonNull(fn, "fn is null");
-        requireNonNull(executor, "executor is null");
         // below code is copied from CompletionStage.exceptionallyComposeAsync
         return (C) cf.handle((r, ex) -> (ex == null) ? cf :
                 cf.handleAsync((r1, ex1) -> fn.apply(ex1), executor).thenCompose(x -> x)
@@ -1703,6 +1726,9 @@ public final class CompletableFutureUtils {
     @Blocking
     @Nullable
     public static <T> T join(CompletableFuture<T> cf, long timeout, TimeUnit unit) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(unit, "unit is null");
+
         if (cf.isDone()) return cf.join();
         // defensive copy input cf to avoid writing it by `orTimeout`
         return orTimeout(copy(cf), timeout, unit).join();
@@ -1720,6 +1746,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     @Nullable
     public static <T> T getSuccessNow(CompletableFuture<? extends T> cf, @Nullable T valueIfNotSuccess) {
+        requireNonNull(cf, "cf is null");
         return cf.isDone() && !cf.isCompletedExceptionally() ? cf.join() : valueIfNotSuccess;
     }
 
@@ -1739,6 +1766,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     @Nullable
     public static <T> T resultNow(Future<T> cf) {
+        requireNonNull(cf, "cf is null");
         if (IS_JAVA19_PLUS) {
             return cf.resultNow();
         }
@@ -1786,6 +1814,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static Throwable exceptionNow(Future<?> cf) {
+        requireNonNull(cf, "cf is null");
         if (IS_JAVA19_PLUS) {
             return cf.exceptionNow();
         }
@@ -1824,6 +1853,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static CffuState state(Future<?> cf) {
+        requireNonNull(cf, "cf is null");
         if (IS_JAVA19_PLUS) {
             return CffuState.toCffuState(cf.state());
         }
@@ -1884,12 +1914,12 @@ public final class CompletableFutureUtils {
      */
     public static <T, C extends CompletableFuture<? super T>>
     C completeAsync(C cf, Supplier<? extends T> supplier, Executor executor) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(supplier, "supplier is null");
+        requireNonNull(executor, "executor is null");
         if (IS_JAVA9_PLUS) {
             cf.completeAsync(supplier, executor);
         } else {
-            requireNonNull(cf, "cf is null");
-            requireNonNull(supplier, "supplier is null");
-            requireNonNull(executor, "executor is null");
             // below code is copied from CompletableFuture#completeAsync with small adoption
             executor.execute(new CfCompleterBySupplier<>(cf, supplier));
         }
@@ -1923,6 +1953,7 @@ public final class CompletableFutureUtils {
         requireNonNull(cf, "cf is null");
         requireNonNull(supplier, "supplier is null");
         requireNonNull(executor, "executor is null");
+
         executor.execute(new CfExCompleterBySupplier(cf, supplier));
         return cf;
     }
@@ -1943,6 +1974,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static <T> CompletionStage<T> minimalCompletionStage(CompletableFuture<T> cf) {
+        requireNonNull(cf, "cf is null");
         if (IS_JAVA9_PLUS) {
             return cf.minimalCompletionStage();
         }
@@ -1960,6 +1992,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T> copy(CompletableFuture<T> cf) {
+        requireNonNull(cf, "cf is null");
         if (IS_JAVA9_PLUS) {
             return cf.copy();
         }
@@ -1974,6 +2007,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static <U> CompletableFuture<U> newIncompleteFuture(CompletableFuture<?> cf) {
+        requireNonNull(cf, "cf is null");
         if (IS_JAVA9_PLUS) {
             return cf.newIncompleteFuture();
         }
@@ -2030,6 +2064,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] completableFutureListToArray(List<CompletableFuture<T>> cfList) {
+        requireNonNull(cfList, "cfList is null");
         @SuppressWarnings("unchecked")
         final CompletableFuture<T>[] a = new CompletableFuture[cfList.size()];
         return cfList.toArray(a);
