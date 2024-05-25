@@ -18,6 +18,7 @@ import java.util.function.*;
 
 import static io.foldright.cffu.Delayer.IS_IN_CF_DELAYER_THREAD;
 import static java.util.Objects.requireNonNull;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 
 
 /**
@@ -89,7 +90,7 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<List<T>> allResultsOf(CompletionStage<? extends T>... cfs) {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
-        if (size == 0) return CompletableFuture.completedFuture(arrayList());
+        if (size == 0) return completedFuture(arrayList());
         if (size == 1) return csToListCf(cfs[0]);
 
         final Object[] result = new Object[size];
@@ -133,7 +134,7 @@ public final class CompletableFutureUtils {
     public static CompletableFuture<Void> allOfFastFail(CompletionStage<?>... cfs) {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
-        if (size == 0) return CompletableFuture.completedFuture(null);
+        if (size == 0) return completedFuture(null);
         // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
         // the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
         if (size == 1) return toNonMinCfCopy(cfs[0]).thenApply(unused -> null);
@@ -175,7 +176,7 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<List<T>> allResultsOfFastFail(CompletionStage<? extends T>... cfs) {
         requireCfsAndEleNonNull(cfs);
         final int size = cfs.length;
-        if (size == 0) return CompletableFuture.completedFuture(arrayList());
+        if (size == 0) return completedFuture(arrayList());
         if (size == 1) return csToListCf(cfs[0]);
 
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[size];
@@ -231,7 +232,7 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         requireCfsAndEleNonNull(cfs);
 
-        if (cfs.length == 0) return CompletableFuture.completedFuture(arrayList());
+        if (cfs.length == 0) return completedFuture(arrayList());
         if (cfs.length == 1) {
             // Defensive copy input cf to non-minimal-stage instance in order to
             // 1. avoid writing it by `completeOnTimeout` and is able to read its result(`getSuccessNow`)
@@ -664,7 +665,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mostTupleOfSuccess(
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return mostTupleOfSuccess0(timeout, unit, executorWhenTimeout, requireCfsAndEleNonNull(cf1, cf2));
+        return mostTupleOfSuccess0(executorWhenTimeout, timeout, unit, requireCfsAndEleNonNull(cf1, cf2));
     }
 
     /**
@@ -703,7 +704,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mostTupleOfSuccess(
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return mostTupleOfSuccess0(timeout, unit, executorWhenTimeout, requireCfsAndEleNonNull(cf1, cf2, cf3));
+        return mostTupleOfSuccess0(executorWhenTimeout, timeout, unit, requireCfsAndEleNonNull(cf1, cf2, cf3));
     }
 
     /**
@@ -744,7 +745,7 @@ public final class CompletableFutureUtils {
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return mostTupleOfSuccess0(timeout, unit, executorWhenTimeout, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
+        return mostTupleOfSuccess0(executorWhenTimeout, timeout, unit, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
     }
 
     /**
@@ -785,11 +786,11 @@ public final class CompletableFutureUtils {
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return mostTupleOfSuccess0(timeout, unit, executorWhenTimeout, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
+        return mostTupleOfSuccess0(executorWhenTimeout, timeout, unit, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
     }
 
     private static <T> CompletableFuture<T> mostTupleOfSuccess0(
-            long timeout, TimeUnit unit, Executor executorWhenTimeout, CompletionStage<?>[] css) {
+            Executor executorWhenTimeout, long timeout, TimeUnit unit, CompletionStage<?>[] css) {
         requireNonNull(unit, "unit is null");
         // MUST be *Non-Minimal* CF instances in order to read results(`getSuccessNow`),
         // otherwise UnsupportedOperationException
@@ -1354,7 +1355,7 @@ public final class CompletableFutureUtils {
         if (IS_JAVA9_PLUS) {
             return CompletableFuture.completedStage(value);
         }
-        return CompletableFuture.completedFuture(value);
+        return completedFuture(value);
     }
 
     /**
@@ -1494,16 +1495,16 @@ public final class CompletableFutureUtils {
      * Exceptionally completes given CompletableFuture with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
      * <p>
-     * <strong>CAUTION:<br></strong> This method and {@link CompletableFuture#orTimeout(long, TimeUnit)}
+     * <strong>CAUTION:</strong> This method and {@link CompletableFuture#orTimeout(long, TimeUnit)}
      * is <strong>UNSAFE</strong>!
      * <p>
      * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
      * are performed in the <strong>SINGLE thread builtin executor</strong>
-     * of CompletableFuture for delay executions (including timeout function).
+     * of CompletableFuture for delay execution (including timeout function).
      * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
      * (including delay execution and timeout).
      * <p>
-     * <strong>Strong recommend</strong> using the safe methods {@link #cffuOrTimeout(CompletableFuture, long, TimeUnit)}
+     * <strong>Strong recommend</strong> using the safe method {@link #cffuOrTimeout(CompletableFuture, long, TimeUnit)}
      * instead of this method and {@link CompletableFuture#orTimeout(long, TimeUnit)}.
      * <p>
      * Unless all subsequent actions of dependent CompletableFutures is ensured executing async
@@ -1563,16 +1564,16 @@ public final class CompletableFutureUtils {
     /**
      * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
      * <p>
-     * <strong>CAUTION:<br></strong> This method and {@link CompletableFuture#completeOnTimeout(Object, long, TimeUnit)}
+     * <strong>CAUTION:</strong> This method and {@link CompletableFuture#completeOnTimeout(Object, long, TimeUnit)}
      * is <strong>UNSAFE</strong>!
      * <p>
      * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
      * are performed in the <strong>SINGLE thread builtin executor</strong>
-     * of CompletableFuture for delay executions (including timeout function).
+     * of CompletableFuture for delay execution (including timeout function).
      * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
      * (including delay execution and timeout).
      * <p>
-     * <strong>Strong recommend</strong> using the safe methods {@link #cffuCompleteOnTimeout(CompletableFuture, Object, long, TimeUnit)}
+     * <strong>Strong recommend</strong> using the safe method {@link #cffuCompleteOnTimeout(CompletableFuture, Object, long, TimeUnit)}
      * instead of this method and {@link CompletableFuture#completeOnTimeout(Object, long, TimeUnit)}.
      * <p>
      * Unless all subsequent actions of dependent CompletableFutures is ensured executing async
@@ -1601,12 +1602,12 @@ public final class CompletableFutureUtils {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T, C extends CompletionStage<? extends T>>
-    C hopAsyncIf(C cf, BooleanSupplier condition, Executor ayncExecutor) {
+    private static <C extends CompletionStage<?>>
+    C hopAsyncIf(C cf, BooleanSupplier condition, Executor asyncExecutor) {
         return (C) cf.handle((r, ex) -> condition.getAsBoolean()
-                ? cf.handleAsync((r1, ex1) -> cf, ayncExecutor).thenCompose(x -> (CompletionStage<T>) x)
+                ? cf.handleAsync((r1, ex1) -> cf, asyncExecutor).thenCompose(x -> (CompletionStage<?>) x)
                 : cf
-        ).thenCompose(x -> (CompletionStage<T>) x);
+        ).thenCompose(x -> x);
     }
 
     //# Advanced methods of CompletionStage
@@ -2071,7 +2072,7 @@ public final class CompletableFutureUtils {
         private static final Executor ASYNC_POOL = _asyncPool0();
 
         private static Executor _asyncPool0() {
-            if (IS_JAVA9_PLUS) return CompletableFuture.completedFuture(null).defaultExecutor();
+            if (IS_JAVA9_PLUS) return completedFuture(null).defaultExecutor();
             if (USE_COMMON_POOL) return ForkJoinPool.commonPool();
             return new ThreadPerTaskExecutor();
         }
@@ -2099,7 +2100,7 @@ public final class CompletableFutureUtils {
         }
         IS_JAVA9_PLUS = b;
 
-        final CompletableFuture<Integer> cf = CompletableFuture.completedFuture(42);
+        final CompletableFuture<Integer> cf = completedFuture(42);
         try {
             // `exceptionallyCompose` is the new method of CompletableFuture since java 12
             cf.exceptionallyCompose(v -> cf);

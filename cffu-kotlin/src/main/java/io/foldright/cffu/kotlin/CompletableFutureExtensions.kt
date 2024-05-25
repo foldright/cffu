@@ -41,7 +41,7 @@ import java.util.function.Function
  * @see allResultsOfCompletableFuture
  */
 fun Collection<CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
-    CompletableFutureUtils.allOf(*this.toTypedArray())
+    CompletableFutureUtils.allOf(*toTypedArray())
 
 /**
  * Returns a new CompletableFuture that is completed when all the given stages complete.
@@ -81,7 +81,7 @@ fun Array<out CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Vo
  * @see allResultsOfFastFailCompletableFuture
  */
 fun Collection<CompletionStage<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
-    CompletableFutureUtils.allOfFastFail(*this.toTypedArray())
+    CompletableFutureUtils.allOfFastFail(*toTypedArray())
 
 /**
  * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
@@ -120,7 +120,7 @@ fun Array<out CompletionStage<*>>.allOfFastFailCompletableFuture(): CompletableF
  * @see allOfCompletableFuture
  */
 fun <T> Collection<CompletionStage<out T>>.allResultsOfCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allResultsOf(*this.toTypedArray())
+    CompletableFutureUtils.allResultsOf(*toTypedArray())
 
 /**
  * Returns a new CompletableFuture with the results in the **same order** of all the given
@@ -157,7 +157,7 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfCompletableFuture(): Compl
  * @see allOfFastFailCompletableFuture
  */
 fun <T> Collection<CompletionStage<out T>>.allResultsOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allResultsOfFastFail(*this.toTypedArray())
+    CompletableFutureUtils.allResultsOfFastFail(*toTypedArray())
 
 /**
  * Returns a new CompletableFuture with the results in the **same order** of all the given
@@ -192,7 +192,7 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfFastFailCompletableFuture(
 fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
     timeout: Long, unit: TimeUnit, valueIfNotSuccess: T
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mostResultsOfSuccess(timeout, unit, valueIfNotSuccess, *this.toTypedArray())
+    CompletableFutureUtils.mostResultsOfSuccess(timeout, unit, valueIfNotSuccess, *toTypedArray())
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of
@@ -226,7 +226,7 @@ fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture
     executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit, valueIfNotSuccess: T
 ): CompletableFuture<List<T>> =
     CompletableFutureUtils.mostResultsOfSuccess(
-        executorWhenTimeout, timeout, unit, valueIfNotSuccess, *this.toTypedArray()
+        executorWhenTimeout, timeout, unit, valueIfNotSuccess, *toTypedArray()
     )
 
 /**
@@ -265,7 +265,7 @@ fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
  * @see anyOfSuccessCompletableFuture
  */
 fun <T> Collection<CompletionStage<out T>>.anyOfCompletableFuture(): CompletableFuture<T> =
-    CompletableFutureUtils.anyOf(*this.toTypedArray())
+    CompletableFutureUtils.anyOf(*toTypedArray())
 
 /**
  * Returns a new CompletableFuture that is completed
@@ -295,7 +295,7 @@ fun <T> Array<out CompletionStage<out T>>.anyOfCompletableFuture(): CompletableF
  * @see anyOfCompletableFuture
  */
 fun <T> Collection<CompletionStage<out T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
-    CompletableFutureUtils.anyOfSuccess(*this.toTypedArray())
+    CompletableFutureUtils.anyOfSuccess(*toTypedArray())
 
 /**
  * Returns a new CompletableFuture that is successful when any of the given CompletableFutures success,
@@ -799,11 +799,11 @@ fun <T, C : CompletableFuture<out T>> C.cffuOrTimeout(executorWhenTimeout: Execu
  *
  * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
  * are performed in the **SINGLE thread builtin executor**
- * of CompletableFuture for delay executions (including timeout function).
+ * of CompletableFuture for delay execution (including timeout function).
  * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
  * (including delay execution and timeout).
  *
- * **Strong recommend** using the safe methods [cffuOrTimeout]
+ * **Strong recommend** using the safe method [cffuOrTimeout]
  * instead of this method and [CompletableFuture.orTimeout].
  *
  * Unless all subsequent actions of dependent CompletableFutures is ensured executing async
@@ -854,11 +854,11 @@ fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
  *
  * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
  * are performed in the **SINGLE thread builtin executor**
- * of CompletableFuture for delay executions (including timeout function).
+ * of CompletableFuture for delay execution (including timeout function).
  * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
  * (including delay execution and timeout).
  *
- * **Strong recommend** using the safe methods [cffuCompleteOnTimeout]
+ * **Strong recommend** using the safe method [cffuCompleteOnTimeout]
  * instead of this method and [CompletableFuture.completeOnTimeout].
  *
  * Unless all subsequent actions of dependent CompletableFutures is ensured executing async
