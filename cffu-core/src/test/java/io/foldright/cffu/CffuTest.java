@@ -338,7 +338,8 @@ class CffuTest {
         CompletionStage<Integer> stage = CompletableFuture.completedStage(n);
         Cffu<Integer> cffu = cffuFactory.toCffu(stage);
 
-        assertSame(stage, cffu.cffuUnwrap());
+        assertNotSame(stage, cffu.cffuUnwrap());
+        assertEquals(n, cffu.join());
     }
 
     @Test

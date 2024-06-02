@@ -143,12 +143,12 @@ class CffuFactoryTest {
         shouldNotBeMinimalStage(cf1);
 
         Cffu<Integer> cf2 = cffuFactory.toCffu(CompletableFuture.completedStage(n));
-        assertTrue(cf2.isMinimalStage());
-        shouldBeMinimalStage(cf2);
+        assertFalse(cf2.isMinimalStage());
+        shouldNotBeMinimalStage(cf2);
 
         Cffu<Object> cf3 = cffuFactory.toCffu(CompletableFuture.failedStage(rte));
-        assertTrue(cf3.isMinimalStage());
-        shouldBeMinimalStage(cf3);
+        assertFalse(cf3.isMinimalStage());
+        shouldNotBeMinimalStage(cf3);
     }
 
     @Test
@@ -157,7 +157,7 @@ class CffuFactoryTest {
         Cffu<Integer>[] cffus = cffuFactory.toCffuArray(CompletableFuture.completedStage(n), completedFuture(n));
         assertEquals(n, cffus[1].get());
 
-        shouldBeMinimalStage(cffus[0]);
+        shouldNotBeMinimalStage(cffus[0]);
         shouldNotBeMinimalStage(cffus[1]);
     }
 

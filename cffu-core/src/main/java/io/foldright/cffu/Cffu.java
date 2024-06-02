@@ -46,7 +46,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     @Contract(pure = true)
-    private <U> Cffu<U> resetToMin(CompletableFuture<U> cf) {
+    private <U> CompletionStage<U> resetToMin(CompletableFuture<U> cf) {
         return new Cffu<>(fac, true, cf);
     }
 

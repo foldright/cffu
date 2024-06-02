@@ -73,7 +73,7 @@ public final class CffuFactory {
     }
 
     @Contract(pure = true)
-    private <T> Cffu<T> createMin(CompletableFuture<T> cf) {
+    private <T> CompletionStage<T> createMin(CompletableFuture<T> cf) {
         return new Cffu<>(this, true, cf);
     }
 
@@ -245,32 +245,20 @@ public final class CffuFactory {
     }
 
     /**
-     * Wrap an existed {@link CompletableFuture} / {@link CompletionStage} / {@link Cffu} to {@link Cffu}.
-     * For {@link CompletableFuture} class instances,
-     * {@link Cffu#cffuUnwrap()} is the inverse operation to this method.
-     * <p>
-     * <strong>NOTE</strong>, keep input stage unchanged if possible when wrap:<br>
-     * <ol>
-     * <li>if input stage is a {@link Cffu}, re-wrapped with the config of
-     *     this {@link CffuFactory} by {@link Cffu#resetCffuFactory(CffuFactory)}.
-     * <li>if input stage is a CompletableFuture, wrap it by setting it as the underlying cf of returned cffu.
-     * <li>otherwise use input {@code stage.toCompletableFuture} as the underlying cf of returned cffu.
-     * </ol>
+     * Returns a Cffu maintaining the same completion properties as this stage and this {@code CffuFactory} config.
+     * If this stage is already a Cffu and have the same {@code CffuFactory}, this method may return this stage itself.
      *
      * @throws NullPointerException if the given stage is null
      * @see #toCffuArray(CompletionStage[])
      * @see CompletionStage#toCompletableFuture()
-     * @see Cffu#cffuUnwrap()
      * @see Cffu#resetCffuFactory(CffuFactory)
      */
     @Contract(pure = true)
     public <T> Cffu<T> toCffu(CompletionStage<T> stage) {
         requireNonNull(stage, "stage is null");
-        if (stage instanceof CompletableFuture) {
-            final CompletableFuture<T> cf = (CompletableFuture<T>) stage;
-            return CompletableFutureUtils.isMinStageCf(cf) ? createMin(cf) : create(cf);
-        } else if (stage instanceof Cffu) {
-            return ((Cffu<T>) stage).resetCffuFactory(this);
+        if (stage instanceof Cffu) {
+            Cffu<T> f = ((Cffu<T>) stage);
+            if (f.cffuFactory() == this && !f.isMinimalStage()) return f;
         }
         return create(stage.toCompletableFuture());
     }
