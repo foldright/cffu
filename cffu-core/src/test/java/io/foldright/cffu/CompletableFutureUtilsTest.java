@@ -1043,17 +1043,13 @@ class CompletableFutureUtilsTest {
         }).join());
 
         assertEquals(n, cffuOrTimeout(createIncompleteFuture(), 5, TimeUnit.MILLISECONDS).handle((r, ex) -> {
-            // FIXME: Not TimeoutException, not compatible with orTimeout method
-            assertInstanceOf(CompletionException.class, ex);
-            assertInstanceOf(TimeoutException.class, ex.getCause());
+            assertInstanceOf(TimeoutException.class, ex);
             assertFalse(Delayer.atCfDelayerThread());
             assertNotSame(testThread, currentThread());
             return n;
         }).join());
         assertEquals(n, cffuOrTimeout(createIncompleteFuture(), executorService, 5, TimeUnit.MILLISECONDS).handle((r, ex) -> {
-            // FIXME: Not TimeoutException, not compatible with orTimeout method
-            assertInstanceOf(CompletionException.class, ex);
-            assertInstanceOf(TimeoutException.class, ex.getCause());
+            assertInstanceOf(TimeoutException.class, ex);
             assertFalse(Delayer.atCfDelayerThread());
             assertTrue(TestThreadPoolManager.isRunInExecutor(executorService));
             return n;

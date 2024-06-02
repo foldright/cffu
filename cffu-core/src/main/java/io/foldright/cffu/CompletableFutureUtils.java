@@ -1487,11 +1487,6 @@ public final class CompletableFutureUtils {
      * if not otherwise completed before the given timeout.
      * <p>
      * Uses CompletableFuture's default asynchronous execution facility as {@code executorWhenTimeout}.
-     * <p>
-     * <strong>CAUTION:<br></strong>
-     * If the wait timed out, the returned CompletableFuture complete exceptionally with a CompletionException holding
-     * the {@link TimeoutException} as its cause; NOT a direct {@link TimeoutException}
-     * like {@link #orTimeout(CompletableFuture, long, TimeUnit)}/{@link CompletableFuture#orTimeout(long, TimeUnit)}.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -1505,11 +1500,6 @@ public final class CompletableFutureUtils {
     /**
      * Exceptionally completes given CompletableFuture with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
-     * <p>
-     * <strong>CAUTION:<br></strong>
-     * If the wait timed out, the returned CompletableFuture complete exceptionally with a CompletionException holding
-     * the {@link TimeoutException} as its cause; NOT a direct {@link TimeoutException}
-     * like {@link #orTimeout(CompletableFuture, long, TimeUnit)}/{@link CompletableFuture#orTimeout(long, TimeUnit)}.
      *
      * @param executorWhenTimeout the async executor when triggered by timeout
      * @param timeout             how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
@@ -1646,17 +1636,20 @@ public final class CompletableFutureUtils {
 
     @SuppressWarnings("unchecked")
     private static <C extends CompletableFuture<?>> C hopExecutorIfAtCfDelayerThread(C cf, Executor asyncExecutor) {
-        final CompletionStage<Object> f = (CompletionStage<Object>) cf;
+        CompletableFuture<Object> ret = newIncompleteFuture(cf);
 
-        return (C) f.handle((v, ex) -> null).thenCompose(unused -> {
-            if (!atCfDelayerThread()) return f;
-
-            CompletableFuture<Void> signal = new CompletableFuture<>();
-            delayedExecutor(0, TimeUnit.SECONDS, asyncExecutor)
-                    .execute(() -> signal.complete(null));
-
-            return signal.thenCompose(v -> f);
+        cf.whenComplete((v, ex) -> {
+            if (!atCfDelayerThread()) completeCf(ret, v, ex);
+            else delayedExecutor(0, TimeUnit.SECONDS, asyncExecutor)
+                    .execute(() -> completeCf(ret, v, ex));
         });
+
+        return (C) ret;
+    }
+
+    private static void completeCf(CompletableFuture<Object> cf, Object value, @Nullable Throwable ex) {
+        if (ex == null) cf.complete(value);
+        else cf.completeExceptionally(ex);
     }
 
     //# Advanced methods of CompletionStage

@@ -771,9 +771,6 @@ fun <T, C : CompletionStage<in T>> C.exceptionallyAsync(fn: Function<Throwable, 
  *
  * Uses CompletableFuture's default asynchronous execution facility as `executorWhenTimeout`.
  *
- * **CAUTION:** If the wait timed out, the returned CompletableFuture complete exceptionally with a CompletionException
- * holding the [TimeoutException] as its cause; NOT a direct [TimeoutException] like [orTimeout]/[CompletableFuture.orTimeout].
- *
  * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of `unit`
  * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
  * @return the new CompletableFuture
@@ -784,9 +781,6 @@ fun <T, C : CompletableFuture<out T>> C.cffuOrTimeout(timeout: Long, unit: TimeU
 /**
  * Exceptionally completes this CompletableFuture with a TimeoutException
  * if not otherwise completed before the given timeout.
- *
- * **CAUTION:** If the wait timed out, the returned CompletableFuture complete exceptionally with a CompletionException
- * holding the [TimeoutException] as its cause; NOT a direct [TimeoutException] like [orTimeout]/[CompletableFuture.orTimeout].
  *
  * @param executorWhenTimeout the async executor when triggered by timeout
  * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of `unit`
