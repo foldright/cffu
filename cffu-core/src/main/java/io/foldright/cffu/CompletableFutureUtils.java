@@ -1271,7 +1271,7 @@ public final class CompletableFutureUtils {
         requireNonNull(cf, "cf is null");
         requireNonNull(action, "action is null");
 
-        cf.whenComplete(action).exceptionally(CompletableFutureUtils::reportExceptionInfoOfPeekAction);
+        cf.whenComplete(action).exceptionally(ex -> reportException("Exception occurred in the action of peek:", ex));
         return cf;
     }
 
@@ -1321,16 +1321,17 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        cf.whenCompleteAsync(action, executor).exceptionally(CompletableFutureUtils::reportExceptionInfoOfPeekAction);
+        cf.whenCompleteAsync(action, executor).exceptionally(ex ->
+                reportException("Exception occurred in the action of peekAsync:", ex));
         return cf;
     }
 
     @Nullable
-    private static <T> T reportExceptionInfoOfPeekAction(Throwable ex) {
+    private static <T> T reportException(String msg, Throwable ex) {
         StringWriter sw = new StringWriter(4096);
         PrintWriter writer = new PrintWriter(sw);
 
-        writer.println("Exception occurred in the action of peek:");
+        writer.println(msg);
         ex.printStackTrace(writer);
 
         System.err.println(sw);
@@ -1642,14 +1643,20 @@ public final class CompletableFutureUtils {
             if (!atCfDelayerThread()) completeCf(ret, v, ex);
             else delayedExecutor(0, TimeUnit.SECONDS, asyncExecutor)
                     .execute(() -> completeCf(ret, v, ex));
-        });
+        }).exceptionally(ex -> reportException("Exception occurred in the input cf whenComplete of hop executor:", ex));
 
         return (C) ret;
     }
 
     private static void completeCf(CompletableFuture<Object> cf, Object value, @Nullable Throwable ex) {
-        if (ex == null) cf.complete(value);
-        else cf.completeExceptionally(ex);
+        try {
+            if (ex == null) cf.complete(value);
+            else cf.completeExceptionally(ex);
+        } catch (Throwable t) {
+            if (ex != null) t.addSuppressed(ex);
+            reportException("Exception occurred in completeCf:", t);
+            throw t; // rethrow exception, report to caller
+        }
     }
 
     //# Advanced methods of CompletionStage
