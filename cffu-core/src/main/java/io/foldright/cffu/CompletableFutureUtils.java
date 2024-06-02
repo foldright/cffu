@@ -254,7 +254,7 @@ public final class CompletableFutureUtils {
         // MUST be non-minimal-stage CF instances in order to read results(`getSuccessNow`),
         // otherwise UnsupportedOperationException
         final CompletableFuture<T>[] cfArray = f_toNonMinCfArray(cfs);
-        return cffuOrTimeout(CompletableFuture.allOf(cfArray), executorWhenTimeout, timeout, unit)
+        return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, executorWhenTimeout, timeout, unit)
                 .handle((unused, ex) -> arrayList(MGetSuccessNow0(valueIfNotSuccess, cfArray)));
     }
 
@@ -800,7 +800,7 @@ public final class CompletableFutureUtils {
         // MUST be *Non-Minimal* CF instances in order to read results(`getSuccessNow`),
         // otherwise UnsupportedOperationException
         final CompletableFuture<Object>[] cfArray = f_toNonMinCfArray(css);
-        return cffuOrTimeout(CompletableFuture.allOf(cfArray), executorWhenTimeout, timeout, unit)
+        return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, executorWhenTimeout, timeout, unit)
                 .handle((unused, ex) -> tupleOf0(MGetSuccessNow0(null, cfArray)));
     }
 
@@ -1513,8 +1513,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
         requireNonNull(unit, "unit is null");
 
-        final C f = orTimeout(cf, timeout, unit);
-        return hopExecutorIfAtCfDelayerThread(f, executorWhenTimeout);
+        return hopExecutorIfAtCfDelayerThread(orTimeout(cf, timeout, unit), executorWhenTimeout);
     }
 
     /**
@@ -1589,8 +1588,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
         requireNonNull(unit, "unit is null");
 
-        final C f = completeOnTimeout(cf, value, timeout, unit);
-        return hopExecutorIfAtCfDelayerThread(f, executorWhenTimeout);
+        return hopExecutorIfAtCfDelayerThread(completeOnTimeout(cf, value, timeout, unit), executorWhenTimeout);
     }
 
     /**
