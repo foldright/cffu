@@ -996,7 +996,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public Cffu<T> unsafeOrTimeout(long timeout, TimeUnit unit) {
         checkMinimalStage();
-        return reset0(CompletableFutureUtils.orTimeout(cf, timeout, unit));
+        CompletableFutureUtils.orTimeout(cf, timeout, unit);
+        return this;
     }
 
     /**
@@ -1054,7 +1055,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public Cffu<T> unsafeCompleteOnTimeout(@Nullable T value, long timeout, TimeUnit unit) {
         checkMinimalStage();
-        return reset0(CompletableFutureUtils.completeOnTimeout(cf, value, timeout, unit));
+        CompletableFutureUtils.completeOnTimeout(cf, value, timeout, unit);
+        return this;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
