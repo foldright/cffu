@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Use {@code java} code to test the api usage problem of {@link Cffu};
  * Do NOT rewrite to {@code kotlin}.
  */
+@SuppressWarnings("RedundantThrows")
 class CffuTest {
     private static CffuFactory cffuFactory;
 
@@ -41,64 +42,37 @@ class CffuTest {
 
         final Runnable runnable = () -> {
         };
-        try {
-            cf.runAfterBothFastFail(failed, runnable).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-        try {
-            cf.runAfterBothFastFailAsync(failed, runnable).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-        try {
-            cf.runAfterBothFastFailAsync(failed, runnable, executorService).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cf.runAfterBothFastFail(failed, runnable).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cf.runAfterBothFastFailAsync(failed, runnable).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cf.runAfterBothFastFailAsync(failed, runnable, executorService).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
 
         BiConsumer<Integer, Integer> bc = (i1, i2) -> {
         };
-        try {
-            cf.thenAcceptBothFastFail(failed, bc).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-        try {
-            cf.thenAcceptBothFastFailAsync(failed, bc).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-        try {
-            cf.thenAcceptBothFastFailAsync(failed, bc, executorService).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cf.thenAcceptBothFastFail(failed, bc).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cf.thenAcceptBothFastFailAsync(failed, bc).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cf.thenAcceptBothFastFailAsync(failed, bc, executorService).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
 
-        try {
-            cf.thenCombineFastFail(failed, Integer::sum).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-        try {
-            cf.thenCombineFastFailAsync(failed, Integer::sum).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-        try {
-            cf.thenCombineFastFailAsync(failed, Integer::sum, executorService).get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cf.thenCombineFastFail(failed, Integer::sum).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cf.thenCombineFastFailAsync(failed, Integer::sum).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cf.thenCombineFastFailAsync(failed, Integer::sum, executorService).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -135,18 +109,15 @@ class CffuTest {
 
     @Test
     void test_timeout() throws Exception {
-        assertInstanceOf(TimeoutException.class,
-                assertThrows(ExecutionException.class, () ->
-                        cffuFactory.newIncompleteCffu().orTimeout(1, TimeUnit.MILLISECONDS).get()
-                ).getCause());
-        assertInstanceOf(TimeoutException.class,
-                assertThrows(ExecutionException.class, () ->
-                        cffuFactory.newIncompleteCffu().orTimeout(executorService, 1, TimeUnit.MILLISECONDS).get()
-                ).getCause());
-        assertInstanceOf(TimeoutException.class,
-                assertThrows(ExecutionException.class, () ->
-                        cffuFactory.newIncompleteCffu().unsafeOrTimeout(1, TimeUnit.MILLISECONDS).get()
-                ).getCause());
+        assertInstanceOf(TimeoutException.class, assertThrowsExactly(ExecutionException.class, () ->
+                cffuFactory.newIncompleteCffu().orTimeout(1, TimeUnit.MILLISECONDS).get()
+        ).getCause());
+        assertInstanceOf(TimeoutException.class, assertThrowsExactly(ExecutionException.class, () ->
+                cffuFactory.newIncompleteCffu().orTimeout(executorService, 1, TimeUnit.MILLISECONDS).get()
+        ).getCause());
+        assertInstanceOf(TimeoutException.class, assertThrowsExactly(ExecutionException.class, () ->
+                cffuFactory.newIncompleteCffu().unsafeOrTimeout(1, TimeUnit.MILLISECONDS).get()
+        ).getCause());
 
         assertEquals(n, cffuFactory.completedFuture(n).orTimeout(1, TimeUnit.MILLISECONDS).get());
         assertEquals(n, cffuFactory.completedFuture(n).orTimeout(executorService, 1, TimeUnit.MILLISECONDS).get());
@@ -191,21 +162,15 @@ class CffuTest {
 
         // Incomplete Future -> CompletionException with TimeoutException
         Cffu<Object> incomplete = cffuFactory.newIncompleteCffu();
-        try {
-            incomplete.join(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (CompletionException expected) {
-            assertEquals(TimeoutException.class, expected.getCause().getClass());
-        }
+        assertInstanceOf(TimeoutException.class, assertThrowsExactly(CompletionException.class, () ->
+                incomplete.join(1, TimeUnit.MILLISECONDS)
+        ).getCause());
 
         // Failed Future -> CompletionException
         Cffu<Object> failed = cffuFactory.failedFuture(rte);
-        try {
-            failed.join(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (CompletionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(CompletionException.class, () ->
+                failed.join(1, TimeUnit.MILLISECONDS)
+        ).getCause());
 
         // Incomplete Future -> join before timeout
 

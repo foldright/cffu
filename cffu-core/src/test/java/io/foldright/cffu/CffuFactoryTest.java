@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * see io.foldright.compatibility_test.CffuApiCompatibilityTest
  */
+@SuppressWarnings("RedundantThrows")
 class CffuFactoryTest {
     ///////////////////////////////////////////////////////////////////////////////
     //# Factory Methods, equivalent to same name static methods of CompletableFuture
@@ -58,12 +59,7 @@ class CffuFactoryTest {
     void test_failedFuture() throws Exception {
         Cffu<Integer> cf = cffuFactory.failedFuture(rte);
 
-        try {
-            cf.join();
-            fail();
-        } catch (CompletionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(CompletionException.class, cf::join).getCause());
         assertEquals(n, cf.exceptionally(throwable -> n).get());
 
         shouldNotBeMinimalStage(cf);
@@ -75,13 +71,9 @@ class CffuFactoryTest {
         CompletionStage<Integer> sa = stage.thenApply(identity());
         CompletionStage<Integer> se = stage.exceptionally(throwable -> n);
 
-        try {
-            failedFuture(rte).toCompletableFuture().join();
-            fail();
-        } catch (CompletionException expected) {
-            assertSame(rte, expected.getCause());
-
-        }
+        assertSame(rte, assertThrowsExactly(CompletionException.class, () ->
+                failedFuture(rte).toCompletableFuture().join()
+        ).getCause());
         assertEquals(n, se.toCompletableFuture().get());
 
         // CAUTION: Last check minimal stage, may rewrite the CF by obtrude* methods
@@ -127,12 +119,9 @@ class CffuFactoryTest {
         assertSame(anotherExecutorService, cffu.defaultExecutor());
         assertSame(fac, cffu.cffuFactory());
 
-        try {
-            cffu.obtrudeValue(44);
-            fail();
-        } catch (UnsupportedOperationException expected) {
-            assertEquals("obtrude methods is forbidden by cffu", expected.getMessage(), expected.getMessage());
-        }
+        assertEquals("obtrude methods is forbidden by cffu", assertThrowsExactly(UnsupportedOperationException.class, () ->
+                cffu.obtrudeValue(44)
+        ).getMessage());
     }
 
     @Test
@@ -195,12 +184,9 @@ class CffuFactoryTest {
         cffuFactory.anyOfSuccess(completedFuture(n), completedFuture(anotherN)).get();
         assertEquals(anotherN, cffuFactory.anyOfSuccess(completedFuture(anotherN)).get());
 
-        try {
-            cffuFactory.anyOfSuccess().get();
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(NoCfsProvidedException.class, expected.getCause().getClass());
-        }
+        assertInstanceOf(NoCfsProvidedException.class, assertThrowsExactly(ExecutionException.class, () ->
+                cffuFactory.anyOfSuccess().get()
+        ).getCause());
 
         cffuFactory.anyOfSuccess(
                 cffuFactory.completedFuture(n),
@@ -269,29 +255,21 @@ class CffuFactoryTest {
 
     @Test
     void test_allResultsOf_exceptionally() throws Exception {
-        try {
-            cffuFactory.allResultsOf(
-                    cffuFactory.completedFuture(n),
-                    cffuFactory.failedFuture(rte),
-                    cffuFactory.completedFuture(s)
-            ).get();
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cffuFactory.allResultsOf(
+                        cffuFactory.completedFuture(n),
+                        cffuFactory.failedFuture(rte),
+                        cffuFactory.completedFuture(s)
+                ).get()
+        ).getCause());
 
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-
-        try {
-            cffuFactory.allResultsOfFastFail(
-                    cffuFactory.completedFuture(n),
-                    cffuFactory.failedFuture(rte),
-                    cffuFactory.completedFuture(s)
-            ).get();
-
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cffuFactory.allResultsOfFastFail(
+                        cffuFactory.completedFuture(n),
+                        cffuFactory.failedFuture(rte),
+                        cffuFactory.completedFuture(s)
+                ).get()
+        ).getCause());
     }
 
     @Test
@@ -360,13 +338,9 @@ class CffuFactoryTest {
         // first exceptionally completed anyOf cf win,
         // even later cfs normally completed!
 
-        try {
-            cffuFactory.anyOf(createIncompleteFuture(), failedFuture(rte), createIncompleteFuture()).get();
-
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cffuFactory.anyOf(createIncompleteFuture(), failedFuture(rte), createIncompleteFuture()).get()
+        ).getCause());
 
         // first normally completed anyOf cf win,
         // even later cfs exceptionally completed!
@@ -519,35 +493,23 @@ class CffuFactoryTest {
 
     @Test
     void test_allTupleOf_exceptionally() throws Exception {
-        try {
-            cffuFactory.allTupleOf(completedFuture(n), failedFuture(rte)).get();
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cffuFactory.allTupleOf(completedFuture(n), failedFuture(rte)).get()
+        ).getCause());
 
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cffuFactory.allTupleOf(completedFuture(n), failedFuture(rte), completedFuture(s)).get()
+        ).getCause());
 
-        try {
-            cffuFactory.allTupleOf(completedFuture(n), failedFuture(rte), completedFuture(s)).get();
-
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-
-        try {
-            cffuFactory.allTupleOf(
-                    completedFuture(n),
-                    completedFuture(d),
-                    failedFuture(rte),
-                    completedFuture(s),
-                    completedFuture(anotherN)
-            ).get();
-
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cffuFactory.allTupleOf(
+                        completedFuture(n),
+                        completedFuture(d),
+                        failedFuture(rte),
+                        completedFuture(s),
+                        completedFuture(anotherN)
+                ).get()
+        ).getCause());
     }
 
     @Test
@@ -609,35 +571,23 @@ class CffuFactoryTest {
 
     @Test
     void test_allTupleOfFastFail_exceptionally() throws Exception {
-        try {
-            cffuFactory.allTupleOfFastFail(completedFuture(n), failedFuture(rte)).get();
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cffuFactory.allTupleOfFastFail(completedFuture(n), failedFuture(rte)).get()
+        ).getCause());
 
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cffuFactory.allTupleOfFastFail(completedFuture(n), failedFuture(rte), completedFuture(s)).get()
+        ).getCause());
 
-        try {
-            cffuFactory.allTupleOfFastFail(completedFuture(n), failedFuture(rte), completedFuture(s)).get();
-
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-
-        try {
-            cffuFactory.allTupleOfFastFail(
-                    completedFuture(n),
-                    completedFuture(d),
-                    failedFuture(rte),
-                    completedFuture(s),
-                    completedFuture(anotherN)
-            ).get();
-
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cffuFactory.allTupleOfFastFail(
+                        completedFuture(n),
+                        completedFuture(d),
+                        failedFuture(rte),
+                        completedFuture(s),
+                        completedFuture(anotherN)
+                ).get()
+        ).getCause());
     }
 
     @Test
@@ -751,18 +701,13 @@ class CffuFactoryTest {
         CffuFactory fac2 = CffuFactory.builder(executorService).forbidObtrudeMethods(true).build();
 
         Cffu<Object> cf = fac2.newIncompleteCffu();
-        try {
-            cf.obtrudeValue(42);
-            fail();
-        } catch (UnsupportedOperationException expected) {
-            assertEquals("obtrude methods is forbidden by cffu", expected.getMessage());
-        }
-        try {
-            cf.obtrudeException(rte);
-            fail();
-        } catch (UnsupportedOperationException expected) {
-            assertEquals("obtrude methods is forbidden by cffu", expected.getMessage(), expected.getMessage());
-        }
+
+        assertEquals("obtrude methods is forbidden by cffu", assertThrowsExactly(UnsupportedOperationException.class, () ->
+                cf.obtrudeValue(42)).getMessage()
+        );
+        assertEquals("obtrude methods is forbidden by cffu", assertThrowsExactly(UnsupportedOperationException.class, () ->
+                cf.obtrudeException(rte)).getMessage()
+        );
     }
 
     @Test

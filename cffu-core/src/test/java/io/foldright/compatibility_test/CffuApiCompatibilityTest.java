@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+@SuppressWarnings("RedundantThrows")
 class CffuApiCompatibilityTest {
     private static final String hello = "Cffu API Compatibility Test - Hello";
 
@@ -58,24 +59,16 @@ class CffuApiCompatibilityTest {
         TestUtils.shouldBeMinimalStage(cf);
 
         // failedFuture
-        cf = cffuFactory.failedFuture(rte);
-        try {
-            cf.get();
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-        TestUtils.shouldNotBeMinimalStage(cf);
+        Cffu<String> ff = cffuFactory.failedFuture(rte);
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, ff::get).getCause());
+        TestUtils.shouldNotBeMinimalStage(ff);
 
         // failedStage
-        cf = (Cffu<String>) cffuFactory.<String>failedStage(rte);
-        try {
-            cf.toCompletableFuture().get();
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
-        TestUtils.shouldBeMinimalStage(cf);
+        Cffu<String> fs = (Cffu<String>) cffuFactory.<String>failedStage(rte);
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                fs.toCompletableFuture().get()
+        ).getCause());
+        TestUtils.shouldBeMinimalStage(fs);
     }
 
     @Test
@@ -364,15 +357,12 @@ class CffuApiCompatibilityTest {
 
         // for incomplete
         Cffu<Integer> incomplete = cffuFactory.newIncompleteCffu();
-        try {
-            incomplete.orTimeout(20, TimeUnit.MILLISECONDS).get();
-            fail();
-        } catch (ExecutionException e) {
-            assertEquals(TimeoutException.class, e.getCause().getClass());
-        }
+        assertEquals(TimeoutException.class, assertThrowsExactly(ExecutionException.class, () ->
+                incomplete.orTimeout(20, TimeUnit.MILLISECONDS).get()
+        ).getCause().getClass());
 
-        incomplete = cffuFactory.newIncompleteCffu();
-        assertEquals(43, incomplete.completeOnTimeout(43, 20, TimeUnit.MILLISECONDS).get());
+        Cffu<Integer> incomplete2 = cffuFactory.newIncompleteCffu();
+        assertEquals(43, incomplete2.completeOnTimeout(43, 20, TimeUnit.MILLISECONDS).get());
     }
 
     @Test
@@ -458,36 +448,20 @@ class CffuApiCompatibilityTest {
 
         Integer r = cf.get();
         assertEquals(42, r);
-        try {
-            failed.get();
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, failed::get).getCause());
 
         assertEquals(r, cf.get(1, TimeUnit.MILLISECONDS));
-        try {
-            failed.get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                failed.get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
 
         assertEquals(r, cf.join());
-        try {
-            failed.join();
-            fail();
-        } catch (CompletionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(CompletionException.class, failed::join).getCause());
 
         assertEquals(r, cf.getNow(0));
-        try {
-            failed.getNow(0);
-            fail();
-        } catch (CompletionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(CompletionException.class, () ->
+                failed.getNow(0)
+        ).getCause());
 
         // below methods is tested in below test method
         // - resultNow
@@ -515,20 +489,10 @@ class CffuApiCompatibilityTest {
 
         // resultNow
         assertEquals(r, cf.resultNow());
-        try {
-            failed.resultNow();
-            fail();
-        } catch (IllegalStateException expected) {
-            // do nothing
-        }
+        assertThrowsExactly(IllegalStateException.class, failed::resultNow);
 
         // exceptionNow
-        try {
-            Throwable t = cf.exceptionNow();
-            fail(t);
-        } catch (IllegalStateException expected) {
-            // do nothing
-        }
+        assertThrowsExactly(IllegalStateException.class, cf::exceptionNow);
         assertSame(rte, failed.exceptionNow());
     }
 
@@ -564,12 +528,7 @@ class CffuApiCompatibilityTest {
 
         incomplete = cffuFactory.newIncompleteCffu();
         assertTrue(incomplete.completeExceptionally(rte));
-        try {
-            incomplete.get();
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, incomplete::get).getCause());
 
         // cancel
         assertFalse(cf.cancel(true));
@@ -603,16 +562,11 @@ class CffuApiCompatibilityTest {
         }, anotherExecutorService).get());
 
         RuntimeException ex = new RuntimeException();
-        incomplete = cffuFactory.newIncompleteCffu();
-        incomplete.completeAsync(() -> {
+        Cffu<Integer> incomplete2 = cffuFactory.newIncompleteCffu();
+        incomplete2.completeAsync(() -> {
             throw ex;
         });
-        try {
-            incomplete.get();
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(ex, expected.getCause());
-        }
+        assertSame(ex, assertThrowsExactly(ExecutionException.class, incomplete2::get).getCause());
     }
 
     ////////////////////////////////////////
@@ -668,12 +622,7 @@ class CffuApiCompatibilityTest {
 
         // obtrudeException
         cf.obtrudeException(rte);
-        try {
-            cf.get();
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, cf::get).getCause());
     }
 
     @Test
@@ -700,53 +649,25 @@ class CffuApiCompatibilityTest {
         // different behavior
         ////////////////////////////////////////
 
-        try {
-            cancelledCf.get();
-            fail();
-        } catch (CancellationException expected) {
-        }
-        try {
-            exceptionallyCf.get();
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertThrowsExactly(CancellationException.class, cancelledCf::get);
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, exceptionallyCf::get).getCause());
 
-        try {
-            cancelledCf.get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (CancellationException expected) {
-        }
-        try {
-            exceptionallyCf.get(1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertThrowsExactly(CancellationException.class, () ->
+                cancelledCf.get(1, TimeUnit.MILLISECONDS)
+        );
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                exceptionallyCf.get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
 
-        try {
-            cancelledCf.join();
-            fail();
-        } catch (CancellationException expected) {
-        }
-        try {
-            exceptionallyCf.join();
-            fail();
-        } catch (CompletionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertThrowsExactly(CancellationException.class, cancelledCf::join);
+        assertSame(rte, assertThrowsExactly(CompletionException.class, exceptionallyCf::join).getCause());
 
-        try {
-            cancelledCf.getNow(42);
-            fail();
-        } catch (CancellationException expected) {
-        }
-        try {
-            exceptionallyCf.getNow(42);
-            fail();
-        } catch (CompletionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        assertThrowsExactly(CancellationException.class, () ->
+                cancelledCf.getNow(42)
+        );
+        assertSame(rte, assertThrowsExactly(CompletionException.class, () ->
+                exceptionallyCf.getNow(42)
+        ).getCause());
 
         assertTrue(cancelledCf.isCancelled());
         assertFalse(exceptionallyCf.isCancelled());
@@ -784,28 +705,15 @@ class CffuApiCompatibilityTest {
         // different behavior
         ////////////////////////////////////////
 
-        try {
-            //noinspection ThrowableNotThrown
-            cancelledCf.exceptionNow();
-            fail();
-        } catch (IllegalStateException expected) {
-        }
+        assertThrowsExactly(IllegalStateException.class, cancelledCf::exceptionNow);
         assertSame(rte, exceptionallyCf.exceptionNow());
 
         ////////////////////////////////////////
         // same behavior
         ////////////////////////////////////////
 
-        try {
-            cancelledCf.resultNow();
-            fail();
-        } catch (IllegalStateException expected) {
-        }
-        try {
-            exceptionallyCf.resultNow();
-            fail();
-        } catch (IllegalStateException expected) {
-        }
+        assertThrowsExactly(IllegalStateException.class, cancelledCf::resultNow);
+        assertThrowsExactly(IllegalStateException.class, exceptionallyCf::resultNow);
     }
 
     @Test
@@ -828,43 +736,26 @@ class CffuApiCompatibilityTest {
 
         cf = cffuFactory.completedFuture(42);
         // auto unwrap first level ExecutionException
-        check1MoreLevelForExecutionException(cf.thenRun(() -> {
-            TestUtils.sneakyThrow(new ExecutionException(rte));
-        }));
+        check1MoreLevelForExecutionException(cf.thenRun(() ->
+                TestUtils.sneakyThrow(new ExecutionException(rte))
+        ));
     }
 
     private <T> void checkNo1MoreLevelForCompletionException(Cffu<T> cf) throws Exception {
-        try {
-            cf.get();
-            fail();
-        } catch (ExecutionException e) {
-            assertSame(rte, e.getCause());
-        }
-        try {
-            cf.join();
-            fail();
-        } catch (CompletionException e) {
-            assertSame(rte, e.getCause());
-        }
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, cf::get).getCause());
+
+        assertSame(rte, assertThrowsExactly(CompletionException.class, cf::join).getCause());
     }
 
     private <T> void check1MoreLevelForExecutionException(Cffu<T> cf) throws Exception {
-        try {
-            cf.get();
-            fail();
-        } catch (ExecutionException e) {
-            Throwable cause = e.getCause();
-            assertInstanceOf(ExecutionException.class, cause);
-            assertSame(rte, cause.getCause());
-        }
-        try {
-            cf.join();
-            fail();
-        } catch (CompletionException e) {
-            Throwable cause = e.getCause();
-            assertInstanceOf(ExecutionException.class, cause);
-            assertSame(rte, cause.getCause());
-        }
+
+        final ExecutionException getEx = assertThrowsExactly(ExecutionException.class, cf::get);
+        assertInstanceOf(ExecutionException.class, getEx.getCause());
+        assertSame(rte, getEx.getCause().getCause());
+
+        final CompletionException joinEx = assertThrowsExactly(CompletionException.class, cf::join);
+        assertInstanceOf(ExecutionException.class, joinEx.getCause());
+        assertSame(rte, joinEx.getCause().getCause());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
