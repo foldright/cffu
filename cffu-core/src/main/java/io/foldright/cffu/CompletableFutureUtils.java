@@ -68,7 +68,7 @@ public final class CompletableFutureUtils {
         requireNonNull(cfs, "cfs is null");
         if (cfs.length == 0) return completedFuture(null);
         // Defensive copy input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
-        // in order to ensure that the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
+        // in order to ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
         if (cfs.length == 1) return toNonMinCfCopy(requireNonNull(cfs[0], "cf1 is null")).thenApply(unused -> null);
         return CompletableFuture.allOf(f_toCfArray(cfs));
     }
@@ -96,7 +96,7 @@ public final class CompletableFutureUtils {
         final int size = cfs.length;
         if (size == 0) return completedFuture(arrayList());
         // Defensive copy input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
-        // in order to ensure that the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
+        // in order to ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
         if (size == 1) return toNonMinCfCopy(cfs[0]).thenApply(CompletableFutureUtils::arrayList);
 
         final Object[] result = new Object[size];
@@ -142,7 +142,7 @@ public final class CompletableFutureUtils {
         final int size = cfs.length;
         if (size == 0) return completedFuture(null);
         // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
-        // the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
+        // the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
         if (size == 1) return toNonMinCfCopy(cfs[0]).thenApply(unused -> null);
 
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[size];
@@ -184,7 +184,7 @@ public final class CompletableFutureUtils {
         final int size = cfs.length;
         if (size == 0) return completedFuture(arrayList());
         // Defensive copy input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
-        // in order to ensure that the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
+        // in order to ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
         if (size == 1) return toNonMinCfCopy(cfs[0]).thenApply(CompletableFutureUtils::arrayList);
 
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[size];
@@ -245,7 +245,7 @@ public final class CompletableFutureUtils {
         if (cfs.length == 1) {
             // Defensive copy input cf to non-minimal-stage instance in order to
             // 1. avoid writing it by `completeOnTimeout` and is able to read its result(`getSuccessNow`)
-            // 2. ensure that the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
+            // 2. ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
             final CompletableFuture<T> f = toNonMinCfCopy(requireNonNull(cfs[0], "cf1 is null"));
             return cffuOrTimeout(f, executorWhenTimeout, timeout, unit)
                     .handle((unused, ex) -> arrayList(getSuccessNow(f, valueIfNotSuccess)));
@@ -426,7 +426,7 @@ public final class CompletableFutureUtils {
         if (cfs.length == 0) return new CompletableFuture<>();
         // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
         // 1. avoid writing the input cf unexpectedly it by caller code
-        // 2. the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
+        // 2. the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
         if (cfs.length == 1) return toNonMinCfCopy(requireNonNull(cfs[0], "cf1 is null"));
         CompletableFuture<Object> ret = CompletableFuture.anyOf(f_toCfArray(cfs));
         return f_cast(ret);
@@ -456,7 +456,7 @@ public final class CompletableFutureUtils {
         if (size == 0) return failedFuture(new NoCfsProvidedException());
         // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
         // 1. avoid writing the input cf unexpectedly it by caller code
-        // 2. the returned cf is not non-minimal-stage CF instance(UnsupportedOperationException)
+        // 2. the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
         if (size == 1) return toNonMinCfCopy(cfs[0]);
 
         // NOTE: fill ONE MORE element of successOrBeIncompleteCfs LATER
