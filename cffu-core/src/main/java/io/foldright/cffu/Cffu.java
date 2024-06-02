@@ -1198,7 +1198,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <U> the function's return type
      * @return the new Cffu
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `whenComplete`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `peek`")
     @Override
     public <U> Cffu<U> handle(BiFunction<? super T, Throwable, ? extends U> fn) {
         return reset0(cf.handle(fn));
@@ -1217,7 +1217,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <U> the function's return type
      * @return the new Cffu
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `whenCompleteAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `peekAsync`")
     @Override
     public <U> Cffu<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn) {
         return handleAsync(fn, fac.defaultExecutor());
@@ -1237,7 +1237,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <U>      the function's return type
      * @return the new Cffu
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `whenCompleteAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `peekAsync`")
     @Override
     public <U> Cffu<U> handleAsync(
             BiFunction<? super T, Throwable, ? extends U> fn, Executor executor) {
@@ -1262,6 +1262,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param action the action to perform
      * @return the new Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `peek`")
     @Override
     public Cffu<T> whenComplete(BiConsumer<? super T, ? super Throwable> action) {
         return reset0(cf.whenComplete(action));
@@ -1287,6 +1288,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param action the action to perform
      * @return the new Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `peekAsync`")
     @Override
     public Cffu<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action) {
         return whenCompleteAsync(action, fac.defaultExecutor());
@@ -1312,6 +1314,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `peekAsync`")
     @Override
     public Cffu<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action, Executor executor) {
         return reset0(cf.whenCompleteAsync(action, executor));
@@ -1334,7 +1337,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @see java.util.stream.Stream#peek(Consumer)
      */
     public Cffu<T> peek(BiConsumer<? super T, ? super Throwable> action) {
-        cf.whenComplete(action);
+        CompletableFutureUtils.peek(cf, action);
         return this;
     }
 
@@ -1377,7 +1380,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @see java.util.stream.Stream#peek(Consumer)
      */
     public Cffu<T> peekAsync(BiConsumer<? super T, ? super Throwable> action, Executor executor) {
-        cf.whenCompleteAsync(action, executor);
+        CompletableFutureUtils.peekAsync(cf, action, executor);
         return this;
     }
 
