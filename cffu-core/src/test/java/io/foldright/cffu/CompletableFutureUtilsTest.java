@@ -550,7 +550,7 @@ class CompletableFutureUtilsTest {
         ).get());
 
         // failed then success
-        try {
+        assertSame(rte, assertThrows(ExecutionException.class, () -> {
             anyOf(
                     CompletableFuture.supplyAsync(() -> {
                         sleep(100);
@@ -559,11 +559,7 @@ class CompletableFutureUtilsTest {
                     failedFuture(rte),
                     failedFuture(rte)
             ).get();
-
-            fail();
-        } catch (ExecutionException expected) {
-            assertSame(rte, expected.getCause());
-        }
+        }).getCause());
 
         ////////////////////////////////////////
 
@@ -1094,6 +1090,8 @@ class CompletableFutureUtilsTest {
         failedTask.run();
         final Cffu<Object> failedCffu = cffuFactory.failedFuture(rte);
 
+        assertSame(rte, assertThrows(CompletionException.class, failed::join).getCause());
+        // same as CompletableFuture.join method
         assertSame(rte,
                 assertThrows(CompletionException.class, () ->
                         join(failed, 1, TimeUnit.MILLISECONDS)
@@ -1124,6 +1122,10 @@ class CompletableFutureUtilsTest {
         ////////////////////////////////////////////////////////////////////////////////
 
         CompletableFuture<Object> cancelled = createCancelledFuture();
+
+        assertThrows(CancellationException.class, cancelled::join);
+        // same as CompletableFuture.join method
+        assertThrows(CancellationException.class, () -> join(cancelled, 1, TimeUnit.MILLISECONDS));
         final String m3 = assertThrows(IllegalStateException.class, () ->
                 resultNow(cancelled)
         ).getMessage();
@@ -1140,12 +1142,9 @@ class CompletableFutureUtilsTest {
 
         final CompletableFuture<Object> incomplete = createIncompleteFuture();
 
-        try {
+        assertInstanceOf(TimeoutException.class, assertThrows(CompletionException.class, () -> {
             join(incomplete, 1, TimeUnit.MILLISECONDS);
-            fail();
-        } catch (CompletionException expected) {
-            assertInstanceOf(TimeoutException.class, expected.getCause());
-        }
+        }).getCause());
         assertEquals(anotherN, getSuccessNow(incomplete, anotherN));
         assertNull(getSuccessNow(incomplete, null));
         final String m5 = assertThrows(IllegalStateException.class, () ->
