@@ -266,11 +266,9 @@ public final class CffuFactory {
     @Contract(pure = true)
     public <T> Cffu<T> toCffu(CompletionStage<T> stage) {
         requireNonNull(stage, "stage is null");
-
-        if (CompletableFutureUtils.isMinStageCf(stage)) {
-            return createMin((CompletableFuture<T>) stage);
-        } else if (stage instanceof CompletableFuture) {
-            return create((CompletableFuture<T>) stage);
+        if (stage instanceof CompletableFuture) {
+            final CompletableFuture<T> cf = (CompletableFuture<T>) stage;
+            return CompletableFutureUtils.isMinStageCf(cf) ? createMin(cf) : create(cf);
         } else if (stage instanceof Cffu) {
             return ((Cffu<T>) stage).resetCffuFactory(this);
         }

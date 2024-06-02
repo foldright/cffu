@@ -256,7 +256,6 @@ public final class CompletableFutureUtils {
                 .handle((unused, ex) -> arrayList(MGetSuccessNow0(valueIfNotSuccess, cfArray)));
     }
 
-
     /**
      * Multi-Gets(MGet) the results in the <strong>same order</strong> of the given cfs,
      * use the result value if the given stage is completed successfully, else use the given valueIfNotSuccess
@@ -322,8 +321,8 @@ public final class CompletableFutureUtils {
      * IGNORE the compile-time type check.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <T> CompletableFuture<T> f_cast(CompletableFuture<?> f) {
-        return (CompletableFuture) f;
+    private static <T> CompletableFuture<T> f_cast(CompletableFuture<?> cf) {
+        return (CompletableFuture) cf;
     }
 
     /**
@@ -393,8 +392,8 @@ public final class CompletableFutureUtils {
         return isMinStageCf(f) ? f.toCompletableFuture() : copy(f);
     }
 
-    static <T> boolean isMinStageCf(CompletionStage<? extends T> s) {
-        return "java.util.concurrent.CompletableFuture$MinimalStage".equals(s.getClass().getName());
+    static boolean isMinStageCf(CompletableFuture<?> cf) {
+        return "java.util.concurrent.CompletableFuture$MinimalStage".equals(cf.getClass().getName());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -1480,8 +1479,7 @@ public final class CompletableFutureUtils {
      * @return a new CompletableFuture
      * @see #cffuOrTimeout(CompletableFuture, Executor, long, TimeUnit)
      */
-    public static <C extends CompletableFuture<?>> C cffuOrTimeout(
-            C cf, long timeout, TimeUnit unit) {
+    public static <C extends CompletableFuture<?>> C cffuOrTimeout(C cf, long timeout, TimeUnit unit) {
         return cffuOrTimeout(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit);
     }
 
@@ -1900,8 +1898,7 @@ public final class CompletableFutureUtils {
      * @param supplier a function returning the value to be used to complete given CompletableFuture
      * @return the given CompletableFuture
      */
-    public static <T, C extends CompletableFuture<? super T>>
-    C completeAsync(C cf, Supplier<? extends T> supplier) {
+    public static <T, C extends CompletableFuture<? super T>> C completeAsync(C cf, Supplier<? extends T> supplier) {
         return completeAsync(cf, supplier, AsyncPoolHolder.ASYNC_POOL);
     }
 
