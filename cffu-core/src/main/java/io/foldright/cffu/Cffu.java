@@ -1319,8 +1319,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Peeks the result by executing the given action when this cffu completes, returns this cffu.
      * <p>
      * When this cffu is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this cffu as arguments.
-     * Whether the supplied action throws an exception or not, do <strong>NOT</strong> affect this cffu.
+     * and the exception (or {@code null} if none) of this cffu as arguments. Whether the supplied action
+     * throws an exception or not, this cffu is <strong>NOT</strong> affected.
      * <p>
      * Unlike method {@link CompletionStage#handle handle} and like method
      * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
@@ -1341,8 +1341,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * executes the given action using {@link #defaultExecutor()}, returns this cffu.
      * <p>
      * When this cffu is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this cffu as arguments.
-     * Whether the supplied action throws an exception or not, do <strong>NOT</strong> affect this cffu.
+     * and the exception (or {@code null} if none) of this cffu as arguments. Whether the supplied action
+     * throws an exception or not, this cffu is <strong>NOT</strong> affected.
      * <p>
      * Unlike method {@link CompletionStage#handle handle} and like method
      * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
@@ -1362,8 +1362,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * that executes the given action using the supplied Executor when this cffu completes, returns this cffu.
      * <p>
      * When this cffu is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this cffu as arguments.
-     * Whether the supplied action throws an exception or not, do <strong>NOT</strong> affect this cffu.
+     * and the exception (or {@code null} if none) of this cffu as arguments. Whether the supplied action
+     * throws an exception or not, this cffu is <strong>NOT</strong> affected.
      * <p>
      * Unlike method {@link CompletionStage#handle handle} and like method
      * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},

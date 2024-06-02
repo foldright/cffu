@@ -10,6 +10,8 @@ import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -1252,8 +1254,8 @@ public final class CompletableFutureUtils {
      * Peeks the result by executing the given action when given stage completes, returns the given stage.
      * <p>
      * When the given stage is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of given stage as arguments.
-     * Whether the supplied action throws an exception or not, do <strong>NOT</strong> affect this cffu.
+     * and the exception (or {@code null} if none) of given stage as arguments. Whether the supplied action
+     * throws an exception or not, the given stage is <strong>NOT</strong> affected.
      * <p>
      * Unlike method {@link CompletionStage#handle handle} and like method
      * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
@@ -1269,7 +1271,7 @@ public final class CompletableFutureUtils {
         requireNonNull(cf, "cf is null");
         requireNonNull(action, "action is null");
 
-        cf.whenComplete(action);
+        cf.whenComplete(action).exceptionally(CompletableFutureUtils::reportExceptionInfoOfPeekAction);
         return cf;
     }
 
@@ -1279,8 +1281,8 @@ public final class CompletableFutureUtils {
      * returns the given stage.
      * <p>
      * When the given stage is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of given stage as arguments.
-     * Whether the supplied action throws an exception or not, do <strong>NOT</strong> affect this cffu.
+     * and the exception (or {@code null} if none) of given stage as arguments. Whether the supplied action
+     * throws an exception or not, the given stage is <strong>NOT</strong> affected.
      * <p>
      * Unlike method {@link CompletionStage#handle handle} and like method
      * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
@@ -1301,8 +1303,8 @@ public final class CompletableFutureUtils {
      * executes the given action using the supplied Executor, returns the given stage.
      * <p>
      * When the given stage is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of given stage as arguments.
-     * Whether the supplied action throws an exception or not, do <strong>NOT</strong> affect this cffu.
+     * and the exception (or {@code null} if none) of given stage as arguments. Whether the supplied action
+     * throws an exception or not, the given stage is <strong>NOT</strong> affected.
      * <p>
      * Unlike method {@link CompletionStage#handle handle} and like method
      * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
@@ -1319,8 +1321,20 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        cf.whenCompleteAsync(action, executor);
+        cf.whenCompleteAsync(action, executor).exceptionally(CompletableFutureUtils::reportExceptionInfoOfPeekAction);
         return cf;
+    }
+
+    @Nullable
+    private static <T> T reportExceptionInfoOfPeekAction(Throwable ex) {
+        StringWriter sw = new StringWriter(4096);
+        PrintWriter writer = new PrintWriter(sw);
+
+        writer.println("Exception occurred in the action of peek:");
+        ex.printStackTrace(writer);
+
+        System.err.println(sw);
+        return null;
     }
 
     ////////////////////////////////////////////////////////////////////////////////

@@ -5,6 +5,7 @@ package io.foldright.cffu.kotlin
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuState
 import io.foldright.cffu.CompletableFutureUtils
+import java.util.*
 import java.util.concurrent.*
 import java.util.function.*
 import java.util.function.Function
@@ -655,8 +656,8 @@ fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
  * Peeks the result by executing the given action when this stage completes, returns this stage.
  *
  * When this stage is complete, the given action is invoked with the result (or `null` if none)
- * and the exception (or `null` if none) of this stage as arguments.
- * Whether the supplied action throws an exception or not, do **NOT** affect this cffu.
+ * and the exception (or `null` if none) of given stage as arguments. Whether the supplied action
+ * throws an exception or not, this stage is **NOT** affected.
  *
  * Unlike method [handle][CompletionStage.handle] and like method [whenComplete][CompletionStage.whenComplete],
  * this method is not designed to translate completion outcomes.
@@ -674,8 +675,8 @@ fun <T, C : CompletionStage<out T>> C.peek(action: BiConsumer<in T, in Throwable
  * executes the given action using this stage's default asynchronous execution facility, returns this stage.
  *
  * When this stage is complete, the given action is invoked with the result (or `null` if none)
- * and the exception (or `null` if none) of this stage as arguments.
- * Whether the supplied action throws an exception or not, do **NOT** affect this cffu.
+ * and the exception (or `null` if none) of given stage as arguments. Whether the supplied action
+ * throws an exception or not, this stage is **NOT** affected.
  *
  * Unlike method [handle][CompletionStage.handle] and like method [whenComplete][CompletionStage.whenComplete],
  * this method is not designed to translate completion outcomes.
@@ -693,8 +694,8 @@ fun <T, C : CompletionStage<out T>> C.peekAsync(action: BiConsumer<in T, in Thro
  * executes the given action using the supplied Executor, returns this stage.
  *
  * When this stage is complete, the given action is invoked with the result (or `null` if none)
- * and the exception (or `null` if none) of this stage as arguments.
- * Whether the supplied action throws an exception or not, do **NOT** affect this cffu.
+ * and the exception (or `null` if none) of given stage as arguments. Whether the supplied action
+ * throws an exception or not, this stage is **NOT** affected.
  *
  * Unlike method [handle][CompletionStage.handle] and like method [whenComplete][CompletionStage.whenComplete],
  * this method is not designed to translate completion outcomes.
