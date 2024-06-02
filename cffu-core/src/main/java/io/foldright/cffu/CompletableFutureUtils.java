@@ -1645,8 +1645,7 @@ public final class CompletableFutureUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <C extends CompletionStage<?>>
-    C hopExecutorIfAtCfDelayerThread(C cf, Executor asyncExecutor) {
+    private static <C extends CompletableFuture<?>> C hopExecutorIfAtCfDelayerThread(C cf, Executor asyncExecutor) {
         final CompletionStage<Object> f = (CompletionStage<Object>) cf;
 
         return (C) f.handle((v, ex) -> null).thenCompose(unused -> {
