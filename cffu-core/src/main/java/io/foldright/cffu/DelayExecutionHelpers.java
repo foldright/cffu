@@ -11,7 +11,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.util.concurrent.*;
 import java.util.function.BiConsumer;
-import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 
@@ -22,20 +21,13 @@ import java.util.function.Supplier;
  */
 @SuppressWarnings("JavadocReference")
 final class Delayer {
-    private static final ScheduledThreadPoolExecutor delayer;
-
-    static {
-        delayer = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
-        delayer.setRemoveOnCancelPolicy(true);
-    }
-
     /**
      * @return a Future that can be used to cancel the delayed task
      * @see FutureCanceller
      * @see DelayedExecutor#execute(Runnable)
      */
     static ScheduledFuture<?> delay(Runnable command, long delay, TimeUnit unit) {
-        return delayer.schedule(command, delay, unit);
+        return DelayerHolder.delayer.schedule(command, delay, unit);
     }
 
     /**
@@ -55,7 +47,34 @@ final class Delayer {
         return delay(new CfCompleter<>(cf, value), delay, unit);
     }
 
-    private static final String THREAD_NAME_OF_CFFU_DELAY_SCHEDULER = "CffuDelayScheduler";
+    /**
+     * Checks whether execution is at the thread of CompletableFuture/Cffu delayer.
+     * <p>
+     * The constant {@code "CompletableFutureDelayScheduler"} is defined
+     * at {@link CompletableFuture.Delayer.DaemonThreadFactory}.
+     */
+    @SuppressWarnings("JavadocReference")
+    static boolean atCfDelayerThread() {
+        final String name = Thread.currentThread().getName();
+        return "CompletableFutureDelayScheduler".equals(name) || THREAD_NAME_OF_CFFU_DELAY_SCHEDULER.equals(name);
+    }
+
+    private static final String THREAD_NAME_OF_CFFU_DELAY_SCHEDULER = "CffuBuiltinDelayScheduler";
+
+    /**
+     * Holds {@link #delayer} scheduler as field of static inner class for lazy loading(init only when needed).
+     * <p>
+     * The lazy loading is need because {@link #atCfDelayerThread()} method of
+     * class {@link Delayer} is used on {@code Java 9+}.
+     */
+    private static class DelayerHolder {
+        static final ScheduledThreadPoolExecutor delayer;
+
+        static {
+            delayer = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
+            delayer.setRemoveOnCancelPolicy(true);
+        }
+    }
 
     private static final class DaemonThreadFactory implements ThreadFactory {
         @Override
@@ -66,18 +85,6 @@ final class Delayer {
             return t;
         }
     }
-
-    /**
-     * Checks whether the action is executed in the thread of CompletableFuture/Cffu delayer.
-     * <p>
-     * The constant {@code "CompletableFutureDelayScheduler"} is defined
-     * at {@link CompletableFuture.Delayer.DaemonThreadFactory}.
-     */
-    @SuppressWarnings("JavadocReference")
-    static final BooleanSupplier IS_IN_CF_DELAYER_THREAD = () -> {
-        final String name = Thread.currentThread().getName();
-        return "CompletableFutureDelayScheduler".equals(name) || THREAD_NAME_OF_CFFU_DELAY_SCHEDULER.equals(name);
-    };
 
     private Delayer() {
     }

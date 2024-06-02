@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.*;
 
-import static io.foldright.cffu.Delayer.IS_IN_CF_DELAYER_THREAD;
+import static io.foldright.cffu.Delayer.atCfDelayerThread;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
@@ -1487,6 +1487,11 @@ public final class CompletableFutureUtils {
      * if not otherwise completed before the given timeout.
      * <p>
      * Uses CompletableFuture's default asynchronous execution facility as {@code executorWhenTimeout}.
+     * <p>
+     * <strong>CAUTION:<br></strong>
+     * If the wait timed out, the returned CompletableFuture complete exceptionally with a CompletionException holding
+     * the {@link TimeoutException} as its cause; NOT a direct {@link TimeoutException}
+     * like {@link #orTimeout(CompletableFuture, long, TimeUnit)}/{@link CompletableFuture#orTimeout(long, TimeUnit)}.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -1500,6 +1505,11 @@ public final class CompletableFutureUtils {
     /**
      * Exceptionally completes given CompletableFuture with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
+     * <p>
+     * <strong>CAUTION:<br></strong>
+     * If the wait timed out, the returned CompletableFuture complete exceptionally with a CompletionException holding
+     * the {@link TimeoutException} as its cause; NOT a direct {@link TimeoutException}
+     * like {@link #orTimeout(CompletableFuture, long, TimeUnit)}/{@link CompletableFuture#orTimeout(long, TimeUnit)}.
      *
      * @param executorWhenTimeout the async executor when triggered by timeout
      * @param timeout             how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
@@ -1513,7 +1523,7 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
 
         final C f = orTimeout(cf, timeout, unit);
-        return hopAsyncIf(f, IS_IN_CF_DELAYER_THREAD, executorWhenTimeout);
+        return hopExecutorIfAtCfDelayerThread(f, executorWhenTimeout);
     }
 
     /**
@@ -1589,7 +1599,7 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
 
         final C f = completeOnTimeout(cf, value, timeout, unit);
-        return hopAsyncIf(f, IS_IN_CF_DELAYER_THREAD, executorWhenTimeout);
+        return hopExecutorIfAtCfDelayerThread(f, executorWhenTimeout);
     }
 
     /**
@@ -1635,12 +1645,19 @@ public final class CompletableFutureUtils {
     }
 
     @SuppressWarnings("unchecked")
-    private static <C extends CompletionStage<?>>
-    C hopAsyncIf(C cf, BooleanSupplier condition, Executor asyncExecutor) {
-        return (C) cf.handle((r, ex) -> condition.getAsBoolean()
-                ? cf.handleAsync((r1, ex1) -> cf, asyncExecutor).thenCompose(x -> (CompletionStage<?>) x)
-                : cf
-        ).thenCompose(x -> x);
+    public static <C extends CompletionStage<?>>
+    C hopExecutorIfAtCfDelayerThread(C cf, Executor asyncExecutor) {
+        final CompletionStage<Object> f = (CompletionStage<Object>) cf;
+
+        return (C) f.handle((v, ex) -> null).thenCompose(unused -> {
+            if (!atCfDelayerThread()) return f;
+
+            CompletableFuture<Void> signal = new CompletableFuture<>();
+            delayedExecutor(0, TimeUnit.SECONDS, asyncExecutor)
+                    .execute(() -> signal.complete(null));
+
+            return signal.thenCompose(v -> f);
+        });
     }
 
     //# Advanced methods of CompletionStage

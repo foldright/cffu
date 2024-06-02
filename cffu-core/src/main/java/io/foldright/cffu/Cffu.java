@@ -946,6 +946,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * if not otherwise completed before the given timeout.
      * <p>
      * Uses {@link #defaultExecutor()} as {@code executorWhenTimeout}.
+     * <p>
+     * <strong>CAUTION:<br></strong>
+     * If the wait timed out, the returned Cffu complete exceptionally with a CompletionException holding
+     * the {@link TimeoutException} as its cause; NOT a direct {@link TimeoutException}
+     * like {@link #unsafeOrTimeout(long, TimeUnit)}/{@link CompletableFuture#orTimeout(long, TimeUnit)}.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -959,6 +964,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Exceptionally completes this Cffu with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
+     * <p>
+     * <strong>CAUTION:<br></strong>
+     * If the wait timed out, the returned Cffu complete exceptionally with a CompletionException holding
+     * the {@link TimeoutException} as its cause; NOT a direct {@link TimeoutException}
+     * like {@link #unsafeOrTimeout(long, TimeUnit)}/{@link CompletableFuture#orTimeout(long, TimeUnit)}.
      *
      * @param executorWhenTimeout the async executor when triggered by timeout
      * @param timeout             how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
