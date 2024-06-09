@@ -43,7 +43,10 @@ public final class CompletableFutureUtils {
      * CompletableFuture({@code CompletableFuture<Void>}), but may be obtained by inspecting them individually.
      * If no stages are provided, returns a CompletableFuture completed with the value {@code null}.
      * <p>
-     * if you need the results of given stages, prefer below methods:
+     * This method is the same as {@link CompletableFuture#allOf(CompletableFuture[])},
+     * except that the parameter type is more generic {@link CompletionStage} instead of {@link CompletableFuture}.
+     * <p>
+     * If you need the results of given stages, prefer below methods:
      * <ul>
      * <li>{@link #allResultsOf(CompletionStage[])}
      * <li>{@link #allTupleOf(CompletionStage, CompletionStage)} /
@@ -51,17 +54,28 @@ public final class CompletableFutureUtils {
      *     (provided overloaded methods with 2~5 input)
      * </ul>
      * <p>
-     * This method is the same as {@link CompletableFuture#allOf(CompletableFuture[])},
-     * except that the parameter type is more generic {@link CompletionStage} instead of {@link CompletableFuture}.
+     * If you need the successful results of given stages in the given time, prefer below methods:
+     * <ul>
+     * <li>{@link #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])}
+     * <li>{@link #mostResultsOfSuccess(Executor, long, TimeUnit, Object, CompletionStage[])}
+     * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)}
+     * <li>{@link #mostTupleOfSuccess(Executor, long, TimeUnit, CompletionStage, CompletionStage)}
+     * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * <li>{@link #mostTupleOfSuccess(Executor, long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * </ul>
      *
      * @param cfs the stages
      * @return a new CompletableFuture that is completed when all the given stages complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #allResultsOf(CompletionStage[])
      * @see #allTupleOf(CompletionStage, CompletionStage)
-     * @see #allTupleOf(CompletionStage, CompletionStage, CompletionStage)
-     * @see #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage)
      * @see #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
+     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Executor, long, TimeUnit, Object, CompletionStage[])
+     * @see #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)
+     * @see #mostTupleOfSuccess(Executor, long, TimeUnit, CompletionStage, CompletionStage)
+     * @see #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
+     * @see #mostTupleOfSuccess(Executor, long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
      * @see CompletableFuture#allOf(CompletableFuture[])
      */
     public static CompletableFuture<Void> allOf(CompletionStage<?>... cfs) {
@@ -93,13 +107,13 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> allResultsOf(CompletionStage<? extends T>... cfs) {
         requireCfsAndEleNonNull(cfs);
-        final int size = cfs.length;
-        if (size == 0) return completedFuture(arrayList());
+        final int len = cfs.length;
+        if (len == 0) return completedFuture(arrayList());
         // Defensive copy input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
         // in order to ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
-        if (size == 1) return toNonMinCfCopy(cfs[0]).thenApply(CompletableFutureUtils::arrayList);
+        if (len == 1) return toNonMinCfCopy(cfs[0]).thenApply(CompletableFutureUtils::arrayList);
 
-        final Object[] result = new Object[size];
+        final Object[] result = new Object[len];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(cfs, result);
 
         CompletableFuture<List<Object>> ret = CompletableFuture.allOf(resultSetterCfs)
@@ -116,43 +130,57 @@ public final class CompletableFutureUtils {
      * but may be obtained by inspecting them individually.
      * If no stages are provided, returns a CompletableFuture completed with the value {@code null}.
      * <p>
+     * This method is the same as {@link #allOf(CompletionStage[])} except for the fast-fail behavior.
+     * <p>
      * If you need the results of given stages, prefer below methods:
-     * <ol>
+     * <ul>
      * <li>{@link #allResultsOfFastFail(CompletionStage[])}
      * <li>{@link #allTupleOfFastFail(CompletionStage, CompletionStage)} /
      *     {@link #allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      *     (provided overloaded methods with 2~5 input)
-     * </ol>
+     * </ul>
      * <p>
-     * This method is the same as {@link #allOf(CompletionStage[])} except for the fast-fail behavior.
+     * If you need the successful results of given stages in the given time, prefer below methods:
+     * <ul>
+     * <li>{@link #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])}
+     * <li>{@link #mostResultsOfSuccess(Executor, long, TimeUnit, Object, CompletionStage[])}
+     * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)}
+     * <li>{@link #mostTupleOfSuccess(Executor, long, TimeUnit, CompletionStage, CompletionStage)}
+     * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * <li>{@link #mostTupleOfSuccess(Executor, long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * </ul>
      *
      * @param cfs the stages
      * @return a new CompletableFuture that is successful when all the given stages success
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #allResultsOfFastFail(CompletionStage[])
      * @see #allTupleOfFastFail(CompletionStage, CompletionStage)
-     * @see #allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage)
-     * @see #allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage)
      * @see #allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
+     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Executor, long, TimeUnit, Object, CompletionStage[])
+     * @see #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)
+     * @see #mostTupleOfSuccess(Executor, long, TimeUnit, CompletionStage, CompletionStage)
+     * @see #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
+     * @see #mostTupleOfSuccess(Executor, long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
      * @see #allOf(CompletionStage[])
      */
     @Contract(pure = true)
     public static CompletableFuture<Void> allOfFastFail(CompletionStage<?>... cfs) {
         requireCfsAndEleNonNull(cfs);
-        final int size = cfs.length;
-        if (size == 0) return completedFuture(null);
+        final int len = cfs.length;
+        if (len == 0) return completedFuture(null);
         // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
         // the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
-        if (size == 1) return toNonMinCfCopy(cfs[0]).thenApply(unused -> null);
+        if (len == 1) return toNonMinCfCopy(cfs[0]).thenApply(unused -> null);
 
-        final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[size];
+        final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[len];
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
-        final CompletableFuture<?>[] failedOrBeIncomplete = new CompletableFuture[size + 1];
+        final CompletableFuture<?>[] failedOrBeIncomplete = new CompletableFuture[len + 1];
         fill(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of failedOrBeIncomplete HERE:
         //       a cf that is successful when all given cfs success, otherwise be incomplete
-        failedOrBeIncomplete[size] = CompletableFuture.allOf(successOrBeIncomplete);
+        failedOrBeIncomplete[len] = CompletableFuture.allOf(successOrBeIncomplete);
 
         CompletableFuture<Object> ret = CompletableFuture.anyOf(failedOrBeIncomplete);
         return f_cast(ret);
@@ -181,20 +209,20 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> allResultsOfFastFail(CompletionStage<? extends T>... cfs) {
         requireCfsAndEleNonNull(cfs);
-        final int size = cfs.length;
-        if (size == 0) return completedFuture(arrayList());
+        final int len = cfs.length;
+        if (len == 0) return completedFuture(arrayList());
         // Defensive copy input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
         // in order to ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
-        if (size == 1) return toNonMinCfCopy(cfs[0]).thenApply(CompletableFutureUtils::arrayList);
+        if (len == 1) return toNonMinCfCopy(cfs[0]).thenApply(CompletableFutureUtils::arrayList);
 
-        final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[size];
+        final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[len];
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
-        final CompletableFuture<?>[] failedOrBeIncomplete = new CompletableFuture[size + 1];
+        final CompletableFuture<?>[] failedOrBeIncomplete = new CompletableFuture[len + 1];
         fill(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of failedOrBeIncomplete HERE:
         //       a cf that is successful when all given cfs success, otherwise be incomplete
-        failedOrBeIncomplete[size] = allResultsOf(successOrBeIncomplete);
+        failedOrBeIncomplete[len] = allResultsOf(successOrBeIncomplete);
 
         CompletableFuture<Object> ret = CompletableFuture.anyOf(failedOrBeIncomplete);
         return f_cast(ret);
@@ -244,7 +272,7 @@ public final class CompletableFutureUtils {
         if (cfs.length == 0) return completedFuture(arrayList());
         if (cfs.length == 1) {
             // Defensive copy input cf to non-minimal-stage instance in order to
-            // 1. avoid writing it by `completeOnTimeout` and is able to read its result(`getSuccessNow`)
+            // 1. avoid writing it by `cffuOrTimeout` and is able to read its result(`getSuccessNow`)
             // 2. ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
             final CompletableFuture<T> f = toNonMinCfCopy(requireNonNull(cfs[0], "cf1 is null"));
             return cffuOrTimeout(f, executorWhenTimeout, timeout, unit)
@@ -394,7 +422,7 @@ public final class CompletableFutureUtils {
         return isMinStageCf(f) ? f.toCompletableFuture() : copy(f);
     }
 
-    static boolean isMinStageCf(CompletableFuture<?> cf) {
+    private static boolean isMinStageCf(CompletableFuture<?> cf) {
         return "java.util.concurrent.CompletableFuture$MinimalStage".equals(cf.getClass().getName());
     }
 
@@ -452,21 +480,21 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<T> anyOfSuccess(CompletionStage<? extends T>... cfs) {
         requireCfsAndEleNonNull(cfs);
-        final int size = cfs.length;
-        if (size == 0) return failedFuture(new NoCfsProvidedException());
+        final int len = cfs.length;
+        if (len == 0) return failedFuture(new NoCfsProvidedException());
         // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
         // 1. avoid writing the input cf unexpectedly it by caller code
         // 2. the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
-        if (size == 1) return toNonMinCfCopy(cfs[0]);
+        if (len == 1) return toNonMinCfCopy(cfs[0]);
 
         // NOTE: fill ONE MORE element of successOrBeIncompleteCfs LATER
-        final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[size + 1];
-        final CompletableFuture<?>[] failedOrBeIncomplete = new CompletableFuture[size];
+        final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[len + 1];
+        final CompletableFuture<?>[] failedOrBeIncomplete = new CompletableFuture[len];
         fill(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of successOrBeIncompleteCfs HERE
         //       a cf that is failed when all given cfs fail, otherwise be incomplete
-        successOrBeIncomplete[size] = CompletableFuture.allOf(failedOrBeIncomplete);
+        successOrBeIncomplete[len] = CompletableFuture.allOf(failedOrBeIncomplete);
 
         CompletableFuture<Object> ret = CompletableFuture.anyOf(successOrBeIncomplete);
         return f_cast(ret);
@@ -625,11 +653,11 @@ public final class CompletableFutureUtils {
 
     @SuppressWarnings("unchecked")
     private static <T> T tupleOf0(Object... elements) {
-        final int length = elements.length;
+        final int len = elements.length;
         final Object ret;
-        if (length == 2) ret = Tuple2.of(elements[0], elements[1]);
-        else if (length == 3) ret = Tuple3.of(elements[0], elements[1], elements[2]);
-        else if (length == 4) ret = Tuple4.of(elements[0], elements[1], elements[2], elements[3]);
+        if (len == 2) ret = Tuple2.of(elements[0], elements[1]);
+        else if (len == 3) ret = Tuple3.of(elements[0], elements[1], elements[2]);
+        else if (len == 4) ret = Tuple4.of(elements[0], elements[1], elements[2], elements[3]);
         else ret = Tuple5.of(elements[0], elements[1], elements[2], elements[3], elements[4]);
         return (T) ret;
     }
