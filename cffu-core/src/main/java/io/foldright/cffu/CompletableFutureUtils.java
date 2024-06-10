@@ -1665,10 +1665,13 @@ public final class CompletableFutureUtils {
     private static <C extends CompletableFuture<?>> C hopExecutorIfAtCfDelayerThread(C cf, Executor asyncExecutor) {
         CompletableFuture<Object> ret = newIncompleteFuture(cf);
 
-        cf.whenComplete((v, ex) -> {
+        cf.handle((v, ex) -> {
             if (!atCfDelayerThread()) completeCf(ret, v, ex);
             else delayedExecutor(0, TimeUnit.SECONDS, asyncExecutor)
                     .execute(() -> completeCf(ret, v, ex));
+            // use `cf.handle` method(instead of `whenComplete`) and return null,
+            // in order to prevent below `exceptionally` reporting the handled argument exception in this action
+            return null;
         }).exceptionally(ex -> reportException("Exception occurred in the input cf whenComplete of hop executor:", ex));
 
         return (C) ret;
