@@ -62,10 +62,8 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> mRunAsync(Executor executor, Runnable... actions) {
         requireNonNull(executor, "executor is null");
-        requireNonNull(actions, "actions is null");
-        for (int i = 0; i < actions.length; i++) {
-            requireNonNull(actions[i], "action" + (i + 1) + " is null");
-        }
+        requireArrayAndEleNonNull("action", actions);
+
         return CompletableFuture.allOf(wrapActions(executor, actions));
     }
 
@@ -99,11 +97,18 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> mRunFastFailAsync(Executor executor, Runnable... actions) {
         requireNonNull(executor, "executor is null");
-        requireNonNull(actions, "actions is null");
-        for (int i = 0; i < actions.length; i++) {
-            requireNonNull(actions[i], "action" + (i + 1) + " is null");
-        }
+        requireArrayAndEleNonNull("action", actions);
+
         return allOfFastFail(wrapActions(executor, actions));
+    }
+
+    @SafeVarargs
+    private static <T> T[] requireArrayAndEleNonNull(String varName, T... array) {
+        requireNonNull(array, varName + "s is null");
+        for (int i = 0; i < array.length; i++) {
+            requireNonNull(array[i], varName + (i + 1) + " is null");
+        }
+        return array;
     }
 
     private static CompletableFuture<Void>[] wrapActions(Executor executor, Runnable[] actions) {
@@ -147,10 +152,8 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyAsync(Executor executor, Supplier<? extends T>... suppliers) {
         requireNonNull(executor, "executor is null");
-        requireNonNull(suppliers, "suppliers is null");
-        for (int i = 0; i < suppliers.length; i++) {
-            requireNonNull(suppliers[i], "supplier" + (i + 1) + " is null");
-        }
+        requireArrayAndEleNonNull("supplier", suppliers);
+
         return allResultsOf(wrapSuppliers(executor, suppliers));
     }
 
@@ -191,10 +194,8 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<List<T>> mSupplyFastFailAsync(
             Executor executor, Supplier<? extends T>... suppliers) {
         requireNonNull(executor, "executor is null");
-        requireNonNull(suppliers, "suppliers is null");
-        for (int i = 0; i < suppliers.length; i++) {
-            requireNonNull(suppliers[i], "supplier" + (i + 1) + " is null");
-        }
+        requireArrayAndEleNonNull("supplier", suppliers);
+
         return allResultsOfFastFail(wrapSuppliers(executor, suppliers));
     }
 
@@ -248,10 +249,8 @@ public final class CompletableFutureUtils {
             @Nullable T valueIfNotSuccess, Supplier<? extends T>... suppliers) {
         requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
-        requireNonNull(suppliers, "suppliers is null");
-        for (int i = 0; i < suppliers.length; i++) {
-            requireNonNull(suppliers[i], "supplier" + (i + 1) + " is null");
-        }
+        requireArrayAndEleNonNull("supplier", suppliers);
+
         return mostResultsOfSuccess(executor, timeout, unit, valueIfNotSuccess, wrapSuppliers(executor, suppliers));
     }
 
@@ -538,11 +537,7 @@ public final class CompletableFutureUtils {
 
     @SafeVarargs
     private static <S extends CompletionStage<?>> S[] requireCfsAndEleNonNull(S... css) {
-        requireNonNull(css, "cfs is null");
-        for (int i = 0; i < css.length; i++) {
-            requireNonNull(css[i], "cf" + (i + 1) + " is null");
-        }
-        return css;
+        return requireArrayAndEleNonNull("cf", css);
     }
 
     /**
@@ -1098,10 +1093,8 @@ public final class CompletableFutureUtils {
     public static CompletableFuture<Void> thenMRunAsync(CompletionStage<?> cf, Executor executor, Runnable... actions) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
-        requireNonNull(actions, "actions is null");
-        for (int i = 0; i < actions.length; i++) {
-            requireNonNull(actions[i], "action" + (i + 1) + " is null");
-        }
+        requireArrayAndEleNonNull("action", actions);
+
         return toNonMinCf(cf).thenCompose(unused -> CompletableFuture.allOf(wrapActions(executor, actions)));
     }
 
@@ -1133,10 +1126,8 @@ public final class CompletableFutureUtils {
             CompletionStage<?> cf, Executor executor, Runnable... actions) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
-        requireNonNull(actions, "actions is null");
-        for (int i = 0; i < actions.length; i++) {
-            requireNonNull(actions[i], "action" + (i + 1) + " is null");
-        }
+        requireArrayAndEleNonNull("action", actions);
+
         return toNonMinCf(cf).thenCompose(unused -> allOfFastFail(wrapActions(executor, actions)));
     }
 
@@ -1166,10 +1157,8 @@ public final class CompletableFutureUtils {
             CompletionStage<? extends T> cf, Executor executor, Consumer<? super T>... actions) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
-        requireNonNull(actions, "actions is null");
-        for (int i = 0; i < actions.length; i++) {
-            requireNonNull(actions[i], "action" + (i + 1) + " is null");
-        }
+        requireArrayAndEleNonNull("action", actions);
+
         return toNonMinCf(cf).thenCompose(v -> CompletableFuture.allOf(wrapConsumers(executor, v, actions)));
     }
 
@@ -1205,10 +1194,8 @@ public final class CompletableFutureUtils {
             CompletionStage<? extends T> cf, Executor executor, Consumer<? super T>... actions) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
-        requireNonNull(actions, "actions is null");
-        for (int i = 0; i < actions.length; i++) {
-            requireNonNull(actions[i], "action" + (i + 1) + " is null");
-        }
+        requireArrayAndEleNonNull("action", actions);
+
         return toNonMinCf(cf).thenCompose(v -> allOfFastFail(wrapConsumers(executor, v, actions)));
     }
 
@@ -1254,10 +1241,8 @@ public final class CompletableFutureUtils {
             CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U>... fns) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
-        requireNonNull(fns, "fns is null");
-        for (int i = 0; i < fns.length; i++) {
-            requireNonNull(fns[i], "fn" + (i + 1) + " is null");
-        }
+        requireArrayAndEleNonNull("fn", fns);
+
         return toNonMinCf(cf).thenCompose(v -> allResultsOf(wrapFunctions(executor, v, fns)));
     }
 
@@ -1299,10 +1284,8 @@ public final class CompletableFutureUtils {
             CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U>... fns) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
-        requireNonNull(fns, "fns is null");
-        for (int i = 0; i < fns.length; i++) {
-            requireNonNull(fns[i], "fn" + (i + 1) + " is null");
-        }
+        requireArrayAndEleNonNull("fn", fns);
+
         return toNonMinCf(cf).thenCompose(v -> allResultsOfFastFail(wrapFunctions(executor, v, fns)));
     }
 
@@ -1355,10 +1338,8 @@ public final class CompletableFutureUtils {
             @Nullable U valueIfNotSuccess, Function<? super T, ? extends U>... fns) {
         requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
-        requireNonNull(fns, "fns is null");
-        for (int i = 0; i < fns.length; i++) {
-            requireNonNull(fns[i], "fn" + (i + 1) + " is null");
-        }
+        requireArrayAndEleNonNull("fn", fns);
+
         return toNonMinCf(cf).thenCompose(v -> mostResultsOfSuccess(
                 executor, timeout, unit, valueIfNotSuccess, wrapFunctions(executor, v, fns)
         ));
@@ -1420,10 +1401,7 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterBothFastFailAsync(
             CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
-        requireNonNull(action, "action is null");
-
-        return allOfFastFail(css).thenRunAsync(action);
+        return runAfterBothFastFailAsync(cf1, cf2, action, AsyncPoolHolder.ASYNC_POOL);
     }
 
     /**
@@ -1494,13 +1472,7 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<Void> thenAcceptBothFastFailAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
             BiConsumer<? super T, ? super U> action) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
-        requireNonNull(action, "action is null");
-
-        final Object[] result = new Object[css.length];
-        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
-
-        return allOfFastFail(resultSetterCfs).thenRunAsync(() -> action.accept((T) result[0], (U) result[1]));
+        return thenAcceptBothFastFailAsync(cf1, cf2, action, AsyncPoolHolder.ASYNC_POOL);
     }
 
     /**
@@ -1577,13 +1549,7 @@ public final class CompletableFutureUtils {
     public static <T, U, V> CompletableFuture<V> thenCombineFastFailAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
             BiFunction<? super T, ? super U, ? extends V> fn) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
-        requireNonNull(fn, "fn is null");
-
-        final Object[] result = new Object[css.length];
-        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
-
-        return allOfFastFail(resultSetterCfs).thenApplyAsync(unused -> fn.apply((T) result[0], (U) result[1]));
+        return thenCombineFastFailAsync(cf1, cf2, fn, AsyncPoolHolder.ASYNC_POOL);
     }
 
     /**
@@ -1661,10 +1627,7 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterEitherSuccessAsync(
             CompletionStage<?> cf1, CompletionStage<?> cf2, Runnable action) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cf1, cf2);
-        requireNonNull(action, "action is null");
-
-        return anyOfSuccess(css).thenRunAsync(action);
+        return runAfterEitherSuccessAsync(cf1, cf2, action, AsyncPoolHolder.ASYNC_POOL);
     }
 
     /**
@@ -1723,10 +1686,7 @@ public final class CompletableFutureUtils {
      */
     public static <T> CompletableFuture<Void> acceptEitherSuccessAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Consumer<? super T> action) {
-        final CompletionStage<? extends T>[] css = requireCfsAndEleNonNull(cf1, cf2);
-        requireNonNull(action, "action is null");
-
-        return anyOfSuccess(css).thenAcceptAsync(action);
+        return acceptEitherSuccessAsync(cf1, cf2, action, AsyncPoolHolder.ASYNC_POOL);
     }
 
     /**
@@ -1786,10 +1746,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends T> cf2, Function<? super T, ? extends U> fn) {
-        final CompletionStage<? extends T>[] css = requireCfsAndEleNonNull(cf1, cf2);
-        requireNonNull(fn, "fn is null");
-
-        return anyOfSuccess(css).thenApplyAsync(fn);
+        return applyToEitherSuccessAsync(cf1, cf2, fn, AsyncPoolHolder.ASYNC_POOL);
     }
 
     /**
