@@ -16,6 +16,8 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -30,6 +32,58 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("RedundantThrows")
 class CompletableFutureUtilsTest {
+    ////////////////////////////////////////////////////////////////////////////////
+    //# multi-actions(M*) methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void test_mRun() throws Exception {
+        final Runnable runnable = () -> sleep(100);
+
+        final long tick = System.currentTimeMillis();
+        @SuppressWarnings("unchecked")
+        CompletableFuture<Void>[] cfs = new CompletableFuture[]{
+                mRunAsync(runnable, runnable),
+                mRunAsync(executorService, runnable, runnable),
+                mRunFastFailAsync(runnable, runnable),
+                mRunFastFailAsync(executorService, runnable, runnable),
+        };
+
+        assertTrue(System.currentTimeMillis() - tick < 50);
+        for (CompletableFuture<Void> cf : cfs) {
+            assertNull(cf.get());
+        }
+    }
+
+    @Test
+    void test_mSupply() throws Exception {
+        final Supplier<Integer> supplier = () -> {
+            sleep(100);
+            return n;
+        };
+
+        final long tick = System.currentTimeMillis();
+
+        @SuppressWarnings("unused")
+        final CompletableFuture<List<Object>> listCompletableFuture = mSupplyMostSuccessAsync(200, TimeUnit.MILLISECONDS, supplier, supplier);
+        // FIXME unexpected type inference, move default value argument ahead before timeout???
+
+        @SuppressWarnings("unchecked")
+        CompletableFuture<List<Integer>>[] cfs = new CompletableFuture[]{
+                mSupplyAsync(supplier, supplier),
+                mSupplyAsync(executorService, supplier, supplier),
+                mSupplyFastFailAsync(supplier, supplier),
+                mSupplyFastFailAsync(executorService, supplier, supplier),
+                mSupplyMostSuccessAsync(500, TimeUnit.MILLISECONDS, anotherN, supplier, supplier),
+                mSupplyMostSuccessAsync(executorService, 500, TimeUnit.MILLISECONDS, anotherN, supplier, supplier),
+        };
+
+        assertTrue(System.currentTimeMillis() - tick < 50);
+        for (CompletableFuture<List<Integer>> cf : cfs) {
+            assertEquals(Arrays.asList(n, n), cf.get());
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# allOf* methods
     ////////////////////////////////////////////////////////////////////////////////
@@ -760,6 +814,81 @@ class CompletableFutureUtilsTest {
         ).get());
     }
 
+    ////////////////////////////////////////////////////////////////////////////////
+    //# then-multi-actions(M*) methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void test_thenMRun() throws Exception {
+        final Runnable runnable = () -> sleep(100);
+        final CompletableFuture<Object> completed = completedFuture(null);
+
+        final long tick = System.currentTimeMillis();
+        @SuppressWarnings("unchecked")
+        CompletableFuture<Void>[] cfs = new CompletableFuture[]{
+                thenMRunAsync(completed, runnable, runnable),
+                thenMRunAsync(completed, executorService, runnable, runnable),
+                thenMRunFastFailAsync(completed, runnable, runnable),
+                thenMRunFastFailAsync(completed, executorService, runnable, runnable),
+        };
+
+        assertTrue(System.currentTimeMillis() - tick < 50);
+        for (CompletableFuture<Void> cf : cfs) {
+            assertNull(cf.get());
+        }
+    }
+
+    @Test
+    void test_thenMAccept() throws Exception {
+        final Consumer<Integer> consumer = (x) -> {
+            assertEquals(n, x);
+            sleep(100);
+        };
+        final CompletableFuture<Integer> completed = completedFuture(n);
+
+        final long tick = System.currentTimeMillis();
+        @SuppressWarnings("unchecked")
+        CompletableFuture<Void>[] cfs = new CompletableFuture[]{
+                thenMAcceptAsync(completed, consumer, consumer),
+                thenMAcceptAsync(completed, executorService, consumer, consumer),
+                thenMAcceptFastFailAsync(completed, consumer, consumer),
+                thenMAcceptFastFailAsync(completed, executorService, consumer, consumer),
+        };
+
+        assertTrue(System.currentTimeMillis() - tick < 50);
+        for (CompletableFuture<Void> cf : cfs) {
+            assertNull(cf.get());
+        }
+    }
+
+    @Test
+    void test_thenMApply() throws Exception {
+        final Function<Integer, Integer> supplier = (x) -> {
+            sleep(100);
+            return n;
+        };
+        final CompletableFuture<Integer> completed = completedFuture(n);
+
+        @SuppressWarnings("unused")
+        final CompletableFuture<List<Object>> listCompletableFuture = thenMApplyMostSuccessAsync(completed, 200, TimeUnit.MILLISECONDS, supplier, supplier);
+        // FIXME unexpected type inference, move default value argument ahead before timeout???
+
+        final long tick = System.currentTimeMillis();
+        @SuppressWarnings("unchecked")
+        CompletableFuture<List<Integer>>[] cfs = new CompletableFuture[]{
+                thenMApplyAsync(completed, supplier, supplier),
+                thenMApplyAsync(completed, executorService, supplier, supplier),
+                thenMApplyFastFailAsync(completed, supplier, supplier),
+                thenMApplyFastFailAsync(completed, executorService, supplier, supplier),
+                thenMApplyMostSuccessAsync(completed, 500, TimeUnit.MILLISECONDS, anotherN, supplier, supplier),
+                thenMApplyMostSuccessAsync(completed, executorService, 500, TimeUnit.MILLISECONDS, anotherN, supplier, supplier),
+        };
+
+        assertTrue(System.currentTimeMillis() - tick < 50);
+        for (CompletableFuture<List<Integer>> cf : cfs) {
+            assertEquals(Arrays.asList(n, n), cf.get());
+        }
+    }
     ////////////////////////////////////////////////////////////////////////////////
     //# both methods
     ////////////////////////////////////////////////////////////////////////////////

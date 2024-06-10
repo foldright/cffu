@@ -66,7 +66,7 @@ private const val ERROR_MSG_FOR_COLL = "no cffuFactory argument provided when th
 private const val ERROR_MSG_FOR_ARRAY = "no cffuFactory argument provided when this array is empty"
 
 /**
- * Returns a new Cffu with the results in the **same order** of all the given Cffus,
+ * Returns a new Cffu with the results in the **same order** of the given Cffus arguments,
  * the new Cffu is completed when all the given Cffus complete.
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
@@ -89,7 +89,7 @@ fun <T> Collection<Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSE
 }
 
 /**
- * Returns a new Cffu with the results in the **same order** of all the given Cffus,
+ * Returns a new Cffu with the results in the **same order** of the given Cffus arguments,
  * the new Cffu is completed when all the given Cffus complete.
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
@@ -112,7 +112,7 @@ fun <T> Array<out Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSEN
 }
 
 /**
- * Returns a new Cffu with the results in the **same order** of all the given stages,
+ * Returns a new Cffu with the results in the **same order** of the given stages arguments,
  * the new Cffu is completed when all the given stages complete.
  * If any of the given stages complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
@@ -130,7 +130,7 @@ fun <T> Collection<CompletionStage<out T>>.allResultsOfCffu(cffuFactory: CffuFac
     cffuFactory.allResultsOf(*toTypedArray())
 
 /**
- * Returns a new Cffu with the results in the **same order** of all the given stages,
+ * Returns a new Cffu with the results in the **same order** of the given stages arguments,
  * the new Cffu is completed when all the given stages complete.
  * If any of the given stages complete exceptionally, then the returned Cffu
  * also does so, with a CompletionException holding this exception as its cause.
@@ -225,7 +225,7 @@ fun Array<out CompletionStage<*>>.allOfCffu(cffuFactory: CffuFactory): Cffu<Void
     cffuFactory.allOf(*this)
 
 /**
- * Returns a new Cffu with the results in the **same order** of all the given Cffus,
+ * Returns a new Cffu with the results in the **same order** of the given Cffus arguments,
  * the new Cffu success when all the given Cffus success.
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given Cffus,
@@ -249,7 +249,7 @@ fun <T> Collection<Cffu<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactor
 }
 
 /**
- * Returns a new Cffu with the results in the **same order** of all the given Cffus,
+ * Returns a new Cffu with the results in the **same order** of the given Cffus arguments,
  * the new Cffu success when all the given Cffus success.
  * If any of the given Cffus complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given Cffus,
@@ -273,7 +273,7 @@ fun <T> Array<out Cffu<out T>>.allResultsOfFastFailCffu(cffuFactory: CffuFactory
 }
 
 /**
- * Returns a new Cffu with the results in the **same order** of all the given stages,
+ * Returns a new Cffu with the results in the **same order** of the given stages arguments,
  * the new Cffu success when all the given stages success.
  * If any of the given stages complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given stages,
@@ -292,7 +292,7 @@ fun <T> Collection<CompletionStage<out T>>.allResultsOfFastFailCffu(cffuFactory:
     cffuFactory.allResultsOfFastFail(*toTypedArray())
 
 /**
- * Returns a new Cffu with the results in the **same order** of all the given stages,
+ * Returns a new Cffu with the results in the **same order** of the given stages arguments,
  * the new Cffu success when all the given stages success.
  * If any of the given stages complete exceptionally, then the returned Cffu
  * also does so *without* waiting other incomplete given stages,
@@ -392,7 +392,7 @@ fun Array<out CompletionStage<*>>.allOfFastFailCffu(cffuFactory: CffuFactory): C
 
 /**
  * Returns a new Cffu with the most results in the **same order** of
- * the given Cffus in the given time(`timeout`), aka as many results as possible in the given time.
+ * the given Cffus arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
  * If the given Cffu is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
  *
@@ -413,7 +413,7 @@ fun <T> Collection<Cffu<out T>>.mostResultsOfSuccessCffu(
 
 /**
  * Returns a new Cffu with the most results in the **same order** of
- * the given Cffus in the given time(`timeout`), aka as many results as possible in the given time.
+ * the given Cffus arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
  * If the given Cffu is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
  *
@@ -434,7 +434,7 @@ fun <T> Array<out Cffu<out T>>.mostResultsOfSuccessCffu(
 
 /**
  * Returns a new Cffu with the most results in the **same order** of
- * the given stages in the given time(`timeout`), aka as many results as possible in the given time.
+ * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
  * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
  *
@@ -453,7 +453,7 @@ fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCffu(
 
 /**
  * Returns a new Cffu with the most results in the **same order** of
- * the given stages in the given time(`timeout`), aka as many results as possible in the given time.
+ * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
  * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
  * (aka the result extraction logic is [Cffu.getSuccessNow]).

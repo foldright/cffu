@@ -325,7 +325,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the results in the <strong>same order</strong> of all the given stages,
+     * Returns a new Cffu with the results in the <strong>same order</strong> of the given stages arguments,
      * the new Cffu is completed when all the given stages complete;
      * If any of the given stages complete exceptionally, then the returned Cffu also does so,
      * with a CompletionException holding this exception as its cause.
@@ -389,7 +389,7 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is successful with the results in the <strong>same order</strong>
-     * of all the given stages when all the given stages success;
+     * of the given stages arguments when all the given stages success;
      * If any of the given stages complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      * If no stages are provided, returns a Cffu completed with the value empty list.
@@ -414,7 +414,7 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu with the most results in the <strong>same order</strong> of
-     * the given stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
      *
@@ -629,7 +629,7 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu with the most results in the <strong>same order</strong> of
-     * the given two stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * the given two stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
      *
@@ -647,7 +647,7 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu with the most results in the <strong>same order</strong> of
-     * the given three stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * the given three stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
      *
@@ -666,7 +666,7 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu with the most results in the <strong>same order</strong> of
-     * the given four stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * the given four stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
      *
@@ -686,7 +686,7 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu with the most results in the <strong>same order</strong> of
-     * the given five stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * the given five stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
      *

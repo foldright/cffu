@@ -28,6 +28,244 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  */
 public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
+    //# multi-actions(M*) methods
+    //
+    //    - mRun*Async(Runnable):    Runnable*    -> CompletableFuture<Void>
+    //        mRunAsync / mRunFastFailAsync
+    //    - mSupply*Async(Supplier): Supplier<T>* -> CompletableFuture<List<T>>
+    //        mSupplyAsync / mSupplyFastFailAsync / mSupplyMostSuccessAsync
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * after runs the given actions.
+     *
+     * @param actions the actions to run before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #allOf(CompletionStage[])
+     * @see CompletableFuture#runAsync(Runnable)
+     */
+    public static CompletableFuture<Void> mRunAsync(Runnable... actions) {
+        return mRunAsync(AsyncPoolHolder.ASYNC_POOL, actions);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the given Executor after runs the given actions.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to run before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #allOf(CompletionStage[])
+     * @see CompletableFuture#runAsync(Runnable, Executor)
+     */
+    public static CompletableFuture<Void> mRunAsync(Executor executor, Runnable... actions) {
+        requireNonNull(executor, "executor is null");
+        requireNonNull(actions, "actions is null");
+        for (int i = 0; i < actions.length; i++) {
+            requireNonNull(actions[i], "action" + (i + 1) + " is null");
+        }
+        return CompletableFuture.allOf(wrapActions(executor, actions));
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * after runs the given actions.
+     * <p>
+     * This method is the same as {@link #mRunAsync(Runnable...)} except for the fast-fail behavior.
+     *
+     * @param actions the actions to run before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #allOfFastFail(CompletionStage[])
+     * @see CompletableFuture#runAsync(Runnable)
+     */
+    public static CompletableFuture<Void> mRunFastFailAsync(Runnable... actions) {
+        return mRunFastFailAsync(AsyncPoolHolder.ASYNC_POOL, actions);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the given Executor after runs the given actions.
+     * <p>
+     * This method is the same as {@link #mRunAsync(Executor, Runnable...)} except for the fast-fail behavior.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to run before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #allOfFastFail(CompletionStage[])
+     * @see CompletableFuture#runAsync(Runnable, Executor)
+     */
+    public static CompletableFuture<Void> mRunFastFailAsync(Executor executor, Runnable... actions) {
+        requireNonNull(executor, "executor is null");
+        requireNonNull(actions, "actions is null");
+        for (int i = 0; i < actions.length; i++) {
+            requireNonNull(actions[i], "action" + (i + 1) + " is null");
+        }
+        return allOfFastFail(wrapActions(executor, actions));
+    }
+
+    private static CompletableFuture<Void>[] wrapActions(Executor executor, Runnable[] actions) {
+        @SuppressWarnings("unchecked")
+        CompletableFuture<Void>[] cfs = new CompletableFuture[actions.length];
+        for (int i = 0; i < actions.length; i++) {
+            cfs[i] = CompletableFuture.runAsync(actions[i], executor);
+        }
+        return cfs;
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     *
+     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param <T>       the suppliers' return type
+     * @return the new CompletableFuture
+     * @see #allResultsOf(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier)
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<List<T>> mSupplyAsync(Supplier<? extends T>... suppliers) {
+        return mSupplyAsync(AsyncPoolHolder.ASYNC_POOL, suppliers);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     *
+     * @param executor  the executor to use for asynchronous execution
+     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param <T>       the suppliers' return type
+     * @return the new CompletableFuture
+     * @see #allResultsOf(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<List<T>> mSupplyAsync(Executor executor, Supplier<? extends T>... suppliers) {
+        requireNonNull(executor, "executor is null");
+        requireNonNull(suppliers, "suppliers is null");
+        for (int i = 0; i < suppliers.length; i++) {
+            requireNonNull(suppliers[i], "supplier" + (i + 1) + " is null");
+        }
+        return allResultsOf(wrapSuppliers(executor, suppliers));
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * This method is the same as {@link #mSupplyAsync(Supplier[])} except for the fast-fail behavior.
+     *
+     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param <T>       the suppliers' return type
+     * @return the new CompletableFuture
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier)
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<List<T>> mSupplyFastFailAsync(Supplier<? extends T>... suppliers) {
+        return mSupplyFastFailAsync(AsyncPoolHolder.ASYNC_POOL, suppliers);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * This method is the same as {@link #mSupplyAsync(Executor, Supplier[])} except for the fast-fail behavior.
+     *
+     * @param executor  the executor to use for asynchronous execution
+     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param <T>       the suppliers' return type
+     * @return the new CompletableFuture
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<List<T>> mSupplyFastFailAsync(
+            Executor executor, Supplier<? extends T>... suppliers) {
+        requireNonNull(executor, "executor is null");
+        requireNonNull(suppliers, "suppliers is null");
+        for (int i = 0; i < suppliers.length; i++) {
+            requireNonNull(suppliers[i], "supplier" + (i + 1) + " is null");
+        }
+        return allResultsOfFastFail(wrapSuppliers(executor, suppliers));
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
+     *
+     * @param timeout           how long to wait in units of {@code unit}
+     * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param valueIfNotSuccess the value to return if not completed successfully
+     * @param suppliers         the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param <T>               the suppliers' return type
+     * @return the new CompletableFuture
+     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier)
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<List<T>> mSupplyMostSuccessAsync(
+            long timeout, TimeUnit unit, @Nullable T valueIfNotSuccess, Supplier<? extends T>... suppliers) {
+        return mSupplyMostSuccessAsync(AsyncPoolHolder.ASYNC_POOL, timeout, unit, valueIfNotSuccess, suppliers);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the given Executor with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
+     *
+     * @param executor          the executor to use for asynchronous execution
+     * @param timeout           how long to wait in units of {@code unit}
+     * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param valueIfNotSuccess the value to return if not completed successfully
+     * @param suppliers         the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param <T>               the suppliers' return type
+     * @return the new CompletableFuture
+     * @see #mostResultsOfSuccess(Executor, long, TimeUnit, Object, CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<List<T>> mSupplyMostSuccessAsync(
+            Executor executor, long timeout, TimeUnit unit,
+            @Nullable T valueIfNotSuccess, Supplier<? extends T>... suppliers) {
+        requireNonNull(executor, "executor is null");
+        requireNonNull(unit, "unit is null");
+        requireNonNull(suppliers, "suppliers is null");
+        for (int i = 0; i < suppliers.length; i++) {
+            requireNonNull(suppliers[i], "supplier" + (i + 1) + " is null");
+        }
+        return mostResultsOfSuccess(executor, timeout, unit, valueIfNotSuccess, wrapSuppliers(executor, suppliers));
+    }
+
+    private static <T> CompletableFuture<? extends T>[] wrapSuppliers(
+            Executor executor, Supplier<? extends T>[] suppliers) {
+        @SuppressWarnings("unchecked")
+        CompletableFuture<? extends T>[] cfs = new CompletableFuture[suppliers.length];
+        for (int i = 0; i < suppliers.length; i++) {
+            cfs[i] = CompletableFuture.supplyAsync(suppliers[i], executor);
+        }
+        return cfs;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
     //# allOf*/mostResultsOfSuccess methods
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -84,7 +322,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture with the results in the <strong>same order</strong> of all the given stages,
+     * Returns a new CompletableFuture with the results in the <strong>same order</strong> of the given stages arguments,
      * the new CompletableFuture is completed when all the given stages complete;
      * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
      * with a CompletionException holding this exception as its cause.
@@ -184,7 +422,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is successful with the results in the <strong>same order</strong>
-     * of all the given stages when all the given stages success;
+     * of the given stages arguments when all the given stages success;
      * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      * If no stages are provided, returns a CompletableFuture completed with the value empty list.
@@ -226,7 +464,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
      *
@@ -245,7 +483,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
      *
@@ -283,7 +521,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Multi-Gets(MGet) the results in the <strong>same order</strong> of the given cfs,
+     * Multi-Gets(MGet) the results in the <strong>same order</strong> of the given cfs arguments,
      * use the result value if the given stage is completed successfully, else use the given valueIfNotSuccess
      *
      * @param cfs MUST be *Non-Minimal* CF instances in order to read results(`getSuccessNow`),
@@ -660,7 +898,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given two stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * the given two stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
      *
@@ -678,7 +916,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given two stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * the given two stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
      *
@@ -698,7 +936,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given three stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * the given three stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
      *
@@ -717,7 +955,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given three stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * the given three stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
      *
@@ -737,7 +975,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given four stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * the given four stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
      *
@@ -757,7 +995,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given four stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * the given four stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
      *
@@ -778,7 +1016,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given five stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * the given five stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
      *
@@ -798,7 +1036,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given five stages in the given time({@code timeout}), aka as many results as possible in the given time.
+     * the given five stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
      *
@@ -826,6 +1064,315 @@ public final class CompletableFutureUtils {
         final CompletableFuture<Object>[] cfArray = f_toNonMinCfArray(css);
         return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, executorWhenTimeout, timeout, unit)
                 .handle((unused, ex) -> tupleOf0(MGetSuccessNow0(null, cfArray)));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# then-multi-actions(M*) methods
+    //
+    //    - thenMRun*Async(Runnable):    Runnable*   -> CompletableFuture<Void>
+    //        thenMRunAsync / thenMRunFastFailAsync
+    //    - thenMAccept*Async(Supplier): Consumer<T>* -> CompletableFuture<Void>
+    //        thenMAcceptAsync / thenMAcceptFastFailAsync
+    //    - thenMApply*Async(Supplier): Function<T>*  -> CompletableFuture<List<T>>
+    //        thenMApplyAsync / thenMApplyFastFailAsync / thenMApplyMostSuccessAsync
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * executes the given actions using the CompletableFuture's default asynchronous execution facility.
+     *
+     * @param actions the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     */
+    public static CompletableFuture<Void> thenMRunAsync(CompletionStage<?> cf, Runnable... actions) {
+        return thenMRunAsync(cf, AsyncPoolHolder.ASYNC_POOL, actions);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * executes the given actions using the given Executor.
+     *
+     * @param actions the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     */
+    public static CompletableFuture<Void> thenMRunAsync(CompletionStage<?> cf, Executor executor, Runnable... actions) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(executor, "executor is null");
+        requireNonNull(actions, "actions is null");
+        for (int i = 0; i < actions.length; i++) {
+            requireNonNull(actions[i], "action" + (i + 1) + " is null");
+        }
+        return toNonMinCf(cf).thenCompose(unused -> CompletableFuture.allOf(wrapActions(executor, actions)));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * executes the given actions using the CompletableFuture's default asynchronous execution facility.
+     * <p>
+     * This method is the same as {@link #thenMRunAsync(CompletionStage, Runnable...)}
+     * except for the fast-fail behavior.
+     *
+     * @param actions the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     */
+    public static CompletableFuture<Void> thenMRunFastFailAsync(CompletionStage<?> cf, Runnable... actions) {
+        return thenMRunFastFailAsync(cf, AsyncPoolHolder.ASYNC_POOL, actions);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * executes the given actions using the given Executor.
+     * <p>
+     * This method is the same as {@link #thenMRunAsync(CompletionStage, Executor, Runnable...)}
+     * except for the fast-fail behavior.
+     *
+     * @param actions the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     */
+    public static CompletableFuture<Void> thenMRunFastFailAsync(
+            CompletionStage<?> cf, Executor executor, Runnable... actions) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(executor, "executor is null");
+        requireNonNull(actions, "actions is null");
+        for (int i = 0; i < actions.length; i++) {
+            requireNonNull(actions[i], "action" + (i + 1) + " is null");
+        }
+        return toNonMinCf(cf).thenCompose(unused -> allOfFastFail(wrapActions(executor, actions)));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the given stage's result as the argument to the given actions.
+     *
+     * @param actions the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<Void> thenMAcceptAsync(
+            CompletionStage<? extends T> cf, Consumer<? super T>... actions) {
+        return thenMAcceptAsync(cf, AsyncPoolHolder.ASYNC_POOL, actions);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
+     *
+     * @param actions the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<Void> thenMAcceptAsync(
+            CompletionStage<? extends T> cf, Executor executor, Consumer<? super T>... actions) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(executor, "executor is null");
+        requireNonNull(actions, "actions is null");
+        for (int i = 0; i < actions.length; i++) {
+            requireNonNull(actions[i], "action" + (i + 1) + " is null");
+        }
+        return toNonMinCf(cf).thenCompose(v -> CompletableFuture.allOf(wrapConsumers(executor, v, actions)));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the given stage's result as the argument to the given actions.
+     * <p>
+     * This method is the same as {@link #thenMAcceptAsync(CompletionStage, Consumer[])}
+     * except for the fast-fail behavior.
+     *
+     * @param actions the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<Void> thenMAcceptFastFailAsync(
+            CompletionStage<? extends T> cf, Consumer<? super T>... actions) {
+        return thenMAcceptFastFailAsync(cf, AsyncPoolHolder.ASYNC_POOL, actions);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
+     * <p>
+     * This method is the same as {@link #thenMAcceptAsync(CompletionStage, Executor, Consumer[])}
+     * except for the fast-fail behavior.
+     *
+     * @param actions the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<Void> thenMAcceptFastFailAsync(
+            CompletionStage<? extends T> cf, Executor executor, Consumer<? super T>... actions) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(executor, "executor is null");
+        requireNonNull(actions, "actions is null");
+        for (int i = 0; i < actions.length; i++) {
+            requireNonNull(actions[i], "action" + (i + 1) + " is null");
+        }
+        return toNonMinCf(cf).thenCompose(v -> allOfFastFail(wrapConsumers(executor, v, actions)));
+    }
+
+    private static <T> CompletableFuture<Void>[] wrapConsumers(Executor executor, T v, Consumer<? super T>[] actions) {
+        @SuppressWarnings("unchecked")
+        CompletableFuture<Void>[] cfs = new CompletableFuture[actions.length];
+        for (int i = 0; i < actions.length; i++) {
+            final int idx = i;
+            cfs[idx] = CompletableFuture.runAsync(() -> actions[idx].accept(v), executor);
+        }
+        return cfs;
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     *
+     * @param fns the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T, U> CompletableFuture<List<U>> thenMApplyAsync(
+            CompletionStage<? extends T> cf, Function<? super T, ? extends U>... fns) {
+        return thenMApplyAsync(cf, AsyncPoolHolder.ASYNC_POOL, fns);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the given Executor, with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     *
+     * @param fns the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T, U> CompletableFuture<List<U>> thenMApplyAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U>... fns) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(executor, "executor is null");
+        requireNonNull(fns, "fns is null");
+        for (int i = 0; i < fns.length; i++) {
+            requireNonNull(fns[i], "fn" + (i + 1) + " is null");
+        }
+        return toNonMinCf(cf).thenCompose(v -> allResultsOf(wrapFunctions(executor, v, fns)));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     * This method is the same as {@link #thenMApplyAsync(CompletionStage, Function[])}
+     * except for the fast-fail behavior.
+     *
+     * @param fns the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T, U> CompletableFuture<List<U>> thenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf, Function<? super T, ? extends U>... fns) {
+        return thenMApplyFastFailAsync(cf, AsyncPoolHolder.ASYNC_POOL, fns);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the given Executor, with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     * This method is the same as {@link #thenMApplyAsync(CompletionStage, Executor, Function[])}
+     * except for the fast-fail behavior.
+     *
+     * @param fns the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T, U> CompletableFuture<List<U>> thenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U>... fns) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(executor, "executor is null");
+        requireNonNull(fns, "fns is null");
+        for (int i = 0; i < fns.length; i++) {
+            requireNonNull(fns[i], "fn" + (i + 1) + " is null");
+        }
+        return toNonMinCf(cf).thenCompose(v -> allResultsOfFastFail(wrapFunctions(executor, v, fns)));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the most values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     * If the given function is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
+     *
+     * @param timeout           how long to wait in units of {@code unit}
+     * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param valueIfNotSuccess the value to return if not completed successfully
+     * @param fns               the functions to use to compute the values of the returned CompletableFuture
+     * @param <U>               the functions' return type
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T, U> CompletableFuture<List<U>> thenMApplyMostSuccessAsync(
+            CompletionStage<? extends T> cf, long timeout, TimeUnit unit,
+            @Nullable U valueIfNotSuccess, Function<? super T, ? extends U>... fns) {
+        return thenMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, valueIfNotSuccess, fns);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the given Executor, with the most values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     * If the given function is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
+     *
+     * @param executor          the executor to use for asynchronous execution
+     * @param timeout           how long to wait in units of {@code unit}
+     * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param valueIfNotSuccess the value to return if not completed successfully
+     * @param fns               the functions to use to compute the values of the returned CompletableFuture
+     * @param <U>               the functions' return type
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T, U> CompletableFuture<List<U>> thenMApplyMostSuccessAsync(
+            CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit,
+            @Nullable U valueIfNotSuccess, Function<? super T, ? extends U>... fns) {
+        requireNonNull(executor, "executor is null");
+        requireNonNull(unit, "unit is null");
+        requireNonNull(fns, "fns is null");
+        for (int i = 0; i < fns.length; i++) {
+            requireNonNull(fns[i], "fn" + (i + 1) + " is null");
+        }
+        return toNonMinCf(cf).thenCompose(v -> mostResultsOfSuccess(
+                executor, timeout, unit, valueIfNotSuccess, wrapFunctions(executor, v, fns)
+        ));
+    }
+
+    private static <T, U> CompletableFuture<U>[] wrapFunctions(
+            Executor executor, T v, Function<? super T, ? extends U>[] fns) {
+        @SuppressWarnings("unchecked")
+        CompletableFuture<U>[] cfs = new CompletableFuture[fns.length];
+        for (int i = 0; i < fns.length; i++) {
+            final int idx = i;
+            cfs[i] = CompletableFuture.supplyAsync(() -> fns[idx].apply(v), executor);
+        }
+        return cfs;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -944,7 +1491,6 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      * @see CompletionStage#thenAcceptBothAsync(CompletionStage, BiConsumer)
      */
-    @SuppressWarnings("unchecked")
     public static <T, U> CompletableFuture<Void> thenAcceptBothFastFailAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
             BiConsumer<? super T, ? super U> action) {
@@ -1028,7 +1574,6 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      * @see CompletionStage#thenCombineAsync(CompletionStage, BiFunction)
      */
-    @SuppressWarnings("unchecked")
     public static <T, U, V> CompletableFuture<V> thenCombineFastFailAsync(
             CompletionStage<? extends T> cf1, CompletionStage<? extends U> cf2,
             BiFunction<? super T, ? super U, ? extends V> fn) {

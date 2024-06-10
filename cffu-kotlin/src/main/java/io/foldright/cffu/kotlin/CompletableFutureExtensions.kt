@@ -5,7 +5,6 @@ package io.foldright.cffu.kotlin
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuState
 import io.foldright.cffu.CompletableFutureUtils
-import java.util.*
 import java.util.concurrent.*
 import java.util.function.*
 import java.util.function.Function
@@ -107,7 +106,7 @@ fun Array<out CompletionStage<*>>.allOfFastFailCompletableFuture(): CompletableF
 
 /**
  * Returns a new CompletableFuture with the results in the **same order** of all the given
- * CompletableFutures, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
+ * CompletableFutures arguments, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so, with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
@@ -125,7 +124,7 @@ fun <T> Collection<CompletionStage<out T>>.allResultsOfCompletableFuture(): Comp
 
 /**
  * Returns a new CompletableFuture with the results in the **same order** of all the given
- * CompletableFutures, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
+ * CompletableFutures arguments, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so, with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
@@ -143,7 +142,7 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfCompletableFuture(): Compl
 
 /**
  * Returns a new CompletableFuture with the results in the **same order** of all the given
- * CompletableFutures, the new CompletableFuture success when all the given CompletableFutures success.
+ * CompletableFutures arguments, the new CompletableFuture success when all the given CompletableFutures success.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so *without* waiting other incomplete given CompletableFutures,
  * with a CompletionException holding this exception as its cause.
@@ -162,7 +161,7 @@ fun <T> Collection<CompletionStage<out T>>.allResultsOfFastFailCompletableFuture
 
 /**
  * Returns a new CompletableFuture with the results in the **same order** of all the given
- * CompletableFutures, the new CompletableFuture success when all the given CompletableFutures success.
+ * CompletableFutures arguments, the new CompletableFuture success when all the given CompletableFutures success.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so *without* waiting other incomplete given CompletableFutures,
  * with a CompletionException holding this exception as its cause.
@@ -181,7 +180,7 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfFastFailCompletableFuture(
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of
- * the given stages in the given time(`timeout`), aka as many results as possible in the given time.
+ * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
  * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
  *
@@ -197,7 +196,7 @@ fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of
- * the given stages in the given time(`timeout`), aka as many results as possible in the given time.
+ * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
  * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
  *
@@ -213,7 +212,7 @@ fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of
- * the given stages in the given time(`timeout`), aka as many results as possible in the given time.
+ * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
  * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
  *
@@ -232,7 +231,7 @@ fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of
- * the given stages in the given time(`timeout`), aka as many results as possible in the given time.
+ * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
  * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
  *
