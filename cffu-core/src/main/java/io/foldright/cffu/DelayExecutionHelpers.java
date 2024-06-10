@@ -6,12 +6,14 @@ package io.foldright.cffu;
 //  below code is copied from CompletableFuture with small adoption
 ////////////////////////////////////////////////////////////////////////////////
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
+
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -34,7 +36,7 @@ final class Delayer {
      * @return a Future can be used to cancel the delayed task(timeout CF)
      * @see FutureCanceller
      */
-    public static ScheduledFuture<?> delayToTimoutCf(CompletableFuture<?> cf, long delay, TimeUnit unit) {
+    static ScheduledFuture<?> delayToTimoutCf(CompletableFuture<?> cf, long delay, TimeUnit unit) {
         return delay(new CfTimeout(cf), delay, unit);
     }
 
@@ -42,8 +44,8 @@ final class Delayer {
      * @return a Future can be used to cancel the delayed task(complete CF)
      * @see FutureCanceller
      */
-    public static <T> ScheduledFuture<?> delayToCompleteCf(
-            CompletableFuture<? super T> cf, T value, long delay, TimeUnit unit) {
+    static <T> ScheduledFuture<?> delayToCompleteCf(
+            CompletableFuture<? super T> cf, @Nullable T value, long delay, TimeUnit unit) {
         return delay(new CfCompleter<>(cf, value), delay, unit);
     }
 
@@ -78,7 +80,7 @@ final class Delayer {
 
     private static final class DaemonThreadFactory implements ThreadFactory {
         @Override
-        public Thread newThread(@NonNull Runnable r) {
+        public Thread newThread(Runnable r) {
             Thread t = new Thread(r);
             t.setDaemon(true);
             t.setName(THREAD_NAME_OF_CFFU_DELAY_SCHEDULER);
@@ -108,10 +110,9 @@ final class DelayedExecutor implements Executor {
     }
 
     @Override
-    public void execute(@NonNull Runnable r) {
-        Delayer.delay(new TaskSubmitter(executor, r), delay, unit);
+    public void execute(Runnable r) {
+        Delayer.delay(new TaskSubmitter(executor, requireNonNull(r, "runnable is null")), delay, unit);
     }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -154,7 +155,7 @@ final class CfTimeout implements Runnable {
 
     @Override
     public void run() {
-        if (cf != null && !cf.isDone())
+        if (!cf.isDone())
             cf.completeExceptionally(new TimeoutException());
     }
 }
@@ -167,16 +168,17 @@ final class CfTimeout implements Runnable {
 @SuppressWarnings("JavadocReference")
 final class CfCompleter<T> implements Runnable {
     private final CompletableFuture<? super T> cf;
+    @Nullable
     private final T value;
 
-    CfCompleter(CompletableFuture<? super T> cf, T value) {
+    CfCompleter(CompletableFuture<? super T> cf, @Nullable T value) {
         this.cf = cf;
         this.value = value;
     }
 
     @Override
     public void run() {
-        if (cf != null) cf.complete(value);
+        cf.complete(value);
     }
 }
 
@@ -191,14 +193,15 @@ final class CfCompleter<T> implements Runnable {
  */
 @SuppressWarnings("JavadocReference")
 final class FutureCanceller implements BiConsumer<Object, Throwable> {
+    @Nullable
     private final Future<?> f;
 
     FutureCanceller(Future<?> f) {
-        this.f = f;
+        this.f = requireNonNull(f);
     }
 
     @Override
-    public void accept(Object ignore, Throwable ex) {
+    public void accept(Object ignore, @Nullable Throwable ex) {
         if (ex == null && f != null && !f.isDone())
             f.cancel(false);
     }
@@ -210,7 +213,9 @@ final class FutureCanceller implements BiConsumer<Object, Throwable> {
 @SuppressFBWarnings("SE_BAD_FIELD")
 final class CfCompleterBySupplier<T> extends ForkJoinTask<Void>
         implements Runnable, CompletableFuture.AsynchronousCompletionTask {
+    @Nullable
     private CompletableFuture<? super T> dep;
+    @Nullable
     private Supplier<? extends T> fn;
 
     CfCompleterBySupplier(CompletableFuture<? super T> dep, Supplier<? extends T> fn) {
@@ -257,7 +262,9 @@ final class CfCompleterBySupplier<T> extends ForkJoinTask<Void>
 @SuppressFBWarnings("SE_BAD_FIELD")
 final class CfExCompleterBySupplier extends ForkJoinTask<Void>
         implements Runnable, CompletableFuture.AsynchronousCompletionTask {
+    @Nullable
     private CompletableFuture<?> dep;
+    @Nullable
     private Supplier<? extends Throwable> fn;
 
     CfExCompleterBySupplier(CompletableFuture<?> dep, Supplier<? extends Throwable> fn) {

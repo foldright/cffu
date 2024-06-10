@@ -1,16 +1,13 @@
 package io.foldright.cffu;
 
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
 import io.foldright.cffu.tuple.Tuple4;
 import io.foldright.cffu.tuple.Tuple5;
 import org.jetbrains.annotations.Contract;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -43,10 +40,7 @@ import static java.util.Objects.requireNonNull;
  * @see CompletableFuture
  */
 @ThreadSafe
-@ParametersAreNonnullByDefault
-@ReturnValuesAreNonnullByDefault
 public final class CffuFactory {
-    @NonNull
     private final Executor defaultExecutor;
 
     private final boolean forbidObtrudeMethods;
@@ -193,7 +187,6 @@ public final class CffuFactory {
      * @see CompletableFuture#supplyAsync(Supplier)
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAsync`")
-    @SuppressWarnings("BoundedWildcard")
     public <T> Cffu<T> supplyAsync(Supplier<T> supplier) {
         return supplyAsync(supplier, defaultExecutor);
     }
@@ -209,7 +202,6 @@ public final class CffuFactory {
      * @see CompletableFuture#supplyAsync(Supplier, Executor)
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAsync`")
-    @SuppressWarnings("BoundedWildcard")
     public <T> Cffu<T> supplyAsync(Supplier<T> supplier, Executor executor) {
         return create(CompletableFuture.supplyAsync(supplier, executor));
     }

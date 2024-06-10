@@ -1,10 +1,11 @@
 package io.foldright.cffu;
 
-import edu.umd.cs.findbugs.annotations.*;
+import edu.umd.cs.findbugs.annotations.CheckReturnValue;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.Contract;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.concurrent.*;
 import java.util.function.*;
 
@@ -24,14 +25,11 @@ import static java.util.Objects.requireNonNull;
  * @see CompletionStage
  * @see CompletableFuture
  */
-@ParametersAreNonnullByDefault
-@ReturnValuesAreNonnullByDefault
 public final class Cffu<T> implements Future<T>, CompletionStage<T> {
-    @NonNull
     private final CffuFactory fac;
 
     private final boolean isMinimalStage;
-    @NonNull
+
     private final CompletableFuture<T> cf;
 
     Cffu(CffuFactory cffuFactory, boolean isMinimalStage, CompletableFuture<T> cf) {

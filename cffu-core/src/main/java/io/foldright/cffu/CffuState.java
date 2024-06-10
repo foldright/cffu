@@ -1,9 +1,7 @@
 package io.foldright.cffu;
 
-import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
 import org.jetbrains.annotations.Contract;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.concurrent.Future;
 
 import static java.util.Objects.requireNonNull;
@@ -17,8 +15,6 @@ import static java.util.Objects.requireNonNull;
  * @see CompletableFutureUtils#state(Future)
  * @see Cffu#cffuState()
  */
-@ParametersAreNonnullByDefault
-@ReturnValuesAreNonnullByDefault
 public enum CffuState {
     /**
      * The task has not completed.

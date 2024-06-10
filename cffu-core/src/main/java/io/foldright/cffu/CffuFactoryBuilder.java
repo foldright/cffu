@@ -1,11 +1,8 @@
 package io.foldright.cffu;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
 import io.foldright.cffu.spi.ExecutorWrapperProvider;
 import org.jetbrains.annotations.Contract;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -25,10 +22,7 @@ import static java.util.Objects.requireNonNull;
  * @see Cffu
  */
 @ThreadSafe
-@ParametersAreNonnullByDefault
-@ReturnValuesAreNonnullByDefault
 public final class CffuFactoryBuilder {
-    @NonNull
     private final Executor defaultExecutor;
 
     private volatile boolean forbidObtrudeMethods = false;

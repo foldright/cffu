@@ -1,7 +1,6 @@
 package io.foldright.cffu;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
-import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
 import io.foldright.cffu.tuple.Tuple4;
@@ -9,7 +8,6 @@ import io.foldright.cffu.tuple.Tuple5;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.Contract;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -28,8 +26,6 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  */
-@ParametersAreNonnullByDefault
-@ReturnValuesAreNonnullByDefault
 public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
     //# allOf*/mostResultsOfSuccess methods
@@ -1355,6 +1351,7 @@ public final class CompletableFutureUtils {
     }
 
     @Nullable
+    @SuppressWarnings("SameReturnValue")
     private static <T> T reportException(String msg, Throwable ex) {
         StringWriter sw = new StringWriter(4096);
         PrintWriter writer = new PrintWriter(sw);
