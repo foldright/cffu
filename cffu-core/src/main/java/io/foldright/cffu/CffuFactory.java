@@ -303,7 +303,7 @@ public final class CffuFactory {
      * <p>
      * If you need the successful results of given stages in the given time, prefer below methods:
      * <ul>
-     * <li>{@link #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])}
+     * <li>{@link #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])}
      * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)}
      * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      * </ul>
@@ -314,7 +314,7 @@ public final class CffuFactory {
      * @see #allResultsOf(CompletionStage[])
      * @see #allTupleOf(CompletionStage, CompletionStage)
      * @see #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
      * @see #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)
      * @see #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
      * @see CompletableFutureUtils#allOf(CompletionStage[])
@@ -366,7 +366,7 @@ public final class CffuFactory {
      * <p>
      * If you need the successful results of given stages in the given time, prefer below methods:
      * <ul>
-     * <li>{@link #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])}
+     * <li>{@link #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])}
      * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)}
      * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      * </ul>
@@ -377,7 +377,7 @@ public final class CffuFactory {
      * @see #allResultsOfFastFail(CompletionStage[])
      * @see #allTupleOfFastFail(CompletionStage, CompletionStage)
      * @see #allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
      * @see #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)
      * @see #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
      * @see #allOf(CompletionStage[])
@@ -418,18 +418,18 @@ public final class CffuFactory {
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
      *
+     * @param valueIfNotSuccess the value to return if not completed successfully
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param valueIfNotSuccess the value to return if not completed successfully
      * @param cfs               the stages
      * @see Cffu#getSuccessNow(Object)
      */
     @Contract(pure = true)
     @SafeVarargs
     public final <T> Cffu<List<T>> mostResultsOfSuccess(
-            long timeout, TimeUnit unit, @Nullable T valueIfNotSuccess, CompletionStage<? extends T>... cfs) {
+            @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit, CompletionStage<? extends T>... cfs) {
         return create(CompletableFutureUtils.mostResultsOfSuccess(
-                defaultExecutor, timeout, unit, valueIfNotSuccess, cfs));
+                valueIfNotSuccess, defaultExecutor, timeout, unit, cfs));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -636,7 +636,7 @@ public final class CffuFactory {
      * @param timeout how long to wait in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new Cffu that is completed when the given two stages complete
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
      * @see Cffu#getSuccessNow(Object)
      */
     @Contract(pure = true)
@@ -654,7 +654,7 @@ public final class CffuFactory {
      * @param timeout how long to wait in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new Cffu that is completed when the given three stages complete
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
      * @see Cffu#getSuccessNow(Object)
      */
     @Contract(pure = true)
@@ -673,7 +673,7 @@ public final class CffuFactory {
      * @param timeout how long to wait in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new Cffu that is completed when the given four stages complete
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
      * @see Cffu#getSuccessNow(Object)
      */
     @Contract(pure = true)
@@ -693,7 +693,7 @@ public final class CffuFactory {
      * @param timeout how long to wait in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new Cffu that is completed when the given five stages complete
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
      * @see Cffu#getSuccessNow(Object)
      */
     @Contract(pure = true)

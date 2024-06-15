@@ -280,22 +280,22 @@ class CffuFactoryTest {
         final Cffu<Integer> cancelled = cffuFactory.toCffu(createCancelledFuture());
         final Cffu<Integer> incomplete = cffuFactory.toCffu(createIncompleteFuture());
 
-        assertEquals(0, cffuFactory.mostResultsOfSuccess(10, TimeUnit.MILLISECONDS, null).get().size());
+        assertEquals(0, cffuFactory.mostResultsOfSuccess(null, 10, TimeUnit.MILLISECONDS).get().size());
 
         assertEquals(Arrays.asList(n, null, null, null), cffuFactory.mostResultsOfSuccess(
-                10, TimeUnit.MILLISECONDS, null, completed, failed, cancelled, incomplete
+                null, 10, TimeUnit.MILLISECONDS, completed, failed, cancelled, incomplete
         ).get());
         assertEquals(Arrays.asList(n, anotherN, anotherN, anotherN), cffuFactory.mostResultsOfSuccess(
-                10, TimeUnit.MILLISECONDS, anotherN, completedStage, failed, cancelled, incomplete
+                anotherN, 10, TimeUnit.MILLISECONDS, completedStage, failed, cancelled, incomplete
         ).get());
 
         assertEquals(Arrays.asList(anotherN, anotherN, anotherN), cffuFactory.mostResultsOfSuccess(
-                10, TimeUnit.MILLISECONDS, anotherN, failed, cancelled, incomplete
+                anotherN, 10, TimeUnit.MILLISECONDS, failed, cancelled, incomplete
         ).get());
 
         // do not wait for failed and cancelled
         assertEquals(Arrays.asList(anotherN, anotherN), cffuFactory.mostResultsOfSuccess(
-                10, TimeUnit.DAYS, anotherN, failed, cancelled
+                anotherN, 10, TimeUnit.DAYS, failed, cancelled
         ).get());
     }
 

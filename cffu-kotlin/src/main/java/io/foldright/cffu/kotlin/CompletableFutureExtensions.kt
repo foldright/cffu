@@ -190,9 +190,9 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfFastFailCompletableFuture(
  * @see getSuccessNow
  */
 fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
-    timeout: Long, unit: TimeUnit, valueIfNotSuccess: T
+    valueIfNotSuccess: T, timeout: Long, unit: TimeUnit
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mostResultsOfSuccess(timeout, unit, valueIfNotSuccess, *toTypedArray())
+    CompletableFutureUtils.mostResultsOfSuccess(valueIfNotSuccess, timeout, unit, *toTypedArray())
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of
@@ -206,9 +206,9 @@ fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture
  * @see getSuccessNow
  */
 fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
-    timeout: Long, unit: TimeUnit, valueIfNotSuccess: T
+    valueIfNotSuccess: T, timeout: Long, unit: TimeUnit
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mostResultsOfSuccess(timeout, unit, valueIfNotSuccess, *this)
+    CompletableFutureUtils.mostResultsOfSuccess(valueIfNotSuccess, timeout, unit, *this)
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of
@@ -223,10 +223,10 @@ fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
  * @see getSuccessNow
  */
 fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
-    executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit, valueIfNotSuccess: T
+    valueIfNotSuccess: T, executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit
 ): CompletableFuture<List<T>> =
     CompletableFutureUtils.mostResultsOfSuccess(
-        executorWhenTimeout, timeout, unit, valueIfNotSuccess, *toTypedArray()
+        valueIfNotSuccess, executorWhenTimeout, timeout, unit, *toTypedArray()
     )
 
 /**
@@ -242,9 +242,9 @@ fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture
  * @see getSuccessNow
  */
 fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
-    executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit, valueIfNotSuccess: T
+    valueIfNotSuccess: T, executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mostResultsOfSuccess(executorWhenTimeout, timeout, unit, valueIfNotSuccess, *this)
+    CompletableFutureUtils.mostResultsOfSuccess(valueIfNotSuccess, executorWhenTimeout, timeout, unit, *this)
 
 ////////////////////////////////////////
 //# anyOf* methods for Array/Collection

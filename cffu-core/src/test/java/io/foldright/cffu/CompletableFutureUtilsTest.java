@@ -64,18 +64,14 @@ class CompletableFutureUtilsTest {
 
         final long tick = System.currentTimeMillis();
 
-        @SuppressWarnings("unused")
-        final CompletableFuture<List<Object>> listCompletableFuture = mSupplyMostSuccessAsync(200, TimeUnit.MILLISECONDS, supplier, supplier);
-        // FIXME unexpected type inference, move default value argument ahead before timeout???
-
         @SuppressWarnings("unchecked")
         CompletableFuture<List<Integer>>[] cfs = new CompletableFuture[]{
                 mSupplyAsync(supplier, supplier),
                 mSupplyAsync(executorService, supplier, supplier),
                 mSupplyFastFailAsync(supplier, supplier),
                 mSupplyFastFailAsync(executorService, supplier, supplier),
-                mSupplyMostSuccessAsync(500, TimeUnit.MILLISECONDS, anotherN, supplier, supplier),
-                mSupplyMostSuccessAsync(executorService, 500, TimeUnit.MILLISECONDS, anotherN, supplier, supplier),
+                mSupplyMostSuccessAsync(anotherN, 500, TimeUnit.MILLISECONDS, supplier, supplier),
+                mSupplyMostSuccessAsync(anotherN, executorService, 500, TimeUnit.MILLISECONDS, supplier, supplier),
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
@@ -392,36 +388,36 @@ class CompletableFutureUtilsTest {
         final CompletableFuture<Integer> incomplete = createIncompleteFuture();
 
         // 0 input cf
-        assertEquals(0, mostResultsOfSuccess(10, TimeUnit.MILLISECONDS, null).get().size());
+        assertEquals(0, mostResultsOfSuccess(null, 10, TimeUnit.MILLISECONDS).get().size());
 
         // 1 input cf
         assertEquals(Collections.singletonList(n), mostResultsOfSuccess(
-                10, TimeUnit.MILLISECONDS, null, completed).get());
+                null, 10, TimeUnit.MILLISECONDS, completed).get());
         assertEquals(Collections.singletonList(n), mostResultsOfSuccess(
-                10, TimeUnit.MILLISECONDS, anotherN, completedStage).get());
+                anotherN, 10, TimeUnit.MILLISECONDS, completedStage).get());
 
         assertEquals(Collections.singletonList(anotherN), mostResultsOfSuccess(
-                10, TimeUnit.MILLISECONDS, anotherN, failed).get());
+                anotherN, 10, TimeUnit.MILLISECONDS, failed).get());
         assertEquals(Collections.singletonList(anotherN), mostResultsOfSuccess(
-                10, TimeUnit.MILLISECONDS, anotherN, cancelled).get());
+                anotherN, 10, TimeUnit.MILLISECONDS, cancelled).get());
         assertEquals(Collections.singletonList(anotherN), mostResultsOfSuccess(
-                10, TimeUnit.MILLISECONDS, anotherN, incomplete).get());
+                anotherN, 10, TimeUnit.MILLISECONDS, incomplete).get());
 
         // more input cf
         assertEquals(Arrays.asList(n, null, null, null), mostResultsOfSuccess(
-                10, TimeUnit.MILLISECONDS, null, completed, failed, cancelled, incomplete
+                null, 10, TimeUnit.MILLISECONDS, completed, failed, cancelled, incomplete
         ).get());
         assertEquals(Arrays.asList(n, anotherN, anotherN, anotherN), mostResultsOfSuccess(
-                10, TimeUnit.MILLISECONDS, anotherN, completedStage, failed, cancelled, incomplete
+                anotherN, 10, TimeUnit.MILLISECONDS, completedStage, failed, cancelled, incomplete
         ).get());
 
         assertEquals(Arrays.asList(anotherN, anotherN, anotherN), mostResultsOfSuccess(
-                10, TimeUnit.MILLISECONDS, anotherN, failed, cancelled, incomplete
+                anotherN, 10, TimeUnit.MILLISECONDS, failed, cancelled, incomplete
         ).get());
 
         // do not wait for failed and cancelled
         assertEquals(Arrays.asList(anotherN, anotherN), mostResultsOfSuccess(
-                10, TimeUnit.DAYS, anotherN, failed, cancelled
+                anotherN, 10, TimeUnit.DAYS, failed, cancelled
         ).get());
     }
 
@@ -431,10 +427,10 @@ class CompletableFutureUtilsTest {
         final CompletableFuture<Integer> incomplete2 = createIncompleteFuture();
 
         assertEquals(Collections.singletonList(null), mostResultsOfSuccess(
-                10, TimeUnit.MILLISECONDS, null, incomplete
+                null, 10, TimeUnit.MILLISECONDS, incomplete
         ).get());
         assertEquals(Arrays.asList(null, null), mostResultsOfSuccess(
-                10, TimeUnit.MILLISECONDS, null, incomplete, incomplete2
+                null, 10, TimeUnit.MILLISECONDS, incomplete, incomplete2
         ).get());
 
         assertEquals(CffuState.RUNNING, state(incomplete));
@@ -869,10 +865,6 @@ class CompletableFutureUtilsTest {
         };
         final CompletableFuture<Integer> completed = completedFuture(n);
 
-        @SuppressWarnings("unused")
-        final CompletableFuture<List<Object>> listCompletableFuture = thenMApplyMostSuccessAsync(completed, 200, TimeUnit.MILLISECONDS, supplier, supplier);
-        // FIXME unexpected type inference, move default value argument ahead before timeout???
-
         final long tick = System.currentTimeMillis();
         @SuppressWarnings("unchecked")
         CompletableFuture<List<Integer>>[] cfs = new CompletableFuture[]{
@@ -880,8 +872,8 @@ class CompletableFutureUtilsTest {
                 thenMApplyAsync(completed, executorService, supplier, supplier),
                 thenMApplyFastFailAsync(completed, supplier, supplier),
                 thenMApplyFastFailAsync(completed, executorService, supplier, supplier),
-                thenMApplyMostSuccessAsync(completed, 500, TimeUnit.MILLISECONDS, anotherN, supplier, supplier),
-                thenMApplyMostSuccessAsync(completed, executorService, 500, TimeUnit.MILLISECONDS, anotherN, supplier, supplier),
+                thenMApplyMostSuccessAsync(completed, anotherN, 500, TimeUnit.MILLISECONDS, supplier, supplier),
+                thenMApplyMostSuccessAsync(completed, anotherN, executorService, 500, TimeUnit.MILLISECONDS, supplier, supplier),
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
