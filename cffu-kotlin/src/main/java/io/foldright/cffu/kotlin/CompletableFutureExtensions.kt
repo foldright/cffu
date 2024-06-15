@@ -11,134 +11,18 @@ import java.util.function.Function
 
 
 ////////////////////////////////////////////////////////////////////////////////
-//# Extension methods for CompletableFuture
+// Extension methods for CompletableFuture
 //  input and output(return type) is CompletableFuture
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////
-//# allOf*/mostResultsOfSuccess* methods for Array/Collection
+// region# allOf*/mostResultsOfSuccess* methods for Array/Collection
 //
+//    - allResultsOfFastFailCompletableFuture
+//    - allResultsOfCompletableFuture
 //    - allOfCompletableFuture
 //    - allOfFastFailCompletableFuture
-//    - allResultsOfCompletableFuture
-//    - allResultsOfFastFailCompletableFuture
 ////////////////////////////////////////
-
-/**
- * Returns a new CompletableFuture that is completed when all the given stages complete.
- * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
- * with a CompletionException holding this exception as its cause.
- * Otherwise, the results, if any, of the given stages are not reflected
- * in the returned CompletableFuture, but may be obtained by inspecting them individually.
- * If no stages are provided, returns a CompletableFuture completed with the value `null`.
- *
- * If you need the results of given stages, prefer below methods:
- *
- *  - [allResultsOfCompletableFuture]
- *
- * This method is the same as [CompletableFutureUtils.allOf], providing this method is convenient for method chaining.
- *
- * @see allResultsOfCompletableFuture
- */
-fun Collection<CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
-    CompletableFutureUtils.allOf(*toTypedArray())
-
-/**
- * Returns a new CompletableFuture that is completed when all the given stages complete.
- * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
- * with a CompletionException holding this exception as its cause.
- * Otherwise, the results, if any, of the given stages are not reflected
- * in the returned CompletableFuture, but may be obtained by inspecting them individually.
- * If no stages are provided, returns a CompletableFuture completed with the value `null`.
- *
- * If you need the results of given stages, prefer below methods:
- *
- *  - [allResultsOfCompletableFuture]
- *
- * This method is the same as [CompletableFutureUtils.allOf], providing this method is convenient for method chaining.
- *
- * @see allResultsOfCompletableFuture
- */
-fun Array<out CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
-    CompletableFutureUtils.allOf(*this)
-
-/**
- * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
- * the results(`CompletableFuture<Void>`) of the given CompletableFutures are not reflected in the returned CompletableFuture,
- * but may be obtained by inspecting them individually.
- * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
- * also does so *without* waiting other incomplete given CompletableFutures,
- * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a CompletableFuture completed with the value `null`.
- *
- * If you need the results of given stages, prefer below methods:
- *
- *  - [allResultsOfFastFailCompletableFuture]
- *
- * This method is the same as [CompletableFutureUtils.allOfFastFail],
- * providing this method is convenient for method chaining.
- *
- * @see allResultsOfFastFailCompletableFuture
- */
-fun Collection<CompletionStage<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
-    CompletableFutureUtils.allOfFastFail(*toTypedArray())
-
-/**
- * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
- * the results(`CompletableFuture<Void>`) of the given CompletableFutures are not reflected in the returned CompletableFuture,
- * but may be obtained by inspecting them individually.
- * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
- * also does so *without* waiting other incomplete given CompletableFutures,
- * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a CompletableFuture completed with the value `null`.
- *
- * If you need the results of given stages, prefer below methods:
- *
- *  - [allResultsOfFastFailCompletableFuture]
- *
- * This method is the same as [CompletableFutureUtils.allOfFastFail],
- * providing this method is convenient for method chaining.
- *
- * @see allResultsOfFastFailCompletableFuture
- */
-fun Array<out CompletionStage<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
-    CompletableFutureUtils.allOfFastFail(*this)
-
-/**
- * Returns a new CompletableFuture with the results in the **same order** of all the given
- * CompletableFutures arguments, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
- * also does so, with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
- *
- * This method is the same as [allOfCompletableFuture],
- * except the returned CompletableFuture contains the results of input CompletableFutures.
- *
- * This method is the same as [CompletableFutureUtils.allResultsOf],
- * providing this method is convenient for method chaining.
- *
- * @see allOfCompletableFuture
- */
-fun <T> Collection<CompletionStage<out T>>.allResultsOfCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allResultsOf(*toTypedArray())
-
-/**
- * Returns a new CompletableFuture with the results in the **same order** of all the given
- * CompletableFutures arguments, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
- * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
- * also does so, with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
- *
- * This method is the same as [allOfCompletableFuture],
- * except the returned CompletableFuture contains the results of input CompletableFutures.
- *
- * This method is the same as [CompletableFutureUtils.allResultsOf],
- * providing this method is convenient for method chaining.
- *
- * @see allOfCompletableFuture
- */
-fun <T> Array<out CompletionStage<out T>>.allResultsOfCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allResultsOf(*this)
 
 /**
  * Returns a new CompletableFuture with the results in the **same order** of all the given
@@ -246,40 +130,129 @@ fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
 ): CompletableFuture<List<T>> =
     CompletableFutureUtils.mostResultsOfSuccess(valueIfNotSuccess, executorWhenTimeout, timeout, unit, *this)
 
+/**
+ * Returns a new CompletableFuture with the results in the **same order** of all the given
+ * CompletableFutures arguments, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
+ * also does so, with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
+ *
+ * This method is the same as [allOfCompletableFuture],
+ * except the returned CompletableFuture contains the results of input CompletableFutures.
+ *
+ * This method is the same as [CompletableFutureUtils.allResultsOf],
+ * providing this method is convenient for method chaining.
+ *
+ * @see allOfCompletableFuture
+ */
+fun <T> Collection<CompletionStage<out T>>.allResultsOfCompletableFuture(): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allResultsOf(*toTypedArray())
+
+/**
+ * Returns a new CompletableFuture with the results in the **same order** of all the given
+ * CompletableFutures arguments, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
+ * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
+ * also does so, with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
+ *
+ * This method is the same as [allOfCompletableFuture],
+ * except the returned CompletableFuture contains the results of input CompletableFutures.
+ *
+ * This method is the same as [CompletableFutureUtils.allResultsOf],
+ * providing this method is convenient for method chaining.
+ *
+ * @see allOfCompletableFuture
+ */
+fun <T> Array<out CompletionStage<out T>>.allResultsOfCompletableFuture(): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allResultsOf(*this)
+
+/**
+ * Returns a new CompletableFuture that is completed when all the given stages complete.
+ * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
+ * with a CompletionException holding this exception as its cause.
+ * Otherwise, the results, if any, of the given stages are not reflected
+ * in the returned CompletableFuture, but may be obtained by inspecting them individually.
+ * If no stages are provided, returns a CompletableFuture completed with the value `null`.
+ *
+ * If you need the results of given stages, prefer below methods:
+ *
+ *  - [allResultsOfCompletableFuture]
+ *
+ * This method is the same as [CompletableFutureUtils.allOf], providing this method is convenient for method chaining.
+ *
+ * @see allResultsOfCompletableFuture
+ */
+fun Collection<CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
+    CompletableFutureUtils.allOf(*toTypedArray())
+
+/**
+ * Returns a new CompletableFuture that is completed when all the given stages complete.
+ * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
+ * with a CompletionException holding this exception as its cause.
+ * Otherwise, the results, if any, of the given stages are not reflected
+ * in the returned CompletableFuture, but may be obtained by inspecting them individually.
+ * If no stages are provided, returns a CompletableFuture completed with the value `null`.
+ *
+ * If you need the results of given stages, prefer below methods:
+ *
+ *  - [allResultsOfCompletableFuture]
+ *
+ * This method is the same as [CompletableFutureUtils.allOf], providing this method is convenient for method chaining.
+ *
+ * @see allResultsOfCompletableFuture
+ */
+fun Array<out CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
+    CompletableFutureUtils.allOf(*this)
+
+/**
+ * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
+ * the results(`CompletableFuture<Void>`) of the given CompletableFutures are not reflected in the returned CompletableFuture,
+ * but may be obtained by inspecting them individually.
+ * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
+ * also does so *without* waiting other incomplete given CompletableFutures,
+ * with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a CompletableFuture completed with the value `null`.
+ *
+ * If you need the results of given stages, prefer below methods:
+ *
+ *  - [allResultsOfFastFailCompletableFuture]
+ *
+ * This method is the same as [CompletableFutureUtils.allOfFastFail],
+ * providing this method is convenient for method chaining.
+ *
+ * @see allResultsOfFastFailCompletableFuture
+ */
+fun Collection<CompletionStage<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
+    CompletableFutureUtils.allOfFastFail(*toTypedArray())
+
+/**
+ * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
+ * the results(`CompletableFuture<Void>`) of the given CompletableFutures are not reflected in the returned CompletableFuture,
+ * but may be obtained by inspecting them individually.
+ * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
+ * also does so *without* waiting other incomplete given CompletableFutures,
+ * with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns a CompletableFuture completed with the value `null`.
+ *
+ * If you need the results of given stages, prefer below methods:
+ *
+ *  - [allResultsOfFastFailCompletableFuture]
+ *
+ * This method is the same as [CompletableFutureUtils.allOfFastFail],
+ * providing this method is convenient for method chaining.
+ *
+ * @see allResultsOfFastFailCompletableFuture
+ */
+fun Array<out CompletionStage<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
+    CompletableFutureUtils.allOfFastFail(*this)
+
+// endregion
 ////////////////////////////////////////
-//# anyOf* methods for Array/Collection
+// region# anyOf* methods for Array/Collection
 //
 //    - anyOfCompletableFuture
 //    - anyOfSuccessCompletableFuture
 ////////////////////////////////////////
-
-/**
- * Returns a new CompletableFuture that is completed
- * when any of the given CompletableFutures complete, with the same result.
- * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so,
- * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
- *
- * This method is the same as [CompletableFutureUtils.anyOf], providing this method is convenient for method chaining.
- *
- * @see anyOfSuccessCompletableFuture
- */
-fun <T> Collection<CompletionStage<out T>>.anyOfCompletableFuture(): CompletableFuture<T> =
-    CompletableFutureUtils.anyOf(*toTypedArray())
-
-/**
- * Returns a new CompletableFuture that is completed
- * when any of the given CompletableFutures complete, with the same result.
- * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so,
- * with a CompletionException holding this exception as its cause.
- * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
- *
- * This method is the same as [CompletableFutureUtils.anyOf], providing this method is convenient for method chaining.
- *
- * @see anyOfSuccessCompletableFuture
- */
-fun <T> Array<out CompletionStage<out T>>.anyOfCompletableFuture(): CompletableFuture<T> =
-    CompletableFutureUtils.anyOf(*this)
 
 /**
  * Returns a new CompletableFuture that is successful when any of the given CompletableFutures success,
@@ -313,62 +286,98 @@ fun <T> Collection<CompletionStage<out T>>.anyOfSuccessCompletableFuture(): Comp
 fun <T> Array<out CompletionStage<out T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
     CompletableFutureUtils.anyOfSuccess(*this)
 
+/**
+ * Returns a new CompletableFuture that is completed
+ * when any of the given CompletableFutures complete, with the same result.
+ * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so,
+ * with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
+ *
+ * This method is the same as [CompletableFutureUtils.anyOf], providing this method is convenient for method chaining.
+ *
+ * @see anyOfSuccessCompletableFuture
+ */
+fun <T> Collection<CompletionStage<out T>>.anyOfCompletableFuture(): CompletableFuture<T> =
+    CompletableFutureUtils.anyOf(*toTypedArray())
+
+/**
+ * Returns a new CompletableFuture that is completed
+ * when any of the given CompletableFutures complete, with the same result.
+ * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so,
+ * with a CompletionException holding this exception as its cause.
+ * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
+ *
+ * This method is the same as [CompletableFutureUtils.anyOf], providing this method is convenient for method chaining.
+ *
+ * @see anyOfSuccessCompletableFuture
+ */
+fun <T> Array<out CompletionStage<out T>>.anyOfCompletableFuture(): CompletableFuture<T> =
+    CompletableFutureUtils.anyOf(*this)
+
+// endregion
 ////////////////////////////////////////////////////////////////////////////////
-//# `then both(binary input)` methods with fast-fail support:
+// region# `then both(binary input)` methods with fast-fail support
 //
-//    - runAfterBothFastFail*(Runnable):     Void, Void -> Void
-//    - thenAcceptBothFastFail*(BiConsumer): (T1, T2) -> Void
 //    - thenCombineFastFail*(BiFunction):    (T1, T2) -> U
+//    - thenAcceptBothFastFail*(BiConsumer): (T1, T2) -> Void
+//    - runAfterBothFastFail*(Runnable):     Void, Void -> Void
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Returns a new CompletableFuture that, when two given stages both complete normally, executes the given action.
- * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
- * **without** waiting other incomplete given CompletionStage,
- * with a CompletionException holding this exception as its cause.
- *
- * This method is the same as [CompletableFuture.runAfterBoth] except for the fast-fail behavior.
- *
- * @param action the action to perform before completing the returned CompletableFuture
- * @return the new CompletableFuture
- * @see CompletionStage.runAfterBoth
- */
-fun CompletionStage<*>.runAfterBothFastFail(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
-    CompletableFutureUtils.runAfterBothFastFail(this, other, action)
-
-/**
- * Returns a new CompletableFuture that, when two given stages both complete normally,
- * executes the given action using CompletableFuture's default asynchronous execution facility.
- * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
- * **without** waiting other incomplete given CompletionStage,
- * with a CompletionException holding this exception as its cause.
- *
- * This method is the same as [CompletableFuture.runAfterBothAsync] except for the fast-fail behavior.
- *
- * @param action the action to perform before completing the returned CompletableFuture
- * @return the new CompletableFuture
- * @see CompletionStage.runAfterBothAsync
- */
-fun CompletionStage<*>.runAfterBothFastFailAsync(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
-    CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action)
-
-/**
- * Returns a new CompletableFuture that, when two given stages both complete normally,
- * executes the given action using the supplied executor.
+ * Returns a new CompletableFuture that, when tow given stage both complete normally,
+ * is executed with the two results as arguments to the supplied function.
  * if any of the given stage complete exceptionally, then the returned CompletableFuture
- * also does so **without** waiting other incomplete given CompletionStage,
+ * also does so *without* waiting other incomplete given CompletionStage,
  * with a CompletionException holding this exception as its cause.
  *
- * This method is the same as [CompletableFuture.runAfterBothAsync] except for the fast-fail behavior.
+ * This method is the same as [CompletableFuture.thenCombine] except for the fast-fail behavior.
  *
- * @param action the action to perform before completing the returned CompletableFuture
+ * @param fn the function to use to compute the value of the returned CompletableFuture
  * @return the new CompletableFuture
- * @see CompletionStage.runAfterBothAsync
+ * @see CompletionStage.thenCombine
  */
-fun CompletionStage<*>.runAfterBothFastFailAsync(
-    other: CompletionStage<*>, action: Runnable, executor: Executor
-): CompletableFuture<Void> =
-    CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action, executor)
+fun <T, U, V> CompletionStage<out T>.thenCombineFastFail(
+    other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
+): CompletableFuture<V> =
+    CompletableFutureUtils.thenCombineFastFail(this, other, fn)
+
+/**
+ * Returns a new CompletableFuture that, when tow given stage both complete normally,
+ * is executed using CompletableFuture's default asynchronous execution facility,
+ * with the two results as arguments to the supplied function.
+ * if any of the given stage complete exceptionally, then the returned CompletableFuture
+ * also does so *without* waiting other incomplete given CompletionStage,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * This method is the same as [CompletableFuture.thenCombineAsync] except for the fast-fail behavior.
+ *
+ * @param fn the function to use to compute the value of the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletionStage.thenCombineAsync
+ */
+fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
+    other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
+): CompletableFuture<V> =
+    CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn)
+
+/**
+ * Returns a new CompletableFuture that, when tow given stage both complete normally,
+ * is executed using the supplied executor,
+ * with the two results as arguments to the supplied function.
+ * if any of the given stage complete exceptionally, then the returned CompletableFuture
+ * also does so *without* waiting other incomplete given CompletionStage,
+ * with a CompletionException holding this exception as its cause.
+ *
+ * This method is the same as [CompletableFuture.thenCombineAsync] except for the fast-fail behavior.
+ *
+ * @param fn the function to use to compute the value of the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletionStage.thenCombineAsync
+ */
+fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
+    other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>, executor: Executor
+): CompletableFuture<V> =
+    CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn, executor)
 
 /**
  * Returns a new CompletableFuture that, when tow given stage both complete normally,
@@ -427,68 +436,165 @@ fun <T, U> CompletionStage<out T>.thenAcceptBothFastFailAsync(
     CompletableFutureUtils.thenAcceptBothFastFailAsync(this, other, action, executor)
 
 /**
- * Returns a new CompletableFuture that, when tow given stage both complete normally,
- * is executed with the two results as arguments to the supplied function.
- * if any of the given stage complete exceptionally, then the returned CompletableFuture
- * also does so *without* waiting other incomplete given CompletionStage,
+ * Returns a new CompletableFuture that, when two given stages both complete normally, executes the given action.
+ * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
+ * **without** waiting other incomplete given CompletionStage,
  * with a CompletionException holding this exception as its cause.
  *
- * This method is the same as [CompletableFuture.thenCombine] except for the fast-fail behavior.
+ * This method is the same as [CompletableFuture.runAfterBoth] except for the fast-fail behavior.
  *
- * @param fn the function to use to compute the value of the returned CompletableFuture
+ * @param action the action to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
- * @see CompletionStage.thenCombine
+ * @see CompletionStage.runAfterBoth
  */
-fun <T, U, V> CompletionStage<out T>.thenCombineFastFail(
-    other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
-): CompletableFuture<V> =
-    CompletableFutureUtils.thenCombineFastFail(this, other, fn)
+fun CompletionStage<*>.runAfterBothFastFail(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
+    CompletableFutureUtils.runAfterBothFastFail(this, other, action)
 
 /**
- * Returns a new CompletableFuture that, when tow given stage both complete normally,
- * is executed using CompletableFuture's default asynchronous execution facility,
- * with the two results as arguments to the supplied function.
- * if any of the given stage complete exceptionally, then the returned CompletableFuture
- * also does so *without* waiting other incomplete given CompletionStage,
+ * Returns a new CompletableFuture that, when two given stages both complete normally,
+ * executes the given action using CompletableFuture's default asynchronous execution facility.
+ * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
+ * **without** waiting other incomplete given CompletionStage,
  * with a CompletionException holding this exception as its cause.
  *
- * This method is the same as [CompletableFuture.thenCombineAsync] except for the fast-fail behavior.
+ * This method is the same as [CompletableFuture.runAfterBothAsync] except for the fast-fail behavior.
  *
- * @param fn the function to use to compute the value of the returned CompletableFuture
+ * @param action the action to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
- * @see CompletionStage.thenCombineAsync
+ * @see CompletionStage.runAfterBothAsync
  */
-fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
-    other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
-): CompletableFuture<V> =
-    CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn)
+fun CompletionStage<*>.runAfterBothFastFailAsync(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
+    CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action)
 
 /**
- * Returns a new CompletableFuture that, when tow given stage both complete normally,
- * is executed using the supplied executor,
- * with the two results as arguments to the supplied function.
+ * Returns a new CompletableFuture that, when two given stages both complete normally,
+ * executes the given action using the supplied executor.
  * if any of the given stage complete exceptionally, then the returned CompletableFuture
- * also does so *without* waiting other incomplete given CompletionStage,
+ * also does so **without** waiting other incomplete given CompletionStage,
  * with a CompletionException holding this exception as its cause.
  *
- * This method is the same as [CompletableFuture.thenCombineAsync] except for the fast-fail behavior.
+ * This method is the same as [CompletableFuture.runAfterBothAsync] except for the fast-fail behavior.
  *
- * @param fn the function to use to compute the value of the returned CompletableFuture
+ * @param action the action to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
- * @see CompletionStage.thenCombineAsync
+ * @see CompletionStage.runAfterBothAsync
  */
-fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
-    other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>, executor: Executor
-): CompletableFuture<V> =
-    CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn, executor)
+fun CompletionStage<*>.runAfterBothFastFailAsync(
+    other: CompletionStage<*>, action: Runnable, executor: Executor
+): CompletableFuture<Void> =
+    CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action, executor)
 
+// endregion
 ////////////////////////////////////////////////////////////////////////////////
-//# `then either(binary input)` methods with either(any)-success support:
+// region# `then either(binary input)` methods with either(any)-success support
 //
 //    - runAfterEitherSuccess*(Runnable):  Void, Void -> Void
 //    - acceptEitherSuccess*(Consumer):  (T, T) -> Void
 //    - applyToEitherSuccess*(Function): (T, T) -> U
 ////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Returns a new CompletionStage that, when either given stage success,
+ * is executed with the corresponding result as argument to the supplied function.
+ *
+ * This method is the same as [CompletableFuture.applyToEither]
+ * except for the either-**success** behavior(not either-**complete**).
+ *
+ * @param fn  the function to use to compute the value of the returned CompletableFuture
+ * @param <U> the function's return type
+ * @return the new CompletableFuture
+ * @see CompletionStage.applyToEither
+ */
+fun <T, U> CompletionStage<out T>.applyToEitherSuccess(
+    other: CompletionStage<out T>, fn: Function<in T, out U>
+): CompletableFuture<U> =
+    CompletableFutureUtils.applyToEitherSuccess(this, other, fn)
+
+/**
+ * Returns a new CompletionStage that, when either given stage success,
+ * is executed using this stage's default asynchronous execution facility,
+ * with the corresponding result as argument to the supplied function.
+ *
+ * This method is the same as [CompletableFuture.applyToEitherAsync]
+ * except for the either-**success** behavior(not either-**complete**).
+ *
+ * @param fn  the function to use to compute the value of the returned CompletableFuture
+ * @param <U> the function's return type
+ * @return the new CompletableFuture
+ * @see CompletionStage.applyToEitherAsync
+ */
+fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
+    other: CompletionStage<out T>, fn: Function<in T, out U>
+): CompletableFuture<U> =
+    CompletableFutureUtils.applyToEitherSuccessAsync(this, other, fn)
+
+/**
+ * Returns a new CompletionStage that, when either given stage success,
+ * is executed using the supplied executor, with the corresponding result as argument to the supplied function.
+ *
+ * This method is the same as [CompletableFuture.applyToEitherAsync]
+ * except for the either-**success** behavior(not either-**complete**).
+ *
+ * @param fn       the function to use to compute the value of the returned CompletableFuture
+ * @param executor the executor to use for asynchronous execution
+ * @param <U>      the function's return type
+ * @return the new CompletableFuture
+ * @see CompletionStage.applyToEitherAsync
+ */
+fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
+    other: CompletionStage<out T>, fn: Function<in T, out U>, executor: Executor
+): CompletableFuture<U> =
+    CompletableFutureUtils.applyToEitherSuccessAsync(this, other, fn, executor)
+
+/**
+ * Returns a new CompletableFuture that, when either given stage success,
+ * is executed with the corresponding result as argument to the supplied action.
+ *
+ * This method is the same as [CompletableFuture.acceptEither]
+ * except for the either-**success** behavior(not either-**complete**).
+ *
+ * @param action the action to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletionStage.acceptEither
+ */
+fun <T> CompletionStage<out T>.acceptEitherSuccess(
+    other: CompletionStage<out T>, action: Consumer<in T>
+): CompletableFuture<Void> =
+    CompletableFutureUtils.acceptEitherSuccess(this, other, action)
+
+/**
+ * Returns a new CompletionStage that, when either given stage success,
+ * is executed using this stage's default asynchronous execution facility,
+ * with the corresponding result as argument to the supplied action.
+ *
+ * This method is the same as [CompletableFuture.acceptEitherAsync]
+ * except for the either-**success** behavior(not either-**complete**).
+ *
+ * @param action the action to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletionStage.acceptEitherAsync
+ */
+fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
+    other: CompletionStage<out T>, action: Consumer<in T>
+): CompletableFuture<Void> =
+    CompletableFutureUtils.acceptEitherSuccessAsync(this, other, action)
+
+/**
+ * Returns a new CompletionStage that, when either given stage success,
+ * is executed using the supplied executor, with the corresponding result as argument to the supplied action.
+ *
+ * This method is the same as [CompletableFuture.acceptEitherAsync]
+ * except for the either-**success** behavior(not either-**complete**).
+ *
+ * @param action   the action to perform before completing the returned CompletableFuture
+ * @param executor the executor to use for asynchronous execution
+ * @return the new CompletableFuture
+ * @see CompletionStage.acceptEitherAsync
+ */
+fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
+    other: CompletionStage<out T>, action: Consumer<in T>, executor: Executor
+): CompletableFuture<Void> =
+    CompletableFutureUtils.acceptEitherSuccessAsync(this, other, action, executor)
 
 /**
  * Returns a new CompletableFuture that, when either given stage success, executes the given action.
@@ -544,111 +650,9 @@ fun CompletionStage<*>.runAfterEitherSuccessAsync(
 ): CompletableFuture<Void> =
     CompletableFutureUtils.runAfterEitherSuccessAsync(this, other, action, executor)
 
-/**
- * Returns a new CompletableFuture that, when either given stage success,
- * is executed with the corresponding result as argument to the supplied action.
- *
- * This method is the same as [CompletableFuture.acceptEither]
- * except for the either-**success** behavior(not either-**complete**).
- *
- * @param action the action to perform before completing the returned CompletableFuture
- * @return the new CompletableFuture
- * @see CompletionStage.acceptEither
- */
-fun <T> CompletionStage<out T>.acceptEitherSuccess(
-    other: CompletionStage<out T>, action: Consumer<in T>
-): CompletableFuture<Void> =
-    CompletableFutureUtils.acceptEitherSuccess(this, other, action)
-
-/**
- * Returns a new CompletionStage that, when either given stage success,
- * is executed using this stage's default asynchronous execution facility,
- * with the corresponding result as argument to the supplied action.
- *
- * This method is the same as [CompletableFuture.acceptEitherAsync]
- * except for the either-**success** behavior(not either-**complete**).
- *
- * @param action the action to perform before completing the returned CompletableFuture
- * @return the new CompletableFuture
- * @see CompletionStage.acceptEitherAsync
- */
-fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
-    other: CompletionStage<out T>, action: Consumer<in T>
-): CompletableFuture<Void> =
-    CompletableFutureUtils.acceptEitherSuccessAsync(this, other, action)
-
-/**
- * Returns a new CompletionStage that, when either given stage success,
- * is executed using the supplied executor, with the corresponding result as argument to the supplied action.
- *
- * This method is the same as [CompletableFuture.acceptEitherAsync]
- * except for the either-**success** behavior(not either-**complete**).
- *
- * @param action   the action to perform before completing the returned CompletableFuture
- * @param executor the executor to use for asynchronous execution
- * @return the new CompletableFuture
- * @see CompletionStage.acceptEitherAsync
- */
-fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
-    other: CompletionStage<out T>, action: Consumer<in T>, executor: Executor
-): CompletableFuture<Void> =
-    CompletableFutureUtils.acceptEitherSuccessAsync(this, other, action, executor)
-
-/**
- * Returns a new CompletionStage that, when either given stage success,
- * is executed with the corresponding result as argument to the supplied function.
- *
- * This method is the same as [CompletableFuture.applyToEither]
- * except for the either-**success** behavior(not either-**complete**).
- *
- * @param fn  the function to use to compute the value of the returned CompletableFuture
- * @param <U> the function's return type
- * @return the new CompletableFuture
- * @see CompletionStage.applyToEither
- */
-fun <T, U> CompletionStage<out T>.applyToEitherSuccess(
-    other: CompletionStage<out T>, fn: Function<in T, out U>
-): CompletableFuture<U> =
-    CompletableFutureUtils.applyToEitherSuccess(this, other, fn)
-
-/**
- * Returns a new CompletionStage that, when either given stage success,
- * is executed using this stage's default asynchronous execution facility,
- * with the corresponding result as argument to the supplied function.
- *
- * This method is the same as [CompletableFuture.applyToEitherAsync]
- * except for the either-**success** behavior(not either-**complete**).
- *
- * @param fn  the function to use to compute the value of the returned CompletableFuture
- * @param <U> the function's return type
- * @return the new CompletableFuture
- * @see CompletionStage.applyToEitherAsync
- */
-fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
-    other: CompletionStage<out T>, fn: Function<in T, out U>
-): CompletableFuture<U> =
-    CompletableFutureUtils.applyToEitherSuccessAsync(this, other, fn)
-
-/**
- * Returns a new CompletionStage that, when either given stage success,
- * is executed using the supplied executor, with the corresponding result as argument to the supplied function.
- *
- * This method is the same as [CompletableFuture.applyToEitherAsync]
- * except for the either-**success** behavior(not either-**complete**).
- *
- * @param fn       the function to use to compute the value of the returned CompletableFuture
- * @param executor the executor to use for asynchronous execution
- * @param <U>      the function's return type
- * @return the new CompletableFuture
- * @see CompletionStage.applyToEitherAsync
- */
-fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
-    other: CompletionStage<out T>, fn: Function<in T, out U>, executor: Executor
-): CompletableFuture<U> =
-    CompletableFutureUtils.applyToEitherSuccessAsync(this, other, fn, executor)
-
+// endregion
 ////////////////////////////////////////////////////////////////////////////////
-//# New enhanced methods
+// region# New enhanced methods
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -707,8 +711,9 @@ fun <T, C : CompletionStage<out T>> C.peekAsync(action: BiConsumer<in T, in Thro
 fun <T, C : CompletionStage<out T>> C.peekAsync(action: BiConsumer<in T, in Throwable>, executor: Executor): C =
     CompletableFutureUtils.peekAsync(this, action, executor)
 
+// endregion
 ////////////////////////////////////////
-// toCompletableFuture methods
+// region# toCompletableFuture methods
 ////////////////////////////////////////
 
 /**
@@ -729,8 +734,9 @@ fun <T> Collection<CompletionStage<T>>.toCompletableFuture(): List<CompletableFu
 fun <T> Array<out CompletionStage<T>>.toCompletableFuture(): Array<CompletableFuture<T>> =
     CompletableFutureUtils.toCompletableFutureArray(*this)
 
+// endregion
 ////////////////////////////////////////////////////////////////////////////////
-//# Backport CF instance methods
+// region# Backport CF instance methods
 //  compatibility for low Java version
 ////////////////////////////////////////////////////////////////////////////////
 

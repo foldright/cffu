@@ -64,10 +64,10 @@
 
 - ☘️ **补全业务使用中缺失的功能**
   - 更方便的功能，如
-    - `allResultsOf`方法：返回多个`CF`的结果，而不是无返回结果`Void`（`CompletableFuture#allOf()`）
-    - `allTupleOf`方法：返回多个`CF`不同类型的结果，而不是同一类型（`allResultsOf`）
+    - `allResultsOfFastFail`/`allResultsOf`方法：返回多个`CF`的结果，而不是无返回结果`Void`（`CompletableFuture#allOf()`）
+    - `allTupleOfFastFail`/`allTupleOf`方法：返回多个`CF`不同类型的结果，而不是同一类型（`allResultsOf`）
   - 更高效灵活的并发执行策略，如
-    - `allOfFastFail`方法：有`CF`失败时快速返回，而不再等待所有`CF`运行完成（`allOf`）
+    - `allResultsOfFastFail`/`allOfFastFail`方法：有`CF`失败时快速返回，而不再等待所有`CF`运行完成（`allOf`）
     - `anyOfSuccess`方法：返回首个成功的`CF`结果，而不是首个完成（但可能失败）的`CF`（`anyOf`）
     - `mostResultsOfSuccess`方法：返回指定时间内成功`CF`的结果，忽略失败或还没有运行完成的`CF`（使用缺省值）
   - 更安全的使用方式，如
@@ -273,10 +273,12 @@ fun main() {
 
 ### 2.1 返回多个运行`CF`的结果
 
-`CompletableFuture`的`allOf`方法没有返回结果，只是返回`Void`，不方便获得所运行的多个`CF`结果。  
-\# 需要在`allOf`方法之后再通过入参`CF`的读方法（如`join`/`get）`来获取结果。
+`CompletableFuture`的`allOf`方法没有返回结果，只是返回`Void`。不方便获取所运行的多个`CF`结果：
 
-`cffu`的`allResultsOf`方法提供了返回多个`CF`结果的功能。
+- 需要在`allOf`方法之后再通过入参`CF`的读方法（如`join`/`get）`来获取结果
+- 或是在传入的`Action`设置外部的变量，要注意多线程写的线程安全问题 ⚠️
+
+`cffu`的`allResultsOfFastFail`/`allResultsOf`方法提供了返回多个`CF`结果的功能，方便直接也规避了多线程写的线程安全问题。
 
 示例代码如下：
 
@@ -318,7 +320,7 @@ public class AllResultsOfDemo {
 
 > \# 完整可运行的Demo代码参见[`AllResultsOfDemo.java`](cffu-core/src/test/java/io/foldright/demo/AllResultsOfDemo.java)。
 
-上面多个相同结果类型的`CF`，`cffu`还提供了返回多个不同类型`CF`结果的方法，`allTupleOf`方法。
+上面多个相同结果类型的`CF`，`cffu`还提供了返回多个不同类型`CF`结果的方法，`allTupleOfFastFail`/`allTupleOf`方法。
 
 示例代码如下：
 
@@ -414,12 +416,12 @@ public class DefaultExecutorSettingForCffu {
 
 > \# 完整可运行的Demo代码参见[`DefaultExecutorSettingForCffu.java`](cffu-core/src/test/java/io/foldright/demo/DefaultExecutorSettingForCffu.java)。
 
-### 2.3 高效灵活的并发执行策略（`allOfFastFail`/`anyOfSuccess`/`mostResultsOfSuccess`）
+### 2.3 高效灵活的并发执行策略（`allResultsOfFastFail`/`anyOfSuccess`/`mostResultsOfSuccess`）
 
 - `CompletableFuture`的`allOf`方法会等待所有输入`CF`运行完成；即使有`CF`失败了也要等待后续`CF`运行完成，再返回一个失败的`CF`。
   - 对于业务逻辑来说，这样失败且继续等待策略，减慢了业务响应性；会希望如果有输入`CF`失败了，则快速失败不再做于事无补的等待
-  - `cffu`提供了相应的`allOfFastFail`/`allResultsOfFastFail`方法
-  - `allOf`/`allOfFastFail`两者都是，只有当所有的输入`CF`都成功时，才返回成功结果
+  - `cffu`提供了相应的`allResultsOfFastFail`方法
+  - `allOf`/`allResultsOfFastFail`两者都是，只有当所有的输入`CF`都成功时，才返回成功结果
 - `CompletableFuture`的`anyOf`方法返回首个完成的`CF`（不会等待后续没有完成的`CF`，赛马模式）；即使首个完成的`CF`是失败的，也会返回这个失败的`CF`结果。
   - 对于业务逻辑来说，会希望赛马模式返回首个成功的`CF`结果，而不是首个完成但失败的`CF`
   - `cffu`提供了相应的`anyOfSuccess`方法
@@ -450,7 +452,7 @@ public class ConcurrencyStrategyDemo {
 
   public static void main(String[] args) throws Exception {
     ////////////////////////////////////////////////////////////////////////
-    // CffuFactory#allOfFastFail / allResultsOfFastFail
+    // CffuFactory#allResultsOfFastFail
     // CffuFactory#anyOfSuccess
     ////////////////////////////////////////////////////////////////////////
     final Cffu<Integer> successAfterLongTime = cffuFactory.supplyAsync(() -> {
