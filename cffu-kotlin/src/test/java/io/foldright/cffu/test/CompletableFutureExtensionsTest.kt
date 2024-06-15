@@ -114,15 +114,15 @@ class CompletableFutureExtensionsTest : FunSpec({
 
     test("mostResultsOfSuccessCompletableFuture") {
         listOf(CompletableFuture(), CompletableFuture.completedFuture(42))
-            .mostResultsOfSuccessCompletableFuture(10, TimeUnit.MILLISECONDS, null).await() shouldBe listOf(null, 42)
+            .mostResultsOfSuccessCompletableFuture(null, 10, TimeUnit.MILLISECONDS).await() shouldBe listOf(null, 42)
         listOf(CompletableFuture(), CompletableFuture.completedFuture(42))
-            .mostResultsOfSuccessCompletableFuture(testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, null)
+            .mostResultsOfSuccessCompletableFuture(null, testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS)
             .await() shouldBe listOf(null, 42)
 
         arrayOf(CompletableFuture(), CompletableFuture.completedFuture(42))
-            .mostResultsOfSuccessCompletableFuture(10, TimeUnit.MILLISECONDS, null).await() shouldBe listOf(null, 42)
+            .mostResultsOfSuccessCompletableFuture(null, 10, TimeUnit.MILLISECONDS).await() shouldBe listOf(null, 42)
         arrayOf(CompletableFuture(), CompletableFuture.completedFuture(42))
-            .mostResultsOfSuccessCompletableFuture(testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS, null)
+            .mostResultsOfSuccessCompletableFuture(null, testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS)
             .await() shouldBe listOf(null, 42)
     }
 

@@ -404,11 +404,11 @@ fun Array<out CompletionStage<*>>.allOfFastFailCffu(cffuFactory: CffuFactory): C
  * @see Cffu.getSuccessNow
  */
 fun <T> Collection<Cffu<out T>>.mostResultsOfSuccessCffu(
-    timeout: Long, unit: TimeUnit, valueIfNotSuccess: T, cffuFactory: CffuFactory = ABSENT
+    valueIfNotSuccess: T, timeout: Long, unit: TimeUnit, cffuFactory: CffuFactory = ABSENT
 ): Cffu<List<T>> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.mostResultsOfSuccess(timeout, unit, valueIfNotSuccess, *toTypedArray())
+    return factory.mostResultsOfSuccess(valueIfNotSuccess, timeout, unit, *toTypedArray())
 }
 
 /**
@@ -425,11 +425,11 @@ fun <T> Collection<Cffu<out T>>.mostResultsOfSuccessCffu(
  * @see Cffu.getSuccessNow
  */
 fun <T> Array<out Cffu<out T>>.mostResultsOfSuccessCffu(
-    timeout: Long, unit: TimeUnit, valueIfNotSuccess: T, cffuFactory: CffuFactory = ABSENT
+    valueIfNotSuccess: T, timeout: Long, unit: TimeUnit, cffuFactory: CffuFactory = ABSENT
 ): Cffu<List<T>> {
     val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
     else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
-    return factory.mostResultsOfSuccess(timeout, unit, valueIfNotSuccess, *this)
+    return factory.mostResultsOfSuccess(valueIfNotSuccess, timeout, unit, *this)
 }
 
 /**
@@ -447,9 +447,9 @@ fun <T> Array<out Cffu<out T>>.mostResultsOfSuccessCffu(
  */
 @JvmName("mostResultsOfSuccessCffuCs")
 fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCffu(
-    timeout: Long, unit: TimeUnit, valueIfNotSuccess: T, cffuFactory: CffuFactory
+    valueIfNotSuccess: T, timeout: Long, unit: TimeUnit, cffuFactory: CffuFactory
 ): Cffu<List<T>> =
-    cffuFactory.mostResultsOfSuccess(timeout, unit, valueIfNotSuccess, *toTypedArray())
+    cffuFactory.mostResultsOfSuccess(valueIfNotSuccess, timeout, unit, *toTypedArray())
 
 /**
  * Returns a new Cffu with the most results in the **same order** of
@@ -466,9 +466,9 @@ fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCffu(
  * @see Cffu.getSuccessNow
  */
 fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCffu(
-    timeout: Long, unit: TimeUnit, valueIfNotSuccess: T, cffuFactory: CffuFactory
+    valueIfNotSuccess: T, timeout: Long, unit: TimeUnit, cffuFactory: CffuFactory
 ): Cffu<List<T>> =
-    cffuFactory.mostResultsOfSuccess(timeout, unit, valueIfNotSuccess, *this)
+    cffuFactory.mostResultsOfSuccess(valueIfNotSuccess, timeout, unit, *this)
 
 ////////////////////////////////////////
 //# anyOf* methods for Array/Collection

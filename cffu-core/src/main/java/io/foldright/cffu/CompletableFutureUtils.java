@@ -209,19 +209,19 @@ public final class CompletableFutureUtils {
      * If the given supplier is successful in the given time, the return result is the completed value;
      * Otherwise the given valueIfNotSuccess.
      *
+     * @param valueIfNotSuccess the value to return if not completed successfully
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param valueIfNotSuccess the value to return if not completed successfully
      * @param suppliers         the suppliers returning the value to be used to complete the returned CompletableFuture
      * @param <T>               the suppliers' return type
      * @return the new CompletableFuture
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
      * @see CompletableFuture#supplyAsync(Supplier)
      */
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyMostSuccessAsync(
-            long timeout, TimeUnit unit, @Nullable T valueIfNotSuccess, Supplier<? extends T>... suppliers) {
-        return mSupplyMostSuccessAsync(AsyncPoolHolder.ASYNC_POOL, timeout, unit, valueIfNotSuccess, suppliers);
+            @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit, Supplier<? extends T>... suppliers) {
+        return mSupplyMostSuccessAsync(valueIfNotSuccess, AsyncPoolHolder.ASYNC_POOL, timeout, unit, suppliers);
     }
 
     /**
@@ -233,25 +233,25 @@ public final class CompletableFutureUtils {
      * If the given supplier is successful in the given time, the return result is the completed value;
      * Otherwise the given valueIfNotSuccess.
      *
+     * @param valueIfNotSuccess the value to return if not completed successfully
      * @param executor          the executor to use for asynchronous execution
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param valueIfNotSuccess the value to return if not completed successfully
      * @param suppliers         the suppliers returning the value to be used to complete the returned CompletableFuture
      * @param <T>               the suppliers' return type
      * @return the new CompletableFuture
-     * @see #mostResultsOfSuccess(Executor, long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, Executor, long, TimeUnit, CompletionStage[])
      * @see CompletableFuture#supplyAsync(Supplier, Executor)
      */
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyMostSuccessAsync(
-            Executor executor, long timeout, TimeUnit unit,
-            @Nullable T valueIfNotSuccess, Supplier<? extends T>... suppliers) {
+            @Nullable T valueIfNotSuccess, Executor executor, long timeout, TimeUnit unit,
+            Supplier<? extends T>... suppliers) {
         requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
-        return mostResultsOfSuccess(executor, timeout, unit, valueIfNotSuccess, wrapSuppliers(executor, suppliers));
+        return mostResultsOfSuccess(valueIfNotSuccess, executor, timeout, unit, wrapSuppliers(executor, suppliers));
     }
 
     private static <T> CompletableFuture<? extends T>[] wrapSuppliers(
@@ -289,8 +289,8 @@ public final class CompletableFutureUtils {
      * <p>
      * If you need the successful results of given stages in the given time, prefer below methods:
      * <ul>
-     * <li>{@link #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])}
-     * <li>{@link #mostResultsOfSuccess(Executor, long, TimeUnit, Object, CompletionStage[])}
+     * <li>{@link #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])}
+     * <li>{@link #mostResultsOfSuccess(Object, Executor, long, TimeUnit, CompletionStage[])}
      * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)}
      * <li>{@link #mostTupleOfSuccess(Executor, long, TimeUnit, CompletionStage, CompletionStage)}
      * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
@@ -303,8 +303,8 @@ public final class CompletableFutureUtils {
      * @see #allResultsOf(CompletionStage[])
      * @see #allTupleOf(CompletionStage, CompletionStage)
      * @see #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
-     * @see #mostResultsOfSuccess(Executor, long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, Executor, long, TimeUnit, CompletionStage[])
      * @see #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)
      * @see #mostTupleOfSuccess(Executor, long, TimeUnit, CompletionStage, CompletionStage)
      * @see #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
@@ -375,8 +375,8 @@ public final class CompletableFutureUtils {
      * <p>
      * If you need the successful results of given stages in the given time, prefer below methods:
      * <ul>
-     * <li>{@link #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])}
-     * <li>{@link #mostResultsOfSuccess(Executor, long, TimeUnit, Object, CompletionStage[])}
+     * <li>{@link #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])}
+     * <li>{@link #mostResultsOfSuccess(Object, Executor, long, TimeUnit, CompletionStage[])}
      * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)}
      * <li>{@link #mostTupleOfSuccess(Executor, long, TimeUnit, CompletionStage, CompletionStage)}
      * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
@@ -389,8 +389,8 @@ public final class CompletableFutureUtils {
      * @see #allResultsOfFastFail(CompletionStage[])
      * @see #allTupleOfFastFail(CompletionStage, CompletionStage)
      * @see #allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
-     * @see #mostResultsOfSuccess(Executor, long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, Executor, long, TimeUnit, CompletionStage[])
      * @see #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)
      * @see #mostTupleOfSuccess(Executor, long, TimeUnit, CompletionStage, CompletionStage)
      * @see #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)
@@ -467,17 +467,17 @@ public final class CompletableFutureUtils {
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
      *
+     * @param valueIfNotSuccess the value to return if not completed successfully
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param valueIfNotSuccess the value to return if not completed successfully
      * @param cfs               the stages
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mostResultsOfSuccess(
-            long timeout, TimeUnit unit, @Nullable T valueIfNotSuccess, CompletionStage<? extends T>... cfs) {
-        return mostResultsOfSuccess(AsyncPoolHolder.ASYNC_POOL, timeout, unit, valueIfNotSuccess, cfs);
+            @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit, CompletionStage<? extends T>... cfs) {
+        return mostResultsOfSuccess(valueIfNotSuccess, AsyncPoolHolder.ASYNC_POOL, timeout, unit, cfs);
     }
 
     /**
@@ -486,18 +486,18 @@ public final class CompletableFutureUtils {
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
      *
+     * @param valueIfNotSuccess   the value to return if not completed successfully
      * @param executorWhenTimeout the async executor when triggered by timeout
      * @param timeout             how long to wait in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param valueIfNotSuccess   the value to return if not completed successfully
      * @param cfs                 the stages
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mostResultsOfSuccess(
-            Executor executorWhenTimeout, long timeout, TimeUnit unit,
-            @Nullable T valueIfNotSuccess, CompletionStage<? extends T>... cfs) {
+            @Nullable T valueIfNotSuccess, Executor executorWhenTimeout, long timeout, TimeUnit unit,
+            CompletionStage<? extends T>... cfs) {
         requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
         requireNonNull(unit, "unit is null");
         requireNonNull(cfs, "cfs is null");
@@ -900,7 +900,7 @@ public final class CompletableFutureUtils {
      * @param timeout how long to wait in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new CompletableFuture that is completed when the given two stages complete
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
@@ -919,7 +919,7 @@ public final class CompletableFutureUtils {
      * @param timeout             how long to wait in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new CompletableFuture that is completed when the given two stages complete
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
@@ -938,7 +938,7 @@ public final class CompletableFutureUtils {
      * @param timeout how long to wait in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new CompletableFuture that is completed when the given three stages complete
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
@@ -958,7 +958,7 @@ public final class CompletableFutureUtils {
      * @param timeout             how long to wait in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new CompletableFuture that is completed when the given three stages complete
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
@@ -977,7 +977,7 @@ public final class CompletableFutureUtils {
      * @param timeout how long to wait in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new CompletableFuture that is completed when the given four stages complete
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
@@ -998,7 +998,7 @@ public final class CompletableFutureUtils {
      * @param timeout             how long to wait in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new CompletableFuture that is completed when the given four stages complete
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
@@ -1018,7 +1018,7 @@ public final class CompletableFutureUtils {
      * @param timeout how long to wait in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new CompletableFuture that is completed when the given five stages complete
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
@@ -1039,7 +1039,7 @@ public final class CompletableFutureUtils {
      * @param timeout             how long to wait in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new CompletableFuture that is completed when the given five stages complete
-     * @see #mostResultsOfSuccess(long, TimeUnit, Object, CompletionStage[])
+     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
@@ -1300,18 +1300,18 @@ public final class CompletableFutureUtils {
      * If the given function is successful in the given time, the return result is the completed value;
      * Otherwise the given valueIfNotSuccess.
      *
+     * @param valueIfNotSuccess the value to return if not completed successfully
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param valueIfNotSuccess the value to return if not completed successfully
      * @param fns               the functions to use to compute the values of the returned CompletableFuture
      * @param <U>               the functions' return type
      * @return the new CompletableFuture
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyMostSuccessAsync(
-            CompletionStage<? extends T> cf, long timeout, TimeUnit unit,
-            @Nullable U valueIfNotSuccess, Function<? super T, ? extends U>... fns) {
-        return thenMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, valueIfNotSuccess, fns);
+            CompletionStage<? extends T> cf, @Nullable U valueIfNotSuccess,
+            long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
+        return thenMApplyMostSuccessAsync(cf, valueIfNotSuccess, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fns);
     }
 
     /**
@@ -1324,24 +1324,24 @@ public final class CompletableFutureUtils {
      * If the given function is successful in the given time, the return result is the completed value;
      * Otherwise the given valueIfNotSuccess.
      *
+     * @param valueIfNotSuccess the value to return if not completed successfully
      * @param executor          the executor to use for asynchronous execution
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param valueIfNotSuccess the value to return if not completed successfully
      * @param fns               the functions to use to compute the values of the returned CompletableFuture
      * @param <U>               the functions' return type
      * @return the new CompletableFuture
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyMostSuccessAsync(
-            CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit,
-            @Nullable U valueIfNotSuccess, Function<? super T, ? extends U>... fns) {
+            CompletionStage<? extends T> cf, @Nullable U valueIfNotSuccess,
+            Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
         requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
         requireArrayAndEleNonNull("fn", fns);
 
         return toNonMinCf(cf).thenCompose(v -> mostResultsOfSuccess(
-                executor, timeout, unit, valueIfNotSuccess, wrapFunctions(executor, v, fns)
+                valueIfNotSuccess, executor, timeout, unit, wrapFunctions(executor, v, fns)
         ));
     }
 
