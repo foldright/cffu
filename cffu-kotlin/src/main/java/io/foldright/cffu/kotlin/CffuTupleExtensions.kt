@@ -6,11 +6,11 @@ import io.foldright.cffu.tuple.Tuple4
 import io.foldright.cffu.tuple.Tuple5
 
 
-////////////////////////////////////////////////////////////////////////////////
-// Destructuring declarations for cffu tuples
-//
-// https://kotlinlang.org/docs/destructuring-declarations.html
-////////////////////////////////////////////////////////////////////////////////
+/*
+  This file contains the destructuring declarations for cffu tuples
+
+  https://kotlinlang.org/docs/destructuring-declarations.html
+*/
 
 operator fun <T1> Tuple2<T1, *>.component1(): T1 = _1
 operator fun <T2> Tuple2<*, T2>.component2(): T2 = _2

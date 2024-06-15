@@ -8,6 +8,7 @@ import java.util.concurrent.Future;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
 class CffuStateTest {
     @Test
     @EnabledForJreRange(min = JRE.JAVA_19)
