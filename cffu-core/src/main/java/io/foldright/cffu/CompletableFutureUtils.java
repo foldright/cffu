@@ -268,10 +268,10 @@ public final class CompletableFutureUtils {
         if (cfs.length == 0) return completedFuture(arrayList());
         if (cfs.length == 1) {
             // Defensive copy input cf to non-minimal-stage instance in order to
-            // 1. avoid writing it by `cffuOrTimeout` and is able to read its result(`getSuccessNow`)
+            // 1. avoid writing it by `cffuCompleteOnTimeout` and is able to read its result(`getSuccessNow`)
             // 2. ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
             final CompletableFuture<T> f = toNonMinCfCopy(requireNonNull(cfs[0], "cf1 is null"));
-            return cffuOrTimeout(f, executorWhenTimeout, timeout, unit)
+            return cffuCompleteOnTimeout(f, valueIfNotSuccess, executorWhenTimeout, timeout, unit)
                     .handle((unused, ex) -> arrayList(getSuccessNow(f, valueIfNotSuccess)));
         }
 
