@@ -13,6 +13,8 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.function.*;
 
@@ -2669,6 +2671,390 @@ public final class CompletableFutureUtils {
             if (IS_JAVA9_PLUS) return completedFuture(null).defaultExecutor();
             if (USE_COMMON_POOL) return ForkJoinPool.commonPool();
             return new ThreadPerTaskExecutor();
+        }
+    }
+
+    public static <R1, U> CompletableFuture<U> combine(CompletionStage<? extends R1> s1,
+                                                       Functions.Function1<? super R1, ? extends U> fn) {
+        return reduceCombine(fn, s1);
+    }
+
+    public static <R1, R2, U> CompletableFuture<U> combine(CompletionStage<? extends R1> s1,
+                                                           CompletionStage<? extends R2> s2,
+                                                           Functions.Function2<? super R1, ? super R2, ? extends U> fn) {
+        return reduceCombine(fn, s1, s2);
+    }
+
+    public static <R1, R2, R3, U> CompletableFuture<U> combine(CompletionStage<? extends R1> s1,
+                                                               CompletionStage<? extends R2> s2,
+                                                               CompletionStage<? extends R3> s3,
+                                                               Functions.Function3<? super R1, ? super R2, ? super R3, ? extends U> fn) {
+        return reduceCombine(fn, s1, s2, s3);
+    }
+
+    public static <R1, R2, R3, R4, U> CompletableFuture<U> combine(CompletionStage<? extends R1> s1,
+                                                                   CompletionStage<? extends R2> s2,
+                                                                   CompletionStage<? extends R3> s3,
+                                                                   CompletionStage<? extends R4> s4,
+                                                                   Functions.Function4<? super R1, ? super R2, ? super R3, ? super R4, ? extends U> fn) {
+        return reduceCombine(fn, s1, s2, s3, s4);
+    }
+
+    public static <R1, R2, R3, R4, R5, U> CompletableFuture<U> combine(CompletionStage<? extends R1> s1,
+                                                                       CompletionStage<? extends R2> s2,
+                                                                       CompletionStage<? extends R3> s3,
+                                                                       CompletionStage<? extends R4> s4,
+                                                                       CompletionStage<? extends R5> s5,
+                                                                       Functions.Function5<? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? extends U> fn) {
+        return reduceCombine(fn, s1, s2, s3, s4, s5);
+    }
+
+    public static <R1, R2, R3, R4, R5, R6, U> CompletableFuture<U> combine(CompletionStage<? extends R1> s1,
+                                                                           CompletionStage<? extends R2> s2,
+                                                                           CompletionStage<? extends R3> s3,
+                                                                           CompletionStage<? extends R4> s4,
+                                                                           CompletionStage<? extends R5> s5,
+                                                                           CompletionStage<? extends R6> s6,
+                                                                           Functions.Function6<? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6, ? extends U> fn) {
+        return reduceCombine(fn, s1, s2, s3, s4, s5, s6);
+    }
+
+    public static <R1, R2, R3, R4, R5, R6, R7, U> CompletableFuture<U> combine(CompletionStage<? extends R1> s1,
+                                                                               CompletionStage<? extends R2> s2,
+                                                                               CompletionStage<? extends R3> s3,
+                                                                               CompletionStage<? extends R4> s4,
+                                                                               CompletionStage<? extends R5> s5,
+                                                                               CompletionStage<? extends R6> s6,
+                                                                               CompletionStage<? extends R7> s7,
+                                                                               Functions.Function7<? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6, ? super R7, ? extends U> fn) {
+        return reduceCombine(fn, s1, s2, s3, s4, s5, s6, s7);
+    }
+
+    public static <R1, R2, R3, R4, R5, R6, R7, R8, U> CompletableFuture<U> combine(CompletionStage<? extends R1> s1,
+                                                                                   CompletionStage<? extends R2> s2,
+                                                                                   CompletionStage<? extends R3> s3,
+                                                                                   CompletionStage<? extends R4> s4,
+                                                                                   CompletionStage<? extends R5> s5,
+                                                                                   CompletionStage<? extends R6> s6,
+                                                                                   CompletionStage<? extends R7> s7,
+                                                                                   CompletionStage<? extends R8> s8,
+                                                                                   Functions.Function8<? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6, ? super R7, ? super R8, ? extends U> fn) {
+        return reduceCombine(fn, s1, s2, s3, s4, s5, s6, s7, s8);
+    }
+
+    public static <R1, R2, R3, R4, R5, R6, R7, R8, R9, U> CompletableFuture<U> combine(CompletionStage<? extends R1> s1,
+                                                                                       CompletionStage<? extends R2> s2,
+                                                                                       CompletionStage<? extends R3> s3,
+                                                                                       CompletionStage<? extends R4> s4,
+                                                                                       CompletionStage<? extends R5> s5,
+                                                                                       CompletionStage<? extends R6> s6,
+                                                                                       CompletionStage<? extends R7> s7,
+                                                                                       CompletionStage<? extends R8> s8,
+                                                                                       CompletionStage<? extends R9> s9,
+                                                                                       Functions.Function9<? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6, ? super R7, ? super R8, ? super R9, ? extends U> fn) {
+        return reduceCombine(fn, s1, s2, s3, s4, s5, s6, s7, s8, s9);
+    }
+
+    public static <R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, U> CompletableFuture<U> combine(CompletionStage<? extends R1> s1,
+                                                                                            CompletionStage<? extends R2> s2,
+                                                                                            CompletionStage<? extends R3> s3,
+                                                                                            CompletionStage<? extends R4> s4,
+                                                                                            CompletionStage<? extends R5> s5,
+                                                                                            CompletionStage<? extends R6> s6,
+                                                                                            CompletionStage<? extends R7> s7,
+                                                                                            CompletionStage<? extends R8> s8,
+                                                                                            CompletionStage<? extends R9> s9,
+                                                                                            CompletionStage<? extends R10> s10,
+                                                                                            Functions.Function10<? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6, ? super R7, ? super R8, ? super R9, ? super R10, ? extends U> fn) {
+        return reduceCombine(fn, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
+    }
+
+    public static <R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, U> CompletableFuture<U> combine(CompletionStage<? extends R1> s1,
+                                                                                                 CompletionStage<? extends R2> s2,
+                                                                                                 CompletionStage<? extends R3> s3,
+                                                                                                 CompletionStage<? extends R4> s4,
+                                                                                                 CompletionStage<? extends R5> s5,
+                                                                                                 CompletionStage<? extends R6> s6,
+                                                                                                 CompletionStage<? extends R7> s7,
+                                                                                                 CompletionStage<? extends R8> s8,
+                                                                                                 CompletionStage<? extends R9> s9,
+                                                                                                 CompletionStage<? extends R10> s10,
+                                                                                                 CompletionStage<? extends R11> s11,
+                                                                                                 Functions.Function11<? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6, ? super R7, ? super R8, ? super R9, ? super R10, ? super R11, ? extends U> fn) {
+        return reduceCombine(fn, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11);
+    }
+
+    public static <R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12, U> CompletableFuture<U> combine(CompletionStage<? extends R1> s1,
+                                                                                                      CompletionStage<? extends R2> s2,
+                                                                                                      CompletionStage<? extends R3> s3,
+                                                                                                      CompletionStage<? extends R4> s4,
+                                                                                                      CompletionStage<? extends R5> s5,
+                                                                                                      CompletionStage<? extends R6> s6,
+                                                                                                      CompletionStage<? extends R7> s7,
+                                                                                                      CompletionStage<? extends R8> s8,
+                                                                                                      CompletionStage<? extends R9> s9,
+                                                                                                      CompletionStage<? extends R10> s10,
+                                                                                                      CompletionStage<? extends R11> s11,
+                                                                                                      CompletionStage<? extends R12> s12,
+                                                                                                      Functions.Function12<? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6, ? super R7, ? super R8, ? super R9, ? super R10, ? super R11, ? super R12, ? extends U> fn) {
+        return reduceCombine(fn, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12);
+    }
+
+    public static <R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12, R13, U> CompletableFuture<U> combine(CompletionStage<? extends R1> s1,
+                                                                                                           CompletionStage<? extends R2> s2,
+                                                                                                           CompletionStage<? extends R3> s3,
+                                                                                                           CompletionStage<? extends R4> s4,
+                                                                                                           CompletionStage<? extends R5> s5,
+                                                                                                           CompletionStage<? extends R6> s6,
+                                                                                                           CompletionStage<? extends R7> s7,
+                                                                                                           CompletionStage<? extends R8> s8,
+                                                                                                           CompletionStage<? extends R9> s9,
+                                                                                                           CompletionStage<? extends R10> s10,
+                                                                                                           CompletionStage<? extends R11> s11,
+                                                                                                           CompletionStage<? extends R12> s12,
+                                                                                                           CompletionStage<? extends R13> s13,
+                                                                                                           Functions.Function13<? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6, ? super R7, ? super R8, ? super R9, ? super R10, ? super R11, ? super R12, ? super R13, ? extends U> fn) {
+        return reduceCombine(fn, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13);
+    }
+
+    public static <R1> CompletableFuture<Void> acceptBoth(CompletionStage<? extends R1> s1,
+                                                          Consumers.Consumer1<? super R1> fn) {
+        return reduceConsumer(fn, s1);
+    }
+
+    public static <R1, R2> CompletableFuture<Void> acceptBoth(CompletionStage<? extends R1> s1,
+                                                              CompletionStage<? extends R2> s2,
+                                                              Consumers.Consumer2<? super R1, ? super R2> fn) {
+        return reduceConsumer(fn, s1, s2);
+    }
+
+    public static <R1, R2, R3> CompletableFuture<Void> acceptBoth(CompletionStage<? extends R1> s1,
+                                                                  CompletionStage<? extends R2> s2,
+                                                                  CompletionStage<? extends R3> s3,
+                                                                  Consumers.Consumer3<? super R1, ? super R2, ? super R3> fn) {
+        return reduceConsumer(fn, s1, s2, s3);
+    }
+
+    public static <R1, R2, R3, R4> CompletableFuture<Void> acceptBoth(CompletionStage<? extends R1> s1,
+                                                                      CompletionStage<? extends R2> s2,
+                                                                      CompletionStage<? extends R3> s3,
+                                                                      CompletionStage<? extends R4> s4,
+                                                                      Consumers.Consumer4<? super R1, ? super R2, ? super R3, ? super R4> fn) {
+        return reduceConsumer(fn, s1, s2, s3, s4);
+    }
+
+    public static <R1, R2, R3, R4, R5> CompletableFuture<Void> acceptBoth(CompletionStage<? extends R1> s1,
+                                                                          CompletionStage<? extends R2> s2,
+                                                                          CompletionStage<? extends R3> s3,
+                                                                          CompletionStage<? extends R4> s4,
+                                                                          CompletionStage<? extends R5> s5,
+                                                                          Consumers.Consumer5<? super R1, ? super R2, ? super R3, ? super R4, ? super R5> fn) {
+        return reduceConsumer(fn, s1, s2, s3, s4, s5);
+    }
+
+    public static <R1, R2, R3, R4, R5, R6> CompletableFuture<Void> acceptBoth(CompletionStage<? extends R1> s1,
+                                                                              CompletionStage<? extends R2> s2,
+                                                                              CompletionStage<? extends R3> s3,
+                                                                              CompletionStage<? extends R4> s4,
+                                                                              CompletionStage<? extends R5> s5,
+                                                                              CompletionStage<? extends R6> s6,
+                                                                              Consumers.Consumer6<? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6> fn) {
+        return reduceConsumer(fn, s1, s2, s3, s4, s5, s6);
+    }
+
+    public static <R1, R2, R3, R4, R5, R6, R7> CompletableFuture<Void> acceptBoth(CompletionStage<? extends R1> s1,
+                                                                                  CompletionStage<? extends R2> s2,
+                                                                                  CompletionStage<? extends R3> s3,
+                                                                                  CompletionStage<? extends R4> s4,
+                                                                                  CompletionStage<? extends R5> s5,
+                                                                                  CompletionStage<? extends R6> s6,
+                                                                                  CompletionStage<? extends R7> s7,
+                                                                                  Consumers.Consumer7<? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6, ? super R7> fn) {
+        return reduceConsumer(fn, s1, s2, s3, s4, s5, s6, s7);
+    }
+
+    public static <R1, R2, R3, R4, R5, R6, R7, R8> CompletableFuture<Void> acceptBoth(CompletionStage<? extends R1> s1,
+                                                                                      CompletionStage<? extends R2> s2,
+                                                                                      CompletionStage<? extends R3> s3,
+                                                                                      CompletionStage<? extends R4> s4,
+                                                                                      CompletionStage<? extends R5> s5,
+                                                                                      CompletionStage<? extends R6> s6,
+                                                                                      CompletionStage<? extends R7> s7,
+                                                                                      CompletionStage<? extends R8> s8,
+                                                                                      Consumers.Consumer8<? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6, ? super R7, ? super R8> fn) {
+        return reduceConsumer(fn, s1, s2, s3, s4, s5, s6, s7, s8);
+    }
+
+    public static <R1, R2, R3, R4, R5, R6, R7, R8, R9> CompletableFuture<Void> acceptBoth(CompletionStage<? extends R1> s1,
+                                                                                          CompletionStage<? extends R2> s2,
+                                                                                          CompletionStage<? extends R3> s3,
+                                                                                          CompletionStage<? extends R4> s4,
+                                                                                          CompletionStage<? extends R5> s5,
+                                                                                          CompletionStage<? extends R6> s6,
+                                                                                          CompletionStage<? extends R7> s7,
+                                                                                          CompletionStage<? extends R8> s8,
+                                                                                          CompletionStage<? extends R9> s9,
+                                                                                          Consumers.Consumer9<? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6, ? super R7, ? super R8, ? super R9> fn) {
+        return reduceConsumer(fn, s1, s2, s3, s4, s5, s6, s7, s8, s9);
+    }
+
+    public static <R1, R2, R3, R4, R5, R6, R7, R8, R9, R10> CompletableFuture<Void> acceptBoth(CompletionStage<? extends R1> s1,
+                                                                                               CompletionStage<? extends R2> s2,
+                                                                                               CompletionStage<? extends R3> s3,
+                                                                                               CompletionStage<? extends R4> s4,
+                                                                                               CompletionStage<? extends R5> s5,
+                                                                                               CompletionStage<? extends R6> s6,
+                                                                                               CompletionStage<? extends R7> s7,
+                                                                                               CompletionStage<? extends R8> s8,
+                                                                                               CompletionStage<? extends R9> s9,
+                                                                                               CompletionStage<? extends R10> s10,
+                                                                                               Consumers.Consumer10<? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6, ? super R7, ? super R8, ? super R9, ? super R10> fn) {
+        return reduceConsumer(fn, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
+    }
+
+    public static <R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11> CompletableFuture<Void> acceptBoth(CompletionStage<? extends R1> s1,
+                                                                                                    CompletionStage<? extends R2> s2,
+                                                                                                    CompletionStage<? extends R3> s3,
+                                                                                                    CompletionStage<? extends R4> s4,
+                                                                                                    CompletionStage<? extends R5> s5,
+                                                                                                    CompletionStage<? extends R6> s6,
+                                                                                                    CompletionStage<? extends R7> s7,
+                                                                                                    CompletionStage<? extends R8> s8,
+                                                                                                    CompletionStage<? extends R9> s9,
+                                                                                                    CompletionStage<? extends R10> s10,
+                                                                                                    CompletionStage<? extends R11> s11,
+                                                                                                    Consumers.Consumer11<? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6, ? super R7, ? super R8, ? super R9, ? super R10, ? super R11> fn) {
+        return reduceConsumer(fn, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11);
+    }
+
+    public static <R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12> CompletableFuture<Void> acceptBoth(CompletionStage<? extends R1> s1,
+                                                                                                         CompletionStage<? extends R2> s2,
+                                                                                                         CompletionStage<? extends R3> s3,
+                                                                                                         CompletionStage<? extends R4> s4,
+                                                                                                         CompletionStage<? extends R5> s5,
+                                                                                                         CompletionStage<? extends R6> s6,
+                                                                                                         CompletionStage<? extends R7> s7,
+                                                                                                         CompletionStage<? extends R8> s8,
+                                                                                                         CompletionStage<? extends R9> s9,
+                                                                                                         CompletionStage<? extends R10> s10,
+                                                                                                         CompletionStage<? extends R11> s11,
+                                                                                                         CompletionStage<? extends R12> s12,
+                                                                                                         Consumers.Consumer12<? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6, ? super R7, ? super R8, ? super R9, ? super R10, ? super R11, ? super R12> fn) {
+        return reduceConsumer(fn, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12);
+    }
+
+    public static <R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12, R13> CompletableFuture<Void> acceptBoth(CompletionStage<? extends R1> s1,
+                                                                                                              CompletionStage<? extends R2> s2,
+                                                                                                              CompletionStage<? extends R3> s3,
+                                                                                                              CompletionStage<? extends R4> s4,
+                                                                                                              CompletionStage<? extends R5> s5,
+                                                                                                              CompletionStage<? extends R6> s6,
+                                                                                                              CompletionStage<? extends R7> s7,
+                                                                                                              CompletionStage<? extends R8> s8,
+                                                                                                              CompletionStage<? extends R9> s9,
+                                                                                                              CompletionStage<? extends R10> s10,
+                                                                                                              CompletionStage<? extends R11> s11,
+                                                                                                              CompletionStage<? extends R12> s12,
+                                                                                                              CompletionStage<? extends R13> s13,
+                                                                                                              Consumers.Consumer13<? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6, ? super R7, ? super R8, ? super R9, ? super R10, ? super R11, ? super R12, ? super R13> fn) {
+        return reduceConsumer(fn, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13);
+    }
+
+    private static <F> CompletableFuture reduceCombine(F function, CompletionStage... completionStages) {
+        int size = completionStages.length;
+        Object[] allResult = new Object[size];
+        CompletableFuture<Object[]> resultFuture = CompletableFuture.completedFuture(allResult);
+        for (int i = 0; i < size; i++) {
+            final int j = i;
+            CompletionStage completionStage = completionStages[i];
+            if (completionStage == null) {
+                allResult[j] = null;
+            } else {
+                resultFuture = resultFuture.thenCombine(completionStage,
+                        (results, result) -> {
+                            results[j] = result;
+                            return results;
+                        });
+            }
+        }
+        switch (size) {
+            case 1:
+                return resultFuture.thenApply(((Functions.Function1) function)::apply_);
+            case 2:
+                return resultFuture.thenApply(((Functions.Function2) function)::apply_);
+            case 3:
+                return resultFuture.thenApply(((Functions.Function3) function)::apply_);
+            case 4:
+                return resultFuture.thenApply(((Functions.Function4) function)::apply_);
+            case 5:
+                return resultFuture.thenApply(((Functions.Function5) function)::apply_);
+            case 6:
+                return resultFuture.thenApply(((Functions.Function6) function)::apply_);
+            case 7:
+                return resultFuture.thenApply(((Functions.Function7) function)::apply_);
+            case 8:
+                return resultFuture.thenApply(((Functions.Function8) function)::apply_);
+            case 9:
+                return resultFuture.thenApply(((Functions.Function9) function)::apply_);
+            case 10:
+                return resultFuture.thenApply(((Functions.Function10) function)::apply_);
+            case 11:
+                return resultFuture.thenApply(((Functions.Function11) function)::apply_);
+            case 12:
+                return resultFuture.thenApply(((Functions.Function12) function)::apply_);
+            case 13:
+                return resultFuture.thenApply(((Functions.Function13) function)::apply_);
+            default:
+                throw new IllegalStateException("only support combine completionStages max size is 13!");
+        }
+    }
+
+    private static <C> CompletableFuture<Void> reduceConsumer(C consumer, CompletionStage... completionStages) {
+        int size = completionStages.length;
+        Object[] allResult = new Object[size];
+        CompletableFuture<Object[]> resultFuture = CompletableFuture.completedFuture(allResult);
+        for (int i = 0; i < size; i++) {
+            final int j = i;
+            CompletionStage completionStage = completionStages[i];
+            if (completionStage == null) {
+                allResult[j] = null;
+            } else {
+                resultFuture = resultFuture.thenCombine(completionStage,
+                        (results, result) -> {
+                            results[j] = result;
+                            return results;
+                        });
+            }
+        }
+        switch (size) {
+            case 1:
+                return resultFuture.thenAccept(((Consumers.Consumer1) consumer)::accept_);
+            case 2:
+                return resultFuture.thenAccept(((Consumers.Consumer2) consumer)::accept_);
+            case 3:
+                return resultFuture.thenAccept(((Consumers.Consumer3) consumer)::accept_);
+            case 4:
+                return resultFuture.thenAccept(((Consumers.Consumer4) consumer)::accept_);
+            case 5:
+                return resultFuture.thenAccept(((Consumers.Consumer5) consumer)::accept_);
+            case 6:
+                return resultFuture.thenAccept(((Consumers.Consumer6) consumer)::accept_);
+            case 7:
+                return resultFuture.thenAccept(((Consumers.Consumer7) consumer)::accept_);
+            case 8:
+                return resultFuture.thenAccept(((Consumers.Consumer8) consumer)::accept_);
+            case 9:
+                return resultFuture.thenAccept(((Consumers.Consumer9) consumer)::accept_);
+            case 10:
+                return resultFuture.thenAccept(((Consumers.Consumer10) consumer)::accept_);
+            case 11:
+                return resultFuture.thenAccept(((Consumers.Consumer11) consumer)::accept_);
+            case 12:
+                return resultFuture.thenAccept(((Consumers.Consumer12) consumer)::accept_);
+            case 13:
+                return resultFuture.thenAccept(((Consumers.Consumer13) consumer)::accept_);
+            default:
+                throw new IllegalStateException("only support accept completionStages max size is 13!");
         }
     }
 

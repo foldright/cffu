@@ -1364,6 +1364,59 @@ class CompletableFutureUtilsTest {
         assertArrayEquals(input, CompletableFutureUtils.completableFutureListToArray(Arrays.asList(input)));
     }
 
+    @Test
+    public void combine() {
+        CompletableFutureUtils.combine(CompletableFuture.completedFuture(1), r1 -> {
+            System.out.println("r1: " + r1);
+            return r1;
+        }).join();
+
+        CompletableFutureUtils.combine(CompletableFuture.completedFuture(1), null, (r1, r2) -> {
+            System.out.println("r1: " + r1);
+            System.out.println("r2: " + r2);
+            return r1;
+        }).join();
+
+        CompletableFutureUtils.combine(null, null, null, null, null, CompletableFuture.completedFuture(1), CompletableFuture.completedFuture(1), null, null,
+                (r1, r2, r3, r4, r5, r6, r7, r8, r9) -> {
+                    System.out.println("r1: " + r1);
+                    System.out.println("r2: " + r2);
+                    System.out.println("r3: " + r3);
+                    System.out.println("r4: " + r4);
+                    System.out.println("r5: " + r5);
+                    System.out.println("r6: " + r6);
+                    System.out.println("r7: " + r7);
+                    System.out.println("r8: " + r8);
+                    System.out.println("r9: " + r9);
+                    return 0;
+                }).join();
+    }
+    @Test
+    public void consumer() {
+        CompletableFutureUtils.acceptBoth(CompletableFuture.completedFuture(1), r1 -> {
+            System.out.println("r1: " + r1);
+        }).join();
+
+        CompletableFutureUtils.acceptBoth(CompletableFuture.completedFuture(1), null, (r1, r2) -> {
+            System.out.println("r1: " + r1);
+            System.out.println("r2: " + r2);
+        }).join();
+
+        CompletableFutureUtils.acceptBoth(null, null, null, null, null, CompletableFuture.completedFuture(1), CompletableFuture.completedFuture(1), null, null,
+                (r1, r2, r3, r4, r5, r6, r7, r8, r9) -> {
+                    System.out.println("r1: " + r1);
+                    System.out.println("r2: " + r2);
+                    System.out.println("r3: " + r3);
+                    System.out.println("r4: " + r4);
+                    System.out.println("r5: " + r5);
+                    System.out.println("r6: " + r6);
+                    System.out.println("r7: " + r7);
+                    System.out.println("r8: " + r8);
+                    System.out.println("r9: " + r9);
+                }).join();
+    }
+
+
     ////////////////////////////////////////////////////////////////////////////////
     //# test helper fields
     ////////////////////////////////////////////////////////////////////////////////
@@ -1390,4 +1443,5 @@ class CompletableFutureUtilsTest {
     static void afterAll() {
         TestThreadPoolManager.shutdownExecutorService(executorService);
     }
+
 }
