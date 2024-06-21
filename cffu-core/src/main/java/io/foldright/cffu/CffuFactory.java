@@ -600,9 +600,9 @@ public final class CffuFactory {
      * @see #allResultsOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
-    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOfMSupplyAsyncFastFailAsync(
+    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOfMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return create(CompletableFutureUtils.allTupleOfMSupplyAsyncFastFailAsync(supplier1, supplier2));
+        return create(CompletableFutureUtils.allTupleOfMSupplyFastFailAsync(supplier1, supplier2));
     }
 
     /**
@@ -633,9 +633,9 @@ public final class CffuFactory {
      * @see #allResultsOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
-    public <T1, T2,T3> Cffu<Tuple3<T1, T2,T3>> allTupleOfMSupplyAsyncFastFailAsync(
+    public <T1, T2,T3> Cffu<Tuple3<T1, T2,T3>> allTupleOfMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return create(CompletableFutureUtils.allTupleOfMSupplyAsyncFastFailAsync(supplier1, supplier2,supplier3));
+        return create(CompletableFutureUtils.allTupleOfMSupplyFastFailAsync(supplier1, supplier2,supplier3));
     }
 
     /**
@@ -666,9 +666,9 @@ public final class CffuFactory {
      * @see #allResultsOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
-    public <T1, T2,T3,T4> Cffu<Tuple4<T1, T2,T3,T4>> allTupleOfMSupplyAsyncFastFailAsync(
+    public <T1, T2,T3,T4> Cffu<Tuple4<T1, T2,T3,T4>> allTupleOfMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return create(CompletableFutureUtils.allTupleOfMSupplyAsyncFastFailAsync(supplier1, supplier2,supplier3,supplier4));
+        return create(CompletableFutureUtils.allTupleOfMSupplyFastFailAsync(supplier1, supplier2,supplier3,supplier4));
     }
 
     /**
@@ -700,9 +700,9 @@ public final class CffuFactory {
      * @see #allResultsOfFastFail(CompletionStage[])
      */
     @Contract(pure = true)
-    public <T1, T2,T3,T4,T5> Cffu<Tuple5<T1, T2,T3,T4,T5>> allTupleOfMSupplyAsyncFastFailAsync(
+    public <T1, T2,T3,T4,T5> Cffu<Tuple5<T1, T2,T3,T4,T5>> allTupleOfMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return create(CompletableFutureUtils.allTupleOfMSupplyAsyncFastFailAsync(supplier1, supplier2,supplier3,supplier4,supplier5));
+        return create(CompletableFutureUtils.allTupleOfMSupplyFastFailAsync(supplier1, supplier2,supplier3,supplier4,supplier5));
     }
 
     /**

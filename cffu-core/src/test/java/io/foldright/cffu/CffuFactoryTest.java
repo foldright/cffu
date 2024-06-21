@@ -651,16 +651,16 @@ class CffuFactoryTest {
             return n+n;
         };
         assertEquals(Tuple2.of(n, s), cffuFactory.allTupleOfMSupplyAsync(supplier_n, supplier_s).get());
-        assertEquals(Tuple2.of(n, s),  cffuFactory.allTupleOfMSupplyAsyncFastFailAsync(supplier_n, supplier_s).get());
+        assertEquals(Tuple2.of(n, s),  cffuFactory.allTupleOfMSupplyFastFailAsync(supplier_n, supplier_s).get());
 
         assertEquals(Tuple3.of(n, s, d),  cffuFactory.allTupleOfMSupplyAsync(supplier_n, supplier_s, supplier_d).get());
-        assertEquals(Tuple3.of(n, s, d),  cffuFactory.allTupleOfMSupplyAsyncFastFailAsync(supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple3.of(n, s, d),  cffuFactory.allTupleOfMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d).get());
 
         assertEquals(Tuple4.of(n, s, d, anotherN),  cffuFactory.allTupleOfMSupplyAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
-        assertEquals(Tuple4.of(n, s, d, anotherN),  cffuFactory.allTupleOfMSupplyAsyncFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN),  cffuFactory.allTupleOfMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
 
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n),  cffuFactory.allTupleOfMSupplyAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n),  cffuFactory.allTupleOfMSupplyAsyncFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n),  cffuFactory.allTupleOfMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
     }
 
     ////////////////////////////////////////////////////////////////////////////////

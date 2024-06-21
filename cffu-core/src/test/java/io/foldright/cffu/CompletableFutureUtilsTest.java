@@ -774,16 +774,16 @@ class CompletableFutureUtilsTest {
             return n+n;
         };
         assertEquals(Tuple2.of(n, s), allTupleOfMSupplyAsync(supplier_n, supplier_s).get());
-        assertEquals(Tuple2.of(n, s), allTupleOfMSupplyAsyncFastFailAsync(supplier_n, supplier_s).get());
+        assertEquals(Tuple2.of(n, s), allTupleOfMSupplyFastFailAsync(supplier_n, supplier_s).get());
 
         assertEquals(Tuple3.of(n, s, d), allTupleOfMSupplyAsync(supplier_n, supplier_s, supplier_d).get());
-        assertEquals(Tuple3.of(n, s, d), allTupleOfMSupplyAsyncFastFailAsync(supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple3.of(n, s, d), allTupleOfMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d).get());
 
         assertEquals(Tuple4.of(n, s, d, anotherN), allTupleOfMSupplyAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
-        assertEquals(Tuple4.of(n, s, d, anotherN), allTupleOfMSupplyAsyncFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), allTupleOfMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
 
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), allTupleOfMSupplyAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), allTupleOfMSupplyAsyncFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), allTupleOfMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
     }
 
 

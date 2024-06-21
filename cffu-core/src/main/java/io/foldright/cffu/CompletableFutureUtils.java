@@ -97,8 +97,8 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#supplyAsync(Supplier)
      */
     @Contract(pure = true)
-    public static <T1,T2> CompletableFuture<Tuple2<T1,T2>> allTupleOfMSupplyAsyncFastFailAsync(Supplier<? extends T1> supplier1,Supplier<? extends T2> supplier2) {
-        return allTupleOfMSupplyAsyncFastFailAsync(AsyncPoolHolder.ASYNC_POOL,supplier1,supplier2);
+    public static <T1,T2> CompletableFuture<Tuple2<T1,T2>> allTupleOfMSupplyFastFailAsync(Supplier<? extends T1> supplier1,Supplier<? extends T2> supplier2) {
+        return allTupleOfMSupplyFastFailAsync(AsyncPoolHolder.ASYNC_POOL,supplier1,supplier2);
     }
 
     /**
@@ -116,7 +116,7 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#supplyAsync(Supplier, Executor)
      */
     @Contract(pure = true)
-    public static <T1,T2> CompletableFuture<Tuple2<T1,T2>> allTupleOfMSupplyAsyncFastFailAsync(
+    public static <T1,T2> CompletableFuture<Tuple2<T1,T2>> allTupleOfMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1,Supplier<? extends T2> supplier2) {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", supplier1,supplier2);
@@ -139,8 +139,8 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#supplyAsync(Supplier)
      */
     @Contract(pure = true)
-    public static <T1,T2,T3> CompletableFuture<Tuple3<T1,T2,T3>> allTupleOfMSupplyAsyncFastFailAsync(Supplier<? extends T1> supplier1,Supplier<? extends T2> supplier2,Supplier<? extends T3> supplier3) {
-        return allTupleOfMSupplyAsyncFastFailAsync(AsyncPoolHolder.ASYNC_POOL,supplier1,supplier2,supplier3);
+    public static <T1,T2,T3> CompletableFuture<Tuple3<T1,T2,T3>> allTupleOfMSupplyFastFailAsync(Supplier<? extends T1> supplier1,Supplier<? extends T2> supplier2,Supplier<? extends T3> supplier3) {
+        return allTupleOfMSupplyFastFailAsync(AsyncPoolHolder.ASYNC_POOL,supplier1,supplier2,supplier3);
     }
 
     /**
@@ -159,7 +159,7 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#supplyAsync(Supplier, Executor)
      */
     @Contract(pure = true)
-    public static <T1,T2,T3> CompletableFuture<Tuple3<T1,T2,T3>> allTupleOfMSupplyAsyncFastFailAsync(
+    public static <T1,T2,T3> CompletableFuture<Tuple3<T1,T2,T3>> allTupleOfMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1,Supplier<? extends T2> supplier2,Supplier<? extends T3> supplier3) {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", supplier1,supplier2,supplier3);
@@ -183,8 +183,8 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#supplyAsync(Supplier)
      */
     @Contract(pure = true)
-    public static <T1,T2,T3,T4> CompletableFuture<Tuple4<T1,T2,T3,T4>> allTupleOfMSupplyAsyncFastFailAsync(Supplier<? extends T1> supplier1,Supplier<? extends T2> supplier2,Supplier<? extends T3> supplier3,Supplier<? extends T4> supplier4) {
-        return allTupleOfMSupplyAsyncFastFailAsync(AsyncPoolHolder.ASYNC_POOL,supplier1,supplier2,supplier3,supplier4);
+    public static <T1,T2,T3,T4> CompletableFuture<Tuple4<T1,T2,T3,T4>> allTupleOfMSupplyFastFailAsync(Supplier<? extends T1> supplier1,Supplier<? extends T2> supplier2,Supplier<? extends T3> supplier3,Supplier<? extends T4> supplier4) {
+        return allTupleOfMSupplyFastFailAsync(AsyncPoolHolder.ASYNC_POOL,supplier1,supplier2,supplier3,supplier4);
     }
 
     /**
@@ -204,7 +204,7 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#supplyAsync(Supplier, Executor)
      */
     @Contract(pure = true)
-    public static <T1,T2,T3,T4> CompletableFuture<Tuple4<T1,T2,T3,T4>> allTupleOfMSupplyAsyncFastFailAsync(
+    public static <T1,T2,T3,T4> CompletableFuture<Tuple4<T1,T2,T3,T4>> allTupleOfMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1,Supplier<? extends T2> supplier2,Supplier<? extends T3> supplier3,Supplier<? extends T4> supplier4) {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", supplier1,supplier2,supplier3,supplier4);
@@ -230,8 +230,8 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#supplyAsync(Supplier)
      */
     @Contract(pure = true)
-    public static <T1,T2,T3,T4,T5> CompletableFuture<Tuple5<T1,T2,T3,T4,T5>> allTupleOfMSupplyAsyncFastFailAsync(Supplier<? extends T1> supplier1,Supplier<? extends T2> supplier2,Supplier<? extends T3> supplier3,Supplier<? extends T4> supplier4,Supplier<? extends T5> supplier5) {
-        return allTupleOfMSupplyAsyncFastFailAsync(AsyncPoolHolder.ASYNC_POOL,supplier1,supplier2,supplier3,supplier4,supplier5);
+    public static <T1,T2,T3,T4,T5> CompletableFuture<Tuple5<T1,T2,T3,T4,T5>> allTupleOfMSupplyFastFailAsync(Supplier<? extends T1> supplier1,Supplier<? extends T2> supplier2,Supplier<? extends T3> supplier3,Supplier<? extends T4> supplier4,Supplier<? extends T5> supplier5) {
+        return allTupleOfMSupplyFastFailAsync(AsyncPoolHolder.ASYNC_POOL,supplier1,supplier2,supplier3,supplier4,supplier5);
     }
 
     /**
@@ -252,7 +252,7 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#supplyAsync(Supplier, Executor)
      */
     @Contract(pure = true)
-    public static <T1,T2,T3,T4,T5> CompletableFuture<Tuple5<T1,T2,T3,T4,T5>> allTupleOfMSupplyAsyncFastFailAsync(
+    public static <T1,T2,T3,T4,T5> CompletableFuture<Tuple5<T1,T2,T3,T4,T5>> allTupleOfMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1,Supplier<? extends T2> supplier2,Supplier<? extends T3> supplier3,Supplier<? extends T4> supplier4,Supplier<? extends T5> supplier5) {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", supplier1,supplier2,supplier3,supplier4,supplier5);
