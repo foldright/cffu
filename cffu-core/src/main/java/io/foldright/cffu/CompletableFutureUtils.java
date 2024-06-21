@@ -123,6 +123,141 @@ public final class CompletableFutureUtils {
         return allTupleOf0(wrapSuppliers(executor,supplier1,supplier2), true);
     }
 
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * This method is the same as {@link #mSupplyAsync(Supplier[])} except for the fast-fail behavior.
+     *
+     * @param supplier1 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier3 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier)
+     */
+    @Contract(pure = true)
+    public static <T> CompletableFuture<Tuple3> allTupleOfMSupplyAsyncFastFailAsync(Supplier<? extends T> supplier1,Supplier<? extends T> supplier2,Supplier<? extends T> supplier3) {
+        return allTupleOfMSupplyAsyncFastFailAsync(AsyncPoolHolder.ASYNC_POOL,supplier1,supplier2,supplier3);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * This method is the same as {@link #mSupplyAsync(Executor, Supplier[])} except for the fast-fail behavior.
+     *
+     * @param executor  the executor to use for asynchronous execution
+     * @param supplier1 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier3 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     */
+    @Contract(pure = true)
+    public static <T> CompletableFuture<Tuple3> allTupleOfMSupplyAsyncFastFailAsync(
+            Executor executor, Supplier<? extends T> supplier1,Supplier<? extends T> supplier2,Supplier<? extends T> supplier3) {
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("supplier", supplier1,supplier2,supplier3);
+        return allTupleOf0(wrapSuppliers(executor,supplier1,supplier2,supplier3), true);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * This method is the same as {@link #mSupplyAsync(Supplier[])} except for the fast-fail behavior.
+     *
+     * @param supplier1 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier3 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier4 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier)
+     */
+    @Contract(pure = true)
+    public static <T> CompletableFuture<Tuple4> allTupleOfMSupplyAsyncFastFailAsync(Supplier<? extends T> supplier1,Supplier<? extends T> supplier2,Supplier<? extends T> supplier3,Supplier<? extends T> supplier4) {
+        return allTupleOfMSupplyAsyncFastFailAsync(AsyncPoolHolder.ASYNC_POOL,supplier1,supplier2,supplier3,supplier4);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * This method is the same as {@link #mSupplyAsync(Executor, Supplier[])} except for the fast-fail behavior.
+     *
+     * @param executor  the executor to use for asynchronous execution
+     * @param supplier1 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier3 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier4 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     */
+    @Contract(pure = true)
+    public static <T> CompletableFuture<Tuple4> allTupleOfMSupplyAsyncFastFailAsync(
+            Executor executor, Supplier<? extends T> supplier1,Supplier<? extends T> supplier2,Supplier<? extends T> supplier3,Supplier<? extends T> supplier4) {
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("supplier", supplier1,supplier2,supplier3,supplier4);
+        return allTupleOf0(wrapSuppliers(executor,supplier1,supplier2,supplier3,supplier4), true);
+    }
+
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * This method is the same as {@link #mSupplyAsync(Supplier[])} except for the fast-fail behavior.
+     *
+     * @param supplier1 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier3 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier4 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier5 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier)
+     */
+    @Contract(pure = true)
+    public static <T> CompletableFuture<Tuple5> allTupleOfMSupplyAsyncFastFailAsync(Supplier<? extends T> supplier1,Supplier<? extends T> supplier2,Supplier<? extends T> supplier3,Supplier<? extends T> supplier4,Supplier<? extends T> supplier5) {
+        return allTupleOfMSupplyAsyncFastFailAsync(AsyncPoolHolder.ASYNC_POOL,supplier1,supplier2,supplier3,supplier4,supplier5);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * This method is the same as {@link #mSupplyAsync(Executor, Supplier[])} except for the fast-fail behavior.
+     *
+     * @param executor  the executor to use for asynchronous execution
+     * @param supplier1 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier3 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier4 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier5 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     */
+    @Contract(pure = true)
+    public static <T> CompletableFuture<Tuple5> allTupleOfMSupplyAsyncFastFailAsync(
+            Executor executor, Supplier<? extends T> supplier1,Supplier<? extends T> supplier2,Supplier<? extends T> supplier3,Supplier<? extends T> supplier4,Supplier<? extends T> supplier5) {
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("supplier", supplier1,supplier2,supplier3,supplier4,supplier5);
+        return allTupleOf0(wrapSuppliers(executor,supplier1,supplier2,supplier3,supplier4,supplier5), true);
+    }
 
     /**
      * Returns a new CompletableFuture that is asynchronously completed
@@ -292,6 +427,89 @@ public final class CompletableFutureUtils {
         return allTupleOf0(wrapSuppliers(executor,supplier1,supplier2,supplier3), false);
     }
 
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     *
+     * @param supplier1 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier3 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier4 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #allResultsOf(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier)
+     */
+    @Contract(pure = true)
+    public static <T> CompletableFuture<Tuple4> allTupleOfMSupplyAsync(Supplier<? extends T> supplier1,Supplier<? extends T> supplier2,Supplier<? extends T> supplier3,Supplier<? extends T> supplier4) {
+        return allTupleOfMSupplyAsync(AsyncPoolHolder.ASYNC_POOL,supplier1,supplier2,supplier3,supplier4);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     *
+     * @param supplier1 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier3 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier4 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param <T>       the suppliers' return type
+     * @return the new CompletableFuture
+     * @see #allResultsOf(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier)
+     */
+    @Contract(pure = true)
+    public static <T> CompletableFuture<Tuple4> allTupleOfMSupplyAsync(Executor executor,Supplier<? extends T> supplier1,Supplier<? extends T> supplier2,Supplier<? extends T> supplier3,Supplier<? extends T> supplier4) {
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("supplier", supplier1,supplier2,supplier3,supplier4);
+        return allTupleOf0(wrapSuppliers(executor,supplier1,supplier2,supplier3,supplier4), false);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     *
+     * @param supplier1 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier3 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier4 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier5 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #allResultsOf(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier)
+     */
+    @Contract(pure = true)
+    public static <T> CompletableFuture<Tuple5> allTupleOfMSupplyAsync(Supplier<? extends T> supplier1,Supplier<? extends T> supplier2,Supplier<? extends T> supplier3,Supplier<? extends T> supplier4,Supplier<? extends T> supplier5) {
+        return allTupleOfMSupplyAsync(AsyncPoolHolder.ASYNC_POOL,supplier1,supplier2,supplier3,supplier4,supplier5);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     *
+     * @param supplier1 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier3 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier4 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param supplier5 the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param <T>       the suppliers' return type
+     * @return the new CompletableFuture
+     * @see #allResultsOf(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier)
+     */
+    @Contract(pure = true)
+    public static <T> CompletableFuture<Tuple5> allTupleOfMSupplyAsync(Executor executor,Supplier<? extends T> supplier1,Supplier<? extends T> supplier2,Supplier<? extends T> supplier3,Supplier<? extends T> supplier4,Supplier<? extends T> supplier5) {
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("supplier", supplier1,supplier2,supplier3,supplier4,supplier5);
+        return allTupleOf0(wrapSuppliers(executor,supplier1,supplier2,supplier3,supplier4,supplier5), false);
+    }
 
     @SafeVarargs
     private static <T> T[] requireArrayAndEleNonNull(String varName, T... array) {
@@ -303,7 +521,7 @@ public final class CompletableFutureUtils {
     }
 
     private static <T> CompletableFuture<? extends T>[] wrapSuppliers(
-            Executor executor, Supplier... suppliers) {
+            Executor executor, Supplier<? extends T>... suppliers) {
         @SuppressWarnings("unchecked")
         CompletableFuture<? extends T>[] cfs = new CompletableFuture[suppliers.length];
         for (int i = 0; i < suppliers.length; i++) {
@@ -1504,6 +1722,135 @@ public final class CompletableFutureUtils {
      *
      * @param function1 the functions to use to compute the values of the returned CompletableFuture
      * @param function2 the functions to use to compute the values of the returned CompletableFuture
+     * @param function3 the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @Contract(pure = true)
+    public static <T, U> CompletableFuture<Tuple3> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3) {
+        return allTupleOfThenMApplyAsync(cf, AsyncPoolHolder.ASYNC_POOL, function1,function2,function3);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the given Executor, with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     *
+     * @param function1 the functions to use to compute the values of the returned CompletableFuture
+     * @param function2 the functions to use to compute the values of the returned CompletableFuture
+     * @param function3 the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @Contract(pure = true)
+    public static <T, U> CompletableFuture<Tuple3> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("fn", function1,function2,function3);
+
+        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, v, function1,function2,function3),false));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     *
+     * @param function1 the functions to use to compute the values of the returned CompletableFuture
+     * @param function2 the functions to use to compute the values of the returned CompletableFuture
+     * @param function3 the functions to use to compute the values of the returned CompletableFuture
+     * @param function4 the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @Contract(pure = true)
+    public static <T, U> CompletableFuture<Tuple4> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3,Function<? super T, ? extends U> function4) {
+        return allTupleOfThenMApplyAsync(cf, AsyncPoolHolder.ASYNC_POOL, function1,function2,function3,function4);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the given Executor, with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     *
+     * @param function1 the functions to use to compute the values of the returned CompletableFuture
+     * @param function2 the functions to use to compute the values of the returned CompletableFuture
+     * @param function3 the functions to use to compute the values of the returned CompletableFuture
+     * @param function4 the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @Contract(pure = true)
+    public static <T, U> CompletableFuture<Tuple4> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3,Function<? super T, ? extends U> function4) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("fn", function1,function2,function3,function4);
+
+        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, v, function1,function2,function3,function4),false));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     *
+     * @param function1 the functions to use to compute the values of the returned CompletableFuture
+     * @param function2 the functions to use to compute the values of the returned CompletableFuture
+     * @param function3 the functions to use to compute the values of the returned CompletableFuture
+     * @param function4 the functions to use to compute the values of the returned CompletableFuture
+     * @param function5 the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @Contract(pure = true)
+    public static <T, U> CompletableFuture<Tuple5> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3,Function<? super T, ? extends U> function4,Function<? super T, ? extends U> function5) {
+        return allTupleOfThenMApplyAsync(cf, AsyncPoolHolder.ASYNC_POOL, function1,function2,function3,function4,function5);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the given Executor, with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     *
+     * @param function1 the functions to use to compute the values of the returned CompletableFuture
+     * @param function2 the functions to use to compute the values of the returned CompletableFuture
+     * @param function3 the functions to use to compute the values of the returned CompletableFuture
+     * @param function4 the functions to use to compute the values of the returned CompletableFuture
+     * @param function5 the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @Contract(pure = true)
+    public static <T, U> CompletableFuture<Tuple5> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3,Function<? super T, ? extends U> function4,Function<? super T, ? extends U> function5) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("fn", function1,function2,function3,function4,function5);
+
+        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, v, function1,function2,function3,function4,function5),false));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     *
+     * @param function1 the functions to use to compute the values of the returned CompletableFuture
+     * @param function2 the functions to use to compute the values of the returned CompletableFuture
      * @param <U> the functions' return type
      * @return the new CompletableFuture
      */
@@ -1533,6 +1880,137 @@ public final class CompletableFutureUtils {
 
         return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, v, function1,function2),true));
     }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     *
+     * @param function1 the functions to use to compute the values of the returned CompletableFuture
+     * @param function2 the functions to use to compute the values of the returned CompletableFuture
+     * @param function3 the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @Contract(pure = true)
+    public static <T, U> CompletableFuture<Tuple3> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3) {
+        return allTupleOfThenMApplyFastFailAsync(cf, AsyncPoolHolder.ASYNC_POOL, function1,function2,function3);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the given Executor, with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     *
+     * @param function1 the functions to use to compute the values of the returned CompletableFuture
+     * @param function2 the functions to use to compute the values of the returned CompletableFuture
+     * @param function3 the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @Contract(pure = true)
+    public static <T, U> CompletableFuture<Tuple3> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("fn", function1,function2,function3);
+
+        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, v, function1,function2,function3),true));
+    }
+
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     *
+     * @param function1 the functions to use to compute the values of the returned CompletableFuture
+     * @param function2 the functions to use to compute the values of the returned CompletableFuture
+     * @param function3 the functions to use to compute the values of the returned CompletableFuture
+     * @param function4 the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @Contract(pure = true)
+    public static <T, U> CompletableFuture<Tuple4> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3,Function<? super T, ? extends U> function4) {
+        return allTupleOfThenMApplyFastFailAsync(cf, AsyncPoolHolder.ASYNC_POOL, function1,function2,function3,function4);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the given Executor, with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     *
+     * @param function1 the functions to use to compute the values of the returned CompletableFuture
+     * @param function2 the functions to use to compute the values of the returned CompletableFuture
+     * @param function3 the functions to use to compute the values of the returned CompletableFuture
+     * @param function4 the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @Contract(pure = true)
+    public static <T, U> CompletableFuture<Tuple4> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3,Function<? super T, ? extends U> function4) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("fn", function1,function2,function3,function4);
+
+        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, v, function1,function2,function3,function4),true));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     *
+     * @param function1 the functions to use to compute the values of the returned CompletableFuture
+     * @param function2 the functions to use to compute the values of the returned CompletableFuture
+     * @param function3 the functions to use to compute the values of the returned CompletableFuture
+     * @param function4 the functions to use to compute the values of the returned CompletableFuture
+     * @param function5 the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @Contract(pure = true)
+    public static <T, U> CompletableFuture<Tuple5> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3,Function<? super T, ? extends U> function4,Function<? super T, ? extends U> function5) {
+        return allTupleOfThenMApplyFastFailAsync(cf, AsyncPoolHolder.ASYNC_POOL, function1,function2,function3,function4,function5);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the given Executor, with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     *
+     * @param function1 the functions to use to compute the values of the returned CompletableFuture
+     * @param function2 the functions to use to compute the values of the returned CompletableFuture
+     * @param function3 the functions to use to compute the values of the returned CompletableFuture
+     * @param function4 the functions to use to compute the values of the returned CompletableFuture
+     * @param function5 the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @Contract(pure = true)
+    public static <T, U> CompletableFuture<Tuple5> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3,Function<? super T, ? extends U> function4,Function<? super T, ? extends U> function5) {
+        requireNonNull(cf, "cf is null");
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("fn", function1,function2,function3,function4,function5);
+
+        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, v, function1,function2,function3,function4,function5),true));
+    }
+
 
     private static <T, U> CompletableFuture<U>[] wrapFunctions(
             Executor executor, T v, Function<? super T, ? extends U>... fns) {
