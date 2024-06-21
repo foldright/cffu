@@ -756,7 +756,6 @@ class CompletableFutureUtilsTest {
             sleep(100);
             return n;
         };
-
         final Supplier<String> supplier_s = () -> {
             sleep(100);
             return s;
