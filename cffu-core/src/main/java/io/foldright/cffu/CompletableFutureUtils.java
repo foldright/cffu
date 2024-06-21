@@ -1687,8 +1687,8 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @Contract(pure = true)
-    public static <T, U> CompletableFuture<Tuple2> allTupleOfThenMApplyAsync(
-            CompletionStage<? extends T> cf,Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2) {
+    public static <T,U1,U2> CompletableFuture<Tuple2<U1,U2>> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2) {
         return allTupleOfThenMApplyAsync(cf, AsyncPoolHolder.ASYNC_POOL, function1,function2);
     }
 
@@ -1704,13 +1704,16 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @Contract(pure = true)
-    public static <T, U> CompletableFuture<Tuple2> allTupleOfThenMApplyAsync(
-            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2) {
+    public static <T,U1,U2> CompletableFuture<Tuple2<U1,U2>> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", function1,function2);
-
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, v, function1,function2),false));
+        CompletableFuture<T>  cf1= toNonMinCf(cf);
+        CompletableFuture<U1>  completableFuture1 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function1.apply(v), executor));
+        CompletableFuture<U2>  completableFuture2 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function2.apply(v), executor));
+        CompletionStage<?>[] css = {completableFuture1,completableFuture2};
+        return allTupleOf0(css,false);
     }
 
     /**
@@ -1723,12 +1726,11 @@ public final class CompletableFutureUtils {
      * @param function1 the functions to use to compute the values of the returned CompletableFuture
      * @param function2 the functions to use to compute the values of the returned CompletableFuture
      * @param function3 the functions to use to compute the values of the returned CompletableFuture
-     * @param <U> the functions' return type
      * @return the new CompletableFuture
      */
     @Contract(pure = true)
-    public static <T, U> CompletableFuture<Tuple3> allTupleOfThenMApplyAsync(
-            CompletionStage<? extends T> cf,Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3) {
+    public static <T,U1,U2,U3> CompletableFuture<Tuple3<U1,U2,U3>> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3) {
         return allTupleOfThenMApplyAsync(cf, AsyncPoolHolder.ASYNC_POOL, function1,function2,function3);
     }
 
@@ -1745,13 +1747,18 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @Contract(pure = true)
-    public static <T, U> CompletableFuture<Tuple3> allTupleOfThenMApplyAsync(
-            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3) {
+    public static <T,U1,U2,U3> CompletableFuture<Tuple3<U1,U2,U3>> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", function1,function2,function3);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, v, function1,function2,function3),false));
+        CompletableFuture<T>  cf1= toNonMinCf(cf);
+        CompletableFuture<U1>  completableFuture1 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function1.apply(v), executor));
+        CompletableFuture<U2>  completableFuture2 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function2.apply(v), executor));
+        CompletableFuture<U3>  completableFuture3 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function3.apply(v), executor));
+        CompletionStage<?>[] css = {completableFuture1,completableFuture2,completableFuture3};
+        return allTupleOf0(css,false);
     }
 
     /**
@@ -1769,8 +1776,8 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @Contract(pure = true)
-    public static <T, U> CompletableFuture<Tuple4> allTupleOfThenMApplyAsync(
-            CompletionStage<? extends T> cf,Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3,Function<? super T, ? extends U> function4) {
+    public static <T,U1,U2,U3,U4> CompletableFuture<Tuple4<U1,U2,U3,U4>> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3,Function<? super T, ? extends U4> function4) {
         return allTupleOfThenMApplyAsync(cf, AsyncPoolHolder.ASYNC_POOL, function1,function2,function3,function4);
     }
 
@@ -1788,13 +1795,19 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @Contract(pure = true)
-    public static <T, U> CompletableFuture<Tuple4> allTupleOfThenMApplyAsync(
-            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3,Function<? super T, ? extends U> function4) {
+    public static <T,U1,U2,U3,U4> CompletableFuture<Tuple4<U1,U2,U3,U4>> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3,Function<? super T, ? extends U4> function4) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", function1,function2,function3,function4);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, v, function1,function2,function3,function4),false));
+        CompletableFuture<T>  cf1= toNonMinCf(cf);
+        CompletableFuture<U1>  completableFuture1 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function1.apply(v), executor));
+        CompletableFuture<U2>  completableFuture2 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function2.apply(v), executor));
+        CompletableFuture<U3>  completableFuture3 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function3.apply(v), executor));
+        CompletableFuture<U4>  completableFuture4 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function4.apply(v), executor));
+        CompletionStage<?>[] css = {completableFuture1,completableFuture2,completableFuture3,completableFuture4};
+        return allTupleOf0(css,false);
     }
 
     /**
@@ -1813,8 +1826,8 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @Contract(pure = true)
-    public static <T, U> CompletableFuture<Tuple5> allTupleOfThenMApplyAsync(
-            CompletionStage<? extends T> cf,Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3,Function<? super T, ? extends U> function4,Function<? super T, ? extends U> function5) {
+    public static <T,U1,U2,U3,U4,U5> CompletableFuture<Tuple5<U1,U2,U3,U4,U5>> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3,Function<? super T, ? extends U4> function4,Function<? super T, ? extends U5> function5) {
         return allTupleOfThenMApplyAsync(cf, AsyncPoolHolder.ASYNC_POOL, function1,function2,function3,function4,function5);
     }
 
@@ -1833,13 +1846,20 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @Contract(pure = true)
-    public static <T, U> CompletableFuture<Tuple5> allTupleOfThenMApplyAsync(
-            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3,Function<? super T, ? extends U> function4,Function<? super T, ? extends U> function5) {
+    public static <T,U1,U2,U3,U4,U5> CompletableFuture<Tuple5<U1,U2,U3,U4,U5>> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3,Function<? super T, ? extends U4> function4,Function<? super T, ? extends U5> function5) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", function1,function2,function3,function4,function5);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, v, function1,function2,function3,function4,function5),false));
+        CompletableFuture<T>  cf1= toNonMinCf(cf);
+        CompletableFuture<U1>  completableFuture1 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function1.apply(v), executor));
+        CompletableFuture<U2>  completableFuture2 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function2.apply(v), executor));
+        CompletableFuture<U3>  completableFuture3 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function3.apply(v), executor));
+        CompletableFuture<U4>  completableFuture4 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function4.apply(v), executor));
+        CompletableFuture<U5>  completableFuture5 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function5.apply(v), executor));
+        CompletionStage<?>[] css = {completableFuture1,completableFuture2,completableFuture3,completableFuture4,completableFuture5};
+        return allTupleOf0(css,false);
     }
 
     /**
@@ -1851,12 +1871,11 @@ public final class CompletableFutureUtils {
      *
      * @param function1 the functions to use to compute the values of the returned CompletableFuture
      * @param function2 the functions to use to compute the values of the returned CompletableFuture
-     * @param <U> the functions' return type
      * @return the new CompletableFuture
      */
     @Contract(pure = true)
-    public static <T, U> CompletableFuture<Tuple2> allTupleOfThenMApplyFastFailAsync(
-            CompletionStage<? extends T> cf,Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2) {
+    public static <T,U1,U2> CompletableFuture<Tuple2<U1,U2>> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2) {
         return allTupleOfThenMApplyFastFailAsync(cf, AsyncPoolHolder.ASYNC_POOL, function1,function2);
     }
 
@@ -1872,13 +1891,16 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @Contract(pure = true)
-    public static <T, U> CompletableFuture<Tuple2> allTupleOfThenMApplyFastFailAsync(
-            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2) {
+    public static <T,U1,U2> CompletableFuture<Tuple2<U1,U2>> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", function1,function2);
-
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, v, function1,function2),true));
+        CompletableFuture<T>  cf1= toNonMinCf(cf);
+        CompletableFuture<U1>  completableFuture1 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function1.apply(v), executor));
+        CompletableFuture<U2>  completableFuture2 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function2.apply(v), executor));
+        CompletionStage<?>[] css = {completableFuture1,completableFuture2};
+        return allTupleOf0(css,true);
     }
 
     /**
@@ -1895,8 +1917,8 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @Contract(pure = true)
-    public static <T, U> CompletableFuture<Tuple3> allTupleOfThenMApplyFastFailAsync(
-            CompletionStage<? extends T> cf,Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3) {
+    public static <T,U1,U2,U3> CompletableFuture<Tuple3<U1,U2,U3>> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3) {
         return allTupleOfThenMApplyFastFailAsync(cf, AsyncPoolHolder.ASYNC_POOL, function1,function2,function3);
     }
 
@@ -1913,13 +1935,18 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @Contract(pure = true)
-    public static <T, U> CompletableFuture<Tuple3> allTupleOfThenMApplyFastFailAsync(
-            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3) {
+    public static <T,U1,U2,U3> CompletableFuture<Tuple3<U1,U2,U3>> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", function1,function2,function3);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, v, function1,function2,function3),true));
+        CompletableFuture<T>  cf1= toNonMinCf(cf);
+        CompletableFuture<U1>  completableFuture1 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function1.apply(v), executor));
+        CompletableFuture<U2>  completableFuture2 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function2.apply(v), executor));
+        CompletableFuture<U3>  completableFuture3 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function3.apply(v), executor));
+        CompletionStage<?>[] css = {completableFuture1,completableFuture2,completableFuture3};
+        return allTupleOf0(css,true);
     }
 
 
@@ -1938,8 +1965,8 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @Contract(pure = true)
-    public static <T, U> CompletableFuture<Tuple4> allTupleOfThenMApplyFastFailAsync(
-            CompletionStage<? extends T> cf,Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3,Function<? super T, ? extends U> function4) {
+    public static <T, U1,U2,U3,U4> CompletableFuture<Tuple4<U1,U2,U3,U4>> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3,Function<? super T, ? extends U4> function4) {
         return allTupleOfThenMApplyFastFailAsync(cf, AsyncPoolHolder.ASYNC_POOL, function1,function2,function3,function4);
     }
 
@@ -1957,13 +1984,19 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @Contract(pure = true)
-    public static <T, U> CompletableFuture<Tuple4> allTupleOfThenMApplyFastFailAsync(
-            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3,Function<? super T, ? extends U> function4) {
+    public static <T,U1,U2,U3,U4> CompletableFuture<Tuple4<U1,U2,U3,U4>> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3,Function<? super T, ? extends U4> function4) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", function1,function2,function3,function4);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, v, function1,function2,function3,function4),true));
+        CompletableFuture<T>  cf1= toNonMinCf(cf);
+        CompletableFuture<U1>  completableFuture1 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function1.apply(v), executor));
+        CompletableFuture<U2>  completableFuture2 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function2.apply(v), executor));
+        CompletableFuture<U3>  completableFuture3 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function3.apply(v), executor));
+        CompletableFuture<U4>  completableFuture4 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function4.apply(v), executor));
+        CompletionStage<?>[] css = {completableFuture1,completableFuture2,completableFuture3,completableFuture4};
+        return allTupleOf0(css,true);
     }
 
     /**
@@ -1982,8 +2015,8 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @Contract(pure = true)
-    public static <T, U> CompletableFuture<Tuple5> allTupleOfThenMApplyFastFailAsync(
-            CompletionStage<? extends T> cf,Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3,Function<? super T, ? extends U> function4,Function<? super T, ? extends U> function5) {
+    public static <T, U1,U2,U3,U4,U5> CompletableFuture<Tuple5<U1,U2,U3,U4,U5>> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3,Function<? super T, ? extends U4> function4,Function<? super T, ? extends U5> function5) {
         return allTupleOfThenMApplyFastFailAsync(cf, AsyncPoolHolder.ASYNC_POOL, function1,function2,function3,function4,function5);
     }
 
@@ -2002,13 +2035,21 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @Contract(pure = true)
-    public static <T, U> CompletableFuture<Tuple5> allTupleOfThenMApplyFastFailAsync(
-            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U> function1,Function<? super T, ? extends U> function2,Function<? super T, ? extends U> function3,Function<? super T, ? extends U> function4,Function<? super T, ? extends U> function5) {
+    public static <T, U1,U2,U3,U4,U5> CompletableFuture<Tuple5<U1,U2,U3,U4,U5>> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3,Function<? super T, ? extends U4> function4,Function<? super T, ? extends U5> function5) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", function1,function2,function3,function4,function5);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, v, function1,function2,function3,function4,function5),true));
+        CompletableFuture<T>  cf1= toNonMinCf(cf);
+        CompletableFuture<U1>  completableFuture1 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function1.apply(v), executor));
+        CompletableFuture<U2>  completableFuture2 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function2.apply(v), executor));
+        CompletableFuture<U3>  completableFuture3 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function3.apply(v), executor));
+        CompletableFuture<U4>  completableFuture4 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function4.apply(v), executor));
+        CompletableFuture<U5>  completableFuture5 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> function5.apply(v), executor));
+        CompletionStage<?>[] css = {completableFuture1,completableFuture2,completableFuture3,completableFuture4,completableFuture5};
+        return allTupleOf0(css,true);
+
     }
 
 
@@ -2022,6 +2063,7 @@ public final class CompletableFutureUtils {
         }
         return cfs;
     }
+
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
