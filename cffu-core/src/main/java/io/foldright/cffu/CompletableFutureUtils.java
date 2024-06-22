@@ -1566,7 +1566,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", fns);
 
-        return toNonMinCf(cf).thenCompose(v -> allResultsOfFastFail(wrapFunctions(executor, v, fns)));
+        return f_toCf(cf).thenCompose(v -> allResultsOfFastFail(wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -1620,7 +1620,7 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         requireArrayAndEleNonNull("fn", fns);
 
-        return toNonMinCf(cf).thenCompose(v -> mostResultsOfSuccess(
+        return f_toCf(cf).thenCompose(v -> mostResultsOfSuccess(
                 valueIfNotSuccess, executor, timeout, unit, wrapFunctions(executor, v, fns)
         ));
     }
@@ -1659,7 +1659,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", fns);
 
-        return toNonMinCf(cf).thenCompose(v -> allResultsOf(wrapFunctions(executor, v, fns)));
+        return f_toCf(cf).thenCompose(v -> allResultsOf(wrapFunctions(executor, v, fns)));
     }
 
     private static <T, U> CompletableFuture<U>[] wrapFunctions(
@@ -1701,7 +1701,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return toNonMinCf(cf).thenCompose(v -> CompletableFuture.allOf(wrapConsumers(executor, v, actions)));
+        return f_toCf(cf).thenCompose(v -> CompletableFuture.allOf(wrapConsumers(executor, v, actions)));
     }
 
     /**
@@ -1738,7 +1738,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return toNonMinCf(cf).thenCompose(v -> allOfFastFail(wrapConsumers(executor, v, actions)));
+        return f_toCf(cf).thenCompose(v -> allOfFastFail(wrapConsumers(executor, v, actions)));
     }
 
     private static <T> CompletableFuture<Void>[] wrapConsumers(Executor executor, T v, Consumer<? super T>[] actions) {
@@ -1785,7 +1785,20 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return toNonMinCf(cf).thenCompose(unused -> allOfFastFail(wrapRunnables(executor, actions)));
+        return f_toCf(cf).thenCompose(unused -> allOfFastFail(wrapRunnables(executor, actions)));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * executes the given actions using the CompletableFuture's default asynchronous execution facility.
+     *
+     * @param actions the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#thenRunAsync(Runnable)
+     * @see #allOf(CompletionStage[])
+     */
+    public static CompletableFuture<Void> thenMRunAsync(CompletionStage<?> cf, Runnable... actions) {
+        return thenMRunAsync(cf, AsyncPoolHolder.ASYNC_POOL, actions);
     }
 
     /**
@@ -1802,20 +1815,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return toNonMinCf(cf).thenCompose(unused -> CompletableFuture.allOf(wrapRunnables(executor, actions)));
-    }
-
-    /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * executes the given actions using the CompletableFuture's default asynchronous execution facility.
-     *
-     * @param actions the actions to perform before completing the returned CompletableFuture
-     * @return the new CompletableFuture
-     * @see CompletableFuture#thenRunAsync(Runnable)
-     * @see #allOf(CompletionStage[])
-     */
-    public static CompletableFuture<Void> thenMRunAsync(CompletionStage<?> cf, Runnable... actions) {
-        return thenMRunAsync(cf, AsyncPoolHolder.ASYNC_POOL, actions);
+        return f_toCf(cf).thenCompose(unused -> CompletableFuture.allOf(wrapRunnables(executor, actions)));
     }
 
     // endregion
