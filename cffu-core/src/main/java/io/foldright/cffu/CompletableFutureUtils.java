@@ -429,6 +429,90 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier)} except for the most-success behavior.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @return the new CompletableFuture
+     */
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
+            Executor executor, long timeout, TimeUnit unit,
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
+        requireNonNull(executor, "executor is null");
+        requireNonNull(unit, "unit is null");
+        Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
+
+        return mostTupleOfSuccess0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier, Supplier)}
+     * except for the most-success behavior.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @return the new CompletableFuture
+     */
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
+            Executor executor, long timeout, TimeUnit unit,
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
+        requireNonNull(executor, "executor is null");
+        requireNonNull(unit, "unit is null");
+        Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3);
+
+        return mostTupleOfSuccess0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier, Supplier, Supplier)}
+     * except for the most-success behavior.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @return the new CompletableFuture
+     */
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
+            Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
+            Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
+        requireNonNull(executor, "executor is null");
+        requireNonNull(unit, "unit is null");
+        Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4);
+
+        return mostTupleOfSuccess0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier, Supplier, Supplier, Supplier)}
+     * except for the most-success behavior.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @return the new CompletableFuture
+     */
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
+            Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
+            Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
+            Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
+        requireNonNull(executor, "executor is null");
+        requireNonNull(unit, "unit is null");
+        Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4, supplier5);
+
+        return mostTupleOfSuccess0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
      * by tasks running in the CompletableFuture's default asynchronous execution facility
      * with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
@@ -558,90 +642,6 @@ public final class CompletableFutureUtils {
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4, supplier5);
 
         return allTupleOf0(false, wrapSuppliers(executor, suppliers));
-    }
-
-    /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier)} except for the most-success behavior.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     */
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
-            Executor executor, long timeout, TimeUnit unit,
-            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        requireNonNull(executor, "executor is null");
-        requireNonNull(unit, "unit is null");
-        Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
-
-        return mostTupleOfSuccess0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
-    }
-
-    /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier, Supplier)}
-     * except for the most-success behavior.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     */
-    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
-            Executor executor, long timeout, TimeUnit unit,
-            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        requireNonNull(executor, "executor is null");
-        requireNonNull(unit, "unit is null");
-        Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3);
-
-        return mostTupleOfSuccess0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
-    }
-
-    /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier, Supplier, Supplier)}
-     * except for the most-success behavior.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     */
-    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
-            Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
-            Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        requireNonNull(executor, "executor is null");
-        requireNonNull(unit, "unit is null");
-        Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4);
-
-        return mostTupleOfSuccess0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
-    }
-
-    /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier, Supplier, Supplier, Supplier)}
-     * except for the most-success behavior.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     */
-    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
-            Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
-            Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
-            Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        requireNonNull(executor, "executor is null");
-        requireNonNull(unit, "unit is null");
-        Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4, supplier5);
-
-        return mostTupleOfSuccess0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
     }
 
     // endregion
@@ -1098,21 +1098,6 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is completed when the given two stages complete.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is completed when the given two stages complete
-     * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allResultsOf(CompletionStage[])
-     */
-    @Contract(pure = true)
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOf(
-            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2));
-    }
-
-    /**
      * Returns a new CompletableFuture that is successful when the given three stages success.
      * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
@@ -1128,21 +1113,6 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOfFastFail(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
         return allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2, cf3));
-    }
-
-    /**
-     * Returns a new CompletableFuture that is completed when the given three stages complete.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is completed when the given three stages complete
-     * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allResultsOf(CompletionStage[])
-     */
-    @Contract(pure = true)
-    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOf(
-            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2, cf3));
     }
 
     /**
@@ -1165,22 +1135,6 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is completed when the given four stages complete.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is completed when the given four stages complete
-     * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allResultsOf(CompletionStage[])
-     */
-    @Contract(pure = true)
-    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOf(
-            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
-            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
-    }
-
-    /**
      * Returns a new CompletableFuture that is successful when the given five stages success.
      * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
@@ -1197,44 +1151,6 @@ public final class CompletableFutureUtils {
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
         return allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
-    }
-
-    /**
-     * Returns a new CompletableFuture that is completed when the given five stages complete.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is completed when the given five stages complete
-     * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allResultsOf(CompletionStage[])
-     */
-    @Contract(pure = true)
-    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
-            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
-            CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
-    }
-
-    private static <T> CompletableFuture<T> allTupleOf0(boolean fastFail, CompletionStage<?>[] css) {
-        final Object[] result = new Object[css.length];
-        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
-
-        final CompletableFuture<Void> resultSetter;
-        if (fastFail) resultSetter = allOfFastFail(resultSetterCfs);
-        else resultSetter = CompletableFuture.allOf(resultSetterCfs);
-
-        return resultSetter.thenApply(unused -> tupleOf0(result));
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> T tupleOf0(Object... elements) {
-        final int len = elements.length;
-        final Object ret;
-        if (len == 2) ret = Tuple2.of(elements[0], elements[1]);
-        else if (len == 3) ret = Tuple3.of(elements[0], elements[1], elements[2]);
-        else if (len == 4) ret = Tuple4.of(elements[0], elements[1], elements[2], elements[3]);
-        else ret = Tuple5.of(elements[0], elements[1], elements[2], elements[3], elements[4]);
-        return (T) ret;
     }
 
     /**
@@ -1394,6 +1310,90 @@ public final class CompletableFutureUtils {
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
         return mostTupleOfSuccess0(executorWhenTimeout, timeout, unit, cf1, cf2, cf3, cf4, cf5);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is completed when the given two stages complete.
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
+     * with a CompletionException holding this exception as its cause.
+     *
+     * @return a new CompletableFuture that is completed when the given two stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOf(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOf(
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
+        return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2));
+    }
+
+    /**
+     * Returns a new CompletableFuture that is completed when the given three stages complete.
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
+     * with a CompletionException holding this exception as its cause.
+     *
+     * @return a new CompletableFuture that is completed when the given three stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOf(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOf(
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
+        return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2, cf3));
+    }
+
+    /**
+     * Returns a new CompletableFuture that is completed when the given four stages complete.
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
+     * with a CompletionException holding this exception as its cause.
+     *
+     * @return a new CompletableFuture that is completed when the given four stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOf(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOf(
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
+        return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
+    }
+
+    /**
+     * Returns a new CompletableFuture that is completed when the given five stages complete.
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
+     * with a CompletionException holding this exception as its cause.
+     *
+     * @return a new CompletableFuture that is completed when the given five stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOf(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
+            CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
+        return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
+    }
+
+    private static <T> CompletableFuture<T> allTupleOf0(boolean fastFail, CompletionStage<?>[] css) {
+        final Object[] result = new Object[css.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
+
+        final CompletableFuture<Void> resultSetter;
+        if (fastFail) resultSetter = allOfFastFail(resultSetterCfs);
+        else resultSetter = CompletableFuture.allOf(resultSetterCfs);
+
+        return resultSetter.thenApply(unused -> tupleOf0(result));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T tupleOf0(Object... elements) {
+        final int len = elements.length;
+        final Object ret;
+        if (len == 2) ret = Tuple2.of(elements[0], elements[1]);
+        else if (len == 3) ret = Tuple3.of(elements[0], elements[1], elements[2]);
+        else if (len == 4) ret = Tuple4.of(elements[0], elements[1], elements[2], elements[3]);
+        else ret = Tuple5.of(elements[0], elements[1], elements[2], elements[3], elements[4]);
+        return (T) ret;
     }
 
     private static <T> CompletableFuture<T> mostTupleOfSuccess0(
