@@ -14,6 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
@@ -545,6 +546,271 @@ public final class CffuFactory {
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
         return create(CompletableFutureUtils.mostTupleOfSuccess(defaultExecutor, timeout, unit, cf1, cf2, cf3, cf4, cf5));
     }
+
+    /**
+     * Returns a new Cffu that is successful when the given three stages success.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #allTupleOfMSupplyAsync(Supplier, Supplier)}
+     * except for the fast-fail behavior.
+     *
+     * @return a new Cffu that is successful when the given three stages success
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOfFastFail(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOfMSupplyFastFailAsync(
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
+        return create(CompletableFutureUtils.allTupleOfMSupplyFastFailAsync(supplier1, supplier2));
+    }
+
+    /**
+     * Returns a new Cffu that is completed when the given three stages complete.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
+     *
+     * @return a new Cffu that is completed when the given three stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOf(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOfMSupplyAsync(
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
+        return create(CompletableFutureUtils.allTupleOfMSupplyAsync(supplier1, supplier2));
+    }
+
+    /**
+     * Returns a new Cffu that is successful when the given three stages success.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #allTupleOfMSupplyAsync(Supplier, Supplier, Supplier)}
+     * except for the fast-fail behavior.
+     *
+     * @return a new Cffu that is successful when the given three stages success
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOfFastFail(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T1, T2,T3> Cffu<Tuple3<T1, T2,T3>> allTupleOfMSupplyFastFailAsync(
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
+        return create(CompletableFutureUtils.allTupleOfMSupplyFastFailAsync(supplier1, supplier2,supplier3));
+    }
+
+    /**
+     * Returns a new Cffu that is completed when the given three stages complete.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
+     *
+     * @return a new Cffu that is completed when the given three stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOf(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T1, T2,T3> Cffu<Tuple3<T1,T2,T3>> allTupleOfMSupplyAsync(
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
+        return create(CompletableFutureUtils.allTupleOfMSupplyAsync(supplier1, supplier2,supplier3));
+    }
+
+    /**
+     * Returns a new Cffu that is successful when the given three stages success.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #allTupleOfMSupplyAsync(Supplier, Supplier, Supplier, Supplier)}
+     * except for the fast-fail behavior.
+     *
+     * @return a new Cffu that is successful when the given three stages success
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOfFastFail(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T1, T2,T3,T4> Cffu<Tuple4<T1, T2,T3,T4>> allTupleOfMSupplyFastFailAsync(
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
+        return create(CompletableFutureUtils.allTupleOfMSupplyFastFailAsync(supplier1, supplier2,supplier3,supplier4));
+    }
+
+    /**
+     * Returns a new Cffu that is completed when the given three stages complete.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
+     *
+     * @return a new Cffu that is completed when the given three stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOf(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T1, T2,T3,T4> Cffu<Tuple4<T1,T2,T3,T4>> allTupleOfMSupplyAsync(
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
+        return create(CompletableFutureUtils.allTupleOfMSupplyAsync(supplier1,supplier2,supplier3,supplier4));
+    }
+
+
+    /**
+     * Returns a new Cffu that is successful when the given three stages success.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #allTupleOfMSupplyAsync(Supplier, Supplier, Supplier, Supplier, Supplier)}
+     * except for the fast-fail behavior.
+     *
+     * @return a new Cffu that is successful when the given three stages success
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOfFastFail(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T1, T2,T3,T4,T5> Cffu<Tuple5<T1, T2,T3,T4,T5>> allTupleOfMSupplyFastFailAsync(
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
+        return create(CompletableFutureUtils.allTupleOfMSupplyFastFailAsync(supplier1, supplier2,supplier3,supplier4,supplier5));
+    }
+
+    /**
+     * Returns a new Cffu that is completed when the given three stages complete.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
+     *
+     * @return a new Cffu that is completed when the given three stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOf(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T1, T2,T3,T4,T5> Cffu<Tuple5<T1,T2,T3,T4,T5>> allTupleOfMSupplyAsync(
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
+        return create(CompletableFutureUtils.allTupleOfMSupplyAsync(supplier1,supplier2,supplier3,supplier4,supplier5));
+    }
+
+
+    /**
+     * Returns a new Cffu that is successful when the given three stages success.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #allTupleOfThenMApplyAsync(CompletionStage,Function, Function)}
+     * except for the fast-fail behavior.
+     *
+     * @return a new Cffu that is successful when the given three stages success
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOfFastFail(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T,U1,U2> Cffu<Tuple2<U1, U2>> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf, Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2) {
+        return create(CompletableFutureUtils.allTupleOfThenMApplyFastFailAsync(cf,function1, function2));
+    }
+    /**
+     * Returns a new Cffu that is successful when the given three stages success.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #allTupleOfThenMApplyAsync(CompletionStage,Function, Function,Function)}
+     * except for the fast-fail behavior.
+     *
+     * @return a new Cffu that is successful when the given three stages success
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOfFastFail(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T,U1,U2,U3> Cffu<Tuple3<U1,U2,U3>> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf, Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3) {
+        return create(CompletableFutureUtils.allTupleOfThenMApplyFastFailAsync(cf,function1, function2,function3));
+    }
+
+    /**
+     * Returns a new Cffu that is successful when the given three stages success.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #allTupleOfThenMApplyAsync(CompletionStage,Function, Function,Function,Function)}
+     * except for the fast-fail behavior.
+     *
+     * @return a new Cffu that is successful when the given three stages success
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOfFastFail(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T,U1,U2,U3,U4> Cffu<Tuple4<U1,U2,U3,U4>> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf, Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3,Function<? super T, ? extends U4> function4) {
+        return create(CompletableFutureUtils.allTupleOfThenMApplyFastFailAsync(cf,function1, function2,function3,function4));
+    }
+
+    /**
+     * Returns a new Cffu that is successful when the given three stages success.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
+     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * <p>
+     * This method is the same as {@link #allTupleOfThenMApplyAsync(CompletionStage,Function, Function,Function, Function,Function)}
+     * except for the fast-fail behavior.
+     *
+     * @return a new Cffu that is successful when the given three stages success
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOfFastFail(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T,U1,U2,U3,U4,U5> Cffu<Tuple5<U1,U2,U3,U4,U5>> allTupleOfThenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf, Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3,Function<? super T, ? extends U4> function4,Function<? super T, ? extends U5> function5) {
+        return create(CompletableFutureUtils.allTupleOfThenMApplyFastFailAsync(cf,function1, function2,function3,function4,function5));
+    }
+
+    /**
+     * Returns a new Cffu that is completed when the given three stages complete.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
+     *
+     * @return a new Cffu that is completed when the given three stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOf(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T,U1,U2> Cffu<Tuple2<U1, U2>> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2) {
+        return create(CompletableFutureUtils.allTupleOfThenMApplyAsync(cf,function1, function2));
+    }
+
+    /**
+     * Returns a new Cffu that is completed when the given three stages complete.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
+     *
+     * @return a new Cffu that is completed when the given three stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOf(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T,U1,U2,U3> Cffu<Tuple3<U1,U2,U3>> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3) {
+        return create(CompletableFutureUtils.allTupleOfThenMApplyAsync(cf,function1, function2,function3));
+    }
+    /**
+     * Returns a new Cffu that is completed when the given three stages complete.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
+     *
+     * @return a new Cffu that is completed when the given three stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOf(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T,U1,U2,U3,U4> Cffu<Tuple4<U1,U2,U3,U4>> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3,Function<? super T, ? extends U4> function4) {
+        return create(CompletableFutureUtils.allTupleOfThenMApplyAsync(cf,function1, function2,function3,function4));
+    }
+
+    /**
+     * Returns a new Cffu that is completed when the given three stages complete.
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
+     *
+     * @return a new Cffu that is completed when the given three stages complete
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allResultsOf(CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T,U1,U2,U3,U4,U5> Cffu<Tuple5<U1,U2,U3,U4,U5>> allTupleOfThenMApplyAsync(
+            CompletionStage<? extends T> cf,Function<? super T, ? extends U1> function1,Function<? super T, ? extends U2> function2,Function<? super T, ? extends U3> function3,Function<? super T, ? extends U4> function4,Function<? super T, ? extends U5> function5) {
+        return create(CompletableFutureUtils.allTupleOfThenMApplyAsync(cf,function1, function2,function3,function4,function5));
+    }
+
 
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
