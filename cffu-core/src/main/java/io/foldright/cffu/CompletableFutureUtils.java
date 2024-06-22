@@ -654,7 +654,7 @@ public final class CompletableFutureUtils {
 
         // MUST be non-minimal-stage CF instances in order to read results(`getSuccessNow`),
         // otherwise UnsupportedOperationException
-        final CompletableFuture<T>[] cfArray = f_toNonMinCfArray(cfs);
+        final CompletableFuture<T>[] cfArray = toNonMinCfArray(cfs);
         return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, executorWhenTimeout, timeout, unit)
                 .handle((unused, ex) -> arrayList(MGetSuccessNow0(valueIfNotSuccess, cfArray)));
     }
@@ -821,7 +821,7 @@ public final class CompletableFutureUtils {
         final CompletableFuture<Void>[] resultSetterCfs = new CompletableFuture[result.length];
         for (int i = 0; i < result.length; i++) {
             final int index = i;
-            resultSetterCfs[index] = toCf(css[index]).thenAccept(v -> result[index] = v);
+            resultSetterCfs[index] = f_toCf(css[index]).thenAccept(v -> result[index] = v);
         }
         return resultSetterCfs;
     }
@@ -831,7 +831,7 @@ public final class CompletableFutureUtils {
                                  CompletableFuture<? extends T>[] failedOrBeIncomplete) {
         final CompletableFuture<T> incomplete = new CompletableFuture<>();
         for (int i = 0; i < css.length; i++) {
-            final CompletableFuture<T> f = toCf(css[i]);
+            final CompletableFuture<T> f = f_toCf(css[i]);
             successOrBeIncomplete[i] = f.handle((v, ex) -> ex == null ? f : incomplete).thenCompose(x -> x);
             failedOrBeIncomplete[i] = f.handle((v, ex) -> ex == null ? incomplete : f).thenCompose(x -> x);
         }
@@ -848,17 +848,18 @@ public final class CompletableFutureUtils {
 
     /**
      * Force converts {@link CompletionStage} array to {@link CompletableFuture} array,
-     * IGNORE the compile-time type check.
+     * reuse cf instance as many as possible. This method is NOT type safe!
+     * More info see method {@link #f_toCf(CompletionStage)}.
      */
     private static <T> CompletableFuture<T>[] f_toCfArray(CompletionStage<? extends T>[] stages) {
-        return toCfArray0(stages, CompletableFutureUtils::toCf);
+        return toCfArray0(stages, CompletableFutureUtils::f_toCf);
     }
 
     /**
-     * Force converts {@link CompletionStage} array to {@link CompletableFuture} array,
-     * IGNORE the compile-time type check.
+     * Converts {@link CompletionStage} array to {@link CompletableFuture} array.
+     * More info see method {@link #toNonMinCf(CompletionStage)}.
      */
-    private static <T> CompletableFuture<T>[] f_toNonMinCfArray(CompletionStage<? extends T>[] stages) {
+    private static <T> CompletableFuture<T>[] toNonMinCfArray(CompletionStage<? extends T>[] stages) {
         return toCfArray0(stages, CompletableFutureUtils::toNonMinCf);
     }
 
@@ -875,14 +876,14 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Converts CompletionStage to CompletableFuture, reuse cf instance as many as possible.
+     * Force converts CompletionStage to CompletableFuture, reuse cf instance as many as possible.
      * <p>
-     * <strong>CAUTION:</strong> because reused the CF instances,
-     * so the returned CF instances MUST NOT be written(e.g. {@link CompletableFuture#complete(Object)}).
-     * Otherwise, the caller should defensive copy instead of writing it directly.
+     * <strong>CAUTION:</strong> This method is NOT type safe! Because reused the CF instances,
+     * The returned cf may be a minimal-stage, MUST NOT be written or read(explicitly)
+     * (e.g. complete(Object)); Otherwise, the caller usage of cf may trigger UnsupportedOperationException.
      */
     @SuppressWarnings("unchecked")
-    private static <T> CompletableFuture<T> toCf(CompletionStage<? extends T> s) {
+    private static <T> CompletableFuture<T> f_toCf(CompletionStage<? extends T> s) {
         if (s instanceof CompletableFuture) return (CompletableFuture<T>) s;
         else if (s instanceof Cffu) return ((Cffu<T>) s).cffuUnwrap();
         else return (CompletableFuture<T>) s.toCompletableFuture();
@@ -892,24 +893,22 @@ public final class CompletableFutureUtils {
      * Converts CompletionStage to non-minimal-stage CompletableFuture, reuse cf instance as many as possible.
      * <p>
      * <strong>CAUTION:</strong> because reused the CF instances,
-     * so the returned CF instances MUST NOT be written(e.g. {@link CompletableFuture#complete(Object)}).
-     * Otherwise, the caller should defensive copy instead of writing it directly.
+     * so the returned CF instances should NOT be written(e.g. complete(Object));
+     * Otherwise, the caller may need defensive copy instead of writing it directly.
      */
     private static <T> CompletableFuture<T> toNonMinCf(CompletionStage<? extends T> s) {
-        final CompletableFuture<T> f = toCf(s);
+        final CompletableFuture<T> f = f_toCf(s);
         return isMinStageCf(f) ? f.toCompletableFuture() : f;
     }
-
     /**
-     * Converts CompletionStage to a non-minimal-stage CompletableFuture copy.
+     * Converts CompletionStage to a non-minimal-stage CompletableFuture copy. This method is type safe.
      * <p>
-     * <strong>NOTE:</strong> The return of {@code copy} methods
+     * <strong>Implementation Note:</strong> The return of {@code copy} methods
      * ({@link #copy(CompletableFuture)}/{@link CompletableFuture#copy()}) on {@code minimal-stage}
-     * is still a {@code minimal-stage}.<br>
-     * e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()}.
+     * is still a {@code minimal-stage}(e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()})
      */
     private static <T> CompletableFuture<T> toNonMinCfCopy(CompletionStage<? extends T> s) {
-        final CompletableFuture<T> f = toCf(s);
+        final CompletableFuture<T> f = f_toCf(s);
         return isMinStageCf(f) ? f.toCompletableFuture() : copy(f);
     }
 
@@ -1318,7 +1317,7 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         // MUST be *Non-Minimal* CF instances in order to read results(`getSuccessNow`),
         // otherwise UnsupportedOperationException
-        final CompletableFuture<Object>[] cfArray = f_toNonMinCfArray(css);
+        final CompletableFuture<Object>[] cfArray = toNonMinCfArray(css);
         return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, executorWhenTimeout, timeout, unit)
                 .handle((unused, ex) -> tupleOf0(MGetSuccessNow0(null, cfArray)));
     }
