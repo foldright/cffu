@@ -1,5 +1,9 @@
 package io.foldright.cffu;
 
+import io.foldright.cffu.tuple.Tuple2;
+import io.foldright.cffu.tuple.Tuple3;
+import io.foldright.cffu.tuple.Tuple4;
+import io.foldright.cffu.tuple.Tuple5;
 import io.foldright.test_utils.TestThreadPoolManager;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,6 +14,7 @@ import org.junit.jupiter.api.condition.JRE;
 import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static io.foldright.test_utils.TestUtils.*;
 import static java.util.function.Function.identity;
@@ -27,6 +32,44 @@ class CffuTest {
     private static CffuFactory cffuFactory;
 
     private static CffuFactory forbidObtrudeMethodsCffuFactory;
+
+    @Test
+    void test_thenTupleMApplyAsync() throws Exception {
+        final Cffu<Integer> completed = cffuFactory.completedFuture(n);
+        final Function<Integer, Integer> function_n = (x) -> {
+            sleep(100);
+            return n;
+        };
+
+        final Function<Integer, String> function_s = (x) -> {
+            sleep(100);
+            return s;
+        };
+
+        final Function<Integer, Double> function_d = (x) -> {
+            sleep(100);
+            return d;
+        };
+        final Function<Integer, Integer> function_an = (x) -> {
+            sleep(100);
+            return anotherN;
+        };
+        final Function<Integer, Integer> function_nn = (x) -> {
+            sleep(100);
+            return n + n;
+        };
+        assertEquals(Tuple2.of(n, s), completed.thenTupleMApplyAsync(function_n, function_s).get());
+        assertEquals(Tuple2.of(n, s), completed.thenTupleMApplyFastFailAsync(function_n, function_s).get());
+
+        assertEquals(Tuple3.of(n, s, d), completed.thenTupleMApplyAsync(function_n, function_s, function_d).get());
+        assertEquals(Tuple3.of(n, s, d), completed.thenTupleMApplyFastFailAsync(function_n, function_s, function_d).get());
+
+        assertEquals(Tuple4.of(n, s, d, anotherN), completed.thenTupleMApplyAsync(function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), completed.thenTupleMApplyFastFailAsync(function_n, function_s, function_d, function_an).get());
+
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), completed.thenTupleMApplyAsync(function_n, function_s, function_d, function_an, function_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), completed.thenTupleMApplyFastFailAsync(function_n, function_s, function_d, function_an, function_nn).get());
+    }
 
     ////////////////////////////////////////////////////////////////////////////////
     //# both methods

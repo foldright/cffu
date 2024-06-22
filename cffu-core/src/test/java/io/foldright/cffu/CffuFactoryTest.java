@@ -662,44 +662,6 @@ class CffuFactoryTest {
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n),  cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
     }
 
-    @Test
-    void test_thenTupleMApplyAsync() throws Exception {
-        final CompletableFuture<Integer> completed = completedFuture(n);
-        final Function<Integer,Integer> function_n = (x) -> {
-            sleep(100);
-            return n;
-        };
-
-        final Function<Integer,String> function_s = (x) -> {
-            sleep(100);
-            return s;
-        };
-
-        final Function<Integer,Double> function_d = (x) -> {
-            sleep(100);
-            return d;
-        };
-        final Function<Integer,Integer> function_an = (x) -> {
-            sleep(100);
-            return anotherN;
-        };
-        final Function<Integer,Integer> function_nn = (x) -> {
-            sleep(100);
-            return n+n;
-        };
-        assertEquals(Tuple2.of(n, s), cffuFactory.thenTupleMApplyAsync(completed,function_n, function_s).get());
-        assertEquals(Tuple2.of(n, s),  cffuFactory.thenTupleMApplyFastFailAsync(completed,function_n, function_s).get());
-
-        assertEquals(Tuple3.of(n, s, d),  cffuFactory.thenTupleMApplyAsync(completed,function_n, function_s, function_d).get());
-        assertEquals(Tuple3.of(n, s, d),  cffuFactory.thenTupleMApplyFastFailAsync(completed,function_n, function_s, function_d).get());
-
-        assertEquals(Tuple4.of(n, s, d, anotherN),  cffuFactory.thenTupleMApplyAsync(completed,function_n, function_s, function_d, function_an).get());
-        assertEquals(Tuple4.of(n, s, d, anotherN),  cffuFactory.thenTupleMApplyFastFailAsync(completed,function_n, function_s, function_d, function_an).get());
-
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n),  cffuFactory.thenTupleMApplyAsync(completed,function_n, function_s, function_d, function_an, function_nn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n),  cffuFactory.thenTupleMApplyFastFailAsync(completed,function_n, function_s, function_d, function_an, function_nn).get());
-    }
-
     ////////////////////////////////////////////////////////////////////////////////
     //# Conversion (Static) Methods
     //
