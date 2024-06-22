@@ -216,7 +216,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return CompletableFuture.allOf(wrapActions(executor, actions));
+        return CompletableFuture.allOf(wrapRunnables(executor, actions));
     }
 
     /**
@@ -251,10 +251,10 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return allOfFastFail(wrapActions(executor, actions));
+        return allOfFastFail(wrapRunnables(executor, actions));
     }
 
-    private static CompletableFuture<Void>[] wrapActions(Executor executor, Runnable[] actions) {
+    private static CompletableFuture<Void>[] wrapRunnables(Executor executor, Runnable[] actions) {
         @SuppressWarnings("unchecked")
         CompletableFuture<Void>[] cfs = new CompletableFuture[actions.length];
         for (int i = 0; i < actions.length; i++) {
@@ -1701,7 +1701,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return toNonMinCf(cf).thenCompose(unused -> allOfFastFail(wrapActions(executor, actions)));
+        return toNonMinCf(cf).thenCompose(unused -> allOfFastFail(wrapRunnables(executor, actions)));
     }
 
     /**
@@ -1718,7 +1718,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return toNonMinCf(cf).thenCompose(unused -> CompletableFuture.allOf(wrapActions(executor, actions)));
+        return toNonMinCf(cf).thenCompose(unused -> CompletableFuture.allOf(wrapRunnables(executor, actions)));
     }
 
     /**
