@@ -166,44 +166,6 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfCompletableFuture(): Compl
     CompletableFutureUtils.allResultsOf(*this)
 
 /**
- * Returns a new CompletableFuture that is completed when all the given stages complete.
- * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
- * with a CompletionException holding this exception as its cause.
- * Otherwise, the results, if any, of the given stages are not reflected
- * in the returned CompletableFuture, but may be obtained by inspecting them individually.
- * If no stages are provided, returns a CompletableFuture completed with the value `null`.
- *
- * If you need the results of given stages, prefer below methods:
- *
- *  - [allResultsOfCompletableFuture]
- *
- * This method is the same as [CompletableFutureUtils.allOf], providing this method is convenient for method chaining.
- *
- * @see allResultsOfCompletableFuture
- */
-fun Collection<CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
-    CompletableFutureUtils.allOf(*toTypedArray())
-
-/**
- * Returns a new CompletableFuture that is completed when all the given stages complete.
- * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
- * with a CompletionException holding this exception as its cause.
- * Otherwise, the results, if any, of the given stages are not reflected
- * in the returned CompletableFuture, but may be obtained by inspecting them individually.
- * If no stages are provided, returns a CompletableFuture completed with the value `null`.
- *
- * If you need the results of given stages, prefer below methods:
- *
- *  - [allResultsOfCompletableFuture]
- *
- * This method is the same as [CompletableFutureUtils.allOf], providing this method is convenient for method chaining.
- *
- * @see allResultsOfCompletableFuture
- */
-fun Array<out CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
-    CompletableFutureUtils.allOf(*this)
-
-/**
  * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
  * the results(`CompletableFuture<Void>`) of the given CompletableFutures are not reflected in the returned CompletableFuture,
  * but may be obtained by inspecting them individually.
@@ -244,6 +206,44 @@ fun Collection<CompletionStage<*>>.allOfFastFailCompletableFuture(): Completable
  */
 fun Array<out CompletionStage<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
     CompletableFutureUtils.allOfFastFail(*this)
+
+/**
+ * Returns a new CompletableFuture that is completed when all the given stages complete.
+ * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
+ * with a CompletionException holding this exception as its cause.
+ * Otherwise, the results, if any, of the given stages are not reflected
+ * in the returned CompletableFuture, but may be obtained by inspecting them individually.
+ * If no stages are provided, returns a CompletableFuture completed with the value `null`.
+ *
+ * If you need the results of given stages, prefer below methods:
+ *
+ *  - [allResultsOfCompletableFuture]
+ *
+ * This method is the same as [CompletableFutureUtils.allOf], providing this method is convenient for method chaining.
+ *
+ * @see allResultsOfCompletableFuture
+ */
+fun Collection<CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
+    CompletableFutureUtils.allOf(*toTypedArray())
+
+/**
+ * Returns a new CompletableFuture that is completed when all the given stages complete.
+ * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
+ * with a CompletionException holding this exception as its cause.
+ * Otherwise, the results, if any, of the given stages are not reflected
+ * in the returned CompletableFuture, but may be obtained by inspecting them individually.
+ * If no stages are provided, returns a CompletableFuture completed with the value `null`.
+ *
+ * If you need the results of given stages, prefer below methods:
+ *
+ *  - [allResultsOfCompletableFuture]
+ *
+ * This method is the same as [CompletableFutureUtils.allOf], providing this method is convenient for method chaining.
+ *
+ * @see allResultsOfCompletableFuture
+ */
+fun Array<out CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Void> =
+    CompletableFutureUtils.allOf(*this)
 
 // endregion
 ////////////////////////////////////////////////////////////
