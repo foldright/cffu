@@ -302,7 +302,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
 
-        return allTupleOf0(wrapSuppliers(executor, suppliers), true);
+        return allTupleOf0(true, wrapSuppliers(executor, suppliers));
     }
 
     /**
@@ -342,7 +342,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3);
 
-        return allTupleOf0(wrapSuppliers(executor, suppliers), true);
+        return allTupleOf0(true, wrapSuppliers(executor, suppliers));
     }
 
     /**
@@ -383,7 +383,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4);
 
-        return allTupleOf0(wrapSuppliers(executor, suppliers), true);
+        return allTupleOf0(true, wrapSuppliers(executor, suppliers));
     }
 
     /**
@@ -424,7 +424,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4, supplier5);
 
-        return allTupleOf0(wrapSuppliers(executor, suppliers), true);
+        return allTupleOf0(true, wrapSuppliers(executor, suppliers));
     }
 
     /**
@@ -456,7 +456,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
 
-        return allTupleOf0(wrapSuppliers(executor, suppliers), false);
+        return allTupleOf0(false, wrapSuppliers(executor, suppliers));
     }
 
     /**
@@ -489,7 +489,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3);
 
-        return allTupleOf0(wrapSuppliers(executor, suppliers), false);
+        return allTupleOf0(false, wrapSuppliers(executor, suppliers));
     }
 
     /**
@@ -523,7 +523,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4);
 
-        return allTupleOf0(wrapSuppliers(executor, suppliers), false);
+        return allTupleOf0(false, wrapSuppliers(executor, suppliers));
     }
 
     /**
@@ -557,7 +557,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4, supplier5);
 
-        return allTupleOf0(wrapSuppliers(executor, suppliers), false);
+        return allTupleOf0(false, wrapSuppliers(executor, suppliers));
     }
 
     // endregion
@@ -852,7 +852,7 @@ public final class CompletableFutureUtils {
      * More info see method {@link #f_toCf(CompletionStage)}.
      */
     private static <T> CompletableFuture<T>[] f_toCfArray(CompletionStage<? extends T>[] stages) {
-        return toCfArray0(stages, CompletableFutureUtils::f_toCf);
+        return toCfArray0(CompletableFutureUtils::f_toCf, stages);
     }
 
     /**
@@ -860,12 +860,12 @@ public final class CompletableFutureUtils {
      * More info see method {@link #toNonMinCf(CompletionStage)}.
      */
     private static <T> CompletableFuture<T>[] toNonMinCfArray(CompletionStage<? extends T>[] stages) {
-        return toCfArray0(stages, CompletableFutureUtils::toNonMinCf);
+        return toCfArray0(CompletableFutureUtils::toNonMinCf, stages);
     }
 
     private static <T> CompletableFuture<T>[] toCfArray0(
-            CompletionStage<? extends T>[] stages,
-            Function<CompletionStage<? extends T>, CompletableFuture<T>> converter) {
+            Function<CompletionStage<? extends T>, CompletableFuture<T>> converter,
+            CompletionStage<? extends T>[] stages) {
         requireNonNull(stages, "cfs is null");
         @SuppressWarnings("unchecked")
         CompletableFuture<T>[] ret = new CompletableFuture[stages.length];
@@ -1009,7 +1009,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOfFastFail(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return allTupleOf0(requireCfsAndEleNonNull(cf1, cf2), true);
+        return allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2));
     }
 
     /**
@@ -1024,7 +1024,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return allTupleOf0(requireCfsAndEleNonNull(cf1, cf2), false);
+        return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2));
     }
 
     /**
@@ -1042,7 +1042,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOfFastFail(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return allTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3), true);
+        return allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2, cf3));
     }
 
     /**
@@ -1057,7 +1057,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return allTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3), false);
+        return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2, cf3));
     }
 
     /**
@@ -1076,7 +1076,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOfFastFail(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return allTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3, cf4), true);
+        return allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
     }
 
     /**
@@ -1092,7 +1092,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return allTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3, cf4), false);
+        return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
     }
 
     /**
@@ -1111,7 +1111,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOfFastFail(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return allTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5), true);
+        return allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
     }
 
     /**
@@ -1127,10 +1127,10 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return allTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5), false);
+        return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
     }
 
-    private static <T> CompletableFuture<T> allTupleOf0(CompletionStage<?>[] css, boolean fastFail) {
+    private static <T> CompletableFuture<T> allTupleOf0(boolean fastFail, CompletionStage<?>[] css) {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
@@ -1774,7 +1774,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, null, fns), false));
+        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, null, fns)));
     }
 
     /**
@@ -1813,7 +1813,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, null, fns), false));
+        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, null, fns)));
     }
 
     /**
@@ -1854,7 +1854,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, null, fns), false));
+        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, null, fns)));
     }
 
     /**
@@ -1895,7 +1895,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4, fn5);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, null, fns), false));
+        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, null, fns)));
     }
 
     /**
@@ -1928,7 +1928,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, null, fns), false));
+        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, null, fns)));
     }
 
     /**
@@ -1961,7 +1961,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, null, fns), false));
+        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, null, fns)));
     }
 
     /**
@@ -1996,7 +1996,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, null, fns), false));
+        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, null, fns)));
     }
 
     /**
@@ -2031,7 +2031,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4, fn5);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(wrapFunctions(executor, null, fns), false));
+        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, null, fns)));
     }
 
     // endregion
