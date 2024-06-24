@@ -14,7 +14,6 @@ import org.junit.jupiter.api.condition.JRE;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.*;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
@@ -660,6 +659,38 @@ class CffuFactoryTest {
 
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n),  cffuFactory.tupleMSupplyAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n),  cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+    }
+
+    @Test
+    void test_tupleMSupplyMostSuccessAsync() throws Exception {
+        final Supplier<Integer> supplier_n = () -> {
+            sleep(100);
+            return n;
+        };
+        final Supplier<String> supplier_s = () -> {
+            sleep(100);
+            return s;
+        };
+
+        final Supplier<Double> supplier_d = () -> {
+            sleep(100);
+            return d;
+        };
+        final Supplier<Integer> supplier_an = () -> {
+            sleep(100);
+            return anotherN;
+        };
+        final Supplier<Integer> supplier_nn = () -> {
+            sleep(100);
+            return n+n;
+        };
+        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyMostSuccessAsync(10, TimeUnit.MILLISECONDS,supplier_n, supplier_s).get());
+
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyMostSuccessAsync(10, TimeUnit.MILLISECONDS,supplier_n, supplier_s, supplier_d).get());
+
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyMostSuccessAsync(10, TimeUnit.MILLISECONDS,supplier_n, supplier_s, supplier_d, supplier_an).get());
+
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyMostSuccessAsync(10, TimeUnit.MILLISECONDS,supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
