@@ -364,6 +364,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static <T1,T2> CompletableFuture<Tuple2<T1,T2>> allTupleOfMSupplyAsync(Supplier<? extends T1> supplier1,Supplier<? extends T2> supplier2) {
+
         return allTupleOfMSupplyAsync(AsyncPoolHolder.ASYNC_POOL,supplier1,supplier2);
     }
 
