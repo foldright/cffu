@@ -786,6 +786,37 @@ class CompletableFutureUtilsTest {
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), tupleMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
     }
 
+    @Test
+    void test_tupleMSupplyMostSuccessAsync() throws Exception {
+        final Supplier<Integer> supplier_n = () -> {
+            sleep(100);
+            return n;
+        };
+        final Supplier<String> supplier_s = () -> {
+            sleep(100);
+            return s;
+        };
+
+        final Supplier<Double> supplier_d = () -> {
+            sleep(100);
+            return d;
+        };
+        final Supplier<Integer> supplier_an = () -> {
+            sleep(100);
+            return anotherN;
+        };
+        final Supplier<Integer> supplier_nn = () -> {
+            sleep(100);
+            return n+n;
+        };
+        assertEquals(Tuple2.of(n, s), tupleMSupplyMostSuccessAsync(defaultExecutor(),10, TimeUnit.MILLISECONDS,supplier_n, supplier_s).get());
+
+        assertEquals(Tuple3.of(n, s, d), tupleMSupplyMostSuccessAsync(defaultExecutor(),10, TimeUnit.MILLISECONDS,supplier_n, supplier_s, supplier_d).get());
+
+        assertEquals(Tuple4.of(n, s, d, anotherN), tupleMSupplyMostSuccessAsync(defaultExecutor(),10, TimeUnit.MILLISECONDS,supplier_n, supplier_s, supplier_d, supplier_an).get());
+
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), tupleMSupplyMostSuccessAsync(defaultExecutor(),10, TimeUnit.MILLISECONDS,supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+    }
 
     @Test
     void test_thenTupleMApplyAsync() throws Exception {
