@@ -570,13 +570,14 @@ public final class CompletableFutureUtils {
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
      */
-    public static <T1,T2> CompletableFuture<Tuple2<T1,T2>> tupleMSupplyMostSuccessAsync(
-            Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1>  supplier1, Supplier<? extends T2>  supplier2) {
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
+            Executor executor, long timeout, TimeUnit unit,
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
 
-        return mostTupleOfSuccess0(executor,timeout, unit, wrapSuppliers(executor,suppliers));
+        return mostTupleOfSuccess0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
     }
 
     /**
@@ -584,18 +585,20 @@ public final class CompletableFutureUtils {
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier,Supplier)} except for the most-success behavior.
+     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier, Supplier)}
+     * except for the most-success behavior.
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
      */
-    public static <T1,T2,T3> CompletableFuture<Tuple3<T1,T2,T3>> tupleMSupplyMostSuccessAsync(
-            Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1>  supplier1, Supplier<? extends T2>  supplier2, Supplier<? extends T3>  supplier3) {
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
+            Executor executor, long timeout, TimeUnit unit,
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
         requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
-        Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2,supplier3);
+        Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3);
 
-        return mostTupleOfSuccess0(executor,timeout, unit, wrapSuppliers(executor,suppliers));
+        return mostTupleOfSuccess0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
     }
 
     /**
@@ -603,18 +606,20 @@ public final class CompletableFutureUtils {
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier,Supplier,Supplier)} except for the most-success behavior.
+     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier, Supplier, Supplier)}
+     * except for the most-success behavior.
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
      */
-    public static <T1,T2,T3,T4> CompletableFuture<Tuple4<T1,T2,T3,T4>> tupleMSupplyMostSuccessAsync(
-            Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1>  supplier1, Supplier<? extends T2>  supplier2, Supplier<? extends T3>  supplier3, Supplier<? extends T4>  supplier4) {
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
+            Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
+            Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
         requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
-        Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2,supplier3,supplier4);
+        Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4);
 
-        return mostTupleOfSuccess0(executor,timeout, unit, wrapSuppliers(executor,suppliers));
+        return mostTupleOfSuccess0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
     }
 
     /**
@@ -622,18 +627,21 @@ public final class CompletableFutureUtils {
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier,Supplier,Supplier,Supplier)} except for the most-success behavior.
+     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier, Supplier, Supplier, Supplier)}
+     * except for the most-success behavior.
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
      */
-    public static <T1,T2,T3,T4,T5> CompletableFuture<Tuple5<T1,T2,T3,T4,T5>> tupleMSupplyMostSuccessAsync(
-            Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1>  supplier1, Supplier<? extends T2>  supplier2, Supplier<? extends T3>  supplier3, Supplier<? extends T4>  supplier4, Supplier<? extends T5>  supplier5) {
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
+            Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
+            Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
+            Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
         requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
-        Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2,supplier3,supplier4,supplier5);
+        Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4, supplier5);
 
-        return mostTupleOfSuccess0(executor,timeout, unit, wrapSuppliers(executor,suppliers));
+        return mostTupleOfSuccess0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
     }
 
     // endregion
@@ -976,6 +984,7 @@ public final class CompletableFutureUtils {
         final CompletableFuture<T> f = f_toCf(s);
         return isMinStageCf(f) ? f.toCompletableFuture() : f;
     }
+
     /**
      * Converts CompletionStage to a non-minimal-stage CompletableFuture copy. This method is type safe.
      * <p>

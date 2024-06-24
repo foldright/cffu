@@ -228,7 +228,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @return the new Cffu
      */
-    @Contract(pure = true)
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyFastFailAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
         return reset0(CompletableFutureUtils.thenTupleMApplyFastFailAsync(cf, fn1, fn2));
@@ -246,7 +245,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @return the new Cffu
      */
-    @Contract(pure = true)
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyFastFailAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3) {
@@ -265,7 +263,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @return the new Cffu
      */
-    @Contract(pure = true)
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFastFailAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
@@ -284,7 +281,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @return the new Cffu
      */
-    @Contract(pure = true)
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFastFailAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
@@ -301,7 +297,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @return the new Cffu
      */
-    @Contract(pure = true)
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
         return reset0(CompletableFutureUtils.thenTupleMApplyAsync(cf, fn1, fn2));
@@ -316,7 +311,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @return the new Cffu
      */
-    @Contract(pure = true)
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3) {
@@ -332,7 +326,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @return the new Cffu
      */
-    @Contract(pure = true)
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
@@ -348,7 +341,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @return the new Cffu
      */
-    @Contract(pure = true)
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
