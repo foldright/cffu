@@ -1776,7 +1776,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, null, fns)));
+        return f_toCf(cf).thenCompose(v -> allTupleOf0(true, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -1815,7 +1815,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, null, fns)));
+        return f_toCf(cf).thenCompose(v -> allTupleOf0(true, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -1856,7 +1856,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, null, fns)));
+        return f_toCf(cf).thenCompose(v -> allTupleOf0(true, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -1897,7 +1897,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4, fn5);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, null, fns)));
+        return f_toCf(cf).thenCompose(v -> allTupleOf0(true, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -1930,7 +1930,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, null, fns)));
+        return f_toCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -1963,7 +1963,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, null, fns)));
+        return f_toCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -1998,7 +1998,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, null, fns)));
+        return f_toCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -2033,7 +2033,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4, fn5);
 
-        return toNonMinCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, null, fns)));
+        return f_toCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, v, fns)));
     }
 
     // endregion
