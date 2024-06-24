@@ -292,69 +292,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         return reset0(CompletableFutureUtils.thenTupleMApplyFastFailAsync(cf, fn1, fn2, fn3, fn4, fn5));
     }
 
-    /**
-     * Returns a new Cffu that, when this Cffu completes normally,
-     * is executed using the {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     *
-     * @return the new Cffu
-     */
-    @Contract(pure = true)
-    public <U1, U2> Cffu<Tuple2<U1, U2>> tupleMApplyMostSuccessAsync(
-            long timeout, TimeUnit unit,   Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return reset0(CompletableFutureUtils.tupleMApplyMostSuccessAsync(fac.defaultExecutor(),cf,timeout,unit, fn1, fn2));
-    }
-
-    /**
-     * Returns a new Cffu that, when this Cffu completes normally,
-     * is executed using the {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     *
-     * @return the new Cffu
-     */
-    @Contract(pure = true)
-    public <U1, U2,U3> Cffu<Tuple3<U1, U2,U3>> tupleMApplyMostSuccessAsync(
-            long timeout, TimeUnit unit,   Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return reset0(CompletableFutureUtils.tupleMApplyMostSuccessAsync(fac.defaultExecutor(),cf,timeout,unit, fn1, fn2,fn3));
-    }
-
-    /**
-     * Returns a new Cffu that, when this Cffu completes normally,
-     * is executed using the {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     *
-     * @return the new Cffu
-     */
-    @Contract(pure = true)
-    public <U1,U2,U3,U4> Cffu<Tuple4<U1,U2,U3,U4>> tupleMApplyMostSuccessAsync(
-            long timeout, TimeUnit unit,   Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3 , Function<? super T, ? extends U4> fn4) {
-        return reset0(CompletableFutureUtils.tupleMApplyMostSuccessAsync(fac.defaultExecutor(),cf,timeout,unit, fn1, fn2,fn3,fn4));
-    }
-
-    /**
-     * Returns a new Cffu that, when this Cffu completes normally,
-     * is executed using the {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     *
-     * @return the new Cffu
-     */
-    @Contract(pure = true)
-    public <U1,U2,U3,U4,U5> Cffu<Tuple5<U1,U2,U3,U4,U5>> tupleMApplyMostSuccessAsync(
-            long timeout, TimeUnit unit,   Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3 , Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return reset0(CompletableFutureUtils.tupleMApplyMostSuccessAsync(fac.defaultExecutor(),cf,timeout,unit, fn1, fn2,fn3,fn4,fn5));
-    }
 
     /**
      * Returns a new Cffu that, when this Cffu completes normally,
