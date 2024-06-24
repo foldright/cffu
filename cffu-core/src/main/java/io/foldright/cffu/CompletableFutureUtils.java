@@ -1990,12 +1990,8 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("fn", fn1,fn2);
-        CompletableFuture<T>  cf1= f_toCf(cf);
-        CompletableFuture<U1>  completableFuture1 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn1.apply(v), executor));
-        CompletableFuture<U2>  completableFuture2 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn2.apply(v), executor));
-        CompletionStage<?>[] css = {completableFuture1,completableFuture2};
-        return allTupleOf0(true,css);
+        Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2);
+        return f_toCf(cf).thenCompose(v -> allTupleOf0(true, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -2032,13 +2028,8 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("fn", fn1,fn2,fn3);
-        CompletableFuture<T>  cf1= f_toCf(cf);
-        CompletableFuture<U1>  completableFuture1 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn1.apply(v), executor));
-        CompletableFuture<U2>  completableFuture2 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn2.apply(v), executor));
-        CompletableFuture<U3>  completableFuture3 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn3.apply(v), executor));
-        CompletionStage<?>[] css = {completableFuture1,completableFuture2,completableFuture3};
-        return allTupleOf0(true,css);
+        Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2,fn3);
+        return f_toCf(cf).thenCompose(v -> allTupleOf0(true, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -2077,14 +2068,8 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U4> fn4) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("fn", fn1,fn2,fn3,fn4);
-        CompletableFuture<T>  cf1= f_toCf(cf);
-        CompletableFuture<U1>  completableFuture1 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn1.apply(v), executor));
-        CompletableFuture<U2>  completableFuture2 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn2.apply(v), executor));
-        CompletableFuture<U3>  completableFuture3 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn3.apply(v), executor));
-        CompletableFuture<U4>  completableFuture4 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn4.apply(v), executor));
-        CompletionStage<?>[] css = {completableFuture1,completableFuture2,completableFuture3,completableFuture4};
-        return allTupleOf0(true,css);
+        Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2,fn3,fn4);
+        return f_toCf(cf).thenCompose(v -> allTupleOf0(true, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -2123,15 +2108,8 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("fn", fn1,fn2,fn3,fn4,fn5);
-        CompletableFuture<T>  cf1= f_toCf(cf);
-        CompletableFuture<U1>  completableFuture1 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn1.apply(v), executor));
-        CompletableFuture<U2>  completableFuture2 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn2.apply(v), executor));
-        CompletableFuture<U3>  completableFuture3 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn3.apply(v), executor));
-        CompletableFuture<U4>  completableFuture4 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn4.apply(v), executor));
-        CompletableFuture<U5>  completableFuture5 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn5.apply(v), executor));
-        CompletionStage<?>[] css = {completableFuture1,completableFuture2,completableFuture3,completableFuture4,completableFuture5};
-        return allTupleOf0(true,css);
+        Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2,fn3,fn4,fn5);
+        return f_toCf(cf).thenCompose(v -> allTupleOf0(true, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -2162,12 +2140,9 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("fn", fn1,fn2);
-        CompletableFuture<T>  cf1= f_toCf(cf);
-        CompletableFuture<U1>  completableFuture1 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn1.apply(v), executor));
-        CompletableFuture<U2>  completableFuture2 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn2.apply(v), executor));
-        CompletionStage<?>[] css = {completableFuture1,completableFuture2};
-        return allTupleOf0(false,css);
+        Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2);
+
+        return f_toCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -2198,13 +2173,9 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("fn", fn1,fn2,fn3);
-        CompletableFuture<T>  cf1= f_toCf(cf);
-        CompletableFuture<U1>  completableFuture1 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn1.apply(v), executor));
-        CompletableFuture<U2>  completableFuture2 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn2.apply(v), executor));
-        CompletableFuture<U3>  completableFuture3 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn3.apply(v), executor));
-        CompletionStage<?>[] css = {completableFuture1,completableFuture2,completableFuture3};
-        return allTupleOf0(false,css);
+        Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2,fn3);
+
+        return f_toCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -2237,14 +2208,9 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U4> fn4) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("fn", fn1,fn2,fn3,fn4);
-        CompletableFuture<T>  cf1= f_toCf(cf);
-        CompletableFuture<U1>  completableFuture1 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn1.apply(v), executor));
-        CompletableFuture<U2>  completableFuture2 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn2.apply(v), executor));
-        CompletableFuture<U3>  completableFuture3 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn3.apply(v), executor));
-        CompletableFuture<U4>  completableFuture4 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn4.apply(v), executor));
-        CompletionStage<?>[] css = {completableFuture1,completableFuture2,completableFuture3,completableFuture4};
-        return allTupleOf0(false,css);
+        Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2,fn3,fn4);
+
+        return f_toCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -2277,15 +2243,9 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
         requireNonNull(cf, "cf is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("fn", fn1,fn2,fn3,fn4,fn5);
-        CompletableFuture<T>  cf1= f_toCf(cf);
-        CompletableFuture<U1>  completableFuture1 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn1.apply(v), executor));
-        CompletableFuture<U2>  completableFuture2 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn2.apply(v), executor));
-        CompletableFuture<U3>  completableFuture3 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn3.apply(v), executor));
-        CompletableFuture<U4>  completableFuture4 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn4.apply(v), executor));
-        CompletableFuture<U5>  completableFuture5 = cf1.thenCompose(v->CompletableFuture.supplyAsync(() -> fn5.apply(v), executor));
-        CompletionStage<?>[] css = {completableFuture1,completableFuture2,completableFuture3,completableFuture4,completableFuture5};
-        return allTupleOf0(false,css);
+        Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4, fn5);
+
+        return f_toCf(cf).thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, v, fns)));
     }
 
     // endregion
