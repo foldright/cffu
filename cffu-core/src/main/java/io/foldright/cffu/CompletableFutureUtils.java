@@ -133,19 +133,19 @@ public final class CompletableFutureUtils {
     }
 
 
-    /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the most-success behavior.
-     *
-     * @return the new CompletableFuture
-     */
-    public static <T1,T2> CompletableFuture<Tuple2<T1,T2>> tupleMSupplyMostSuccessAsync(
-            long timeout, TimeUnit unit, Supplier<? extends T1>  supplier1, Supplier<? extends T2>  supplier2) {
-        return tupleMSupplyMostSuccessAsync(AsyncPoolHolder.ASYNC_POOL, timeout, unit, supplier1,supplier2);
-    }
+//     /**
+//      * Returns a new CompletableFuture that is asynchronously completed
+//      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+//      * in the <strong>same order</strong> of the given Suppliers arguments.
+//      * <p>
+//      * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the most-success behavior.
+//      *
+//      * @return the new CompletableFuture
+//      */
+//     public static <T1,T2> CompletableFuture<Tuple2<T1,T2>> tupleMSupplyMostSuccessAsync(
+//             long timeout, TimeUnit unit, Supplier<? extends T1>  supplier1, Supplier<? extends T2>  supplier2) {
+//         return tupleMSupplyMostSuccessAsync(AsyncPoolHolder.ASYNC_POOL, timeout, unit, supplier1,supplier2);
+//     }
 
     /**
      * Returns a new CompletableFuture that is asynchronously completed
@@ -313,24 +313,6 @@ public final class CompletableFutureUtils {
     }
 
 
-
-
-
-
-    /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier,Supplier)} except for the most-success behavior.
-     *
-     * @return the new CompletableFuture
-     */
-    public static <T1,T2,T3> CompletableFuture<Tuple3<T1,T2,T3>> tupleMSupplyMostSuccessAsync(
-            long timeout, TimeUnit unit, Supplier<? extends T1>  supplier1, Supplier<? extends T2>  supplier2, Supplier<? extends T3>  supplier3) {
-        return tupleMSupplyMostSuccessAsync(AsyncPoolHolder.ASYNC_POOL, timeout, unit, supplier1,supplier2,supplier3);
-    }
-
     /**
      * Returns a new CompletableFuture that is asynchronously completed
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
@@ -360,20 +342,6 @@ public final class CompletableFutureUtils {
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier,Supplier,Supplier)} except for the most-success behavior.
-     *
-     * @return the new CompletableFuture
-     */
-    public static <T1,T2,T3,T4> CompletableFuture<Tuple4<T1,T2,T3,T4>> tupleMSupplyMostSuccessAsync(
-            long timeout, TimeUnit unit, Supplier<? extends T1>  supplier1, Supplier<? extends T2>  supplier2, Supplier<? extends T3>  supplier3, Supplier<? extends T4>  supplier4) {
-        return tupleMSupplyMostSuccessAsync(AsyncPoolHolder.ASYNC_POOL, timeout, unit, supplier1,supplier2,supplier3,supplier4);
-    }
-
-    /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
      * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier,Supplier,Supplier)} except for the most-success behavior.
      *
      * @param executor the executor to use for asynchronous execution
@@ -394,20 +362,6 @@ public final class CompletableFutureUtils {
         return mostTupleOfSuccess(executor,timeout, unit, cf1,cf2,cf3,cf4);
     }
 
-
-    /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier,Supplier,Supplier,Supplier)} except for the most-success behavior.
-     *
-     * @return the new CompletableFuture
-     */
-    public static <T1,T2,T3,T4,T5> CompletableFuture<Tuple5<T1,T2,T3,T4,T5>> tupleMSupplyMostSuccessAsync(
-            long timeout, TimeUnit unit, Supplier<? extends T1>  supplier1, Supplier<? extends T2>  supplier2, Supplier<? extends T3>  supplier3, Supplier<? extends T4>  supplier4, Supplier<? extends T5>  supplier5) {
-        return tupleMSupplyMostSuccessAsync(AsyncPoolHolder.ASYNC_POOL, timeout, unit, supplier1,supplier2,supplier3,supplier4,supplier5);
-    }
 
     /**
      * Returns a new CompletableFuture that is asynchronously completed
