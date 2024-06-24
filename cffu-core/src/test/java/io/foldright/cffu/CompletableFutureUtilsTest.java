@@ -786,6 +786,73 @@ class CompletableFutureUtilsTest {
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), tupleMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
     }
 
+    @Test
+    void test_tupleMSupplyMostSuccessAsync() throws Exception {
+        final Supplier<Integer> supplier_n = () -> {
+            sleep(100);
+            return n;
+        };
+        final Supplier<String> supplier_s = () -> {
+            sleep(100);
+            return s;
+        };
+
+        final Supplier<Double> supplier_d = () -> {
+            sleep(100);
+            return d;
+        };
+        final Supplier<Integer> supplier_an = () -> {
+            sleep(100);
+            return anotherN;
+        };
+        final Supplier<Integer> supplier_nn = () -> {
+            sleep(100);
+            return n+n;
+        };
+        assertEquals(Tuple2.of(n, s), tupleMSupplyMostSuccessAsync(defaultExecutor(),10, TimeUnit.MILLISECONDS,supplier_n, supplier_s).get());
+
+        assertEquals(Tuple3.of(n, s, d), tupleMSupplyMostSuccessAsync(defaultExecutor(),10, TimeUnit.MILLISECONDS,supplier_n, supplier_s, supplier_d).get());
+
+        assertEquals(Tuple4.of(n, s, d, anotherN), tupleMSupplyMostSuccessAsync(defaultExecutor(),10, TimeUnit.MILLISECONDS,supplier_n, supplier_s, supplier_d, supplier_an).get());
+
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), tupleMSupplyMostSuccessAsync(defaultExecutor(),10, TimeUnit.MILLISECONDS,supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+    }
+
+    @Test
+    void test_tupleMApplyMostSuccessAsync() throws Exception {
+        final CompletableFuture<Integer> completed = completedFuture(n);
+        final Function<Integer,Integer> function_n = (x) -> {
+            sleep(100);
+            return n;
+        };
+
+        final Function<Integer,String> function_s = (x) -> {
+            sleep(100);
+            return s;
+        };
+
+        final Function<Integer,Double> function_d = (x) -> {
+            sleep(100);
+            return d;
+        };
+        final Function<Integer,Integer> function_an = (x) -> {
+            sleep(100);
+            return anotherN;
+        };
+        final Function<Integer,Integer> function_nn = (x) -> {
+            sleep(100);
+            return n+n;
+        };
+        assertEquals(Tuple2.of(n, s), tupleMApplyMostSuccessAsync(defaultExecutor(),completed,10, TimeUnit.MILLISECONDS,function_n, function_s).get());
+
+        assertEquals(Tuple3.of(n, s, d), tupleMApplyMostSuccessAsync(defaultExecutor(),completed,10, TimeUnit.MILLISECONDS,function_n, function_s, function_d).get());
+
+        assertEquals(Tuple4.of(n, s, d, anotherN), tupleMApplyMostSuccessAsync(defaultExecutor(),completed,10, TimeUnit.MILLISECONDS,function_n, function_s, function_d, function_an).get());
+
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), tupleMApplyMostSuccessAsync(defaultExecutor(),completed,10, TimeUnit.MILLISECONDS,function_n, function_s, function_d, function_an, function_nn).get());
+    }
+
+
 
     @Test
     void test_thenTupleMApplyAsync() throws Exception {
