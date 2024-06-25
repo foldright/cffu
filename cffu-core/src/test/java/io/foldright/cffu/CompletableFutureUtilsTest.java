@@ -809,12 +809,16 @@ class CompletableFutureUtilsTest {
             sleep(10);
             return n + n;
         };
+        assertEquals(Tuple2.of(n, s), tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s).get());
         assertEquals(Tuple2.of(n, s), tupleMSupplyMostSuccessAsync(defaultExecutor(), 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s).get());
 
+        assertEquals(Tuple3.of(n, s, d), tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d).get());
         assertEquals(Tuple3.of(n, s, d), tupleMSupplyMostSuccessAsync(defaultExecutor(), 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d).get());
 
+        assertEquals(Tuple4.of(n, s, d, anotherN), tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an).get());
         assertEquals(Tuple4.of(n, s, d, anotherN), tupleMSupplyMostSuccessAsync(defaultExecutor(), 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an).get());
 
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), tupleMSupplyMostSuccessAsync(defaultExecutor(), 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
     }
 

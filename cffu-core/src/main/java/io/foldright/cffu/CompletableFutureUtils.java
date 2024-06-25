@@ -429,12 +429,44 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier)} except for the most-success behavior.
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
      *
-     * @param executor the executor to use for asynchronous execution
+     * @param timeout   how long to wait in units of {@code unit}
+     * @param unit      a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param supplier1 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param <T1>      the supplier return type
+     * @param <T2>      the supplier return type
+     * @return the new CompletableFuture
+     */
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
+            long timeout, TimeUnit unit,
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
+        return tupleMSupplyMostSuccessAsync(AsyncPoolHolder.ASYNC_POOL, timeout, unit, supplier1, supplier2);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
+     *
+     * @param timeout   how long to wait in units of {@code unit}
+     * @param unit      a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param supplier1 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param <T1>      the supplier return type
+     * @param <T2>      the supplier return type
      * @return the new CompletableFuture
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
@@ -449,13 +481,48 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier, Supplier)}
-     * except for the most-success behavior.
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
      *
-     * @param executor the executor to use for asynchronous execution
+     * @param timeout   how long to wait in units of {@code unit}
+     * @param unit      a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param supplier1 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier3 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param <T1>      the supplier return type
+     * @param <T2>      the supplier return type
+     * @param <T3>      the supplier return type
+     * @return the new CompletableFuture
+     */
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
+            long timeout, TimeUnit unit,
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
+        return tupleMSupplyMostSuccessAsync(AsyncPoolHolder.ASYNC_POOL, timeout, unit, supplier1, supplier2, supplier3);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
+     *
+     * @param timeout   how long to wait in units of {@code unit}
+     * @param unit      a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param supplier1 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier3 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param <T1>      the supplier return type
+     * @param <T2>      the supplier return type
+     * @param <T3>      the supplier return type
      * @return the new CompletableFuture
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
@@ -470,13 +537,52 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier, Supplier, Supplier)}
-     * except for the most-success behavior.
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
      *
-     * @param executor the executor to use for asynchronous execution
+     * @param timeout   how long to wait in units of {@code unit}
+     * @param unit      a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param supplier1 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier3 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier4 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param <T1>      the supplier return type
+     * @param <T2>      the supplier return type
+     * @param <T3>      the supplier return type
+     * @param <T4>      the supplier return type
+     * @return the new CompletableFuture
+     */
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
+            long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
+            Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
+        return tupleMSupplyMostSuccessAsync(AsyncPoolHolder.ASYNC_POOL, timeout, unit, supplier1, supplier2, supplier3, supplier4);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
+     *
+     * @param timeout   how long to wait in units of {@code unit}
+     * @param unit      a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param supplier1 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier3 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier4 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param <T1>      the supplier return type
+     * @param <T2>      the supplier return type
+     * @param <T3>      the supplier return type
+     * @param <T4>      the supplier return type
      * @return the new CompletableFuture
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
@@ -491,13 +597,57 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Executor, Supplier, Supplier, Supplier, Supplier, Supplier)}
-     * except for the most-success behavior.
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
      *
-     * @param executor the executor to use for asynchronous execution
+     * @param timeout   how long to wait in units of {@code unit}
+     * @param unit      a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param supplier1 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier3 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier4 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier5 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param <T1>      the supplier return type
+     * @param <T2>      the supplier return type
+     * @param <T3>      the supplier return type
+     * @param <T4>      the supplier return type
+     * @param <T5>      the supplier return type
+     * @return the new CompletableFuture
+     */
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
+            long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
+            Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
+            Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
+        return tupleMSupplyMostSuccessAsync(AsyncPoolHolder.ASYNC_POOL, timeout, unit, supplier1, supplier2, supplier3, supplier4, supplier5);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
+     *
+     * @param timeout   how long to wait in units of {@code unit}
+     * @param unit      a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param supplier1 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier2 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier3 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier4 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param supplier5 the supplier returning the value to be used to complete the returned CompletableFuture
+     * @param <T1>      the supplier return type
+     * @param <T2>      the supplier return type
+     * @param <T3>      the supplier return type
+     * @param <T4>      the supplier return type
+     * @param <T5>      the supplier return type
      * @return the new CompletableFuture
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
@@ -901,8 +1051,7 @@ public final class CompletableFutureUtils {
      * Returns a cf array whose elements do the result collection.
      */
     private static <T> CompletableFuture<Void>[] createResultSetterCfs(CompletionStage<? extends T>[] css, T[] result) {
-        @SuppressWarnings("unchecked")
-        final CompletableFuture<Void>[] resultSetterCfs = new CompletableFuture[result.length];
+        @SuppressWarnings("unchecked") final CompletableFuture<Void>[] resultSetterCfs = new CompletableFuture[result.length];
         for (int i = 0; i < result.length; i++) {
             final int index = i;
             resultSetterCfs[index] = f_toCf(css[index]).thenAccept(v -> result[index] = v);
@@ -3279,8 +3428,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] completableFutureListToArray(List<CompletableFuture<T>> cfList) {
         requireNonNull(cfList, "cfList is null");
-        @SuppressWarnings("unchecked")
-        final CompletableFuture<T>[] a = new CompletableFuture[cfList.size()];
+        @SuppressWarnings("unchecked") final CompletableFuture<T>[] a = new CompletableFuture[cfList.size()];
         return cfList.toArray(a);
     }
 
