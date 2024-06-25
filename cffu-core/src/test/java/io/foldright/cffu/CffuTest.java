@@ -108,16 +108,32 @@ class CffuTest {
             return n + n;
         };
         assertEquals(Tuple2.of(n, s), completed.thenTupleMApplyAsync(function_n, function_s).get());
+        assertEquals(Tuple2.of(n, s), completed.thenTupleMApplyAsync(executorService, function_n, function_s).get());
         assertEquals(Tuple2.of(n, s), completed.thenTupleMApplyFastFailAsync(function_n, function_s).get());
+        assertEquals(Tuple2.of(n, s), completed.thenTupleMApplyFastFailAsync(executorService, function_n, function_s).get());
+        assertEquals(Tuple2.of(n, s), completed.thenTupleMApplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, function_n, function_s).get());
+        assertEquals(Tuple2.of(n, s), completed.thenTupleMApplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, function_n, function_s).get());
 
         assertEquals(Tuple3.of(n, s, d), completed.thenTupleMApplyAsync(function_n, function_s, function_d).get());
+        assertEquals(Tuple3.of(n, s, d), completed.thenTupleMApplyAsync(executorService, function_n, function_s, function_d).get());
         assertEquals(Tuple3.of(n, s, d), completed.thenTupleMApplyFastFailAsync(function_n, function_s, function_d).get());
+        assertEquals(Tuple3.of(n, s, d), completed.thenTupleMApplyFastFailAsync(executorService, function_n, function_s, function_d).get());
+        assertEquals(Tuple3.of(n, s, d), completed.thenTupleMApplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, function_n, function_s, function_d).get());
+        assertEquals(Tuple3.of(n, s, d), completed.thenTupleMApplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d).get());
 
         assertEquals(Tuple4.of(n, s, d, anotherN), completed.thenTupleMApplyAsync(function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), completed.thenTupleMApplyAsync(executorService, function_n, function_s, function_d, function_an).get());
         assertEquals(Tuple4.of(n, s, d, anotherN), completed.thenTupleMApplyFastFailAsync(function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), completed.thenTupleMApplyFastFailAsync(executorService, function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), completed.thenTupleMApplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), completed.thenTupleMApplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an).get());
 
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), completed.thenTupleMApplyAsync(function_n, function_s, function_d, function_an, function_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), completed.thenTupleMApplyAsync(executorService, function_n, function_s, function_d, function_an, function_nn).get());
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), completed.thenTupleMApplyFastFailAsync(function_n, function_s, function_d, function_an, function_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), completed.thenTupleMApplyFastFailAsync(executorService, function_n, function_s, function_d, function_an, function_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), completed.thenTupleMApplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an, function_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), completed.thenTupleMApplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an, function_nn).get());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
