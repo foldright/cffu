@@ -266,6 +266,21 @@ public final class CffuFactory {
      * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
+     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the fast-fail behavior.
+     *
+     * @return the new Cffu
+     * @see #allResultsOfFastFail(CompletionStage[])
+     */
+    public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyFastFailAsync(
+            Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
+        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(executor,supplier1, supplier2));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
      * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier, Supplier)} except for the fast-fail behavior.
      *
      * @return the new Cffu
@@ -274,6 +289,21 @@ public final class CffuFactory {
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
         return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(supplier1, supplier2, supplier3));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier, Supplier)} except for the fast-fail behavior.
+     *
+     * @return the new Cffu
+     * @see #allResultsOfFastFail(CompletionStage[])
+     */
+    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
+            Executor executor,  Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
+        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(executor,supplier1, supplier2, supplier3));
     }
 
     /**
@@ -297,6 +327,22 @@ public final class CffuFactory {
      * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
+     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier, Supplier, Supplier)} except for the fast-fail behavior.
+     *
+     * @return the new Cffu
+     * @see #allResultsOfFastFail(CompletionStage[])
+     */
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyFastFailAsync(
+            Executor executor,Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+            Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
+        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(executor,supplier1, supplier2, supplier3, supplier4));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
      * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier, Supplier, Supplier, Supplier)} except for the fast-fail behavior.
      *
      * @return the new Cffu
@@ -313,13 +359,45 @@ public final class CffuFactory {
      * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
+     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier, Supplier, Supplier, Supplier)} except for the fast-fail behavior.
+     *
+     * @return the new Cffu
+     * @see #allResultsOfFastFail(CompletionStage[])
+     */
+    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
+            Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
+            Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
+        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(executor,supplier1, supplier2, supplier3, supplier4, supplier5));
+    }
+
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
      * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the most-success behavior.
      *
      * @return the new Cffu
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return create(CompletableFutureUtils.tupleMSupplyMostSuccessAsync(defaultExecutor, timeout, unit, supplier1, supplier2));
+        return create(CompletableFutureUtils.tupleMSupplyMostSuccessAsync(timeout, unit, supplier1, supplier2));
+    }
+
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the most-success behavior.
+     *
+     * @return the new Cffu
+     */
+    public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(Executor executor,
+                                                                      long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
+        return create(CompletableFutureUtils.tupleMSupplyMostSuccessAsync(executor,timeout, unit, supplier1, supplier2));
     }
 
     /**
@@ -335,7 +413,23 @@ public final class CffuFactory {
             long timeout, TimeUnit unit,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
         return create(CompletableFutureUtils.tupleMSupplyMostSuccessAsync(
-                defaultExecutor, timeout, unit, supplier1, supplier2, supplier3));
+                 timeout, unit, supplier1, supplier2, supplier3));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the most-success behavior.
+     *
+     * @return the new Cffu
+     */
+    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
+            Executor executor,long timeout, TimeUnit unit,
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
+        return create(CompletableFutureUtils.tupleMSupplyMostSuccessAsync(
+                executor, timeout, unit, supplier1, supplier2, supplier3));
     }
 
     /**
@@ -351,7 +445,23 @@ public final class CffuFactory {
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
         return create(CompletableFutureUtils.tupleMSupplyMostSuccessAsync(
-                defaultExecutor, timeout, unit, supplier1, supplier2, supplier3, supplier4));
+                 timeout, unit, supplier1, supplier2, supplier3, supplier4));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the most-success behavior.
+     *
+     * @return the new Cffu
+     */
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
+           Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+            Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
+        return create(CompletableFutureUtils.tupleMSupplyMostSuccessAsync(
+                executor, timeout, unit, supplier1, supplier2, supplier3, supplier4));
     }
 
     /**
@@ -367,7 +477,23 @@ public final class CffuFactory {
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
         return create(CompletableFutureUtils.tupleMSupplyMostSuccessAsync(
-                defaultExecutor, timeout, unit, supplier1, supplier2, supplier3, supplier4, supplier5));
+                 timeout, unit, supplier1, supplier2, supplier3, supplier4, supplier5));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the most-success behavior.
+     *
+     * @return the new Cffu
+     */
+    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
+            Executor executor,long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+            Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
+        return create(CompletableFutureUtils.tupleMSupplyMostSuccessAsync(
+                executor, timeout, unit, supplier1, supplier2, supplier3, supplier4, supplier5));
     }
 
     /**
@@ -391,9 +517,35 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #allResultsOf(CompletionStage[])
      */
+    public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyAsync(
+           Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
+        return create(CompletableFutureUtils.tupleMSupplyAsync(executor,supplier1, supplier2));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     *
+     * @return the new Cffu
+     * @see #allResultsOf(CompletionStage[])
+     */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
         return create(CompletableFutureUtils.tupleMSupplyAsync(supplier1, supplier2, supplier3));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     *
+     * @return the new Cffu
+     * @see #allResultsOf(CompletionStage[])
+     */
+    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyAsync(
+           Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
+        return create(CompletableFutureUtils.tupleMSupplyAsync(executor,supplier1, supplier2, supplier3));
     }
 
     /**
@@ -418,9 +570,38 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #allResultsOf(CompletionStage[])
      */
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyAsync(
+            Executor executor,
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+            Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
+        return create(CompletableFutureUtils.tupleMSupplyAsync(executor,supplier1, supplier2, supplier3, supplier4));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     *
+     * @return the new Cffu
+     * @see #allResultsOf(CompletionStage[])
+     */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
             Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
+        return create(CompletableFutureUtils.tupleMSupplyAsync(supplier1, supplier2, supplier3, supplier4, supplier5));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     *
+     * @return the new Cffu
+     * @see #allResultsOf(CompletionStage[])
+     */
+    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAsync(
+            Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+            Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
         return create(CompletableFutureUtils.tupleMSupplyAsync(supplier1, supplier2, supplier3, supplier4, supplier5));
     }
 
