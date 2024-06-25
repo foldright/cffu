@@ -208,7 +208,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     // endregion
     ////////////////////////////////////////////////////////////
-    // region## Then-Multi-Actions(thenM*) Methods
+    // region## Then-Multi-Actions(M*) Methods
     ////////////////////////////////////////////////////////////
 
 
