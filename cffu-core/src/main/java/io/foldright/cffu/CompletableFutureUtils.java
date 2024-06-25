@@ -2135,6 +2135,252 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
      * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the most values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     * If the given function is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param fn1     the function to use to compute the values of the returned CompletableFuture
+     * @param fn2     the function to use to compute the values of the returned CompletableFuture
+     * @param <U1>    the function return type
+     * @param <U2>    the function return type
+     * @return the new CompletableFuture
+     */
+    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> tupleMApplyMostSuccessAsync(
+            CompletionStage<? extends T> cf,
+            long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
+        return tupleMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the most values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     * If the given function is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param fn1     the function to use to compute the values of the returned CompletableFuture
+     * @param fn2     the function to use to compute the values of the returned CompletableFuture
+     * @param <U1>    the function return type
+     * @param <U2>    the function return type
+     * @return the new CompletableFuture
+     */
+    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> tupleMApplyMostSuccessAsync(
+            CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
+        requireNonNull(executor, "executor is null");
+        requireNonNull(unit, "unit is null");
+        requireArrayAndEleNonNull("fn", fn1, fn2);
+
+        return f_toCf(cf).thenCompose(v -> mostTupleOfSuccess0(executor, timeout, unit, CompletableFuture.supplyAsync(() -> fn1.apply(v), executor), CompletableFuture.supplyAsync(() -> fn2.apply(v), executor)));
+    }
+
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the most values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     * If the given function is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param fn1     the function to use to compute the values of the returned CompletableFuture
+     * @param fn2     the function to use to compute the values of the returned CompletableFuture
+     * @param fn3     the function to use to compute the values of the returned CompletableFuture
+     * @param <U1>    the function return type
+     * @param <U2>    the function return type
+     * @param <U3>    the function return type
+     * @return the new CompletableFuture
+     */
+    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> tupleMApplyMostSuccessAsync(
+            CompletionStage<? extends T> cf,
+            long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
+        return tupleMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2, fn3);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the most values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     * If the given function is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param fn1     the function to use to compute the values of the returned CompletableFuture
+     * @param fn2     the function to use to compute the values of the returned CompletableFuture
+     * @param fn3     the function to use to compute the values of the returned CompletableFuture
+     * @param <U1>    the function return type
+     * @param <U2>    the function return type
+     * @param <U3>    the function return type
+     * @return the new CompletableFuture
+     */
+    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> tupleMApplyMostSuccessAsync(
+            CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
+        requireNonNull(executor, "executor is null");
+        requireNonNull(unit, "unit is null");
+        requireArrayAndEleNonNull("fn", fn1, fn2, fn3);
+
+        return f_toCf(cf).thenCompose(v -> mostTupleOfSuccess0(executor, timeout, unit, CompletableFuture.supplyAsync(() -> fn1.apply(v), executor),
+                CompletableFuture.supplyAsync(() -> fn2.apply(v), executor), CompletableFuture.supplyAsync(() -> fn3.apply(v), executor)));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the most values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     * If the given function is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param fn1     the function to use to compute the values of the returned CompletableFuture
+     * @param fn2     the function to use to compute the values of the returned CompletableFuture
+     * @param fn3     the function to use to compute the values of the returned CompletableFuture
+     * @param fn4     the function to use to compute the values of the returned CompletableFuture
+     * @param <U1>    the function return type
+     * @param <U2>    the function return type
+     * @param <U3>    the function return type
+     * @param <U4>    the function return type
+     * @return the new CompletableFuture
+     */
+    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> tupleMApplyMostSuccessAsync(
+            CompletionStage<? extends T> cf, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
+            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
+        return tupleMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2, fn3, fn4);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the most values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     * If the given function is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param fn1     the function to use to compute the values of the returned CompletableFuture
+     * @param fn2     the function to use to compute the values of the returned CompletableFuture
+     * @param fn3     the function to use to compute the values of the returned CompletableFuture
+     * @param fn4     the function to use to compute the values of the returned CompletableFuture
+     * @param <U1>    the function return type
+     * @param <U2>    the function return type
+     * @param <U3>    the function return type
+     * @param <U4>    the function return type
+     * @return the new CompletableFuture
+     */
+    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> tupleMApplyMostSuccessAsync(
+            CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
+            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
+        requireNonNull(executor, "executor is null");
+        requireNonNull(unit, "unit is null");
+        requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4);
+
+        return f_toCf(cf).thenCompose(v -> mostTupleOfSuccess0(executor, timeout, unit, CompletableFuture.supplyAsync(() -> fn1.apply(v), executor),
+                CompletableFuture.supplyAsync(() -> fn2.apply(v), executor), CompletableFuture.supplyAsync(() -> fn3.apply(v), executor), CompletableFuture.supplyAsync(() -> fn4.apply(v), executor)));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the most values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     * If the given function is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param fn1     the function to use to compute the values of the returned CompletableFuture
+     * @param fn2     the function to use to compute the values of the returned CompletableFuture
+     * @param fn3     the function to use to compute the values of the returned CompletableFuture
+     * @param fn4     the function to use to compute the values of the returned CompletableFuture
+     * @param fn5     the function to use to compute the values of the returned CompletableFuture
+     * @param <U1>    the function return type
+     * @param <U2>    the function return type
+     * @param <U3>    the function return type
+     * @param <U4>    the function return type
+     * @param <U5>    the function return type
+     * @return the new CompletableFuture
+     */
+    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> tupleMApplyMostSuccessAsync(
+            CompletionStage<? extends T> cf, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
+            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
+            Function<? super T, ? extends U5> fn5) {
+        return tupleMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2, fn3, fn4, fn5);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the most values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     * If the given function is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param fn1     the function to use to compute the values of the returned CompletableFuture
+     * @param fn2     the function to use to compute the values of the returned CompletableFuture
+     * @param fn3     the function to use to compute the values of the returned CompletableFuture
+     * @param fn4     the function to use to compute the values of the returned CompletableFuture
+     * @param fn5     the function to use to compute the values of the returned CompletableFuture
+     * @param <U1>    the function return type
+     * @param <U2>    the function return type
+     * @param <U3>    the function return type
+     * @param <U4>    the function return type
+     * @param <U5>    the function return type
+     * @return the new CompletableFuture
+     */
+    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> tupleMApplyMostSuccessAsync(
+            CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
+            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
+            Function<? super T, ? extends U5> fn5) {
+        requireNonNull(executor, "executor is null");
+        requireNonNull(unit, "unit is null");
+        requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4, fn5);
+
+        return f_toCf(cf).thenCompose(v -> mostTupleOfSuccess0(executor, timeout, unit, CompletableFuture.supplyAsync(() -> fn1.apply(v), executor),
+                CompletableFuture.supplyAsync(() -> fn2.apply(v), executor), CompletableFuture.supplyAsync(() -> fn3.apply(v), executor),
+                CompletableFuture.supplyAsync(() -> fn4.apply(v), executor), CompletableFuture.supplyAsync(() -> fn5.apply(v), executor)));
+    }
+
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
      * with the values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
