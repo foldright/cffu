@@ -167,7 +167,7 @@ public final class CffuFactory {
      * @see #allResultsOfFastFail(CompletionStage[])
      * @see CompletableFuture#supplyAsync(Supplier)
      */
-    public  <T> Cffu<List<T>> mSupplyFastFailAsync(Supplier<? extends T>... suppliers) {
+    public <T> Cffu<List<T>> mSupplyFastFailAsync(Supplier<? extends T>... suppliers) {
         return create(CompletableFutureUtils.mSupplyFastFailAsync(suppliers));
     }
 
@@ -223,7 +223,7 @@ public final class CffuFactory {
      * @see #allOfFastFail(CompletionStage[])
      * @see CompletableFuture#runAsync(Runnable)
      */
-    public  Cffu<Void> mRunFastFailAsync(Runnable... actions) {
+    public Cffu<Void> mRunFastFailAsync(Runnable... actions) {
         return create(CompletableFutureUtils.mRunFastFailAsync(actions));
     }
 
@@ -237,7 +237,7 @@ public final class CffuFactory {
      * @see #allOf(CompletionStage[])
      * @see CompletableFuture#runAsync(Runnable)
      */
-    public  Cffu<Void> mRunAsync(Runnable... actions) {
+    public Cffu<Void> mRunAsync(Runnable... actions) {
         return create(CompletableFutureUtils.mRunAsync(actions));
     }
 
@@ -273,7 +273,7 @@ public final class CffuFactory {
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(executor,supplier1, supplier2));
+        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(executor, supplier1, supplier2));
     }
 
     /**
@@ -302,8 +302,8 @@ public final class CffuFactory {
      * @see #allResultsOfFastFail(CompletionStage[])
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
-            Executor executor,  Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(executor,supplier1, supplier2, supplier3));
+            Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
+        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(executor, supplier1, supplier2, supplier3));
     }
 
     /**
@@ -333,9 +333,9 @@ public final class CffuFactory {
      * @see #allResultsOfFastFail(CompletionStage[])
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyFastFailAsync(
-            Executor executor,Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+            Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(executor,supplier1, supplier2, supplier3, supplier4));
+        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(executor, supplier1, supplier2, supplier3, supplier4));
     }
 
     /**
@@ -367,7 +367,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
             Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(executor,supplier1, supplier2, supplier3, supplier4, supplier5));
+        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(executor, supplier1, supplier2, supplier3, supplier4, supplier5));
     }
 
 
@@ -397,7 +397,7 @@ public final class CffuFactory {
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(Executor executor,
                                                                       long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return create(CompletableFutureUtils.tupleMSupplyMostSuccessAsync(executor,timeout, unit, supplier1, supplier2));
+        return create(CompletableFutureUtils.tupleMSupplyMostSuccessAsync(executor, timeout, unit, supplier1, supplier2));
     }
 
     /**
@@ -413,7 +413,7 @@ public final class CffuFactory {
             long timeout, TimeUnit unit,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
         return create(CompletableFutureUtils.tupleMSupplyMostSuccessAsync(
-                 timeout, unit, supplier1, supplier2, supplier3));
+                timeout, unit, supplier1, supplier2, supplier3));
     }
 
     /**
@@ -426,7 +426,7 @@ public final class CffuFactory {
      * @return the new Cffu
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
-            Executor executor,long timeout, TimeUnit unit,
+            Executor executor, long timeout, TimeUnit unit,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
         return create(CompletableFutureUtils.tupleMSupplyMostSuccessAsync(
                 executor, timeout, unit, supplier1, supplier2, supplier3));
@@ -445,7 +445,7 @@ public final class CffuFactory {
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
         return create(CompletableFutureUtils.tupleMSupplyMostSuccessAsync(
-                 timeout, unit, supplier1, supplier2, supplier3, supplier4));
+                timeout, unit, supplier1, supplier2, supplier3, supplier4));
     }
 
     /**
@@ -458,7 +458,7 @@ public final class CffuFactory {
      * @return the new Cffu
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
-           Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+            Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
         return create(CompletableFutureUtils.tupleMSupplyMostSuccessAsync(
                 executor, timeout, unit, supplier1, supplier2, supplier3, supplier4));
@@ -477,7 +477,7 @@ public final class CffuFactory {
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
         return create(CompletableFutureUtils.tupleMSupplyMostSuccessAsync(
-                 timeout, unit, supplier1, supplier2, supplier3, supplier4, supplier5));
+                timeout, unit, supplier1, supplier2, supplier3, supplier4, supplier5));
     }
 
     /**
@@ -490,7 +490,7 @@ public final class CffuFactory {
      * @return the new Cffu
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
-            Executor executor,long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+            Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
         return create(CompletableFutureUtils.tupleMSupplyMostSuccessAsync(
                 executor, timeout, unit, supplier1, supplier2, supplier3, supplier4, supplier5));
@@ -518,8 +518,8 @@ public final class CffuFactory {
      * @see #allResultsOf(CompletionStage[])
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyAsync(
-           Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return create(CompletableFutureUtils.tupleMSupplyAsync(executor,supplier1, supplier2));
+            Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
+        return create(CompletableFutureUtils.tupleMSupplyAsync(executor, supplier1, supplier2));
     }
 
     /**
@@ -544,8 +544,8 @@ public final class CffuFactory {
      * @see #allResultsOf(CompletionStage[])
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyAsync(
-           Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return create(CompletableFutureUtils.tupleMSupplyAsync(executor,supplier1, supplier2, supplier3));
+            Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
+        return create(CompletableFutureUtils.tupleMSupplyAsync(executor, supplier1, supplier2, supplier3));
     }
 
     /**
@@ -574,7 +574,7 @@ public final class CffuFactory {
             Executor executor,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return create(CompletableFutureUtils.tupleMSupplyAsync(executor,supplier1, supplier2, supplier3, supplier4));
+        return create(CompletableFutureUtils.tupleMSupplyAsync(executor, supplier1, supplier2, supplier3, supplier4));
     }
 
     /**
@@ -1181,8 +1181,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public static <T> Cffu<T>[] cffuListToArray(List<Cffu<T>> cffuList) {
-        @SuppressWarnings("unchecked")
-        final Cffu<T>[] a = new Cffu[cffuList.size()];
+        @SuppressWarnings("unchecked") final Cffu<T>[] a = new Cffu[cffuList.size()];
         return cffuList.toArray(a);
     }
 

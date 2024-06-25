@@ -11,10 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static io.foldright.test_utils.TestUtils.*;
 import static java.util.function.Function.identity;
@@ -32,6 +35,52 @@ class CffuTest {
     private static CffuFactory cffuFactory;
 
     private static CffuFactory forbidObtrudeMethodsCffuFactory;
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# multi-actions(M*) methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void test_mRun() throws Exception {
+        final Cffu<Integer> completed = cffuFactory.completedFuture(n);
+
+        final Runnable runnable = () -> sleep(100);
+
+        final long tick = System.currentTimeMillis();
+        @SuppressWarnings("unchecked")
+        Cffu<Void>[] cfs = new Cffu[]{
+                completed.mRunAsync(runnable, runnable),
+                completed.mRunFastFailAsync(runnable, runnable)
+        };
+
+        assertTrue(System.currentTimeMillis() - tick < 50);
+        for (Cffu<Void> cf : cfs) {
+            assertNull(cf.get());
+        }
+    }
+
+    @Test
+    void test_mSupply() throws Exception {
+        final Cffu<Integer> completed = cffuFactory.completedFuture(n);
+        final Supplier<Integer> supplier = () -> {
+            sleep(100);
+            return n;
+        };
+
+        final long tick = System.currentTimeMillis();
+
+        @SuppressWarnings("unchecked")
+        Cffu<List<Integer>>[] cfs = new Cffu[]{
+                completed.mSupplyAsync(supplier, supplier),
+                completed.mSupplyFastFailAsync(supplier, supplier),
+                completed.mSupplyMostSuccessAsync(anotherN, 500, TimeUnit.MILLISECONDS, supplier, supplier)
+        };
+
+        assertTrue(System.currentTimeMillis() - tick < 50);
+        for (Cffu<List<Integer>> cf : cfs) {
+            assertEquals(Arrays.asList(n, n), cf.get());
+        }
+    }
 
     @Test
     void test_thenTupleMApplyAsync() throws Exception {
