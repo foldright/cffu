@@ -82,7 +82,7 @@
 		<slf4j.version>2.0.13</slf4j.version>
 
 		<!-- testing dependencies versions -->
-		<junit5.version>5.10.2</junit5.version>
+		<junit5.version>5.10.3</junit5.version>
 		<kotest.version>5.8.1</kotest.version>
 	</properties>
 
@@ -469,7 +469,7 @@
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.8.5.0</version>
+					<version>4.8.6.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
