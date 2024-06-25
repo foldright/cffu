@@ -152,6 +152,13 @@ public final class CffuFactory {
     // region## Multi-Actions(M*) Methods(create by actions)
     ////////////////////////////////////////////////////////////
 
+    // TODO: TO BE implemented!!
+
+    // endregion
+    ////////////////////////////////////////////////////////////
+    // region## Tuple-Multi-Actions(tupleM*) Methods(create by actions)
+    ////////////////////////////////////////////////////////////
+
     /**
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
@@ -398,40 +405,6 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is completed when all the given stages complete;
-     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
-     * with a CompletionException holding this exception as its cause.
-     * Otherwise, the results, if any, of the given stages are not reflected in the returned
-     * Cffu({@code Cffu<Void>}), but may be obtained by inspecting them individually.
-     * If no stages are provided, returns a Cffu completed with the value {@code null}.
-     * <p>
-     * This method is the same as {@link CompletableFuture#allOf(CompletableFuture[])},
-     * except that the parameter type is more generic {@link CompletionStage} instead of {@link CompletableFuture}.
-     * <p>
-     * If you need the results of given stages, prefer below methods:
-     * <ul>
-     * <li>{@link #allResultsOf(CompletionStage[])}
-     * <li>{@link #allTupleOf(CompletionStage, CompletionStage)} /
-     *     {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
-     * </ul>
-     * <p>
-     * If you need the successful results of given stages in the given time, prefer below methods:
-     * <ul>
-     * <li>{@link #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])}
-     * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)} /
-     *     {@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
-     * </ul>
-     *
-     * @param cfs the stages
-     * @return a new Cffu that is completed when all the given stages complete
-     * @throws NullPointerException if the array or any of its elements are {@code null}
-     */
-    @Contract(pure = true)
-    public Cffu<Void> allOf(CompletionStage<?>... cfs) {
-        return create(CompletableFutureUtils.allOf(cfs));
-    }
-
-    /**
      * Returns a new Cffu that is successful when all the given stages success;
      * If any of the given stages complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
@@ -463,6 +436,40 @@ public final class CffuFactory {
     @Contract(pure = true)
     public Cffu<Void> allOfFastFail(CompletionStage<?>... cfs) {
         return create(CompletableFutureUtils.allOfFastFail(cfs));
+    }
+
+    /**
+     * Returns a new Cffu that is completed when all the given stages complete;
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
+     * Otherwise, the results, if any, of the given stages are not reflected in the returned
+     * Cffu({@code Cffu<Void>}), but may be obtained by inspecting them individually.
+     * If no stages are provided, returns a Cffu completed with the value {@code null}.
+     * <p>
+     * This method is the same as {@link CompletableFuture#allOf(CompletableFuture[])},
+     * except that the parameter type is more generic {@link CompletionStage} instead of {@link CompletableFuture}.
+     * <p>
+     * If you need the results of given stages, prefer below methods:
+     * <ul>
+     * <li>{@link #allResultsOf(CompletionStage[])}
+     * <li>{@link #allTupleOf(CompletionStage, CompletionStage)} /
+     *     {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * </ul>
+     * <p>
+     * If you need the successful results of given stages in the given time, prefer below methods:
+     * <ul>
+     * <li>{@link #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])}
+     * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)} /
+     *     {@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * </ul>
+     *
+     * @param cfs the stages
+     * @return a new Cffu that is completed when all the given stages complete
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     */
+    @Contract(pure = true)
+    public Cffu<Void> allOf(CompletionStage<?>... cfs) {
+        return create(CompletableFutureUtils.allOf(cfs));
     }
 
     // endregion

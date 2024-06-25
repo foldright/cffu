@@ -192,37 +192,6 @@ public final class CompletableFutureUtils {
      * Returns a new CompletableFuture that is asynchronously completed
      * by tasks running in the CompletableFuture's default asynchronous execution facility
      * after runs the given actions.
-     *
-     * @param actions the actions to run before completing the returned CompletableFuture
-     * @return the new CompletableFuture
-     * @see #allOf(CompletionStage[])
-     * @see CompletableFuture#runAsync(Runnable)
-     */
-    public static CompletableFuture<Void> mRunAsync(Runnable... actions) {
-        return mRunAsync(AsyncPoolHolder.ASYNC_POOL, actions);
-    }
-
-    /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor after runs the given actions.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to run before completing the returned CompletableFuture
-     * @return the new CompletableFuture
-     * @see #allOf(CompletionStage[])
-     * @see CompletableFuture#runAsync(Runnable, Executor)
-     */
-    public static CompletableFuture<Void> mRunAsync(Executor executor, Runnable... actions) {
-        requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("action", actions);
-
-        return CompletableFuture.allOf(wrapRunnables(executor, actions));
-    }
-
-    /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * after runs the given actions.
      * <p>
      * This method is the same as {@link #mRunAsync(Runnable...)} except for the fast-fail behavior.
      *
@@ -252,6 +221,37 @@ public final class CompletableFutureUtils {
         requireArrayAndEleNonNull("action", actions);
 
         return allOfFastFail(wrapRunnables(executor, actions));
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * after runs the given actions.
+     *
+     * @param actions the actions to run before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #allOf(CompletionStage[])
+     * @see CompletableFuture#runAsync(Runnable)
+     */
+    public static CompletableFuture<Void> mRunAsync(Runnable... actions) {
+        return mRunAsync(AsyncPoolHolder.ASYNC_POOL, actions);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the given Executor after runs the given actions.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to run before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #allOf(CompletionStage[])
+     * @see CompletableFuture#runAsync(Runnable, Executor)
+     */
+    public static CompletableFuture<Void> mRunAsync(Executor executor, Runnable... actions) {
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("action", actions);
+
+        return CompletableFuture.allOf(wrapRunnables(executor, actions));
     }
 
     private static CompletableFuture<Void>[] wrapRunnables(Executor executor, Runnable[] actions) {
@@ -792,44 +792,6 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is completed when all the given stages complete;
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
-     * Otherwise, the results, if any, of the given stages are not reflected in the returned
-     * CompletableFuture({@code CompletableFuture<Void>}), but may be obtained by inspecting them individually.
-     * If no stages are provided, returns a CompletableFuture completed with the value {@code null}.
-     * <p>
-     * This method is the same as {@link CompletableFuture#allOf(CompletableFuture[])},
-     * except that the parameter type is more generic {@link CompletionStage} instead of {@link CompletableFuture}.
-     * <p>
-     * If you need the results of given stages, prefer below methods:
-     * <ul>
-     * <li>{@link #allResultsOf(CompletionStage[])}
-     * <li>{@link #allTupleOf(CompletionStage, CompletionStage)} /
-     *     {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
-     * </ul>
-     * <p>
-     * If you need the successful results of given stages in the given time, prefer below methods:
-     * <ul>
-     * <li>{@link #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])}
-     * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)} /
-     *     {@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
-     * </ul>
-     *
-     * @param cfs the stages
-     * @return a new CompletableFuture that is completed when all the given stages complete
-     * @throws NullPointerException if the array or any of its elements are {@code null}
-     */
-    public static CompletableFuture<Void> allOf(CompletionStage<?>... cfs) {
-        requireNonNull(cfs, "cfs is null");
-        if (cfs.length == 0) return completedFuture(null);
-        // Defensive copy input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
-        // in order to ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
-        if (cfs.length == 1) return toNonMinCfCopy(requireNonNull(cfs[0], "cf1 is null")).thenApply(unused -> null);
-        return CompletableFuture.allOf(f_toCfArray(cfs));
-    }
-
-    /**
      * Returns a new CompletableFuture that is successful when all the given stages success;
      * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
@@ -879,6 +841,44 @@ public final class CompletableFutureUtils {
 
         CompletableFuture<Object> ret = CompletableFuture.anyOf(failedOrBeIncomplete);
         return f_cast(ret);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is completed when all the given stages complete;
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
+     * with a CompletionException holding this exception as its cause.
+     * Otherwise, the results, if any, of the given stages are not reflected in the returned
+     * CompletableFuture({@code CompletableFuture<Void>}), but may be obtained by inspecting them individually.
+     * If no stages are provided, returns a CompletableFuture completed with the value {@code null}.
+     * <p>
+     * This method is the same as {@link CompletableFuture#allOf(CompletableFuture[])},
+     * except that the parameter type is more generic {@link CompletionStage} instead of {@link CompletableFuture}.
+     * <p>
+     * If you need the results of given stages, prefer below methods:
+     * <ul>
+     * <li>{@link #allResultsOf(CompletionStage[])}
+     * <li>{@link #allTupleOf(CompletionStage, CompletionStage)} /
+     *     {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * </ul>
+     * <p>
+     * If you need the successful results of given stages in the given time, prefer below methods:
+     * <ul>
+     * <li>{@link #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])}
+     * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)} /
+     *     {@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * </ul>
+     *
+     * @param cfs the stages
+     * @return a new CompletableFuture that is completed when all the given stages complete
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     */
+    public static CompletableFuture<Void> allOf(CompletionStage<?>... cfs) {
+        requireNonNull(cfs, "cfs is null");
+        if (cfs.length == 0) return completedFuture(null);
+        // Defensive copy input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
+        // in order to ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
+        if (cfs.length == 1) return toNonMinCfCopy(requireNonNull(cfs[0], "cf1 is null")).thenApply(unused -> null);
+        return CompletableFuture.allOf(f_toCfArray(cfs));
     }
 
     @SafeVarargs
