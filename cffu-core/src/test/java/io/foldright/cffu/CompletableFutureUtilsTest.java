@@ -848,17 +848,17 @@ class CompletableFutureUtilsTest {
             sleep(100);
             return n + n;
         };
-        assertEquals(Tuple2.of(n, s), tupleMApplyMostSuccessAsync(completed, 100, TimeUnit.MILLISECONDS, function_n, function_s).get());
-        assertEquals(Tuple2.of(n, s), tupleMApplyMostSuccessAsync(completed, defaultExecutor(), 100, TimeUnit.MILLISECONDS, function_n, function_s).get());
+        assertEquals(Tuple2.of(n, s), thenTupleMApplyMostSuccessAsync(completed, 100, TimeUnit.MILLISECONDS, function_n, function_s).get());
+        assertEquals(Tuple2.of(n, s), thenTupleMApplyMostSuccessAsync(completed, defaultExecutor(), 100, TimeUnit.MILLISECONDS, function_n, function_s).get());
 
-        assertEquals(Tuple3.of(n, s, d), tupleMApplyMostSuccessAsync(completed, 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d).get());
-        assertEquals(Tuple3.of(n, s, d), tupleMApplyMostSuccessAsync(completed, defaultExecutor(), 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d).get());
+        assertEquals(Tuple3.of(n, s, d), thenTupleMApplyMostSuccessAsync(completed, 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d).get());
+        assertEquals(Tuple3.of(n, s, d), thenTupleMApplyMostSuccessAsync(completed, defaultExecutor(), 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d).get());
 
-        assertEquals(Tuple4.of(n, s, d, anotherN), tupleMApplyMostSuccessAsync(completed, 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an).get());
-        assertEquals(Tuple4.of(n, s, d, anotherN), tupleMApplyMostSuccessAsync(completed, defaultExecutor(), 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), thenTupleMApplyMostSuccessAsync(completed, 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), thenTupleMApplyMostSuccessAsync(completed, defaultExecutor(), 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an).get());
 
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), tupleMApplyMostSuccessAsync(completed, 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an, function_nn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), tupleMApplyMostSuccessAsync(completed, defaultExecutor(), 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an, function_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), thenTupleMApplyMostSuccessAsync(completed, 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an, function_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), thenTupleMApplyMostSuccessAsync(completed, defaultExecutor(), 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an, function_nn).get());
     }
 
     @Test

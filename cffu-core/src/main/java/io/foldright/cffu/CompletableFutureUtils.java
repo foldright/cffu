@@ -2151,10 +2151,10 @@ public final class CompletableFutureUtils {
      * @param <U2>    the function return type
      * @return the new CompletableFuture
      */
-    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> tupleMApplyMostSuccessAsync(
+    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
             CompletionStage<? extends T> cf,
             long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return tupleMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2);
+        return thenTupleMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2);
     }
 
     /**
@@ -2176,7 +2176,7 @@ public final class CompletableFutureUtils {
      * @param <U2>    the function return type
      * @return the new CompletableFuture
      */
-    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> tupleMApplyMostSuccessAsync(
+    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
             CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
         requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
@@ -2207,10 +2207,10 @@ public final class CompletableFutureUtils {
      * @param <U3>    the function return type
      * @return the new CompletableFuture
      */
-    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> tupleMApplyMostSuccessAsync(
+    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
             CompletionStage<? extends T> cf,
             long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return tupleMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2, fn3);
+        return thenTupleMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2, fn3);
     }
 
     /**
@@ -2234,7 +2234,7 @@ public final class CompletableFutureUtils {
      * @param <U3>    the function return type
      * @return the new CompletableFuture
      */
-    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> tupleMApplyMostSuccessAsync(
+    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
             CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
         requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
@@ -2267,10 +2267,10 @@ public final class CompletableFutureUtils {
      * @param <U4>    the function return type
      * @return the new CompletableFuture
      */
-    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> tupleMApplyMostSuccessAsync(
+    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyMostSuccessAsync(
             CompletionStage<? extends T> cf, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return tupleMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2, fn3, fn4);
+        return thenTupleMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2, fn3, fn4);
     }
 
     /**
@@ -2296,7 +2296,7 @@ public final class CompletableFutureUtils {
      * @param <U4>    the function return type
      * @return the new CompletableFuture
      */
-    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> tupleMApplyMostSuccessAsync(
+    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyMostSuccessAsync(
             CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
         requireNonNull(executor, "executor is null");
@@ -2332,11 +2332,11 @@ public final class CompletableFutureUtils {
      * @param <U5>    the function return type
      * @return the new CompletableFuture
      */
-    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> tupleMApplyMostSuccessAsync(
+    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyMostSuccessAsync(
             CompletionStage<? extends T> cf, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
             Function<? super T, ? extends U5> fn5) {
-        return tupleMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2, fn3, fn4, fn5);
+        return thenTupleMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
@@ -2364,7 +2364,7 @@ public final class CompletableFutureUtils {
      * @param <U5>    the function return type
      * @return the new CompletableFuture
      */
-    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> tupleMApplyMostSuccessAsync(
+    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyMostSuccessAsync(
             CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
             Function<? super T, ? extends U5> fn5) {
