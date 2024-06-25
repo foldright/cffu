@@ -13,10 +13,16 @@ import org.junit.jupiter.api.condition.JRE;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 
 import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
+import static io.foldright.cffu.CompletableFutureUtils.mRunAsync;
+import static io.foldright.cffu.CompletableFutureUtils.mRunFastFailAsync;
+import static io.foldright.cffu.CompletableFutureUtils.mSupplyAsync;
+import static io.foldright.cffu.CompletableFutureUtils.mSupplyFastFailAsync;
+import static io.foldright.cffu.CompletableFutureUtils.mSupplyMostSuccessAsync;
 import static io.foldright.cffu.CompletableFutureUtils.toCompletableFutureArray;
 import static io.foldright.test_utils.TestUtils.*;
 import static java.util.concurrent.CompletableFuture.completedFuture;
@@ -30,6 +36,50 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SuppressWarnings("RedundantThrows")
 class CffuFactoryTest {
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //# multi-actions(M*) methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void test_mRun() throws Exception {
+        final Runnable runnable = () -> sleep(100);
+
+        final long tick = System.currentTimeMillis();
+        @SuppressWarnings("unchecked")
+        Cffu<Void>[] cfs = new Cffu[]{
+                cffuFactory.mRunAsync(runnable, runnable),
+                cffuFactory.mRunFastFailAsync(runnable, runnable)
+        };
+
+        assertTrue(System.currentTimeMillis() - tick < 50);
+        for (Cffu<Void> cf : cfs) {
+            assertNull(cf.get());
+        }
+    }
+
+    @Test
+    void test_mSupply() throws Exception {
+        final Supplier<Integer> supplier = () -> {
+            sleep(100);
+            return n;
+        };
+
+        final long tick = System.currentTimeMillis();
+
+        @SuppressWarnings("unchecked")
+        Cffu<List<Integer>>[] cfs = new Cffu[]{
+                cffuFactory.mSupplyAsync(supplier, supplier),
+                cffuFactory.mSupplyFastFailAsync(supplier, supplier),
+                cffuFactory.mSupplyMostSuccessAsync(anotherN, 500, TimeUnit.MILLISECONDS, supplier, supplier)
+        };
+
+        assertTrue(System.currentTimeMillis() - tick < 50);
+        for (Cffu<List<Integer>> cf : cfs) {
+            assertEquals(Arrays.asList(n, n), cf.get());
+        }
+    }
+
     ///////////////////////////////////////////////////////////////////////////////
     //# Factory Methods, equivalent to same name static methods of CompletableFuture
     //
@@ -649,16 +699,24 @@ class CffuFactoryTest {
             return n + n;
         };
         assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyAsync(supplier_n, supplier_s).get());
+        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyAsync(executorService, supplier_n, supplier_s).get());
         assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s).get());
+        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s).get());
 
         assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyAsync(supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyAsync(executorService, supplier_n, supplier_s, supplier_d).get());
         assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s, supplier_d).get());
 
         assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an).get());
         assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an).get());
 
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
     }
 
     @Test
@@ -685,12 +743,16 @@ class CffuFactoryTest {
             return n + n;
         };
         assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s).get());
+        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s).get());
 
         assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d).get());
 
         assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an).get());
 
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
