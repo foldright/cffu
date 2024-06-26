@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -33,42 +35,140 @@ class CffuTest {
 
     private static CffuFactory forbidObtrudeMethodsCffuFactory;
 
+    ////////////////////////////////////////////////////////////////////////////////
+    //# multi-actions(M*) methods
+    ////////////////////////////////////////////////////////////////////////////////
+
     @Test
-    void test_thenTupleMApplyAsync() throws Exception {
+    void test_thenMApply() throws Exception {
         final Cffu<Integer> completed = cffuFactory.completedFuture(n);
+
         final Function<Integer, Integer> function_n = (x) -> {
             sleep(100);
             return n;
         };
 
-        final Function<Integer, String> function_s = (x) -> {
+
+        final long tick = System.currentTimeMillis();
+        @SuppressWarnings("unchecked")
+        Cffu<Void>[] cfs = new Cffu[]{
+                completed.thenMApplyFastFailAsync(completed, function_n, function_n),
+                completed.thenMApplyFastFailAsync(completed, executorService, function_n, function_n),
+                completed.thenMApplyMostSuccessAsync(completed, 100, 500, TimeUnit.MILLISECONDS, function_n, function_n),
+                completed.thenMApplyMostSuccessAsync(completed, 100, executorService, 500, TimeUnit.MILLISECONDS, function_n, function_n),
+                completed.thenMApplyAsync(completed, function_n, function_n),
+                completed.thenMApplyAsync(completed, executorService, function_n, function_n)
+        };
+
+        assertTrue(System.currentTimeMillis() - tick < 50);
+        for (Cffu<Void> cf : cfs) {
+            assertEquals(Arrays.asList(n, n), cf.get());
+        }
+    }
+
+    @Test
+    void test_thenMAccept() throws Exception {
+        final Cffu<Integer> completed = cffuFactory.completedFuture(n);
+        final Consumer<Integer> consumer = (x) -> {
+            assertEquals(n, x);
             sleep(100);
+        };
+
+        final long tick = System.currentTimeMillis();
+
+        @SuppressWarnings("unchecked")
+        Cffu<List<Integer>>[] cfs = new Cffu[]{
+                completed.thenMAcceptAsync(completed, consumer, consumer),
+                completed.thenMAcceptAsync(completed, executorService, consumer, consumer),
+                completed.thenMAcceptFastFailAsync(completed, consumer, consumer),
+                completed.thenMAcceptFastFailAsync(completed, executorService, consumer, consumer)
+        };
+
+        assertTrue(System.currentTimeMillis() - tick < 50);
+        for (Cffu<List<Integer>> cf : cfs) {
+            assertNull(cf.get());
+        }
+    }
+
+    @Test
+    void test_thenMRun() throws Exception {
+        final Cffu<Integer> completed = cffuFactory.completedFuture(null);
+        final Runnable runnable = () -> {
+            sleep(100);
+        };
+
+        final long tick = System.currentTimeMillis();
+
+        @SuppressWarnings("unchecked")
+        Cffu<List<Integer>>[] cfs = new Cffu[]{
+                completed.thenMRunAsync(completed, runnable, runnable),
+                completed.thenMRunAsync(completed, executorService, runnable, runnable),
+                completed.thenMRunFastFailAsync(completed, runnable, runnable),
+                completed.thenMRunFastFailAsync(completed, executorService, runnable, runnable)
+        };
+
+        assertTrue(System.currentTimeMillis() - tick < 50);
+        for (Cffu<List<Integer>> cf : cfs) {
+            assertNull(cf.get());
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Then-Tuple-Multi-Actions(thenTupleM*) Methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void test_thenTupleMApplyAsync() throws Exception {
+        final Cffu<Integer> completed = cffuFactory.completedFuture(n);
+        final Function<Integer, Integer> function_n = (x) -> {
+            sleep(10);
+            return n;
+        };
+
+        final Function<Integer, String> function_s = (x) -> {
+            sleep(10);
             return s;
         };
 
         final Function<Integer, Double> function_d = (x) -> {
-            sleep(100);
+            sleep(10);
             return d;
         };
         final Function<Integer, Integer> function_an = (x) -> {
-            sleep(100);
+            sleep(10);
             return anotherN;
         };
         final Function<Integer, Integer> function_nn = (x) -> {
-            sleep(100);
+            sleep(10);
             return n + n;
         };
         assertEquals(Tuple2.of(n, s), completed.thenTupleMApplyAsync(function_n, function_s).get());
+        assertEquals(Tuple2.of(n, s), completed.thenTupleMApplyAsync(executorService, function_n, function_s).get());
         assertEquals(Tuple2.of(n, s), completed.thenTupleMApplyFastFailAsync(function_n, function_s).get());
+        assertEquals(Tuple2.of(n, s), completed.thenTupleMApplyFastFailAsync(executorService, function_n, function_s).get());
+        assertEquals(Tuple2.of(n, s), completed.thenTupleMApplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, function_n, function_s).get());
+        assertEquals(Tuple2.of(n, s), completed.thenTupleMApplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, function_n, function_s).get());
 
         assertEquals(Tuple3.of(n, s, d), completed.thenTupleMApplyAsync(function_n, function_s, function_d).get());
+        assertEquals(Tuple3.of(n, s, d), completed.thenTupleMApplyAsync(executorService, function_n, function_s, function_d).get());
         assertEquals(Tuple3.of(n, s, d), completed.thenTupleMApplyFastFailAsync(function_n, function_s, function_d).get());
+        assertEquals(Tuple3.of(n, s, d), completed.thenTupleMApplyFastFailAsync(executorService, function_n, function_s, function_d).get());
+        assertEquals(Tuple3.of(n, s, d), completed.thenTupleMApplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, function_n, function_s, function_d).get());
+        assertEquals(Tuple3.of(n, s, d), completed.thenTupleMApplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d).get());
 
         assertEquals(Tuple4.of(n, s, d, anotherN), completed.thenTupleMApplyAsync(function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), completed.thenTupleMApplyAsync(executorService, function_n, function_s, function_d, function_an).get());
         assertEquals(Tuple4.of(n, s, d, anotherN), completed.thenTupleMApplyFastFailAsync(function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), completed.thenTupleMApplyFastFailAsync(executorService, function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), completed.thenTupleMApplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), completed.thenTupleMApplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an).get());
 
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), completed.thenTupleMApplyAsync(function_n, function_s, function_d, function_an, function_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), completed.thenTupleMApplyAsync(executorService, function_n, function_s, function_d, function_an, function_nn).get());
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), completed.thenTupleMApplyFastFailAsync(function_n, function_s, function_d, function_an, function_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), completed.thenTupleMApplyFastFailAsync(executorService, function_n, function_s, function_d, function_an, function_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), completed.thenTupleMApplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an, function_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), completed.thenTupleMApplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an, function_nn).get());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
