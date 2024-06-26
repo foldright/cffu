@@ -227,7 +227,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public <T, U> Cffu<List<U>> thenMApplyFastFailAsync(
             CompletionStage<? extends T> cf, Function<? super T, ? extends U>... fns) {
-        return thenMApplyFastFailAsync(cf, fns);
+        return thenMApplyFastFailAsync(cf,fac.defaultExecutor(),fns);
     }
 
     /**
@@ -270,7 +270,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public <T, U> Cffu<List<U>> thenMApplyMostSuccessAsync(
             CompletionStage<? extends T> cf, @Nullable U valueIfNotSuccess,
             long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
-        return thenMApplyMostSuccessAsync(cf, valueIfNotSuccess, timeout, unit, fns);
+        return thenMApplyMostSuccessAsync(cf, valueIfNotSuccess, fac.defaultExecutor(),timeout, unit, fns);
     }
 
     /**
@@ -310,7 +310,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public <T, U> Cffu<List<U>> thenMApplyAsync(
             CompletionStage<? extends T> cf, Function<? super T, ? extends U>... fns) {
-        return thenMApplyAsync(cf, fns);
+        return thenMApplyAsync(cf,fac.defaultExecutor(), fns);
     }
 
     /**
@@ -339,7 +339,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public <T> Cffu<Void> thenMAcceptAsync(
             CompletionStage<? extends T> cf, Consumer<? super T>... actions) {
-        return thenMAcceptAsync(cf, actions);
+        return thenMAcceptAsync(cf,fac.defaultExecutor(), actions);
     }
 
     /**
@@ -367,7 +367,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public <T> Cffu<Void> thenMAcceptFastFailAsync(
             CompletionStage<? extends T> cf, Consumer<? super T>... actions) {
-        return thenMAcceptFastFailAsync(cf, actions);
+        return thenMAcceptFastFailAsync(cf,fac.defaultExecutor(), actions);
     }
 
     /**
@@ -398,7 +398,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @see CompletableFuture#thenRunAsync(Runnable)
      */
     public Cffu<Void> thenMRunFastFailAsync(CompletionStage<?> cf, Runnable... actions) {
-        return thenMRunFastFailAsync(cf, actions);
+        return thenMRunFastFailAsync(cf,fac.defaultExecutor(), actions);
     }
 
     /**
@@ -426,7 +426,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @see CompletableFuture#thenRunAsync(Runnable)
      */
     public Cffu<Void> thenMRunAsync(CompletionStage<?> cf, Runnable... actions) {
-        return thenMRunAsync(cf, actions);
+        return thenMRunAsync(cf,fac.defaultExecutor(), actions);
     }
 
     /**
