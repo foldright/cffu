@@ -55,22 +55,23 @@ class CffuTest {
         Cffu<Void>[] cfs = new Cffu[]{
                 completed.thenMApplyFastFailAsync(completed, function_n, function_n),
                 completed.thenMApplyFastFailAsync(completed, executorService, function_n, function_n),
-                completed.thenMApplyMostSuccessAsync(completed, 100, 100, TimeUnit.MILLISECONDS, function_n, function_n),
-                completed.thenMApplyMostSuccessAsync(completed, 100, executorService, 100, TimeUnit.MILLISECONDS, function_n, function_n),
+                completed.thenMApplyMostSuccessAsync(completed, 100, 500, TimeUnit.MILLISECONDS, function_n, function_n),
+                completed.thenMApplyMostSuccessAsync(completed, 100, executorService, 500, TimeUnit.MILLISECONDS, function_n, function_n),
                 completed.thenMApplyAsync(completed, function_n, function_n),
                 completed.thenMApplyAsync(completed, executorService, function_n, function_n)
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
         for (Cffu<Void> cf : cfs) {
-            assertNull(cf.get());
+            assertEquals(Arrays.asList(n, n), cf.get());
         }
     }
 
     @Test
     void test_thenMAccept() throws Exception {
         final Cffu<Integer> completed = cffuFactory.completedFuture(n);
-        final Consumer<Integer> consumer = (s) -> {
+        final Consumer<Integer> consumer =  (x)  -> {
+            assertEquals(n, x);
             sleep(100);
         };
 
@@ -92,7 +93,7 @@ class CffuTest {
 
     @Test
     void test_thenMRun() throws Exception {
-        final Cffu<Integer> completed = cffuFactory.completedFuture(n);
+        final Cffu<Integer> completed = cffuFactory.completedFuture(null);
         final Runnable runnable = () -> {
             sleep(100);
         };
@@ -109,7 +110,7 @@ class CffuTest {
 
         assertTrue(System.currentTimeMillis() - tick < 50);
         for (Cffu<List<Integer>> cf : cfs) {
-            assertEquals(Arrays.asList(n, n), cf.get());
+            assertNull(cf.get());
         }
     }
     ////////////////////////////////////////////////////////////////////////////////
