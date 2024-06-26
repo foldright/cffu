@@ -211,89 +211,236 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     // region## Then-Multi-Actions(M*) Methods
     ////////////////////////////////////////////////////////////
 
-
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Returns a new Cffu that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
-     * This method is the same as {@link #mSupplyAsync(Supplier[])} except for the fast-fail behavior.
+     * This method is the same as {@link #thenMApplyAsync(CompletionStage, Function[])}
+     * except for the fast-fail behavior.
      *
-     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
-     * @param <T>       the suppliers' return type
-     * @return the new CompletableFuture
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * @param fns the functions to use to compute the values of the returned Cffu
+     * @param <U> the functions' return type
+     * @return the new Cffu
      */
-    public <T> Cffu<List<T>> mSupplyFastFailAsync(Supplier<? extends T>... suppliers) {
-        return reset0(CompletableFutureUtils.mSupplyFastFailAsync(suppliers));
+    public <T, U> Cffu<List<U>> thenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf, Function<? super T, ? extends U>... fns) {
+        return thenMApplyFastFailAsync(cf, fns);
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Returns a new Cffu that, when the given stage completes normally,
+     * is executed using the given Executor, with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
+     * This method is the same as {@link #thenMApplyAsync(CompletionStage, Executor, Function[])}
+     * except for the fast-fail behavior.
+     *
+     * @param fns      the functions to use to compute the values of the returned Cffu
+     * @param executor executor
+     * @param <U>      the functions' return type
+     * @return the new Cffu
+     */
+    public <T, U> Cffu<List<U>> thenMApplyFastFailAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U>... fns) {
+        return reset0(CompletableFutureUtils.thenMApplyFastFailAsync(cf, executor, fns));
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the most values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     * If the given function is successful in the given time, the return result is the completed value;
      * Otherwise the given valueIfNotSuccess.
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param suppliers         the suppliers returning the value to be used to complete the returned CompletableFuture
-     * @param <T>               the suppliers' return type
-     * @return the new CompletableFuture
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * @param fns               the functions to use to compute the values of the returned Cffu
+     * @param <U>               the functions' return type
+     * @return the new Cffu
      */
-    public <T> Cffu<List<T>> mSupplyMostSuccessAsync(
-            @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit, Supplier<? extends T>... suppliers) {
-        return reset0(CompletableFutureUtils.mSupplyMostSuccessAsync(valueIfNotSuccess, timeout, unit, suppliers));
+    public <T, U> Cffu<List<U>> thenMApplyMostSuccessAsync(
+            CompletionStage<? extends T> cf, @Nullable U valueIfNotSuccess,
+            long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
+        return thenMApplyMostSuccessAsync(cf, valueIfNotSuccess, timeout, unit, fns);
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
-     * @param <T>       the suppliers' return type
-     * @return the new CompletableFuture
-     * @see CompletableFuture#supplyAsync(Supplier)
-     */
-    public <T> Cffu<List<T>> mSupplyAsync(Supplier<? extends T>... suppliers) {
-        return reset0(CompletableFutureUtils.mSupplyAsync(suppliers));
-    }
-
-    /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * after runs the given actions.
+     * Returns a new Cffu that, when the given stage completes normally,
+     * is executed using the given Executor, with the most values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
-     * This method is the same as {@link #mRunAsync(Runnable...)} except for the fast-fail behavior.
+     * If the given function is successful in the given time, the return result is the completed value;
+     * Otherwise the given valueIfNotSuccess.
      *
-     * @param actions the actions to run before completing the returned CompletableFuture
-     * @return the new CompletableFuture
-     * @see CompletableFuture#runAsync(Runnable)
+     * @param valueIfNotSuccess the value to return if not completed successfully
+     * @param executor          the executor to use for asynchronous execution
+     * @param timeout           how long to wait in units of {@code unit}
+     * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param fns               the functions to use to compute the values of the returned Cffu
+     * @param <U>               the functions' return type
+     * @return the new Cffu
      */
-    public Cffu<Void> mRunFastFailAsync(Runnable... actions) {
-        return reset0(CompletableFutureUtils.mRunFastFailAsync(actions));
+    public <T, U> Cffu<List<U>> thenMApplyMostSuccessAsync(
+            CompletionStage<? extends T> cf, @Nullable U valueIfNotSuccess,
+            Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
+        return reset0(CompletableFutureUtils.thenMApplyMostSuccessAsync(cf, valueIfNotSuccess, executor, timeout, unit, fns));
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * after runs the given actions.
+     * Returns a new Cffu that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
      *
-     * @param actions the actions to run before completing the returned CompletableFuture
-     * @return the new CompletableFuture
-     * @see CompletableFuture#runAsync(Runnable)
+     * @param fns the functions to use to compute the values of the returned Cffu
+     * @param <U> the functions' return type
+     * @return the new Cffu
      */
-    public Cffu<Void> mRunAsync(Runnable... actions) {
-        return reset0(CompletableFutureUtils.mRunAsync(actions));
+    public <T, U> Cffu<List<U>> thenMApplyAsync(
+            CompletionStage<? extends T> cf, Function<? super T, ? extends U>... fns) {
+        return thenMApplyAsync(cf, fns);
     }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * is executed using the given Executor, with the values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     *
+     * @param fns the functions to use to compute the values of the returned Cffu
+     * @param <U> the functions' return type
+     * @return the new Cffu
+     */
+    public <T, U> Cffu<List<U>> thenMApplyAsync(
+            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U>... fns) {
+        return reset0(CompletableFutureUtils.thenMApplyAsync(cf, executor, fns));
+    }
+
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the given stage's result as the argument to the given actions.
+     *
+     * @param actions the actions to perform before completing the returned Cffu
+     * @return the new Cffu
+     */
+    public <T> Cffu<Void> thenMAcceptAsync(
+            CompletionStage<? extends T> cf, Consumer<? super T>... actions) {
+        return thenMAcceptAsync(cf, actions);
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
+     *
+     * @param actions the actions to perform before completing the returned Cffu
+     * @return the new Cffu
+     */
+    public <T> Cffu<Void> thenMAcceptAsync(
+            CompletionStage<? extends T> cf, Executor executor, Consumer<? super T>... actions) {
+        return reset0(CompletableFutureUtils.thenMAcceptAsync(cf, executor, actions));
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the given stage's result as the argument to the given actions.
+     * <p>
+     * This method is the same as {@link #thenMAcceptAsync(CompletionStage, Consumer[])}
+     * except for the fast-fail behavior.
+     *
+     * @param actions the actions to perform before completing the returned Cffu
+     * @return the new Cffu
+     */
+    public <T> Cffu<Void> thenMAcceptFastFailAsync(
+            CompletionStage<? extends T> cf, Consumer<? super T>... actions) {
+        return thenMAcceptFastFailAsync(cf, actions);
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
+     * <p>
+     * This method is the same as {@link #thenMAcceptAsync(CompletionStage, Executor, Consumer[])}
+     * except for the fast-fail behavior.
+     *
+     * @param actions the actions to perform before completing the returned Cffu
+     * @return the new Cffu
+     */
+    public <T> Cffu<Void> thenMAcceptFastFailAsync(
+            CompletionStage<? extends T> cf, Executor executor, Consumer<? super T>... actions) {
+        return reset0(CompletableFutureUtils.thenMAcceptFastFailAsync(cf, executor, actions));
+    }
+
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * executes the given actions using the CompletableFuture's default asynchronous execution facility.
+     * <p>
+     * This method is the same as {@link #thenMRunAsync(CompletionStage, Runnable...)}
+     * except for the fast-fail behavior.
+     *
+     * @param actions the actions to perform before completing the returned Cffu
+     * @return the new Cffu
+     * @see CompletableFuture#thenRunAsync(Runnable)
+     */
+    public Cffu<Void> thenMRunFastFailAsync(CompletionStage<?> cf, Runnable... actions) {
+        return thenMRunFastFailAsync(cf, actions);
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * executes the given actions using the given Executor.
+     * <p>
+     * This method is the same as {@link #thenMRunAsync(CompletionStage, Executor, Runnable...)}
+     * except for the fast-fail behavior.
+     *
+     * @param actions the actions to perform before completing the returned Cffu
+     * @return the new Cffu
+     * @see CompletableFuture#thenRunAsync(Runnable, Executor)
+     */
+    public Cffu<Void> thenMRunFastFailAsync(
+            CompletionStage<?> cf, Executor executor, Runnable... actions) {
+        return reset0(CompletableFutureUtils.thenMRunFastFailAsync(cf, executor, actions));
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * executes the given actions using the CompletableFuture's default asynchronous execution facility.
+     *
+     * @param actions the actions to perform before completing the returned Cffu
+     * @return the new Cffu
+     * @see CompletableFuture#thenRunAsync(Runnable)
+     */
+    public Cffu<Void> thenMRunAsync(CompletionStage<?> cf, Runnable... actions) {
+        return thenMRunAsync(cf, actions);
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * executes the given actions using the given Executor.
+     *
+     * @param actions the actions to perform before completing the returned Cffu
+     * @return the new Cffu
+     * @see CompletableFuture#thenRunAsync(Runnable, Executor)
+     */
+    public Cffu<Void> thenMRunAsync(CompletionStage<?> cf, Executor executor, Runnable... actions) {
+        return reset0(CompletableFutureUtils.thenMRunAsync(cf, executor, actions));
+    }
+
 
     // endregion
     ////////////////////////////////////////////////////////////

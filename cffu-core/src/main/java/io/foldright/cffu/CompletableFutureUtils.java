@@ -1704,8 +1704,9 @@ public final class CompletableFutureUtils {
      * This method is the same as {@link #thenMApplyAsync(CompletionStage, Executor, Function[])}
      * except for the fast-fail behavior.
      *
-     * @param fns the functions to use to compute the values of the returned CompletableFuture
-     * @param <U> the functions' return type
+     * @param fns      the functions to use to compute the values of the returned CompletableFuture
+     * @param executor executor
+     * @param <U>      the functions' return type
      * @return the new CompletableFuture
      */
     @SafeVarargs

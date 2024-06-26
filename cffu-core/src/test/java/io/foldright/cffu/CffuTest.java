@@ -41,16 +41,24 @@ class CffuTest {
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
-    void test_mRun() throws Exception {
+    void test_thenMApply() throws Exception {
         final Cffu<Integer> completed = cffuFactory.completedFuture(n);
 
-        final Runnable runnable = () -> sleep(100);
+        final Function<Integer, Integer> function_n = (x) -> {
+            sleep(100);
+            return n;
+        };
+
 
         final long tick = System.currentTimeMillis();
         @SuppressWarnings("unchecked")
         Cffu<Void>[] cfs = new Cffu[]{
-                completed.mRunAsync(runnable, runnable),
-                completed.mRunFastFailAsync(runnable, runnable)
+                completed.thenMApplyFastFailAsync(completed, function_n, function_n),
+                completed.thenMApplyFastFailAsync(completed, executorService, function_n, function_n),
+                completed.thenMApplyMostSuccessAsync(completed, 100, 100, TimeUnit.MILLISECONDS, function_n, function_n),
+                completed.thenMApplyMostSuccessAsync(completed, 100, executorService, 100, TimeUnit.MILLISECONDS, function_n, function_n),
+                completed.thenMApplyAsync(completed, function_n, function_n),
+                completed.thenMApplyAsync(completed, executorService, function_n, function_n)
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
@@ -60,20 +68,20 @@ class CffuTest {
     }
 
     @Test
-    void test_mSupply() throws Exception {
+    void test_thenMAccept() throws Exception {
         final Cffu<Integer> completed = cffuFactory.completedFuture(n);
-        final Supplier<Integer> supplier = () -> {
+        final Consumer<Integer> consumer = (s) -> {
             sleep(100);
-            return n;
         };
 
         final long tick = System.currentTimeMillis();
 
         @SuppressWarnings("unchecked")
         Cffu<List<Integer>>[] cfs = new Cffu[]{
-                completed.mSupplyAsync(supplier, supplier),
-                completed.mSupplyFastFailAsync(supplier, supplier),
-                completed.mSupplyMostSuccessAsync(anotherN, 500, TimeUnit.MILLISECONDS, supplier, supplier)
+                completed.thenMAcceptAsync(completed, consumer, consumer),
+                completed.thenMAcceptAsync(completed, executorService, consumer, consumer),
+                completed.thenMAcceptFastFailAsync(completed, consumer, consumer),
+                completed.thenMAcceptFastFailAsync(completed, executorService, consumer, consumer)
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
@@ -81,6 +89,32 @@ class CffuTest {
             assertEquals(Arrays.asList(n, n), cf.get());
         }
     }
+
+    @Test
+    void test_thenMRun() throws Exception {
+        final Cffu<Integer> completed = cffuFactory.completedFuture(n);
+        final Runnable runnable = () -> {
+            sleep(100);
+        };
+
+        final long tick = System.currentTimeMillis();
+
+        @SuppressWarnings("unchecked")
+        Cffu<List<Integer>>[] cfs = new Cffu[]{
+                completed.thenMRunAsync(completed, runnable, runnable),
+                completed.thenMRunAsync(completed, executorService, runnable, runnable),
+                completed.thenMRunFastFailAsync(completed, runnable, runnable),
+                completed.thenMRunFastFailAsync(completed, executorService, runnable, runnable)
+        };
+
+        assertTrue(System.currentTimeMillis() - tick < 50);
+        for (Cffu<List<Integer>> cf : cfs) {
+            assertEquals(Arrays.asList(n, n), cf.get());
+        }
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+    // Then-Tuple-Multi-Actions(thenTupleM*) Methods
+    ////////////////////////////////////////////////////////////////////////////////
 
     @Test
     void test_thenTupleMApplyAsync() throws Exception {
