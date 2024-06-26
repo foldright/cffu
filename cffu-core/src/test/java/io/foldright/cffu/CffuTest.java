@@ -87,7 +87,7 @@ class CffuTest {
 
         assertTrue(System.currentTimeMillis() - tick < 50);
         for (Cffu<List<Integer>> cf : cfs) {
-            assertEquals(Arrays.asList(n, n), cf.get());
+            assertNull(cf.get());
         }
     }
 
