@@ -448,8 +448,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the given Executor
      * with the most values obtained by calling the given Suppliers
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
@@ -492,8 +491,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the given Executor
      * with the most values obtained by calling the given Suppliers
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
@@ -536,8 +534,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the given Executor
      * with the most values obtained by calling the given Suppliers
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
@@ -581,8 +578,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the given Executor
      * with the most values obtained by calling the given Suppliers
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
@@ -2099,14 +2095,14 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
-            CompletionStage<? extends T> cf,
-            long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
+            CompletionStage<? extends T> cf, long timeout, TimeUnit unit,
+            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
         return thenTupleMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2);
     }
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using  the given Executor,
      * with the most values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the given time({@code timeout}, aka as many results as possible in the given time)
@@ -2121,12 +2117,13 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
-            CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
+            CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit,
+            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
         requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
-        requireArrayAndEleNonNull("fn", fn1, fn2);
+        Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2);
 
-        return f_toCf(cf).thenCompose(v -> mostTupleOfSuccess0(executor, timeout, unit, CompletableFuture.supplyAsync(() -> fn1.apply(v), executor), CompletableFuture.supplyAsync(() -> fn2.apply(v), executor)));
+        return f_toCf(cf).thenCompose(v -> mostTupleOfSuccess0(executor, timeout, unit, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -2145,14 +2142,14 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
-            CompletionStage<? extends T> cf,
-            long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
+            CompletionStage<? extends T> cf, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
+            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
         return thenTupleMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2, fn3);
     }
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using  the given Executor,
      * with the most values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the given time({@code timeout}, aka as many results as possible in the given time)
@@ -2167,13 +2164,14 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
-            CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
+            CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit,
+            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+            Function<? super T, ? extends U3> fn3) {
         requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
-        requireArrayAndEleNonNull("fn", fn1, fn2, fn3);
+        Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3);
 
-        return f_toCf(cf).thenCompose(v -> mostTupleOfSuccess0(executor, timeout, unit, CompletableFuture.supplyAsync(() -> fn1.apply(v), executor),
-                CompletableFuture.supplyAsync(() -> fn2.apply(v), executor), CompletableFuture.supplyAsync(() -> fn3.apply(v), executor)));
+        return f_toCf(cf).thenCompose(v -> mostTupleOfSuccess0(executor, timeout, unit, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -2192,14 +2190,15 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyMostSuccessAsync(
-            CompletionStage<? extends T> cf, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
-            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
+            CompletionStage<? extends T> cf, long timeout, TimeUnit unit,
+            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+            Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
         return thenTupleMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2, fn3, fn4);
     }
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using  the given Executor,
      * with the most values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the given time({@code timeout}, aka as many results as possible in the given time)
@@ -2214,14 +2213,14 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyMostSuccessAsync(
-            CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
-            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
+            CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit,
+            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+            Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
         requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
-        requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4);
+        Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4);
 
-        return f_toCf(cf).thenCompose(v -> mostTupleOfSuccess0(executor, timeout, unit, CompletableFuture.supplyAsync(() -> fn1.apply(v), executor),
-                CompletableFuture.supplyAsync(() -> fn2.apply(v), executor), CompletableFuture.supplyAsync(() -> fn3.apply(v), executor), CompletableFuture.supplyAsync(() -> fn4.apply(v), executor)));
+        return f_toCf(cf).thenCompose(v -> mostTupleOfSuccess0(executor, timeout, unit, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -2241,14 +2240,14 @@ public final class CompletableFutureUtils {
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyMostSuccessAsync(
             CompletionStage<? extends T> cf, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
-            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
-            Function<? super T, ? extends U5> fn5) {
+            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
+            Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
         return thenTupleMApplyMostSuccessAsync(cf, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using  the given Executor,
      * with the most values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the given time({@code timeout}, aka as many results as possible in the given time)
@@ -2263,16 +2262,15 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyMostSuccessAsync(
-            CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
-            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
+            CompletionStage<? extends T> cf, Executor executor, long timeout, TimeUnit unit,
+            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+            Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
             Function<? super T, ? extends U5> fn5) {
         requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
-        requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4, fn5);
+        Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4, fn5);
 
-        return f_toCf(cf).thenCompose(v -> mostTupleOfSuccess0(executor, timeout, unit, CompletableFuture.supplyAsync(() -> fn1.apply(v), executor),
-                CompletableFuture.supplyAsync(() -> fn2.apply(v), executor), CompletableFuture.supplyAsync(() -> fn3.apply(v), executor),
-                CompletableFuture.supplyAsync(() -> fn4.apply(v), executor), CompletableFuture.supplyAsync(() -> fn5.apply(v), executor)));
+        return f_toCf(cf).thenCompose(v -> mostTupleOfSuccess0(executor, timeout, unit, wrapFunctions(executor, v, fns)));
     }
 
     /**
