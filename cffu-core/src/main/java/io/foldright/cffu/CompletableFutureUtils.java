@@ -427,6 +427,28 @@ public final class CompletableFutureUtils {
         return allTupleOf0(true, wrapSuppliers(executor, suppliers));
     }
 
+    private static <T> CompletableFuture<T> allTupleOf0(boolean fastFail, CompletionStage<?>[] css) {
+        final Object[] result = new Object[css.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
+
+        final CompletableFuture<Void> resultSetter;
+        if (fastFail) resultSetter = allOfFastFail(resultSetterCfs);
+        else resultSetter = CompletableFuture.allOf(resultSetterCfs);
+
+        return resultSetter.thenApply(unused -> tupleOf0(result));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T tupleOf0(Object... elements) {
+        final int len = elements.length;
+        final Object ret;
+        if (len == 2) ret = Tuple2.of(elements[0], elements[1]);
+        else if (len == 3) ret = Tuple3.of(elements[0], elements[1], elements[2]);
+        else if (len == 4) ret = Tuple4.of(elements[0], elements[1], elements[2], elements[3]);
+        else ret = Tuple5.of(elements[0], elements[1], elements[2], elements[3], elements[4]);
+        return (T) ret;
+    }
+
     /**
      * Returns a new CompletableFuture that is asynchronously completed
      * by tasks running in the CompletableFuture's default asynchronous execution facility
@@ -599,6 +621,33 @@ public final class CompletableFutureUtils {
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4, supplier5);
 
         return mostTupleOfSuccess0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
+    }
+
+    private static <T> CompletableFuture<T> mostTupleOfSuccess0(
+            Executor executorWhenTimeout, long timeout, TimeUnit unit, CompletionStage<?>... css) {
+        requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
+        requireNonNull(unit, "unit is null");
+        // MUST be *Non-Minimal* CF instances in order to read results(`getSuccessNow`),
+        // otherwise UnsupportedOperationException
+        final CompletableFuture<Object>[] cfArray = toNonMinCfArray(css);
+        return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, executorWhenTimeout, timeout, unit)
+                .handle((unused, ex) -> tupleOf0(MGetSuccessNow0(null, cfArray)));
+    }
+
+    /**
+     * Multi-Gets(MGet) the results in the <strong>same order</strong> of the given cfs arguments,
+     * use the result value if the given stage is completed successfully, else use the given valueIfNotSuccess
+     *
+     * @param cfs MUST be *Non-Minimal* CF instances in order to read results(`getSuccessNow`),
+     *            otherwise UnsupportedOperationException
+     */
+    @SuppressWarnings("unchecked")
+    private static <T> T[] MGetSuccessNow0(@Nullable Object valueIfNotSuccess, CompletableFuture<?>... cfs) {
+        Object[] ret = new Object[cfs.length];
+        for (int i = 0; i < cfs.length; i++) {
+            ret[i] = getSuccessNow(cfs[i], valueIfNotSuccess);
+        }
+        return (T[]) ret;
     }
 
     /**
@@ -831,22 +880,6 @@ public final class CompletableFutureUtils {
         final CompletableFuture<T>[] cfArray = toNonMinCfArray(cfs);
         return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, executorWhenTimeout, timeout, unit)
                 .handle((unused, ex) -> arrayList(MGetSuccessNow0(valueIfNotSuccess, cfArray)));
-    }
-
-    /**
-     * Multi-Gets(MGet) the results in the <strong>same order</strong> of the given cfs arguments,
-     * use the result value if the given stage is completed successfully, else use the given valueIfNotSuccess
-     *
-     * @param cfs MUST be *Non-Minimal* CF instances in order to read results(`getSuccessNow`),
-     *            otherwise UnsupportedOperationException
-     */
-    @SuppressWarnings("unchecked")
-    private static <T> T[] MGetSuccessNow0(@Nullable Object valueIfNotSuccess, CompletableFuture<?>... cfs) {
-        Object[] ret = new Object[cfs.length];
-        for (int i = 0; i < cfs.length; i++) {
-            ret[i] = getSuccessNow(cfs[i], valueIfNotSuccess);
-        }
-        return (T[]) ret;
     }
 
     /**
@@ -1462,39 +1495,6 @@ public final class CompletableFutureUtils {
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
         return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
-    }
-
-    private static <T> CompletableFuture<T> allTupleOf0(boolean fastFail, CompletionStage<?>[] css) {
-        final Object[] result = new Object[css.length];
-        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
-
-        final CompletableFuture<Void> resultSetter;
-        if (fastFail) resultSetter = allOfFastFail(resultSetterCfs);
-        else resultSetter = CompletableFuture.allOf(resultSetterCfs);
-
-        return resultSetter.thenApply(unused -> tupleOf0(result));
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> T tupleOf0(Object... elements) {
-        final int len = elements.length;
-        final Object ret;
-        if (len == 2) ret = Tuple2.of(elements[0], elements[1]);
-        else if (len == 3) ret = Tuple3.of(elements[0], elements[1], elements[2]);
-        else if (len == 4) ret = Tuple4.of(elements[0], elements[1], elements[2], elements[3]);
-        else ret = Tuple5.of(elements[0], elements[1], elements[2], elements[3], elements[4]);
-        return (T) ret;
-    }
-
-    private static <T> CompletableFuture<T> mostTupleOfSuccess0(
-            Executor executorWhenTimeout, long timeout, TimeUnit unit, CompletionStage<?>... css) {
-        requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
-        requireNonNull(unit, "unit is null");
-        // MUST be *Non-Minimal* CF instances in order to read results(`getSuccessNow`),
-        // otherwise UnsupportedOperationException
-        final CompletableFuture<Object>[] cfArray = toNonMinCfArray(css);
-        return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, executorWhenTimeout, timeout, unit)
-                .handle((unused, ex) -> tupleOf0(MGetSuccessNow0(null, cfArray)));
     }
 
     // endregion
@@ -3036,6 +3036,19 @@ public final class CompletableFutureUtils {
         }
     }
 
+    @Nullable
+    @SuppressWarnings("SameReturnValue")
+    private static <T> T reportException(String msg, Throwable ex) {
+        StringWriter sw = new StringWriter(4096);
+        PrintWriter writer = new PrintWriter(sw);
+
+        writer.println(msg);
+        ex.printStackTrace(writer);
+
+        System.err.println(sw);
+        return null;
+    }
+
     // endregion
     ////////////////////////////////////////////////////////////
     // region## Advanced Methods of CompletionStage(compose* and handle-like methods)
@@ -3177,19 +3190,6 @@ public final class CompletableFutureUtils {
         cf.whenCompleteAsync(action, executor).exceptionally(ex ->
                 reportException("Exception occurred in the action of peekAsync:", ex));
         return cf;
-    }
-
-    @Nullable
-    @SuppressWarnings("SameReturnValue")
-    private static <T> T reportException(String msg, Throwable ex) {
-        StringWriter sw = new StringWriter(4096);
-        PrintWriter writer = new PrintWriter(sw);
-
-        writer.println(msg);
-        ex.printStackTrace(writer);
-
-        System.err.println(sw);
-        return null;
     }
 
     // endregion
