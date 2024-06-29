@@ -17,7 +17,7 @@ public class ConcurrencyStrategyDemo {
     public static void main(String[] args) throws Exception {
         ////////////////////////////////////////////////////////////////////////
         // CffuFactory#allOfFastFail / allResultsOfFastFail
-        // CffuFactory#anyOfSuccess
+        // CffuFactory#anySuccessOf
         ////////////////////////////////////////////////////////////////////////
         final Cffu<Integer> successAfterLongTime = cffuFactory.supplyAsync(() -> {
             sleep(3000); // sleep LONG time
@@ -32,12 +32,12 @@ public class ConcurrencyStrategyDemo {
         // fast failed without waiting successAfterLongTime
         System.out.println(fastFailed.exceptionNow());
 
-        Cffu<Integer> anyOfSuccess = cffuFactory.anyOfSuccess(successAfterLongTime, failed);
-        System.out.println(anyOfSuccess.get());
+        Cffu<Integer> anySuccessOf = cffuFactory.anySuccessOf(successAfterLongTime, failed);
+        System.out.println(anySuccessOf.get());
 
         ////////////////////////////////////////////////////////////////////////
         // or CompletableFutureUtils#allOfFastFail / allResultsOfFastFail
-        //    CompletableFutureUtils#anyOfSuccess
+        //    CompletableFutureUtils#anySuccessOf
         ////////////////////////////////////////////////////////////////////////
         final CompletableFuture<Integer> successAfterLongTimeCf = CompletableFuture.supplyAsync(() -> {
             sleep(3000); // sleep LONG time
@@ -52,7 +52,7 @@ public class ConcurrencyStrategyDemo {
         // fast failed without waiting successAfterLongTime
         System.out.println(CompletableFutureUtils.exceptionNow(fastFailedCf));
 
-        CompletableFuture<Integer> cfSuccess = CompletableFutureUtils.anyOfSuccess(successAfterLongTimeCf, failedCf);
+        CompletableFuture<Integer> cfSuccess = CompletableFutureUtils.anySuccessOf(successAfterLongTimeCf, failedCf);
         System.out.println(cfSuccess.get());
 
         ////////////////////////////////////////

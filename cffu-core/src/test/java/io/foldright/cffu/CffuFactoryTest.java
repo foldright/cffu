@@ -18,11 +18,6 @@ import java.util.concurrent.*;
 import java.util.function.Supplier;
 
 import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
-import static io.foldright.cffu.CompletableFutureUtils.mRunAsync;
-import static io.foldright.cffu.CompletableFutureUtils.mRunFastFailAsync;
-import static io.foldright.cffu.CompletableFutureUtils.mSupplyAsync;
-import static io.foldright.cffu.CompletableFutureUtils.mSupplyFastFailAsync;
-import static io.foldright.cffu.CompletableFutureUtils.mSupplyMostSuccessAsync;
 import static io.foldright.cffu.CompletableFutureUtils.toCompletableFutureArray;
 import static io.foldright.test_utils.TestUtils.*;
 import static java.util.concurrent.CompletableFuture.completedFuture;
@@ -232,18 +227,18 @@ class CffuFactoryTest {
 
         ////////////////////////////////////////
 
-        cffuFactory.anyOfSuccess(completedFuture(n), completedFuture(anotherN)).get();
-        assertEquals(anotherN, cffuFactory.anyOfSuccess(completedFuture(anotherN)).get());
+        cffuFactory.anySuccessOf(completedFuture(n), completedFuture(anotherN)).get();
+        assertEquals(anotherN, cffuFactory.anySuccessOf(completedFuture(anotherN)).get());
 
         assertInstanceOf(NoCfsProvidedException.class, assertThrowsExactly(ExecutionException.class, () ->
-                cffuFactory.anyOfSuccess().get()
+                cffuFactory.anySuccessOf().get()
         ).getCause());
 
-        cffuFactory.anyOfSuccess(
+        cffuFactory.anySuccessOf(
                 cffuFactory.completedFuture(n),
                 cffuFactory.completedFuture(anotherN)
         ).get();
-        assertEquals(anotherN, cffuFactory.anyOfSuccess(
+        assertEquals(anotherN, cffuFactory.anySuccessOf(
                 cffuFactory.completedFuture(anotherN)
         ).get());
     }
@@ -331,21 +326,21 @@ class CffuFactoryTest {
         final Cffu<Integer> cancelled = cffuFactory.toCffu(createCancelledFuture());
         final Cffu<Integer> incomplete = cffuFactory.toCffu(createIncompleteFuture());
 
-        assertEquals(0, cffuFactory.mostResultsOfSuccess(null, 10, TimeUnit.MILLISECONDS).get().size());
+        assertEquals(0, cffuFactory.mostSuccessResultsOf(null, 10, TimeUnit.MILLISECONDS).get().size());
 
-        assertEquals(Arrays.asList(n, null, null, null), cffuFactory.mostResultsOfSuccess(
+        assertEquals(Arrays.asList(n, null, null, null), cffuFactory.mostSuccessResultsOf(
                 null, 10, TimeUnit.MILLISECONDS, completed, failed, cancelled, incomplete
         ).get());
-        assertEquals(Arrays.asList(n, anotherN, anotherN, anotherN), cffuFactory.mostResultsOfSuccess(
+        assertEquals(Arrays.asList(n, anotherN, anotherN, anotherN), cffuFactory.mostSuccessResultsOf(
                 anotherN, 10, TimeUnit.MILLISECONDS, completedStage, failed, cancelled, incomplete
         ).get());
 
-        assertEquals(Arrays.asList(anotherN, anotherN, anotherN), cffuFactory.mostResultsOfSuccess(
+        assertEquals(Arrays.asList(anotherN, anotherN, anotherN), cffuFactory.mostSuccessResultsOf(
                 anotherN, 10, TimeUnit.MILLISECONDS, failed, cancelled, incomplete
         ).get());
 
         // do not wait for failed and cancelled
-        assertEquals(Arrays.asList(anotherN, anotherN), cffuFactory.mostResultsOfSuccess(
+        assertEquals(Arrays.asList(anotherN, anotherN), cffuFactory.mostSuccessResultsOf(
                 anotherN, 10, TimeUnit.DAYS, failed, cancelled
         ).get());
     }
@@ -372,16 +367,16 @@ class CffuFactoryTest {
 
         ////////////////////////////////////////
 
-        assertEquals(n, cffuFactory.anyOfSuccess(createIncompleteFuture(), completedFuture(n)).get());
-        assertEquals(n, cffuFactory.anyOfSuccess(completedFuture(n)).get());
+        assertEquals(n, cffuFactory.anySuccessOf(createIncompleteFuture(), completedFuture(n)).get());
+        assertEquals(n, cffuFactory.anySuccessOf(completedFuture(n)).get());
 
-        assertSame(NoCfsProvidedException.class, cffuFactory.anyOfSuccess().exceptionNow().getClass());
+        assertSame(NoCfsProvidedException.class, cffuFactory.anySuccessOf().exceptionNow().getClass());
 
-        assertEquals(n, cffuFactory.anyOfSuccess(
+        assertEquals(n, cffuFactory.anySuccessOf(
                 cffuFactory.completedFuture(n),
                 cffuFactory.newIncompleteCffu()
         ).get());
-        assertEquals(n, cffuFactory.anyOfSuccess(cffuFactory.completedFuture(n)).get());
+        assertEquals(n, cffuFactory.anySuccessOf(cffuFactory.completedFuture(n)).get());
     }
 
     @Test
@@ -404,9 +399,9 @@ class CffuFactoryTest {
     }
 
     @Test
-    void test_anyOfSuccess__trivial_case() throws Exception {
+    void test_anySuccessOf__trivial_case() throws Exception {
         // success then success
-        assertEquals(n, cffuFactory.anyOfSuccess(
+        assertEquals(n, cffuFactory.anySuccessOf(
                 cffuFactory.newIncompleteCffu(),
                 cffuFactory.newIncompleteCffu(),
                 cffuFactory.supplyAsync(() -> {
@@ -416,7 +411,7 @@ class CffuFactoryTest {
                 cffuFactory.completedFuture(n)
         ).get());
         // success then failed
-        assertEquals(n, cffuFactory.anyOfSuccess(
+        assertEquals(n, cffuFactory.anySuccessOf(
                 cffuFactory.newIncompleteCffu(),
                 cffuFactory.newIncompleteCffu(),
                 cffuFactory.supplyAsync(() -> {
@@ -427,7 +422,7 @@ class CffuFactoryTest {
         ).get());
 
         // all success
-        assertEquals(n, cffuFactory.anyOfSuccess(
+        assertEquals(n, cffuFactory.anySuccessOf(
                 cffuFactory.supplyAsync(() -> {
                     sleep(300);
                     return anotherN;
@@ -442,7 +437,7 @@ class CffuFactoryTest {
         //////////////////////////////////////////////////////////////////////////////
 
         // success then success
-        assertEquals(n, cffuFactory.anyOfSuccess(
+        assertEquals(n, cffuFactory.anySuccessOf(
                 createIncompleteFuture(),
                 createIncompleteFuture(),
                 CompletableFuture.supplyAsync(() -> {
@@ -452,7 +447,7 @@ class CffuFactoryTest {
                 completedFuture(n)
         ).get());
         // success then failed
-        assertEquals(n, cffuFactory.anyOfSuccess(
+        assertEquals(n, cffuFactory.anySuccessOf(
                 createIncompleteFuture(),
                 createIncompleteFuture(),
                 CompletableFuture.supplyAsync(() -> {
@@ -463,7 +458,7 @@ class CffuFactoryTest {
         ).get());
 
         // all success
-        assertEquals(n, cffuFactory.anyOfSuccess(
+        assertEquals(n, cffuFactory.anySuccessOf(
                 CompletableFuture.supplyAsync(() -> {
                     sleep(300);
                     return anotherN;
@@ -477,7 +472,7 @@ class CffuFactoryTest {
 
         //////////////////////////////////////////////////////////////////////////////
 
-        assertSame(NoCfsProvidedException.class, cffuFactory.anyOfSuccess().exceptionNow().getClass());
+        assertSame(NoCfsProvidedException.class, cffuFactory.anySuccessOf().exceptionNow().getClass());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -642,35 +637,35 @@ class CffuFactoryTest {
     }
 
     @Test
-    void test_mostTupleOfSuccess() throws Exception {
+    void test_mostSuccessTupleOf() throws Exception {
         final Cffu<Integer> completed = cffuFactory.completedFuture(n);
         final CompletionStage<String> anotherCompleted = cffuFactory.completedStage(s);
         final Cffu<Integer> failed = cffuFactory.failedFuture(rte);
         final Cffu<Integer> cancelled = cffuFactory.toCffu(createCancelledFuture());
         final Cffu<Integer> incomplete = cffuFactory.toCffu(createIncompleteFuture());
 
-        assertEquals(Tuple2.of(n, s), cffuFactory.mostTupleOfSuccess(
+        assertEquals(Tuple2.of(n, s), cffuFactory.mostSuccessTupleOf(
                 10, TimeUnit.MILLISECONDS, completed, anotherCompleted
         ).get());
-        assertEquals(Tuple2.of(n, null), cffuFactory.mostTupleOfSuccess(
+        assertEquals(Tuple2.of(n, null), cffuFactory.mostSuccessTupleOf(
                 10, TimeUnit.MILLISECONDS, completed, failed
         ).get());
 
-        assertEquals(Tuple3.of(n, s, null), cffuFactory.mostTupleOfSuccess(
+        assertEquals(Tuple3.of(n, s, null), cffuFactory.mostSuccessTupleOf(
                 10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled
         ).get());
-        assertEquals(Tuple3.of(null, null, s), cffuFactory.mostTupleOfSuccess(
+        assertEquals(Tuple3.of(null, null, s), cffuFactory.mostSuccessTupleOf(
                 10, TimeUnit.MILLISECONDS, incomplete, failed, anotherCompleted
         ).get());
 
-        assertEquals(Tuple4.of(n, s, null, null), cffuFactory.mostTupleOfSuccess(
+        assertEquals(Tuple4.of(n, s, null, null), cffuFactory.mostSuccessTupleOf(
                 10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled, incomplete
         ).get());
-        assertEquals(Tuple4.of(null, null, null, null), cffuFactory.mostTupleOfSuccess(
+        assertEquals(Tuple4.of(null, null, null, null), cffuFactory.mostSuccessTupleOf(
                 10, TimeUnit.MILLISECONDS, incomplete, failed, cancelled, incomplete
         ).get());
 
-        assertEquals(Tuple5.of(null, n, s, null, null), cffuFactory.mostTupleOfSuccess(
+        assertEquals(Tuple5.of(null, n, s, null, null), cffuFactory.mostSuccessTupleOf(
                 10, TimeUnit.MILLISECONDS, cancelled, completed, anotherCompleted, incomplete, failed
         ).get());
     }

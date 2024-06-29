@@ -40,8 +40,8 @@ public class CffuDemo {
                 .orTimeout(1500, TimeUnit.MILLISECONDS);
         System.out.println("combined result: " + combined.get());
 
-        final Cffu<Integer> anyOfSuccess = cffuFactory.anyOfSuccess(longTaskC, longFailedTask);
-        System.out.println("anyOfSuccess result: " + anyOfSuccess.get());
+        final Cffu<Integer> anySuccessOf = cffuFactory.anySuccessOf(longTaskC, longFailedTask);
+        System.out.println("anySuccessOf result: " + anySuccessOf.get());
 
         ////////////////////////////////////////
         // cleanup

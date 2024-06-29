@@ -8,8 +8,8 @@ import java.util.concurrent.CompletionStage;
  * Exception indicates that NO cfs({@link Cffu} / {@link CompletableFuture}) are provided
  * for methods require cf arguments.
  *
- * @see CffuFactory#anyOfSuccess(CompletionStage[])
- * @see CompletableFutureUtils#anyOfSuccess(CompletionStage[])
+ * @see CffuFactory#anySuccessOf(CompletionStage[])
+ * @see CompletableFutureUtils#anySuccessOf(CompletionStage[])
  */
 @SuppressWarnings("serial")
 public class NoCfsProvidedException extends RuntimeException {

@@ -89,7 +89,7 @@ public final class CompletableFutureUtils {
      * @param suppliers         the suppliers returning the value to be used to complete the returned CompletableFuture
      * @param <T>               the suppliers' return type
      * @return the new CompletableFuture
-     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
+     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
      * @see CompletableFuture#supplyAsync(Supplier)
      */
     @SafeVarargs
@@ -114,7 +114,7 @@ public final class CompletableFutureUtils {
      * @param suppliers         the suppliers returning the value to be used to complete the returned CompletableFuture
      * @param <T>               the suppliers' return type
      * @return the new CompletableFuture
-     * @see #mostResultsOfSuccess(Object, Executor, long, TimeUnit, CompletionStage[])
+     * @see #mostSuccessResultsOf(Object, Executor, long, TimeUnit, CompletionStage[])
      * @see CompletableFuture#supplyAsync(Supplier, Executor)
      */
     @SafeVarargs
@@ -125,7 +125,7 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
-        return mostResultsOfSuccess(valueIfNotSuccess, executor, timeout, unit, wrapSuppliers(executor, suppliers));
+        return mostSuccessResultsOf(valueIfNotSuccess, executor, timeout, unit, wrapSuppliers(executor, suppliers));
     }
 
     /**
@@ -459,7 +459,7 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
 
-        return mostTupleOfSuccess0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
+        return mostSuccessTupleOf0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
     }
 
     /**
@@ -502,7 +502,7 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3);
 
-        return mostTupleOfSuccess0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
+        return mostSuccessTupleOf0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
     }
 
     /**
@@ -545,7 +545,7 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4);
 
-        return mostTupleOfSuccess0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
+        return mostSuccessTupleOf0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
     }
 
     /**
@@ -590,10 +590,10 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4, supplier5);
 
-        return mostTupleOfSuccess0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
+        return mostSuccessTupleOf0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
     }
 
-    private static <T> CompletableFuture<T> mostTupleOfSuccess0(
+    private static <T> CompletableFuture<T> mostSuccessTupleOf0(
             Executor executorWhenTimeout, long timeout, TimeUnit unit, CompletionStage<?>... css) {
         requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
         requireNonNull(unit, "unit is null");
@@ -755,7 +755,7 @@ public final class CompletableFutureUtils {
 
     // endregion
     ////////////////////////////////////////////////////////////
-    // region## allOf* Methods(including mostResultsOfSuccess)
+    // region## allOf* Methods(including mostSuccessResultsOf)
     ////////////////////////////////////////////////////////////
 
     /**
@@ -808,9 +808,9 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SafeVarargs
-    public static <T> CompletableFuture<List<T>> mostResultsOfSuccess(
+    public static <T> CompletableFuture<List<T>> mostSuccessResultsOf(
             @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit, CompletionStage<? extends T>... cfs) {
-        return mostResultsOfSuccess(valueIfNotSuccess, AsyncPoolHolder.ASYNC_POOL, timeout, unit, cfs);
+        return mostSuccessResultsOf(valueIfNotSuccess, AsyncPoolHolder.ASYNC_POOL, timeout, unit, cfs);
     }
 
     /**
@@ -828,7 +828,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SafeVarargs
-    public static <T> CompletableFuture<List<T>> mostResultsOfSuccess(
+    public static <T> CompletableFuture<List<T>> mostSuccessResultsOf(
             @Nullable T valueIfNotSuccess, Executor executorWhenTimeout, long timeout, TimeUnit unit,
             CompletionStage<? extends T>... cfs) {
         requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
@@ -905,9 +905,9 @@ public final class CompletableFutureUtils {
      * <p>
      * If you need the successful results of given stages in the given time, prefer below methods:
      * <ul>
-     * <li>{@link #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])}
-     * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)} /
-     *     {@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * <li>{@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * <li>{@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage)} /
+     *     {@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      * </ul>
      *
      * @param cfs the stages
@@ -956,9 +956,9 @@ public final class CompletableFutureUtils {
      * <p>
      * If you need the successful results of given stages in the given time, prefer below methods:
      * <ul>
-     * <li>{@link #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])}
-     * <li>{@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage)} /
-     *     {@link #mostTupleOfSuccess(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * <li>{@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * <li>{@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage)} /
+     *     {@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      * </ul>
      *
      * @param cfs the stages
@@ -1116,7 +1116,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SafeVarargs
-    public static <T> CompletableFuture<T> anyOfSuccess(CompletionStage<? extends T>... cfs) {
+    public static <T> CompletableFuture<T> anySuccessOf(CompletionStage<? extends T>... cfs) {
         requireCfsAndEleNonNull(cfs);
         final int len = cfs.length;
         if (len == 0) return failedFuture(new NoCfsProvidedException());
@@ -1152,7 +1152,7 @@ public final class CompletableFutureUtils {
      * @return a new CompletableFuture that is completed with the result or exception
      * from any of the given stages when one completes
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see #anyOfSuccess(CompletionStage[])
+     * @see #anySuccessOf(CompletionStage[])
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1169,7 +1169,7 @@ public final class CompletableFutureUtils {
 
     // endregion
     ////////////////////////////////////////////////////////////
-    // region## allTupleOf*/mostTupleOfSuccess Methods
+    // region## allTupleOf*/mostSuccessTupleOf Methods
     ////////////////////////////////////////////////////////////
 
     /**
@@ -1243,13 +1243,13 @@ public final class CompletableFutureUtils {
      * @param timeout how long to wait in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new CompletableFuture that is completed when the given two stages complete
-     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
+     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mostTupleOfSuccess(
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mostSuccessTupleOf(
             long timeout, TimeUnit unit, CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return mostTupleOfSuccess(AsyncPoolHolder.ASYNC_POOL, timeout, unit, cf1, cf2);
+        return mostSuccessTupleOf(AsyncPoolHolder.ASYNC_POOL, timeout, unit, cf1, cf2);
     }
 
     /**
@@ -1262,14 +1262,14 @@ public final class CompletableFutureUtils {
      * @param timeout             how long to wait in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new CompletableFuture that is completed when the given two stages complete
-     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
+     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mostTupleOfSuccess(
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mostSuccessTupleOf(
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return mostTupleOfSuccess0(executorWhenTimeout, timeout, unit, cf1, cf2);
+        return mostSuccessTupleOf0(executorWhenTimeout, timeout, unit, cf1, cf2);
     }
 
     /**
@@ -1281,14 +1281,14 @@ public final class CompletableFutureUtils {
      * @param timeout how long to wait in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new CompletableFuture that is completed when the given three stages complete
-     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
+     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
-    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mostTupleOfSuccess(
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mostSuccessTupleOf(
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return mostTupleOfSuccess(AsyncPoolHolder.ASYNC_POOL, timeout, unit, cf1, cf2, cf3);
+        return mostSuccessTupleOf(AsyncPoolHolder.ASYNC_POOL, timeout, unit, cf1, cf2, cf3);
     }
 
     /**
@@ -1301,14 +1301,14 @@ public final class CompletableFutureUtils {
      * @param timeout             how long to wait in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new CompletableFuture that is completed when the given three stages complete
-     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
+     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
-    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mostTupleOfSuccess(
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mostSuccessTupleOf(
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return mostTupleOfSuccess0(executorWhenTimeout, timeout, unit, cf1, cf2, cf3);
+        return mostSuccessTupleOf0(executorWhenTimeout, timeout, unit, cf1, cf2, cf3);
     }
 
     /**
@@ -1320,15 +1320,15 @@ public final class CompletableFutureUtils {
      * @param timeout how long to wait in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new CompletableFuture that is completed when the given four stages complete
-     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
+     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
-    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mostTupleOfSuccess(
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mostSuccessTupleOf(
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return mostTupleOfSuccess(AsyncPoolHolder.ASYNC_POOL, timeout, unit, cf1, cf2, cf3, cf4);
+        return mostSuccessTupleOf(AsyncPoolHolder.ASYNC_POOL, timeout, unit, cf1, cf2, cf3, cf4);
     }
 
     /**
@@ -1341,15 +1341,15 @@ public final class CompletableFutureUtils {
      * @param timeout             how long to wait in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new CompletableFuture that is completed when the given four stages complete
-     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
+     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
-    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mostTupleOfSuccess(
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mostSuccessTupleOf(
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return mostTupleOfSuccess0(executorWhenTimeout, timeout, unit, cf1, cf2, cf3, cf4);
+        return mostSuccessTupleOf0(executorWhenTimeout, timeout, unit, cf1, cf2, cf3, cf4);
     }
 
     /**
@@ -1361,15 +1361,15 @@ public final class CompletableFutureUtils {
      * @param timeout how long to wait in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new CompletableFuture that is completed when the given five stages complete
-     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
+     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
-    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mostTupleOfSuccess(
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mostSuccessTupleOf(
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return mostTupleOfSuccess(AsyncPoolHolder.ASYNC_POOL, timeout, unit, cf1, cf2, cf3, cf4, cf5);
+        return mostSuccessTupleOf(AsyncPoolHolder.ASYNC_POOL, timeout, unit, cf1, cf2, cf3, cf4, cf5);
     }
 
     /**
@@ -1382,15 +1382,15 @@ public final class CompletableFutureUtils {
      * @param timeout             how long to wait in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return a new CompletableFuture that is completed when the given five stages complete
-     * @see #mostResultsOfSuccess(Object, long, TimeUnit, CompletionStage[])
+     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
-    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mostTupleOfSuccess(
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mostSuccessTupleOf(
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return mostTupleOfSuccess0(executorWhenTimeout, timeout, unit, cf1, cf2, cf3, cf4, cf5);
+        return mostSuccessTupleOf0(executorWhenTimeout, timeout, unit, cf1, cf2, cf3, cf4, cf5);
     }
 
     /**
@@ -1664,7 +1664,7 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         requireArrayAndEleNonNull("fn", fns);
 
-        return cfThis.thenCompose(v -> mostResultsOfSuccess(
+        return cfThis.thenCompose(v -> mostSuccessResultsOf(
                 valueIfNotSuccess, executor, timeout, unit, wrapFunctions(executor, v, fns)
         ));
     }
@@ -2042,7 +2042,7 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2);
 
-        return cfThis.thenCompose(v -> mostTupleOfSuccess0(executor, timeout, unit, wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> mostSuccessTupleOf0(executor, timeout, unit, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -2091,7 +2091,7 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3);
 
-        return cfThis.thenCompose(v -> mostTupleOfSuccess0(executor, timeout, unit, wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> mostSuccessTupleOf0(executor, timeout, unit, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -2141,7 +2141,7 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4);
 
-        return cfThis.thenCompose(v -> mostTupleOfSuccess0(executor, timeout, unit, wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> mostSuccessTupleOf0(executor, timeout, unit, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -2192,7 +2192,7 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4, fn5);
 
-        return cfThis.thenCompose(v -> mostTupleOfSuccess0(executor, timeout, unit, wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> mostSuccessTupleOf0(executor, timeout, unit, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -2544,7 +2544,7 @@ public final class CompletableFutureUtils {
         final CompletionStage<? extends T>[] css = requireCfsAndEleNonNull(cfThis, other);
         requireNonNull(fn, "fn is null");
 
-        return anyOfSuccess(css).thenApply(fn);
+        return anySuccessOf(css).thenApply(fn);
     }
 
     /**
@@ -2577,7 +2577,7 @@ public final class CompletableFutureUtils {
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
-        return anyOfSuccess(css).thenApplyAsync(fn, executor);
+        return anySuccessOf(css).thenApplyAsync(fn, executor);
     }
 
     /**
@@ -2592,7 +2592,7 @@ public final class CompletableFutureUtils {
         final CompletionStage<? extends T>[] css = requireCfsAndEleNonNull(cfThis, other);
         requireNonNull(action, "action is null");
 
-        return anyOfSuccess(css).thenAccept(action);
+        return anySuccessOf(css).thenAccept(action);
     }
 
     /**
@@ -2623,7 +2623,7 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return anyOfSuccess(css).thenAcceptAsync(action, executor);
+        return anySuccessOf(css).thenAcceptAsync(action, executor);
     }
 
     /**
@@ -2640,7 +2640,7 @@ public final class CompletableFutureUtils {
         final CompletionStage<?>[] css = requireCfsAndEleNonNull(cfThis, other);
         requireNonNull(action, "action is null");
 
-        return anyOfSuccess(css).thenRun(action);
+        return anySuccessOf(css).thenRun(action);
     }
 
     /**
@@ -2674,7 +2674,7 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return anyOfSuccess(css).thenRunAsync(action, executor);
+        return anySuccessOf(css).thenRunAsync(action, executor);
     }
 
     // endregion

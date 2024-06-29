@@ -20,7 +20,7 @@ import java.util.function.Function
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-// region## allOf* Methods for Collection/Array(including mostResultsOfSuccess)
+// region## allOf* Methods for Collection/Array(including mostSuccessResultsOf)
 ////////////////////////////////////////////////////////////
 
 /**
@@ -72,10 +72,10 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfFastFailCompletableFuture(
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see getSuccessNow
  */
-fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
+fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
     valueIfNotSuccess: T, timeout: Long, unit: TimeUnit
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mostResultsOfSuccess(valueIfNotSuccess, timeout, unit, *toTypedArray())
+    CompletableFutureUtils.mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *toTypedArray())
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of
@@ -88,10 +88,10 @@ fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see getSuccessNow
  */
-fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
+fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
     valueIfNotSuccess: T, timeout: Long, unit: TimeUnit
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mostResultsOfSuccess(valueIfNotSuccess, timeout, unit, *this)
+    CompletableFutureUtils.mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *this)
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of
@@ -105,10 +105,10 @@ fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see getSuccessNow
  */
-fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
+fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
     valueIfNotSuccess: T, executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mostResultsOfSuccess(
+    CompletableFutureUtils.mostSuccessResultsOf(
         valueIfNotSuccess, executorWhenTimeout, timeout, unit, *toTypedArray()
     )
 
@@ -124,10 +124,10 @@ fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see getSuccessNow
  */
-fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
+fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
     valueIfNotSuccess: T, executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mostResultsOfSuccess(valueIfNotSuccess, executorWhenTimeout, timeout, unit, *this)
+    CompletableFutureUtils.mostSuccessResultsOf(valueIfNotSuccess, executorWhenTimeout, timeout, unit, *this)
 
 /**
  * Returns a new CompletableFuture with the results in the **same order** of all the given
@@ -258,13 +258,13 @@ fun Array<out CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Vo
  * returns a new CompletableFuture that is already completed exceptionally with a CompletionException
  * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
- * This method is the same as [CompletableFutureUtils.anyOfSuccess],
+ * This method is the same as [CompletableFutureUtils.anySuccessOf],
  * providing this method is convenient for method chaining.
  *
  * @see anyOfCompletableFuture
  */
-fun <T> Collection<CompletionStage<out T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
-    CompletableFutureUtils.anyOfSuccess(*toTypedArray())
+fun <T> Collection<CompletionStage<out T>>.anySuccessOfCompletableFuture(): CompletableFuture<T> =
+    CompletableFutureUtils.anySuccessOf(*toTypedArray())
 
 /**
  * Returns a new CompletableFuture that is successful when any of the given CompletableFutures success,
@@ -274,13 +274,13 @@ fun <T> Collection<CompletionStage<out T>>.anyOfSuccessCompletableFuture(): Comp
  * returns a new CompletableFuture that is already completed exceptionally with a CompletionException
  * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
- * This method is the same as [CompletableFutureUtils.anyOfSuccess],
+ * This method is the same as [CompletableFutureUtils.anySuccessOf],
  * providing this method is convenient for method chaining.
  *
  * @see anyOfCompletableFuture
  */
-fun <T> Array<out CompletionStage<out T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
-    CompletableFutureUtils.anyOfSuccess(*this)
+fun <T> Array<out CompletionStage<out T>>.anySuccessOfCompletableFuture(): CompletableFuture<T> =
+    CompletableFutureUtils.anySuccessOf(*this)
 
 /**
  * Returns a new CompletableFuture that is completed
@@ -291,7 +291,7 @@ fun <T> Array<out CompletionStage<out T>>.anyOfSuccessCompletableFuture(): Compl
  *
  * This method is the same as [CompletableFutureUtils.anyOf], providing this method is convenient for method chaining.
  *
- * @see anyOfSuccessCompletableFuture
+ * @see anySuccessOfCompletableFuture
  */
 fun <T> Collection<CompletionStage<out T>>.anyOfCompletableFuture(): CompletableFuture<T> =
     CompletableFutureUtils.anyOf(*toTypedArray())
@@ -305,7 +305,7 @@ fun <T> Collection<CompletionStage<out T>>.anyOfCompletableFuture(): Completable
  *
  * This method is the same as [CompletableFutureUtils.anyOf], providing this method is convenient for method chaining.
  *
- * @see anyOfSuccessCompletableFuture
+ * @see anySuccessOfCompletableFuture
  */
 fun <T> Array<out CompletionStage<out T>>.anyOfCompletableFuture(): CompletableFuture<T> =
     CompletableFutureUtils.anyOf(*this)
