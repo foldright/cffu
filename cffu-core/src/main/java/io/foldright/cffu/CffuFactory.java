@@ -161,7 +161,7 @@ public final class CffuFactory {
      * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>       the suppliers' return type
      * @return the new Cffu
-     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allResultsFastFailOf(CompletionStage[])
      */
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyFastFailAsync(Supplier<? extends T>... suppliers) {
@@ -173,10 +173,11 @@ public final class CffuFactory {
      * with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
+     * @param executor  the executor to use for asynchronous execution
      * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>       the suppliers' return type
      * @return the new Cffu
-     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allResultsFastFailOf(CompletionStage[])
      */
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyFastFailAsync(Executor executor, Supplier<? extends T>... suppliers) {
@@ -217,6 +218,7 @@ public final class CffuFactory {
      * Otherwise the given valueIfNotSuccess.
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
+     * @param executor          the executor to use for asynchronous execution
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @param suppliers         the suppliers returning the value to be used to complete the returned Cffu
@@ -252,6 +254,7 @@ public final class CffuFactory {
      * with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
+     * @param executor  the executor to use for asynchronous execution
      * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>       the suppliers' return type
      * @return the new Cffu
@@ -270,7 +273,7 @@ public final class CffuFactory {
      *
      * @param actions the actions to run before completing the returned Cffu
      * @return the new Cffu
-     * @see #allOfFastFail(CompletionStage[])
+     * @see #allFastFailOf(CompletionStage[])
      */
     public Cffu<Void> mRunFastFailAsync(Runnable... actions) {
         return mRunFastFailAsync(defaultExecutor, actions);
@@ -280,9 +283,10 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed by tasks running in the given Executor
      * after runs the given actions.
      *
-     * @param actions the actions to run before completing the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to run before completing the returned Cffu
      * @return the new Cffu
-     * @see #allOfFastFail(CompletionStage[])
+     * @see #allFastFailOf(CompletionStage[])
      */
     public Cffu<Void> mRunFastFailAsync(Executor executor, Runnable... actions) {
         return create(CompletableFutureUtils.mRunFastFailAsync(executor, actions));
@@ -305,7 +309,8 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed by tasks running in the given Executor
      * after runs the given actions.
      *
-     * @param actions the actions to run before completing the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to run before completing the returned Cffu
      * @return the new Cffu
      * @see #allOf(CompletionStage[])
      */
@@ -324,7 +329,7 @@ public final class CffuFactory {
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
      * @return the new Cffu
-     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allResultsFastFailOf(CompletionStage[])
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -336,8 +341,9 @@ public final class CffuFactory {
      * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
-     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allResultsFastFailOf(CompletionStage[])
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -350,7 +356,7 @@ public final class CffuFactory {
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
      * @return the new Cffu
-     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allResultsFastFailOf(CompletionStage[])
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -362,8 +368,9 @@ public final class CffuFactory {
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
-     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allResultsFastFailOf(CompletionStage[])
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -376,7 +383,7 @@ public final class CffuFactory {
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
      * @return the new Cffu
-     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allResultsFastFailOf(CompletionStage[])
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -389,8 +396,9 @@ public final class CffuFactory {
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
-     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allResultsFastFailOf(CompletionStage[])
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -404,7 +412,7 @@ public final class CffuFactory {
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
      * @return the new Cffu
-     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allResultsFastFailOf(CompletionStage[])
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -417,8 +425,9 @@ public final class CffuFactory {
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
-     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allResultsFastFailOf(CompletionStage[])
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -443,6 +452,7 @@ public final class CffuFactory {
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
@@ -469,6 +479,7 @@ public final class CffuFactory {
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
@@ -496,6 +507,7 @@ public final class CffuFactory {
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
@@ -523,6 +535,7 @@ public final class CffuFactory {
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
@@ -551,6 +564,7 @@ public final class CffuFactory {
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      * @see #allResultsOf(CompletionStage[])
      */
@@ -577,6 +591,7 @@ public final class CffuFactory {
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      * @see #allResultsOf(CompletionStage[])
      */
@@ -605,6 +620,7 @@ public final class CffuFactory {
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      * @see #allResultsOf(CompletionStage[])
      */
@@ -633,6 +649,7 @@ public final class CffuFactory {
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      * @see #allResultsOf(CompletionStage[])
      */
@@ -662,8 +679,8 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     @SafeVarargs
-    public final <T> Cffu<List<T>> allResultsOfFastFail(CompletionStage<? extends T>... cfs) {
-        return create(CompletableFutureUtils.allResultsOfFastFail(cfs));
+    public final <T> Cffu<List<T>> allResultsFastFailOf(CompletionStage<? extends T>... cfs) {
+        return create(CompletableFutureUtils.allResultsFastFailOf(cfs));
     }
 
     /**
@@ -718,9 +735,9 @@ public final class CffuFactory {
      * <p>
      * If you need the results of given stages, prefer below methods:
      * <ul>
-     * <li>{@link #allResultsOfFastFail(CompletionStage[])}
-     * <li>{@link #allTupleOfFastFail(CompletionStage, CompletionStage)} /
-     *     {@link #allTupleOfFastFail(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * <li>{@link #allResultsFastFailOf(CompletionStage[])}
+     * <li>{@link #allTupleFastFailOf(CompletionStage, CompletionStage)} /
+     *     {@link #allTupleFastFailOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      *     (provided overloaded methods with 2~5 input)
      * </ul>
      * <p>
@@ -736,8 +753,8 @@ public final class CffuFactory {
      * @throws NullPointerException if the array or any of its elements are {@code null}
      */
     @Contract(pure = true)
-    public Cffu<Void> allOfFastFail(CompletionStage<?>... cfs) {
-        return create(CompletableFutureUtils.allOfFastFail(cfs));
+    public Cffu<Void> allFastFailOf(CompletionStage<?>... cfs) {
+        return create(CompletableFutureUtils.allFastFailOf(cfs));
     }
 
     /**
@@ -832,12 +849,12 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is successful when the given two stages success
      * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allResultsFastFailOf(CompletionStage[])
      */
     @Contract(pure = true)
-    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOfFastFail(
+    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleFastFailOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return create(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2));
+        return create(CompletableFutureUtils.allTupleFastFailOf(cf1, cf2));
     }
 
     /**
@@ -847,12 +864,12 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is successful when the given three stages success
      * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allResultsFastFailOf(CompletionStage[])
      */
     @Contract(pure = true)
-    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOfFastFail(
+    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleFastFailOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return create(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3));
+        return create(CompletableFutureUtils.allTupleFastFailOf(cf1, cf2, cf3));
     }
 
     /**
@@ -862,13 +879,13 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is successful when the given four stages success
      * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allResultsFastFailOf(CompletionStage[])
      */
     @Contract(pure = true)
-    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOfFastFail(
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleFastFailOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return create(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3, cf4));
+        return create(CompletableFutureUtils.allTupleFastFailOf(cf1, cf2, cf3, cf4));
     }
 
     /**
@@ -878,13 +895,13 @@ public final class CffuFactory {
      *
      * @return a new Cffu that is successful when the given five stages success
      * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allResultsOfFastFail(CompletionStage[])
+     * @see #allResultsFastFailOf(CompletionStage[])
      */
     @Contract(pure = true)
-    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOfFastFail(
+    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleFastFailOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return create(CompletableFutureUtils.allTupleOfFastFail(cf1, cf2, cf3, cf4, cf5));
+        return create(CompletableFutureUtils.allTupleFastFailOf(cf1, cf2, cf3, cf4, cf5));
     }
 
     /**
