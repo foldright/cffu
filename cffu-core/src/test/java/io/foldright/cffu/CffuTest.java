@@ -52,12 +52,12 @@ class CffuTest {
         final long tick = System.currentTimeMillis();
         @SuppressWarnings("unchecked")
         Cffu<Void>[] cfs = new Cffu[]{
-                completed.thenMApplyFastFailAsync(completed, function_n, function_n),
-                completed.thenMApplyFastFailAsync(completed, executorService, function_n, function_n),
-                completed.thenMApplyMostSuccessAsync(completed, 100, 500, TimeUnit.MILLISECONDS, function_n, function_n),
-                completed.thenMApplyMostSuccessAsync(completed, 100, executorService, 500, TimeUnit.MILLISECONDS, function_n, function_n),
-                completed.thenMApplyAsync(completed, function_n, function_n),
-                completed.thenMApplyAsync(completed, executorService, function_n, function_n)
+                completed.thenMApplyFastFailAsync(function_n, function_n),
+                completed.thenMApplyFastFailAsync(executorService, function_n, function_n),
+                completed.thenMApplyMostSuccessAsync(100, 500, TimeUnit.MILLISECONDS, function_n, function_n),
+                completed.thenMApplyMostSuccessAsync(100, executorService, 500, TimeUnit.MILLISECONDS, function_n, function_n),
+                completed.thenMApplyAsync(function_n, function_n),
+                completed.thenMApplyAsync(executorService, function_n, function_n)
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
@@ -78,10 +78,10 @@ class CffuTest {
 
         @SuppressWarnings("unchecked")
         Cffu<List<Integer>>[] cfs = new Cffu[]{
-                completed.thenMAcceptAsync(completed, consumer, consumer),
-                completed.thenMAcceptAsync(completed, executorService, consumer, consumer),
-                completed.thenMAcceptFastFailAsync(completed, consumer, consumer),
-                completed.thenMAcceptFastFailAsync(completed, executorService, consumer, consumer)
+                completed.thenMAcceptAsync(consumer, consumer),
+                completed.thenMAcceptAsync(executorService, consumer, consumer),
+                completed.thenMAcceptFastFailAsync(consumer, consumer),
+                completed.thenMAcceptFastFailAsync(executorService, consumer, consumer)
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
@@ -101,10 +101,10 @@ class CffuTest {
 
         @SuppressWarnings("unchecked")
         Cffu<List<Integer>>[] cfs = new Cffu[]{
-                completed.thenMRunAsync(completed, runnable, runnable),
-                completed.thenMRunAsync(completed, executorService, runnable, runnable),
-                completed.thenMRunFastFailAsync(completed, runnable, runnable),
-                completed.thenMRunFastFailAsync(completed, executorService, runnable, runnable)
+                completed.thenMRunAsync(runnable, runnable),
+                completed.thenMRunAsync(executorService, runnable, runnable),
+                completed.thenMRunFastFailAsync(runnable, runnable),
+                completed.thenMRunFastFailAsync(executorService, runnable, runnable)
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);

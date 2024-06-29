@@ -157,8 +157,6 @@ public final class CffuFactory {
      * by tasks running in the Cffu's default asynchronous execution facility
      * with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #mSupplyAsync(Supplier[])} except for the fast-fail behavior.
      *
      * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>       the suppliers' return type
@@ -174,8 +172,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed by tasks running in the given Executor
      * with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #mSupplyAsync(Supplier[])} except for the fast-fail behavior.
      *
      * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>       the suppliers' return type
@@ -271,8 +267,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the Cffu's default asynchronous execution facility
      * after runs the given actions.
-     * <p>
-     * This method is the same as {@link #mRunAsync(Runnable...)} except for the fast-fail behavior.
      *
      * @param actions the actions to run before completing the returned Cffu
      * @return the new Cffu
@@ -285,8 +279,6 @@ public final class CffuFactory {
     /**
      * Returns a new Cffu that is asynchronously completed by tasks running in the given Executor
      * after runs the given actions.
-     * <p>
-     * This method is the same as {@link #mRunAsync(Runnable...)} except for the fast-fail behavior.
      *
      * @param actions the actions to run before completing the returned Cffu
      * @return the new Cffu
@@ -330,8 +322,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the fast-fail behavior.
      *
      * @return the new Cffu
      * @see #allResultsOfFastFail(CompletionStage[])
@@ -345,8 +335,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the fast-fail behavior.
      *
      * @return the new Cffu
      * @see #allResultsOfFastFail(CompletionStage[])
@@ -360,8 +348,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier, Supplier)} except for the fast-fail behavior.
      *
      * @return the new Cffu
      * @see #allResultsOfFastFail(CompletionStage[])
@@ -375,8 +361,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier, Supplier)} except for the fast-fail behavior.
      *
      * @return the new Cffu
      * @see #allResultsOfFastFail(CompletionStage[])
@@ -390,8 +374,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier, Supplier, Supplier)} except for the fast-fail behavior.
      *
      * @return the new Cffu
      * @see #allResultsOfFastFail(CompletionStage[])
@@ -406,8 +388,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier, Supplier, Supplier)} except for the fast-fail behavior.
      *
      * @return the new Cffu
      * @see #allResultsOfFastFail(CompletionStage[])
@@ -422,8 +402,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier, Supplier, Supplier, Supplier)} except for the fast-fail behavior.
      *
      * @return the new Cffu
      * @see #allResultsOfFastFail(CompletionStage[])
@@ -438,8 +416,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier, Supplier, Supplier, Supplier)} except for the fast-fail behavior.
      *
      * @return the new Cffu
      * @see #allResultsOfFastFail(CompletionStage[])
@@ -454,8 +430,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the most-success behavior.
      *
      * @return the new Cffu
      */
@@ -468,8 +442,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the most-success behavior.
      *
      * @return the new Cffu
      */
@@ -483,8 +455,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the most-success behavior.
      *
      * @return the new Cffu
      */
@@ -498,8 +468,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the most-success behavior.
      *
      * @return the new Cffu
      */
@@ -514,8 +482,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the most-success behavior.
      *
      * @return the new Cffu
      */
@@ -529,8 +495,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the most-success behavior.
      *
      * @return the new Cffu
      */
@@ -545,8 +509,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the most-success behavior.
      *
      * @return the new Cffu
      */
@@ -560,8 +522,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the given Executor with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * This method is the same as {@link #tupleMSupplyAsync(Supplier, Supplier)} except for the most-success behavior.
      *
      * @return the new Cffu
      */
@@ -695,9 +655,6 @@ public final class CffuFactory {
      * If no stages are provided, returns a Cffu completed with the value empty list.
      * <p>
      * This method is the same as {@link #allResultsOf(CompletionStage[])} except for the fast-fail behavior.
-     * <p>
-     * This method is the same as {@link #allOfFastFail(CompletionStage[])},
-     * except that the returned Cffu contains the results of the given stages.
      *
      * @param cfs the stages
      * @return a new Cffu that is successful when all the given stages success
@@ -872,9 +829,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is successful when the given two stages success.
      * If any of the given stages complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #allTupleOf(CompletionStage, CompletionStage)}
-     * except for the fast-fail behavior.
      *
      * @return a new Cffu that is successful when the given two stages success
      * @throws NullPointerException if any of the given stages are {@code null}
@@ -890,9 +844,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is successful when the given three stages success.
      * If any of the given stages complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage)}
-     * except for the fast-fail behavior.
      *
      * @return a new Cffu that is successful when the given three stages success
      * @throws NullPointerException if any of the given stages are {@code null}
@@ -908,9 +859,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is successful when the given four stages success.
      * If any of the given stages complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
-     * except for the fast-fail behavior.
      *
      * @return a new Cffu that is successful when the given four stages success
      * @throws NullPointerException if any of the given stages are {@code null}
@@ -927,9 +875,6 @@ public final class CffuFactory {
      * Returns a new Cffu that is successful when the given five stages success.
      * If any of the given stages complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
-     * except for the fast-fail behavior.
      *
      * @return a new Cffu that is successful when the given five stages success
      * @throws NullPointerException if any of the given stages are {@code null}

@@ -333,13 +333,11 @@ fun <T> Array<out CompletionStage<out T>>.anyOfCompletableFuture(): CompletableF
  * also does so *without* waiting other incomplete given CompletionStage,
  * with a CompletionException holding this exception as its cause.
  *
- * This method is the same as [CompletableFuture.thenCombine] except for the fast-fail behavior.
- *
  * @param fn the function to use to compute the value of the returned CompletableFuture
  * @return the new CompletableFuture
  * @see CompletionStage.thenCombine
  */
-fun <T, U, V> CompletionStage<out T>.thenCombineFastFail(
+fun <T, U, V> CompletableFuture<out T>.thenCombineFastFail(
     other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
 ): CompletableFuture<V> =
     CompletableFutureUtils.thenCombineFastFail(this, other, fn)
@@ -358,7 +356,7 @@ fun <T, U, V> CompletionStage<out T>.thenCombineFastFail(
  * @return the new CompletableFuture
  * @see CompletionStage.thenCombineAsync
  */
-fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
+fun <T, U, V> CompletableFuture<out T>.thenCombineFastFailAsync(
     other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
 ): CompletableFuture<V> =
     CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn)
@@ -377,7 +375,7 @@ fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.thenCombineAsync
  */
-fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
+fun <T, U, V> CompletableFuture<out T>.thenCombineFastFailAsync(
     other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>, executor: Executor
 ): CompletableFuture<V> =
     CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn, executor)
@@ -395,7 +393,7 @@ fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.thenAcceptBoth
  */
-fun <T, U> CompletionStage<out T>.thenAcceptBothFastFail(
+fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFail(
     other: CompletionStage<out U>, action: BiConsumer<in T, in U>
 ): CompletableFuture<Void> =
     CompletableFutureUtils.thenAcceptBothFastFail(this, other, action)
@@ -414,7 +412,7 @@ fun <T, U> CompletionStage<out T>.thenAcceptBothFastFail(
  * @return the new CompletableFuture
  * @see CompletionStage.thenAcceptBothAsync
  */
-fun <T, U> CompletionStage<out T>.thenAcceptBothFastFailAsync(
+fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFailAsync(
     other: CompletionStage<out U>, action: BiConsumer<in T, in U>
 ): CompletableFuture<Void> =
     CompletableFutureUtils.thenAcceptBothFastFailAsync(this, other, action)
@@ -433,7 +431,7 @@ fun <T, U> CompletionStage<out T>.thenAcceptBothFastFailAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.thenAcceptBothAsync
  */
-fun <T, U> CompletionStage<out T>.thenAcceptBothFastFailAsync(
+fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFailAsync(
     other: CompletionStage<out U>, action: BiConsumer<in T, in U>, executor: Executor
 ): CompletableFuture<Void> =
     CompletableFutureUtils.thenAcceptBothFastFailAsync(this, other, action, executor)
@@ -450,7 +448,7 @@ fun <T, U> CompletionStage<out T>.thenAcceptBothFastFailAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.runAfterBoth
  */
-fun CompletionStage<*>.runAfterBothFastFail(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
+fun CompletableFuture<*>.runAfterBothFastFail(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
     CompletableFutureUtils.runAfterBothFastFail(this, other, action)
 
 /**
@@ -466,7 +464,10 @@ fun CompletionStage<*>.runAfterBothFastFail(other: CompletionStage<*>, action: R
  * @return the new CompletableFuture
  * @see CompletionStage.runAfterBothAsync
  */
-fun CompletionStage<*>.runAfterBothFastFailAsync(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
+fun CompletableFuture<*>.runAfterBothFastFailAsync(
+    other: CompletionStage<*>,
+    action: Runnable
+): CompletableFuture<Void> =
     CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action)
 
 /**
@@ -482,7 +483,7 @@ fun CompletionStage<*>.runAfterBothFastFailAsync(other: CompletionStage<*>, acti
  * @return the new CompletableFuture
  * @see CompletionStage.runAfterBothAsync
  */
-fun CompletionStage<*>.runAfterBothFastFailAsync(
+fun CompletableFuture<*>.runAfterBothFastFailAsync(
     other: CompletionStage<*>, action: Runnable, executor: Executor
 ): CompletableFuture<Void> =
     CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action, executor)
@@ -508,7 +509,7 @@ fun CompletionStage<*>.runAfterBothFastFailAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.applyToEither
  */
-fun <T, U> CompletionStage<out T>.applyToEitherSuccess(
+fun <T, U> CompletableFuture<out T>.applyToEitherSuccess(
     other: CompletionStage<out T>, fn: Function<in T, out U>
 ): CompletableFuture<U> =
     CompletableFutureUtils.applyToEitherSuccess(this, other, fn)
@@ -526,7 +527,7 @@ fun <T, U> CompletionStage<out T>.applyToEitherSuccess(
  * @return the new CompletableFuture
  * @see CompletionStage.applyToEitherAsync
  */
-fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
+fun <T, U> CompletableFuture<out T>.applyToEitherSuccessAsync(
     other: CompletionStage<out T>, fn: Function<in T, out U>
 ): CompletableFuture<U> =
     CompletableFutureUtils.applyToEitherSuccessAsync(this, other, fn)
@@ -544,7 +545,7 @@ fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.applyToEitherAsync
  */
-fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
+fun <T, U> CompletableFuture<out T>.applyToEitherSuccessAsync(
     other: CompletionStage<out T>, fn: Function<in T, out U>, executor: Executor
 ): CompletableFuture<U> =
     CompletableFutureUtils.applyToEitherSuccessAsync(this, other, fn, executor)
@@ -560,7 +561,7 @@ fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.acceptEither
  */
-fun <T> CompletionStage<out T>.acceptEitherSuccess(
+fun <T> CompletableFuture<out T>.acceptEitherSuccess(
     other: CompletionStage<out T>, action: Consumer<in T>
 ): CompletableFuture<Void> =
     CompletableFutureUtils.acceptEitherSuccess(this, other, action)
@@ -577,7 +578,7 @@ fun <T> CompletionStage<out T>.acceptEitherSuccess(
  * @return the new CompletableFuture
  * @see CompletionStage.acceptEitherAsync
  */
-fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
+fun <T> CompletableFuture<out T>.acceptEitherSuccessAsync(
     other: CompletionStage<out T>, action: Consumer<in T>
 ): CompletableFuture<Void> =
     CompletableFutureUtils.acceptEitherSuccessAsync(this, other, action)
@@ -594,7 +595,7 @@ fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.acceptEitherAsync
  */
-fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
+fun <T> CompletableFuture<out T>.acceptEitherSuccessAsync(
     other: CompletionStage<out T>, action: Consumer<in T>, executor: Executor
 ): CompletableFuture<Void> =
     CompletableFutureUtils.acceptEitherSuccessAsync(this, other, action, executor)
@@ -612,7 +613,7 @@ fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.runAfterEither
  */
-fun CompletionStage<*>.runAfterEitherSuccess(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
+fun CompletableFuture<*>.runAfterEitherSuccess(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
     CompletableFutureUtils.runAfterEitherSuccess(this, other, action)
 
 /**
@@ -629,7 +630,7 @@ fun CompletionStage<*>.runAfterEitherSuccess(other: CompletionStage<*>, action: 
  * @return the new CompletableFuture
  * @see CompletionStage.runAfterEitherAsync
  */
-fun CompletionStage<*>.runAfterEitherSuccessAsync(
+fun CompletableFuture<*>.runAfterEitherSuccessAsync(
     other: CompletionStage<*>, action: Runnable
 ): CompletableFuture<Void> =
     CompletableFutureUtils.runAfterEitherSuccessAsync(this, other, action)
@@ -648,7 +649,7 @@ fun CompletionStage<*>.runAfterEitherSuccessAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.runAfterEitherAsync
  */
-fun CompletionStage<*>.runAfterEitherSuccessAsync(
+fun CompletableFuture<*>.runAfterEitherSuccessAsync(
     other: CompletionStage<*>, action: Runnable, executor: Executor
 ): CompletableFuture<Void> =
     CompletableFutureUtils.runAfterEitherSuccessAsync(this, other, action, executor)
