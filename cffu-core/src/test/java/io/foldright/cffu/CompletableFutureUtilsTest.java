@@ -1064,6 +1064,7 @@ class CompletableFutureUtilsTest {
             return n;
         });
         final CompletableFuture<Integer> failed = failedFuture(rte);
+        final CompletableFuture<Integer> cf_ee = failedFuture(anotherRte);
 
         final Runnable runnable = () -> {
         };
@@ -1075,6 +1076,24 @@ class CompletableFutureUtilsTest {
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 runAfterBothFastFailAsync(cf_n, failed, runnable, executorService).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                runAfterBothFastFail(failed, cf_n, runnable).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                runAfterBothFastFailAsync(failed, cf_n, runnable).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                runAfterBothFastFailAsync(failed, cf_n, runnable, executorService).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                runAfterBothFastFail(failed, cf_ee, runnable).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                runAfterBothFastFailAsync(failed, cf_ee, runnable).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                runAfterBothFastFailAsync(failed, cf_ee, runnable, executorService).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
 
         BiConsumer<Integer, Integer> bc = (i1, i2) -> {
@@ -1088,6 +1107,24 @@ class CompletableFutureUtilsTest {
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 thenAcceptBothFastFailAsync(cf_n, failed, bc, executorService).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                thenAcceptBothFastFail(failed, cf_n, bc).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                thenAcceptBothFastFailAsync(failed, cf_n, bc).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                thenAcceptBothFastFailAsync(failed, cf_n, bc, executorService).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                thenAcceptBothFastFail(failed, cf_ee, bc).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                thenAcceptBothFastFailAsync(failed, cf_ee, bc).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                thenAcceptBothFastFailAsync(failed, cf_ee, bc, executorService).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
 
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 thenCombineFastFail(cf_n, failed, Integer::sum).get(1, TimeUnit.MILLISECONDS)
@@ -1097,6 +1134,24 @@ class CompletableFutureUtilsTest {
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 thenCombineFastFailAsync(cf_n, failed, Integer::sum, executorService).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                thenCombineFastFail(failed, cf_n, Integer::sum).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                thenCombineFastFailAsync(failed, cf_n, Integer::sum).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                thenCombineFastFailAsync(failed, cf_n, Integer::sum, executorService).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                thenCombineFastFail(failed, cf_ee, Integer::sum).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                thenCombineFastFailAsync(failed, cf_ee, Integer::sum).get(1, TimeUnit.MILLISECONDS)
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                thenCombineFastFailAsync(failed, cf_ee, Integer::sum, executorService).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
     }
 
@@ -1128,24 +1183,62 @@ class CompletableFutureUtilsTest {
 
     @Test
     void test_either_success() throws Exception {
-        final CompletableFuture<Integer> failed = failedFuture(rte);
         CompletableFuture<Integer> cf = completedFuture(n);
+        final CompletableFuture<Integer> failed = failedFuture(rte);
+        final CompletableFuture<Integer> cf_ee = failedFuture(anotherRte);
+
 
         final Runnable runnable = () -> {
         };
+        assertNull(runAfterEitherSuccess(cf, failed, runnable).get());
+        assertNull(runAfterEitherSuccessAsync(cf, failed, runnable).get());
+        assertNull(runAfterEitherSuccessAsync(cf, failed, runnable, executorService).get());
         assertNull(runAfterEitherSuccess(failed, cf, runnable).get());
         assertNull(runAfterEitherSuccessAsync(failed, cf, runnable).get());
         assertNull(runAfterEitherSuccessAsync(failed, cf, runnable, executorService).get());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                runAfterEitherSuccess(failed, cf_ee, runnable).get()
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                runAfterEitherSuccessAsync(failed, cf_ee, runnable).get()
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                runAfterEitherSuccessAsync(failed, cf_ee, runnable, executorService).get()
+        ).getCause());
 
         Consumer<Integer> c = i -> {
         };
+        assertNull(acceptEitherSuccess(cf, failed, c).get());
+        assertNull(acceptEitherSuccessAsync(cf, failed, c).get());
+        assertNull(acceptEitherSuccessAsync(cf, failed, c, executorService).get());
         assertNull(acceptEitherSuccess(failed, cf, c).get());
         assertNull(acceptEitherSuccessAsync(failed, cf, c).get());
         assertNull(acceptEitherSuccessAsync(failed, cf, c, executorService).get());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                acceptEitherSuccess(failed, cf_ee, c).get()
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                acceptEitherSuccessAsync(failed, cf_ee, c).get()
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                acceptEitherSuccessAsync(failed, cf_ee, c, executorService).get()
+        ).getCause());
 
+        assertEquals(n, applyToEitherSuccess(cf, failed, identity()).get());
+        assertEquals(n, applyToEitherSuccessAsync(cf, failed, identity()).get());
+        assertEquals(n, applyToEitherSuccessAsync(cf, failed, identity(), executorService).get());
         assertEquals(n, applyToEitherSuccess(failed, cf, identity()).get());
         assertEquals(n, applyToEitherSuccessAsync(failed, cf, identity()).get());
         assertEquals(n, applyToEitherSuccessAsync(failed, cf, identity(), executorService).get());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                applyToEitherSuccess(failed, cf_ee, identity()).get()
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                applyToEitherSuccessAsync(failed, cf_ee, identity()).get()
+        ).getCause());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                applyToEitherSuccessAsync(failed, cf_ee, identity(), executorService).get()
+        ).getCause());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
