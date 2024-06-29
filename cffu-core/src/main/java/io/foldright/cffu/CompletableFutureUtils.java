@@ -2376,7 +2376,9 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return allFastFailOf(resultSetterCfs).thenApply(unused -> fn.apply((T) result[0], (U) result[1]));
+        CompletableFuture<V> ret = allFastFailOf(resultSetterCfs)
+                .thenApply(unused -> fn.apply((T) result[0], (U) result[1]));
+        return composeTypeAndResult0(cfThis, ret);
     }
 
     /**
@@ -2418,14 +2420,28 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return allFastFailOf(resultSetterCfs)
+        CompletableFuture<V> ret = allFastFailOf(resultSetterCfs)
                 .thenApplyAsync(unused -> fn.apply((T) result[0], (U) result[1]), executor);
+        return composeTypeAndResult0(cfThis, ret);
     }
 
     @SuppressWarnings("unchecked")
     private static <T> CompletionStage<? extends T>[] requireThisAndOtherNonNull(
             CompletionStage<? extends T> cfThis, CompletionStage<? extends T> other) {
         return new CompletionStage[]{requireNonNull(cfThis, "cfThis is null"), requireNonNull(other, "other is null")};
+    }
+
+    /**
+     * Returns a new CompletableFuture that its runtime type(including minimal-stage)
+     * is same as parameter {@code cfType} and its result is same as parameter {@code cfResult}.
+     *
+     * <strong>Implementation Note:</strong> Calling this method is necessary
+     * because {@link Cffu} internal use type CompletableFuture to represent minimal-stage(NOT type safe).
+     */
+    @SuppressWarnings("unchecked")
+    private static <T, U> CompletableFuture<U> composeTypeAndResult0(
+            CompletableFuture<? extends T> cfType, CompletionStage<? extends U> cfResult) {
+        return cfType.handle((v, ex) -> null).thenCompose(v -> (CompletionStage<U>) cfResult);
     }
 
     /**
@@ -2448,7 +2464,9 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return allFastFailOf(resultSetterCfs).thenRun(() -> action.accept((T) result[0], (U) result[1]));
+        CompletableFuture<Void> ret = allFastFailOf(resultSetterCfs)
+                .thenRun(() -> action.accept((T) result[0], (U) result[1]));
+        return composeTypeAndResult0(cfThis, ret);
     }
 
     /**
@@ -2490,7 +2508,9 @@ public final class CompletableFutureUtils {
         final Object[] result = new Object[css.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
 
-        return allFastFailOf(resultSetterCfs).thenRunAsync(() -> action.accept((T) result[0], (U) result[1]), executor);
+        CompletableFuture<Void> ret = allFastFailOf(resultSetterCfs)
+                .thenRunAsync(() -> action.accept((T) result[0], (U) result[1]), executor);
+        return composeTypeAndResult0(cfThis, ret);
     }
 
     /**
@@ -2507,7 +2527,8 @@ public final class CompletableFutureUtils {
         final CompletionStage<?>[] css = requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
 
-        return allFastFailOf(css).thenRun(action);
+        CompletableFuture<Void> ret = allFastFailOf(css).thenRun(action);
+        return composeTypeAndResult0(cfThis, ret);
     }
 
     /**
@@ -2541,7 +2562,8 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return allFastFailOf(css).thenRunAsync(action, executor);
+        CompletableFuture<Void> ret = allFastFailOf(css).thenRunAsync(action, executor);
+        return composeTypeAndResult0(cfThis, ret);
     }
 
     // endregion
@@ -2566,7 +2588,8 @@ public final class CompletableFutureUtils {
         final CompletionStage<? extends T>[] css = requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(fn, "fn is null");
 
-        return anySuccessOf(css).thenApply(fn);
+        CompletableFuture<U> ret = anySuccessOf(css).thenApply(fn);
+        return composeTypeAndResult0(cfThis, ret);
     }
 
     /**
@@ -2599,7 +2622,8 @@ public final class CompletableFutureUtils {
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
-        return anySuccessOf(css).thenApplyAsync(fn, executor);
+        CompletableFuture<U> ret = anySuccessOf(css).thenApplyAsync(fn, executor);
+        return composeTypeAndResult0(cfThis, ret);
     }
 
     /**
@@ -2614,7 +2638,8 @@ public final class CompletableFutureUtils {
         final CompletionStage<? extends T>[] css = requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
 
-        return anySuccessOf(css).thenAccept(action);
+        CompletableFuture<Void> ret = anySuccessOf(css).thenAccept(action);
+        return composeTypeAndResult0(cfThis, ret);
     }
 
     /**
@@ -2645,7 +2670,8 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return anySuccessOf(css).thenAcceptAsync(action, executor);
+        CompletableFuture<Void> ret = anySuccessOf(css).thenAcceptAsync(action, executor);
+        return composeTypeAndResult0(cfThis, ret);
     }
 
     /**
@@ -2662,7 +2688,8 @@ public final class CompletableFutureUtils {
         final CompletionStage<?>[] css = requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
 
-        return anySuccessOf(css).thenRun(action);
+        CompletableFuture<Void> ret = anySuccessOf(css).thenRun(action);
+        return composeTypeAndResult0(cfThis, ret);
     }
 
     /**
@@ -2696,7 +2723,8 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return anySuccessOf(css).thenRunAsync(action, executor);
+        CompletableFuture<Void> ret = anySuccessOf(css).thenRunAsync(action, executor);
+        return composeTypeAndResult0(cfThis, ret);
     }
 
     // endregion
