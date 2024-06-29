@@ -409,7 +409,7 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         obtrudeException(null)
     }.message shouldBe "unsupported because this is a minimal stage"
-    if (recursive) newIncompleteFuture<T>().shouldMinCffu()
+    if (recursive) newIncompleteFuture<T>().shouldNotMinCffu()
 
     ////////////////////////////////////////////////////////////
     // Cffu specified methods
