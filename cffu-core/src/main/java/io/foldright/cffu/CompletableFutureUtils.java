@@ -2370,7 +2370,7 @@ public final class CompletableFutureUtils {
     public static <T, U, V> CompletableFuture<V> thenCombineFastFail(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiFunction<? super T, ? super U, ? extends V> fn) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cfThis, other);
+        final CompletionStage<?>[] css = requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(fn, "fn is null");
 
         final Object[] result = new Object[css.length];
@@ -2411,7 +2411,7 @@ public final class CompletableFutureUtils {
     public static <T, U, V> CompletableFuture<V> thenCombineFastFailAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cfThis, other);
+        final CompletionStage<?>[] css = requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
@@ -2420,6 +2420,12 @@ public final class CompletableFutureUtils {
 
         return allFastFailOf(resultSetterCfs)
                 .thenApplyAsync(unused -> fn.apply((T) result[0], (U) result[1]), executor);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> CompletionStage<? extends T>[] requireThisAndOtherNonNull(
+            CompletionStage<? extends T> cfThis, CompletionStage<? extends T> other) {
+        return new CompletionStage[]{requireNonNull(cfThis, "cfThis is null"), requireNonNull(other, "other is null")};
     }
 
     /**
@@ -2436,7 +2442,7 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<Void> thenAcceptBothFastFail(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiConsumer<? super T, ? super U> action) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cfThis, other);
+        final CompletionStage<?>[] css = requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
 
         final Object[] result = new Object[css.length];
@@ -2477,7 +2483,7 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<Void> thenAcceptBothFastFailAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiConsumer<? super T, ? super U> action, Executor executor) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cfThis, other);
+        final CompletionStage<?>[] css = requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
@@ -2498,7 +2504,7 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterBothFastFail(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cfThis, other);
+        final CompletionStage<?>[] css = requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
 
         return allFastFailOf(css).thenRun(action);
@@ -2531,7 +2537,7 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterBothFastFailAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action, Executor executor) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cfThis, other);
+        final CompletionStage<?>[] css = requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
@@ -2557,7 +2563,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, U> CompletableFuture<U> applyToEitherSuccess(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other, Function<? super T, ? extends U> fn) {
-        final CompletionStage<? extends T>[] css = requireCfsAndEleNonNull(cfThis, other);
+        final CompletionStage<? extends T>[] css = requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(fn, "fn is null");
 
         return anySuccessOf(css).thenApply(fn);
@@ -2589,7 +2595,7 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other,
             Function<? super T, ? extends U> fn, Executor executor) {
-        final CompletionStage<? extends T>[] css = requireCfsAndEleNonNull(cfThis, other);
+        final CompletionStage<? extends T>[] css = requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
@@ -2605,7 +2611,7 @@ public final class CompletableFutureUtils {
      */
     public static <T> CompletableFuture<Void> acceptEitherSuccess(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other, Consumer<? super T> action) {
-        final CompletionStage<? extends T>[] css = requireCfsAndEleNonNull(cfThis, other);
+        final CompletionStage<? extends T>[] css = requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
 
         return anySuccessOf(css).thenAccept(action);
@@ -2635,7 +2641,7 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<Void> acceptEitherSuccessAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other,
             Consumer<? super T> action, Executor executor) {
-        final CompletionStage<? extends T>[] css = requireCfsAndEleNonNull(cfThis, other);
+        final CompletionStage<? extends T>[] css = requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
@@ -2653,7 +2659,7 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterEitherSuccess(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cfThis, other);
+        final CompletionStage<?>[] css = requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
 
         return anySuccessOf(css).thenRun(action);
@@ -2686,7 +2692,7 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterEitherSuccessAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action, Executor executor) {
-        final CompletionStage<?>[] css = requireCfsAndEleNonNull(cfThis, other);
+        final CompletionStage<?>[] css = requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
