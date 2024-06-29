@@ -73,21 +73,21 @@ class CompletableFutureExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture(43),
             CompletableFuture.completedFuture(44),
-        ).allResultsOfFastFailCompletableFuture().await() shouldBe listOf(42, 43, 44)
-        listOf<CompletableFuture<Int>>().allResultsOfFastFailCompletableFuture().await() shouldBe emptyList()
+        ).allResultsFastFailOfCompletableFuture().await() shouldBe listOf(42, 43, 44)
+        listOf<CompletableFuture<Int>>().allResultsFastFailOfCompletableFuture().await() shouldBe emptyList()
 
         setOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture(43),
             CompletableFuture.completedFuture(44),
-        ).allResultsOfFastFailCompletableFuture().await() shouldBe listOf(42, 43, 44)
+        ).allResultsFastFailOfCompletableFuture().await() shouldBe listOf(42, 43, 44)
 
         arrayOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture(43),
             CompletableFuture.completedFuture(44),
-        ).allResultsOfFastFailCompletableFuture().await() shouldBe listOf(42, 43, 44)
-        arrayOf<CompletableFuture<Int>>().allResultsOfFastFailCompletableFuture().await() shouldBe emptyList()
+        ).allResultsFastFailOfCompletableFuture().await() shouldBe listOf(42, 43, 44)
+        arrayOf<CompletableFuture<Int>>().allResultsFastFailOfCompletableFuture().await() shouldBe emptyList()
 
         ////////////////////////////////////////
 
@@ -95,21 +95,21 @@ class CompletableFutureExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture("42"),
             CompletableFuture.completedFuture(42.0),
-        ).allOfFastFailCompletableFuture().await().shouldBeNull()
-        listOf<CompletableFuture<Int>>().allOfFastFailCompletableFuture().await().shouldBeNull()
+        ).allFastFailOfCompletableFuture().await().shouldBeNull()
+        listOf<CompletableFuture<Int>>().allFastFailOfCompletableFuture().await().shouldBeNull()
 
         setOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture("42"),
             CompletableFuture.completedFuture(42.0),
-        ).allOfFastFailCompletableFuture().await().shouldBeNull()
+        ).allFastFailOfCompletableFuture().await().shouldBeNull()
 
         arrayOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture("42"),
             CompletableFuture.completedFuture(42.0),
-        ).allOfFastFailCompletableFuture().await().shouldBeNull()
-        arrayOf<CompletableFuture<*>>().allOfFastFailCompletableFuture().await().shouldBeNull()
+        ).allFastFailOfCompletableFuture().await().shouldBeNull()
+        arrayOf<CompletableFuture<*>>().allFastFailOfCompletableFuture().await().shouldBeNull()
     }
 
     test("mostSuccessResultsOfCompletableFuture") {

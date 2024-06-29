@@ -209,13 +209,13 @@ class CffuFactoryTest {
 
         ////////////////////////////////////////
 
-        cffuFactory.allOfFastFail(completedFuture(n), completedFuture(anotherN)).get();
-        cffuFactory.allOfFastFail(completedFuture(anotherN)).get();
+        cffuFactory.allFastFailOf(completedFuture(n), completedFuture(anotherN)).get();
+        cffuFactory.allFastFailOf(completedFuture(anotherN)).get();
 
-        assertNull(cffuFactory.allOfFastFail().get());
+        assertNull(cffuFactory.allFastFailOf().get());
 
-        cffuFactory.allOfFastFail(cffuFactory.completedFuture(n), cffuFactory.completedFuture(anotherN)).get();
-        cffuFactory.allOfFastFail(cffuFactory.completedFuture(anotherN)).get();
+        cffuFactory.allFastFailOf(cffuFactory.completedFuture(n), cffuFactory.completedFuture(anotherN)).get();
+        cffuFactory.allFastFailOf(cffuFactory.completedFuture(anotherN)).get();
     }
 
     @Test
@@ -281,21 +281,21 @@ class CffuFactoryTest {
         ////////////////////////////////////////
 
         assertEquals(Arrays.asList(n, n + 1),
-                cffuFactory.allResultsOfFastFail(completedFuture(n), completedFuture(n + 1)).get()
+                cffuFactory.allResultsFastFailOf(completedFuture(n), completedFuture(n + 1)).get()
         );
         assertEquals(Collections.singletonList(n),
-                cffuFactory.allResultsOfFastFail(completedFuture(n)).get()
+                cffuFactory.allResultsFastFailOf(completedFuture(n)).get()
         );
 
         assertEquals(Collections.emptyList(),
-                cffuFactory.allResultsOfFastFail().get()
+                cffuFactory.allResultsFastFailOf().get()
         );
 
         assertEquals(Arrays.asList(n, n + 1),
-                cffuFactory.allResultsOfFastFail(cffuFactory.completedFuture(n), cffuFactory.completedFuture(n + 1)).get()
+                cffuFactory.allResultsFastFailOf(cffuFactory.completedFuture(n), cffuFactory.completedFuture(n + 1)).get()
         );
         assertEquals(Collections.singletonList(n),
-                cffuFactory.allResultsOfFastFail(cffuFactory.completedFuture(n)).get()
+                cffuFactory.allResultsFastFailOf(cffuFactory.completedFuture(n)).get()
         );
     }
 
@@ -310,7 +310,7 @@ class CffuFactoryTest {
         ).getCause());
 
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cffuFactory.allResultsOfFastFail(
+                cffuFactory.allResultsFastFailOf(
                         cffuFactory.completedFuture(n),
                         cffuFactory.failedFuture(rte),
                         cffuFactory.completedFuture(s)
@@ -559,26 +559,26 @@ class CffuFactoryTest {
     }
 
     @Test
-    void test_allTupleOfFastFail() throws Exception {
-        assertEquals(Tuple2.of(n, s), cffuFactory.allTupleOfFastFail(
+    void test_allTupleFastFailOf() throws Exception {
+        assertEquals(Tuple2.of(n, s), cffuFactory.allTupleFastFailOf(
                 completedFuture(n),
                 completedFuture(s)
         ).get());
 
-        assertEquals(Tuple3.of(n, s, d), cffuFactory.allTupleOfFastFail(
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.allTupleFastFailOf(
                 completedFuture(n),
                 completedFuture(s),
                 completedFuture(d)
         ).get());
 
-        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.allTupleOfFastFail(
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.allTupleFastFailOf(
                 completedFuture(n),
                 completedFuture(s),
                 completedFuture(d),
                 completedFuture(anotherN)
         ).get());
 
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.allTupleOfFastFail(
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.allTupleFastFailOf(
                 completedFuture(n),
                 completedFuture(s),
                 completedFuture(d),
@@ -588,25 +588,25 @@ class CffuFactoryTest {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        assertEquals(Tuple2.of(n, s), cffuFactory.allTupleOfFastFail(
+        assertEquals(Tuple2.of(n, s), cffuFactory.allTupleFastFailOf(
                 cffuFactory.completedFuture(n),
                 cffuFactory.completedFuture(s)
         ).get());
 
-        assertEquals(Tuple3.of(n, s, d), cffuFactory.allTupleOfFastFail(
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.allTupleFastFailOf(
                 cffuFactory.completedFuture(n),
                 cffuFactory.completedFuture(s),
                 cffuFactory.completedFuture(d)
         ).get());
 
-        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.allTupleOfFastFail(
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.allTupleFastFailOf(
                 cffuFactory.completedFuture(n),
                 cffuFactory.completedFuture(s),
                 cffuFactory.completedFuture(d),
                 cffuFactory.completedFuture(anotherN)
         ).get());
 
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.allTupleOfFastFail(
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.allTupleFastFailOf(
                 cffuFactory.completedFuture(n),
                 cffuFactory.completedFuture(s),
                 cffuFactory.completedFuture(d),
@@ -616,17 +616,17 @@ class CffuFactoryTest {
     }
 
     @Test
-    void test_allTupleOfFastFail_exceptionally() throws Exception {
+    void test_allTupleFastFail_Of_exceptionally() throws Exception {
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cffuFactory.allTupleOfFastFail(completedFuture(n), failedFuture(rte)).get()
+                cffuFactory.allTupleFastFailOf(completedFuture(n), failedFuture(rte)).get()
         ).getCause());
 
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cffuFactory.allTupleOfFastFail(completedFuture(n), failedFuture(rte), completedFuture(s)).get()
+                cffuFactory.allTupleFastFailOf(completedFuture(n), failedFuture(rte), completedFuture(s)).get()
         ).getCause());
 
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cffuFactory.allTupleOfFastFail(
+                cffuFactory.allTupleFastFailOf(
                         completedFuture(n),
                         completedFuture(d),
                         failedFuture(rte),

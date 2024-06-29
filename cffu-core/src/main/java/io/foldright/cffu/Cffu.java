@@ -233,8 +233,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @param fns      the functions to use to compute the values of the returned Cffu
-     * @param executor executor
      * @param <U>      the functions' return type
      * @return the new Cffu
      */
@@ -314,8 +314,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
-     * @param fns the functions to use to compute the values of the returned Cffu
-     * @param <U> the functions' return type
+     * @param executor the executor to use for asynchronous execution
+     * @param fns      the functions to use to compute the values of the returned Cffu
+     * @param <U>      the functions' return type
      * @return the new Cffu
      */
     @SafeVarargs
@@ -340,7 +341,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Returns a new Cffu that, when the given stage completes normally,
      * is executed using the given Executor, with the given stage's result as the argument to the given actions.
      *
-     * @param actions the actions to perform before completing the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to perform before completing the returned Cffu
      * @return the new Cffu
      */
     @SafeVarargs
@@ -365,7 +367,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Returns a new Cffu that, when the given stage completes normally,
      * is executed using the given Executor, with the given stage's result as the argument to the given actions.
      *
-     * @param actions the actions to perform before completing the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to perform before completing the returned Cffu
      * @return the new Cffu
      */
     @SafeVarargs
@@ -390,7 +393,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Returns a new Cffu that, when the given stage completes normally,
      * executes the given actions using the given Executor.
      *
-     * @param actions the actions to perform before completing the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to perform before completing the returned Cffu
      * @return the new Cffu
      * @see CompletableFuture#thenRunAsync(Runnable, Executor)
      */
@@ -414,7 +418,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Returns a new Cffu that, when the given stage completes normally,
      * executes the given actions using the given Executor.
      *
-     * @param actions the actions to perform before completing the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to perform before completing the returned Cffu
      * @return the new Cffu
      * @see CompletableFuture#thenRunAsync(Runnable, Executor)
      */
@@ -446,6 +451,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyFastFailAsync(
@@ -473,6 +479,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyFastFailAsync(
@@ -501,6 +508,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFastFailAsync(
@@ -530,6 +538,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFastFailAsync(
@@ -558,6 +567,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
@@ -586,6 +596,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
@@ -615,6 +626,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyMostSuccessAsync(
@@ -645,6 +657,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyMostSuccessAsync(
@@ -673,6 +686,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyAsync(
@@ -700,6 +714,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyAsync(
@@ -728,6 +743,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAsync(
@@ -757,6 +773,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAsync(

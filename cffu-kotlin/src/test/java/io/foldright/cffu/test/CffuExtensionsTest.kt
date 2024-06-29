@@ -196,31 +196,31 @@ class CffuExtensionsTest : FunSpec({
             testCffuFactory.completedFuture(42),
             testCffuFactory.completedFuture(43),
             testCffuFactory.completedFuture(44),
-        ).allResultsOfFastFailCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+        ).allResultsFastFailOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
 
         listOf(
             testCffuFactory.completedFuture(42),
             testCffuFactory.completedFuture(43),
             testCffuFactory.completedFuture(44),
-        ).allResultsOfFastFailCffu().await() shouldBe listOf(42, 43, 44)
+        ).allResultsFastFailOfCffu().await() shouldBe listOf(42, 43, 44)
 
         setOf(
             testCffuFactory.completedFuture(42),
             testCffuFactory.completedFuture(43),
             testCffuFactory.completedFuture(44),
-        ).allResultsOfFastFailCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+        ).allResultsFastFailOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
 
         listOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture(43),
             CompletableFuture.completedFuture(44),
-        ).allResultsOfFastFailCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+        ).allResultsFastFailOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
 
         setOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture(43),
             CompletableFuture.completedFuture(44),
-        ).allResultsOfFastFailCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+        ).allResultsFastFailOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
 
         // Array
 
@@ -228,19 +228,19 @@ class CffuExtensionsTest : FunSpec({
             testCffuFactory.completedFuture(42),
             testCffuFactory.completedFuture(43),
             testCffuFactory.completedFuture(44),
-        ).allResultsOfFastFailCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+        ).allResultsFastFailOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
 
         arrayOf(
             testCffuFactory.completedFuture(42),
             testCffuFactory.completedFuture(43),
             testCffuFactory.completedFuture(44),
-        ).allResultsOfFastFailCffu().await() shouldBe listOf(42, 43, 44)
+        ).allResultsFastFailOfCffu().await() shouldBe listOf(42, 43, 44)
 
         arrayOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture(43),
             CompletableFuture.completedFuture(44),
-        ).allResultsOfFastFailCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+        ).allResultsFastFailOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
 
         ////////////////////////////////////////
 
@@ -250,31 +250,31 @@ class CffuExtensionsTest : FunSpec({
             testCffuFactory.completedFuture(42),
             testCffuFactory.completedFuture(43),
             testCffuFactory.completedFuture(44),
-        ).allOfFastFailCffu(testCffuFactory).await().shouldBeNull()
+        ).allFastFailOfCffu(testCffuFactory).await().shouldBeNull()
 
         listOf(
             testCffuFactory.completedFuture(42),
             testCffuFactory.completedFuture(43),
             testCffuFactory.completedFuture(44),
-        ).allOfFastFailCffu().await().shouldBeNull()
+        ).allFastFailOfCffu().await().shouldBeNull()
 
         setOf(
             testCffuFactory.completedFuture(42),
             testCffuFactory.completedFuture(43),
             testCffuFactory.completedFuture(44),
-        ).allOfFastFailCffu(testCffuFactory).await().shouldBeNull()
+        ).allFastFailOfCffu(testCffuFactory).await().shouldBeNull()
 
         listOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture(43),
             CompletableFuture.completedFuture(44),
-        ).allOfFastFailCffu(testCffuFactory).await().shouldBeNull()
+        ).allFastFailOfCffu(testCffuFactory).await().shouldBeNull()
 
         setOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture(43),
             CompletableFuture.completedFuture(44),
-        ).allOfFastFailCffu(testCffuFactory).await().shouldBeNull()
+        ).allFastFailOfCffu(testCffuFactory).await().shouldBeNull()
 
         // Array
 
@@ -282,19 +282,19 @@ class CffuExtensionsTest : FunSpec({
             testCffuFactory.completedFuture(42),
             testCffuFactory.completedFuture(43),
             testCffuFactory.completedFuture(44),
-        ).allOfFastFailCffu(testCffuFactory).await().shouldBeNull()
+        ).allFastFailOfCffu(testCffuFactory).await().shouldBeNull()
 
         arrayOf(
             testCffuFactory.completedFuture(42),
             testCffuFactory.completedFuture(43),
             testCffuFactory.completedFuture(44),
-        ).allOfFastFailCffu().await().shouldBeNull()
+        ).allFastFailOfCffu().await().shouldBeNull()
 
         arrayOf(
             CompletableFuture.completedFuture(42),
             CompletableFuture.completedFuture(43),
             CompletableFuture.completedFuture(44),
-        ).allOfFastFailCffu(testCffuFactory).await().shouldBeNull()
+        ).allFastFailOfCffu(testCffuFactory).await().shouldBeNull()
     }
 
     test("mostSuccessResultsOfCffu") {
@@ -593,15 +593,15 @@ class CffuExtensionsTest : FunSpec({
         assertEmptyArray { emptyArray.allOfCffu() }
         assertCffuFactoryForOptional(array.allOfCffu())
 
-        assertEmptyCollection { emptyList.allResultsOfFastFailCffu() }
-        assertCffuFactoryForOptional(list.allResultsOfFastFailCffu())
-        assertEmptyArray { emptyArray.allResultsOfFastFailCffu() }
-        assertCffuFactoryForOptional(array.allResultsOfFastFailCffu())
+        assertEmptyCollection { emptyList.allResultsFastFailOfCffu() }
+        assertCffuFactoryForOptional(list.allResultsFastFailOfCffu())
+        assertEmptyArray { emptyArray.allResultsFastFailOfCffu() }
+        assertCffuFactoryForOptional(array.allResultsFastFailOfCffu())
 
-        assertEmptyCollection { emptyList.allOfFastFailCffu() }
-        assertCffuFactoryForOptional(list.allOfFastFailCffu())
-        assertEmptyArray { emptyArray.allOfFastFailCffu() }
-        assertCffuFactoryForOptional(array.allOfFastFailCffu())
+        assertEmptyCollection { emptyList.allFastFailOfCffu() }
+        assertCffuFactoryForOptional(list.allFastFailOfCffu())
+        assertEmptyArray { emptyArray.allFastFailOfCffu() }
+        assertCffuFactoryForOptional(array.allFastFailOfCffu())
 
         assertEmptyCollection { emptyList.mostSuccessResultsOfCffu(4, 1, TimeUnit.MILLISECONDS) }
         assertCffuFactoryForOptional(list.mostSuccessResultsOfCffu(4, 1, TimeUnit.MILLISECONDS))

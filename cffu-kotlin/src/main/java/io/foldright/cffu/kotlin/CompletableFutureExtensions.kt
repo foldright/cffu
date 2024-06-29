@@ -31,16 +31,16 @@ import java.util.function.Function
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
  *
- * This method is the same as [allOfFastFailCompletableFuture],
+ * This method is the same as [allFastFailOfCompletableFuture],
  * except the returned CompletableFuture contains the results of input CompletableFutures.
  *
- * This method is the same as [CompletableFutureUtils.allResultsOfFastFail],
+ * This method is the same as [CompletableFutureUtils.allResultsFastFailOf],
  * providing this method is convenient for method chaining.
  *
- * @see allOfFastFailCompletableFuture
+ * @see allFastFailOfCompletableFuture
  */
-fun <T> Collection<CompletionStage<out T>>.allResultsOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allResultsOfFastFail(*toTypedArray())
+fun <T> Collection<CompletionStage<out T>>.allResultsFastFailOfCompletableFuture(): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allResultsFastFailOf(*toTypedArray())
 
 /**
  * Returns a new CompletableFuture with the results in the **same order** of all the given
@@ -50,16 +50,16 @@ fun <T> Collection<CompletionStage<out T>>.allResultsOfFastFailCompletableFuture
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
  *
- * This method is the same as [allOfFastFailCompletableFuture],
+ * This method is the same as [allFastFailOfCompletableFuture],
  * except the returned CompletableFuture contains the results of input CompletableFutures.
  *
- * This method is the same as [CompletableFutureUtils.allResultsOfFastFail],
+ * This method is the same as [CompletableFutureUtils.allResultsFastFailOf],
  * providing this method is convenient for method chaining.
  *
- * @see allOfFastFailCompletableFuture
+ * @see allFastFailOfCompletableFuture
  */
-fun <T> Array<out CompletionStage<out T>>.allResultsOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allResultsOfFastFail(*this)
+fun <T> Array<out CompletionStage<out T>>.allResultsFastFailOfCompletableFuture(): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allResultsFastFailOf(*this)
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of
@@ -176,15 +176,15 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfCompletableFuture(): Compl
  *
  * If you need the results of given stages, prefer below methods:
  *
- *  - [allResultsOfFastFailCompletableFuture]
+ *  - [allResultsFastFailOfCompletableFuture]
  *
- * This method is the same as [CompletableFutureUtils.allOfFastFail],
+ * This method is the same as [CompletableFutureUtils.allFastFailOf],
  * providing this method is convenient for method chaining.
  *
- * @see allResultsOfFastFailCompletableFuture
+ * @see allResultsFastFailOfCompletableFuture
  */
-fun Collection<CompletionStage<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
-    CompletableFutureUtils.allOfFastFail(*toTypedArray())
+fun Collection<CompletionStage<*>>.allFastFailOfCompletableFuture(): CompletableFuture<Void> =
+    CompletableFutureUtils.allFastFailOf(*toTypedArray())
 
 /**
  * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
@@ -197,15 +197,15 @@ fun Collection<CompletionStage<*>>.allOfFastFailCompletableFuture(): Completable
  *
  * If you need the results of given stages, prefer below methods:
  *
- *  - [allResultsOfFastFailCompletableFuture]
+ *  - [allResultsFastFailOfCompletableFuture]
  *
- * This method is the same as [CompletableFutureUtils.allOfFastFail],
+ * This method is the same as [CompletableFutureUtils.allFastFailOf],
  * providing this method is convenient for method chaining.
  *
- * @see allResultsOfFastFailCompletableFuture
+ * @see allResultsFastFailOfCompletableFuture
  */
-fun Array<out CompletionStage<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
-    CompletableFutureUtils.allOfFastFail(*this)
+fun Array<out CompletionStage<*>>.allFastFailOfCompletableFuture(): CompletableFuture<Void> =
+    CompletableFutureUtils.allFastFailOf(*this)
 
 /**
  * Returns a new CompletableFuture that is completed when all the given stages complete.

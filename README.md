@@ -43,7 +43,7 @@
   - [2. `cffu`功能介绍](#2-cffu%E5%8A%9F%E8%83%BD%E4%BB%8B%E7%BB%8D)
     - [2.1 返回多个运行`CF`的结果](#21-%E8%BF%94%E5%9B%9E%E5%A4%9A%E4%B8%AA%E8%BF%90%E8%A1%8Ccf%E7%9A%84%E7%BB%93%E6%9E%9C)
     - [2.2 支持设置缺省的业务线程池并封装可携带](#22-%E6%94%AF%E6%8C%81%E8%AE%BE%E7%BD%AE%E7%BC%BA%E7%9C%81%E7%9A%84%E4%B8%9A%E5%8A%A1%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%B9%B6%E5%B0%81%E8%A3%85%E5%8F%AF%E6%90%BA%E5%B8%A6)
-    - [2.3 高效灵活的并发执行策略（`allResultsOfFastFail`/`anySuccessOf`/`mostSuccessResultsOf`）](#23-%E9%AB%98%E6%95%88%E7%81%B5%E6%B4%BB%E7%9A%84%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E7%AD%96%E7%95%A5allresultsoffastfailanysuccessofmostsuccessresultsof)
+    - [2.3 高效灵活的并发执行策略（`allResultsFastFailOf`/`anySuccessOf`/`mostSuccessResultsOf`）](#23-%E9%AB%98%E6%95%88%E7%81%B5%E6%B4%BB%E7%9A%84%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E7%AD%96%E7%95%A5allResultsFastFailOfanysuccessofmostsuccessresultsof)
     - [2.4 支持超时的`join`的方法](#24-%E6%94%AF%E6%8C%81%E8%B6%85%E6%97%B6%E7%9A%84join%E7%9A%84%E6%96%B9%E6%B3%95)
     - [2.5 `Backport`支持`Java 8`](#25-backport%E6%94%AF%E6%8C%81java-8)
     - [2.6 返回具体类型的`anyOf`方法](#26-%E8%BF%94%E5%9B%9E%E5%85%B7%E4%BD%93%E7%B1%BB%E5%9E%8B%E7%9A%84anyof%E6%96%B9%E6%B3%95)
@@ -64,10 +64,10 @@
 
 - ☘️ **补全业务使用中缺失的功能**
   - 更方便的功能，如
-    - `allResultsOfFastFail`/`allResultsOf`方法：返回多个`CF`的结果，而不是无返回结果`Void`（`CompletableFuture#allOf()`）
-    - `allTupleOfFastFail`/`allTupleOf`方法：返回多个`CF`不同类型的结果，而不是同一类型（`allResultsOf`）
+    - `allResultsFastFailOf`/`allResultsOf`方法：返回多个`CF`的结果，而不是无返回结果`Void`（`CompletableFuture#allOf()`）
+    - `allTupleFastFailOf`/`allTupleOf`方法：返回多个`CF`不同类型的结果，而不是同一类型（`allResultsOf`）
   - 更高效灵活的并发执行策略，如
-    - `allResultsOfFastFail`/`allOfFastFail`方法：有`CF`失败时快速返回，而不再等待所有`CF`运行完成（`allOf`）
+    - `allResultsFastFailOf`/`allFastFailOf`方法：有`CF`失败时快速返回，而不再等待所有`CF`运行完成（`allOf`）
     - `anySuccessOf`方法：返回首个成功的`CF`结果，而不是首个完成（但可能失败）的`CF`（`anyOf`）
     - `mostSuccessResultsOf`方法：返回指定时间内成功`CF`的结果，忽略失败或还没有运行完成的`CF`（使用缺省值）
   - 更安全的使用方式，如
@@ -278,7 +278,7 @@ fun main() {
 - 需要在`allOf`方法之后再通过入参`CF`的读方法（如`join`/`get）`来获取结果
 - 或是在传入的`Action`设置外部的变量，要注意多线程写的线程安全问题 ⚠️
 
-`cffu`的`allResultsOfFastFail`/`allResultsOf`方法提供了返回多个`CF`结果的功能，方便直接也规避了多线程写的线程安全问题。
+`cffu`的`allResultsFastFailOf`/`allResultsOf`方法提供了返回多个`CF`结果的功能，方便直接也规避了多线程写的线程安全问题。
 
 示例代码如下：
 
@@ -320,7 +320,7 @@ public class AllResultsOfDemo {
 
 > \# 完整可运行的Demo代码参见[`AllResultsOfDemo.java`](cffu-core/src/test/java/io/foldright/demo/AllResultsOfDemo.java)。
 
-上面多个相同结果类型的`CF`，`cffu`还提供了返回多个不同类型`CF`结果的方法，`allTupleOfFastFail`/`allTupleOf`方法。
+上面多个相同结果类型的`CF`，`cffu`还提供了返回多个不同类型`CF`结果的方法，`allTupleFastFailOf`/`allTupleOf`方法。
 
 示例代码如下：
 
@@ -416,12 +416,12 @@ public class DefaultExecutorSettingForCffu {
 
 > \# 完整可运行的Demo代码参见[`DefaultExecutorSettingForCffu.java`](cffu-core/src/test/java/io/foldright/demo/DefaultExecutorSettingForCffu.java)。
 
-### 2.3 高效灵活的并发执行策略（`allResultsOfFastFail`/`anySuccessOf`/`mostSuccessResultsOf`）
+### 2.3 高效灵活的并发执行策略（`allResultsFastFailOf`/`anySuccessOf`/`mostSuccessResultsOf`）
 
 - `CompletableFuture`的`allOf`方法会等待所有输入`CF`运行完成；即使有`CF`失败了也要等待后续`CF`运行完成，再返回一个失败的`CF`。
   - 对于业务逻辑来说，这样失败且继续等待策略，减慢了业务响应性；会希望如果有输入`CF`失败了，则快速失败不再做于事无补的等待
-  - `cffu`提供了相应的`allResultsOfFastFail`方法
-  - `allOf`/`allResultsOfFastFail`两者都是，只有当所有的输入`CF`都成功时，才返回成功结果
+  - `cffu`提供了相应的`allResultsFastFailOf`方法
+  - `allOf`/`allResultsFastFailOf`两者都是，只有当所有的输入`CF`都成功时，才返回成功结果
 - `CompletableFuture`的`anyOf`方法返回首个完成的`CF`（不会等待后续没有完成的`CF`，赛马模式）；即使首个完成的`CF`是失败的，也会返回这个失败的`CF`结果。
   - 对于业务逻辑来说，会希望赛马模式返回首个成功的`CF`结果，而不是首个完成但失败的`CF`
   - `cffu`提供了相应的`anySuccessOf`方法
@@ -434,7 +434,7 @@ public class DefaultExecutorSettingForCffu {
 >
 > `JavaScript Promise`提供了4个并发执行方法：
 >
-> - [`Promise.all()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all)：等待所有`Promise`运行成功，只要有一个失败就立即返回失败（对应`cffu`的`allOfFastFail`方法）
+> - [`Promise.all()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all)：等待所有`Promise`运行成功，只要有一个失败就立即返回失败（对应`cffu`的`allFastFailOf`方法）
 > - [`Promise.allSettled()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled)：等待所有`Promise`运行完成，不管成功失败（对应`cffu`的`allOf`方法）
 > - [`Promise.any()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/any)：赛马模式，立即返回首个成功的`Promise`（对应`cffu`的`anySuccessOf`方法）
 > - [`Promise.race()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race)：赛马模式，立即返回首个完成的`Promise`（对应`cffu`的`anyOf`方法）
@@ -452,7 +452,7 @@ public class ConcurrencyStrategyDemo {
 
   public static void main(String[] args) throws Exception {
     ////////////////////////////////////////////////////////////////////////
-    // CffuFactory#allResultsOfFastFail
+    // CffuFactory#allResultsFastFailOf
     // CffuFactory#anySuccessOf
     ////////////////////////////////////////////////////////////////////////
     final Cffu<Integer> successAfterLongTime = cffuFactory.supplyAsync(() -> {
@@ -462,9 +462,9 @@ public class ConcurrencyStrategyDemo {
     final Cffu<Integer> failed = cffuFactory.failedFuture(new RuntimeException("Bang!"));
 
     // Result type is Void!
-    Cffu<Void> cffuAll = cffuFactory.allOfFastFail(successAfterLongTime, failed);
+    Cffu<Void> cffuAll = cffuFactory.allFastFailOf(successAfterLongTime, failed);
 
-    Cffu<List<Integer>> fastFailed = cffuFactory.allResultsOfFastFail(successAfterLongTime, failed);
+    Cffu<List<Integer>> fastFailed = cffuFactory.allResultsFastFailOf(successAfterLongTime, failed);
     // fast failed without waiting successAfterLongTime
     System.out.println(fastFailed.exceptionNow());
 
@@ -472,7 +472,7 @@ public class ConcurrencyStrategyDemo {
     System.out.println(anySuccessOf.get());
 
     ////////////////////////////////////////////////////////////////////////
-    // or CompletableFutureUtils#allOfFastFail / allResultsOfFastFail
+    // or CompletableFutureUtils#allFastFailOf / allResultsFastFailOf
     //    CompletableFutureUtils#anySuccessOf
     ////////////////////////////////////////////////////////////////////////
     final CompletableFuture<Integer> successAfterLongTimeCf = CompletableFuture.supplyAsync(() -> {
@@ -482,9 +482,9 @@ public class ConcurrencyStrategyDemo {
     final CompletableFuture<Integer> failedCf = CompletableFutureUtils.failedFuture(new RuntimeException("Bang!"));
 
     // Result type is Void!
-    CompletableFuture<Void> cfAll = CompletableFutureUtils.allOfFastFail(successAfterLongTimeCf, failedCf);
+    CompletableFuture<Void> cfAll = CompletableFutureUtils.allFastFailOf(successAfterLongTimeCf, failedCf);
 
-    CompletableFuture<List<Integer>> fastFailedCf = CompletableFutureUtils.allResultsOfFastFail(successAfterLongTimeCf, failedCf);
+    CompletableFuture<List<Integer>> fastFailedCf = CompletableFutureUtils.allResultsFastFailOf(successAfterLongTimeCf, failedCf);
     // fast failed without waiting successAfterLongTime
     System.out.println(CompletableFutureUtils.exceptionNow(fastFailedCf));
 
