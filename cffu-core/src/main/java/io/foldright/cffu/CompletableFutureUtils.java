@@ -1,6 +1,7 @@
 package io.foldright.cffu;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
+import io.foldright.cffu.logger.ConfigReportException;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
 import io.foldright.cffu.tuple.Tuple4;
@@ -1565,10 +1566,31 @@ public final class CompletableFutureUtils {
     }
 
     // endregion
+
+    ////////////////////////////////////////////////////////////
+    // region## unwrapCfException(static methods)
+    ////////////////////////////////////////////////////////////
+    /**
+     * A convenient util method for converting input package {@link Throwable}  to root {@link Throwable}.
+     * @param throwable
+     */
+    public static Throwable unwrapCfException(Throwable throwable) {
+        if (throwable instanceof CompletionException || throwable instanceof ExecutionException) {
+            if (throwable.getCause() != null) {
+                return throwable.getCause();
+            }
+        }
+        return throwable;
+    }
+
     // endregion
+    // endregion
+
     ////////////////////////////////////////////////////////////////////////////////
     // region# CF Instance Methods(including new enhanced + backport methods)
     ////////////////////////////////////////////////////////////////////////////////
+
+
 
     ////////////////////////////////////////////////////////////
     // region## Then-Multi-Actions(thenM*) Methods
@@ -2888,7 +2910,7 @@ public final class CompletableFutureUtils {
             // use `cf.handle` method(instead of `whenComplete`) and return null,
             // in order to prevent below `exceptionally` reporting the handled argument exception in this action
             return null;
-        }).exceptionally(ex -> reportException("Exception occurred in the input cf whenComplete of hop executor:", ex));
+        }).exceptionally(ex -> ConfigReportException.reportException("Exception occurred in the input cf whenComplete of hop executor:", ex));
 
         return (C) ret;
     }
@@ -2899,23 +2921,12 @@ public final class CompletableFutureUtils {
             else cf.completeExceptionally(ex);
         } catch (Throwable t) {
             if (ex != null) t.addSuppressed(ex);
-            reportException("Exception occurred in completeCf:", t);
+            ConfigReportException.reportException("Exception occurred in completeCf:", t);
             throw t; // rethrow exception, report to caller
         }
     }
 
-    @Nullable
-    @SuppressWarnings("SameReturnValue")
-    private static <T> T reportException(String msg, Throwable ex) {
-        StringWriter sw = new StringWriter(4096);
-        PrintWriter writer = new PrintWriter(sw);
 
-        writer.println(msg);
-        ex.printStackTrace(writer);
-
-        System.err.println(sw);
-        return null;
-    }
 
     // endregion
     ////////////////////////////////////////////////////////////
@@ -3005,7 +3016,7 @@ public final class CompletableFutureUtils {
         requireNonNull(cf, "cf is null");
         requireNonNull(action, "action is null");
 
-        cf.whenComplete(action).exceptionally(ex -> reportException("Exception occurred in the action of peek:", ex));
+        cf.whenComplete(action).exceptionally(ex -> ConfigReportException.reportException("Exception occurred in the action of peek:", ex));
         return cf;
     }
 
@@ -3056,7 +3067,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
 
         cf.whenCompleteAsync(action, executor).exceptionally(ex ->
-                reportException("Exception occurred in the action of peekAsync:", ex));
+                ConfigReportException.reportException("Exception occurred in the action of peekAsync:", ex));
         return cf;
     }
 
