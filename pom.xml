@@ -413,7 +413,7 @@
 					<!-- https://github.com/moditect/moditect -->
 					<groupId>org.moditect</groupId>
 					<artifactId>moditect-maven-plugin</artifactId>
-					<version>1.2.1.Final</version>
+					<version>1.2.2.Final</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -464,7 +464,7 @@
 				<plugin>
 					<groupId>io.github.git-commit-id</groupId>
 					<artifactId>git-commit-id-maven-plugin</artifactId>
-					<version>9.0.0</version>
+					<version>9.0.1</version>
 				</plugin>
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
