@@ -3447,7 +3447,7 @@ public final class CompletableFutureUtils {
     // endregion
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# Conversion Methods(static methods)
+    // region# Util Methods(static methods)
     //
     //    - toCompletableFutureArray:     CompletionStage[](including Cffu) -> CF[]
     //    - completableFutureListToArray: List<CF> -> CF[]
@@ -3485,6 +3485,19 @@ public final class CompletableFutureUtils {
         @SuppressWarnings("unchecked")
         final CompletableFuture<T>[] a = new CompletableFuture[cfList.size()];
         return cfList.toArray(a);
+    }
+
+    /**
+     * A convenient util method for unwrapping CF exception({@link CompletionException}/{@link ExecutionException})
+     * to the biz exception.
+     */
+    public static Throwable unwrapCfException(Throwable throwable) {
+        if (throwable instanceof CompletionException || throwable instanceof ExecutionException) {
+            if (throwable.getCause() != null) {
+                return throwable.getCause();
+            }
+        }
+        return throwable;
     }
 
     // endregion
