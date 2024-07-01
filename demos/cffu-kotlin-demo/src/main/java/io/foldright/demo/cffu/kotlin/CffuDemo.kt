@@ -2,7 +2,7 @@ package io.foldright.demo.cffu.kotlin
 
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
-import io.foldright.cffu.kotlin.anyOfSuccessCffu
+import io.foldright.cffu.kotlin.anySuccessOfCffu
 import java.lang.Thread.sleep
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -41,8 +41,8 @@ fun main() {
         .orTimeout(1500, TimeUnit.MILLISECONDS)
     println("combined result: ${combined.get()}")
 
-    val anyOfSuccess: Cffu<Int> = listOf(longTaskC, longFailedTask).anyOfSuccessCffu()
-    println("anyOfSuccess result: ${anyOfSuccess.get()}")
+    val anySuccessOf: Cffu<Int> = listOf(longTaskC, longFailedTask).anySuccessOfCffu()
+    println("anySuccessOf result: ${anySuccessOf.get()}")
 
     ////////////////////////////////////////
     // cleanup

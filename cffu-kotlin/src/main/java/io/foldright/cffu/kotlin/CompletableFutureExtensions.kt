@@ -20,7 +20,7 @@ import java.util.function.Function
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-// region## allOf* Methods for Collection/Array(including mostResultsOfSuccess)
+// region## allOf* Methods for Collection/Array(including mostSuccessResultsOf)
 ////////////////////////////////////////////////////////////
 
 /**
@@ -31,16 +31,16 @@ import java.util.function.Function
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
  *
- * This method is the same as [allOfFastFailCompletableFuture],
+ * This method is the same as [allFastFailOfCompletableFuture],
  * except the returned CompletableFuture contains the results of input CompletableFutures.
  *
- * This method is the same as [CompletableFutureUtils.allResultsOfFastFail],
+ * This method is the same as [CompletableFutureUtils.allResultsFastFailOf],
  * providing this method is convenient for method chaining.
  *
- * @see allOfFastFailCompletableFuture
+ * @see allFastFailOfCompletableFuture
  */
-fun <T> Collection<CompletionStage<out T>>.allResultsOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allResultsOfFastFail(*toTypedArray())
+fun <T> Collection<CompletionStage<out T>>.allResultsFastFailOfCompletableFuture(): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allResultsFastFailOf(*toTypedArray())
 
 /**
  * Returns a new CompletableFuture with the results in the **same order** of all the given
@@ -50,16 +50,16 @@ fun <T> Collection<CompletionStage<out T>>.allResultsOfFastFailCompletableFuture
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
  *
- * This method is the same as [allOfFastFailCompletableFuture],
+ * This method is the same as [allFastFailOfCompletableFuture],
  * except the returned CompletableFuture contains the results of input CompletableFutures.
  *
- * This method is the same as [CompletableFutureUtils.allResultsOfFastFail],
+ * This method is the same as [CompletableFutureUtils.allResultsFastFailOf],
  * providing this method is convenient for method chaining.
  *
- * @see allOfFastFailCompletableFuture
+ * @see allFastFailOfCompletableFuture
  */
-fun <T> Array<out CompletionStage<out T>>.allResultsOfFastFailCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allResultsOfFastFail(*this)
+fun <T> Array<out CompletionStage<out T>>.allResultsFastFailOfCompletableFuture(): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allResultsFastFailOf(*this)
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of
@@ -72,10 +72,10 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfFastFailCompletableFuture(
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see getSuccessNow
  */
-fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
+fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
     valueIfNotSuccess: T, timeout: Long, unit: TimeUnit
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mostResultsOfSuccess(valueIfNotSuccess, timeout, unit, *toTypedArray())
+    CompletableFutureUtils.mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *toTypedArray())
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of
@@ -88,10 +88,10 @@ fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see getSuccessNow
  */
-fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
+fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
     valueIfNotSuccess: T, timeout: Long, unit: TimeUnit
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mostResultsOfSuccess(valueIfNotSuccess, timeout, unit, *this)
+    CompletableFutureUtils.mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *this)
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of
@@ -105,10 +105,10 @@ fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see getSuccessNow
  */
-fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
+fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
     valueIfNotSuccess: T, executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mostResultsOfSuccess(
+    CompletableFutureUtils.mostSuccessResultsOf(
         valueIfNotSuccess, executorWhenTimeout, timeout, unit, *toTypedArray()
     )
 
@@ -124,10 +124,10 @@ fun <T> Collection<CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see getSuccessNow
  */
-fun <T> Array<out CompletionStage<out T>>.mostResultsOfSuccessCompletableFuture(
+fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
     valueIfNotSuccess: T, executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mostResultsOfSuccess(valueIfNotSuccess, executorWhenTimeout, timeout, unit, *this)
+    CompletableFutureUtils.mostSuccessResultsOf(valueIfNotSuccess, executorWhenTimeout, timeout, unit, *this)
 
 /**
  * Returns a new CompletableFuture with the results in the **same order** of all the given
@@ -176,15 +176,15 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfCompletableFuture(): Compl
  *
  * If you need the results of given stages, prefer below methods:
  *
- *  - [allResultsOfFastFailCompletableFuture]
+ *  - [allResultsFastFailOfCompletableFuture]
  *
- * This method is the same as [CompletableFutureUtils.allOfFastFail],
+ * This method is the same as [CompletableFutureUtils.allFastFailOf],
  * providing this method is convenient for method chaining.
  *
- * @see allResultsOfFastFailCompletableFuture
+ * @see allResultsFastFailOfCompletableFuture
  */
-fun Collection<CompletionStage<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
-    CompletableFutureUtils.allOfFastFail(*toTypedArray())
+fun Collection<CompletionStage<*>>.allFastFailOfCompletableFuture(): CompletableFuture<Void> =
+    CompletableFutureUtils.allFastFailOf(*toTypedArray())
 
 /**
  * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
@@ -197,15 +197,15 @@ fun Collection<CompletionStage<*>>.allOfFastFailCompletableFuture(): Completable
  *
  * If you need the results of given stages, prefer below methods:
  *
- *  - [allResultsOfFastFailCompletableFuture]
+ *  - [allResultsFastFailOfCompletableFuture]
  *
- * This method is the same as [CompletableFutureUtils.allOfFastFail],
+ * This method is the same as [CompletableFutureUtils.allFastFailOf],
  * providing this method is convenient for method chaining.
  *
- * @see allResultsOfFastFailCompletableFuture
+ * @see allResultsFastFailOfCompletableFuture
  */
-fun Array<out CompletionStage<*>>.allOfFastFailCompletableFuture(): CompletableFuture<Void> =
-    CompletableFutureUtils.allOfFastFail(*this)
+fun Array<out CompletionStage<*>>.allFastFailOfCompletableFuture(): CompletableFuture<Void> =
+    CompletableFutureUtils.allFastFailOf(*this)
 
 /**
  * Returns a new CompletableFuture that is completed when all the given stages complete.
@@ -258,13 +258,13 @@ fun Array<out CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<Vo
  * returns a new CompletableFuture that is already completed exceptionally with a CompletionException
  * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
- * This method is the same as [CompletableFutureUtils.anyOfSuccess],
+ * This method is the same as [CompletableFutureUtils.anySuccessOf],
  * providing this method is convenient for method chaining.
  *
  * @see anyOfCompletableFuture
  */
-fun <T> Collection<CompletionStage<out T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
-    CompletableFutureUtils.anyOfSuccess(*toTypedArray())
+fun <T> Collection<CompletionStage<out T>>.anySuccessOfCompletableFuture(): CompletableFuture<T> =
+    CompletableFutureUtils.anySuccessOf(*toTypedArray())
 
 /**
  * Returns a new CompletableFuture that is successful when any of the given CompletableFutures success,
@@ -274,13 +274,13 @@ fun <T> Collection<CompletionStage<out T>>.anyOfSuccessCompletableFuture(): Comp
  * returns a new CompletableFuture that is already completed exceptionally with a CompletionException
  * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
- * This method is the same as [CompletableFutureUtils.anyOfSuccess],
+ * This method is the same as [CompletableFutureUtils.anySuccessOf],
  * providing this method is convenient for method chaining.
  *
  * @see anyOfCompletableFuture
  */
-fun <T> Array<out CompletionStage<out T>>.anyOfSuccessCompletableFuture(): CompletableFuture<T> =
-    CompletableFutureUtils.anyOfSuccess(*this)
+fun <T> Array<out CompletionStage<out T>>.anySuccessOfCompletableFuture(): CompletableFuture<T> =
+    CompletableFutureUtils.anySuccessOf(*this)
 
 /**
  * Returns a new CompletableFuture that is completed
@@ -291,7 +291,7 @@ fun <T> Array<out CompletionStage<out T>>.anyOfSuccessCompletableFuture(): Compl
  *
  * This method is the same as [CompletableFutureUtils.anyOf], providing this method is convenient for method chaining.
  *
- * @see anyOfSuccessCompletableFuture
+ * @see anySuccessOfCompletableFuture
  */
 fun <T> Collection<CompletionStage<out T>>.anyOfCompletableFuture(): CompletableFuture<T> =
     CompletableFutureUtils.anyOf(*toTypedArray())
@@ -305,7 +305,7 @@ fun <T> Collection<CompletionStage<out T>>.anyOfCompletableFuture(): Completable
  *
  * This method is the same as [CompletableFutureUtils.anyOf], providing this method is convenient for method chaining.
  *
- * @see anyOfSuccessCompletableFuture
+ * @see anySuccessOfCompletableFuture
  */
 fun <T> Array<out CompletionStage<out T>>.anyOfCompletableFuture(): CompletableFuture<T> =
     CompletableFutureUtils.anyOf(*this)
@@ -333,13 +333,11 @@ fun <T> Array<out CompletionStage<out T>>.anyOfCompletableFuture(): CompletableF
  * also does so *without* waiting other incomplete given CompletionStage,
  * with a CompletionException holding this exception as its cause.
  *
- * This method is the same as [CompletableFuture.thenCombine] except for the fast-fail behavior.
- *
  * @param fn the function to use to compute the value of the returned CompletableFuture
  * @return the new CompletableFuture
  * @see CompletionStage.thenCombine
  */
-fun <T, U, V> CompletionStage<out T>.thenCombineFastFail(
+fun <T, U, V> CompletableFuture<out T>.thenCombineFastFail(
     other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
 ): CompletableFuture<V> =
     CompletableFutureUtils.thenCombineFastFail(this, other, fn)
@@ -358,7 +356,7 @@ fun <T, U, V> CompletionStage<out T>.thenCombineFastFail(
  * @return the new CompletableFuture
  * @see CompletionStage.thenCombineAsync
  */
-fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
+fun <T, U, V> CompletableFuture<out T>.thenCombineFastFailAsync(
     other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
 ): CompletableFuture<V> =
     CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn)
@@ -377,7 +375,7 @@ fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.thenCombineAsync
  */
-fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
+fun <T, U, V> CompletableFuture<out T>.thenCombineFastFailAsync(
     other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>, executor: Executor
 ): CompletableFuture<V> =
     CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn, executor)
@@ -395,7 +393,7 @@ fun <T, U, V> CompletionStage<out T>.thenCombineFastFailAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.thenAcceptBoth
  */
-fun <T, U> CompletionStage<out T>.thenAcceptBothFastFail(
+fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFail(
     other: CompletionStage<out U>, action: BiConsumer<in T, in U>
 ): CompletableFuture<Void> =
     CompletableFutureUtils.thenAcceptBothFastFail(this, other, action)
@@ -414,7 +412,7 @@ fun <T, U> CompletionStage<out T>.thenAcceptBothFastFail(
  * @return the new CompletableFuture
  * @see CompletionStage.thenAcceptBothAsync
  */
-fun <T, U> CompletionStage<out T>.thenAcceptBothFastFailAsync(
+fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFailAsync(
     other: CompletionStage<out U>, action: BiConsumer<in T, in U>
 ): CompletableFuture<Void> =
     CompletableFutureUtils.thenAcceptBothFastFailAsync(this, other, action)
@@ -433,7 +431,7 @@ fun <T, U> CompletionStage<out T>.thenAcceptBothFastFailAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.thenAcceptBothAsync
  */
-fun <T, U> CompletionStage<out T>.thenAcceptBothFastFailAsync(
+fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFailAsync(
     other: CompletionStage<out U>, action: BiConsumer<in T, in U>, executor: Executor
 ): CompletableFuture<Void> =
     CompletableFutureUtils.thenAcceptBothFastFailAsync(this, other, action, executor)
@@ -450,7 +448,7 @@ fun <T, U> CompletionStage<out T>.thenAcceptBothFastFailAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.runAfterBoth
  */
-fun CompletionStage<*>.runAfterBothFastFail(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
+fun CompletableFuture<*>.runAfterBothFastFail(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
     CompletableFutureUtils.runAfterBothFastFail(this, other, action)
 
 /**
@@ -466,7 +464,10 @@ fun CompletionStage<*>.runAfterBothFastFail(other: CompletionStage<*>, action: R
  * @return the new CompletableFuture
  * @see CompletionStage.runAfterBothAsync
  */
-fun CompletionStage<*>.runAfterBothFastFailAsync(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
+fun CompletableFuture<*>.runAfterBothFastFailAsync(
+    other: CompletionStage<*>,
+    action: Runnable
+): CompletableFuture<Void> =
     CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action)
 
 /**
@@ -482,7 +483,7 @@ fun CompletionStage<*>.runAfterBothFastFailAsync(other: CompletionStage<*>, acti
  * @return the new CompletableFuture
  * @see CompletionStage.runAfterBothAsync
  */
-fun CompletionStage<*>.runAfterBothFastFailAsync(
+fun CompletableFuture<*>.runAfterBothFastFailAsync(
     other: CompletionStage<*>, action: Runnable, executor: Executor
 ): CompletableFuture<Void> =
     CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action, executor)
@@ -508,7 +509,7 @@ fun CompletionStage<*>.runAfterBothFastFailAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.applyToEither
  */
-fun <T, U> CompletionStage<out T>.applyToEitherSuccess(
+fun <T, U> CompletableFuture<out T>.applyToEitherSuccess(
     other: CompletionStage<out T>, fn: Function<in T, out U>
 ): CompletableFuture<U> =
     CompletableFutureUtils.applyToEitherSuccess(this, other, fn)
@@ -526,7 +527,7 @@ fun <T, U> CompletionStage<out T>.applyToEitherSuccess(
  * @return the new CompletableFuture
  * @see CompletionStage.applyToEitherAsync
  */
-fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
+fun <T, U> CompletableFuture<out T>.applyToEitherSuccessAsync(
     other: CompletionStage<out T>, fn: Function<in T, out U>
 ): CompletableFuture<U> =
     CompletableFutureUtils.applyToEitherSuccessAsync(this, other, fn)
@@ -544,7 +545,7 @@ fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.applyToEitherAsync
  */
-fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
+fun <T, U> CompletableFuture<out T>.applyToEitherSuccessAsync(
     other: CompletionStage<out T>, fn: Function<in T, out U>, executor: Executor
 ): CompletableFuture<U> =
     CompletableFutureUtils.applyToEitherSuccessAsync(this, other, fn, executor)
@@ -560,7 +561,7 @@ fun <T, U> CompletionStage<out T>.applyToEitherSuccessAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.acceptEither
  */
-fun <T> CompletionStage<out T>.acceptEitherSuccess(
+fun <T> CompletableFuture<out T>.acceptEitherSuccess(
     other: CompletionStage<out T>, action: Consumer<in T>
 ): CompletableFuture<Void> =
     CompletableFutureUtils.acceptEitherSuccess(this, other, action)
@@ -577,7 +578,7 @@ fun <T> CompletionStage<out T>.acceptEitherSuccess(
  * @return the new CompletableFuture
  * @see CompletionStage.acceptEitherAsync
  */
-fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
+fun <T> CompletableFuture<out T>.acceptEitherSuccessAsync(
     other: CompletionStage<out T>, action: Consumer<in T>
 ): CompletableFuture<Void> =
     CompletableFutureUtils.acceptEitherSuccessAsync(this, other, action)
@@ -594,7 +595,7 @@ fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.acceptEitherAsync
  */
-fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
+fun <T> CompletableFuture<out T>.acceptEitherSuccessAsync(
     other: CompletionStage<out T>, action: Consumer<in T>, executor: Executor
 ): CompletableFuture<Void> =
     CompletableFutureUtils.acceptEitherSuccessAsync(this, other, action, executor)
@@ -612,7 +613,7 @@ fun <T> CompletionStage<out T>.acceptEitherSuccessAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.runAfterEither
  */
-fun CompletionStage<*>.runAfterEitherSuccess(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
+fun CompletableFuture<*>.runAfterEitherSuccess(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
     CompletableFutureUtils.runAfterEitherSuccess(this, other, action)
 
 /**
@@ -629,7 +630,7 @@ fun CompletionStage<*>.runAfterEitherSuccess(other: CompletionStage<*>, action: 
  * @return the new CompletableFuture
  * @see CompletionStage.runAfterEitherAsync
  */
-fun CompletionStage<*>.runAfterEitherSuccessAsync(
+fun CompletableFuture<*>.runAfterEitherSuccessAsync(
     other: CompletionStage<*>, action: Runnable
 ): CompletableFuture<Void> =
     CompletableFutureUtils.runAfterEitherSuccessAsync(this, other, action)
@@ -648,7 +649,7 @@ fun CompletionStage<*>.runAfterEitherSuccessAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.runAfterEitherAsync
  */
-fun CompletionStage<*>.runAfterEitherSuccessAsync(
+fun CompletableFuture<*>.runAfterEitherSuccessAsync(
     other: CompletionStage<*>, action: Runnable, executor: Executor
 ): CompletableFuture<Void> =
     CompletableFutureUtils.runAfterEitherSuccessAsync(this, other, action, executor)

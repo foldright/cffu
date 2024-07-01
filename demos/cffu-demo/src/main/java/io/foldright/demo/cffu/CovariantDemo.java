@@ -34,26 +34,26 @@ public class CovariantDemo {
     }
 
     public static void useAnyOf() {
-        CompletableFuture<Number> cf1 = CompletableFutureUtils.anyOfSuccess(
+        CompletableFuture<Number> cf1 = CompletableFutureUtils.anySuccessOf(
                 CompletableFuture.completedFuture(42),
                 CompletableFuture.completedFuture(42.0)
         ).thenApply(Number::byteValue);
         cf1.thenAccept(System.out::println);
 
-        CompletableFuture<? extends Number> cf2 = CompletableFutureUtils.anyOfSuccess(
+        CompletableFuture<? extends Number> cf2 = CompletableFutureUtils.anySuccessOf(
                 CompletableFuture.completedFuture(42),
                 CompletableFuture.completedFuture(42.0)
         );
         cf2.thenAccept(System.out::println);
 
-        CompletableFutureUtils.anyOfSuccess(
+        CompletableFutureUtils.anySuccessOf(
                         CompletableFuture.completedFuture(42),
                         CompletableFuture.completedFuture(42.0)
                 )
                 .thenApply(Number::byteValue)
                 .thenAccept(System.out::println);
 
-        CompletableFuture<Integer> cf5 = CompletableFutureUtils.anyOfSuccess(
+        CompletableFuture<Integer> cf5 = CompletableFutureUtils.anySuccessOf(
                 CompletableFuture.completedFuture(42),
                 CompletableFuture.completedFuture(42)
         );

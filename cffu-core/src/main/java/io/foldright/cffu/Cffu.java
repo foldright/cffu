@@ -217,18 +217,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenMApplyAsync(CompletionStage, Function[])}
-     * except for the fast-fail behavior.
      *
      * @param fns the functions to use to compute the values of the returned Cffu
      * @param <U> the functions' return type
      * @return the new Cffu
      */
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyFastFailAsync(
-            CompletionStage<? extends T> cf, Function<? super T, ? extends U>... fns) {
-        return thenMApplyFastFailAsync(cf, fac.defaultExecutor(), fns);
+    public final <U> Cffu<List<U>> thenMApplyFastFailAsync(Function<? super T, ? extends U>... fns) {
+        return thenMApplyFastFailAsync(fac.defaultExecutor(), fns);
     }
 
     /**
@@ -236,18 +232,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * is executed using the given Executor, with the values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenMApplyAsync(CompletionStage, Executor, Function[])}
-     * except for the fast-fail behavior.
      *
+     * @param executor the executor to use for asynchronous execution
      * @param fns      the functions to use to compute the values of the returned Cffu
-     * @param executor executor
      * @param <U>      the functions' return type
      * @return the new Cffu
      */
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyFastFailAsync(
-            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U>... fns) {
+    public final <U> Cffu<List<U>> thenMApplyFastFailAsync(Executor executor, Function<? super T, ? extends U>... fns) {
         return reset0(CompletableFutureUtils.thenMApplyFastFailAsync(cf, executor, fns));
     }
 
@@ -271,9 +263,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyMostSuccessAsync(
-            CompletionStage<? extends T> cf, @Nullable U valueIfNotSuccess,
-            long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
-        return thenMApplyMostSuccessAsync(cf, valueIfNotSuccess, fac.defaultExecutor(), timeout, unit, fns);
+            @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
+        return thenMApplyMostSuccessAsync(valueIfNotSuccess, fac.defaultExecutor(), timeout, unit, fns);
     }
 
     /**
@@ -296,8 +287,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyMostSuccessAsync(
-            CompletionStage<? extends T> cf, @Nullable U valueIfNotSuccess,
-            Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
+            @Nullable U valueIfNotSuccess, Executor executor, long timeout, TimeUnit unit,
+            Function<? super T, ? extends U>... fns) {
         return reset0(CompletableFutureUtils.thenMApplyMostSuccessAsync(cf, valueIfNotSuccess, executor, timeout, unit, fns));
     }
 
@@ -313,9 +304,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      */
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyAsync(
-            CompletionStage<? extends T> cf, Function<? super T, ? extends U>... fns) {
-        return thenMApplyAsync(cf, fac.defaultExecutor(), fns);
+    public final <U> Cffu<List<U>> thenMApplyAsync(Function<? super T, ? extends U>... fns) {
+        return thenMApplyAsync(fac.defaultExecutor(), fns);
     }
 
     /**
@@ -324,13 +314,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
-     * @param fns the functions to use to compute the values of the returned Cffu
-     * @param <U> the functions' return type
+     * @param executor the executor to use for asynchronous execution
+     * @param fns      the functions to use to compute the values of the returned Cffu
+     * @param <U>      the functions' return type
      * @return the new Cffu
      */
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyAsync(
-            CompletionStage<? extends T> cf, Executor executor, Function<? super T, ? extends U>... fns) {
+    public final <U> Cffu<List<U>> thenMApplyAsync(Executor executor, Function<? super T, ? extends U>... fns) {
         return reset0(CompletableFutureUtils.thenMApplyAsync(cf, executor, fns));
     }
 
@@ -343,21 +333,20 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      */
     @SafeVarargs
-    public final Cffu<Void> thenMAcceptAsync(
-            CompletionStage<? extends T> cf, Consumer<? super T>... actions) {
-        return thenMAcceptAsync(cf, fac.defaultExecutor(), actions);
+    public final Cffu<Void> thenMAcceptAsync(Consumer<? super T>... actions) {
+        return thenMAcceptAsync(fac.defaultExecutor(), actions);
     }
 
     /**
      * Returns a new Cffu that, when the given stage completes normally,
      * is executed using the given Executor, with the given stage's result as the argument to the given actions.
      *
-     * @param actions the actions to perform before completing the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to perform before completing the returned Cffu
      * @return the new Cffu
      */
     @SafeVarargs
-    public final Cffu<Void> thenMAcceptAsync(
-            CompletionStage<? extends T> cf, Executor executor, Consumer<? super T>... actions) {
+    public final Cffu<Void> thenMAcceptAsync(Executor executor, Consumer<? super T>... actions) {
         return reset0(CompletableFutureUtils.thenMAcceptAsync(cf, executor, actions));
     }
 
@@ -365,32 +354,25 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Returns a new Cffu that, when the given stage completes normally,
      * is executed using {@link #defaultExecutor()},
      * with the given stage's result as the argument to the given actions.
-     * <p>
-     * This method is the same as {@link #thenMAcceptAsync(CompletionStage, Consumer[])}
-     * except for the fast-fail behavior.
      *
      * @param actions the actions to perform before completing the returned Cffu
      * @return the new Cffu
      */
     @SafeVarargs
-    public final Cffu<Void> thenMAcceptFastFailAsync(
-            CompletionStage<? extends T> cf, Consumer<? super T>... actions) {
-        return thenMAcceptFastFailAsync(cf, fac.defaultExecutor(), actions);
+    public final Cffu<Void> thenMAcceptFastFailAsync(Consumer<? super T>... actions) {
+        return thenMAcceptFastFailAsync(fac.defaultExecutor(), actions);
     }
 
     /**
      * Returns a new Cffu that, when the given stage completes normally,
      * is executed using the given Executor, with the given stage's result as the argument to the given actions.
-     * <p>
-     * This method is the same as {@link #thenMAcceptAsync(CompletionStage, Executor, Consumer[])}
-     * except for the fast-fail behavior.
      *
-     * @param actions the actions to perform before completing the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to perform before completing the returned Cffu
      * @return the new Cffu
      */
     @SafeVarargs
-    public final Cffu<Void> thenMAcceptFastFailAsync(
-            CompletionStage<? extends T> cf, Executor executor, Consumer<? super T>... actions) {
+    public final Cffu<Void> thenMAcceptFastFailAsync(Executor executor, Consumer<? super T>... actions) {
         return reset0(CompletableFutureUtils.thenMAcceptFastFailAsync(cf, executor, actions));
     }
 
@@ -398,31 +380,25 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that, when the given stage completes normally,
      * executes using {@link #defaultExecutor()},
-     * <p>
-     * This method is the same as {@link #thenMRunAsync(CompletionStage, Runnable...)}
-     * except for the fast-fail behavior.
      *
      * @param actions the actions to perform before completing the returned Cffu
      * @return the new Cffu
      * @see CompletableFuture#thenRunAsync(Runnable)
      */
-    public Cffu<Void> thenMRunFastFailAsync(CompletionStage<?> cf, Runnable... actions) {
-        return thenMRunFastFailAsync(cf, fac.defaultExecutor(), actions);
+    public Cffu<Void> thenMRunFastFailAsync(Runnable... actions) {
+        return thenMRunFastFailAsync(fac.defaultExecutor(), actions);
     }
 
     /**
      * Returns a new Cffu that, when the given stage completes normally,
      * executes the given actions using the given Executor.
-     * <p>
-     * This method is the same as {@link #thenMRunAsync(CompletionStage, Executor, Runnable...)}
-     * except for the fast-fail behavior.
      *
-     * @param actions the actions to perform before completing the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to perform before completing the returned Cffu
      * @return the new Cffu
      * @see CompletableFuture#thenRunAsync(Runnable, Executor)
      */
-    public Cffu<Void> thenMRunFastFailAsync(
-            CompletionStage<?> cf, Executor executor, Runnable... actions) {
+    public Cffu<Void> thenMRunFastFailAsync(Executor executor, Runnable... actions) {
         return reset0(CompletableFutureUtils.thenMRunFastFailAsync(cf, executor, actions));
     }
 
@@ -434,19 +410,20 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      * @see CompletableFuture#thenRunAsync(Runnable)
      */
-    public Cffu<Void> thenMRunAsync(CompletionStage<?> cf, Runnable... actions) {
-        return thenMRunAsync(cf, fac.defaultExecutor(), actions);
+    public Cffu<Void> thenMRunAsync(Runnable... actions) {
+        return thenMRunAsync(fac.defaultExecutor(), actions);
     }
 
     /**
      * Returns a new Cffu that, when the given stage completes normally,
      * executes the given actions using the given Executor.
      *
-     * @param actions the actions to perform before completing the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to perform before completing the returned Cffu
      * @return the new Cffu
      * @see CompletableFuture#thenRunAsync(Runnable, Executor)
      */
-    public Cffu<Void> thenMRunAsync(CompletionStage<?> cf, Executor executor, Runnable... actions) {
+    public Cffu<Void> thenMRunAsync(Executor executor, Runnable... actions) {
         return reset0(CompletableFutureUtils.thenMRunAsync(cf, executor, actions));
     }
 
@@ -460,9 +437,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the values obtained by calling the given Functions
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenTupleMApplyAsync(Function, Function)}
-     * except for the fast-fail behavior.
      *
      * @return the new Cffu
      */
@@ -476,10 +450,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the values obtained by calling the given Functions
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenTupleMApplyAsync(Executor, Function, Function)}
-     * except for the fast-fail behavior.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyFastFailAsync(
@@ -492,9 +464,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the values obtained by calling the given Functions
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenTupleMApplyAsync(Function, Function, Function)}
-     * except for the fast-fail behavior.
      *
      * @return the new Cffu
      */
@@ -509,10 +478,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the values obtained by calling the given Functions
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenTupleMApplyAsync(Executor, Function, Function, Function)}
-     * except for the fast-fail behavior.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyFastFailAsync(
@@ -526,9 +493,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the values obtained by calling the given Functions
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenTupleMApplyAsync(Function, Function, Function, Function)}
-     * except for the fast-fail behavior.
      *
      * @return the new Cffu
      */
@@ -543,10 +507,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the values obtained by calling the given Functions
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenTupleMApplyAsync(Executor, Function, Function, Function, Function)}
-     * except for the fast-fail behavior.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFastFailAsync(
@@ -560,9 +522,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the values obtained by calling the given Functions
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenTupleMApplyAsync(Function, Function, Function, Function, Function)}
-     * except for the fast-fail behavior.
      *
      * @return the new Cffu
      */
@@ -578,10 +537,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the values obtained by calling the given Functions
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenTupleMApplyAsync(Executor, Function, Function, Function, Function, Function)}
-     * except for the fast-fail behavior.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFastFailAsync(
@@ -596,9 +553,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the values obtained by calling the given Functions
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenTupleMApplyAsync(Function, Function)}
-     * except for the fast-fail behavior.
      *
      * @return the new Cffu
      */
@@ -612,10 +566,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the values obtained by calling the given Functions
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenTupleMApplyAsync(Executor, Function, Function)}
-     * except for the fast-fail behavior.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
@@ -629,9 +581,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the values obtained by calling the given Functions
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenTupleMApplyAsync(Function, Function, Function)}
-     * except for the fast-fail behavior.
      *
      * @return the new Cffu
      */
@@ -646,10 +595,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the values obtained by calling the given Functions
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenTupleMApplyAsync(Executor, Function, Function, Function)}
-     * except for the fast-fail behavior.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
@@ -663,9 +610,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the values obtained by calling the given Functions
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenTupleMApplyAsync(Function, Function, Function, Function)}
-     * except for the fast-fail behavior.
      *
      * @return the new Cffu
      */
@@ -681,10 +625,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the values obtained by calling the given Functions
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenTupleMApplyAsync(Executor, Function, Function, Function, Function)}
-     * except for the fast-fail behavior.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyMostSuccessAsync(
@@ -699,9 +641,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the values obtained by calling the given Functions
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenTupleMApplyAsync(Function, Function, Function, Function, Function)}
-     * except for the fast-fail behavior.
      *
      * @return the new Cffu
      */
@@ -717,10 +656,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the values obtained by calling the given Functions
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * This method is the same as {@link #thenTupleMApplyAsync(Executor, Function, Function, Function, Function, Function)}
-     * except for the fast-fail behavior.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyMostSuccessAsync(
@@ -749,6 +686,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyAsync(
@@ -776,6 +714,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyAsync(
@@ -804,6 +743,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAsync(
@@ -833,6 +773,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with this Cffu's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      *
+     * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAsync(
@@ -857,9 +798,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #thenCombine(CompletionStage, BiFunction)}
-     * except for the fast-fail behavior.
      *
      * @param other the other CompletionStage
      * @param fn    the function to use to compute the value of the returned Cffu
@@ -870,7 +808,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothFastFail`")
     public <U, V> Cffu<V> thenCombineFastFail(
             CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
-        return reset0(CompletableFutureUtils.thenCombineFastFail(this, other, fn));
+        return reset0(CompletableFutureUtils.thenCombineFastFail(cf, other, fn));
     }
 
     /**
@@ -879,9 +817,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #thenCombineAsync(CompletionStage, BiFunction)}
-     * except for the fast-fail behavior.
      *
      * @param other the other CompletionStage
      * @param fn    the function to use to compute the value of the returned Cffu
@@ -901,9 +836,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #thenCombineAsync(CompletionStage, BiFunction, Executor)}
-     * except for the fast-fail behavior.
      *
      * @param other    the other CompletionStage
      * @param fn       the function to use to compute the value of the returned Cffu
@@ -916,7 +848,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public <U, V> Cffu<V> thenCombineFastFailAsync(CompletionStage<? extends U> other,
                                                    BiFunction<? super T, ? super U, ? extends V> fn,
                                                    Executor executor) {
-        return reset0(CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn, executor));
+        return reset0(CompletableFutureUtils.thenCombineFastFailAsync(cf, other, fn, executor));
     }
 
     /**
@@ -925,9 +857,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #thenAcceptBoth(CompletionStage, BiConsumer)}
-     * except for the fast-fail behavior.
      *
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
@@ -936,7 +865,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public <U> Cffu<Void> thenAcceptBothFastFail(
             CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
-        return reset0(CompletableFutureUtils.thenAcceptBothFastFail(this, other, action));
+        return reset0(CompletableFutureUtils.thenAcceptBothFastFail(cf, other, action));
     }
 
     /**
@@ -945,9 +874,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #thenAcceptBothAsync(CompletionStage, BiConsumer)}
-     * except for the fast-fail behavior.
      *
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
@@ -965,9 +891,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #thenAcceptBothAsync(CompletionStage, BiConsumer, Executor)}
-     * except for the fast-fail behavior.
      *
      * @param other    the other CompletionStage
      * @param action   the action to perform before completing the returned Cffu
@@ -978,7 +901,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public <U> Cffu<Void> thenAcceptBothFastFailAsync(CompletionStage<? extends U> other,
                                                       BiConsumer<? super T, ? super U> action,
                                                       Executor executor) {
-        return reset0(CompletableFutureUtils.thenAcceptBothFastFailAsync(this, other, action, executor));
+        return reset0(CompletableFutureUtils.thenAcceptBothFastFailAsync(cf, other, action, executor));
     }
 
     /**
@@ -986,16 +909,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #runAfterBoth(CompletionStage, Runnable)}
-     * except for the fast-fail behavior.
      *
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
      * @return the new Cffu
      */
     public Cffu<Void> runAfterBothFastFail(CompletionStage<?> other, Runnable action) {
-        return reset0(CompletableFutureUtils.runAfterBothFastFail(this, other, action));
+        return reset0(CompletableFutureUtils.runAfterBothFastFail(cf, other, action));
     }
 
     /**
@@ -1004,9 +924,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #runAfterBothAsync(CompletionStage, Runnable)}
-     * except for the fast-fail behavior.
      *
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
@@ -1022,9 +939,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
-     * <p>
-     * This method is the same as {@link #runAfterBothAsync(CompletionStage, Runnable, Executor)}
-     * except for the fast-fail behavior.
      *
      * @param other    the other CompletionStage
      * @param action   the action to perform before completing the returned Cffu
@@ -1032,7 +946,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      */
     public Cffu<Void> runAfterBothFastFailAsync(CompletionStage<?> other, Runnable action, Executor executor) {
-        return reset0(CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action, executor));
+        return reset0(CompletableFutureUtils.runAfterBothFastFailAsync(cf, other, action, executor));
     }
 
     /**
@@ -1206,9 +1120,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
      * is executed with the corresponding result as argument to the supplied function.
-     * <p>
-     * This method is the same as {@link #applyToEither(CompletionStage, Function)}
-     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other the other CompletionStage
      * @param fn    the function to use to compute the value of the returned Cffu
@@ -1218,16 +1129,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherSuccess`")
     public <U> Cffu<U> applyToEitherSuccess(
             CompletionStage<? extends T> other, Function<? super T, U> fn) {
-        return reset0(CompletableFutureUtils.applyToEitherSuccess(this, other, fn));
+        return reset0(CompletableFutureUtils.applyToEitherSuccess(cf, other, fn));
     }
 
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
      * is executed using {@link #defaultExecutor()},
      * with the corresponding result as argument to the supplied function.
-     * <p>
-     * This method is the same as {@link #applyToEitherAsync(CompletionStage, Function)}
-     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other the other CompletionStage
      * @param fn    the function to use to compute the value of the returned Cffu
@@ -1243,9 +1151,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
      * is executed using the supplied executor, with the corresponding result as argument to the supplied function.
-     * <p>
-     * This method is the same as {@link #applyToEitherAsync(CompletionStage, Function, Executor)}
-     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other    the other CompletionStage
      * @param fn       the function to use to compute the value of the returned Cffu
@@ -1257,15 +1162,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public <U> Cffu<U> applyToEitherSuccessAsync(CompletionStage<? extends T> other,
                                                  Function<? super T, U> fn,
                                                  Executor executor) {
-        return reset0(CompletableFutureUtils.applyToEitherSuccessAsync(this, other, fn, executor));
+        return reset0(CompletableFutureUtils.applyToEitherSuccessAsync(cf, other, fn, executor));
     }
 
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
      * is executed with the corresponding result as argument to the supplied action.
-     * <p>
-     * This method is the same as {@link #acceptEither(CompletionStage, Consumer)}
-     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
@@ -1273,16 +1175,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public Cffu<Void> acceptEitherSuccess(
             CompletionStage<? extends T> other, Consumer<? super T> action) {
-        return reset0(CompletableFutureUtils.acceptEitherSuccess(this, other, action));
+        return reset0(CompletableFutureUtils.acceptEitherSuccess(cf, other, action));
     }
 
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
      * is executed using {@link #defaultExecutor()},
      * with the corresponding result as argument to the supplied action.
-     * <p>
-     * This method is the same as {@link #acceptEitherAsync(CompletionStage, Consumer)}
-     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
@@ -1296,9 +1195,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
      * is executed using the supplied executor, with the corresponding result as argument to the supplied action.
-     * <p>
-     * This method is the same as {@link #acceptEitherAsync(CompletionStage, Consumer, Executor)}
-     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other    the other CompletionStage
      * @param action   the action to perform before completing the returned Cffu
@@ -1308,23 +1204,20 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public Cffu<Void> acceptEitherSuccessAsync(CompletionStage<? extends T> other,
                                                Consumer<? super T> action,
                                                Executor executor) {
-        return reset0(CompletableFutureUtils.acceptEitherSuccessAsync(this, other, action, executor));
+        return reset0(CompletableFutureUtils.acceptEitherSuccessAsync(cf, other, action, executor));
     }
 
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally, executes the given action.
      * Otherwise, all two complete exceptionally, the returned Cffu also does so,
      * with a CompletionException holding an exception from any of as its cause.
-     * <p>
-     * This method is the same as {@link #runAfterEither(CompletionStage, Runnable)}
-     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
      * @return the new Cffu
      */
     public Cffu<Void> runAfterEitherSuccess(CompletionStage<?> other, Runnable action) {
-        return reset0(CompletableFutureUtils.runAfterEitherSuccess(this, other, action));
+        return reset0(CompletableFutureUtils.runAfterEitherSuccess(cf, other, action));
     }
 
     /**
@@ -1332,9 +1225,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * executes the given action using {@link #defaultExecutor()}.
      * Otherwise, all two complete exceptionally, the returned Cffu also does so,
      * with a CompletionException holding an exception from any of as its cause.
-     * <p>
-     * This method is the same as {@link #runAfterEitherAsync(CompletionStage, Runnable)}
-     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
@@ -1349,9 +1239,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * executes the given action using the supplied executor.
      * Otherwise, all two complete exceptionally, the returned Cffu also does so,
      * with a CompletionException holding an exception from any of as its cause.
-     * <p>
-     * This method is the same as {@link #runAfterEitherAsync(CompletionStage, Runnable, Executor)}
-     * except for the either-<strong>success</strong> behavior instead of either-<strong>complete</strong>.
      *
      * @param other    the other CompletionStage
      * @param action   the action to perform before completing the returned Cffu
@@ -1360,7 +1247,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public Cffu<Void> runAfterEitherSuccessAsync(
             CompletionStage<?> other, Runnable action, Executor executor) {
-        return reset0(CompletableFutureUtils.runAfterEitherSuccessAsync(this, other, action, executor));
+        return reset0(CompletableFutureUtils.runAfterEitherSuccessAsync(cf, other, action, executor));
     }
 
     /**

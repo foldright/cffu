@@ -11,7 +11,8 @@
 	<artifactId>cffu</artifactId>
 	<name>CompletableFuture-Fu(cffu)</name>
 	<description>
-		🦝 A tiny sidekick library for CompletableFuture to improve user experience and reduce misuse.
+		🦝 A tiny sidekick library to make CompletableFuture usage
+		more convenient, more efficient and safer in your application. 😋🚀🦺
 	</description>
 	<url>https://github.com/foldright/cffu</url>
 	<inceptionYear>2023</inceptionYear>

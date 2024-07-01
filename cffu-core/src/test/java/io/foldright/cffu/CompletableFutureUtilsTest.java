@@ -104,21 +104,21 @@ class CompletableFutureUtilsTest {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        assertEquals(Arrays.asList(n, n + 1, n + 2), allResultsOfFastFail(
+        assertEquals(Arrays.asList(n, n + 1, n + 2), allResultsFastFailOf(
                 completedStage(n),
                 completedStage(n + 1),
                 completedFuture(n + 2)
         ).get());
 
-        assertEquals(Arrays.asList(n, n + 1), allResultsOfFastFail(
+        assertEquals(Arrays.asList(n, n + 1), allResultsFastFailOf(
                 completedFuture(n),
                 completedStage(n + 1)
         ).get());
 
-        assertEquals(Collections.singletonList(n), allResultsOfFastFail(completedFuture(n)).get());
-        assertEquals(Collections.singletonList(n), allResultsOfFastFail(completedStage(n)).get());
+        assertEquals(Collections.singletonList(n), allResultsFastFailOf(completedFuture(n)).get());
+        assertEquals(Collections.singletonList(n), allResultsFastFailOf(completedStage(n)).get());
 
-        assertEquals(Collections.emptyList(), allResultsOfFastFail().get());
+        assertEquals(Collections.emptyList(), allResultsFastFailOf().get());
 
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -129,11 +129,11 @@ class CompletableFutureUtilsTest {
                 allOf(completedStage(n)),
                 allOf(),
 
-                allOfFastFail(completedFuture(n), completedStage(n + 1), completedFuture(n + 2)),
-                allOfFastFail(completedStage(n), completedFuture(n + 1)),
-                allOfFastFail(completedFuture(n)),
-                allOfFastFail(completedStage(n)),
-                allOfFastFail()
+                allFastFailOf(completedFuture(n), completedStage(n + 1), completedFuture(n + 2)),
+                allFastFailOf(completedStage(n), completedFuture(n + 1)),
+                allFastFailOf(completedFuture(n)),
+                allFastFailOf(completedStage(n)),
+                allFastFailOf()
         ).forEach(f -> assertNull(f.join()));
     }
 
@@ -202,14 +202,14 @@ class CompletableFutureUtilsTest {
         );
 
         ////////////////////////////////////////////////////////////////////////////////
-        // allResultsOfFastFail
+        // allResultsFastFailOf
         ////////////////////////////////////////////////////////////////////////////////
 
         // all failed
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                // allResultsOfFastFail: the ex of first given cf argument win.
+                // allResultsFastFailOf: the ex of first given cf argument win.
                 //   ❗dependent on the implementation behavior of `CF.allOf`️
-                allResultsOfFastFail(
+                allResultsFastFailOf(
                         failedFuture(rte),
                         failedFuture(anotherRte),
                         failedFuture(ex1),
@@ -219,9 +219,9 @@ class CompletableFutureUtilsTest {
 
         // all failed - concurrent
         assertSame(anotherRte, assertThrowsExactly(ExecutionException.class, () ->
-                // allResultsOfFastFail: the ex of first given cf argument win, even subsequent cf failed early.
+                // allResultsFastFailOf: the ex of first given cf argument win, even subsequent cf failed early.
                 //   ❗dependent on the implementation behavior of `CF.allOf`️
-                allResultsOfFastFail(
+                allResultsFastFailOf(
                         CompletableFuture.supplyAsync(() -> {
                             sleep(100);
                             throw rte;
@@ -234,7 +234,7 @@ class CompletableFutureUtilsTest {
 
         // success and failed
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                allResultsOfFastFail(
+                allResultsFastFailOf(
                         completedFuture(n),
                         failedFuture(rte),
                         completedFuture(s),
@@ -244,7 +244,7 @@ class CompletableFutureUtilsTest {
 
         // failed/incomplete/failed
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                allResultsOfFastFail(
+                allResultsFastFailOf(
                         completedFuture(n),
                         failedFuture(rte),
                         createIncompleteFuture()
@@ -253,7 +253,7 @@ class CompletableFutureUtilsTest {
 
         // incomplete fail incomplete
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                allResultsOfFastFail(
+                allResultsFastFailOf(
                         createIncompleteFuture(),
                         failedFuture(rte),
                         createIncompleteFuture()
@@ -261,14 +261,14 @@ class CompletableFutureUtilsTest {
         ).getCause());
 
         ////////////////////////////////////////////////////////////////////////////////
-        // allOfFastFail
+        // allFastFailOf
         ////////////////////////////////////////////////////////////////////////////////
 
         // all failed
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                // allOfFastFail: the ex of first complete(in time) cf argument win.
+                // allFastFailOf: the ex of first complete(in time) cf argument win.
                 //   ❗dependent on the implementation behavior of `CF.allOf`️
-                allOfFastFail(
+                allFastFailOf(
                         failedFuture(rte),
                         failedFuture(anotherRte),
                         failedFuture(ex1),
@@ -278,9 +278,9 @@ class CompletableFutureUtilsTest {
 
         // all failed - concurrent
         assertSame(anotherRte, assertThrowsExactly(ExecutionException.class, () ->
-                // allOfFastFail: the ex of first complete(in time) cf argument win, even subsequent cf failed early.
+                // allFastFailOf: the ex of first complete(in time) cf argument win, even subsequent cf failed early.
                 //   ❗dependent on the implementation behavior of `CF.allOf`️
-                allOfFastFail(
+                allFastFailOf(
                         CompletableFuture.supplyAsync(() -> {
                             sleep(100);
                             throw rte;
@@ -293,7 +293,7 @@ class CompletableFutureUtilsTest {
 
         // success and failed
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                allOfFastFail(
+                allFastFailOf(
                         completedFuture(n),
                         failedFuture(rte),
                         completedFuture(s),
@@ -303,7 +303,7 @@ class CompletableFutureUtilsTest {
 
         // failed/incomplete/failed
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                allOfFastFail(
+                allFastFailOf(
                         completedFuture(n),
                         failedFuture(rte),
                         createIncompleteFuture()
@@ -312,7 +312,7 @@ class CompletableFutureUtilsTest {
 
         // incomplete fail incomplete
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                allOfFastFail(
+                allFastFailOf(
                         createIncompleteFuture(),
                         failedFuture(rte),
                         createIncompleteFuture()
@@ -388,35 +388,35 @@ class CompletableFutureUtilsTest {
         final CompletableFuture<Integer> incomplete = createIncompleteFuture();
 
         // 0 input cf
-        assertEquals(0, mostResultsOfSuccess(null, 10, TimeUnit.MILLISECONDS).get().size());
+        assertEquals(0, mostSuccessResultsOf(null, 10, TimeUnit.MILLISECONDS).get().size());
 
         // 1 input cf
-        assertEquals(Collections.singletonList(n), mostResultsOfSuccess(
+        assertEquals(Collections.singletonList(n), mostSuccessResultsOf(
                 null, 10, TimeUnit.MILLISECONDS, completed).get());
-        assertEquals(Collections.singletonList(n), mostResultsOfSuccess(
+        assertEquals(Collections.singletonList(n), mostSuccessResultsOf(
                 anotherN, 10, TimeUnit.MILLISECONDS, completedStage).get());
 
-        assertEquals(Collections.singletonList(anotherN), mostResultsOfSuccess(
+        assertEquals(Collections.singletonList(anotherN), mostSuccessResultsOf(
                 anotherN, 10, TimeUnit.MILLISECONDS, failed).get());
-        assertEquals(Collections.singletonList(anotherN), mostResultsOfSuccess(
+        assertEquals(Collections.singletonList(anotherN), mostSuccessResultsOf(
                 anotherN, 10, TimeUnit.MILLISECONDS, cancelled).get());
-        assertEquals(Collections.singletonList(anotherN), mostResultsOfSuccess(
+        assertEquals(Collections.singletonList(anotherN), mostSuccessResultsOf(
                 anotherN, 10, TimeUnit.MILLISECONDS, incomplete).get());
 
         // more input cf
-        assertEquals(Arrays.asList(n, null, null, null), mostResultsOfSuccess(
+        assertEquals(Arrays.asList(n, null, null, null), mostSuccessResultsOf(
                 null, 10, TimeUnit.MILLISECONDS, completed, failed, cancelled, incomplete
         ).get());
-        assertEquals(Arrays.asList(n, anotherN, anotherN, anotherN), mostResultsOfSuccess(
+        assertEquals(Arrays.asList(n, anotherN, anotherN, anotherN), mostSuccessResultsOf(
                 anotherN, 10, TimeUnit.MILLISECONDS, completedStage, failed, cancelled, incomplete
         ).get());
 
-        assertEquals(Arrays.asList(anotherN, anotherN, anotherN), mostResultsOfSuccess(
+        assertEquals(Arrays.asList(anotherN, anotherN, anotherN), mostSuccessResultsOf(
                 anotherN, 10, TimeUnit.MILLISECONDS, failed, cancelled, incomplete
         ).get());
 
         // do not wait for failed and cancelled
-        assertEquals(Arrays.asList(anotherN, anotherN), mostResultsOfSuccess(
+        assertEquals(Arrays.asList(anotherN, anotherN), mostSuccessResultsOf(
                 anotherN, 10, TimeUnit.DAYS, failed, cancelled
         ).get());
     }
@@ -426,10 +426,10 @@ class CompletableFutureUtilsTest {
         final CompletableFuture<Integer> incomplete = createIncompleteFuture();
         final CompletableFuture<Integer> incomplete2 = createIncompleteFuture();
 
-        assertEquals(Collections.singletonList(null), mostResultsOfSuccess(
+        assertEquals(Collections.singletonList(null), mostSuccessResultsOf(
                 null, 10, TimeUnit.MILLISECONDS, incomplete
         ).get());
-        assertEquals(Arrays.asList(null, null), mostResultsOfSuccess(
+        assertEquals(Arrays.asList(null, null), mostSuccessResultsOf(
                 null, 10, TimeUnit.MILLISECONDS, incomplete, incomplete2
         ).get());
 
@@ -442,7 +442,7 @@ class CompletableFutureUtilsTest {
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
-    void test_anyOf__success__trivial_case() throws Exception {
+    void test_anySuccessOf__trivial_case() throws Exception {
         assertEquals(n, anyOf(
                 completedFuture(n),
                 completedStage(n + 1),
@@ -473,30 +473,30 @@ class CompletableFutureUtilsTest {
 
         ////////////////////////////////////////
 
-        assertEquals(n, anyOfSuccess(
+        assertEquals(n, anySuccessOf(
                 completedFuture(n),
                 completedStage(n + 1),
                 completedFuture(n + 2)
         ).get());
-        assertEquals(n, anyOfSuccess(
+        assertEquals(n, anySuccessOf(
                 completedStage(n),
                 completedFuture(n + 1)
         ).get());
 
-        assertEquals(n, anyOfSuccess(completedFuture(n)).get());
-        assertEquals(n, anyOfSuccess(completedStage(n)).get());
+        assertEquals(n, anySuccessOf(completedFuture(n)).get());
+        assertEquals(n, anySuccessOf(completedStage(n)).get());
 
         assertInstanceOf(NoCfsProvidedException.class, assertThrowsExactly(ExecutionException.class, () ->
-                anyOfSuccess().get()
+                anySuccessOf().get()
         ).getCause());
 
         // success with incomplete CF
-        assertEquals(n, anyOfSuccess(
+        assertEquals(n, anySuccessOf(
                 createIncompleteFuture(),
                 createIncompleteFuture(),
                 completedFuture(n)
         ).get());
-        assertEquals(n, anyOfSuccess(
+        assertEquals(n, anySuccessOf(
                 createIncompleteFuture(),
                 createIncompleteFuture(),
                 completedStage(n)
@@ -537,14 +537,14 @@ class CompletableFutureUtilsTest {
         ).getCause());
 
         ////////////////////////////////////////////////////////////////////////////////
-        // anyOfSuccess
+        // anySuccessOf
         ////////////////////////////////////////////////////////////////////////////////
 
         // all failed
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                // anyOfSuccess: the ex of first failed cf argument win, even subsequent cf failed early.
+                // anySuccessOf: the ex of first failed cf argument win, even subsequent cf failed early.
                 //   ❗dependent on the implementation behavior of `CF.allOf`️
-                anyOfSuccess(
+                anySuccessOf(
                         CompletableFuture.supplyAsync(() -> {
                             sleep(100);
                             throw rte;
@@ -557,7 +557,7 @@ class CompletableFutureUtilsTest {
 
         // incomplete fail incomplete
         assertThrowsExactly(TimeoutException.class, () ->
-                anyOfSuccess(
+                anySuccessOf(
                         createIncompleteFuture(),
                         failedFuture(rte),
                         createIncompleteFuture()
@@ -617,7 +617,7 @@ class CompletableFutureUtilsTest {
         ////////////////////////////////////////
 
         // incomplete/wait-success then success
-        assertEquals(n, anyOfSuccess(
+        assertEquals(n, anySuccessOf(
                 createIncompleteFuture(),
                 createIncompleteFuture(),
                 CompletableFuture.supplyAsync(() -> {
@@ -628,7 +628,7 @@ class CompletableFutureUtilsTest {
         ).get());
 
         // wait/success then success
-        assertEquals(n, anyOfSuccess(
+        assertEquals(n, anySuccessOf(
                 CompletableFuture.supplyAsync(() -> {
                     sleep(300);
                     return anotherN;
@@ -641,7 +641,7 @@ class CompletableFutureUtilsTest {
         ).get());
 
         // success then failed
-        assertEquals(n, anyOfSuccess(
+        assertEquals(n, anySuccessOf(
                 createIncompleteFuture(),
                 createIncompleteFuture(),
                 CompletableFuture.supplyAsync(() -> {
@@ -652,7 +652,7 @@ class CompletableFutureUtilsTest {
         ).get());
 
         // failed then success
-        assertEquals(n, anyOfSuccess(
+        assertEquals(n, anySuccessOf(
                 CompletableFuture.supplyAsync(() -> {
                     sleep(100);
                     return n;
@@ -675,16 +675,16 @@ class CompletableFutureUtilsTest {
         final CompletableFuture<Integer> cf_nn = completedFuture(n + n);
 
         assertEquals(Tuple2.of(n, s), allTupleOf(cf_n, cf_s).get());
-        assertEquals(Tuple2.of(n, s), allTupleOfFastFail(cf_n, cf_s).get());
+        assertEquals(Tuple2.of(n, s), allTupleFastFailOf(cf_n, cf_s).get());
 
         assertEquals(Tuple3.of(n, s, d), allTupleOf(cf_n, cf_s, cf_d).get());
-        assertEquals(Tuple3.of(n, s, d), allTupleOfFastFail(cf_n, cf_s, cf_d).get());
+        assertEquals(Tuple3.of(n, s, d), allTupleFastFailOf(cf_n, cf_s, cf_d).get());
 
         assertEquals(Tuple4.of(n, s, d, anotherN), allTupleOf(cf_n, cf_s, cf_d, cf_an).get());
-        assertEquals(Tuple4.of(n, s, d, anotherN), allTupleOfFastFail(cf_n, cf_s, cf_d, cf_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), allTupleFastFailOf(cf_n, cf_s, cf_d, cf_an).get());
 
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), allTupleOf(cf_n, cf_s, cf_d, cf_an, cf_nn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), allTupleOfFastFail(cf_n, cf_s, cf_d, cf_an, cf_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), allTupleFastFailOf(cf_n, cf_s, cf_d, cf_an, cf_nn).get());
     }
 
     @Test
@@ -701,28 +701,28 @@ class CompletableFutureUtilsTest {
                 allTupleOf(cf_n, fail).get()
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                allTupleOfFastFail(incomplete, fail).get()
+                allTupleFastFailOf(incomplete, fail).get()
         ).getCause());
 
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 allTupleOf(cf_n, fail, cf_s).get()
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                allTupleOfFastFail(incomplete, fail, cf_s).get()
+                allTupleFastFailOf(incomplete, fail, cf_s).get()
         ).getCause());
 
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 allTupleOf(cf_n, fail, cf_d, cf_s).get()
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                allTupleOfFastFail(incomplete, fail, cf_d, cf_s).get()
+                allTupleFastFailOf(incomplete, fail, cf_d, cf_s).get()
         ).getCause());
 
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 allTupleOf(cf_n, cf_d, fail, cf_s, cf_an).get()
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                allTupleOfFastFail(incomplete, cf_d, fail, cf_s, cf_an).get()
+                allTupleFastFailOf(incomplete, cf_d, fail, cf_s, cf_an).get()
         ).getCause());
     }
 
@@ -900,62 +900,62 @@ class CompletableFutureUtilsTest {
     }
 
     @Test
-    void test_mostTupleOfSuccess() throws Exception {
+    void test_mostSuccessTupleOf() throws Exception {
         final CompletableFuture<Integer> completed = completedFuture(n);
         final CompletionStage<String> anotherCompleted = completedStage(s);
         final CompletableFuture<Integer> failed = failedFuture(rte);
         final CompletableFuture<Integer> cancelled = createCancelledFuture();
         final CompletableFuture<Integer> incomplete = createIncompleteFuture();
 
-        assertEquals(Tuple2.of(n, s), mostTupleOfSuccess(
+        assertEquals(Tuple2.of(n, s), mostSuccessTupleOf(
                 10, TimeUnit.MILLISECONDS, completed, anotherCompleted
         ).get());
-        assertEquals(Tuple2.of(n, null), mostTupleOfSuccess(
+        assertEquals(Tuple2.of(n, null), mostSuccessTupleOf(
                 10, TimeUnit.MILLISECONDS, completed, failed
         ).get());
 
-        assertEquals(Tuple3.of(n, s, null), mostTupleOfSuccess(
+        assertEquals(Tuple3.of(n, s, null), mostSuccessTupleOf(
                 10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled
         ).get());
-        assertEquals(Tuple3.of(null, null, s), mostTupleOfSuccess(
+        assertEquals(Tuple3.of(null, null, s), mostSuccessTupleOf(
                 10, TimeUnit.MILLISECONDS, incomplete, failed, anotherCompleted
         ).get());
 
-        assertEquals(Tuple4.of(n, s, null, null), mostTupleOfSuccess(
+        assertEquals(Tuple4.of(n, s, null, null), mostSuccessTupleOf(
                 10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled, incomplete
         ).get());
-        assertEquals(Tuple4.of(null, null, null, null), mostTupleOfSuccess(
+        assertEquals(Tuple4.of(null, null, null, null), mostSuccessTupleOf(
                 10, TimeUnit.MILLISECONDS, incomplete, failed, cancelled, incomplete
         ).get());
 
-        assertEquals(Tuple5.of(null, n, s, null, null), mostTupleOfSuccess(
+        assertEquals(Tuple5.of(null, n, s, null, null), mostSuccessTupleOf(
                 10, TimeUnit.MILLISECONDS, cancelled, completed, anotherCompleted, incomplete, failed
         ).get());
 
         // with `executorWhenTimeout`
 
-        assertEquals(Tuple2.of(n, s), mostTupleOfSuccess(
+        assertEquals(Tuple2.of(n, s), mostSuccessTupleOf(
                 executorService, 10, TimeUnit.MILLISECONDS, completed, anotherCompleted
         ).get());
-        assertEquals(Tuple2.of(n, null), mostTupleOfSuccess(
+        assertEquals(Tuple2.of(n, null), mostSuccessTupleOf(
                 executorService, 10, TimeUnit.MILLISECONDS, completed, failed
         ).get());
 
-        assertEquals(Tuple3.of(n, s, null), mostTupleOfSuccess(
+        assertEquals(Tuple3.of(n, s, null), mostSuccessTupleOf(
                 executorService, 10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled
         ).get());
-        assertEquals(Tuple3.of(null, null, s), mostTupleOfSuccess(
+        assertEquals(Tuple3.of(null, null, s), mostSuccessTupleOf(
                 executorService, 10, TimeUnit.MILLISECONDS, incomplete, failed, anotherCompleted
         ).get());
 
-        assertEquals(Tuple4.of(n, s, null, null), mostTupleOfSuccess(
+        assertEquals(Tuple4.of(n, s, null, null), mostSuccessTupleOf(
                 executorService, 10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled, incomplete
         ).get());
-        assertEquals(Tuple4.of(null, null, null, null), mostTupleOfSuccess(
+        assertEquals(Tuple4.of(null, null, null, null), mostSuccessTupleOf(
                 executorService, 10, TimeUnit.MILLISECONDS, incomplete, failed, cancelled, incomplete
         ).get());
 
-        assertEquals(Tuple5.of(null, n, s, null, null), mostTupleOfSuccess(
+        assertEquals(Tuple5.of(null, n, s, null, null), mostSuccessTupleOf(
                 executorService, 10, TimeUnit.MILLISECONDS, cancelled, completed, anotherCompleted, incomplete, failed
         ).get());
     }

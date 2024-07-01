@@ -38,8 +38,8 @@ public class CompletableFutureUtilsDemo {
                 CompletableFutureUtils.orTimeout(combined, 1500, TimeUnit.MILLISECONDS);
         System.out.println("combined result: " + combinedWithTimeout.get());
 
-        final CompletableFuture<Integer> anyOfSuccess = CompletableFutureUtils.anyOfSuccess(longTaskC, longFailedTask);
-        System.out.println("anyOfSuccess result: " + anyOfSuccess.get());
+        final CompletableFuture<Integer> anySuccessOf = CompletableFutureUtils.anySuccessOf(longTaskC, longFailedTask);
+        System.out.println("anySuccessOf result: " + anySuccessOf.get());
 
         ////////////////////////////////////////
         // cleanup
