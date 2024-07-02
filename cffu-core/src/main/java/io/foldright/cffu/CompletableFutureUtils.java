@@ -2940,7 +2940,7 @@ public final class CompletableFutureUtils {
             // use `cf.handle` method(instead of `whenComplete`) and return null,
             // in order to prevent below `exceptionally` reporting the handled argument exception in this action
             return null;
-        }).exceptionally(ex -> reportException("Exception occurred in the input cf whenComplete of hop executor:", ex));
+        }).exceptionally(ex -> reportException("Exception occurred in handle of executor hop", ex));
 
         return (C) ret;
     }
@@ -2951,7 +2951,7 @@ public final class CompletableFutureUtils {
             else cf.completeExceptionally(ex);
         } catch (Throwable t) {
             if (ex != null) t.addSuppressed(ex);
-            reportException("Exception occurred in completeCf:", t);
+            reportException("Exception occurred in completeCf", t);
             throw t; // rethrow exception, report to caller
         }
     }
@@ -3044,7 +3044,7 @@ public final class CompletableFutureUtils {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(action, "action is null");
 
-        cfThis.whenComplete(action).exceptionally(ex -> reportException("Exception occurred in the action of peek:", ex));
+        cfThis.whenComplete(action).exceptionally(ex -> reportException("Exception occurred in the action of peek", ex));
         return cfThis;
     }
 
@@ -3095,7 +3095,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
 
         cfThis.whenCompleteAsync(action, executor).exceptionally(ex ->
-                reportException("Exception occurred in the action of peekAsync:", ex));
+                reportException("Exception occurred in the action of peekAsync", ex));
         return cfThis;
     }
 
@@ -3482,16 +3482,15 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * A convenient util method for unwrapping CF exception({@link CompletionException}/{@link ExecutionException})
-     * to the biz exception.
+     * A convenient util method for unwrapping CF exception
+     * ({@link CompletionException}/{@link ExecutionException}) to the biz exception.
      */
-    public static Throwable unwrapCfException(Throwable throwable) {
-        if (throwable instanceof CompletionException || throwable instanceof ExecutionException) {
-            if (throwable.getCause() != null) {
-                return throwable.getCause();
-            }
+    public static Throwable unwrapCfException(Throwable ex) {
+        if (!(ex instanceof CompletionException) && !(ex instanceof ExecutionException)) {
+            return ex;
         }
-        return throwable;
+        if (ex.getCause() == null) return ex;
+        return ex.getCause();
     }
 
     // endregion
