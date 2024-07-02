@@ -8,8 +8,6 @@ import io.foldright.cffu.tuple.Tuple5;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.Contract;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +15,7 @@ import java.util.concurrent.*;
 import java.util.function.*;
 
 import static io.foldright.cffu.Delayer.atCfDelayerThread;
+import static io.foldright.cffu.ExceptionReporter.reportException;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
@@ -2957,19 +2956,6 @@ public final class CompletableFutureUtils {
         }
     }
 
-    @Nullable
-    @SuppressWarnings("SameReturnValue")
-    private static <T> T reportException(String msg, Throwable ex) {
-        StringWriter sw = new StringWriter(4096);
-        PrintWriter writer = new PrintWriter(sw);
-
-        writer.println(msg);
-        ex.printStackTrace(writer);
-
-        System.err.println(sw);
-        return null;
-    }
-
     // endregion
     ////////////////////////////////////////////////////////////
     // region## Advanced Methods of CompletionStage(compose* and handle-like methods)
@@ -3455,7 +3441,7 @@ public final class CompletableFutureUtils {
     // endregion
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# Conversion Methods(static methods)
+    // region# Util Methods(static methods)
     //
     //    - toCompletableFutureArray:     CompletionStage[](including Cffu) -> CF[]
     //    - completableFutureListToArray: List<CF> -> CF[]
@@ -3493,6 +3479,19 @@ public final class CompletableFutureUtils {
         @SuppressWarnings("unchecked")
         final CompletableFuture<T>[] a = new CompletableFuture[cfList.size()];
         return cfList.toArray(a);
+    }
+
+    /**
+     * A convenient util method for unwrapping CF exception({@link CompletionException}/{@link ExecutionException})
+     * to the biz exception.
+     */
+    public static Throwable unwrapCfException(Throwable throwable) {
+        if (throwable instanceof CompletionException || throwable instanceof ExecutionException) {
+            if (throwable.getCause() != null) {
+                return throwable.getCause();
+            }
+        }
+        return throwable;
     }
 
     // endregion
