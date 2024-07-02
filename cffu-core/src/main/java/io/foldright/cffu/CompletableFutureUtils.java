@@ -3482,16 +3482,15 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * A convenient util method for unwrapping CF exception({@link CompletionException}/{@link ExecutionException})
-     * to the biz exception.
+     * A convenient util method for unwrapping CF exception
+     * ({@link CompletionException}/{@link ExecutionException}) to the biz exception.
      */
     public static Throwable unwrapCfException(Throwable throwable) {
-        if (throwable instanceof CompletionException || throwable instanceof ExecutionException) {
-            if (throwable.getCause() != null) {
-                return throwable.getCause();
-            }
+        if (!(throwable instanceof CompletionException) && !(throwable instanceof ExecutionException)) {
+            return throwable;
         }
-        return throwable;
+        if (throwable.getCause() == null) return throwable;
+        return throwable.getCause();
     }
 
     // endregion
