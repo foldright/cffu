@@ -8,8 +8,6 @@ import io.foldright.cffu.tuple.Tuple5;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.Contract;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +15,7 @@ import java.util.concurrent.*;
 import java.util.function.*;
 
 import static io.foldright.cffu.Delayer.atCfDelayerThread;
+import static io.foldright.cffu.ExceptionReporter.reportException;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
@@ -2955,19 +2954,6 @@ public final class CompletableFutureUtils {
             reportException("Exception occurred in completeCf:", t);
             throw t; // rethrow exception, report to caller
         }
-    }
-
-    @Nullable
-    @SuppressWarnings("SameReturnValue")
-    private static <T> T reportException(String msg, Throwable ex) {
-        StringWriter sw = new StringWriter(4096);
-        PrintWriter writer = new PrintWriter(sw);
-
-        writer.println(msg);
-        ex.printStackTrace(writer);
-
-        System.err.println(sw);
-        return null;
     }
 
     // endregion
