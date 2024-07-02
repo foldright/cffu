@@ -1599,6 +1599,24 @@ class CompletableFutureUtilsTest {
         assertArrayEquals(input, CompletableFutureUtils.completableFutureListToArray(Arrays.asList(input)));
     }
 
+    @Test
+    @SuppressWarnings("ThrowableNotThrown")
+    void test_unwrapCfException() {
+        CompletableFuture<Object> failed = failedFuture(rte);
+
+        ExecutionException ee = assertThrowsExactly(ExecutionException.class, () -> failed.get(0, TimeUnit.MILLISECONDS));
+        assertSame(rte, unwrapCfException(ee));
+
+        CompletionException ce = assertThrowsExactly(CompletionException.class, failed::join);
+        assertSame(rte, unwrapCfException(ce));
+
+        CompletionException nakedCe = new CompletionException() {
+        };
+        assertSame(nakedCe, unwrapCfException(nakedCe));
+
+        assertSame(rte, unwrapCfException(rte));
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# test helper fields
     ////////////////////////////////////////////////////////////////////////////////
