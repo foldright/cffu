@@ -18,7 +18,7 @@ class ExceptionReporter {
         } else if ("short".equals(report)) {
             logger.error(msg + ", cause: " + ex.getMessage(), null);
         }
-        return null;
+        return (T)ex;
     }
 
     private static LoggerAdapter getLogger() {
