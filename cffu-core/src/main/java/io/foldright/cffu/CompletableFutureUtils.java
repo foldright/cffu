@@ -1,7 +1,6 @@
 package io.foldright.cffu;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
-import io.foldright.cffu.logger.ConfigReportException;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
 import io.foldright.cffu.tuple.Tuple4;
@@ -995,8 +994,7 @@ public final class CompletableFutureUtils {
      * Returns a cf array whose elements do the result collection.
      */
     private static <T> CompletableFuture<Void>[] createResultSetterCfs(CompletionStage<? extends T>[] css, T[] result) {
-        @SuppressWarnings("unchecked")
-        final CompletableFuture<Void>[] resultSetterCfs = new CompletableFuture[result.length];
+        @SuppressWarnings("unchecked") final CompletableFuture<Void>[] resultSetterCfs = new CompletableFuture[result.length];
         for (int i = 0; i < result.length; i++) {
             final int index = i;
             resultSetterCfs[index] = f_toCf(css[index]).thenAccept(v -> result[index] = v);
@@ -1570,8 +1568,10 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
     // region## unwrapCfException(static methods)
     ////////////////////////////////////////////////////////////
+
     /**
      * A convenient util method for converting input package {@link Throwable}  to root {@link Throwable}.
+     *
      * @param throwable
      */
     public static Throwable unwrapCfException(Throwable throwable) {
@@ -1589,7 +1589,6 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
     // region# CF Instance Methods(including new enhanced + backport methods)
     ////////////////////////////////////////////////////////////////////////////////
-
 
 
     ////////////////////////////////////////////////////////////
@@ -2910,7 +2909,7 @@ public final class CompletableFutureUtils {
             // use `cf.handle` method(instead of `whenComplete`) and return null,
             // in order to prevent below `exceptionally` reporting the handled argument exception in this action
             return null;
-        }).exceptionally(ex -> ConfigReportException.reportException("Exception occurred in the input cf whenComplete of hop executor:", ex));
+        }).exceptionally(ex -> ExceptionReporter.reportException("Exception occurred in the input cf whenComplete of hop executor:", ex));
 
         return (C) ret;
     }
@@ -2921,11 +2920,10 @@ public final class CompletableFutureUtils {
             else cf.completeExceptionally(ex);
         } catch (Throwable t) {
             if (ex != null) t.addSuppressed(ex);
-            ConfigReportException.reportException("Exception occurred in completeCf:", t);
+            ExceptionReporter.reportException("Exception occurred in completeCf:", t);
             throw t; // rethrow exception, report to caller
         }
     }
-
 
 
     // endregion
@@ -3016,7 +3014,7 @@ public final class CompletableFutureUtils {
         requireNonNull(cf, "cf is null");
         requireNonNull(action, "action is null");
 
-        cf.whenComplete(action).exceptionally(ex -> ConfigReportException.reportException("Exception occurred in the action of peek:", ex));
+        cf.whenComplete(action).exceptionally(ex -> ExceptionReporter.reportException("Exception occurred in the action of peek:", ex));
         return cf;
     }
 
@@ -3067,7 +3065,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
 
         cf.whenCompleteAsync(action, executor).exceptionally(ex ->
-                ConfigReportException.reportException("Exception occurred in the action of peekAsync:", ex));
+                ExceptionReporter.reportException("Exception occurred in the action of peekAsync:", ex));
         return cf;
     }
 
@@ -3448,8 +3446,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] completableFutureListToArray(List<CompletableFuture<T>> cfList) {
         requireNonNull(cfList, "cfList is null");
-        @SuppressWarnings("unchecked")
-        final CompletableFuture<T>[] a = new CompletableFuture[cfList.size()];
+        @SuppressWarnings("unchecked") final CompletableFuture<T>[] a = new CompletableFuture[cfList.size()];
         return cfList.toArray(a);
     }
 

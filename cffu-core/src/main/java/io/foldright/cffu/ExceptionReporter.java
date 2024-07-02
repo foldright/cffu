@@ -1,7 +1,6 @@
 package io.foldright.cffu;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
-import io.foldright.cffu.logger.slf4j.Slf4jLogger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.spi.LocationAwareLogger;
 
@@ -30,14 +29,14 @@ class ExceptionReporter {
         }
     }
 
-    private static interface LoggerAdapter {
+    private interface LoggerAdapter {
         void error(String msg, @Nullable Throwable thrown);
 
         void warn(String msg, @Nullable Throwable thrown);
     }
 
     private static class Slf4jLoggerAdapter implements LoggerAdapter {
-        private static final String FQCN = Slf4jLogger.class.getName();
+        private static final String FQCN = Slf4jLoggerAdapter.class.getName();
 
         private final org.slf4j.Logger logger = LoggerFactory.getLogger("cffu");
 
@@ -60,9 +59,9 @@ class ExceptionReporter {
                 ((LocationAwareLogger) logger).log(null, FQCN, LocationAwareLogger.WARN_INT, msg, null, thrown);
             } else {
                 if (thrown != null) {
-                    logger.error(msg, thrown);
+                    logger.warn(msg, thrown);
                 } else {
-                    logger.error(msg);
+                    logger.warn(msg);
                 }
             }
         }
