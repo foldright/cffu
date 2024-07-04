@@ -1426,7 +1426,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOf(
-            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
+            CompletionStage<T1> cf1, CompletionStage<T2> cf2, CompletionStage<T3> cf3) {
         return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2, cf3));
     }
 
