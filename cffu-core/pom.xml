@@ -55,6 +55,18 @@
 			<organization>FoldRight</organization>
 			<organizationUrl>https://foldright.io</organizationUrl>
 		</developer>
+		<developer>
+			<name>HuHao</name>
+			<id>huhaosumail</id>
+			<email>995483610(AT)qq(DOT)com</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+8</timezone>
+			<url>https://github.com/huhaosumail</url>
+			<organization>FoldRight</organization>
+			<organizationUrl>https://foldright.io</organizationUrl>
+		</developer>
 	</developers>
 
 	<dependencies>

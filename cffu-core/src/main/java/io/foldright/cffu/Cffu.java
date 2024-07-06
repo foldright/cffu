@@ -1492,7 +1492,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Exceptionally completes given Cffu with a {@link TimeoutException}
+     * Exceptionally completes this Cffu with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
      * <p>
      * <strong>CAUTION:</strong> This method is <strong>UNSAFE</strong>!
@@ -1551,7 +1551,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Completes given Cffu with the given value if not otherwise completed before the given timeout.
+     * Completes this Cffu with the given value if not otherwise completed before the given timeout.
      * <p>
      * <strong>CAUTION:</strong> This method is <strong>UNSAFE</strong>!
      * <p>
@@ -2222,23 +2222,23 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * If not already completed, completes given Cffu with the exception result
+     * If not already completed, completes this Cffu with the exception result
      * of the given Supplier function invoked from an asynchronous task using the default executor.
      *
-     * @param supplier a function returning the value to be used to complete given Cffu
-     * @return the given Cffu
+     * @param supplier a function returning the value to be used to complete this Cffu
+     * @return this Cffu
      */
     public Cffu<T> completeExceptionallyAsync(Supplier<? extends Throwable> supplier) {
         return completeExceptionallyAsync(supplier, fac.defaultExecutor());
     }
 
     /**
-     * If not already completed, completes given Cffu with the exception result
+     * If not already completed, completes this Cffu with the exception result
      * of the given Supplier function invoked from an asynchronous task using the given executor.
      *
-     * @param supplier a function returning the value to be used to complete given Cffu
+     * @param supplier a function returning the value to be used to complete this Cffu
      * @param executor the executor to use for asynchronous execution
-     * @return the given Cffu
+     * @return this Cffu
      */
     public Cffu<T> completeExceptionallyAsync(Supplier<? extends Throwable> supplier, Executor executor) {
         checkMinimalStage();
@@ -2292,7 +2292,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu with given CffuFactory(contained configuration)
+     * Returns a new Cffu with the given CffuFactory(contained configuration)
      * that is completed normally with the same value as this Cffu when it completes normally.
      * If this Cffu completes exceptionally, then the returned Cffu completes exceptionally
      * with a CompletionException with this exception as cause.
@@ -2435,7 +2435,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Returns the estimated number of Cffus whose completions are awaiting completion of this Cffu.
      * This method is designed for use in monitoring system state, not for synchronization control.
      *
-     * @return the number of dependent Cffus
+     * @return the number of dependent CompletableFutures(Cffus)
      */
     @Contract(pure = true)
     public int getNumberOfDependents() {

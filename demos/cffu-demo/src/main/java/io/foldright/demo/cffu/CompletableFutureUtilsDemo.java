@@ -40,7 +40,7 @@ public class CompletableFutureUtilsDemo {
         System.out.println("combined result: " + combinedWithTimeout.get());
 
         final CompletableFuture<Integer> anySuccess = anySuccessOf(longTaskC, longFailedTask);
-        System.out.println("any success of result: " + anySuccess.get());
+        System.out.println("any success result: " + anySuccess.get());
 
         ////////////////////////////////////////
         // cleanup

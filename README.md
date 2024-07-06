@@ -64,16 +64,16 @@
 
 - ☘️ **补全业务使用中缺失的功能**
   - 🏪 更方便的功能，如
-    - 支持返回多个`CF`的结果，而不是无返回结果的`Void`（`allOf()`），  
-      如`allResultsFastFailOf`/`allResultsOf`/`mSupplyFastFailAsync`/`thenMApplyFastFailAsync`方法
+    - 支持返回多个`CF`的结果，而不是无返回结果的`Void`（`allOf`）  
+      如方法`allResultsFastFailOf` / `allResultsOf` / `mSupplyFastFailAsync` / `thenMApplyFastFailAsync`
     - 支持返回多个不同类型`CF`的结果，而不是同一类型  
-      如`allTupleFastFailOf`/`allTupleOf`/`tupleMSupplyFastFailAsync`/`thenTupleMApplyFastFailAsync`方法
+      如方法`allTupleFastFailOf` / `allTupleOf` / `tupleMSupplyFastFailAsync` / `thenTupleMApplyFastFailAsync`
     - 支持直接运行多个`action`，而不是要先包装成`CompletableFuture`  
-      如`tupleMSupplyFastFailAsync`/`mSupplyMostSuccessAsync`/`thenTupleMApplyFastFailAsync`/`thenMRunFastFailAsync`方法
-  - ⚙️更高效灵活的并发执行策略，如
+      如方法`tupleMSupplyFastFailAsync` / `mSupplyMostSuccessAsync` / `thenTupleMApplyFastFailAsync` / `thenMRunFastFailAsync`
+  - ⚙️ 更高效灵活的并发执行策略，如
     - `AllFastFail`策略：当输入的多个`CF`有失败时快速失败返回，而不再于事无补地等待所有`CF`运行完成（`allOf`）
     - `AnySuccess`策略：返回首个成功的`CF`结果，而不是首个完成（但可能失败）的`CF`（`anyOf`）
-    - `MostSuccess`策略：指定时间内返回多个`CF`中的成功结果，忽略失败或还没有运行完成的`CF`（返回指定的缺省值）
+    - `MostSuccess`策略：指定时间内返回多个`CF`中成功的结果，忽略失败或还没有运行完成的`CF`（返回指定的缺省值）
   - 🦺 更安全的使用方式，如
     - 支持设置缺省的业务线程池并封装携带，`CffuFactory#builder(executor)`方法
     - 支持超时的`join`的方法，`join(timeout, unit)`方法
@@ -87,12 +87,12 @@
     - 非阻塞地获取成功结果，`getSuccessNow`方法
     - 解包装`CF`异常成业务异常，`unwrapCfException`方法
 - 💪 **已有功能的增强**，如
-  - `anySuccessOf`/`anyOf`方法：返回类型是`T`（类型安全），而不是返回`Object`（`CompletableFuture#anyOf()`）
+  - `anySuccessOf`/`anyOf`方法：返回具体类型`T`（类型安全），而不是返回`Object`（`CompletableFuture#anyOf`）
 - ⏳ **`Backport`支持`Java 8`**，`Java 9+`高版本的所有`CF`新功能在`Java 8`等低`Java`版本直接可用，如
   - 超时控制：`orTimeout`/`completeOnTimeout`方法
   - 延迟执行：`delayedExecutor`方法
-  - 工厂方法：`failedFuture`/`completedStage`/`failedStage`
-  - 处理操作：`completeAsync`/`exceptionallyAsync`/`exceptionallyCompose`/`copy`
+  - 工厂方法：`failedFuture` / `completedStage` / `failedStage`
+  - 处理操作：`completeAsync` / `exceptionallyAsync` / `exceptionallyCompose` / `copy`
 - 🍩 **一等公民支持`Kotlin`**
 
 更多`cffu`的使用方式与功能说明详见 [User Guide](#-user-guide)。
@@ -189,8 +189,8 @@ public class CffuDemo {
         .orTimeout(1500, TimeUnit.MILLISECONDS);
     System.out.println("combined result: " + combined.get());
 
-    final Cffu<Integer> anySuccessOf = cffuFactory.anySuccessOf(longTaskC, longFailedTask);
-    System.out.println("anySuccessOf result: " + anySuccessOf.get());
+    final Cffu<Integer> anySuccess = cffuFactory.anySuccessOf(longTaskC, longFailedTask);
+    System.out.println("any success result: " + anySuccess.get());
   }
 }
 ```
@@ -227,11 +227,11 @@ public class CompletableFutureUtilsDemo {
 
     final CompletableFuture<Integer> combined = longTaskA.thenCombine(longTaskB, Integer::sum);
     final CompletableFuture<Integer> combinedWithTimeout =
-        CompletableFutureUtils.orTimeout(combined, 1500, TimeUnit.MILLISECONDS);
+        orTimeout(combined, 1500, TimeUnit.MILLISECONDS);
     System.out.println("combined result: " + combinedWithTimeout.get());
 
-    final CompletableFuture<Integer> anySuccessOf = CompletableFutureUtils.anySuccessOf(longTaskC, longFailedTask);
-    System.out.println("anySuccessOf result: " + anySuccessOf.get());
+    final CompletableFuture<Integer> anySuccess = anySuccessOf(longTaskC, longFailedTask);
+    System.out.println("any success result: " + anySuccess.get());
   }
 }
 ```
@@ -273,8 +273,8 @@ fun main() {
     .orTimeout(1500, TimeUnit.MILLISECONDS)
   println("combined result: ${combined.get()}")
 
-  val anySuccessOf: Cffu<Int> = listOf(longTaskC, longFailedTask).anySuccessOfCffu()
-  println("anySuccessOf result: ${anySuccessOf.get()}")
+  val anySuccess: Cffu<Int> = listOf(longTaskC, longFailedTask).anySuccessOfCffu()
+  println("any success result: ${anySuccess.get()}")
 }
 ```
 
@@ -286,10 +286,18 @@ fun main() {
 
 `CompletableFuture`的`allOf`方法没有返回结果，只是返回`Void`。不方便获取所运行的多个`CF`结果：
 
-- 需要在`allOf`方法之后再通过入参`CF`的读方法（如`join`/`get）`来获取结果
-- 或是在传入的`Action`设置外部的变量，要注意多线程写的线程安全问题 ⚠️
+- 需要在`allOf`方法之后再通过入参`CF`的读操作（如`join`/`get`）来获取结果
+  - 操作繁琐
+  - 读方法（如`join`/`get`）是阻塞的，增加了业务逻辑的死锁风险❗️
+    更多说明可以看看[CompletableFuture原理与实践 - 4.2.2 线程池循环引用会导致死锁](https://juejin.cn/post/7098727514725416967#heading-24)
+- 或是在传入的`Action`并在`Action`中设置外部的变量，需要注意多线程读写的线程安全问题 ⚠️
+  - 多线程读写涉及多线程数据传递的复杂性，遗漏并发逻辑的数据读写的正确处理是业务代码中的常见问题❗️
 
-`cffu`的`allResultsFastFailOf`/`allResultsOf`方法提供了返回多个`CF`结果的功能，方便直接也规避了多线程写的线程安全问题。
+`cffu`的`allResultsFastFailOf`/`allResultsOf`方法提供了返回多个`CF`结果的功能，使用库的功能直接获取整体结果：
+
+- 方便直接
+- 规避了多线程读写的复杂线程安全问题与逻辑错误
+- 因为返回的是有整体结果的`CF`（可以继续串接非阻塞的操作），自然减少了阻塞的读方法（如`join`/`get`）使用，尽量降低死锁风险
 
 示例代码如下：
 
@@ -437,7 +445,7 @@ public class DefaultExecutorSettingForCffu {
   - 对于业务逻辑来说，会希望赛马模式返回首个成功的`CF`结果，而不是首个完成但失败的`CF`
   - `cffu`提供了相应的`anySuccessOf`等方法
   - `anySuccessOf`只有当所有的输入`CF`都失败时，才返回失败结果
-- 返回指定时间内成功`CF`的结果，忽略失败或还没有运行完成的`CF`（使用缺省值）
+- 返回指定时间内多个`CF`中成功的结果，忽略失败或还没有运行完成的`CF`（返回指定的缺省值）
   - 业务最终一致性时，能返回就尽量返回有的；对于没有及时返回还在运行中处理的`CF`，结果会写到分布式缓存中避免重复计算，下次就有了
   - 这是个常见业务使用模式，`cffu`提供了相应的`mostSuccessResultsOf`等方法
 
@@ -526,16 +534,16 @@ public class ConcurrencyStrategyDemo {
 
 - 超时控制：`orTimeout`/`completeOnTimeout`方法
 - 延迟执行：`delayedExecutor`方法
-- 工厂方法：`failedFuture`/`completedStage`/`failedStage`
-- 处理操作：`completeAsync`/`exceptionallyAsync`/`exceptionallyCompose`/`copy`
+- 工厂方法：`failedFuture` / `completedStage` / `failedStage`
+- 处理操作：`completeAsync` / `exceptionallyAsync` / `exceptionallyCompose` / `copy`
 
 这些`backport`的方法是`CompletableFuture`的已有功能，不附代码示例。
 
 ### 2.6 返回具体类型的`anyOf`方法
 
-`CompletableFuture.anyOf`方法返回类型是`Object`，丢失具体类型，不够类型安全，使用时需要转型也不方便。
+`CompletableFuture.anyOf`方法返回类型是`Object`，丢失具体类型，不类型安全，使用时需要转型也不方便。
 
-`cffu`提供了`anyOf`/`anyOf`方法，返回类型是`T`（类型安全），而不是返回`Object`（`CompletableFuture#anyOf()`）。
+`cffu`提供的`anySuccessOf`/`anyOf`方法，返回具体类型`T`，而不是返回`Object`。
 
 这个新方法使用简单类似，不附代码示例。
 
@@ -553,9 +561,9 @@ public class ConcurrencyStrategyDemo {
 
 ## 3. 如何从直接使用`CompletableFuture`类迁移到`Cffu`类
 
-为了使用`cffu`增强功能，可以迁移已有直接使用`CompletableFuture`的代码到`Cffu`。包含2步修改：
+为了使用`cffu`增强功能，可以迁移已有直接使用`CompletableFuture`类的代码到`Cffu`类。包含2步修改：
 
-- 在类型声明地方，`CompletableFuture`改成`Cffu`
+- 在类型声明地方，`CompletableFuture`类改成`Cffu`类
 - 在`CompletableFuture`静态方法调用的地方，类名`CompletableFuture`改成`cffuFactory`实例
 
 之所以可以这样迁移，是因为：
@@ -581,18 +589,18 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>1.0.0-Alpha12</version>
+      <version>1.0.0-Alpha13</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu:1.0.0-Alpha12")
+    implementation("io.foldright:cffu:1.0.0-Alpha13")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu:1.0.0-Alpha12'
+    implementation 'io.foldright:cffu:1.0.0-Alpha13'
     ```
 - `cffu Kotlin`支持库:
   - For `Maven` projects:
@@ -601,18 +609,18 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-kotlin</artifactId>
-      <version>1.0.0-Alpha12</version>
+      <version>1.0.0-Alpha13</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha12")
+    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha13")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha12'
+    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha13'
     ```
 - `cffu bom`:
   - For `Maven` projects:
@@ -621,7 +629,7 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-bom</artifactId>
-      <version>1.0.0-Alpha12</version>
+      <version>1.0.0-Alpha13</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -630,11 +638,11 @@ public class ConcurrencyStrategyDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha12"))
+    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha13"))
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha12')
+    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha13')
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local)的[`cffu executor wrapper SPI`实现](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -643,7 +651,7 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>1.0.0-Alpha12</version>
+      <version>1.0.0-Alpha13</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -651,11 +659,11 @@ public class ConcurrencyStrategyDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha12")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha13")
     ```
     ```groovy
     // Gradle Groovy DSL
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha12'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha13'
     ```
 
 # 📚 更多资料

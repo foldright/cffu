@@ -41,7 +41,7 @@ public class CffuDemo {
         System.out.println("combined result: " + combined.get());
 
         final Cffu<Integer> anySuccess = cffuFactory.anySuccessOf(longTaskC, longFailedTask);
-        System.out.println("any success of result: " + anySuccess.get());
+        System.out.println("any success result: " + anySuccess.get());
 
         ////////////////////////////////////////
         // cleanup
