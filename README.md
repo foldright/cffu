@@ -473,6 +473,7 @@ public class ConcurrencyStrategyDemo {
     ////////////////////////////////////////////////////////////////////////
     // CffuFactory#allResultsFastFailOf
     // CffuFactory#anySuccessOf
+    // CffuFactory#mostSuccessResultsOf
     ////////////////////////////////////////////////////////////////////////
     final Cffu<Integer> successAfterLongTime = cffuFactory.supplyAsync(() -> {
       sleep(3000); // sleep LONG time
@@ -480,35 +481,38 @@ public class ConcurrencyStrategyDemo {
     });
     final Cffu<Integer> failed = cffuFactory.failedFuture(new RuntimeException("Bang!"));
 
-    // Result type is Void!
-    Cffu<Void> cffuAll = cffuFactory.allFastFailOf(successAfterLongTime, failed);
-
     Cffu<List<Integer>> fastFailed = cffuFactory.allResultsFastFailOf(successAfterLongTime, failed);
     // fast failed without waiting successAfterLongTime
     System.out.println(fastFailed.exceptionNow());
 
-    Cffu<Integer> anySuccessOf = cffuFactory.anySuccessOf(successAfterLongTime, failed);
-    System.out.println(anySuccessOf.get());
+    Cffu<Integer> anySuccess = cffuFactory.anySuccessOf(successAfterLongTime, failed);
+    System.out.println(anySuccess.get());
+
+    Cffu<List<Integer>> mostSuccess = cffuFactory.mostSuccessResultsOf(
+        0, 100, TimeUnit.MILLISECONDS, successAfterLongTime, failed);
+    System.out.println(mostSuccess.get());
 
     ////////////////////////////////////////////////////////////////////////
-    // or CompletableFutureUtils#allFastFailOf / allResultsFastFailOf
+    // or CompletableFutureUtils#allResultsFastFailOf
     //    CompletableFutureUtils#anySuccessOf
+    //    CompletableFutureUtils#mostSuccessResultsOf
     ////////////////////////////////////////////////////////////////////////
     final CompletableFuture<Integer> successAfterLongTimeCf = CompletableFuture.supplyAsync(() -> {
       sleep(3000); // sleep LONG time
       return 42;
     });
-    final CompletableFuture<Integer> failedCf = CompletableFutureUtils.failedFuture(new RuntimeException("Bang!"));
+    final CompletableFuture<Integer> failedCf = failedFuture(new RuntimeException("Bang!"));
 
-    // Result type is Void!
-    CompletableFuture<Void> cfAll = CompletableFutureUtils.allFastFailOf(successAfterLongTimeCf, failedCf);
-
-    CompletableFuture<List<Integer>> fastFailedCf = CompletableFutureUtils.allResultsFastFailOf(successAfterLongTimeCf, failedCf);
+    CompletableFuture<List<Integer>> fastFailed2 = allResultsFastFailOf(successAfterLongTimeCf, failedCf);
     // fast failed without waiting successAfterLongTime
-    System.out.println(CompletableFutureUtils.exceptionNow(fastFailedCf));
+    System.out.println(exceptionNow(fastFailed2));
 
-    CompletableFuture<Integer> cfSuccess = CompletableFutureUtils.anySuccessOf(successAfterLongTimeCf, failedCf);
-    System.out.println(cfSuccess.get());
+    CompletableFuture<Integer> anySuccess2 = anySuccessOf(successAfterLongTimeCf, failedCf);
+    System.out.println(anySuccess2.get());
+
+    CompletableFuture<List<Integer>> mostSuccess2 = mostSuccessResultsOf(
+        0, 100, TimeUnit.MILLISECONDS, successAfterLongTime, failed);
+    System.out.println(mostSuccess2.get());
   }
 }
 ```
