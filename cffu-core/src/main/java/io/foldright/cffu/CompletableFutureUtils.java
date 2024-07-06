@@ -1735,38 +1735,6 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @SafeVarargs
-    public static <T> CompletableFuture<Void> thenMAcceptAsync(
-            CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
-        return thenMAcceptAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, actions);
-    }
-
-    /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned CompletableFuture
-     * @return the new CompletableFuture
-     */
-    @SafeVarargs
-    public static <T> CompletableFuture<Void> thenMAcceptAsync(
-            CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
-        requireNonNull(cfThis, "cfThis is null");
-        requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("action", actions);
-
-        return cfThis.thenCompose(v -> CompletableFuture.allOf(wrapConsumers(executor, v, actions)));
-    }
-
-    /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
-     * with the given stage's result as the argument to the given actions.
-     *
-     * @param actions the actions to perform before completing the returned CompletableFuture
-     * @return the new CompletableFuture
-     */
-    @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptFastFailAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
         return thenMAcceptFastFailAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, actions);
@@ -1788,6 +1756,38 @@ public final class CompletableFutureUtils {
         requireArrayAndEleNonNull("action", actions);
 
         return cfThis.thenCompose(v -> allFastFailOf(wrapConsumers(executor, v, actions)));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the given stage's result as the argument to the given actions.
+     *
+     * @param actions the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<Void> thenMAcceptAsync(
+            CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
+        return thenMAcceptAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, actions);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<Void> thenMAcceptAsync(
+            CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("action", actions);
+
+        return cfThis.thenCompose(v -> CompletableFuture.allOf(wrapConsumers(executor, v, actions)));
     }
 
     private static <T> CompletableFuture<Void>[] wrapConsumers(Executor executor, T v, Consumer<? super T>[] actions) {
