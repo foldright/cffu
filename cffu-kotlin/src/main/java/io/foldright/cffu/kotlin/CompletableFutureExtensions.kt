@@ -108,9 +108,7 @@ fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
 fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
     valueIfNotSuccess: T, executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mostSuccessResultsOf(
-        valueIfNotSuccess, executorWhenTimeout, timeout, unit, *toTypedArray()
-    )
+    CompletableFutureUtils.mostSuccessResultsOf(valueIfNotSuccess, executorWhenTimeout, timeout, unit, *toTypedArray())
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of
@@ -339,8 +337,7 @@ fun <T> Array<out CompletionStage<out T>>.anyOfCompletableFuture(): CompletableF
  */
 fun <T, U, V> CompletableFuture<out T>.thenCombineFastFail(
     other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
-): CompletableFuture<V> =
-    CompletableFutureUtils.thenCombineFastFail(this, other, fn)
+): CompletableFuture<V> = CompletableFutureUtils.thenCombineFastFail(this, other, fn)
 
 /**
  * Returns a new CompletableFuture that, when tow given stage both complete normally,
@@ -358,8 +355,7 @@ fun <T, U, V> CompletableFuture<out T>.thenCombineFastFail(
  */
 fun <T, U, V> CompletableFuture<out T>.thenCombineFastFailAsync(
     other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
-): CompletableFuture<V> =
-    CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn)
+): CompletableFuture<V> = CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn)
 
 /**
  * Returns a new CompletableFuture that, when tow given stage both complete normally,
@@ -377,8 +373,7 @@ fun <T, U, V> CompletableFuture<out T>.thenCombineFastFailAsync(
  */
 fun <T, U, V> CompletableFuture<out T>.thenCombineFastFailAsync(
     other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>, executor: Executor
-): CompletableFuture<V> =
-    CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn, executor)
+): CompletableFuture<V> = CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn, executor)
 
 /**
  * Returns a new CompletableFuture that, when tow given stage both complete normally,
@@ -395,8 +390,7 @@ fun <T, U, V> CompletableFuture<out T>.thenCombineFastFailAsync(
  */
 fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFail(
     other: CompletionStage<out U>, action: BiConsumer<in T, in U>
-): CompletableFuture<Void> =
-    CompletableFutureUtils.thenAcceptBothFastFail(this, other, action)
+): CompletableFuture<Void> = CompletableFutureUtils.thenAcceptBothFastFail(this, other, action)
 
 /**
  * Returns a new CompletableFuture that, when tow given stage both complete normally,
@@ -414,8 +408,7 @@ fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFail(
  */
 fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFailAsync(
     other: CompletionStage<out U>, action: BiConsumer<in T, in U>
-): CompletableFuture<Void> =
-    CompletableFutureUtils.thenAcceptBothFastFailAsync(this, other, action)
+): CompletableFuture<Void> = CompletableFutureUtils.thenAcceptBothFastFailAsync(this, other, action)
 
 /**
  * Returns a new CompletableFuture that, when tow given stage both complete normally,
@@ -433,8 +426,7 @@ fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFailAsync(
  */
 fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFailAsync(
     other: CompletionStage<out U>, action: BiConsumer<in T, in U>, executor: Executor
-): CompletableFuture<Void> =
-    CompletableFutureUtils.thenAcceptBothFastFailAsync(this, other, action, executor)
+): CompletableFuture<Void> = CompletableFutureUtils.thenAcceptBothFastFailAsync(this, other, action, executor)
 
 /**
  * Returns a new CompletableFuture that, when two given stages both complete normally, executes the given action.
@@ -467,8 +459,7 @@ fun CompletableFuture<*>.runAfterBothFastFail(other: CompletionStage<*>, action:
 fun CompletableFuture<*>.runAfterBothFastFailAsync(
     other: CompletionStage<*>,
     action: Runnable
-): CompletableFuture<Void> =
-    CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action)
+): CompletableFuture<Void> = CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action)
 
 /**
  * Returns a new CompletableFuture that, when two given stages both complete normally,
@@ -485,8 +476,7 @@ fun CompletableFuture<*>.runAfterBothFastFailAsync(
  */
 fun CompletableFuture<*>.runAfterBothFastFailAsync(
     other: CompletionStage<*>, action: Runnable, executor: Executor
-): CompletableFuture<Void> =
-    CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action, executor)
+): CompletableFuture<Void> = CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action, executor)
 
 // endregion
 ////////////////////////////////////////////////////////////
@@ -511,8 +501,7 @@ fun CompletableFuture<*>.runAfterBothFastFailAsync(
  */
 fun <T, U> CompletableFuture<out T>.applyToEitherSuccess(
     other: CompletionStage<out T>, fn: Function<in T, out U>
-): CompletableFuture<U> =
-    CompletableFutureUtils.applyToEitherSuccess(this, other, fn)
+): CompletableFuture<U> = CompletableFutureUtils.applyToEitherSuccess(this, other, fn)
 
 /**
  * Returns a new CompletionStage that, when either given stage success,
@@ -529,8 +518,7 @@ fun <T, U> CompletableFuture<out T>.applyToEitherSuccess(
  */
 fun <T, U> CompletableFuture<out T>.applyToEitherSuccessAsync(
     other: CompletionStage<out T>, fn: Function<in T, out U>
-): CompletableFuture<U> =
-    CompletableFutureUtils.applyToEitherSuccessAsync(this, other, fn)
+): CompletableFuture<U> = CompletableFutureUtils.applyToEitherSuccessAsync(this, other, fn)
 
 /**
  * Returns a new CompletionStage that, when either given stage success,
@@ -547,8 +535,7 @@ fun <T, U> CompletableFuture<out T>.applyToEitherSuccessAsync(
  */
 fun <T, U> CompletableFuture<out T>.applyToEitherSuccessAsync(
     other: CompletionStage<out T>, fn: Function<in T, out U>, executor: Executor
-): CompletableFuture<U> =
-    CompletableFutureUtils.applyToEitherSuccessAsync(this, other, fn, executor)
+): CompletableFuture<U> = CompletableFutureUtils.applyToEitherSuccessAsync(this, other, fn, executor)
 
 /**
  * Returns a new CompletableFuture that, when either given stage success,
@@ -563,8 +550,7 @@ fun <T, U> CompletableFuture<out T>.applyToEitherSuccessAsync(
  */
 fun <T> CompletableFuture<out T>.acceptEitherSuccess(
     other: CompletionStage<out T>, action: Consumer<in T>
-): CompletableFuture<Void> =
-    CompletableFutureUtils.acceptEitherSuccess(this, other, action)
+): CompletableFuture<Void> = CompletableFutureUtils.acceptEitherSuccess(this, other, action)
 
 /**
  * Returns a new CompletionStage that, when either given stage success,
@@ -580,8 +566,7 @@ fun <T> CompletableFuture<out T>.acceptEitherSuccess(
  */
 fun <T> CompletableFuture<out T>.acceptEitherSuccessAsync(
     other: CompletionStage<out T>, action: Consumer<in T>
-): CompletableFuture<Void> =
-    CompletableFutureUtils.acceptEitherSuccessAsync(this, other, action)
+): CompletableFuture<Void> = CompletableFutureUtils.acceptEitherSuccessAsync(this, other, action)
 
 /**
  * Returns a new CompletionStage that, when either given stage success,
@@ -597,8 +582,7 @@ fun <T> CompletableFuture<out T>.acceptEitherSuccessAsync(
  */
 fun <T> CompletableFuture<out T>.acceptEitherSuccessAsync(
     other: CompletionStage<out T>, action: Consumer<in T>, executor: Executor
-): CompletableFuture<Void> =
-    CompletableFutureUtils.acceptEitherSuccessAsync(this, other, action, executor)
+): CompletableFuture<Void> = CompletableFutureUtils.acceptEitherSuccessAsync(this, other, action, executor)
 
 /**
  * Returns a new CompletableFuture that, when either given stage success, executes the given action.
@@ -632,8 +616,7 @@ fun CompletableFuture<*>.runAfterEitherSuccess(other: CompletionStage<*>, action
  */
 fun CompletableFuture<*>.runAfterEitherSuccessAsync(
     other: CompletionStage<*>, action: Runnable
-): CompletableFuture<Void> =
-    CompletableFutureUtils.runAfterEitherSuccessAsync(this, other, action)
+): CompletableFuture<Void> = CompletableFutureUtils.runAfterEitherSuccessAsync(this, other, action)
 
 /**
  * Returns a new CompletableFuture that, when either given stage success, executes the given action
@@ -651,8 +634,12 @@ fun CompletableFuture<*>.runAfterEitherSuccessAsync(
  */
 fun CompletableFuture<*>.runAfterEitherSuccessAsync(
     other: CompletionStage<*>, action: Runnable, executor: Executor
-): CompletableFuture<Void> =
-    CompletableFutureUtils.runAfterEitherSuccessAsync(this, other, action, executor)
+): CompletableFuture<Void> = CompletableFutureUtils.runAfterEitherSuccessAsync(this, other, action, executor)
+
+// endregion
+////////////////////////////////////////////////////////////
+// region## Error Handling Methods of CompletionStage
+////////////////////////////////////////////////////////////
 
 // endregion
 ////////////////////////////////////////////////////////////
@@ -660,25 +647,72 @@ fun CompletableFuture<*>.runAfterEitherSuccessAsync(
 ////////////////////////////////////////////////////////////
 
 /**
- * Returns a new CompletionStage that, when given stage completes exceptionally, is executed with given
- * stage's exception as the argument to the supplied function, using given stage's
- * default asynchronous execution facility. Otherwise, if given stage completes normally,
+ * Returns a new CompletionStage that, when this stage completes exceptionally with the given exceptionType,
+ * is executed with this stage's exception as the argument to the supplied function.
+ * Otherwise, the returned stage contains same result as input CompletionStage.
+ *
+ * @param exceptionType the exception type that triggers use of `fallback`. The exception type is matched
+ * against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+ * callers should prefer more specific types, avoiding `Throwable.class` in particular.
+ * @param fallback      the Function to be called if `input` fails with the expected exception type.
+ * The function's argument is the input's exception.
+ */
+fun <T, X : Throwable, C : CompletionStage<in T>> C.catching(
+    exceptionType: Class<X>, fallback: Function<in X, out T>
+): C = CompletableFutureUtils.catching(this, exceptionType, fallback)
+
+/**
+ * Returns a new CompletionStage that, when this stage completes exceptionally with the given exceptionType,
+ * is executed with this stage's exception as the argument to the supplied function,
+ * using this stage's default asynchronous execution facility.
+ * Otherwise, the returned stage contains same result as input CompletionStage.
+ *
+ * @param exceptionType the exception type that triggers use of `fallback`. The exception type is matched
+ * against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+ * callers should prefer more specific types, avoiding `Throwable.class` in particular.
+ * @param fallback      the Function to be called if `input` fails with the expected exception type.
+ * The function's argument is the input's exception.
+ */
+fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingAsync(
+    exceptionType: Class<X>, fallback: Function<in X, out T>
+): C = CompletableFutureUtils.catchingAsync(this, exceptionType, fallback)
+
+/**
+ * Returns a new CompletionStage that, when this stage completes exceptionally with the given exceptionType,
+ * is executed with this stage's exception as the argument to the supplied function, using the supplied Executor.
+ * Otherwise, the returned stage contains same result as input CompletionStage.
+ *
+ * @param exceptionType the exception type that triggers use of `fallback`. The exception type is matched
+ * against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+ * callers should prefer more specific types, avoiding `Throwable.class` in particular.
+ * @param fallback      the Function to be called if `input` fails with the expected exception type.
+ * The function's argument is the input's exception.
+ * @param executor      the executor to use for asynchronous execution
+ */
+fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingAsync(
+    exceptionType: Class<X>, fallback: Function<in X, out T>, executor: Executor
+): C = CompletableFutureUtils.catchingAsync(this, exceptionType, fallback, executor)
+
+/**
+ * Returns a new CompletionStage that, when this stage completes exceptionally, is executed with this
+ * stage's exception as the argument to the supplied function, using this stage's
+ * default asynchronous execution facility. Otherwise, if this stage completes normally,
  * then the returned stage also completes normally with the same value.
  *
  * @param fn the function to use to compute the value of the returned CompletionStage
- * if given CompletionStage completed exceptionally
+ * if this CompletionStage completed exceptionally
  * @return the new CompletionStage
  */
 fun <T, C : CompletionStage<in T>> C.exceptionallyAsync(fn: Function<Throwable, out T>): C =
     CompletableFutureUtils.exceptionallyAsync(this, fn)
 
 /**
- * Returns a new CompletionStage that, when given stage completes exceptionally, is executed with given
+ * Returns a new CompletionStage that, when this stage completes exceptionally, is executed with this
  * stage's exception as the argument to the supplied function, using the supplied Executor. Otherwise,
- * if given stage completes normally, then the returned stage also completes normally with the same value.
+ * if this stage completes normally, then the returned stage also completes normally with the same value.
  *
  * @param fn       the function to use to compute the value of the returned CompletionStage
- * if given CompletionStage completed exceptionally
+ * if this CompletionStage completed exceptionally
  * @param executor the executor to use for asynchronous execution
  * @return the new CompletionStage
  */
@@ -754,8 +788,7 @@ fun <T, C : CompletableFuture<out T>> C.orTimeout(timeout: Long, unit: TimeUnit)
  */
 fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
     value: T, timeout: Long, unit: TimeUnit
-): C =
-    CompletableFutureUtils.cffuCompleteOnTimeout(this, value, timeout, unit)
+): C = CompletableFutureUtils.cffuCompleteOnTimeout(this, value, timeout, unit)
 
 /**
  * Completes this CompletableFuture with the given value if not otherwise completed before the given timeout.
@@ -768,8 +801,7 @@ fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
  */
 fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
     value: T, executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit
-): C =
-    CompletableFutureUtils.cffuCompleteOnTimeout(this, value, executorWhenTimeout, timeout, unit)
+): C = CompletableFutureUtils.cffuCompleteOnTimeout(this, value, executorWhenTimeout, timeout, unit)
 
 /**
  * Completes this CompletableFuture with the given value if not otherwise completed before the given timeout.
@@ -807,6 +839,60 @@ fun <T, C : CompletableFuture<in T>> C.completeOnTimeout(value: T, timeout: Long
 //   - handle successful and failed result together(handle*/whenComplete*/peek*)
 ////////////////////////////////////////////////////////////
 
+// endregion
+////////////////////////////////////////////////////////////
+// region## Advanced Methods of CompletionStage(compose* and handle-like methods)
+//
+// NOTE about advanced meaning:
+//   - `compose` methods, input function argument return CompletionStage
+//   - handle successful and failed result together(handle*/whenComplete*/peek*)
+////////////////////////////////////////////////////////////
+/**
+ * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
+ * is composed using the results of the supplied function applied to given stage's exception.
+ *
+ * @param exceptionType the exception type that triggers use of `fallback`. The exception type is matched
+ * against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+ * callers should prefer more specific types, avoiding `Throwable.class` in particular.
+ * @param fallback      the Function to be called if `input` fails with the expected exception type.
+ * The function's argument is the input's exception.
+ */
+fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingCompose(
+    exceptionType: Class<X>, fallback: Function<in X, out CompletionStage<T>>
+): C = CompletableFutureUtils.catchingCompose(this, exceptionType, fallback)
+
+/**
+ * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
+ * is composed using the results of the supplied function applied to given stage's exception,
+ * using given stage's default asynchronous execution facility.
+ *
+ * @param exceptionType the exception type that triggers use of `fallback`. The exception type is matched
+ * against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+ * callers should prefer more specific types, avoiding `Throwable.class` in particular.
+ * @param fallback      the Function to be called if `input` fails with the expected exception type.
+ * The function's argument is the input's exception.
+ */
+fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingComposeAsync(
+    exceptionType: Class<X>, fallback: Function<in X, out CompletionStage<T>>
+): C = CompletableFutureUtils.catchingComposeAsync(this, exceptionType, fallback)
+
+/**
+ * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
+ * is composed using the results of the supplied function applied to given's exception,
+ * using the supplied Executor.
+ *
+ * @param exceptionType the exception type that triggers use of `fallback`. The exception type is matched
+ * against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+ * callers should prefer more specific types, avoiding `Throwable.class` in particular.
+ * @param fallback      the Function to be called if `input` fails with the expected exception type.
+ * The function's argument is the input's exception.
+ * @param executor      the executor to use for asynchronous execution
+ */
+fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingComposeAsync(
+    exceptionType: Class<X>, fallback: Function<in X, out CompletionStage<T>>,
+    executor: Executor
+): C = CompletableFutureUtils.catchingComposeAsync(this, exceptionType, fallback, executor)
+
 /**
  * Returns a new CompletionStage that, when given stage completes exceptionally,
  * is composed using the results of the supplied function applied to given stage's exception.
@@ -841,8 +927,7 @@ fun <T, C : CompletionStage<in T>> C.exceptionallyComposeAsync(fn: Function<Thro
  */
 fun <T, C : CompletionStage<in T>> C.exceptionallyComposeAsync(
     fn: Function<Throwable, out CompletionStage<T>>, executor: Executor
-): C =
-    CompletableFutureUtils.exceptionallyComposeAsync(this, fn, executor)
+): C = CompletableFutureUtils.exceptionallyComposeAsync(this, fn, executor)
 
 /**
  * Peeks the result by executing the given action when this stage completes, returns this stage.

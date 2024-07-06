@@ -19,6 +19,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static io.foldright.test_utils.TestUtils.*;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.function.Function.identity;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -297,6 +298,29 @@ class CffuTest {
     // region# Error Handling Methods of CompletionStage
     ////////////////////////////////////////////////////////////////////////////////
 
+    @Test
+    void test_catching() throws Exception {
+        Cffu<Integer> failed = cffuFactory.failedFuture(rte);
+
+        assertEquals(n, failed.catching(RuntimeException.class, ex -> n).get());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                failed.catching(IndexOutOfBoundsException.class, ex -> n).get()
+        ).getCause());
+
+        assertEquals(n, failed.catchingAsync(RuntimeException.class, ex -> n).get());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                failed.catchingAsync(IndexOutOfBoundsException.class, ex -> n).get()
+        ).getCause());
+
+        Cffu<Integer> success = cffuFactory.completedFuture(n);
+
+        assertEquals(n, success.catching(RuntimeException.class, ex -> anotherN).get());
+        assertEquals(n, success.catching(IndexOutOfBoundsException.class, ex -> anotherN).get());
+
+        assertEquals(n, success.catchingAsync(RuntimeException.class, ex -> anotherN).get());
+        assertEquals(n, success.catchingAsync(IndexOutOfBoundsException.class, ex -> anotherN).get());
+    }
+
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
     // region# Timeout Control Methods
@@ -338,6 +362,29 @@ class CffuTest {
     ////////////////////////////////////////////////////////////////////////////////
     // region# Advanced Methods(compose* and handle-like methods)
     ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void test_catchingCompose() throws Exception {
+        Cffu<Integer> failed = cffuFactory.failedFuture(rte);
+
+        assertEquals(n, failed.catchingCompose(RuntimeException.class, ex -> completedFuture(n)).get());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                failed.catchingCompose(IndexOutOfBoundsException.class, ex -> completedFuture(n)).get()
+        ).getCause());
+
+        assertEquals(n, failed.catchingComposeAsync(RuntimeException.class, ex -> completedFuture(n)).get());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                failed.catchingComposeAsync(IndexOutOfBoundsException.class, ex -> completedFuture(n)).get()
+        ).getCause());
+
+        Cffu<Integer> success = cffuFactory.completedFuture(n);
+
+        assertEquals(n, success.catchingCompose(RuntimeException.class, ex -> completedFuture(anotherN)).get());
+        assertEquals(n, success.catchingCompose(IndexOutOfBoundsException.class, ex -> completedFuture(anotherN)).get());
+
+        assertEquals(n, success.catchingComposeAsync(RuntimeException.class, ex -> completedFuture(anotherN)).get());
+        assertEquals(n, success.catchingComposeAsync(IndexOutOfBoundsException.class, ex -> completedFuture(anotherN)).get());
+    }
 
     @Test
     void test_peek() throws Exception {

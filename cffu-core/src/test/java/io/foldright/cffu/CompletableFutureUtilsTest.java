@@ -1424,6 +1424,29 @@ class CompletableFutureUtilsTest {
 
     }
 
+    @Test
+    void test_catching() throws Exception {
+        CompletableFuture<Integer> failed = failedFuture(rte);
+
+        assertEquals(n, catching(failed, RuntimeException.class, ex -> n).get());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                catching(failed, IndexOutOfBoundsException.class, ex -> n).get()
+        ).getCause());
+
+        assertEquals(n, catchingAsync(failed, RuntimeException.class, ex -> n).get());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                catchingAsync(failed, IndexOutOfBoundsException.class, ex -> n).get()
+        ).getCause());
+
+        CompletableFuture<Integer> success = completedFuture(n);
+
+        assertEquals(n, catching(success, RuntimeException.class, ex -> anotherN).get());
+        assertEquals(n, catching(success, IndexOutOfBoundsException.class, ex -> anotherN).get());
+
+        assertEquals(n, catchingAsync(success, RuntimeException.class, ex -> anotherN).get());
+        assertEquals(n, catchingAsync(success, IndexOutOfBoundsException.class, ex -> anotherN).get());
+    }
+
     // endregion
     ////////////////////////////////////////////////////////////
     // region## Timeout Control Methods of CompletableFuture
@@ -1536,6 +1559,29 @@ class CompletableFutureUtilsTest {
 
         assertEquals(n, exceptionallyComposeAsync(failed, ex -> completedFuture(n)).get());
         assertEquals(n, exceptionallyComposeAsync(completed, ex -> completedFuture(anotherN)).get());
+    }
+
+    @Test
+    void test_catchingCompose() throws Exception {
+        CompletableFuture<Integer> failed = failedFuture(rte);
+
+        assertEquals(n, catchingCompose(failed, RuntimeException.class, ex -> completedFuture(n)).get());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                catchingCompose(failed, IndexOutOfBoundsException.class, ex -> completedFuture(n)).get()
+        ).getCause());
+
+        assertEquals(n, catchingComposeAsync(failed, RuntimeException.class, ex -> completedFuture(n)).get());
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                catchingComposeAsync(failed, IndexOutOfBoundsException.class, ex -> completedFuture(n)).get()
+        ).getCause());
+
+        CompletableFuture<Integer> success = completedFuture(n);
+
+        assertEquals(n, catchingCompose(success, RuntimeException.class, ex -> completedFuture(anotherN)).get());
+        assertEquals(n, catchingCompose(success, IndexOutOfBoundsException.class, ex -> completedFuture(anotherN)).get());
+
+        assertEquals(n, catchingComposeAsync(success, RuntimeException.class, ex -> completedFuture(anotherN)).get());
+        assertEquals(n, catchingComposeAsync(success, IndexOutOfBoundsException.class, ex -> completedFuture(anotherN)).get());
     }
 
     @Test

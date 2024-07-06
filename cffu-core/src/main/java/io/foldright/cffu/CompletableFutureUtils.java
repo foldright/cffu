@@ -459,8 +459,7 @@ public final class CompletableFutureUtils {
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
      * @return the new CompletableFuture
-     * @see #allResultsFastFailOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * @see #mSupplyFastFailAsync(Supplier[])
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -474,8 +473,7 @@ public final class CompletableFutureUtils {
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
-     * @see #allResultsFastFailOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     * @see #mSupplyFastFailAsync(Executor, Supplier[])
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -493,7 +491,7 @@ public final class CompletableFutureUtils {
      *
      * @return the new CompletableFuture
      * @see #allResultsFastFailOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * @see #mSupplyFastFailAsync(Supplier[])
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -507,8 +505,7 @@ public final class CompletableFutureUtils {
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
-     * @see #allResultsFastFailOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     * @see #mSupplyFastFailAsync(Executor, Supplier[])
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
             Executor executor,
@@ -526,8 +523,7 @@ public final class CompletableFutureUtils {
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
      * @return the new CompletableFuture
-     * @see #allResultsFastFailOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * @see #mSupplyFastFailAsync(Supplier[])
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -542,8 +538,7 @@ public final class CompletableFutureUtils {
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
-     * @see #allResultsFastFailOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     * @see #mSupplyFastFailAsync(Executor, Supplier[])
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -561,8 +556,7 @@ public final class CompletableFutureUtils {
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
      * @return the new CompletableFuture
-     * @see #allResultsFastFailOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * @see #mSupplyFastFailAsync(Supplier[])
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -577,8 +571,7 @@ public final class CompletableFutureUtils {
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
-     * @see #allResultsFastFailOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     * @see #mSupplyFastFailAsync(Executor, Supplier[])
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -620,6 +613,7 @@ public final class CompletableFutureUtils {
      * If the given supplier failed, use {@code null}.
      *
      * @return the new CompletableFuture
+     * @see #mSupplyAllSuccessAsync(Object, Supplier[])
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAllSuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -635,6 +629,7 @@ public final class CompletableFutureUtils {
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
+     * @see #mSupplyAllSuccessAsync(Object, Executor, Supplier[])
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAllSuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -653,6 +648,7 @@ public final class CompletableFutureUtils {
      * If the given supplier failed, use {@code null}.
      *
      * @return the new CompletableFuture
+     * @see #mSupplyAllSuccessAsync(Object, Supplier[])
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAllSuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -668,6 +664,7 @@ public final class CompletableFutureUtils {
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
+     * @see #mSupplyAllSuccessAsync(Object, Executor, Supplier[])
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAllSuccessAsync(
             Executor executor,
@@ -687,6 +684,7 @@ public final class CompletableFutureUtils {
      * If the given supplier failed, use {@code null}.
      *
      * @return the new CompletableFuture
+     * @see #mSupplyAllSuccessAsync(Object, Supplier[])
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAllSuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -703,6 +701,7 @@ public final class CompletableFutureUtils {
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
+     * @see #mSupplyAllSuccessAsync(Object, Executor, Supplier[])
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAllSuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -722,6 +721,7 @@ public final class CompletableFutureUtils {
      * If the given supplier failed, use {@code null}.
      *
      * @return the new CompletableFuture
+     * @see #mSupplyAllSuccessAsync(Object, Supplier[])
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAllSuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -738,6 +738,7 @@ public final class CompletableFutureUtils {
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
+     * @see #mSupplyAllSuccessAsync(Object, Executor, Supplier[])
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAllSuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -777,6 +778,7 @@ public final class CompletableFutureUtils {
      * @param timeout how long to wait in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new CompletableFuture
+     * @see #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -796,6 +798,7 @@ public final class CompletableFutureUtils {
      * @param timeout  how long to wait in units of {@code unit}
      * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new CompletableFuture
+     * @see #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit,
@@ -820,6 +823,7 @@ public final class CompletableFutureUtils {
      * @param timeout how long to wait in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new CompletableFuture
+     * @see #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit,
@@ -840,6 +844,7 @@ public final class CompletableFutureUtils {
      * @param timeout  how long to wait in units of {@code unit}
      * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new CompletableFuture
+     * @see #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit,
@@ -864,6 +869,7 @@ public final class CompletableFutureUtils {
      * @param timeout how long to wait in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new CompletableFuture
+     * @see #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
@@ -884,6 +890,7 @@ public final class CompletableFutureUtils {
      * @param timeout  how long to wait in units of {@code unit}
      * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new CompletableFuture
+     * @see #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
@@ -908,6 +915,7 @@ public final class CompletableFutureUtils {
      * @param timeout how long to wait in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new CompletableFuture
+     * @see #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
@@ -929,6 +937,7 @@ public final class CompletableFutureUtils {
      * @param timeout  how long to wait in units of {@code unit}
      * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new CompletableFuture
+     * @see #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
@@ -975,8 +984,7 @@ public final class CompletableFutureUtils {
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
      * @return the new CompletableFuture
-     * @see #allResultsOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * @see #mSupplyAsync(Supplier[])
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -990,8 +998,7 @@ public final class CompletableFutureUtils {
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
-     * @see #allResultsOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * @see #mSupplyFastFailAsync(Executor, Supplier[])
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -1008,8 +1015,7 @@ public final class CompletableFutureUtils {
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
      * @return the new CompletableFuture
-     * @see #allResultsOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * @see #mSupplyAsync(Supplier[])
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -1023,8 +1029,7 @@ public final class CompletableFutureUtils {
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
-     * @see #allResultsOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * @see #mSupplyFastFailAsync(Executor, Supplier[])
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAsync(
             Executor executor,
@@ -1042,8 +1047,7 @@ public final class CompletableFutureUtils {
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
      * @return the new CompletableFuture
-     * @see #allResultsOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * @see #mSupplyAsync(Supplier[])
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -1058,8 +1062,7 @@ public final class CompletableFutureUtils {
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
-     * @see #allResultsOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * @see #mSupplyFastFailAsync(Executor, Supplier[])
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -1077,8 +1080,7 @@ public final class CompletableFutureUtils {
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
      * @return the new CompletableFuture
-     * @see #allResultsOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * @see #mSupplyAsync(Supplier[])
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -1093,8 +1095,7 @@ public final class CompletableFutureUtils {
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
-     * @see #allResultsOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * @see #mSupplyFastFailAsync(Executor, Supplier[])
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -1155,6 +1156,8 @@ public final class CompletableFutureUtils {
      * @param valueIfFailed the value to return if not completed successfully
      * @param cfs           the stages
      * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see #getSuccessNow(CompletableFuture, Object)
+     * @see com.google.common.util.concurrent.Futures#successfulAsList(com.google.common.util.concurrent.ListenableFuture[]) guava#successfulAsList() method
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1177,6 +1180,7 @@ public final class CompletableFutureUtils {
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @param cfs               the stages
      * @see #getSuccessNow(CompletableFuture, Object)
+     * @see com.google.common.util.concurrent.Futures#successfulAsList(com.google.common.util.concurrent.ListenableFuture[]) guava#successfulAsList() method
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -3554,6 +3558,70 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
+     * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
+     * is executed with given stage's exception as the argument to the supplied function.
+     * Otherwise, the returned stage contains same result as input CompletionStage.
+     *
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
+     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
+     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
+     *                      The function's argument is the input's exception.
+     * @see com.google.common.util.concurrent.Futures#catching(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.base.Function, Executor) guava#catching() method
+     */
+    @SuppressWarnings("unchecked")
+    public static <T, X extends Throwable, C extends CompletionStage<? super T>>
+    C catching(C cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(fallback, "fallback is null");
+        return (C) cfThis.handle((r, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
+                ? cfThis : completedFuture(fallback.apply((X) ex))
+        ).thenCompose(x -> x);
+    }
+
+    /**
+     * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
+     * is executed with given stage's exception as the argument to the supplied function,
+     * using the given stage's default asynchronous execution facility.
+     * Otherwise, the returned stage contains same result as input CompletionStage.
+     *
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
+     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
+     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
+     *                      The function's argument is the input's exception.
+     * @see com.google.common.util.concurrent.Futures#catching(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.base.Function, Executor) guava#catching() method
+     */
+    public static <T, X extends Throwable, C extends CompletionStage<? super T>>
+    C catchingAsync(C cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
+        return catchingAsync(cfThis, exceptionType, fallback, ASYNC_POOL);
+    }
+
+    /**
+     * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
+     * is executed with given stage's exception as the argument to the supplied function, using the supplied Executor.
+     * Otherwise, the returned stage contains same result as input CompletionStage.
+     *
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
+     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
+     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
+     *                      The function's argument is the input's exception.
+     * @param executor      the executor to use for asynchronous execution
+     * @see com.google.common.util.concurrent.Futures#catching(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.base.Function, Executor) guava#catching() method
+     */
+    @SuppressWarnings("unchecked")
+    public static <T, X extends Throwable, C extends CompletionStage<? super T>>
+    C catchingAsync(C cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback, Executor executor) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(fallback, "fallback is null");
+        requireNonNull(executor, "executor is null");
+        return (C) cfThis.handle((r, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
+                ? cfThis : cfThis.<T>handleAsync((r1, ex1) -> fallback.apply((X) ex1), executor)
+        ).thenCompose(x -> x);
+    }
+
+    /**
      * Returns a new CompletionStage that, when given stage completes exceptionally, is executed with given
      * stage's exception as the argument to the supplied function, using given stage's
      * default asynchronous execution facility. Otherwise, if given stage completes normally,
@@ -3785,6 +3853,69 @@ public final class CompletableFutureUtils {
     //   - `compose` methods, input function argument return CompletionStage
     //   - handle successful and failed result together(handle*/whenComplete*/peek*)
     ////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
+     * is composed using the results of the supplied function applied to given stage's exception.
+     *
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
+     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
+     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
+     *                      The function's argument is the input's exception.
+     * @see com.google.common.util.concurrent.Futures#catchingAsync(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) guava#catchingAsync() method
+     */
+    @SuppressWarnings("unchecked")
+    public static <T, X extends Throwable, C extends CompletionStage<? super T>>
+    C catchingCompose(C cfThis, Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(fallback, "fallback is null");
+        return (C) cfThis.handle((r, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
+                ? cfThis : fallback.apply((X) ex)
+        ).thenCompose(x -> x);
+    }
+
+    /**
+     * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
+     * is composed using the results of the supplied function applied to given stage's exception,
+     * using given stage's default asynchronous execution facility.
+     *
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
+     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
+     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
+     *                      The function's argument is the input's exception.
+     * @see com.google.common.util.concurrent.Futures#catchingAsync(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) guava#catchingAsync() method
+     */
+    public static <T, X extends Throwable, C extends CompletionStage<? super T>> C catchingComposeAsync(
+            C cfThis, Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
+        return catchingComposeAsync(cfThis, exceptionType, fallback, ASYNC_POOL);
+    }
+
+    /**
+     * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
+     * is composed using the results of the supplied function applied to given's exception,
+     * using the supplied Executor.
+     *
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
+     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
+     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
+     *                      The function's argument is the input's exception.
+     * @param executor      the executor to use for asynchronous execution
+     * @see com.google.common.util.concurrent.Futures#catchingAsync(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) guava#catchingAsync() method
+     */
+    @SuppressWarnings("unchecked")
+    public static <T, X extends Throwable, C extends CompletionStage<? super T>> C catchingComposeAsync(
+            C cfThis, Class<X> exceptionType,
+            Function<? super X, ? extends CompletionStage<T>> fallback, Executor executor) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(fallback, "fallback is null");
+        requireNonNull(executor, "executor is null");
+        return (C) cfThis.handle((r, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
+                ? cfThis : cfThis.handleAsync((r1, ex1) -> fallback.apply((X) ex1), executor).thenCompose(x -> x)
+        ).thenCompose(x -> x);
+    }
 
     /**
      * Returns a new CompletableFuture that, when given CompletableFuture completes exceptionally,

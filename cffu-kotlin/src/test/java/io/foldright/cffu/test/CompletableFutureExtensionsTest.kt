@@ -7,7 +7,7 @@ import io.foldright.cffu.kotlin.*
 import io.foldright.test_utils.createIncompleteFuture
 import io.foldright.test_utils.sleep
 import io.foldright.test_utils.testThreadPoolExecutor
-import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.nulls.shouldBeNull
@@ -16,6 +16,7 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 import io.kotest.matchers.types.shouldBeTypeOf
 import kotlinx.coroutines.future.await
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletableFuture.completedFuture
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -26,102 +27,102 @@ import java.util.function.Function.identity
 class CompletableFutureExtensionsTest : FunSpec({
     test("allOf*") {
         listOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
+            completedFuture(42),
+            completedFuture(43),
+            completedFuture(44),
         ).allResultsOfCompletableFuture().await() shouldBe listOf(42, 43, 44)
         listOf<CompletableFuture<Int>>().allResultsOfCompletableFuture().await() shouldBe emptyList()
 
         setOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
+            completedFuture(42),
+            completedFuture(43),
+            completedFuture(44),
         ).allResultsOfCompletableFuture().await() shouldBe listOf(42, 43, 44)
 
         arrayOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
+            completedFuture(42),
+            completedFuture(43),
+            completedFuture(44),
         ).allResultsOfCompletableFuture().await() shouldBe listOf(42, 43, 44)
         arrayOf<CompletableFuture<Int>>().allResultsOfCompletableFuture().await() shouldBe emptyList()
 
         ////////////////////////////////////////
 
         listOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture("42"),
-            CompletableFuture.completedFuture(42.0),
+            completedFuture(42),
+            completedFuture("42"),
+            completedFuture(42.0),
         ).allOfCompletableFuture().await().shouldBeNull()
         listOf<CompletableFuture<Int>>().allOfCompletableFuture().await().shouldBeNull()
 
         setOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture("42"),
-            CompletableFuture.completedFuture(42.0),
+            completedFuture(42),
+            completedFuture("42"),
+            completedFuture(42.0),
         ).allOfCompletableFuture().await().shouldBeNull()
 
         arrayOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture("42"),
-            CompletableFuture.completedFuture(42.0),
+            completedFuture(42),
+            completedFuture("42"),
+            completedFuture(42.0),
         ).allOfCompletableFuture().await().shouldBeNull()
         arrayOf<CompletableFuture<*>>().allOfCompletableFuture().await().shouldBeNull()
 
         ////////////////////////////////////////
 
         listOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
+            completedFuture(42),
+            completedFuture(43),
+            completedFuture(44),
         ).allResultsFastFailOfCompletableFuture().await() shouldBe listOf(42, 43, 44)
         listOf<CompletableFuture<Int>>().allResultsFastFailOfCompletableFuture().await() shouldBe emptyList()
 
         setOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
+            completedFuture(42),
+            completedFuture(43),
+            completedFuture(44),
         ).allResultsFastFailOfCompletableFuture().await() shouldBe listOf(42, 43, 44)
 
         arrayOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
+            completedFuture(42),
+            completedFuture(43),
+            completedFuture(44),
         ).allResultsFastFailOfCompletableFuture().await() shouldBe listOf(42, 43, 44)
         arrayOf<CompletableFuture<Int>>().allResultsFastFailOfCompletableFuture().await() shouldBe emptyList()
 
         ////////////////////////////////////////
 
         listOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture("42"),
-            CompletableFuture.completedFuture(42.0),
+            completedFuture(42),
+            completedFuture("42"),
+            completedFuture(42.0),
         ).allFastFailOfCompletableFuture().await().shouldBeNull()
         listOf<CompletableFuture<Int>>().allFastFailOfCompletableFuture().await().shouldBeNull()
 
         setOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture("42"),
-            CompletableFuture.completedFuture(42.0),
+            completedFuture(42),
+            completedFuture("42"),
+            completedFuture(42.0),
         ).allFastFailOfCompletableFuture().await().shouldBeNull()
 
         arrayOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture("42"),
-            CompletableFuture.completedFuture(42.0),
+            completedFuture(42),
+            completedFuture("42"),
+            completedFuture(42.0),
         ).allFastFailOfCompletableFuture().await().shouldBeNull()
         arrayOf<CompletableFuture<*>>().allFastFailOfCompletableFuture().await().shouldBeNull()
     }
 
     test("mostSuccessResultsOfCompletableFuture") {
-        listOf(CompletableFuture(), CompletableFuture.completedFuture(42))
+        listOf(CompletableFuture(), completedFuture(42))
             .mostSuccessResultsOfCompletableFuture(null, 10, TimeUnit.MILLISECONDS).await() shouldBe listOf(null, 42)
-        listOf(CompletableFuture(), CompletableFuture.completedFuture(42))
+        listOf(CompletableFuture(), completedFuture(42))
             .mostSuccessResultsOfCompletableFuture(null, testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS)
             .await() shouldBe listOf(null, 42)
 
-        arrayOf(CompletableFuture(), CompletableFuture.completedFuture(42))
+        arrayOf(CompletableFuture(), completedFuture(42))
             .mostSuccessResultsOfCompletableFuture(null, 10, TimeUnit.MILLISECONDS).await() shouldBe listOf(null, 42)
-        arrayOf(CompletableFuture(), CompletableFuture.completedFuture(42))
+        arrayOf(CompletableFuture(), completedFuture(42))
             .mostSuccessResultsOfCompletableFuture(null, testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS)
             .await() shouldBe listOf(null, 42)
     }
@@ -130,20 +131,20 @@ class CompletableFutureExtensionsTest : FunSpec({
         listOf(
             CompletableFuture(),
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
+            completedFuture(42),
         ).anyOfCompletableFuture().await() shouldBe 42
         listOf<CompletableFuture<Int>>().anyOfCompletableFuture().isDone.shouldBeFalse()
 
         setOf(
             CompletableFuture(),
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
+            completedFuture(42),
         ).anyOfCompletableFuture().await() shouldBe 42
 
         arrayOf(
             CompletableFuture(),
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
+            completedFuture(42),
         ).anyOfCompletableFuture().await() shouldBe 42
         arrayOf<CompletableFuture<Int>>().anyOfCompletableFuture().isDone.shouldBeFalse()
 
@@ -152,20 +153,20 @@ class CompletableFutureExtensionsTest : FunSpec({
         listOf(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
-            CompletableFuture.completedFuture(42),
+            completedFuture(42),
         ).anyOfCompletableFuture().await() shouldBe 42
         listOf<CompletableFuture<*>>().anyOfCompletableFuture().isDone.shouldBeFalse()
 
         setOf(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
-            CompletableFuture.completedFuture(42),
+            completedFuture(42),
         ).anyOfCompletableFuture().await() shouldBe 42
 
         arrayOf(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
-            CompletableFuture.completedFuture(42),
+            completedFuture(42),
         ).anyOfCompletableFuture().await() shouldBe 42
         arrayOf<CompletableFuture<*>>().anyOfCompletableFuture().isDone.shouldBeFalse()
 
@@ -174,24 +175,24 @@ class CompletableFutureExtensionsTest : FunSpec({
         listOf(
             CompletableFuture(),
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
+            completedFuture(42),
         ).anySuccessOfCompletableFuture().await() shouldBe 42
-        shouldThrow<NoCfsProvidedException> {
+        shouldThrowExactly<NoCfsProvidedException> {
             listOf<CompletableFuture<Int>>().anySuccessOfCompletableFuture().await()
         }
 
         setOf(
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
+            completedFuture(42),
             CompletableFuture(),
         ).anySuccessOfCompletableFuture().await() shouldBe 42
 
         arrayOf(
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
+            completedFuture(42),
             CompletableFuture(),
         ).anySuccessOfCompletableFuture().await() shouldBe 42
-        shouldThrow<NoCfsProvidedException> {
+        shouldThrowExactly<NoCfsProvidedException> {
             arrayOf<CompletableFuture<Int>>().anySuccessOfCompletableFuture().await()
         }
 
@@ -200,24 +201,24 @@ class CompletableFutureExtensionsTest : FunSpec({
         listOf(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
-            CompletableFuture.completedFuture(42),
+            completedFuture(42),
         ).anySuccessOfCompletableFuture().await() shouldBe 42
-        shouldThrow<NoCfsProvidedException> {
+        shouldThrowExactly<NoCfsProvidedException> {
             listOf<CompletableFuture<*>>().anySuccessOfCompletableFuture().await()
         }
 
         setOf(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
-            CompletableFuture.completedFuture(42),
+            completedFuture(42),
         ).anySuccessOfCompletableFuture().await() shouldBe 42
 
         arrayOf(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
-            CompletableFuture.completedFuture(42),
+            completedFuture(42),
         ).anySuccessOfCompletableFuture().await() shouldBe 42
-        shouldThrow<NoCfsProvidedException> {
+        shouldThrowExactly<NoCfsProvidedException> {
             arrayOf<CompletableFuture<*>>().anySuccessOfCompletableFuture().await()
         }
     }
@@ -234,34 +235,34 @@ class CompletableFutureExtensionsTest : FunSpec({
         val failed = CompletableFutureUtils.failedFuture<Int>(rte)
 
         val runnable = Runnable {}
-        shouldThrow<ExecutionException> {
+        shouldThrowExactly<ExecutionException> {
             cf.runAfterBothFastFail(failed, runnable)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
-        shouldThrow<ExecutionException> {
+        shouldThrowExactly<ExecutionException> {
             cf.runAfterBothFastFailAsync(failed, runnable)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
-        shouldThrow<ExecutionException> {
+        shouldThrowExactly<ExecutionException> {
             cf.runAfterBothFastFailAsync(failed, runnable, testThreadPoolExecutor)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
 
         val bc = BiConsumer { _: Int, _: Int -> }
-        shouldThrow<ExecutionException> {
+        shouldThrowExactly<ExecutionException> {
             cf.thenAcceptBothFastFail(failed, bc)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
-        shouldThrow<ExecutionException> {
+        shouldThrowExactly<ExecutionException> {
             cf.thenAcceptBothFastFailAsync(failed, bc)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
-        shouldThrow<ExecutionException> {
+        shouldThrowExactly<ExecutionException> {
             cf.thenAcceptBothFastFailAsync(failed, bc, testThreadPoolExecutor)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
 
-        shouldThrow<ExecutionException> {
+        shouldThrowExactly<ExecutionException> {
             cf.thenCombineFastFail(failed, Integer::sum)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
-        shouldThrow<ExecutionException> {
+        shouldThrowExactly<ExecutionException> {
             cf.thenCombineFastFailAsync(failed, Integer::sum)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
-        shouldThrow<ExecutionException> {
+        shouldThrowExactly<ExecutionException> {
             cf.thenCombineFastFailAsync(failed, Integer::sum, testThreadPoolExecutor)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
     }
@@ -272,7 +273,7 @@ class CompletableFutureExtensionsTest : FunSpec({
 
     test("either success") {
         val failed = CompletableFutureUtils.failedFuture<Int>(rte)
-        val cf = CompletableFuture.completedFuture(n)
+        val cf = completedFuture(n)
 
         val runnable = Runnable {}
         failed.runAfterEitherSuccess(cf, runnable).get().shouldBeNull()
@@ -305,7 +306,7 @@ class CompletableFutureExtensionsTest : FunSpec({
         failed.peekAsync(ec) shouldBeSameInstanceAs failed
         failed.peekAsync(ec, testThreadPoolExecutor) shouldBeSameInstanceAs failed
 
-        val success = CompletableFuture.completedFuture(n)
+        val success = completedFuture(n)
         success.peek(c).get() shouldBe n
         success.peekAsync(c).get() shouldBe n
         success.peekAsync(c).get() shouldBe n
@@ -319,20 +320,47 @@ class CompletableFutureExtensionsTest : FunSpec({
     //  compatibility for low Java version
     ////////////////////////////////////////////////////////////////////////////////
 
+    test("catching") {
+        val failed = CompletableFutureUtils.failedFuture<Int>(rte)
+
+        failed.catching(RuntimeException::class.java) { n }.await() shouldBe n
+        shouldThrowExactly<RuntimeException> {
+            failed.catching(IndexOutOfBoundsException::class.java) { n }.await()
+        } shouldBeSameInstanceAs rte
+
+        failed.catchingAsync(RuntimeException::class.java) { n }.await() shouldBe n
+        shouldThrowExactly<RuntimeException> {
+            failed.catchingAsync(IndexOutOfBoundsException::class.java) { n }.await()
+        } shouldBeSameInstanceAs rte
+        shouldThrowExactly<RuntimeException> {
+            failed.catchingAsync(IndexOutOfBoundsException::class.java, { n }, testThreadPoolExecutor).await()
+        } shouldBeSameInstanceAs rte
+
+        val success = completedFuture(n)
+
+        success.catching(RuntimeException::class.java) { anotherN }.await() shouldBe n
+        success.catching(IndexOutOfBoundsException::class.java) { anotherN }.await() shouldBe n
+
+        success.catchingAsync(RuntimeException::class.java) { anotherN }.await() shouldBe n
+        success.catchingAsync(IndexOutOfBoundsException::class.java) { anotherN }.await() shouldBe n
+        success.catchingAsync(IndexOutOfBoundsException::class.java, { anotherN }, testThreadPoolExecutor)
+            .await() shouldBe n
+    }
+
     test("exceptionallyAsync") {
         val cf = CompletableFutureUtils.failedFuture<Int>(rte)
         cf.exceptionallyAsync { n }.get() shouldBe n
         cf.exceptionallyAsync({ n }, testThreadPoolExecutor).get() shouldBe n
     }
 
-    test("test_timeout") {
-        shouldThrow<ExecutionException> {
+    test("timeout") {
+        shouldThrowExactly<ExecutionException> {
             CompletableFuture<Int>().orTimeout(1, TimeUnit.MILLISECONDS).get()
         }.cause.shouldBeTypeOf<TimeoutException>()
-        shouldThrow<ExecutionException> {
+        shouldThrowExactly<ExecutionException> {
             CompletableFuture<Int>().cffuOrTimeout(1, TimeUnit.MILLISECONDS).get()
         }.cause.shouldBeTypeOf<TimeoutException>()
-        shouldThrow<ExecutionException> {
+        shouldThrowExactly<ExecutionException> {
             CompletableFuture<Int>().cffuOrTimeout(testThreadPoolExecutor, 1, TimeUnit.MILLISECONDS).get()
         }.cause.shouldBeTypeOf<TimeoutException>()
 
@@ -342,16 +370,51 @@ class CompletableFutureExtensionsTest : FunSpec({
             .get() shouldBe n
     }
 
+    test("catchingCompose") {
+        val failed = CompletableFutureUtils.failedFuture<Int>(rte)
+
+        failed.catchingCompose(RuntimeException::class.java) { completedFuture(n) }.await() shouldBe n
+        shouldThrowExactly<RuntimeException> {
+            failed.catchingCompose(IndexOutOfBoundsException::class.java) { completedFuture(n) }.await()
+        } shouldBeSameInstanceAs rte
+
+        failed.catchingComposeAsync(RuntimeException::class.java) { completedFuture(n) }.await() shouldBe n
+        shouldThrowExactly<RuntimeException> {
+            failed.catchingComposeAsync(IndexOutOfBoundsException::class.java) { completedFuture(n) }.await()
+        } shouldBeSameInstanceAs rte
+        shouldThrowExactly<RuntimeException> {
+            failed.catchingComposeAsync(
+                IndexOutOfBoundsException::class.java,
+                { completedFuture(n) },
+                testThreadPoolExecutor
+            ).await()
+        } shouldBeSameInstanceAs rte
+
+        val success = completedFuture(n)
+
+        success.catchingCompose(RuntimeException::class.java) { completedFuture(anotherN) }.await() shouldBe n
+        success.catchingCompose(IndexOutOfBoundsException::class.java) { completedFuture(anotherN) }.await() shouldBe n
+
+        success.catchingComposeAsync(RuntimeException::class.java) { completedFuture(anotherN) }.await() shouldBe n
+        success.catchingComposeAsync(IndexOutOfBoundsException::class.java) { completedFuture(anotherN) }
+            .await() shouldBe n
+        success.catchingComposeAsync(
+            IndexOutOfBoundsException::class.java,
+            { completedFuture(anotherN) },
+            testThreadPoolExecutor
+        ).await() shouldBe n
+    }
+
     test("exceptionallyCompose") {
         val cf = CompletableFutureUtils.failedFuture<Int>(rte)
-        cf.exceptionallyCompose { CompletableFuture.completedFuture(n) }.get() shouldBe n
-        cf.exceptionallyComposeAsync { CompletableFuture.completedFuture(n) }.get() shouldBe n
-        cf.exceptionallyComposeAsync({ CompletableFuture.completedFuture(n) }, testThreadPoolExecutor)
+        cf.exceptionallyCompose { completedFuture(n) }.get() shouldBe n
+        cf.exceptionallyComposeAsync { completedFuture(n) }.get() shouldBe n
+        cf.exceptionallyComposeAsync({ completedFuture(n) }, testThreadPoolExecutor)
             .get() shouldBe n
     }
 
     test("read methods") {
-        val cf = CompletableFuture.completedFuture(n)
+        val cf = completedFuture(n)
         val ff = CompletableFutureUtils.failedFuture<Int>(rte)
 
         cf.join(1, TimeUnit.MILLISECONDS) shouldBe n
@@ -367,17 +430,17 @@ class CompletableFutureExtensionsTest : FunSpec({
         createIncompleteFuture<Int>().completeAsync { n }.get() shouldBe n
         createIncompleteFuture<Int>().completeAsync({ n }, testThreadPoolExecutor).get() shouldBe n
 
-        shouldThrow<ExecutionException> {
+        shouldThrowExactly<ExecutionException> {
             createIncompleteFuture<Int>().completeExceptionallyAsync { rte }.get()
         }.cause shouldBeSameInstanceAs rte
 
-        shouldThrow<ExecutionException> {
+        shouldThrowExactly<ExecutionException> {
             createIncompleteFuture<Int>().completeExceptionallyAsync({ rte }, testThreadPoolExecutor).get()
         }.cause shouldBeSameInstanceAs rte
     }
 
     test("re_config") {
-        CompletableFuture.completedFuture(n).minimalCompletionStage()
+        completedFuture(n).minimalCompletionStage()
             .toCompletableFuture().get() shouldBe n
 
         val cf = CompletableFuture<Int>()

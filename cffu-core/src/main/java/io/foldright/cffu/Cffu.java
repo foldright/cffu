@@ -1,5 +1,6 @@
 package io.foldright.cffu;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -1728,6 +1729,58 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
+     * Returns a new Cffu that, when given stage completes exceptionally with the given exceptionType,
+     * is executed with given stage's exception as the argument to the supplied function.
+     * Otherwise, the returned stage contains same result as input Cffu.
+     *
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
+     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
+     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
+     *                      The function's argument is the input's exception.
+     * @see com.google.common.util.concurrent.Futures#catching(ListenableFuture, Class, com.google.common.base.Function, Executor) guava#catching() method
+     */
+    public <X extends Throwable> Cffu<T> catching(Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
+        return reset0(CompletableFutureUtils.catching(cf, exceptionType, fallback));
+    }
+
+    /**
+     * Returns a new Cffu that, when given stage completes exceptionally with the given exceptionType,
+     * is executed with given stage's exception as the argument to the supplied function,
+     * using the given stage's default asynchronous execution facility.
+     * Otherwise, the returned stage contains same result as input Cffu.
+     *
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
+     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
+     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
+     *                      The function's argument is the input's exception.
+     * @see com.google.common.util.concurrent.Futures#catching(ListenableFuture, Class, com.google.common.base.Function, Executor) guava#catching() method
+     */
+    public <X extends Throwable> Cffu<T> catchingAsync(
+            Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
+        return catchingAsync(exceptionType, fallback, fac.defaultExecutor());
+    }
+
+    /**
+     * Returns a new Cffu that, when given stage completes exceptionally with the given exceptionType,
+     * is executed with given stage's exception as the argument to the supplied function, using the supplied Executor.
+     * Otherwise, the returned stage contains same result as input Cffu.
+     *
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
+     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
+     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
+     *                      The function's argument is the input's exception.
+     * @param executor      the executor to use for asynchronous execution
+     * @see com.google.common.util.concurrent.Futures#catching(ListenableFuture, Class, com.google.common.base.Function, Executor) guava#catching() method
+     */
+    public <X extends Throwable> Cffu<T> catchingAsync(
+            Class<X> exceptionType, Function<? super X, ? extends T> fallback, Executor executor) {
+        return reset0(CompletableFutureUtils.catchingAsync(cf, exceptionType, fallback, executor));
+    }
+
+    /**
      * Returns a new Cffu that, when this stage completes exceptionally,
      * is executed with this stage's exception as the argument to the supplied function.
      * Otherwise, if this stage completes normally,
@@ -1982,6 +2035,57 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public <U> Cffu<U> thenComposeAsync(
             Function<? super T, ? extends CompletionStage<U>> fn, Executor executor) {
         return reset0(cf.thenComposeAsync(fn, executor));
+    }
+
+    /**
+     * Returns a new Cffu that, when given stage completes exceptionally with the given exceptionType,
+     * is composed using the results of the supplied function applied to given stage's exception.
+     *
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
+     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
+     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
+     *                      The function's argument is the input's exception.
+     * @see com.google.common.util.concurrent.Futures#catchingAsync(ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) guava#catchingAsync() method
+     */
+    public <X extends Throwable> Cffu<T> catchingCompose(
+            Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
+        return reset0(CompletableFutureUtils.catchingCompose(cf, exceptionType, fallback));
+    }
+
+    /**
+     * Returns a new Cffu that, when given stage completes exceptionally with the given exceptionType,
+     * is composed using the results of the supplied function applied to given stage's exception,
+     * using given stage's default asynchronous execution facility.
+     *
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
+     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
+     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
+     *                      The function's argument is the input's exception.
+     * @see com.google.common.util.concurrent.Futures#catchingAsync(ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) guava#catchingAsync() method
+     */
+    public <X extends Throwable> Cffu<T> catchingComposeAsync(
+            Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
+        return catchingComposeAsync(exceptionType, fallback, fac.defaultExecutor());
+    }
+
+    /**
+     * Returns a new Cffu that, when given stage completes exceptionally with the given exceptionType,
+     * is composed using the results of the supplied function applied to given's exception,
+     * using the supplied Executor.
+     *
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
+     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
+     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
+     *                      The function's argument is the input's exception.
+     * @param executor      the executor to use for asynchronous execution
+     * @see com.google.common.util.concurrent.Futures#catchingAsync(ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) guava#catchingAsync() method
+     */
+    public <X extends Throwable> Cffu<T> catchingComposeAsync(
+            Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback, Executor executor) {
+        return reset0(CompletableFutureUtils.catchingComposeAsync(cf, exceptionType, fallback, executor));
     }
 
     /**

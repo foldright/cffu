@@ -81,6 +81,7 @@
 
 		<slf4j.version>2.0.13</slf4j.version>
 		<log4j2.version>2.23.1</log4j2.version>
+		<guava.version>33.2.1-jre</guava.version>
 
 		<!-- testing dependencies versions -->
 		<junit5.version>5.10.3</junit5.version>
@@ -102,6 +103,12 @@
 		<dependency>
 			<groupId>org.jetbrains</groupId>
 			<artifactId>annotations</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
 			<optional>true</optional>
 		</dependency>
 
@@ -181,6 +188,11 @@
 			</dependency>
 
 			<!-- implementation dependencies -->
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>${guava.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>com.alibaba</groupId>
 				<artifactId>transmittable-thread-local</artifactId>
@@ -730,6 +742,9 @@
 								<additionalOption>-linkoffline</additionalOption>
 								<additionalOption>https://docs.oracle.com/en/java/javase/21/docs/api/java.base/</additionalOption>
 								<additionalOption>${javadoc.package.list.dir}/java/</additionalOption>
+								<additionalOption>-linkoffline</additionalOption>
+								<additionalOption>https://guava.dev/releases/${guava.version}/api/docs</additionalOption>
+								<additionalOption>${javadoc.package.list.dir}/guava/</additionalOption>
 							</additionalOptions>
 							<additionalJOptions>
 								<additionalJOption>-J-Duser.language=en</additionalJOption>
