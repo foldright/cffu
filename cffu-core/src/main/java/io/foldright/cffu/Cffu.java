@@ -1516,6 +1516,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return this Cffu
      * @see #orTimeout(long, TimeUnit)
      */
+    @Contract("_, _ -> this")
     public Cffu<T> unsafeOrTimeout(long timeout, TimeUnit unit) {
         checkMinimalStage();
         CompletableFutureUtils.orTimeout(cf, timeout, unit);
@@ -1575,6 +1576,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return this Cffu
      * @see #completeOnTimeout(Object, long, TimeUnit)
      */
+    @Contract("_, _, _ -> this")
     public Cffu<T> unsafeCompleteOnTimeout(@Nullable T value, long timeout, TimeUnit unit) {
         checkMinimalStage();
         CompletableFutureUtils.completeOnTimeout(cf, value, timeout, unit);
@@ -1858,6 +1860,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return this Cffu
      * @see java.util.stream.Stream#peek(Consumer)
      */
+    @Contract("_ -> this")
     public Cffu<T> peek(BiConsumer<? super T, ? super Throwable> action) {
         CompletableFutureUtils.peek(cf, action);
         return this;
@@ -1879,6 +1882,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return this Cffu
      * @see java.util.stream.Stream#peek(Consumer)
      */
+    @Contract("_ -> this")
     public Cffu<T> peekAsync(BiConsumer<? super T, ? super Throwable> action) {
         return peekAsync(action, fac.defaultExecutor());
     }
@@ -1899,6 +1903,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return this Cffu
      * @see java.util.stream.Stream#peek(Consumer)
      */
+    @Contract("_, _ -> this")
     public Cffu<T> peekAsync(BiConsumer<? super T, ? super Throwable> action, Executor executor) {
         CompletableFutureUtils.peekAsync(cf, action, executor);
         return this;
@@ -2193,6 +2198,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param supplier a function returning the value to be used to complete this Cffu
      * @return this Cffu
      */
+    @Contract("_ -> this")
     public Cffu<T> completeAsync(Supplier<? extends T> supplier) {
         return completeAsync(supplier, fac.defaultExecutor());
     }
@@ -2205,6 +2211,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param executor the executor to use for asynchronous execution
      * @return this Cffu
      */
+    @Contract("_, _ -> this")
     public Cffu<T> completeAsync(Supplier<? extends T> supplier, Executor executor) {
         checkMinimalStage();
         CompletableFutureUtils.completeAsync(cf, supplier, executor);
@@ -2229,6 +2236,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param supplier a function returning the value to be used to complete this Cffu
      * @return this Cffu
      */
+    @Contract("_ -> this")
     public Cffu<T> completeExceptionallyAsync(Supplier<? extends Throwable> supplier) {
         return completeExceptionallyAsync(supplier, fac.defaultExecutor());
     }
@@ -2241,6 +2249,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param executor the executor to use for asynchronous execution
      * @return this Cffu
      */
+    @Contract("_, _ -> this")
     public Cffu<T> completeExceptionallyAsync(Supplier<? extends Throwable> supplier, Executor executor) {
         checkMinimalStage();
         CompletableFutureUtils.completeExceptionallyAsync(cf, supplier, executor);
@@ -2457,7 +2466,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Forcibly sets or resets the value subsequently returned by method {@link #get()} and related methods,
-     * whether or not already completed. This method is designed for use only in error recovery actions,
+     * whether already completed or not. This method is designed for use only in error recovery actions,
      * and even in such situations may result in ongoing dependent completions using established versus overwritten outcomes.
      *
      * @param value the completion value
@@ -2473,7 +2482,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Forcibly causes subsequent invocations of method {@link #get()} and related methods to throw the given exception,
-     * whether or not already completed. This method is designed for use only in error recovery actions,
+     * whether already completed or not. This method is designed for use only in error recovery actions,
      * and even in such situations may result in ongoing dependent completions using established versus overwritten outcomes.
      *
      * @param ex the exception

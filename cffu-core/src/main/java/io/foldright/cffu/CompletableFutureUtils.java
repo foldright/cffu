@@ -2830,6 +2830,7 @@ public final class CompletableFutureUtils {
      * @return the given CompletableFuture
      * @see #cffuOrTimeout(CompletableFuture, long, TimeUnit)
      */
+    @Contract("_, _, _ -> param1")
     public static <C extends CompletableFuture<?>> C orTimeout(C cfThis, long timeout, TimeUnit unit) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(unit, "unit is null");
@@ -2905,6 +2906,7 @@ public final class CompletableFutureUtils {
      * @return the given CompletableFuture
      * @see #cffuCompleteOnTimeout(CompletableFuture, Object, long, TimeUnit)
      */
+    @Contract("_, _, _, _ -> param1")
     public static <T, C extends CompletableFuture<? super T>>
     C completeOnTimeout(C cfThis, @Nullable T value, long timeout, TimeUnit unit) {
         requireNonNull(cfThis, "cfThis is null");
@@ -3032,6 +3034,7 @@ public final class CompletableFutureUtils {
      * @see CompletionStage#whenComplete(BiConsumer)
      * @see java.util.stream.Stream#peek(Consumer)
      */
+    @Contract("_, _ -> param1")
     public static <T, C extends CompletionStage<? extends T>>
     C peek(C cfThis, BiConsumer<? super T, ? super Throwable> action) {
         requireNonNull(cfThis, "cfThis is null");
@@ -3059,6 +3062,7 @@ public final class CompletableFutureUtils {
      * @see CompletionStage#whenCompleteAsync(BiConsumer)
      * @see java.util.stream.Stream#peek(Consumer)
      */
+    @Contract("_, _ -> param1")
     public static <T, C extends CompletionStage<? extends T>>
     C peekAsync(C cfThis, BiConsumer<? super T, ? super Throwable> action) {
         return peekAsync(cfThis, action, AsyncPoolHolder.ASYNC_POOL);
@@ -3081,6 +3085,7 @@ public final class CompletableFutureUtils {
      * @see CompletionStage#whenCompleteAsync(BiConsumer, Executor)
      * @see java.util.stream.Stream#peek(Consumer)
      */
+    @Contract("_, _, _ -> param1")
     public static <T, C extends CompletionStage<? extends T>>
     C peekAsync(C cfThis, BiConsumer<? super T, ? super Throwable> action, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
@@ -3307,6 +3312,7 @@ public final class CompletableFutureUtils {
      * @return the given CompletableFuture
      * @see CompletableFuture#completeAsync(Supplier)
      */
+    @Contract("_, _ -> param1")
     public static <T, C extends CompletableFuture<? super T>> C completeAsync(C cfThis, Supplier<? extends T> supplier) {
         return completeAsync(cfThis, supplier, AsyncPoolHolder.ASYNC_POOL);
     }
@@ -3320,6 +3326,7 @@ public final class CompletableFutureUtils {
      * @return the given CompletableFuture
      * @see CompletableFuture#completeAsync(Supplier, Executor)
      */
+    @Contract("_, _, _ -> param1")
     public static <T, C extends CompletableFuture<? super T>>
     C completeAsync(C cfThis, Supplier<? extends T> supplier, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
@@ -3344,6 +3351,7 @@ public final class CompletableFutureUtils {
      * @return the given CompletableFuture
      * @see CompletableFuture#completeExceptionally(Throwable)
      */
+    @Contract("_, _ -> param1")
     public static <C extends CompletableFuture<?>>
     C completeExceptionallyAsync(C cfThis, Supplier<? extends Throwable> supplier) {
         return completeExceptionallyAsync(cfThis, supplier, AsyncPoolHolder.ASYNC_POOL);
@@ -3358,6 +3366,7 @@ public final class CompletableFutureUtils {
      * @return the given CompletableFuture
      * @see CompletableFuture#completeExceptionally(Throwable)
      */
+    @Contract("_, _, _ -> param1")
     public static <C extends CompletableFuture<?>>
     C completeExceptionallyAsync(C cfThis, Supplier<? extends Throwable> supplier, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
