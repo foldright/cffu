@@ -24,6 +24,7 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  * This class contains the new enhanced and backport methods for {@link CompletableFuture}.
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
+ * @author HuHao (995483610 at qq dot com)
  */
 public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////

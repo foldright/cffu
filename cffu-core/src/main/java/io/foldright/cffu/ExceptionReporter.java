@@ -4,6 +4,10 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.spi.LocationAwareLogger;
 
 
+/**
+ * @author HuHao (995483610 at qq dot com)
+ * @author Jerry Lee (oldratlee at gmail dot com)
+ */
 class ExceptionReporter {
     private static final String CFFU_PACKAGE_NAME = ExceptionReporter.class.getName().replaceFirst("\\.[^.]*$", "");
 

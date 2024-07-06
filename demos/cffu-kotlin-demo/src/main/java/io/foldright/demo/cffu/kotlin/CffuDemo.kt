@@ -42,7 +42,7 @@ fun main() {
     println("combined result: ${combined.get()}")
 
     val anySuccess: Cffu<Int> = listOf(longTaskC, longFailedTask).anySuccessOfCffu()
-    println("any success of result: ${anySuccess.get()}")
+    println("any success result: ${anySuccess.get()}")
 
     ////////////////////////////////////////
     // cleanup
