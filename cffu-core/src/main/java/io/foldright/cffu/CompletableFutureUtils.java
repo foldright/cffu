@@ -1016,8 +1016,8 @@ public final class CompletableFutureUtils {
         final CompletableFuture<T> incomplete = new CompletableFuture<>();
         for (int i = 0; i < css.length; i++) {
             final CompletableFuture<T> f = f_toCf(css[i]);
-            successOrBeIncomplete[i] = f.handle((v, ex) -> ex == null ? f : incomplete).thenCompose(x -> x);
-            failedOrBeIncomplete[i] = f.handle((v, ex) -> ex == null ? incomplete : f).thenCompose(x -> x);
+            successOrBeIncomplete[i] = exceptionallyCompose(f, ex -> incomplete);
+            failedOrBeIncomplete[i] = f.thenCompose(v -> incomplete);
         }
     }
 
@@ -2427,16 +2427,12 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T1> cfThis, CompletionStage<? extends T2> other) {
         final CompletableFuture incomplete = new CompletableFuture();
 
-        CompletableFuture thisSuccessOrBeIncomplete =
-                cfThis.handle((v, ex) -> ex == null ? cfThis : incomplete).thenCompose(x -> x);
-        CompletionStage otherSuccessOrBeIncomplete =
-                other.handle((v, ex) -> ex == null ? other : incomplete).thenCompose(x -> x);
+        CompletableFuture thisSuccessOrBeIncomplete = exceptionallyCompose(cfThis, ex -> incomplete);
+        CompletionStage otherSuccessOrBeIncomplete = exceptionallyCompose(other, ex -> incomplete);
         CompletableFuture cfValue = thisSuccessOrBeIncomplete.thenCombine(otherSuccessOrBeIncomplete, Tuple2::of);
 
-        CompletableFuture thisFailedOrBeIncomplete =
-                cfThis.handle((v, ex) -> ex == null ? incomplete : cfThis).thenCompose(x -> x);
-        CompletionStage otherFailedOrBeIncomplete =
-                other.handle((v, ex) -> ex == null ? incomplete : other).thenCompose(x -> x);
+        CompletableFuture thisFailedOrBeIncomplete = cfThis.thenCompose(v -> incomplete);
+        CompletionStage otherFailedOrBeIncomplete = other.thenCompose(v -> incomplete);
         CompletableFuture cfEx = thisFailedOrBeIncomplete.applyToEither(otherFailedOrBeIncomplete, v -> null);
 
         return cfValue.applyToEither(cfEx, x -> x);
@@ -2617,16 +2613,12 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other) {
         final CompletableFuture incomplete = new CompletableFuture();
 
-        CompletableFuture thisSuccessOrBeIncomplete =
-                cfThis.handle((v, ex) -> ex == null ? cfThis : incomplete).thenCompose(x -> x);
-        CompletionStage otherSuccessOrBeIncomplete =
-                other.handle((v, ex) -> ex == null ? other : incomplete).thenCompose(x -> x);
+        CompletableFuture thisSuccessOrBeIncomplete = exceptionallyCompose(cfThis, ex -> incomplete);
+        CompletionStage otherSuccessOrBeIncomplete = exceptionallyCompose(other, ex -> incomplete);
         CompletableFuture cfValue = thisSuccessOrBeIncomplete.applyToEither(otherSuccessOrBeIncomplete, x -> x);
 
-        CompletableFuture thisFailedOrBeIncomplete =
-                cfThis.handle((v, ex) -> ex == null ? incomplete : cfThis).thenCompose(x -> x);
-        CompletionStage otherFailedOrBeIncomplete =
-                other.handle((v, ex) -> ex == null ? incomplete : other).thenCompose(x -> x);
+        CompletableFuture thisFailedOrBeIncomplete = cfThis.thenCompose(v -> incomplete);
+        CompletionStage otherFailedOrBeIncomplete = other.thenCompose(v -> incomplete);
         CompletableFuture cfEx = thisFailedOrBeIncomplete.thenCombine(otherFailedOrBeIncomplete, (v1, v2) -> null);
 
         return cfValue.applyToEither(cfEx, x -> x);
