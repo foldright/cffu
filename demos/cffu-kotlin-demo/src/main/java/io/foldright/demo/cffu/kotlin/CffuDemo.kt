@@ -41,8 +41,8 @@ fun main() {
         .orTimeout(1500, TimeUnit.MILLISECONDS)
     println("combined result: ${combined.get()}")
 
-    val anySuccessOf: Cffu<Int> = listOf(longTaskC, longFailedTask).anySuccessOfCffu()
-    println("anySuccessOf result: ${anySuccessOf.get()}")
+    val anySuccess: Cffu<Int> = listOf(longTaskC, longFailedTask).anySuccessOfCffu()
+    println("any success of result: ${anySuccess.get()}")
 
     ////////////////////////////////////////
     // cleanup

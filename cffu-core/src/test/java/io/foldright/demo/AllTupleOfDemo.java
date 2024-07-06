@@ -2,12 +2,13 @@ package io.foldright.demo;
 
 import io.foldright.cffu.Cffu;
 import io.foldright.cffu.CffuFactory;
-import io.foldright.cffu.CompletableFutureUtils;
 import io.foldright.cffu.tuple.Tuple2;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static io.foldright.cffu.CompletableFutureUtils.allTupleFastFailOf;
 
 
 public class AllTupleOfDemo {
@@ -16,21 +17,21 @@ public class AllTupleOfDemo {
 
     public static void main(String[] args) throws Exception {
         //////////////////////////////////////////////////
-        // allTupleOf
+        // allTupleFastFailOf / allTupleOf
         //////////////////////////////////////////////////
         Cffu<String> cffu1 = cffuFactory.completedFuture("21");
         Cffu<Integer> cffu2 = cffuFactory.completedFuture(42);
 
-        Cffu<Tuple2<String, Integer>> allTuple = cffuFactory.allTupleOf(cffu1, cffu2);
+        Cffu<Tuple2<String, Integer>> allTuple = cffuFactory.allTupleFastFailOf(cffu1, cffu2);
         System.out.println(allTuple.get());
 
         //////////////////////////////////////////////////
-        // or CompletableFutureUtils.allTupleOf
+        // or CompletableFutureUtils.allTupleFastFailOf / allTupleOf
         //////////////////////////////////////////////////
         CompletableFuture<String> cf1 = CompletableFuture.completedFuture("21");
         CompletableFuture<Integer> cf2 = CompletableFuture.completedFuture(42);
 
-        CompletableFuture<Tuple2<String, Integer>> allTuple2 = CompletableFutureUtils.allTupleOf(cf1, cf2);
+        CompletableFuture<Tuple2<String, Integer>> allTuple2 = allTupleFastFailOf(cf1, cf2);
         System.out.println(allTuple2.get());
 
         ////////////////////////////////////////

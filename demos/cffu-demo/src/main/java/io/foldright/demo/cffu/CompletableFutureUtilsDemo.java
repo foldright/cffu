@@ -1,11 +1,12 @@
 package io.foldright.demo.cffu;
 
-import io.foldright.cffu.CompletableFutureUtils;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import static io.foldright.cffu.CompletableFutureUtils.anySuccessOf;
+import static io.foldright.cffu.CompletableFutureUtils.orTimeout;
 
 
 public class CompletableFutureUtilsDemo {
@@ -35,11 +36,11 @@ public class CompletableFutureUtilsDemo {
 
         final CompletableFuture<Integer> combined = longTaskA.thenCombine(longTaskB, Integer::sum);
         final CompletableFuture<Integer> combinedWithTimeout =
-                CompletableFutureUtils.orTimeout(combined, 1500, TimeUnit.MILLISECONDS);
+                orTimeout(combined, 1500, TimeUnit.MILLISECONDS);
         System.out.println("combined result: " + combinedWithTimeout.get());
 
-        final CompletableFuture<Integer> anySuccessOf = CompletableFutureUtils.anySuccessOf(longTaskC, longFailedTask);
-        System.out.println("anySuccessOf result: " + anySuccessOf.get());
+        final CompletableFuture<Integer> anySuccess = anySuccessOf(longTaskC, longFailedTask);
+        System.out.println("any success of result: " + anySuccess.get());
 
         ////////////////////////////////////////
         // cleanup
