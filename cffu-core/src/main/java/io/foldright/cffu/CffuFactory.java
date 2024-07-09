@@ -242,14 +242,14 @@ public final class CffuFactory {
      * <p>
      * If the given supplier is successful in the given time, the return result is the completed value;
      *
-     * @param suppliers         the suppliers returning the value to be used to complete the returned Cffu
-     * @param <T>               the suppliers' return type
+     * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
+     * @param <T>       the suppliers' return type
      * @return the new Cffu
      * @see #anySuccessOf(CompletionStage[])
      */
     @SafeVarargs
     public final <T> Cffu<T> mSupplyAnySuccessAsync(Supplier<? extends T>... suppliers) {
-        return mSupplyAnySuccessAsync(defaultExecutor,suppliers);
+        return mSupplyAnySuccessAsync(defaultExecutor, suppliers);
     }
 
     /**
@@ -260,15 +260,15 @@ public final class CffuFactory {
      * <p>
      * If the given supplier is successful in the given time, the return result is the completed value;
      *
-     * @param executor          the executor to use for asynchronous execution
-     * @param suppliers         the suppliers returning the value to be used to complete the returned Cffu
-     * @param <T>               the suppliers' return type
+     * @param executor  the executor to use for asynchronous execution
+     * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
+     * @param <T>       the suppliers' return type
      * @return the new Cffu
      * @see #anySuccessOf(CompletionStage[])
      */
     @SafeVarargs
     public final <T> Cffu<T> mSupplyAnySuccessAsync(
-           Executor executor, Supplier<? extends T>... suppliers) {
+            Executor executor, Supplier<? extends T>... suppliers) {
         return create(CompletableFutureUtils.mSupplyAnySuccessAsync(executor, suppliers));
     }
 
@@ -281,14 +281,14 @@ public final class CffuFactory {
      * <p>
      * If the given supplier is successful in the given time, the return result is the completed value;
      *
-     * @param suppliers         the suppliers returning the value to be used to complete the returned Cffu
-     * @param <T>               the suppliers' return type
+     * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
+     * @param <T>       the suppliers' return type
      * @return the new Cffu
      * @see #anyOf(CompletionStage[])
      */
     @SafeVarargs
     public final <T> Cffu<T> mSupplyAnyAsync(Supplier<? extends T>... suppliers) {
-        return mSupplyAnyAsync(defaultExecutor,suppliers);
+        return mSupplyAnyAsync(defaultExecutor, suppliers);
     }
 
     /**
@@ -299,9 +299,9 @@ public final class CffuFactory {
      * <p>
      * If the given supplier is successful in the given time, the return result is the completed value;
      *
-     * @param executor          the executor to use for asynchronous execution
-     * @param suppliers         the suppliers returning the value to be used to complete the returned Cffu
-     * @param <T>               the suppliers' return type
+     * @param executor  the executor to use for asynchronous execution
+     * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
+     * @param <T>       the suppliers' return type
      * @return the new Cffu
      * @see #anyOf(CompletionStage[])
      */
@@ -685,8 +685,8 @@ public final class CffuFactory {
      *
      * @return the new Cffu
      */
-    public <T1, T2,T> Cffu<T> tupleMSupplyAnySuccessAsync(
-          Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
+    public <T1, T2, T> Cffu<T> tupleMSupplyAnySuccessAsync(
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         return tupleMSupplyAnySuccessAsync(defaultExecutor, supplier1, supplier2);
     }
 
@@ -698,10 +698,11 @@ public final class CffuFactory {
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
-    public <T1, T2,T> Cffu<T> tupleMSupplyAnySuccessAsync(
+    public <T1, T2, T> Cffu<T> tupleMSupplyAnySuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         return create(CompletableFutureUtils.tupleMSupplyAnySuccessAsync(executor, supplier1, supplier2));
     }
+
     /**
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
@@ -709,9 +710,9 @@ public final class CffuFactory {
      *
      * @return the new Cffu
      */
-    public <T1, T2,T3,T> Cffu<T> tupleMSupplyAnySuccessAsync(
+    public <T1, T2, T3, T> Cffu<T> tupleMSupplyAnySuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return tupleMSupplyAnySuccessAsync(defaultExecutor, supplier1, supplier2,supplier3);
+        return tupleMSupplyAnySuccessAsync(defaultExecutor, supplier1, supplier2, supplier3);
     }
 
     /**
@@ -722,9 +723,9 @@ public final class CffuFactory {
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
-    public <T1, T2,T3,T> Cffu<T> tupleMSupplyAnySuccessAsync(
+    public <T1, T2, T3, T> Cffu<T> tupleMSupplyAnySuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return create(CompletableFutureUtils.tupleMSupplyAnySuccessAsync(executor, supplier1, supplier2,supplier3));
+        return create(CompletableFutureUtils.tupleMSupplyAnySuccessAsync(executor, supplier1, supplier2, supplier3));
     }
 
     /**
@@ -734,9 +735,9 @@ public final class CffuFactory {
      *
      * @return the new Cffu
      */
-    public <T1, T2,T3,T4,T> Cffu<T> tupleMSupplyAnySuccessAsync(
+    public <T1, T2, T3, T4, T> Cffu<T> tupleMSupplyAnySuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return tupleMSupplyAnySuccessAsync(defaultExecutor, supplier1, supplier2,supplier3,supplier4);
+        return tupleMSupplyAnySuccessAsync(defaultExecutor, supplier1, supplier2, supplier3, supplier4);
     }
 
     /**
@@ -747,9 +748,9 @@ public final class CffuFactory {
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
-    public <T1, T2,T3,T4,T> Cffu<T> tupleMSupplyAnySuccessAsync(
+    public <T1, T2, T3, T4, T> Cffu<T> tupleMSupplyAnySuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return create(CompletableFutureUtils.tupleMSupplyAnySuccessAsync(executor, supplier1, supplier2,supplier3,supplier4));
+        return create(CompletableFutureUtils.tupleMSupplyAnySuccessAsync(executor, supplier1, supplier2, supplier3, supplier4));
     }
 
     /**
@@ -759,10 +760,10 @@ public final class CffuFactory {
      *
      * @return the new Cffu
      */
-    public <T1, T2,T3,T4,T5,T> Cffu<T> tupleMSupplyAnySuccessAsync(
+    public <T1, T2, T3, T4, T5, T> Cffu<T> tupleMSupplyAnySuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return tupleMSupplyAnySuccessAsync(defaultExecutor, supplier1, supplier2,supplier3,supplier4,supplier5);
+        return tupleMSupplyAnySuccessAsync(defaultExecutor, supplier1, supplier2, supplier3, supplier4, supplier5);
     }
 
     /**
@@ -773,10 +774,10 @@ public final class CffuFactory {
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
-    public <T1, T2,T3,T4,T5,T> Cffu<T> tupleMSupplyAnySuccessAsync(
+    public <T1, T2, T3, T4, T5, T> Cffu<T> tupleMSupplyAnySuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return create(CompletableFutureUtils.tupleMSupplyAnySuccessAsync(executor, supplier1, supplier2,supplier3,supplier4,supplier5));
+        return create(CompletableFutureUtils.tupleMSupplyAnySuccessAsync(executor, supplier1, supplier2, supplier3, supplier4, supplier5));
     }
 
     /**
@@ -786,7 +787,7 @@ public final class CffuFactory {
      *
      * @return the new Cffu
      */
-    public <T1, T2,T> Cffu<T> tupleMSupplyAnyAsync(
+    public <T1, T2, T> Cffu<T> tupleMSupplyAnyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         return tupleMSupplyAnyAsync(defaultExecutor, supplier1, supplier2);
     }
@@ -799,10 +800,11 @@ public final class CffuFactory {
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
-    public <T1, T2,T> Cffu<T> tupleMSupplyAnyAsync(
+    public <T1, T2, T> Cffu<T> tupleMSupplyAnyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         return create(CompletableFutureUtils.tupleMSupplyAnyAsync(executor, supplier1, supplier2));
     }
+
     /**
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
@@ -810,9 +812,9 @@ public final class CffuFactory {
      *
      * @return the new Cffu
      */
-    public <T1, T2,T3,T> Cffu<T> tupleMSupplyAnyAsync(
+    public <T1, T2, T3, T> Cffu<T> tupleMSupplyAnyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return tupleMSupplyAnyAsync(defaultExecutor, supplier1, supplier2,supplier3);
+        return tupleMSupplyAnyAsync(defaultExecutor, supplier1, supplier2, supplier3);
     }
 
     /**
@@ -823,9 +825,9 @@ public final class CffuFactory {
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
-    public <T1, T2,T3,T> Cffu<T> tupleMSupplyAnyAsync(
+    public <T1, T2, T3, T> Cffu<T> tupleMSupplyAnyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return create(CompletableFutureUtils.tupleMSupplyAnyAsync(executor, supplier1, supplier2,supplier3));
+        return create(CompletableFutureUtils.tupleMSupplyAnyAsync(executor, supplier1, supplier2, supplier3));
     }
 
     /**
@@ -835,9 +837,9 @@ public final class CffuFactory {
      *
      * @return the new Cffu
      */
-    public <T1, T2,T3,T4,T> Cffu<T> tupleMSupplyAnyAsync(
+    public <T1, T2, T3, T4, T> Cffu<T> tupleMSupplyAnyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return tupleMSupplyAnyAsync(defaultExecutor, supplier1, supplier2,supplier3,supplier4);
+        return tupleMSupplyAnyAsync(defaultExecutor, supplier1, supplier2, supplier3, supplier4);
     }
 
     /**
@@ -848,9 +850,9 @@ public final class CffuFactory {
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
-    public <T1, T2,T3,T4,T> Cffu<T> tupleMSupplyAnyAsync(
+    public <T1, T2, T3, T4, T> Cffu<T> tupleMSupplyAnyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return create(CompletableFutureUtils.tupleMSupplyAnyAsync(executor, supplier1, supplier2,supplier3,supplier4));
+        return create(CompletableFutureUtils.tupleMSupplyAnyAsync(executor, supplier1, supplier2, supplier3, supplier4));
     }
 
     /**
@@ -860,10 +862,10 @@ public final class CffuFactory {
      *
      * @return the new Cffu
      */
-    public <T1, T2,T3,T4,T5,T> Cffu<T> tupleMSupplyAnyAsync(
+    public <T1, T2, T3, T4, T5, T> Cffu<T> tupleMSupplyAnyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return tupleMSupplyAnyAsync(defaultExecutor, supplier1, supplier2,supplier3,supplier4,supplier5);
+        return tupleMSupplyAnyAsync(defaultExecutor, supplier1, supplier2, supplier3, supplier4, supplier5);
     }
 
     /**
@@ -874,10 +876,10 @@ public final class CffuFactory {
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
-    public <T1, T2,T3,T4,T5,T> Cffu<T> tupleMSupplyAnyAsync(
+    public <T1, T2, T3, T4, T5, T> Cffu<T> tupleMSupplyAnyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return create(CompletableFutureUtils.tupleMSupplyAnyAsync(executor, supplier1, supplier2,supplier3,supplier4,supplier5));
+        return create(CompletableFutureUtils.tupleMSupplyAnyAsync(executor, supplier1, supplier2, supplier3, supplier4, supplier5));
     }
 
     /**
@@ -1554,8 +1556,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public static <T> Cffu<T>[] cffuListToArray(List<Cffu<T>> cffuList) {
-        @SuppressWarnings("unchecked")
-        final Cffu<T>[] a = new Cffu[cffuList.size()];
+        @SuppressWarnings("unchecked") final Cffu<T>[] a = new Cffu[cffuList.size()];
         return cffuList.toArray(a);
     }
 
