@@ -47,6 +47,10 @@ class CompletableFutureUtilsTest {
                 mRunAsync(executorService, runnable, runnable),
                 mRunFastFailAsync(runnable, runnable),
                 mRunFastFailAsync(executorService, runnable, runnable),
+                mRunAnySuccessAsync(runnable, runnable),
+                mRunAnySuccessAsync(executorService, runnable, runnable),
+                mRunAnyAsync(runnable, runnable),
+                mRunAnyAsync(executorService, runnable, runnable),
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
@@ -77,6 +81,21 @@ class CompletableFutureUtilsTest {
         assertTrue(System.currentTimeMillis() - tick < 50);
         for (CompletableFuture<List<Integer>> cf : cfs) {
             assertEquals(Arrays.asList(n, n), cf.get());
+        }
+
+        final long tick1 = System.currentTimeMillis();
+
+        @SuppressWarnings("unchecked")
+        CompletableFuture<List<Integer>>[] cfs1 = new CompletableFuture[]{
+                mSupplyAnySuccessAsync(supplier, supplier),
+                mSupplyAnySuccessAsync(executorService, supplier, supplier),
+                mSupplyAnyAsync(supplier, supplier),
+                mSupplyAnyAsync(executorService, supplier, supplier),
+        };
+
+        assertTrue(System.currentTimeMillis() - tick1 < 50);
+        for (CompletableFuture<List<Integer>> cf : cfs1) {
+            assertEquals(n, cf.get());
         }
     }
 
@@ -861,6 +880,7 @@ class CompletableFutureUtilsTest {
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), thenTupleMApplyMostSuccessAsync(completed, defaultExecutor(), 500, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an, function_nn).get());
     }
 
+
     @Test
     void test_thenTupleMApplyAsync() throws Exception {
         final CompletableFuture<Integer> completed = completedFuture(n);
@@ -976,6 +996,10 @@ class CompletableFutureUtilsTest {
                 thenMRunAsync(completed, executorService, runnable, runnable),
                 thenMRunFastFailAsync(completed, runnable, runnable),
                 thenMRunFastFailAsync(completed, executorService, runnable, runnable),
+                thenMRunAnySuccessAsync(completed, runnable, runnable),
+                thenMRunAnySuccessAsync(completed, executorService, runnable, runnable),
+                thenMRunAnyAsync(completed, runnable, runnable),
+                thenMRunAnyAsync(completed, executorService, runnable, runnable),
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
@@ -999,6 +1023,10 @@ class CompletableFutureUtilsTest {
                 thenMAcceptAsync(completed, executorService, consumer, consumer),
                 thenMAcceptFastFailAsync(completed, consumer, consumer),
                 thenMAcceptFastFailAsync(completed, executorService, consumer, consumer),
+                thenMAcceptAnySuccessAsync(completed, consumer, consumer),
+                thenMAcceptAnySuccessAsync(completed, executorService, consumer, consumer),
+                thenMAcceptAnyAsync(completed, consumer, consumer),
+                thenMAcceptAnyAsync(completed, executorService, consumer, consumer),
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
@@ -1029,6 +1057,20 @@ class CompletableFutureUtilsTest {
         assertTrue(System.currentTimeMillis() - tick < 50);
         for (CompletableFuture<List<Integer>> cf : cfs) {
             assertEquals(Arrays.asList(n, n), cf.get());
+        }
+
+        final long tick1 = System.currentTimeMillis();
+        @SuppressWarnings("unchecked")
+        CompletableFuture<List<Integer>>[] cfs1 = new CompletableFuture[]{
+                thenMApplyAnySuccessAsync(completed, supplier, supplier),
+                thenMApplyAnySuccessAsync(completed, executorService, supplier, supplier),
+                thenMApplyAnyAsync(completed, supplier, supplier),
+                thenMApplyAnyAsync(completed, executorService, supplier, supplier),
+        };
+
+        assertTrue(System.currentTimeMillis() - tick1 < 50);
+        for (CompletableFuture<List<Integer>> cf : cfs1) {
+            assertEquals(n, cf.get());
         }
     }
     ////////////////////////////////////////////////////////////////////////////////
