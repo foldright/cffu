@@ -44,7 +44,9 @@ class CffuFactoryTest {
         @SuppressWarnings("unchecked")
         Cffu<Void>[] cfs = new Cffu[]{
                 cffuFactory.mRunAsync(runnable, runnable),
-                cffuFactory.mRunFastFailAsync(runnable, runnable)
+                cffuFactory.mRunFastFailAsync(runnable, runnable),
+                cffuFactory.mRunAnySuccessAsync(runnable, runnable),
+                cffuFactory.mRunAnyAsync(runnable, runnable),
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
@@ -66,7 +68,8 @@ class CffuFactoryTest {
         Cffu<List<Integer>>[] cfs = new Cffu[]{
                 cffuFactory.mSupplyAsync(supplier, supplier),
                 cffuFactory.mSupplyFastFailAsync(supplier, supplier),
-                cffuFactory.mSupplyMostSuccessAsync(anotherN, 500, TimeUnit.MILLISECONDS, supplier, supplier)
+                cffuFactory.mSupplyAnySuccessAsync(supplier, supplier),
+                cffuFactory.mSupplyAnyAsync(supplier, supplier),
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
@@ -713,6 +716,83 @@ class CffuFactoryTest {
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
     }
+
+
+    @Test
+    void test_tupleMSupplyAnySuccessAsync() throws Exception {
+        final Supplier<Integer> supplier_n = () -> {
+            sleep(100);
+            return n;
+        };
+        final Supplier<String> supplier_s = () -> {
+            sleep(100);
+            return s;
+        };
+
+        final Supplier<Double> supplier_d = () -> {
+            sleep(100);
+            return d;
+        };
+        final Supplier<Integer> supplier_an = () -> {
+            sleep(100);
+            return anotherN;
+        };
+        final Supplier<Integer> supplier_nn = () -> {
+            sleep(100);
+            return n + n;
+        };
+        assertEquals(s, cffuFactory.tupleMSupplyAnySuccessAsync(supplier_n, supplier_s).get());
+        assertEquals(s, cffuFactory.tupleMSupplyAnySuccessAsync(executorService, supplier_n, supplier_s).get());
+
+
+        assertEquals(s, cffuFactory.tupleMSupplyAnySuccessAsync(supplier_n, supplier_s, supplier_d).get());
+        assertEquals(s, cffuFactory.tupleMSupplyAnySuccessAsync(executorService, supplier_n, supplier_s, supplier_d).get());
+
+        assertEquals(d, cffuFactory.tupleMSupplyAnySuccessAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(d, cffuFactory.tupleMSupplyAnySuccessAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an).get());
+
+        assertEquals(d, cffuFactory.tupleMSupplyAnySuccessAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(d, cffuFactory.tupleMSupplyAnySuccessAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+    }
+
+
+    @Test
+    void test_tupleMSupplyAnyAsync() throws Exception {
+        final Supplier<Integer> supplier_n = () -> {
+            sleep(100);
+            return n;
+        };
+        final Supplier<String> supplier_s = () -> {
+            sleep(100);
+            return s;
+        };
+
+        final Supplier<Double> supplier_d = () -> {
+            sleep(100);
+            return d;
+        };
+        final Supplier<Integer> supplier_an = () -> {
+            sleep(100);
+            return anotherN;
+        };
+        final Supplier<Integer> supplier_nn = () -> {
+            sleep(100);
+            return n + n;
+        };
+        assertEquals(s, cffuFactory.tupleMSupplyAnyAsync(supplier_n, supplier_s).get());
+        assertEquals(s, cffuFactory.tupleMSupplyAnyAsync(executorService, supplier_n, supplier_s).get());
+
+
+        assertEquals(s, cffuFactory.tupleMSupplyAnyAsync(supplier_n, supplier_s, supplier_d).get());
+        assertEquals(s, cffuFactory.tupleMSupplyAnyAsync(executorService, supplier_n, supplier_s, supplier_d).get());
+
+        assertEquals(d, cffuFactory.tupleMSupplyAnyAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(d, cffuFactory.tupleMSupplyAnyAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an).get());
+
+        assertEquals(d, cffuFactory.tupleMSupplyAnyAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(d, cffuFactory.tupleMSupplyAnyAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+    }
+
 
     @Test
     void test_tupleMSupplyMostSuccessAsync() throws Exception {
