@@ -802,6 +802,25 @@ public final class CompletableFutureUtils {
         return f_cast(ret);
     }
 
+    @Contract(pure = true)
+    @SafeVarargs
+    public static <T> CompletableFuture<List<T>> allSuccessResultsOf(
+            @Nullable T valueIfNotSuccess, CompletionStage<? extends T>... cfs) {
+        requireNonNull(cfs, "cfs is null");
+
+        if (cfs.length == 0) return completedFuture(arrayList());
+        if (cfs.length == 1) {
+            // Defensive copy input cf to non-minimal-stage instance in order to ensure that
+            // the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
+            final CompletableFuture<T> f = toNonMinCfCopy(requireNonNull(cfs[0], "cf1 is null"));
+            return f.handle((v, ex) -> arrayList(ex == null ? v : valueIfNotSuccess));
+        }
+
+        Function<CompletionStage<? extends T>, CompletableFuture<T>> converter = s ->
+                CompletableFutureUtils.<T>toNonMinCf(s).exceptionally(v -> valueIfNotSuccess);
+        return allResultsOf(toCfArray0(converter, cfs));
+    }
+
     /**
      * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
      * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
