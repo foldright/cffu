@@ -128,6 +128,103 @@ public final class CompletableFutureUtils {
         return mostSuccessResultsOf(valueIfNotSuccess, executor, timeout, unit, wrapSuppliers(executor, suppliers));
     }
 
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     *
+     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param <T>       the suppliers' return type
+     * @return the new CompletableFuture
+     * @see #anySuccessOf(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier)
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<T> mSupplyAnySuccessAsync(
+            Supplier<? extends T>... suppliers) {
+        return mSupplyAnySuccessAsync(AsyncPoolHolder.ASYNC_POOL, suppliers);
+    }
+
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the given Executor with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     *
+     * @param executor  the executor to use for asynchronous execution
+     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param <T>       the suppliers' return type
+     * @return the new CompletableFuture
+     * @see #anySuccessOf(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<T> mSupplyAnySuccessAsync(
+            Executor executor,
+            Supplier<? extends T>... suppliers) {
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("supplier", suppliers);
+
+        return anySuccessOf(wrapSuppliers(executor, suppliers));
+    }
+
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     *
+     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param <T>       the suppliers' return type
+     * @return the new CompletableFuture
+     * @see #anyOf(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier)
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<T> mSupplyAnyAsync(
+            Supplier<? extends T>... suppliers) {
+        return mSupplyAnyAsync(AsyncPoolHolder.ASYNC_POOL, suppliers);
+    }
+
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the given Executor with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     *
+     * @param executor  the executor to use for asynchronous execution
+     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
+     * @param <T>       the suppliers' return type
+     * @return the new CompletableFuture
+     * @see #anyOf(CompletionStage[])
+     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<T> mSupplyAnyAsync(
+            Executor executor,
+            Supplier<? extends T>... suppliers) {
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("supplier", suppliers);
+
+        return anyOf(wrapSuppliers(executor, suppliers));
+    }
+
+
     /**
      * Returns a new CompletableFuture that is asynchronously completed
      * by tasks running in the CompletableFuture's default asynchronous execution facility
@@ -213,6 +310,68 @@ public final class CompletableFutureUtils {
         requireArrayAndEleNonNull("action", actions);
 
         return allFastFailOf(wrapRunnables(executor, actions));
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * after runs the given actions.
+     *
+     * @param actions the actions to run before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #anySuccessOf(CompletionStage[])
+     * @see CompletableFuture#runAsync(Runnable)
+     */
+    public static CompletableFuture<Void> mRunAnySuccessAsync(Runnable... actions) {
+        return mRunAnySuccessAsync(AsyncPoolHolder.ASYNC_POOL, actions);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the given Executor after runs the given actions.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to run before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #anySuccessOf(CompletionStage[])
+     * @see CompletableFuture#runAsync(Runnable, Executor)
+     */
+    public static CompletableFuture<Void> mRunAnySuccessAsync(Executor executor, Runnable... actions) {
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("action", actions);
+
+        return anySuccessOf(wrapRunnables(executor, actions));
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the CompletableFuture's default asynchronous execution facility
+     * after runs the given actions.
+     *
+     * @param actions the actions to run before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #anyOf(CompletionStage[])
+     * @see CompletableFuture#runAsync(Runnable)
+     */
+    public static CompletableFuture<Void> mRunAnyAsync(Runnable... actions) {
+        return mRunAnyAsync(AsyncPoolHolder.ASYNC_POOL, actions);
+    }
+
+    /**
+     * Returns a new CompletableFuture that is asynchronously completed
+     * by tasks running in the given Executor after runs the given actions.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to run before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see #anyOf(CompletionStage[])
+     * @see CompletableFuture#runAsync(Runnable, Executor)
+     */
+    public static CompletableFuture<Void> mRunAnyAsync(Executor executor, Runnable... actions) {
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("action", actions);
+
+        return anyOf(wrapRunnables(executor, actions));
     }
 
     /**
@@ -1680,6 +1839,86 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
      * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the most values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     *
+     * @param fns the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T, U> CompletableFuture<U> thenMApplyAnySuccessAsync(
+            CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
+        return thenMApplyAnySuccessAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fns);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the given Executor, with the most values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param fns      the functions to use to compute the values of the returned CompletableFuture
+     * @param <U>      the functions' return type
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T, U> CompletableFuture<U> thenMApplyAnySuccessAsync(
+            CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("fn", fns);
+
+        return cfThis.thenCompose(v -> anySuccessOf(wrapFunctions(executor, v, fns)));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the most values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     *
+     * @param fns the functions to use to compute the values of the returned CompletableFuture
+     * @param <U> the functions' return type
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T, U> CompletableFuture<U> thenMApplyAnyAsync(
+            CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
+        return thenMApplyAnyAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fns);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the given Executor, with the most values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param fns      the functions to use to compute the values of the returned CompletableFuture
+     * @param <U>      the functions' return type
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T, U> CompletableFuture<U> thenMApplyAnyAsync(
+            CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("fn", fns);
+
+        return cfThis.thenCompose(v -> anyOf(wrapFunctions(executor, v, fns)));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
      * with the values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
@@ -1790,6 +2029,70 @@ public final class CompletableFutureUtils {
         return cfThis.thenCompose(v -> CompletableFuture.allOf(wrapConsumers(executor, v, actions)));
     }
 
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the given stage's result as the argument to the given actions.
+     *
+     * @param actions the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<Void> thenMAcceptAnySuccessAsync(
+            CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
+        return thenMAcceptAnySuccessAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, actions);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<Void> thenMAcceptAnySuccessAsync(
+            CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("action", actions);
+
+        return cfThis.thenCompose(v -> anySuccessOf(wrapConsumers(executor, v, actions)));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * with the given stage's result as the argument to the given actions.
+     *
+     * @param actions the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<Void> thenMAcceptAnyAsync(
+            CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
+        return thenMAcceptAnyAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, actions);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     */
+    @SafeVarargs
+    public static <T> CompletableFuture<Void> thenMAcceptAnyAsync(
+            CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("action", actions);
+
+        return cfThis.thenCompose(v -> anyOf(wrapConsumers(executor, v, actions)));
+    }
+
     private static <T> CompletableFuture<Void>[] wrapConsumers(Executor executor, T v, Consumer<? super T>[] actions) {
         @SuppressWarnings("unchecked")
         CompletableFuture<Void>[] cfs = new CompletableFuture[actions.length];
@@ -1830,6 +2133,70 @@ public final class CompletableFutureUtils {
         requireArrayAndEleNonNull("action", actions);
 
         return cfThis.thenCompose(unused -> allFastFailOf(wrapRunnables(executor, actions)));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * executes the given actions using the CompletableFuture's default asynchronous execution facility.
+     *
+     * @param actions the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#thenRunAsync(Runnable)
+     * @see #anySuccessOf(CompletionStage[])
+     */
+    public static CompletableFuture<Void> thenMRunAnySuccessAsync(CompletableFuture<?> cfThis, Runnable... actions) {
+        return thenMRunAnySuccessAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, actions);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * executes the given actions using the given Executor.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#thenRunAsync(Runnable, Executor)
+     * @see #anySuccessOf(CompletionStage[])
+     */
+    public static CompletableFuture<Void> thenMRunAnySuccessAsync(
+            CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("action", actions);
+
+        return cfThis.thenCompose(unused -> anySuccessOf(wrapRunnables(executor, actions)));
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * executes the given actions using the CompletableFuture's default asynchronous execution facility.
+     *
+     * @param actions the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#thenRunAsync(Runnable)
+     * @see #anyOf(CompletionStage[])
+     */
+    public static CompletableFuture<Void> thenMRunAnyAsync(CompletableFuture<?> cfThis, Runnable... actions) {
+        return thenMRunAnyAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, actions);
+    }
+
+    /**
+     * Returns a new CompletableFuture that, when the given stage completes normally,
+     * executes the given actions using the given Executor.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to perform before completing the returned CompletableFuture
+     * @return the new CompletableFuture
+     * @see CompletableFuture#thenRunAsync(Runnable, Executor)
+     * @see #anyOf(CompletionStage[])
+     */
+    public static CompletableFuture<Void> thenMRunAnyAsync(
+            CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("action", actions);
+
+        return cfThis.thenCompose(unused -> anyOf(wrapRunnables(executor, actions)));
     }
 
     /**
