@@ -49,7 +49,7 @@ public final class CompletableFutureUtils {
      */
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyFastFailAsync(Supplier<? extends T>... suppliers) {
-        return mSupplyFastFailAsync(AsyncPoolHolder.ASYNC_POOL, suppliers);
+        return mSupplyFastFailAsync(ASYNC_POOL, suppliers);
     }
 
     /**
@@ -95,7 +95,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyMostSuccessAsync(
             @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit, Supplier<? extends T>... suppliers) {
-        return mSupplyMostSuccessAsync(valueIfNotSuccess, AsyncPoolHolder.ASYNC_POOL, timeout, unit, suppliers);
+        return mSupplyMostSuccessAsync(valueIfNotSuccess, ASYNC_POOL, timeout, unit, suppliers);
     }
 
     /**
@@ -142,7 +142,7 @@ public final class CompletableFutureUtils {
      */
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyAsync(Supplier<? extends T>... suppliers) {
-        return mSupplyAsync(AsyncPoolHolder.ASYNC_POOL, suppliers);
+        return mSupplyAsync(ASYNC_POOL, suppliers);
     }
 
     /**
@@ -183,7 +183,7 @@ public final class CompletableFutureUtils {
      */
     @SafeVarargs
     public static <T> CompletableFuture<T> mSupplyAnySuccessAsync(Supplier<? extends T>... suppliers) {
-        return mSupplyAnySuccessAsync(AsyncPoolHolder.ASYNC_POOL, suppliers);
+        return mSupplyAnySuccessAsync(ASYNC_POOL, suppliers);
     }
 
     /**
@@ -227,7 +227,7 @@ public final class CompletableFutureUtils {
      */
     @SafeVarargs
     public static <T> CompletableFuture<T> mSupplyAnyAsync(Supplier<? extends T>... suppliers) {
-        return mSupplyAnyAsync(AsyncPoolHolder.ASYNC_POOL, suppliers);
+        return mSupplyAnyAsync(ASYNC_POOL, suppliers);
     }
 
     /**
@@ -282,7 +282,7 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#runAsync(Runnable)
      */
     public static CompletableFuture<Void> mRunFastFailAsync(Runnable... actions) {
-        return mRunFastFailAsync(AsyncPoolHolder.ASYNC_POOL, actions);
+        return mRunFastFailAsync(ASYNC_POOL, actions);
     }
 
     /**
@@ -313,7 +313,7 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#runAsync(Runnable)
      */
     public static CompletableFuture<Void> mRunAsync(Runnable... actions) {
-        return mRunAsync(AsyncPoolHolder.ASYNC_POOL, actions);
+        return mRunAsync(ASYNC_POOL, actions);
     }
 
     /**
@@ -343,7 +343,7 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#runAsync(Runnable)
      */
     public static CompletableFuture<Void> mRunAnySuccessAsync(Runnable... actions) {
-        return mRunAnySuccessAsync(AsyncPoolHolder.ASYNC_POOL, actions);
+        return mRunAnySuccessAsync(ASYNC_POOL, actions);
     }
 
     /**
@@ -373,7 +373,7 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#runAsync(Runnable)
      */
     public static CompletableFuture<Void> mRunAnyAsync(Runnable... actions) {
-        return mRunAnyAsync(AsyncPoolHolder.ASYNC_POOL, actions);
+        return mRunAnyAsync(ASYNC_POOL, actions);
     }
 
     /**
@@ -419,7 +419,7 @@ public final class CompletableFutureUtils {
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return tupleMSupplyFastFailAsync(AsyncPoolHolder.ASYNC_POOL, supplier1, supplier2);
+        return tupleMSupplyFastFailAsync(ASYNC_POOL, supplier1, supplier2);
     }
 
     /**
@@ -452,7 +452,7 @@ public final class CompletableFutureUtils {
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return tupleMSupplyFastFailAsync(AsyncPoolHolder.ASYNC_POOL, supplier1, supplier2, supplier3);
+        return tupleMSupplyFastFailAsync(ASYNC_POOL, supplier1, supplier2, supplier3);
     }
 
     /**
@@ -487,7 +487,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return tupleMSupplyFastFailAsync(AsyncPoolHolder.ASYNC_POOL, supplier1, supplier2, supplier3, supplier4);
+        return tupleMSupplyFastFailAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4);
     }
 
     /**
@@ -522,7 +522,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return tupleMSupplyFastFailAsync(AsyncPoolHolder.ASYNC_POOL, supplier1, supplier2, supplier3, supplier4, supplier5);
+        return tupleMSupplyFastFailAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4, supplier5);
     }
 
     /**
@@ -583,7 +583,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return tupleMSupplyMostSuccessAsync(AsyncPoolHolder.ASYNC_POOL, timeout, unit, supplier1, supplier2);
+        return tupleMSupplyMostSuccessAsync(ASYNC_POOL, timeout, unit, supplier1, supplier2);
     }
 
     /**
@@ -627,7 +627,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return tupleMSupplyMostSuccessAsync(AsyncPoolHolder.ASYNC_POOL, timeout, unit, supplier1, supplier2, supplier3);
+        return tupleMSupplyMostSuccessAsync(ASYNC_POOL, timeout, unit, supplier1, supplier2, supplier3);
     }
 
     /**
@@ -671,7 +671,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return tupleMSupplyMostSuccessAsync(AsyncPoolHolder.ASYNC_POOL, timeout, unit, supplier1, supplier2, supplier3, supplier4);
+        return tupleMSupplyMostSuccessAsync(ASYNC_POOL, timeout, unit, supplier1, supplier2, supplier3, supplier4);
     }
 
     /**
@@ -716,7 +716,7 @@ public final class CompletableFutureUtils {
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
             Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return tupleMSupplyMostSuccessAsync(AsyncPoolHolder.ASYNC_POOL, timeout, unit, supplier1, supplier2, supplier3, supplier4, supplier5);
+        return tupleMSupplyMostSuccessAsync(ASYNC_POOL, timeout, unit, supplier1, supplier2, supplier3, supplier4, supplier5);
     }
 
     /**
@@ -783,7 +783,7 @@ public final class CompletableFutureUtils {
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return tupleMSupplyAsync(AsyncPoolHolder.ASYNC_POOL, supplier1, supplier2);
+        return tupleMSupplyAsync(ASYNC_POOL, supplier1, supplier2);
     }
 
     /**
@@ -816,7 +816,7 @@ public final class CompletableFutureUtils {
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return tupleMSupplyAsync(AsyncPoolHolder.ASYNC_POOL, supplier1, supplier2, supplier3);
+        return tupleMSupplyAsync(ASYNC_POOL, supplier1, supplier2, supplier3);
     }
 
     /**
@@ -851,7 +851,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return tupleMSupplyAsync(AsyncPoolHolder.ASYNC_POOL, supplier1, supplier2, supplier3, supplier4);
+        return tupleMSupplyAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4);
     }
 
     /**
@@ -886,7 +886,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return tupleMSupplyAsync(AsyncPoolHolder.ASYNC_POOL, supplier1, supplier2, supplier3, supplier4, supplier5);
+        return tupleMSupplyAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4, supplier5);
     }
 
     /**
@@ -965,7 +965,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mostSuccessResultsOf(
             @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit, CompletionStage<? extends T>... cfs) {
-        return mostSuccessResultsOf(valueIfNotSuccess, AsyncPoolHolder.ASYNC_POOL, timeout, unit, cfs);
+        return mostSuccessResultsOf(valueIfNotSuccess, ASYNC_POOL, timeout, unit, cfs);
     }
 
     /**
@@ -1404,7 +1404,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mostSuccessTupleOf(
             long timeout, TimeUnit unit, CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return mostSuccessTupleOf(AsyncPoolHolder.ASYNC_POOL, timeout, unit, cf1, cf2);
+        return mostSuccessTupleOf(ASYNC_POOL, timeout, unit, cf1, cf2);
     }
 
     /**
@@ -1443,7 +1443,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mostSuccessTupleOf(
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return mostSuccessTupleOf(AsyncPoolHolder.ASYNC_POOL, timeout, unit, cf1, cf2, cf3);
+        return mostSuccessTupleOf(ASYNC_POOL, timeout, unit, cf1, cf2, cf3);
     }
 
     /**
@@ -1483,7 +1483,7 @@ public final class CompletableFutureUtils {
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return mostSuccessTupleOf(AsyncPoolHolder.ASYNC_POOL, timeout, unit, cf1, cf2, cf3, cf4);
+        return mostSuccessTupleOf(ASYNC_POOL, timeout, unit, cf1, cf2, cf3, cf4);
     }
 
     /**
@@ -1524,7 +1524,7 @@ public final class CompletableFutureUtils {
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return mostSuccessTupleOf(AsyncPoolHolder.ASYNC_POOL, timeout, unit, cf1, cf2, cf3, cf4, cf5);
+        return mostSuccessTupleOf(ASYNC_POOL, timeout, unit, cf1, cf2, cf3, cf4, cf5);
     }
 
     /**
@@ -1686,7 +1686,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static Executor delayedExecutor(long delay, TimeUnit unit) {
-        return delayedExecutor(delay, unit, AsyncPoolHolder.ASYNC_POOL);
+        return delayedExecutor(delay, unit, ASYNC_POOL);
     }
 
     /**
@@ -1716,7 +1716,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static Executor defaultExecutor() {
-        return AsyncPoolHolder.ASYNC_POOL;
+        return ASYNC_POOL;
     }
 
     // endregion
@@ -1743,7 +1743,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
-        return thenMApplyFastFailAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fns);
+        return thenMApplyFastFailAsync(cfThis, ASYNC_POOL, fns);
     }
 
     /**
@@ -1789,7 +1789,7 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<List<U>> thenMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, @Nullable U valueIfNotSuccess,
             long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
-        return thenMApplyMostSuccessAsync(cfThis, valueIfNotSuccess, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fns);
+        return thenMApplyMostSuccessAsync(cfThis, valueIfNotSuccess, ASYNC_POOL, timeout, unit, fns);
     }
 
     /**
@@ -1838,7 +1838,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
-        return thenMApplyAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fns);
+        return thenMApplyAsync(cfThis, ASYNC_POOL, fns);
     }
 
     /**
@@ -1875,7 +1875,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
-        return thenMApplyAnySuccessAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fns);
+        return thenMApplyAnySuccessAsync(cfThis, ASYNC_POOL, fns);
     }
 
     /**
@@ -1911,7 +1911,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
-        return thenMApplyAnyAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fns);
+        return thenMApplyAnyAsync(cfThis, ASYNC_POOL, fns);
     }
 
     /**
@@ -1956,7 +1956,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptFastFailAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
-        return thenMAcceptFastFailAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, actions);
+        return thenMAcceptFastFailAsync(cfThis, ASYNC_POOL, actions);
     }
 
     /**
@@ -1988,7 +1988,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
-        return thenMAcceptAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, actions);
+        return thenMAcceptAsync(cfThis, ASYNC_POOL, actions);
     }
 
     /**
@@ -2020,7 +2020,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
-        return thenMAcceptAnySuccessAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, actions);
+        return thenMAcceptAnySuccessAsync(cfThis, ASYNC_POOL, actions);
     }
 
     /**
@@ -2052,7 +2052,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnyAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
-        return thenMAcceptAnyAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, actions);
+        return thenMAcceptAnyAsync(cfThis, ASYNC_POOL, actions);
     }
 
     /**
@@ -2093,7 +2093,7 @@ public final class CompletableFutureUtils {
      * @see #allFastFailOf(CompletionStage[])
      */
     public static CompletableFuture<Void> thenMRunFastFailAsync(CompletableFuture<?> cfThis, Runnable... actions) {
-        return thenMRunFastFailAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, actions);
+        return thenMRunFastFailAsync(cfThis, ASYNC_POOL, actions);
     }
 
     /**
@@ -2125,7 +2125,7 @@ public final class CompletableFutureUtils {
      * @see #allOf(CompletionStage[])
      */
     public static CompletableFuture<Void> thenMRunAsync(CompletableFuture<?> cfThis, Runnable... actions) {
-        return thenMRunAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, actions);
+        return thenMRunAsync(cfThis, ASYNC_POOL, actions);
     }
 
     /**
@@ -2157,7 +2157,7 @@ public final class CompletableFutureUtils {
      * @see #anySuccessOf(CompletionStage[])
      */
     public static CompletableFuture<Void> thenMRunAnySuccessAsync(CompletableFuture<?> cfThis, Runnable... actions) {
-        return thenMRunAnySuccessAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, actions);
+        return thenMRunAnySuccessAsync(cfThis, ASYNC_POOL, actions);
     }
 
     /**
@@ -2189,7 +2189,7 @@ public final class CompletableFutureUtils {
      * @see #anyOf(CompletionStage[])
      */
     public static CompletableFuture<Void> thenMRunAnyAsync(CompletableFuture<?> cfThis, Runnable... actions) {
-        return thenMRunAnyAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, actions);
+        return thenMRunAnyAsync(cfThis, ASYNC_POOL, actions);
     }
 
     /**
@@ -2228,7 +2228,7 @@ public final class CompletableFutureUtils {
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyFastFailAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fn1, fn2);
+        return thenTupleMApplyFastFailAsync(cfThis, ASYNC_POOL, fn1, fn2);
     }
 
     /**
@@ -2262,7 +2262,7 @@ public final class CompletableFutureUtils {
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyFastFailAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fn1, fn2, fn3);
+        return thenTupleMApplyFastFailAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3);
     }
 
     /**
@@ -2297,7 +2297,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyFastFailAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fn1, fn2, fn3, fn4);
+        return thenTupleMApplyFastFailAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3, fn4);
     }
 
     /**
@@ -2333,7 +2333,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyFastFailAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fn1, fn2, fn3, fn4, fn5);
+        return thenTupleMApplyFastFailAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
@@ -2374,7 +2374,7 @@ public final class CompletableFutureUtils {
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyMostSuccessAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2);
+        return thenTupleMApplyMostSuccessAsync(cfThis, ASYNC_POOL, timeout, unit, fn1, fn2);
     }
 
     /**
@@ -2422,7 +2422,7 @@ public final class CompletableFutureUtils {
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyMostSuccessAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2, fn3);
+        return thenTupleMApplyMostSuccessAsync(cfThis, ASYNC_POOL, timeout, unit, fn1, fn2, fn3);
     }
 
     /**
@@ -2472,7 +2472,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyMostSuccessAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2, fn3, fn4);
+        return thenTupleMApplyMostSuccessAsync(cfThis, ASYNC_POOL, timeout, unit, fn1, fn2, fn3, fn4);
     }
 
     /**
@@ -2522,7 +2522,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyMostSuccessAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, timeout, unit, fn1, fn2, fn3, fn4, fn5);
+        return thenTupleMApplyMostSuccessAsync(cfThis, ASYNC_POOL, timeout, unit, fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
@@ -2566,7 +2566,7 @@ public final class CompletableFutureUtils {
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fn1, fn2);
+        return thenTupleMApplyAsync(cfThis, ASYNC_POOL, fn1, fn2);
     }
 
     /**
@@ -2600,7 +2600,7 @@ public final class CompletableFutureUtils {
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fn1, fn2, fn3);
+        return thenTupleMApplyAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3);
     }
 
     /**
@@ -2635,7 +2635,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fn1, fn2, fn3, fn4);
+        return thenTupleMApplyAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3, fn4);
     }
 
     /**
@@ -2671,7 +2671,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fn1, fn2, fn3, fn4, fn5);
+        return thenTupleMApplyAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
@@ -2736,7 +2736,7 @@ public final class CompletableFutureUtils {
     public static <T, U, V> CompletableFuture<V> thenCombineFastFailAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiFunction<? super T, ? super U, ? extends V> fn) {
-        return thenCombineFastFailAsync(cfThis, other, fn, AsyncPoolHolder.ASYNC_POOL);
+        return thenCombineFastFailAsync(cfThis, other, fn, ASYNC_POOL);
     }
 
     /**
@@ -2819,7 +2819,7 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<Void> thenAcceptBothFastFailAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiConsumer<? super T, ? super U> action) {
-        return thenAcceptBothFastFailAsync(cfThis, other, action, AsyncPoolHolder.ASYNC_POOL);
+        return thenAcceptBothFastFailAsync(cfThis, other, action, ASYNC_POOL);
     }
 
     /**
@@ -2872,7 +2872,7 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterBothFastFailAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
-        return runAfterBothFastFailAsync(cfThis, other, action, AsyncPoolHolder.ASYNC_POOL);
+        return runAfterBothFastFailAsync(cfThis, other, action, ASYNC_POOL);
     }
 
     /**
@@ -2930,7 +2930,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other, Function<? super T, ? extends U> fn) {
-        return applyToEitherSuccessAsync(cfThis, other, fn, AsyncPoolHolder.ASYNC_POOL);
+        return applyToEitherSuccessAsync(cfThis, other, fn, ASYNC_POOL);
     }
 
     /**
@@ -2997,7 +2997,7 @@ public final class CompletableFutureUtils {
      */
     public static <T> CompletableFuture<Void> acceptEitherSuccessAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other, Consumer<? super T> action) {
-        return acceptEitherSuccessAsync(cfThis, other, action, AsyncPoolHolder.ASYNC_POOL);
+        return acceptEitherSuccessAsync(cfThis, other, action, ASYNC_POOL);
     }
 
     /**
@@ -3047,7 +3047,7 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterEitherSuccessAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
-        return runAfterEitherSuccessAsync(cfThis, other, action, AsyncPoolHolder.ASYNC_POOL);
+        return runAfterEitherSuccessAsync(cfThis, other, action, ASYNC_POOL);
     }
 
     /**
@@ -3086,7 +3086,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, C extends CompletionStage<? super T>>
     C exceptionallyAsync(C cfThis, Function<Throwable, ? extends T> fn) {
-        return exceptionallyAsync(cfThis, fn, AsyncPoolHolder.ASYNC_POOL);
+        return exceptionallyAsync(cfThis, fn, ASYNC_POOL);
     }
 
     /**
@@ -3131,7 +3131,7 @@ public final class CompletableFutureUtils {
      * @see #cffuOrTimeout(CompletableFuture, Executor, long, TimeUnit)
      */
     public static <C extends CompletableFuture<?>> C cffuOrTimeout(C cfThis, long timeout, TimeUnit unit) {
-        return cffuOrTimeout(cfThis, AsyncPoolHolder.ASYNC_POOL, timeout, unit);
+        return cffuOrTimeout(cfThis, ASYNC_POOL, timeout, unit);
     }
 
     /**
@@ -3207,7 +3207,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, C extends CompletableFuture<? super T>>
     C cffuCompleteOnTimeout(C cfThis, @Nullable T value, long timeout, TimeUnit unit) {
-        return cffuCompleteOnTimeout(cfThis, value, AsyncPoolHolder.ASYNC_POOL, timeout, unit);
+        return cffuCompleteOnTimeout(cfThis, value, ASYNC_POOL, timeout, unit);
     }
 
     /**
@@ -3338,7 +3338,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, C extends CompletionStage<? super T>>
     C exceptionallyComposeAsync(C cfThis, Function<Throwable, ? extends CompletionStage<T>> fn) {
-        return exceptionallyComposeAsync(cfThis, fn, AsyncPoolHolder.ASYNC_POOL);
+        return exceptionallyComposeAsync(cfThis, fn, ASYNC_POOL);
     }
 
     /**
@@ -3412,7 +3412,7 @@ public final class CompletableFutureUtils {
     @Contract("_, _ -> param1")
     public static <T, C extends CompletionStage<? extends T>>
     C peekAsync(C cfThis, BiConsumer<? super T, ? super Throwable> action) {
-        return peekAsync(cfThis, action, AsyncPoolHolder.ASYNC_POOL);
+        return peekAsync(cfThis, action, ASYNC_POOL);
     }
 
     /**
@@ -3661,7 +3661,7 @@ public final class CompletableFutureUtils {
      */
     @Contract("_, _ -> param1")
     public static <T, C extends CompletableFuture<? super T>> C completeAsync(C cfThis, Supplier<? extends T> supplier) {
-        return completeAsync(cfThis, supplier, AsyncPoolHolder.ASYNC_POOL);
+        return completeAsync(cfThis, supplier, ASYNC_POOL);
     }
 
     /**
@@ -3701,7 +3701,7 @@ public final class CompletableFutureUtils {
     @Contract("_, _ -> param1")
     public static <C extends CompletableFuture<?>>
     C completeExceptionallyAsync(C cfThis, Supplier<? extends Throwable> supplier) {
-        return completeExceptionallyAsync(cfThis, supplier, AsyncPoolHolder.ASYNC_POOL);
+        return completeExceptionallyAsync(cfThis, supplier, ASYNC_POOL);
     }
 
     /**
@@ -3854,7 +3854,7 @@ public final class CompletableFutureUtils {
     @SuppressWarnings("resource")
     static Executor screenExecutor(Executor e) {
         if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool())
-            return AsyncPoolHolder.ASYNC_POOL;
+            return ASYNC_POOL;
         return requireNonNull(e, "defaultExecutor is null");
     }
 
@@ -3871,19 +3871,14 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * hold {@link #ASYNC_POOL} as field of static inner class for lazy loading(init only when needed).
+     * Default executor -- ForkJoinPool.commonPool() unless it cannot support parallelism.
      */
-    private static class AsyncPoolHolder {
-        /**
-         * Default executor -- ForkJoinPool.commonPool() unless it cannot support parallelism.
-         */
-        private static final Executor ASYNC_POOL = _asyncPool0();
+    private static final Executor ASYNC_POOL = _asyncPool0();
 
-        private static Executor _asyncPool0() {
-            if (IS_JAVA9_PLUS) return completedFuture(null).defaultExecutor();
-            if (USE_COMMON_POOL) return ForkJoinPool.commonPool();
-            return new ThreadPerTaskExecutor();
-        }
+    private static Executor _asyncPool0() {
+        if (IS_JAVA9_PLUS) return completedFuture(null).defaultExecutor();
+        if (USE_COMMON_POOL) return ForkJoinPool.commonPool();
+        return new ThreadPerTaskExecutor();
     }
 
     // endregion
