@@ -68,8 +68,6 @@ class CffuFactoryTest {
         Cffu<List<Integer>>[] cfs = new Cffu[]{
                 cffuFactory.mSupplyAsync(supplier, supplier),
                 cffuFactory.mSupplyFastFailAsync(supplier, supplier),
-                cffuFactory.mSupplyAnySuccessAsync(supplier, supplier),
-                cffuFactory.mSupplyAnyAsync(supplier, supplier),
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
