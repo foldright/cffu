@@ -56,10 +56,6 @@ class CffuTest {
                 completed.thenMApplyFastFailAsync(executorService, function_n, function_n),
                 completed.thenMApplyMostSuccessAsync(100, 500, TimeUnit.MILLISECONDS, function_n, function_n),
                 completed.thenMApplyMostSuccessAsync(100, executorService, 500, TimeUnit.MILLISECONDS, function_n, function_n),
-                completed.thenMApplyAnySuccessAsync(function_n, function_n),
-                completed.thenMApplyAnySuccessAsync(executorService, function_n, function_n),
-                completed.thenMApplyAnyAsync(function_n, function_n),
-                completed.thenMApplyAnyAsync(executorService, function_n, function_n),
                 completed.thenMApplyAsync(function_n, function_n),
                 completed.thenMApplyAsync(executorService, function_n, function_n)
         };
@@ -67,6 +63,21 @@ class CffuTest {
         assertTrue(System.currentTimeMillis() - tick < 50);
         for (Cffu<Void> cf : cfs) {
             assertEquals(Arrays.asList(n, n), cf.get());
+        }
+
+
+        final long tick1 = System.currentTimeMillis();
+        @SuppressWarnings("unchecked")
+        Cffu<Void>[] cfs1 = new Cffu[]{
+                completed.thenMApplyAnySuccessAsync(function_n, function_n),
+                completed.thenMApplyAnySuccessAsync(executorService, function_n, function_n),
+                completed.thenMApplyAnyAsync(function_n, function_n),
+                completed.thenMApplyAnyAsync(executorService, function_n, function_n),
+        };
+
+        assertTrue(System.currentTimeMillis() - tick1 < 50);
+        for (Cffu<Void> cf : cfs1) {
+            assertEquals(n, cf.get());
         }
     }
 
