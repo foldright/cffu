@@ -64,6 +64,21 @@ class CffuTest {
         for (Cffu<Void> cf : cfs) {
             assertEquals(Arrays.asList(n, n), cf.get());
         }
+
+
+        final long tick1 = System.currentTimeMillis();
+        @SuppressWarnings("unchecked")
+        Cffu<Void>[] cfs1 = new Cffu[]{
+                completed.thenMApplyAnySuccessAsync(function_n, function_n),
+                completed.thenMApplyAnySuccessAsync(executorService, function_n, function_n),
+                completed.thenMApplyAnyAsync(function_n, function_n),
+                completed.thenMApplyAnyAsync(executorService, function_n, function_n),
+        };
+
+        assertTrue(System.currentTimeMillis() - tick1 < 50);
+        for (Cffu<Void> cf : cfs1) {
+            assertEquals(n, cf.get());
+        }
     }
 
     @Test
@@ -81,7 +96,11 @@ class CffuTest {
                 completed.thenMAcceptAsync(consumer, consumer),
                 completed.thenMAcceptAsync(executorService, consumer, consumer),
                 completed.thenMAcceptFastFailAsync(consumer, consumer),
-                completed.thenMAcceptFastFailAsync(executorService, consumer, consumer)
+                completed.thenMAcceptFastFailAsync(executorService, consumer, consumer),
+                completed.thenMAcceptAnySuccessAsync(consumer, consumer),
+                completed.thenMAcceptAnySuccessAsync(executorService, consumer, consumer),
+                completed.thenMAcceptAnyAsync(consumer, consumer),
+                completed.thenMAcceptAnyAsync(executorService, consumer, consumer)
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
@@ -104,7 +123,9 @@ class CffuTest {
                 completed.thenMRunAsync(runnable, runnable),
                 completed.thenMRunAsync(executorService, runnable, runnable),
                 completed.thenMRunFastFailAsync(runnable, runnable),
-                completed.thenMRunFastFailAsync(executorService, runnable, runnable)
+                completed.thenMRunFastFailAsync(executorService, runnable, runnable),
+                completed.thenMRunAnySuccessAsync(runnable, runnable),
+                completed.thenMRunAnyAsync(executorService, runnable, runnable)
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
@@ -170,7 +191,6 @@ class CffuTest {
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), completed.thenTupleMApplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an, function_nn).get());
         assertEquals(Tuple5.of(n, s, d, anotherN, n + n), completed.thenTupleMApplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an, function_nn).get());
     }
-
     ////////////////////////////////////////////////////////////////////////////////
     //# both methods
     ////////////////////////////////////////////////////////////////////////////////
