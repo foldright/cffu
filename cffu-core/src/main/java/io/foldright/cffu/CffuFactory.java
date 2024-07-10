@@ -237,85 +237,6 @@ public final class CffuFactory {
     /**
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the Cffu's default asynchronous execution facility
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     *
-     * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
-     * @param <T>       the suppliers' return type
-     * @return the new Cffu
-     * @see #anySuccessOf(CompletionStage[])
-     */
-    @SafeVarargs
-    public final <T> Cffu<T> mSupplyAnySuccessAsync(Supplier<? extends T>... suppliers) {
-        return mSupplyAnySuccessAsync(defaultExecutor, suppliers);
-    }
-
-    /**
-     * Returns a new Cffu that is asynchronously completed by tasks running in the given Executor
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     *
-     * @param executor  the executor to use for asynchronous execution
-     * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
-     * @param <T>       the suppliers' return type
-     * @return the new Cffu
-     * @see #anySuccessOf(CompletionStage[])
-     */
-    @SafeVarargs
-    public final <T> Cffu<T> mSupplyAnySuccessAsync(
-            Executor executor, Supplier<? extends T>... suppliers) {
-        return create(CompletableFutureUtils.mSupplyAnySuccessAsync(executor, suppliers));
-    }
-
-    /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the Cffu's default asynchronous execution facility
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     *
-     * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
-     * @param <T>       the suppliers' return type
-     * @return the new Cffu
-     * @see #anyOf(CompletionStage[])
-     */
-    @SafeVarargs
-    public final <T> Cffu<T> mSupplyAnyAsync(Supplier<? extends T>... suppliers) {
-        return mSupplyAnyAsync(defaultExecutor, suppliers);
-    }
-
-    /**
-     * Returns a new Cffu that is asynchronously completed by tasks running in the given Executor
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     *
-     * @param executor  the executor to use for asynchronous execution
-     * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
-     * @param <T>       the suppliers' return type
-     * @return the new Cffu
-     * @see #anyOf(CompletionStage[])
-     */
-    @SafeVarargs
-    public final <T> Cffu<T> mSupplyAnyAsync(
-            Executor executor, Supplier<? extends T>... suppliers) {
-        return create(CompletableFutureUtils.mSupplyAnyAsync(executor, suppliers));
-    }
-
-
-    /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the Cffu's default asynchronous execution facility
      * with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
@@ -344,6 +265,82 @@ public final class CffuFactory {
     public final <T> Cffu<List<T>> mSupplyAsync(
             Executor executor, Supplier<? extends T>... suppliers) {
         return create(CompletableFutureUtils.mSupplyAsync(executor, suppliers));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously successful
+     * when any of tasks running in the Cffu's default asynchronous execution facility
+     * by calling the given Suppliers success, with the same result.
+     * Otherwise, all the given tasks complete exceptionally,
+     * the returned Cffu also does so, with a CompletionException holding
+     * an exception from any of the given stages as its cause.
+     * If no suppliers are provided, returns a new Cffu that is already completed exceptionally
+     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
+     *
+     * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
+     * @param <T>       the suppliers' return type
+     * @return the new Cffu
+     * @see #anySuccessOf(CompletionStage[])
+     */
+    @SafeVarargs
+    public final <T> Cffu<T> mSupplyAnySuccessAsync(Supplier<? extends T>... suppliers) {
+        return mSupplyAnySuccessAsync(defaultExecutor, suppliers);
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously successful
+     * when any of tasks running in the given executor by calling the given Suppliers success, with the same result.
+     * Otherwise, all the given tasks complete exceptionally,
+     * the returned Cffu also does so, with a CompletionException holding
+     * an exception from any of the given stages as its cause.
+     * If no suppliers are provided, returns a new Cffu that is already completed exceptionally
+     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
+     *
+     * @param executor  the executor to use for asynchronous execution
+     * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
+     * @param <T>       the suppliers' return type
+     * @return the new Cffu
+     * @see #anySuccessOf(CompletionStage[])
+     */
+    @SafeVarargs
+    public final <T> Cffu<T> mSupplyAnySuccessAsync(Executor executor, Supplier<? extends T>... suppliers) {
+        return create(CompletableFutureUtils.mSupplyAnySuccessAsync(executor, suppliers));
+    }
+
+    /**
+     * Returns a new Cffu that is completed
+     * when any of tasks running in the Cffu's default asynchronous execution facility
+     * by calling the given Suppliers complete, with the same result.
+     * Otherwise, if it completed exceptionally, the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
+     * If no suppliers are provided, returns an incomplete Cffu.
+     *
+     * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
+     * @param <T>       the suppliers' return type
+     * @return the new Cffu
+     * @see #anyOf(CompletionStage[])
+     */
+    @SafeVarargs
+    public final <T> Cffu<T> mSupplyAnyAsync(Supplier<? extends T>... suppliers) {
+        return mSupplyAnyAsync(defaultExecutor, suppliers);
+    }
+
+    /**
+     * Returns a new Cffu that is completed
+     * when any of tasks running in the given Executor by calling the given Suppliers complete, with the same result.
+     * Otherwise, if it completed exceptionally, the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
+     * If no suppliers are provided, returns an incomplete Cffu.
+     *
+     * @param executor  the executor to use for asynchronous execution
+     * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
+     * @param <T>       the suppliers' return type
+     * @return the new Cffu
+     * @see #anyOf(CompletionStage[])
+     */
+    @SafeVarargs
+    public final <T> Cffu<T> mSupplyAnyAsync(Executor executor, Supplier<? extends T>... suppliers) {
+        return create(CompletableFutureUtils.mSupplyAnyAsync(executor, suppliers));
     }
 
     /**
@@ -379,59 +376,6 @@ public final class CffuFactory {
      *
      * @param actions the actions to run before completing the returned Cffu
      * @return the new Cffu
-     * @see #anySuccessOf(CompletionStage[])
-     */
-    public Cffu<Void> mRunAnySuccessAsync(Runnable... actions) {
-        return mRunAnySuccessAsync(defaultExecutor, actions);
-    }
-
-    /**
-     * Returns a new Cffu that is asynchronously completed by tasks running in the given Executor
-     * after runs the given actions.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to run before completing the returned Cffu
-     * @return the new Cffu
-     * @see #anySuccessOf(CompletionStage[])
-     */
-    public Cffu<Void> mRunAnySuccessAsync(Executor executor, Runnable... actions) {
-        return create(CompletableFutureUtils.mRunAnySuccessAsync(executor, actions));
-    }
-
-    /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the Cffu's default asynchronous execution facility
-     * after runs the given actions.
-     *
-     * @param actions the actions to run before completing the returned Cffu
-     * @return the new Cffu
-     * @see #anyOf(CompletionStage[])
-     */
-    public Cffu<Void> mRunAnyAsync(Runnable... actions) {
-        return mRunAnyAsync(defaultExecutor, actions);
-    }
-
-    /**
-     * Returns a new Cffu that is asynchronously completed by tasks running in the given Executor
-     * after runs the given actions.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to run before completing the returned Cffu
-     * @return the new Cffu
-     * @see #anyOf(CompletionStage[])
-     */
-    public Cffu<Void> mRunAnyAsync(Executor executor, Runnable... actions) {
-        return create(CompletableFutureUtils.mRunAnyAsync(executor, actions));
-    }
-
-
-    /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the Cffu's default asynchronous execution facility
-     * after runs the given actions.
-     *
-     * @param actions the actions to run before completing the returned Cffu
-     * @return the new Cffu
      * @see #allOf(CompletionStage[])
      */
     public Cffu<Void> mRunAsync(Runnable... actions) {
@@ -449,6 +393,56 @@ public final class CffuFactory {
      */
     public Cffu<Void> mRunAsync(Executor executor, Runnable... actions) {
         return create(CompletableFutureUtils.mRunAsync(executor, actions));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously successful
+     * when any tasks running in the Cffu's default asynchronous execution facility success.
+     *
+     * @param actions the actions to run before completing the returned Cffu
+     * @return the new Cffu
+     * @see #anySuccessOf(CompletionStage[])
+     */
+    public Cffu<Void> mRunAnySuccessAsync(Runnable... actions) {
+        return mRunAnySuccessAsync(defaultExecutor, actions);
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * when any tasks running in the Cffu's default asynchronous execution facility.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to run before completing the returned Cffu
+     * @return the new Cffu
+     * @see #anySuccessOf(CompletionStage[])
+     */
+    public Cffu<Void> mRunAnySuccessAsync(Executor executor, Runnable... actions) {
+        return create(CompletableFutureUtils.mRunAnySuccessAsync(executor, actions));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * when any tasks running in the Cffu's default asynchronous execution facility.
+     *
+     * @param actions the actions to run before completing the returned Cffu
+     * @return the new Cffu
+     * @see #anyOf(CompletionStage[])
+     */
+    public Cffu<Void> mRunAnyAsync(Runnable... actions) {
+        return mRunAnyAsync(defaultExecutor, actions);
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * when any tasks running in the given executor complete.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to run before completing the returned Cffu
+     * @return the new Cffu
+     * @see #anyOf(CompletionStage[])
+     */
+    public Cffu<Void> mRunAnyAsync(Executor executor, Runnable... actions) {
+        return create(CompletableFutureUtils.mRunAnyAsync(executor, actions));
     }
 
     // endregion
@@ -1354,7 +1348,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public static <T> Cffu<T>[] cffuListToArray(List<Cffu<T>> cffuList) {
         @SuppressWarnings("unchecked")
-        final Cffu<T>[] a = new Cffu[cffuList.size()];
+        Cffu<T>[] a = new Cffu[cffuList.size()];
         return cffuList.toArray(a);
     }
 

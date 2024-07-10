@@ -86,7 +86,7 @@ class CompletableFutureUtilsTest {
         final long tick1 = System.currentTimeMillis();
 
         @SuppressWarnings("unchecked")
-        CompletableFuture<List<Integer>>[] cfs1 = new CompletableFuture[]{
+        CompletableFuture<Integer>[] cfs1 = new CompletableFuture[]{
                 mSupplyAnySuccessAsync(supplier, supplier),
                 mSupplyAnySuccessAsync(executorService, supplier, supplier),
                 mSupplyAnyAsync(supplier, supplier),
@@ -94,7 +94,7 @@ class CompletableFutureUtilsTest {
         };
 
         assertTrue(System.currentTimeMillis() - tick1 < 50);
-        for (CompletableFuture<List<Integer>> cf : cfs1) {
+        for (CompletableFuture<Integer> cf : cfs1) {
             assertEquals(n, cf.get());
         }
     }
@@ -1061,7 +1061,7 @@ class CompletableFutureUtilsTest {
 
         final long tick1 = System.currentTimeMillis();
         @SuppressWarnings("unchecked")
-        CompletableFuture<List<Integer>>[] cfs1 = new CompletableFuture[]{
+        CompletableFuture<Integer>[] cfs1 = new CompletableFuture[]{
                 thenMApplyAnySuccessAsync(completed, supplier, supplier),
                 thenMApplyAnySuccessAsync(completed, executorService, supplier, supplier),
                 thenMApplyAnyAsync(completed, supplier, supplier),
@@ -1069,7 +1069,7 @@ class CompletableFutureUtilsTest {
         };
 
         assertTrue(System.currentTimeMillis() - tick1 < 50);
-        for (CompletableFuture<List<Integer>> cf : cfs1) {
+        for (CompletableFuture<Integer> cf : cfs1) {
             assertEquals(n, cf.get());
         }
     }
@@ -1642,7 +1642,6 @@ class CompletableFutureUtilsTest {
     }
 
     @Test
-    @SuppressWarnings("ThrowableNotThrown")
     void test_unwrapCfException() {
         CompletableFuture<Object> failed = failedFuture(rte);
 

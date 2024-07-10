@@ -293,86 +293,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         return reset0(CompletableFutureUtils.thenMApplyMostSuccessAsync(cf, valueIfNotSuccess, executor, timeout, unit, fns));
     }
 
-
-    /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using {@link #defaultExecutor()},
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     *
-     * @param fns the functions to use to compute the values of the returned Cffu
-     * @param <U> the functions' return type
-     * @return the new Cffu
-     */
-    @SafeVarargs
-    public final <U> Cffu<U> thenMApplyAnySuccessAsync(Function<? super T, ? extends U>... fns) {
-        return thenMApplyAnySuccessAsync(fac.defaultExecutor(), fns);
-    }
-
-    /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using the given Executor, with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param fns      the functions to use to compute the values of the returned Cffu
-     * @param <U>      the functions' return type
-     * @return the new Cffu
-     */
-    @SafeVarargs
-    public final <U> Cffu<U> thenMApplyAnySuccessAsync(
-            Executor executor, Function<? super T, ? extends U>... fns) {
-        return reset0(CompletableFutureUtils.thenMApplyAnySuccessAsync(cf, executor, fns));
-    }
-
-    /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using {@link #defaultExecutor()},
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     *
-     * @param fns the functions to use to compute the values of the returned Cffu
-     * @param <U> the functions' return type
-     * @return the new Cffu
-     */
-    @SafeVarargs
-    public final <U> Cffu<U> thenMApplyAnyAsync(Function<? super T, ? extends U>... fns) {
-        return thenMApplyAnyAsync(fac.defaultExecutor(), fns);
-    }
-
-    /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using the given Executor, with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param fns      the functions to use to compute the values of the returned Cffu
-     * @param <U>      the functions' return type
-     * @return the new Cffu
-     */
-    @SafeVarargs
-    public final <U> Cffu<U> thenMApplyAnyAsync(
-            Executor executor, Function<? super T, ? extends U>... fns) {
-        return reset0(CompletableFutureUtils.thenMApplyAnyAsync(cf, executor, fns));
-    }
-
-
     /**
      * Returns a new Cffu that, when the given stage completes normally,
      * is executed using {@link #defaultExecutor()},
@@ -407,6 +327,66 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when the given stage completes normally,
+     * is executed using the Cffu's default asynchronous execution facility,
+     * with any successful value obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions).
+     *
+     * @param fns the functions to use to compute the values of the returned Cffu
+     * @param <U> the functions' return type
+     * @return the new Cffu
+     */
+    @SafeVarargs
+    public final <U> Cffu<U> thenMApplyAnySuccessAsync(Function<? super T, ? extends U>... fns) {
+        return thenMApplyAnySuccessAsync(fac.defaultExecutor(), fns);
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * is executed using the given Executor, with any successful value obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions).
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param fns      the functions to use to compute the values of the returned Cffu
+     * @param <U>      the functions' return type
+     * @return the new Cffu
+     */
+    @SafeVarargs
+    public final <U> Cffu<U> thenMApplyAnySuccessAsync(Executor executor, Function<? super T, ? extends U>... fns) {
+        return reset0(CompletableFutureUtils.thenMApplyAnySuccessAsync(cf, executor, fns));
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * is executed using the Cffu's default asynchronous execution facility,
+     * with any completed result obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions).
+     *
+     * @param fns the functions to use to compute the values of the returned Cffu
+     * @param <U> the functions' return type
+     * @return the new Cffu
+     */
+    @SafeVarargs
+    public final <U> Cffu<U> thenMApplyAnyAsync(Function<? super T, ? extends U>... fns) {
+        return thenMApplyAnyAsync(fac.defaultExecutor(), fns);
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * is executed using the given Executor, with any completed result obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions).
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param fns      the functions to use to compute the values of the returned Cffu
+     * @param <U>      the functions' return type
+     * @return the new Cffu
+     */
+    @SafeVarargs
+    public final <U> Cffu<U> thenMApplyAnyAsync(Executor executor, Function<? super T, ? extends U>... fns) {
+        return reset0(CompletableFutureUtils.thenMApplyAnyAsync(cf, executor, fns));
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
      * is executed using {@link #defaultExecutor()},
      * with the given stage's result as the argument to the given actions.
      *
@@ -429,6 +409,32 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @SafeVarargs
     public final Cffu<Void> thenMAcceptFastFailAsync(Executor executor, Consumer<? super T>... actions) {
         return reset0(CompletableFutureUtils.thenMAcceptFastFailAsync(cf, executor, actions));
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * is executed using {@link #defaultExecutor()},
+     * with the given stage's result as the argument to the given actions.
+     *
+     * @param actions the actions to perform before completing the returned Cffu
+     * @return the new Cffu
+     */
+    @SafeVarargs
+    public final Cffu<Void> thenMAcceptAsync(Consumer<? super T>... actions) {
+        return thenMAcceptAsync(fac.defaultExecutor(), actions);
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to perform before completing the returned Cffu
+     * @return the new Cffu
+     */
+    @SafeVarargs
+    public final Cffu<Void> thenMAcceptAsync(Executor executor, Consumer<? super T>... actions) {
+        return reset0(CompletableFutureUtils.thenMAcceptAsync(cf, executor, actions));
     }
 
     /**
@@ -485,38 +491,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using {@link #defaultExecutor()},
-     * with the given stage's result as the argument to the given actions.
-     *
-     * @param actions the actions to perform before completing the returned Cffu
-     * @return the new Cffu
-     */
-    @SafeVarargs
-    public final Cffu<Void> thenMAcceptAsync(Consumer<? super T>... actions) {
-        return thenMAcceptAsync(fac.defaultExecutor(), actions);
-    }
-
-    /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned Cffu
-     * @return the new Cffu
-     */
-    @SafeVarargs
-    public final Cffu<Void> thenMAcceptAsync(Executor executor, Consumer<? super T>... actions) {
-        return reset0(CompletableFutureUtils.thenMAcceptAsync(cf, executor, actions));
-    }
-
-
-    /**
-     * Returns a new Cffu that, when the given stage completes normally,
      * executes using {@link #defaultExecutor()},
      *
      * @param actions the actions to perform before completing the returned Cffu
      * @return the new Cffu
-     * @see CompletableFuture#thenRunAsync(Runnable)
      */
     public Cffu<Void> thenMRunFastFailAsync(Runnable... actions) {
         return thenMRunFastFailAsync(fac.defaultExecutor(), actions);
@@ -529,61 +507,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param executor the executor to use for asynchronous execution
      * @param actions  the actions to perform before completing the returned Cffu
      * @return the new Cffu
-     * @see CompletableFuture#thenRunAsync(Runnable, Executor)
      */
     public Cffu<Void> thenMRunFastFailAsync(Executor executor, Runnable... actions) {
         return reset0(CompletableFutureUtils.thenMRunFastFailAsync(cf, executor, actions));
-    }
-
-
-    /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * executes using {@link #defaultExecutor()},
-     *
-     * @param actions the actions to perform before completing the returned Cffu
-     * @return the new Cffu
-     * @see CompletableFuture#thenRunAsync(Runnable)
-     */
-    public Cffu<Void> thenMRunAnySuccessAsync(Runnable... actions) {
-        return thenMRunAnySuccessAsync(fac.defaultExecutor(), actions);
-    }
-
-    /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * executes the given actions using the given Executor.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned Cffu
-     * @return the new Cffu
-     * @see CompletableFuture#thenRunAsync(Runnable, Executor)
-     */
-    public Cffu<Void> thenMRunAnySuccessAsync(Executor executor, Runnable... actions) {
-        return reset0(CompletableFutureUtils.thenMRunAnySuccessAsync(cf, executor, actions));
-    }
-
-    /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * executes using {@link #defaultExecutor()},
-     *
-     * @param actions the actions to perform before completing the returned Cffu
-     * @return the new Cffu
-     * @see CompletableFuture#thenRunAsync(Runnable)
-     */
-    public Cffu<Void> thenMRunAnyAsync(Runnable... actions) {
-        return thenMRunAnyAsync(fac.defaultExecutor(), actions);
-    }
-
-    /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * executes the given actions using the given Executor.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned Cffu
-     * @return the new Cffu
-     * @see CompletableFuture#thenRunAsync(Runnable, Executor)
-     */
-    public Cffu<Void> thenMRunAnyAsync(Executor executor, Runnable... actions) {
-        return reset0(CompletableFutureUtils.thenMRunAnyAsync(cf, executor, actions));
     }
 
     /**
@@ -592,7 +518,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @param actions the actions to perform before completing the returned Cffu
      * @return the new Cffu
-     * @see CompletableFuture#thenRunAsync(Runnable)
      */
     public Cffu<Void> thenMRunAsync(Runnable... actions) {
         return thenMRunAsync(fac.defaultExecutor(), actions);
@@ -605,10 +530,55 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param executor the executor to use for asynchronous execution
      * @param actions  the actions to perform before completing the returned Cffu
      * @return the new Cffu
-     * @see CompletableFuture#thenRunAsync(Runnable, Executor)
      */
     public Cffu<Void> thenMRunAsync(Executor executor, Runnable... actions) {
         return reset0(CompletableFutureUtils.thenMRunAsync(cf, executor, actions));
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * executes using {@link #defaultExecutor()},
+     *
+     * @param actions the actions to perform before completing the returned Cffu
+     * @return the new Cffu
+     */
+    public Cffu<Void> thenMRunAnySuccessAsync(Runnable... actions) {
+        return thenMRunAnySuccessAsync(fac.defaultExecutor(), actions);
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * executes the given actions using the given Executor.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to perform before completing the returned Cffu
+     * @return the new Cffu
+     */
+    public Cffu<Void> thenMRunAnySuccessAsync(Executor executor, Runnable... actions) {
+        return reset0(CompletableFutureUtils.thenMRunAnySuccessAsync(cf, executor, actions));
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * executes using {@link #defaultExecutor()},
+     *
+     * @param actions the actions to perform before completing the returned Cffu
+     * @return the new Cffu
+     */
+    public Cffu<Void> thenMRunAnyAsync(Runnable... actions) {
+        return thenMRunAnyAsync(fac.defaultExecutor(), actions);
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * executes the given actions using the given Executor.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to perform before completing the returned Cffu
+     * @return the new Cffu
+     */
+    public Cffu<Void> thenMRunAnyAsync(Executor executor, Runnable... actions) {
+        return reset0(CompletableFutureUtils.thenMRunAnyAsync(cf, executor, actions));
     }
 
     // endregion

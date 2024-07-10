@@ -51,7 +51,7 @@ class CffuTest {
 
         final long tick = System.currentTimeMillis();
         @SuppressWarnings("unchecked")
-        Cffu<Void>[] cfs = new Cffu[]{
+        Cffu<List<Integer>>[] cfs = new Cffu[]{
                 completed.thenMApplyFastFailAsync(function_n, function_n),
                 completed.thenMApplyFastFailAsync(executorService, function_n, function_n),
                 completed.thenMApplyMostSuccessAsync(100, 500, TimeUnit.MILLISECONDS, function_n, function_n),
@@ -61,14 +61,14 @@ class CffuTest {
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
-        for (Cffu<Void> cf : cfs) {
+        for (Cffu<List<Integer>> cf : cfs) {
             assertEquals(Arrays.asList(n, n), cf.get());
         }
 
 
         final long tick1 = System.currentTimeMillis();
         @SuppressWarnings("unchecked")
-        Cffu<Void>[] cfs1 = new Cffu[]{
+        Cffu<Integer>[] cfs1 = new Cffu[]{
                 completed.thenMApplyAnySuccessAsync(function_n, function_n),
                 completed.thenMApplyAnySuccessAsync(executorService, function_n, function_n),
                 completed.thenMApplyAnyAsync(function_n, function_n),
@@ -76,7 +76,7 @@ class CffuTest {
         };
 
         assertTrue(System.currentTimeMillis() - tick1 < 50);
-        for (Cffu<Void> cf : cfs1) {
+        for (Cffu<Integer> cf : cfs1) {
             assertEquals(n, cf.get());
         }
     }
@@ -119,17 +119,19 @@ class CffuTest {
         final long tick = System.currentTimeMillis();
 
         @SuppressWarnings("unchecked")
-        Cffu<List<Integer>>[] cfs = new Cffu[]{
+        Cffu<Void>[] cfs = new Cffu[]{
                 completed.thenMRunAsync(runnable, runnable),
                 completed.thenMRunAsync(executorService, runnable, runnable),
                 completed.thenMRunFastFailAsync(runnable, runnable),
                 completed.thenMRunFastFailAsync(executorService, runnable, runnable),
                 completed.thenMRunAnySuccessAsync(runnable, runnable),
-                completed.thenMRunAnyAsync(executorService, runnable, runnable)
+                completed.thenMRunAnySuccessAsync(executorService, runnable, runnable),
+                completed.thenMRunAnyAsync(runnable, runnable),
+                completed.thenMRunAnyAsync(executorService, runnable, runnable),
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
-        for (Cffu<List<Integer>> cf : cfs) {
+        for (Cffu<Void> cf : cfs) {
             assertNull(cf.get());
         }
     }
