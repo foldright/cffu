@@ -92,7 +92,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyAllSuccessAsync(
             @Nullable T valueIfNotSuccess, Supplier<? extends T>... suppliers) {
-        return mSupplyAllSuccessAsync(valueIfNotSuccess, AsyncPoolHolder.ASYNC_POOL,suppliers);
+        return mSupplyAllSuccessAsync(valueIfNotSuccess, AsyncPoolHolder.ASYNC_POOL, suppliers);
     }
 
     /**
@@ -119,7 +119,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
-        return allSuccessResultsOf(valueIfNotSuccess,wrapSuppliers(executor, suppliers));
+        return allSuccessResultsOf(valueIfNotSuccess, wrapSuppliers(executor, suppliers));
     }
 
 
@@ -517,7 +517,7 @@ public final class CompletableFutureUtils {
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAllSuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return tupleMSupplyAllSuccessAsync(AsyncPoolHolder.ASYNC_POOL,  supplier1, supplier2, supplier3);
+        return tupleMSupplyAllSuccessAsync(AsyncPoolHolder.ASYNC_POOL, supplier1, supplier2, supplier3);
     }
 
     /**
@@ -569,7 +569,7 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAllSuccessAsync(
-            Executor executor,  Supplier<? extends T1> supplier1,
+            Executor executor, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4);
@@ -589,10 +589,10 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAllSuccessAsync(
-             Supplier<? extends T1> supplier1,
+            Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
             Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return tupleMSupplyAllSuccessAsync(AsyncPoolHolder.ASYNC_POOL,  supplier1, supplier2, supplier3, supplier4, supplier5);
+        return tupleMSupplyAllSuccessAsync(AsyncPoolHolder.ASYNC_POOL, supplier1, supplier2, supplier3, supplier4, supplier5);
     }
 
     /**
@@ -1069,8 +1069,8 @@ public final class CompletableFutureUtils {
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
      *
-     * @param valueIfNotSuccess   the value to return if not completed successfully
-     * @param cfs                 the stages
+     * @param valueIfNotSuccess the value to return if not completed successfully
+     * @param cfs               the stages
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
@@ -1235,8 +1235,7 @@ public final class CompletableFutureUtils {
      * Returns a cf array whose elements do the result collection.
      */
     private static <T> CompletableFuture<Void>[] createResultSetterCfs(CompletionStage<? extends T>[] css, T[] result) {
-        @SuppressWarnings("unchecked")
-        final CompletableFuture<Void>[] resultSetterCfs = new CompletableFuture[result.length];
+        @SuppressWarnings("unchecked") final CompletableFuture<Void>[] resultSetterCfs = new CompletableFuture[result.length];
         for (int i = 0; i < result.length; i++) {
             final int index = i;
             resultSetterCfs[index] = f_toCf(css[index]).thenAccept(v -> result[index] = v);
@@ -1894,12 +1893,12 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, @Nullable U valueIfNotSuccess,
-            Executor executor,  Function<? super T, ? extends U>... fns) {
+            Executor executor, Function<? super T, ? extends U>... fns) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", fns);
 
-        return cfThis.thenCompose(v -> allSuccessResultsOf(valueIfNotSuccess,wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> allSuccessResultsOf(valueIfNotSuccess, wrapFunctions(executor, v, fns)));
     }
 
     /**
@@ -2306,7 +2305,7 @@ public final class CompletableFutureUtils {
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyAllSuccessAsync(cfThis, AsyncPoolHolder.ASYNC_POOL,fn1, fn2);
+        return thenTupleMApplyAllSuccessAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fn1, fn2);
     }
 
     /**
@@ -2344,9 +2343,9 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyAllSuccessAsync(
-            CompletableFuture<? extends T> cfThis,  Function<? super T, ? extends U1> fn1,
+            CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyAllSuccessAsync(cfThis, AsyncPoolHolder.ASYNC_POOL,  fn1, fn2, fn3);
+        return thenTupleMApplyAllSuccessAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fn1, fn2, fn3);
     }
 
     /**
@@ -2389,7 +2388,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyAllSuccessAsync(cfThis, AsyncPoolHolder.ASYNC_POOL,  fn1, fn2, fn3, fn4);
+        return thenTupleMApplyAllSuccessAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fn1, fn2, fn3, fn4);
     }
 
     /**
@@ -2429,7 +2428,7 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAllSuccessAsync(
-            CompletableFuture<? extends T> cfThis,  Function<? super T, ? extends U1> fn1,
+            CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
         return thenTupleMApplyAllSuccessAsync(cfThis, AsyncPoolHolder.ASYNC_POOL, fn1, fn2, fn3, fn4, fn5);
@@ -3921,8 +3920,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] completableFutureListToArray(List<CompletableFuture<T>> cfList) {
         requireNonNull(cfList, "cfList is null");
-        @SuppressWarnings("unchecked")
-        final CompletableFuture<T>[] a = new CompletableFuture[cfList.size()];
+        @SuppressWarnings("unchecked") final CompletableFuture<T>[] a = new CompletableFuture[cfList.size()];
         return cfList.toArray(a);
     }
 
