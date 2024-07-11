@@ -31,9 +31,23 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SuppressWarnings("RedundantThrows")
 class CffuFactoryTest {
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Constructor Method
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void test_newIncompleteCffu() {
+        Cffu<Integer> cf = cffuFactory.newIncompleteCffu();
+        assertFalse(cf.isDone());
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Factory Methods
+    ////////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# multi-actions(M*) methods
+    // region## supplyAsync*/runAsync* Methods(create by action) + Multi-Actions(M*) Methods(create by actions)
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
@@ -66,9 +80,14 @@ class CffuFactoryTest {
 
         @SuppressWarnings("unchecked")
         Cffu<List<Integer>>[] cfs = new Cffu[]{
-                cffuFactory.mSupplyAsync(supplier, supplier),
                 cffuFactory.mSupplyFastFailAsync(supplier, supplier),
-                cffuFactory.mSupplyMostSuccessAsync(anotherN, 500, TimeUnit.MILLISECONDS, supplier, supplier)
+                cffuFactory.mSupplyFastFailAsync(executorService, supplier, supplier),
+                cffuFactory.mSupplyAllSuccessAsync(anotherN, supplier, supplier),
+                cffuFactory.mSupplyAllSuccessAsync(anotherN, executorService, supplier, supplier),
+                cffuFactory.mSupplyMostSuccessAsync(anotherN, 500, TimeUnit.MILLISECONDS, supplier, supplier),
+                cffuFactory.mSupplyMostSuccessAsync(anotherN, executorService, 500, TimeUnit.MILLISECONDS, supplier, supplier),
+                cffuFactory.mSupplyAsync(supplier, supplier),
+                cffuFactory.mSupplyAsync(executorService, supplier, supplier),
         };
 
         assertTrue(System.currentTimeMillis() - tick < 50);
@@ -81,7 +100,9 @@ class CffuFactoryTest {
         @SuppressWarnings("unchecked")
         Cffu<Integer>[] cfs1 = new Cffu[]{
                 cffuFactory.mSupplyAnySuccessAsync(supplier, supplier),
+                cffuFactory.mSupplyAnySuccessAsync(executorService, supplier, supplier),
                 cffuFactory.mSupplyAnyAsync(supplier, supplier),
+                cffuFactory.mSupplyAnyAsync(executorService, supplier, supplier),
         };
 
         assertTrue(System.currentTimeMillis() - tick1 < 50);
@@ -90,130 +111,163 @@ class CffuFactoryTest {
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    //# Factory Methods, equivalent to same name static methods of CompletableFuture
-    //
-    //  Create by immediate value
-    //    - completedFuture/completedStage
-    //    - failedFuture/failedStage
+    // endregion
+    ////////////////////////////////////////////////////////////
+    // region## Tuple-Multi-Actions(tupleM*) Methods(create by actions)
+    ////////////////////////////////////////////////////////////
+
+    @Test
+    void test_tupleMSupplyAsync() throws Exception {
+        final Supplier<Integer> supplier_n = () -> {
+            sleep(100);
+            return n;
+        };
+        final Supplier<String> supplier_s = () -> {
+            sleep(100);
+            return s;
+        };
+
+        final Supplier<Double> supplier_d = () -> {
+            sleep(100);
+            return d;
+        };
+        final Supplier<Integer> supplier_an = () -> {
+            sleep(100);
+            return anotherN;
+        };
+        final Supplier<Integer> supplier_nn = () -> {
+            sleep(100);
+            return n + n;
+        };
+
+        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s).get());
+        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s).get());
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+
+        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyAllSuccessAsync(supplier_n, supplier_s).get());
+        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyAllSuccessAsync(executorService, supplier_n, supplier_s).get());
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyAllSuccessAsync(supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyAllSuccessAsync(executorService, supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyAllSuccessAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyAllSuccessAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyAllSuccessAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyAllSuccessAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+
+        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyAsync(supplier_n, supplier_s).get());
+        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyAsync(executorService, supplier_n, supplier_s).get());
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyAsync(supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyAsync(executorService, supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+    }
+
+    @Test
+    void test_tupleMSupplyMostSuccessAsync() throws Exception {
+        final Supplier<Integer> supplier_n = () -> {
+            sleep(10);
+            return n;
+        };
+        final Supplier<String> supplier_s = () -> {
+            sleep(10);
+            return s;
+        };
+
+        final Supplier<Double> supplier_d = () -> {
+            sleep(10);
+            return d;
+        };
+        final Supplier<Integer> supplier_an = () -> {
+            sleep(10);
+            return anotherN;
+        };
+        final Supplier<Integer> supplier_nn = () -> {
+            sleep(10);
+            return n + n;
+        };
+        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s).get());
+        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s).get());
+
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d).get());
+
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an).get());
+
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region## allOf* Methods(including mostSuccessResultsOf)
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
-    void test_completedFuture() throws Exception {
-        assertEquals(n, cffuFactory.completedFuture(n).get());
+    void test_allOf() throws Exception {
+        assertEquals(Arrays.asList(n, n + 1),
+                cffuFactory.allResultsFastFailOf(completedFuture(n), completedFuture(n + 1)).get()
+        );
+        assertEquals(Collections.singletonList(n),
+                cffuFactory.allResultsFastFailOf(completedFuture(n)).get()
+        );
+
+        assertEquals(Collections.emptyList(),
+                cffuFactory.allResultsFastFailOf().get()
+        );
+
+        assertEquals(Arrays.asList(n, n + 1),
+                cffuFactory.allResultsFastFailOf(cffuFactory.completedFuture(n), cffuFactory.completedFuture(n + 1)).get()
+        );
+        assertEquals(Collections.singletonList(n),
+                cffuFactory.allResultsFastFailOf(cffuFactory.completedFuture(n)).get()
+        );
+
+        ////////////////////////////////////////
+
+        assertEquals(Arrays.asList(n, n + 1),
+                cffuFactory.allSuccessResultsOf(anotherN, completedFuture(n), completedFuture(n + 1)).get()
+        );
+        assertEquals(Collections.singletonList(n),
+                cffuFactory.allSuccessResultsOf(anotherN, completedFuture(n)).get()
+        );
+
+        assertEquals(Collections.emptyList(),
+                cffuFactory.allResultsFastFailOf().get()
+        );
+
+        assertEquals(Arrays.asList(n, n + 1),
+                cffuFactory.allSuccessResultsOf(anotherN, cffuFactory.completedFuture(n), cffuFactory.completedFuture(n + 1)).get()
+        );
+        assertEquals(Collections.singletonList(n),
+                cffuFactory.allSuccessResultsOf(anotherN, cffuFactory.completedFuture(n)).get()
+        );
+
+        ////////////////////////////////////////
+        assertEquals(Arrays.asList(n, n + 1),
+                cffuFactory.allResultsOf(completedFuture(n), completedFuture(n + 1)).get()
+        );
+        assertEquals(Collections.singletonList(n),
+                cffuFactory.allResultsOf(completedFuture(n)).get()
+        );
+
+        assertEquals(Collections.emptyList(),
+                cffuFactory.allResultsOf().get()
+        );
+
+        assertEquals(Arrays.asList(n, n + 1),
+                cffuFactory.allResultsOf(cffuFactory.completedFuture(n), cffuFactory.completedFuture(n + 1)).get()
+        );
+        assertEquals(Collections.singletonList(n),
+                cffuFactory.allResultsOf(cffuFactory.completedFuture(n)).get()
+        );
     }
-
-    @Test
-    void test_completedStage() throws Exception {
-        CompletionStage<Integer> stage = cffuFactory.completedStage(n);
-        CompletionStage<Integer> sa = stage.thenApply(identity());
-
-        assertEquals(n, stage.toCompletableFuture().get());
-        assertEquals(n, sa.toCompletableFuture().get());
-
-        // CAUTION: Last check minimal stage, may rewrite the CF by obtrude* methods
-        shouldBeMinimalStage((Cffu<?>) stage);
-        shouldBeMinimalStage((Cffu<?>) sa);
-    }
-
-    @Test
-    void test_failedFuture() throws Exception {
-        Cffu<Integer> cf = cffuFactory.failedFuture(rte);
-
-        assertSame(rte, assertThrowsExactly(CompletionException.class, cf::join).getCause());
-        assertEquals(n, cf.exceptionally(throwable -> n).get());
-
-        shouldNotBeMinimalStage(cf);
-    }
-
-    @Test
-    void test_failedStage() throws Exception {
-        CompletionStage<Integer> stage = cffuFactory.failedStage(rte);
-        CompletionStage<Integer> sa = stage.thenApply(identity());
-        CompletionStage<Integer> se = stage.exceptionally(throwable -> n);
-
-        assertSame(rte, assertThrowsExactly(CompletionException.class, () ->
-                failedFuture(rte).toCompletableFuture().join()
-        ).getCause());
-        assertEquals(n, se.toCompletableFuture().get());
-
-        // CAUTION: Last check minimal stage, may rewrite the CF by obtrude* methods
-        shouldBeMinimalStage((Cffu<Integer>) stage);
-        shouldBeMinimalStage((Cffu<Integer>) sa);
-        shouldBeMinimalStage((Cffu<Integer>) se);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    //# Factory Methods, equivalent to same name static methods of CompletableFuture
-    //
-    //  create by logic/lambda
-    //    - runAsync*
-    //    - supplyAsync*
-    ////////////////////////////////////////////////////////////////////////////////
-
-    // ...
-
-    ////////////////////////////////////////////////////////////////////////////////
-    //# Factory Methods
-    //
-    //    - newIncompleteCffu: equivalent to CompletableFuture constructor
-    //
-    //    - toCffu:      CF/CompletionStage -> Cffu
-    //    - toCffuArray: CF/CompletionStage[] -> Cffu[]
-    ////////////////////////////////////////////////////////////////////////////////
-
-    @Test
-    void test_newIncompleteCffu() {
-        Cffu<Integer> cf = cffuFactory.newIncompleteCffu();
-        assertFalse(cf.isDone());
-    }
-
-    @Test
-    void test_toCffu() throws Exception {
-        Cffu<Integer> cf = cffuFactory.toCffu(completedFuture(n));
-
-        assertEquals(n, cf.get());
-        shouldNotBeMinimalStage(cf);
-
-        CffuFactory fac = CffuFactory.builder(anotherExecutorService).forbidObtrudeMethods(true).build();
-        Cffu<Integer> cffu = fac.toCffu(cffuFactory.completedFuture(42));
-        assertSame(anotherExecutorService, cffu.defaultExecutor());
-        assertSame(fac, cffu.cffuFactory());
-
-        assertEquals("obtrude methods is forbidden by cffu", assertThrowsExactly(UnsupportedOperationException.class, () ->
-                cffu.obtrudeValue(44)
-        ).getMessage());
-    }
-
-    @Test
-    @EnabledForJreRange(min = JRE.JAVA_9)
-    void test_toCffu__for_factoryMethods_of_Java9() {
-        CompletableFuture<Object> cf1 = CompletableFuture.failedFuture(rte);
-        assertFalse(cffuFactory.toCffu(cf1).isMinimalStage());
-        shouldNotBeMinimalStage(cf1);
-
-        Cffu<Integer> cf2 = cffuFactory.toCffu(CompletableFuture.completedStage(n));
-        assertFalse(cf2.isMinimalStage());
-        shouldNotBeMinimalStage(cf2);
-
-        Cffu<Object> cf3 = cffuFactory.toCffu(CompletableFuture.failedStage(rte));
-        assertFalse(cf3.isMinimalStage());
-        shouldNotBeMinimalStage(cf3);
-    }
-
-    @Test
-    @EnabledForJreRange(min = JRE.JAVA_9)
-    void test_toCffuArray() throws Exception {
-        Cffu<Integer>[] cffus = cffuFactory.toCffuArray(CompletableFuture.completedStage(n), completedFuture(n));
-        assertEquals(n, cffus[1].get());
-
-        shouldNotBeMinimalStage(cffus[0]);
-        shouldNotBeMinimalStage(cffus[1]);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    //# allOf / anyOf methods, equivalent to same name static methods of CompletableFuture
-    ////////////////////////////////////////////////////////////////////////////////
 
     @Test
     void test_allOf_CompletableFuture() throws Exception {
@@ -234,88 +288,7 @@ class CffuFactoryTest {
     }
 
     @Test
-    void test_anyOf_CompletableFuture() throws Exception {
-        cffuFactory.anyOf(completedFuture(n), completedFuture(anotherN)).get();
-        assertEquals(anotherN, cffuFactory.anyOf(completedFuture(anotherN)).get());
-
-        assertFalse(cffuFactory.anyOf().isDone());
-
-        ////////////////////////////////////////
-
-        cffuFactory.anySuccessOf(completedFuture(n), completedFuture(anotherN)).get();
-        assertEquals(anotherN, cffuFactory.anySuccessOf(completedFuture(anotherN)).get());
-
-        assertInstanceOf(NoCfsProvidedException.class, assertThrowsExactly(ExecutionException.class, () ->
-                cffuFactory.anySuccessOf().get()
-        ).getCause());
-
-        cffuFactory.anySuccessOf(
-                cffuFactory.completedFuture(n),
-                cffuFactory.completedFuture(anotherN)
-        ).get();
-        assertEquals(anotherN, cffuFactory.anySuccessOf(
-                cffuFactory.completedFuture(anotherN)
-        ).get());
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    //# Delay Execution, equivalent to same name static methods of CompletableFuture
-    //
-    //    - delayedExecutor
-    ////////////////////////////////////////////////////////////////////////////////
-
-    // ...
-
-    ////////////////////////////////////////////////////////////////////////////////
-    //# New type-safe allOf/anyOf Factory Methods
-    //    method name prefix with `cffu`
-    //
-    //    - allResultsOf
-    ////////////////////////////////////////////////////////////////////////////////
-
-    @Test
-    void test_allResultsOf() throws Exception {
-        assertEquals(Arrays.asList(n, n + 1),
-                cffuFactory.allResultsOf(completedFuture(n), completedFuture(n + 1)).get()
-        );
-        assertEquals(Collections.singletonList(n),
-                cffuFactory.allResultsOf(completedFuture(n)).get()
-        );
-
-        assertEquals(Collections.emptyList(),
-                cffuFactory.allResultsOf().get()
-        );
-
-        assertEquals(Arrays.asList(n, n + 1),
-                cffuFactory.allResultsOf(cffuFactory.completedFuture(n), cffuFactory.completedFuture(n + 1)).get()
-        );
-        assertEquals(Collections.singletonList(n),
-                cffuFactory.allResultsOf(cffuFactory.completedFuture(n)).get()
-        );
-
-        ////////////////////////////////////////
-
-        assertEquals(Arrays.asList(n, n + 1),
-                cffuFactory.allResultsFastFailOf(completedFuture(n), completedFuture(n + 1)).get()
-        );
-        assertEquals(Collections.singletonList(n),
-                cffuFactory.allResultsFastFailOf(completedFuture(n)).get()
-        );
-
-        assertEquals(Collections.emptyList(),
-                cffuFactory.allResultsFastFailOf().get()
-        );
-
-        assertEquals(Arrays.asList(n, n + 1),
-                cffuFactory.allResultsFastFailOf(cffuFactory.completedFuture(n), cffuFactory.completedFuture(n + 1)).get()
-        );
-        assertEquals(Collections.singletonList(n),
-                cffuFactory.allResultsFastFailOf(cffuFactory.completedFuture(n)).get()
-        );
-    }
-
-    @Test
-    void test_allResultsOf_exceptionally() throws Exception {
+    void test_allOf_exceptionally() throws Exception {
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 cffuFactory.allResultsOf(
                         cffuFactory.completedFuture(n),
@@ -360,6 +333,11 @@ class CffuFactoryTest {
         ).get());
     }
 
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region## anyOf* Methods
+    ////////////////////////////////////////////////////////////////////////////////
+
     @Test
     void test_anyOf() throws Exception {
         assertEquals(n, cffuFactory.anyOf(
@@ -392,6 +370,31 @@ class CffuFactoryTest {
                 cffuFactory.newIncompleteCffu()
         ).get());
         assertEquals(n, cffuFactory.anySuccessOf(cffuFactory.completedFuture(n)).get());
+    }
+
+    @Test
+    void test_anyOf_CompletableFuture() throws Exception {
+        cffuFactory.anyOf(completedFuture(n), completedFuture(anotherN)).get();
+        assertEquals(anotherN, cffuFactory.anyOf(completedFuture(anotherN)).get());
+
+        assertFalse(cffuFactory.anyOf().isDone());
+
+        ////////////////////////////////////////
+
+        cffuFactory.anySuccessOf(completedFuture(n), completedFuture(anotherN)).get();
+        assertEquals(anotherN, cffuFactory.anySuccessOf(completedFuture(anotherN)).get());
+
+        assertInstanceOf(NoCfsProvidedException.class, assertThrowsExactly(ExecutionException.class, () ->
+                cffuFactory.anySuccessOf().get()
+        ).getCause());
+
+        cffuFactory.anySuccessOf(
+                cffuFactory.completedFuture(n),
+                cffuFactory.completedFuture(anotherN)
+        ).get();
+        assertEquals(anotherN, cffuFactory.anySuccessOf(
+                cffuFactory.completedFuture(anotherN)
+        ).get());
     }
 
     @Test
@@ -490,88 +493,10 @@ class CffuFactoryTest {
         assertSame(NoCfsProvidedException.class, cffuFactory.anySuccessOf().exceptionNow().getClass());
     }
 
+    // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    //# New type-safe allTupleOf Factory Methods
-    //  support 2~5 input arguments, method name prefix with `cffu`
+    // region## allTupleOf*/mostSuccessTupleOf Methods
     ////////////////////////////////////////////////////////////////////////////////
-
-    @Test
-    void test_allTupleOf() throws Exception {
-        assertEquals(Tuple2.of(n, s), cffuFactory.allTupleOf(
-                completedFuture(n),
-                completedFuture(s)
-        ).get());
-
-        assertEquals(Tuple3.of(n, s, d), cffuFactory.allTupleOf(
-                completedFuture(n),
-                completedFuture(s),
-                completedFuture(d)
-        ).get());
-
-        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.allTupleOf(
-                completedFuture(n),
-                completedFuture(s),
-                completedFuture(d),
-                completedFuture(anotherN)
-        ).get());
-
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.allTupleOf(
-                completedFuture(n),
-                completedFuture(s),
-                completedFuture(d),
-                completedFuture(anotherN),
-                completedFuture(n + n)
-        ).get());
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        assertEquals(Tuple2.of(n, s), cffuFactory.allTupleOf(
-                cffuFactory.completedFuture(n),
-                cffuFactory.completedFuture(s)
-        ).get());
-
-        assertEquals(Tuple3.of(n, s, d), cffuFactory.allTupleOf(
-                cffuFactory.completedFuture(n),
-                cffuFactory.completedFuture(s),
-                cffuFactory.completedFuture(d)
-        ).get());
-
-        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.allTupleOf(
-                cffuFactory.completedFuture(n),
-                cffuFactory.completedFuture(s),
-                cffuFactory.completedFuture(d),
-                cffuFactory.completedFuture(anotherN)
-        ).get());
-
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.allTupleOf(
-                cffuFactory.completedFuture(n),
-                cffuFactory.completedFuture(s),
-                cffuFactory.completedFuture(d),
-                cffuFactory.completedFuture(anotherN),
-                cffuFactory.completedFuture(n + n)
-        ).get());
-    }
-
-    @Test
-    void test_allTupleOf_exceptionally() throws Exception {
-        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cffuFactory.allTupleOf(completedFuture(n), failedFuture(rte)).get()
-        ).getCause());
-
-        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cffuFactory.allTupleOf(completedFuture(n), failedFuture(rte), completedFuture(s)).get()
-        ).getCause());
-
-        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cffuFactory.allTupleOf(
-                        completedFuture(n),
-                        completedFuture(d),
-                        failedFuture(rte),
-                        completedFuture(s),
-                        completedFuture(anotherN)
-                ).get()
-        ).getCause());
-    }
 
     @Test
     void test_allTupleFastFailOf() throws Exception {
@@ -652,6 +577,63 @@ class CffuFactoryTest {
     }
 
     @Test
+    void test_allSuccessTupleOf() throws Exception {
+        assertEquals(Tuple2.of(n, s), cffuFactory.allSuccessTupleOf(
+                completedFuture(n),
+                completedFuture(s)
+        ).get());
+
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.allSuccessTupleOf(
+                completedFuture(n),
+                completedFuture(s),
+                completedFuture(d)
+        ).get());
+
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.allSuccessTupleOf(
+                completedFuture(n),
+                completedFuture(s),
+                completedFuture(d),
+                completedFuture(anotherN)
+        ).get());
+
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.allSuccessTupleOf(
+                completedFuture(n),
+                completedFuture(s),
+                completedFuture(d),
+                completedFuture(anotherN),
+                completedFuture(n + n)
+        ).get());
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        assertEquals(Tuple2.of(n, s), cffuFactory.allSuccessTupleOf(
+                cffuFactory.completedFuture(n),
+                cffuFactory.completedFuture(s)
+        ).get());
+
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.allSuccessTupleOf(
+                cffuFactory.completedFuture(n),
+                cffuFactory.completedFuture(s),
+                cffuFactory.completedFuture(d)
+        ).get());
+
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.allSuccessTupleOf(
+                cffuFactory.completedFuture(n),
+                cffuFactory.completedFuture(s),
+                cffuFactory.completedFuture(d),
+                cffuFactory.completedFuture(anotherN)
+        ).get());
+
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.allSuccessTupleOf(
+                cffuFactory.completedFuture(n),
+                cffuFactory.completedFuture(s),
+                cffuFactory.completedFuture(d),
+                cffuFactory.completedFuture(anotherN),
+                cffuFactory.completedFuture(n + n)
+        ).get());
+    }
+
+    @Test
     void test_mostSuccessTupleOf() throws Exception {
         final Cffu<Integer> completed = cffuFactory.completedFuture(n);
         final CompletionStage<String> anotherCompleted = cffuFactory.completedStage(s);
@@ -686,104 +668,196 @@ class CffuFactoryTest {
     }
 
     @Test
-    void test_tupleMSupplyAsync() throws Exception {
-        final Supplier<Integer> supplier_n = () -> {
-            sleep(100);
-            return n;
-        };
-        final Supplier<String> supplier_s = () -> {
-            sleep(100);
-            return s;
-        };
+    void test_allTupleOf() throws Exception {
+        assertEquals(Tuple2.of(n, s), cffuFactory.allTupleOf(
+                completedFuture(n),
+                completedFuture(s)
+        ).get());
 
-        final Supplier<Double> supplier_d = () -> {
-            sleep(100);
-            return d;
-        };
-        final Supplier<Integer> supplier_an = () -> {
-            sleep(100);
-            return anotherN;
-        };
-        final Supplier<Integer> supplier_nn = () -> {
-            sleep(100);
-            return n + n;
-        };
-        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyAsync(supplier_n, supplier_s).get());
-        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyAsync(executorService, supplier_n, supplier_s).get());
-        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s).get());
-        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s).get());
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.allTupleOf(
+                completedFuture(n),
+                completedFuture(s),
+                completedFuture(d)
+        ).get());
 
-        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyAsync(supplier_n, supplier_s, supplier_d).get());
-        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyAsync(executorService, supplier_n, supplier_s, supplier_d).get());
-        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d).get());
-        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.allTupleOf(
+                completedFuture(n),
+                completedFuture(s),
+                completedFuture(d),
+                completedFuture(anotherN)
+        ).get());
 
-        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
-        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an).get());
-        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
-        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.allTupleOf(
+                completedFuture(n),
+                completedFuture(s),
+                completedFuture(d),
+                completedFuture(anotherN),
+                completedFuture(n + n)
+        ).get());
 
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
-    }
+        ////////////////////////////////////////////////////////////////////////////////
 
-    @Test
-    void test_tupleMSupplyMostSuccessAsync() throws Exception {
-        final Supplier<Integer> supplier_n = () -> {
-            sleep(10);
-            return n;
-        };
-        final Supplier<String> supplier_s = () -> {
-            sleep(10);
-            return s;
-        };
-
-        final Supplier<Double> supplier_d = () -> {
-            sleep(10);
-            return d;
-        };
-        final Supplier<Integer> supplier_an = () -> {
-            sleep(10);
-            return anotherN;
-        };
-        final Supplier<Integer> supplier_nn = () -> {
-            sleep(10);
-            return n + n;
-        };
-        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s).get());
-        assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s).get());
-
-        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d).get());
-        assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d).get());
-
-        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an).get());
-        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an).get());
-
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    //# Conversion (Static) Methods
-    //
-    //    - cffuArrayUnwrap:              Cffu -> CF
-    //    - cffuListToArray:              List<Cffu> -> Cffu[]
-    //    - toCompletableFutureArray:     CompletionStage[](including Cffu) -> CF[]
-    ////////////////////////////////////////////////////////////////////////////////
-
-    @Test
-    void test_cffuListToArray() {
-        @SuppressWarnings("unchecked")
-        Cffu<Integer>[] input = new Cffu[]{
+        assertEquals(Tuple2.of(n, s), cffuFactory.allTupleOf(
                 cffuFactory.completedFuture(n),
-                cffuFactory.completedFuture(anotherN),
-                cffuFactory.newIncompleteCffu()
-        };
+                cffuFactory.completedFuture(s)
+        ).get());
 
-        assertArrayEquals(input, CffuFactory.cffuListToArray(Arrays.asList(input)));
+        assertEquals(Tuple3.of(n, s, d), cffuFactory.allTupleOf(
+                cffuFactory.completedFuture(n),
+                cffuFactory.completedFuture(s),
+                cffuFactory.completedFuture(d)
+        ).get());
+
+        assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.allTupleOf(
+                cffuFactory.completedFuture(n),
+                cffuFactory.completedFuture(s),
+                cffuFactory.completedFuture(d),
+                cffuFactory.completedFuture(anotherN)
+        ).get());
+
+        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.allTupleOf(
+                cffuFactory.completedFuture(n),
+                cffuFactory.completedFuture(s),
+                cffuFactory.completedFuture(d),
+                cffuFactory.completedFuture(anotherN),
+                cffuFactory.completedFuture(n + n)
+        ).get());
     }
+
+    @Test
+    void test_allTupleOf_exceptionally() throws Exception {
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cffuFactory.allTupleOf(completedFuture(n), failedFuture(rte)).get()
+        ).getCause());
+
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cffuFactory.allTupleOf(completedFuture(n), failedFuture(rte), completedFuture(s)).get()
+        ).getCause());
+
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                cffuFactory.allTupleOf(
+                        completedFuture(n),
+                        completedFuture(d),
+                        failedFuture(rte),
+                        completedFuture(s),
+                        completedFuture(anotherN)
+                ).get()
+        ).getCause());
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region## Immediate Value Argument Factory Methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void test_completedFuture() throws Exception {
+        assertEquals(n, cffuFactory.completedFuture(n).get());
+    }
+
+    @Test
+    void test_completedStage() throws Exception {
+        CompletionStage<Integer> stage = cffuFactory.completedStage(n);
+        CompletionStage<Integer> sa = stage.thenApply(identity());
+
+        assertEquals(n, stage.toCompletableFuture().get());
+        assertEquals(n, sa.toCompletableFuture().get());
+
+        // CAUTION: Last check minimal stage, may rewrite the CF by obtrude* methods
+        shouldBeMinimalStage((Cffu<?>) stage);
+        shouldBeMinimalStage((Cffu<?>) sa);
+    }
+
+    @Test
+    void test_failedFuture() throws Exception {
+        Cffu<Integer> cf = cffuFactory.failedFuture(rte);
+
+        assertSame(rte, assertThrowsExactly(CompletionException.class, cf::join).getCause());
+        assertEquals(n, cf.exceptionally(throwable -> n).get());
+
+        shouldNotBeMinimalStage(cf);
+    }
+
+    @Test
+    void test_failedStage() throws Exception {
+        CompletionStage<Integer> stage = cffuFactory.failedStage(rte);
+        CompletionStage<Integer> sa = stage.thenApply(identity());
+        CompletionStage<Integer> se = stage.exceptionally(throwable -> n);
+
+        assertSame(rte, assertThrowsExactly(CompletionException.class, () ->
+                failedFuture(rte).toCompletableFuture().join()
+        ).getCause());
+        assertEquals(n, se.toCompletableFuture().get());
+
+        // CAUTION: Last check minimal stage, may rewrite the CF by obtrude* methods
+        shouldBeMinimalStage((Cffu<Integer>) stage);
+        shouldBeMinimalStage((Cffu<Integer>) sa);
+        shouldBeMinimalStage((Cffu<Integer>) se);
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region## CompletionStage Argument Factory Methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void test_toCffu() throws Exception {
+        Cffu<Integer> cf = cffuFactory.toCffu(completedFuture(n));
+
+        assertEquals(n, cf.get());
+        shouldNotBeMinimalStage(cf);
+
+        CffuFactory fac = CffuFactory.builder(anotherExecutorService).forbidObtrudeMethods(true).build();
+        Cffu<Integer> cffu = fac.toCffu(cffuFactory.completedFuture(42));
+        assertSame(anotherExecutorService, cffu.defaultExecutor());
+        assertSame(fac, cffu.cffuFactory());
+
+        assertEquals("obtrude methods is forbidden by cffu", assertThrowsExactly(UnsupportedOperationException.class, () ->
+                cffu.obtrudeValue(44)
+        ).getMessage());
+    }
+
+    @Test
+    @EnabledForJreRange(min = JRE.JAVA_9)
+    void test_toCffu__for_factoryMethods_of_Java9() {
+        CompletableFuture<Object> cf1 = CompletableFuture.failedFuture(rte);
+        assertFalse(cffuFactory.toCffu(cf1).isMinimalStage());
+        shouldNotBeMinimalStage(cf1);
+
+        Cffu<Integer> cf2 = cffuFactory.toCffu(CompletableFuture.completedStage(n));
+        assertFalse(cf2.isMinimalStage());
+        shouldNotBeMinimalStage(cf2);
+
+        Cffu<Object> cf3 = cffuFactory.toCffu(CompletableFuture.failedStage(rte));
+        assertFalse(cf3.isMinimalStage());
+        shouldNotBeMinimalStage(cf3);
+    }
+
+    @Test
+    @EnabledForJreRange(min = JRE.JAVA_9)
+    void test_toCffuArray() throws Exception {
+        Cffu<Integer>[] cffus = cffuFactory.toCffuArray(CompletableFuture.completedStage(n), completedFuture(n));
+        assertEquals(n, cffus[1].get());
+
+        shouldNotBeMinimalStage(cffus[0]);
+        shouldNotBeMinimalStage(cffus[1]);
+    }
+
+    // endregion
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Delay Execution
+    ////////////////////////////////////////////////////////////////////////////////
+
+    // tested in CffuApiCompatibilityTest#staticMethods_delayedExecutor
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Conversion Methods(static methods)
+    //
+    //    - cffuArrayUnwrap: Cffu[] -> CompletableFuture[]
+    //    - cffuListToArray: List<Cffu> -> Cffu[]
+    ////////////////////////////////////////////////////////////////////////////////
 
     @Test
     void test_cffuArrayUnwrap() {
@@ -824,7 +898,28 @@ class CffuFactoryTest {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    //# Getter methods of CffuFactory properties
+    //# Conversion (Static) Methods
+    //
+    //    - cffuArrayUnwrap:              Cffu -> CF
+    //    - cffuListToArray:              List<Cffu> -> Cffu[]
+    //    - toCompletableFutureArray:     CompletionStage[](including Cffu) -> CF[]
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    void test_cffuListToArray() {
+        @SuppressWarnings("unchecked")
+        Cffu<Integer>[] input = new Cffu[]{
+                cffuFactory.completedFuture(n),
+                cffuFactory.completedFuture(anotherN),
+                cffuFactory.newIncompleteCffu()
+        };
+
+        assertArrayEquals(input, CffuFactory.cffuListToArray(Arrays.asList(input)));
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Getter Methods of CffuFactory properties
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
@@ -866,8 +961,9 @@ class CffuFactoryTest {
         assertEquals(42, fac.supplyAsync(() -> 42).get());
     }
 
+    // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    //# Test helper methods
+    // region# Test helper methods/fields
     ////////////////////////////////////////////////////////////////////////////////
 
     private static CffuFactory cffuFactory;

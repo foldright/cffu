@@ -209,7 +209,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     // endregion
     ////////////////////////////////////////////////////////////
-    // region## Then-Multi-Actions(thenM*) Methods
+    // region# Then-Multi-Actions(thenM*) Methods
     ////////////////////////////////////////////////////////////
 
     /**
@@ -242,6 +242,45 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyFastFailAsync(Executor executor, Function<? super T, ? extends U>... fns) {
         return reset0(CompletableFutureUtils.thenMApplyFastFailAsync(cf, executor, fns));
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * is executed in the Cffu's default asynchronous execution facility
+     * with the successful values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     * If the given Functions failed, use the given valueIfFailed.
+     *
+     * @param valueIfFailed the value to return if not completed successfully
+     * @param fns           the functions to use to compute the values of the returned Cffu
+     * @param <U>           the functions' return type
+     * @return the new Cffu
+     */
+    @SafeVarargs
+    public final <U> Cffu<List<U>> thenMApplyAllSuccessAsync(
+            @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
+        return thenMApplyAllSuccessAsync(valueIfFailed, fac.defaultExecutor(), fns);
+    }
+
+    /**
+     * Returns a new Cffu that, when the given stage completes normally,
+     * is executed in the given Executor with the successful values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions)
+     * in the <strong>same order</strong> of the given Functions arguments.
+     * <p>
+     * If the given Functions failed, use the given valueIfFailed.
+     *
+     * @param valueIfFailed the value to return if not completed successfully
+     * @param fns           the functions to use to compute the values of the returned Cffu
+     * @param <U>           the functions' return type
+     * @return the new Cffu
+     */
+    @SafeVarargs
+    public final <U> Cffu<List<U>> thenMApplyAllSuccessAsync(
+            @Nullable U valueIfFailed, Executor executor, Function<? super T, ? extends U>... fns) {
+        return reset0(CompletableFutureUtils.thenMApplyAllSuccessAsync(cf, valueIfFailed, executor, fns));
     }
 
     /**
@@ -583,7 +622,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     // endregion
     ////////////////////////////////////////////////////////////
-    // region## Then-Tuple-Multi-Actions(thenTupleM*) Methods
+    // region# Then-Tuple-Multi-Actions(thenTupleM*) Methods
     ////////////////////////////////////////////////////////////
 
     /**
@@ -700,6 +739,130 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
         return reset0(CompletableFutureUtils.thenTupleMApplyFastFailAsync(cf, executor, fn1, fn2, fn3, fn4, fn5));
+    }
+
+    /**
+     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
+     * with the successful values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions).
+     * <p>
+     * If the given Functions failed, use {@code null}.
+     *
+     * @return the new Cffu
+     */
+    public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyAllSuccessAsync(
+            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
+        return thenTupleMApplyAllSuccessAsync(fac.defaultExecutor(), fn1, fn2);
+    }
+
+    /**
+     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
+     * with the successful values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions).
+     * <p>
+     * If the given Functions failed, use {@code null}.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @return the new Cffu
+     */
+    public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyAllSuccessAsync(
+            Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
+        return reset0(CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(cf, executor, fn1, fn2));
+    }
+
+    /**
+     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
+     * with the successful values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions).
+     * <p>
+     * If the given Functions failed, use {@code null}.
+     *
+     * @return the new Cffu
+     */
+    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyAllSuccessAsync(
+            Function<? super T, ? extends U1> fn1,
+            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
+        return thenTupleMApplyAllSuccessAsync(fac.defaultExecutor(), fn1, fn2, fn3);
+    }
+
+    /**
+     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
+     * with the successful values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions).
+     * <p>
+     * If the given Functions failed, use {@code null}.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @return the new Cffu
+     */
+    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyAllSuccessAsync(
+            Executor executor, Function<? super T, ? extends U1> fn1,
+            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
+        return reset0(CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(cf, executor, fn1, fn2, fn3));
+    }
+
+    /**
+     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
+     * with the successful values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions).
+     * <p>
+     * If the given Functions failed, use {@code null}.
+     *
+     * @return the new Cffu
+     */
+    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAllSuccessAsync(
+            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+            Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
+        return thenTupleMApplyAllSuccessAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4);
+    }
+
+    /**
+     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
+     * with the successful values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions).
+     * <p>
+     * If the given Functions failed, use {@code null}.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @return the new Cffu
+     */
+    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAllSuccessAsync(
+            Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+            Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
+        return reset0(CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(cf, executor, fn1, fn2, fn3, fn4));
+    }
+
+    /**
+     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
+     * with the successful values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions).
+     * <p>
+     * If the given Functions failed, use {@code null}.
+     *
+     * @return the new Cffu
+     */
+    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAllSuccessAsync(
+            Function<? super T, ? extends U1> fn1,
+            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
+            Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
+        return thenTupleMApplyAllSuccessAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4, fn5);
+    }
+
+    /**
+     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
+     * with the successful values obtained by calling the given Functions
+     * (with the given stage's result as the argument to the given functions).
+     * <p>
+     * If the given Functions failed, use {@code null}.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @return the new Cffu
+     */
+    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAllSuccessAsync(
+            Executor executor, Function<? super T, ? extends U1> fn1,
+            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
+            Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
+        return reset0(CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(cf, executor, fn1, fn2, fn3, fn4, fn5));
     }
 
     /**
