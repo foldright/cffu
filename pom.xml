@@ -84,6 +84,8 @@
 		<!-- testing dependencies versions -->
 		<junit5.version>5.10.3</junit5.version>
 		<kotest.version>5.8.1</kotest.version>
+
+		<guava.version>33.2.1-jre</guava.version>
 	</properties>
 
 	<dependencies>
@@ -242,6 +244,14 @@
 				<version>${kotest.version}</version>
 				<scope>test</scope>
 			</dependency>
+
+			<!-- guava -->
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>${guava.version}</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 

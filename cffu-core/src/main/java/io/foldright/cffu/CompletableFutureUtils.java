@@ -1,5 +1,7 @@
 package io.foldright.cffu;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
@@ -4274,6 +4276,56 @@ public final class CompletableFutureUtils {
     //    - toCompletableFutureArray:     CompletionStage[](including Cffu) -> CF[]
     //    - completableFutureListToArray: List<CF> -> CF[]
     ////////////////////////////////////////////////////////////////////////////////
+
+
+
+    /**
+     * A convenient util method for converting input {@link ListenableFuture} to  {@link CompletableFuture}
+     */
+    @Contract(pure = true)
+    public static <T> CompletableFuture<T> toCompletableFuture(ListenableFuture<T> listenableFuture) {
+        requireNonNull(listenableFuture, "listenableFuture is null");
+
+//         CompletableFuture ret = CompletableFuture.supplyAsync(()->listenableFuture.get());
+
+        return null;
+    }
+
+    /**
+     * A convenient util method for converting input {@link CompletionStage} to  {@link ListenableFuture}
+     */
+    @Contract(pure = true)
+    public static <T> ListenableFuture<T> toListenableFuture(CompletionStage<T> stage) {
+        requireNonNull(stage, "stage is null");
+        CompletableFuture<T> completableFuture = stage.toCompletableFuture();
+
+        ListenableFuture listenableFuture = Futures.submit(()-> completableFuture.join(),ASYNC_POOL);
+        return listenableFuture;
+    }
+
+    /**
+     * A convenient util method for converting input {@link ListenableFuture} to  {@link CompletableFuture}
+     */
+    @Contract(pure = true)
+    public static <T> CompletableFuture<T> toCompletableFuture(ListenableFuture<T> listenableFuture) {
+        requireNonNull(listenableFuture, "listenableFuture is null");
+
+//         CompletableFuture ret = CompletableFuture.supplyAsync(()->listenableFuture.get());
+
+        return null;
+    }
+
+    /**
+     * A convenient util method for converting input {@link CompletionStage} to  {@link ListenableFuture}
+     */
+    @Contract(pure = true)
+    public static <T> ListenableFuture<T> toListenableFuture(CompletionStage<T> stage) {
+        requireNonNull(stage, "stage is null");
+        CompletableFuture<T> completableFuture = stage.toCompletableFuture();
+
+        ListenableFuture listenableFuture = Futures.submit(()-> completableFuture.join(),ASYNC_POOL);
+        return listenableFuture;
+    }
 
     /**
      * A convenient util method for converting input {@link CompletionStage} (including
