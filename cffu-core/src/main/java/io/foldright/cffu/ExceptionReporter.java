@@ -5,23 +5,30 @@ import org.slf4j.spi.LocationAwareLogger;
 
 
 /**
+ * <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
+ *
  * @author HuHao (995483610 at qq dot com)
  * @author Jerry Lee (oldratlee at gmail dot com)
  */
 class ExceptionReporter {
-    private static final String CFFU_PACKAGE_NAME = ExceptionReporter.class.getName().replaceFirst("\\.[^.]*$", "");
+    private static final String FQCN = ExceptionReporter.class.getName();
+    private static final String CFFU_PACKAGE_NAME = FQCN.replaceFirst("\\.[^.]*$", "");
 
     private static final LoggerAdapter logger = getLogger();
 
     @Nullable
+    @SuppressWarnings("StatementWithEmptyBody")
     static <T> T reportException(String msg, Throwable ex) {
         final String fullReport = "full";
         final String shortReport = "short";
+        final String noneReport = "none";
 
         String report = System.getProperty("cffu.uncaught.exception.report", shortReport);
-        if (fullReport.equals(report)) {
+        if (noneReport.equalsIgnoreCase(report)) {
+            // pass silently when explicitly silenced.
+        } else if (fullReport.equalsIgnoreCase(report)) {
             logger.error(msg, ex);
-        } else if (shortReport.equals(report)) {
+        } else {
             logger.error(msg + ", " + ex, null);
         }
 
@@ -41,8 +48,6 @@ class ExceptionReporter {
     }
 
     private static class Slf4jLoggerAdapter implements LoggerAdapter {
-        private final String FQCN = Slf4jLoggerAdapter.class.getName();
-
         private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CFFU_PACKAGE_NAME);
 
         @Override
@@ -62,5 +67,8 @@ class ExceptionReporter {
         public void error(String msg, @Nullable Throwable ex) {
             logger.log(java.util.logging.Level.SEVERE, msg, ex);
         }
+    }
+
+    private ExceptionReporter() {
     }
 }

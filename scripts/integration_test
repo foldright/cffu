@@ -53,9 +53,9 @@ mvu::mvn_cmd clean install
 # test by multiply version jdks
 ########################################
 
-readonly KT_VERSION_FOR_JAVA8=1.6.0
-readonly KT_VERSION_FOR_JAVA11=1.7.0
-readonly KT_VERSION_FOR_JAVA17=1.8.0
+readonly MVN_OPTS_FOR_JAVA8='-Dkotlin.version=1.6.0 -P!logging-dependencies-default'
+readonly MVN_OPTS_FOR_JAVA11='-Dkotlin.version=1.7.0 -P!logging-dependencies-default -Dcffu.uncaught.exception.report=none'
+readonly MVN_OPTS_FOR_JAVA17='-Dkotlin.version=1.8.0 -P!logging-dependencies-default -Plogging-dependencies-log4j2 -Dcffu.uncaught.exception.report=full'
 
 # about CI env var
 #   https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
@@ -72,9 +72,6 @@ for jdk_version in "${JDK_VERSIONS[@]}"; do
   # just test without build
   cu::head_line_echo "test with Java $jdk_version: $JAVA_HOME"
 
-  kt_version_var_name="KT_VERSION_FOR_JAVA${jdk_version}"
-  kt_version_opt="${!kt_version_var_name:+-Dkotlin.version=${!kt_version_var_name}}"
-
   # skip kotlin module test for low java version(19-)
   # need recompile and test later(more info see the comments)
   pl=
@@ -82,7 +79,9 @@ for jdk_version in "${JDK_VERSIONS[@]}"; do
     pl='-pl cffu-core,cffu-ttl-executor-wrapper'
   fi
 
-  mvu::mvn_cmd ${pl:-} ${CI_MORE_BEGIN_OPTS:-} dependency:properties surefire:test ${CI_MORE_END_OPTS:-} $kt_version_opt
+  mvn_opts_for_java_version_var_name="MVN_OPTS_FOR_JAVA${jdk_version}"
+
+  mvu::mvn_cmd ${pl:-} ${CI_MORE_BEGIN_OPTS:-} dependency:properties surefire:test ${CI_MORE_END_OPTS:-} ${!mvn_opts_for_java_version_var_name:-}
 done
 
 # test the kotlin extension methods works
@@ -112,8 +111,7 @@ for jdk_version in "${JDK_VERSIONS[@]}"; do
   # just test without build
   cu::head_line_echo "test cffu-kotlin with Java $jdk_version: $JAVA_HOME"
 
-  kt_version_var_name="KT_VERSION_FOR_JAVA${jdk_version}"
-  kt_version_opt="${!kt_version_var_name:+-Dkotlin.version=${!kt_version_var_name}}"
+  mvn_opts_for_java_version_var_name="MVN_OPTS_FOR_JAVA${jdk_version}"
 
-  mvu::mvn_cmd -Dmaven.main.skip -Denforcer.skip ${CI_MORE_BEGIN_OPTS:-} dependency:properties surefire:test ${CI_MORE_END_OPTS:-} $kt_version_opt
+  mvu::mvn_cmd -Dmaven.main.skip -Denforcer.skip ${CI_MORE_BEGIN_OPTS:-} dependency:properties surefire:test ${CI_MORE_END_OPTS:-} ${!mvn_opts_for_java_version_var_name:-}
 done

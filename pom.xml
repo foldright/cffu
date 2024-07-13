@@ -80,6 +80,7 @@
 		<kotlin.compiler.apiVersion>1.6</kotlin.compiler.apiVersion>
 
 		<slf4j.version>2.0.13</slf4j.version>
+		<log4j2.version>2.23.1</log4j2.version>
 
 		<!-- testing dependencies versions -->
 		<junit5.version>5.10.3</junit5.version>
@@ -102,18 +103,6 @@
 			<groupId>org.jetbrains</groupId>
 			<artifactId>annotations</artifactId>
 			<optional>true</optional>
-		</dependency>
-
-		<!-- logging libs -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.github.oshai</groupId>
-			<artifactId>kotlin-logging-jvm</artifactId>
-			<scope>test</scope>
 		</dependency>
 
 		<!-- testing libs -->
@@ -206,14 +195,17 @@
 			<!-- logging libs -->
 			<dependency>
 				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
+				<artifactId>slf4j-bom</artifactId>
 				<version>${slf4j.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-simple</artifactId>
-				<version>${slf4j.version}</version>
-				<scope>test</scope>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-bom</artifactId>
+				<version>${log4j2.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<groupId>io.github.oshai</groupId>
@@ -480,6 +472,52 @@
 		</pluginManagement>
 	</build>
 	<profiles>
+		<profile>
+			<id>logging-dependencies-default</id>
+			<activation>
+				<property>
+					<name>!skipDefaultProfile</name>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+					<optional>true</optional>
+				</dependency>
+				<!-- logging libs -->
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-simple</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>io.github.oshai</groupId>
+					<artifactId>kotlin-logging-jvm</artifactId>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>logging-dependencies-log4j2</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+					<optional>true</optional>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-slf4j2-impl</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>io.github.oshai</groupId>
+					<artifactId>kotlin-logging-jvm</artifactId>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
 		<profile>
 			<id>enable-test-jar-if-not-maven-skip-test</id>
 			<activation>
