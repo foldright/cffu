@@ -88,7 +88,7 @@
     - 解包装`CF`异常成业务异常，`unwrapCfException`方法
 - 💪 **已有功能的增强**，如
   - `anySuccessOf`/`anyOf`方法：返回具体类型`T`（类型安全），而不是返回`Object`（`CompletableFuture#anyOf`）
-- ⏳ **`Backport`支持`Java 8`**，`Java 9+`高版本的所有`CF`新功能在`Java 8`等低`Java`版本直接可用，如
+- ⏳ **`Backport`支持`Java 8`**，`Java 9+`高版本的所有`CF`新功能在`Java 8`低版本直接可用，如
   - 超时控制：`orTimeout`/`completeOnTimeout`方法
   - 延迟执行：`delayedExecutor`方法
   - 工厂方法：`failedFuture` / `completedStage` / `failedStage`
@@ -532,7 +532,7 @@ public class ConcurrencyStrategyDemo {
 
 ### 2.5 `Backport`支持`Java 8`
 
-`Java 9+`高版本的所有`CF`新功能在`Java 8`等低`Java`版本直接可用。
+`Java 9+`高版本的所有`CF`新功能在`Java 8`低版本直接可用。
 
 其中重要的Backport功能有：
 
@@ -593,18 +593,18 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>1.0.0-Alpha13</version>
+      <version>1.0.0-Alpha14</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu:1.0.0-Alpha13")
+    implementation("io.foldright:cffu:1.0.0-Alpha14")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu:1.0.0-Alpha13'
+    implementation 'io.foldright:cffu:1.0.0-Alpha14'
     ```
 - `cffu Kotlin`支持库:
   - For `Maven` projects:
@@ -613,18 +613,18 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-kotlin</artifactId>
-      <version>1.0.0-Alpha13</version>
+      <version>1.0.0-Alpha14</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha13")
+    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha14")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha13'
+    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha14'
     ```
 - `cffu bom`:
   - For `Maven` projects:
@@ -633,7 +633,7 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-bom</artifactId>
-      <version>1.0.0-Alpha13</version>
+      <version>1.0.0-Alpha14</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -642,11 +642,11 @@ public class ConcurrencyStrategyDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha13"))
+    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha14"))
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha13')
+    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha14')
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local)的[`cffu executor wrapper SPI`实现](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -655,7 +655,7 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>1.0.0-Alpha13</version>
+      <version>1.0.0-Alpha14</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -663,11 +663,11 @@ public class ConcurrencyStrategyDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha13")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha14")
     ```
     ```groovy
     // Gradle Groovy DSL
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha13'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha14'
     ```
 
 # 📚 更多资料
