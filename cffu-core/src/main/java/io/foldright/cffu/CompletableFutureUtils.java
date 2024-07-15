@@ -1,5 +1,7 @@
 package io.foldright.cffu;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
@@ -4450,6 +4452,78 @@ public final class CompletableFutureUtils {
         }
         if (ex.getCause() == null) return ex;
         return ex.getCause();
+    }
+
+    /**
+     * A convenient util method for converting input {@link ListenableFuture} to  {@link CompletableFuture}
+     */
+    @Contract(pure = true)
+    public static <T> CompletableFuture<T> toCompletableFuture(ListenableFuture<T> listenableFuture) {
+        requireNonNull(listenableFuture, "listenableFuture is null");
+
+        CompletableFuture<T> completableFuture = new CompletableFuture<>();
+        listenableFuture.addListener(() -> {
+            try {
+                T value = listenableFuture.get();
+                completableFuture.complete(value);
+            } catch (InterruptedException | ExecutionException e) {
+                completableFuture.completeExceptionally(e);
+            }
+        }, MoreExecutors.directExecutor());
+        return completableFuture;
+    }
+
+    /**
+     * A convenient util method for converting input {@link CompletionStage} to  {@link ListenableFuture}
+     */
+    @Contract(pure = true)
+    public static <T> ListenableFuture<T> toListenableFuture(CompletionStage<T> stage) {
+        requireNonNull(stage, "stage is null");
+        CompletableFuture<T> completableFuture = toNonMinCf(stage);
+
+        CompletableFuturebackedValueSource<T> completableFuturebackedValueSource = new CompletableFuturebackedValueSource<>(completableFuture);
+
+        ValueSourceFutureBackedListenableFuture<T> listenableFuture = new ValueSourceFutureBackedListenableFuture<>(completableFuturebackedValueSource);
+
+        return listenableFuture;
+    }
+
+    private static class ValueSourceFutureBackedListenableFuture<T> extends FutureWrapper<T> implements ListenableFuture<T> {
+        ValueSourceFutureBackedListenableFuture(ValueSourceFuture<T> valueSourceFuture) {
+            super(valueSourceFuture);
+        }
+
+        @Override
+        protected ValueSourceFuture<T> getWrappedFuture() {
+            return (ValueSourceFuture<T>) super.getWrappedFuture();
+        }
+
+        @Override
+        public void addListener(Runnable listener, Executor executor) {
+            getWrappedFuture().addCallbacks(value -> executor.execute(listener), ex -> executor.execute(listener));
+        }
+    }
+
+    private static final class CompletableFuturebackedValueSource<T> extends ValueSourceFuture<T> {
+        private CompletableFuturebackedValueSource(CompletableFuture<T> completableFuture) {
+            super(completableFuture);
+        }
+
+        @Override
+        public void addCallbacks(Consumer<T> successCallback, Consumer<Throwable> failureCallback) {
+            getWrappedFuture().whenComplete((v, t) -> {
+                if (t == null) {
+                    successCallback.accept(v);
+                } else {
+                    failureCallback.accept(t);
+                }
+            });
+        }
+
+        @Override
+        protected CompletableFuture<T> getWrappedFuture() {
+            return (CompletableFuture<T>) super.getWrappedFuture();
+        }
     }
 
     // endregion
