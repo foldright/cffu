@@ -2,6 +2,8 @@ package io.foldright.cffu;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.google.common.util.concurrent.SettableFuture;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
@@ -4286,9 +4288,16 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<T> toCompletableFuture(ListenableFuture<T> listenableFuture) {
         requireNonNull(listenableFuture, "listenableFuture is null");
 
-//         CompletableFuture ret = CompletableFuture.supplyAsync(()->listenableFuture.get());
-
-        return null;
+        CompletableFuture<T> completableFuture = new CompletableFuture();
+        listenableFuture.addListener(()->{
+            try{
+                T value = listenableFuture.get();
+                completableFuture.complete(value);
+            }catch (InterruptedException  | ExecutionException e){
+                completableFuture.completeExceptionally(e);
+            }
+        },MoreExecutors.directExecutor());
+        return completableFuture;
     }
 
     /**
@@ -4297,35 +4306,53 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <T> ListenableFuture<T> toListenableFuture(CompletionStage<T> stage) {
         requireNonNull(stage, "stage is null");
-        CompletableFuture<T> completableFuture = stage.toCompletableFuture();
+        CompletableFuture<T> completableFuture = toNonMinCf(stage);
 
-        ListenableFuture listenableFuture = Futures.submit(()-> completableFuture.join(),ASYNC_POOL);
-        return listenableFuture;
+        CompletableFuturebackedValueSource  completableFuturebackedValueSource = new CompletableFuturebackedValueSource(completableFuture);
+
+
+        return new ValueSourceFutureBackedListenableFuture<>(completableFuturebackedValueSource);
     }
 
-    /**
-     * A convenient util method for converting input {@link ListenableFuture} to  {@link CompletableFuture}
-     */
-    @Contract(pure = true)
-    public static <T> CompletableFuture<T> toCompletableFuture(ListenableFuture<T> listenableFuture) {
-        requireNonNull(listenableFuture, "listenableFuture is null");
+    private static class ValueSourceFutureBackedListenableFuture<T> extends FutureWrapper<T> implements ListenableFuture<T> {
+        ValueSourceFutureBackedListenableFuture(ValueSourceFuture<T> valueSourceFuture) {
+            super(valueSourceFuture);
+        }
 
-//         CompletableFuture ret = CompletableFuture.supplyAsync(()->listenableFuture.get());
+        @Override
+        protected ValueSourceFuture<T> getWrappedFuture() {
+            return (ValueSourceFuture<T>) super.getWrappedFuture();
+        }
 
-        return null;
+        @Override
+        public void addListener(Runnable listener, Executor executor) {
+            getWrappedFuture().addCallbacks(value -> executor.execute(listener), ex -> executor.execute(listener));
+        }
     }
 
-    /**
-     * A convenient util method for converting input {@link CompletionStage} to  {@link ListenableFuture}
-     */
-    @Contract(pure = true)
-    public static <T> ListenableFuture<T> toListenableFuture(CompletionStage<T> stage) {
-        requireNonNull(stage, "stage is null");
-        CompletableFuture<T> completableFuture = stage.toCompletableFuture();
+    private static final class CompletableFuturebackedValueSource<T> extends ValueSourceFuture<T> {
+        private CompletableFuturebackedValueSource(CompletableFuture<T> completableFuture) {
+            super(completableFuture);
+        }
 
-        ListenableFuture listenableFuture = Futures.submit(()-> completableFuture.join(),ASYNC_POOL);
-        return listenableFuture;
+
+        @Override
+        public void addCallbacks(Consumer<T> successCallback, Consumer<Throwable> failureCallback) {
+            getWrappedFuture().whenComplete((v, t) -> {
+                if (t == null) {
+                    successCallback.accept(v);
+                } else {
+                    failureCallback.accept(t);
+                }
+            });
+        }
+
+        @Override
+        protected CompletableFuture<T> getWrappedFuture() {
+            return (CompletableFuture<T>) super.getWrappedFuture();
+        }
     }
+
 
     /**
      * A convenient util method for converting input {@link CompletionStage} (including
