@@ -1,5 +1,9 @@
 package io.foldright.cffu;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.google.common.util.concurrent.SettableFuture;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
 import io.foldright.cffu.tuple.Tuple4;
@@ -18,9 +22,12 @@ import java.util.concurrent.*;
 import java.util.function.Supplier;
 
 import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
+import static io.foldright.cffu.CompletableFutureUtils.toCompletableFuture;
 import static io.foldright.cffu.CompletableFutureUtils.toCompletableFutureArray;
+import static io.foldright.cffu.CompletableFutureUtils.toListenableFuture;
 import static io.foldright.test_utils.TestUtils.*;
 import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static java.util.function.Function.identity;
 import static org.junit.jupiter.api.Assertions.*;
@@ -897,6 +904,26 @@ class CffuFactoryTest {
         assertArrayEquals(cfArray, toCompletableFutureArray(cffuArray));
     }
 
+    @Test
+    void test_convertListenableFuture() throws Exception{
+
+
+        ListenableFuture orginalListenableFuture = executor.submit(()->n);
+        ListenableFuture orginalAnotherListenableFuture = executor.submit(()->anotherN);
+
+        CompletableFuture srcCompletableFuture1 = toCompletableFuture(orginalListenableFuture);
+        CompletableFuture srcCompletableFuture2 = toCompletableFuture(orginalAnotherListenableFuture,executorService);
+
+        assertEquals(orginalListenableFuture.get(), srcCompletableFuture1.get());
+        assertEquals(orginalAnotherListenableFuture.get(), srcCompletableFuture2.get());
+
+        CompletableFuture orginalCompletableFuture = completedFuture(n);
+
+        ListenableFuture srcListenableFuture = toListenableFuture(orginalCompletableFuture);
+
+        assertEquals(orginalCompletableFuture.get(), srcListenableFuture.get());
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     //# Conversion (Static) Methods
     //
@@ -971,6 +998,8 @@ class CffuFactoryTest {
     private static ExecutorService executorService;
 
     private static ExecutorService anotherExecutorService;
+
+    private static ListeningExecutorService executor = MoreExecutors.listeningDecorator(newCachedThreadPool());
 
     @BeforeAll
     static void beforeAll() {
