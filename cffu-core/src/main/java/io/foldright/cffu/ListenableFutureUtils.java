@@ -19,8 +19,9 @@ public class ListenableFutureUtils {
     /*
      * Implementation Note:
      *
-     * the methods of this class MUST NOT be defined in {@link CompletableFutureUtils}; Otherwise `NoClassDefFoundError`
-     * when loading CompletableFutureUtils if ListenableFuture class(`ClassNotFoundException` aka. guava dependency) absent.
+     * The methods of this class MUST NOT be defined in `CompletableFutureUtils`;
+     * Otherwise `NoClassDefFoundError` when loading `CompletableFutureUtils`
+     * if `ListenableFuture` class(`ClassNotFoundException` aka. `Guava` dependency) is absent.
      */
 
     /**
@@ -51,11 +52,21 @@ public class ListenableFutureUtils {
             }
 
             @Override
-            public void onFailure(Throwable t) {
-                ret.completeExceptionally(t);
+            public void onFailure(Throwable ex) {
+                ret.completeExceptionally(ex);
             }
         }, executor);
         return ret;
+    }
+
+    /**
+     * A convenient util method for converting input {@link ListenableFuture} to {@link Cffu}.
+     * <p>
+     * Callback from ListenableFuture is executed using cffuFactory's default executor.
+     */
+    @Contract(pure = true)
+    public static <T> Cffu<T> toCffu(ListenableFuture<T> lf, CffuFactory cffuFactory) {
+        return cffuFactory.toCffu(toCompletableFuture(lf, cffuFactory.defaultExecutor()));
     }
 
     /**
@@ -69,7 +80,7 @@ public class ListenableFutureUtils {
         return new ListenableFuture<T>() {
             @Override
             public void addListener(Runnable listener, Executor executor) {
-                CompletableFutureUtils.peekAsync(cf, (v, t) -> listener.run(), executor);
+                CompletableFutureUtils.peekAsync(cf, (v, ex) -> listener.run(), executor);
             }
 
             @Override
@@ -99,8 +110,22 @@ public class ListenableFutureUtils {
 
             @Override
             public String toString() {
-                return "ListenableFutureAdapter(ListenableFutureUtils.toListenableFuture) of " + cf;
+                return "ListenableFutureAdapter@ListenableFutureUtils.toListenableFuture of " + cf;
             }
         };
+    }
+
+    /**
+     * A convenient util method for converting input {@link Cffu} to {@link ListenableFuture}.
+     */
+    @Contract(pure = true)
+    public static <T> ListenableFuture<T> toListenableFuture(Cffu<T> cf) {
+        requireNonNull(cf, "cf is null");
+        if (cf.isMinimalStage()) throw new UnsupportedOperationException();
+
+        return toListenableFuture(cf.cffuUnwrap());
+    }
+
+    private ListenableFutureUtils() {
     }
 }

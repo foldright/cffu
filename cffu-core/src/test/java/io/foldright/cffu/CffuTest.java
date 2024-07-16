@@ -32,10 +32,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SuppressWarnings("RedundantThrows")
 class CffuTest {
-    private static CffuFactory cffuFactory;
-
-    private static CffuFactory forbidObtrudeMethodsCffuFactory;
-
     ////////////////////////////////////////////////////////////////////////////////
     // region# Simple then* Methods of CompletionStage
     //
@@ -126,9 +122,7 @@ class CffuTest {
     @Test
     void test_thenMRun() throws Exception {
         final Cffu<Integer> completed = cffuFactory.completedFuture(null);
-        final Runnable runnable = () -> {
-            sleep(100);
-        };
+        final Runnable runnable = () -> sleep(100);
 
         final long tick = System.currentTimeMillis();
 
@@ -567,6 +561,10 @@ class CffuTest {
     ////////////////////////////////////////////////////////////////////////////////
 
     private static ExecutorService executorService;
+
+    private static CffuFactory cffuFactory;
+
+    private static CffuFactory forbidObtrudeMethodsCffuFactory;
 
     @BeforeAll
     static void beforeAll() {
