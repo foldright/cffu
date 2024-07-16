@@ -1,5 +1,7 @@
 package io.foldright.cffu;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -4455,75 +4457,78 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * A convenient util method for converting input {@link ListenableFuture} to  {@link CompletableFuture}
+     * A convenient util method for converting input {@link ListenableFuture} to {@link CompletableFuture}.
+     * <p>
+     * Callback from ListenableFuture is executed using CompletableFuture's default asynchronous execution facility.
      */
-    @Contract(pure = true)
-    public static <T> CompletableFuture<T> toCompletableFuture(ListenableFuture<T> listenableFuture) {
-        requireNonNull(listenableFuture, "listenableFuture is null");
-
-        CompletableFuture<T> completableFuture = new CompletableFuture<>();
-        listenableFuture.addListener(() -> {
-            try {
-                T value = listenableFuture.get();
-                completableFuture.complete(value);
-            } catch (InterruptedException | ExecutionException e) {
-                completableFuture.completeExceptionally(e);
-            }
-        }, MoreExecutors.directExecutor());
-        return completableFuture;
+    public static <T> CompletableFuture<T> toCompletableFuture(ListenableFuture<T> lf) {
+        return toCompletableFuture(lf, ASYNC_POOL);
     }
 
     /**
-     * A convenient util method for converting input {@link CompletionStage} to  {@link ListenableFuture}
+     * A convenient util method for converting input {@link ListenableFuture} to {@link CompletableFuture}.
+     * <p>
+     * Callback from ListenableFuture is executed using the given executor,
+     * use {{@link MoreExecutors#directExecutor()}} if you need skip executor switch.
      */
     @Contract(pure = true)
-    public static <T> ListenableFuture<T> toListenableFuture(CompletionStage<T> stage) {
-        requireNonNull(stage, "stage is null");
-        CompletableFuture<T> completableFuture = toNonMinCf(stage);
+    public static <T> CompletableFuture<T> toCompletableFuture(ListenableFuture<T> lf, Executor executor) {
+        requireNonNull(lf, "listenableFuture is null");
 
-        CompletableFuturebackedValueSource<T> completableFuturebackedValueSource = new CompletableFuturebackedValueSource<>(completableFuture);
+        CompletableFuture<T> ret = new CompletableFuture<>();
+        Futures.addCallback(lf, new FutureCallback<T>() {
+            @Override
+            public void onSuccess(T result) {
+                ret.complete(result);
+            }
 
-        ValueSourceFutureBackedListenableFuture<T> listenableFuture = new ValueSourceFutureBackedListenableFuture<>(completableFuturebackedValueSource);
-
-        return listenableFuture;
+            @Override
+            public void onFailure(Throwable t) {
+                ret.completeExceptionally(t);
+            }
+        }, executor);
+        return ret;
     }
 
-    private static class ValueSourceFutureBackedListenableFuture<T> extends FutureWrapper<T> implements ListenableFuture<T> {
-        ValueSourceFutureBackedListenableFuture(ValueSourceFuture<T> valueSourceFuture) {
-            super(valueSourceFuture);
-        }
+    /**
+     * A convenient util method for converting input {@link CompletableFuture} to  {@link ListenableFuture}.
+     */
+    @Contract(pure = true)
+    public static <T> ListenableFuture<T> toListenableFuture(CompletableFuture<T> cf) {
+        requireNonNull(cf, "cf is null");
+        if (isMinStageCf(cf)) throw new UnsupportedOperationException();
 
-        @Override
-        protected ValueSourceFuture<T> getWrappedFuture() {
-            return (ValueSourceFuture<T>) super.getWrappedFuture();
-        }
+        return new ListenableFuture<T>() {
+            @Override
+            public void addListener(Runnable listener, Executor executor) {
+                peekAsync(cf, (v, t) -> listener.run(), executor);
+            }
 
-        @Override
-        public void addListener(Runnable listener, Executor executor) {
-            getWrappedFuture().addCallbacks(value -> executor.execute(listener), ex -> executor.execute(listener));
-        }
-    }
+            @Override
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                return cf.cancel(mayInterruptIfRunning);
+            }
 
-    private static final class CompletableFuturebackedValueSource<T> extends ValueSourceFuture<T> {
-        private CompletableFuturebackedValueSource(CompletableFuture<T> completableFuture) {
-            super(completableFuture);
-        }
+            @Override
+            public boolean isCancelled() {
+                return cf.isCancelled();
+            }
 
-        @Override
-        public void addCallbacks(Consumer<T> successCallback, Consumer<Throwable> failureCallback) {
-            getWrappedFuture().whenComplete((v, t) -> {
-                if (t == null) {
-                    successCallback.accept(v);
-                } else {
-                    failureCallback.accept(t);
-                }
-            });
-        }
+            @Override
+            public boolean isDone() {
+                return cf.isDone();
+            }
 
-        @Override
-        protected CompletableFuture<T> getWrappedFuture() {
-            return (CompletableFuture<T>) super.getWrappedFuture();
-        }
+            @Override
+            public T get() throws InterruptedException, ExecutionException {
+                return cf.get();
+            }
+
+            @Override
+            public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+                return cf.get(timeout, unit);
+            }
+        };
     }
 
     // endregion
