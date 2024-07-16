@@ -1,9 +1,5 @@
 package io.foldright.cffu;
 
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.MoreExecutors;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
@@ -1245,6 +1241,7 @@ public final class CompletableFutureUtils {
      * @param cfs the stages
      * @return a new CompletableFuture that is completed when all the given stages complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see com.google.common.util.concurrent.Futures#allAsList(com.google.common.util.concurrent.ListenableFuture[]) guava#allAsList() method
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1470,7 +1467,7 @@ public final class CompletableFutureUtils {
         return isMinStageCf(f) ? f.toCompletableFuture() : copy(f);
     }
 
-    private static boolean isMinStageCf(CompletableFuture<?> cf) {
+    static boolean isMinStageCf(CompletableFuture<?> cf) {
         return "java.util.concurrent.CompletableFuture$MinimalStage".equals(cf.getClass().getName());
     }
 
@@ -4456,81 +4453,6 @@ public final class CompletableFutureUtils {
         return ex.getCause();
     }
 
-    /**
-     * A convenient util method for converting input {@link ListenableFuture} to {@link CompletableFuture}.
-     * <p>
-     * Callback from ListenableFuture is executed using CompletableFuture's default asynchronous execution facility.
-     */
-    public static <T> CompletableFuture<T> toCompletableFuture(ListenableFuture<T> lf) {
-        return toCompletableFuture(lf, ASYNC_POOL);
-    }
-
-    /**
-     * A convenient util method for converting input {@link ListenableFuture} to {@link CompletableFuture}.
-     * <p>
-     * Callback from ListenableFuture is executed using the given executor,
-     * use {{@link MoreExecutors#directExecutor()}} if you need skip executor switch.
-     */
-    @Contract(pure = true)
-    public static <T> CompletableFuture<T> toCompletableFuture(ListenableFuture<T> lf, Executor executor) {
-        requireNonNull(lf, "listenableFuture is null");
-
-        CompletableFuture<T> ret = new CompletableFuture<>();
-        Futures.addCallback(lf, new FutureCallback<T>() {
-            @Override
-            public void onSuccess(T result) {
-                ret.complete(result);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                ret.completeExceptionally(t);
-            }
-        }, executor);
-        return ret;
-    }
-
-    /**
-     * A convenient util method for converting input {@link CompletableFuture} to  {@link ListenableFuture}.
-     */
-    @Contract(pure = true)
-    public static <T> ListenableFuture<T> toListenableFuture(CompletableFuture<T> cf) {
-        requireNonNull(cf, "cf is null");
-        if (isMinStageCf(cf)) throw new UnsupportedOperationException();
-
-        return new ListenableFuture<T>() {
-            @Override
-            public void addListener(Runnable listener, Executor executor) {
-                peekAsync(cf, (v, t) -> listener.run(), executor);
-            }
-
-            @Override
-            public boolean cancel(boolean mayInterruptIfRunning) {
-                return cf.cancel(mayInterruptIfRunning);
-            }
-
-            @Override
-            public boolean isCancelled() {
-                return cf.isCancelled();
-            }
-
-            @Override
-            public boolean isDone() {
-                return cf.isDone();
-            }
-
-            @Override
-            public T get() throws InterruptedException, ExecutionException {
-                return cf.get();
-            }
-
-            @Override
-            public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-                return cf.get(timeout, unit);
-            }
-        };
-    }
-
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
     // region# Internal helper fields and classes
@@ -4562,7 +4484,7 @@ public final class CompletableFutureUtils {
     /**
      * Default executor -- ForkJoinPool.commonPool() unless it cannot support parallelism.
      */
-    private static final Executor ASYNC_POOL = _asyncPool0();
+    static final Executor ASYNC_POOL = _asyncPool0();
 
     private static Executor _asyncPool0() {
         if (IS_JAVA9_PLUS) return completedFuture(null).defaultExecutor();
