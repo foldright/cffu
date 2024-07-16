@@ -1241,6 +1241,7 @@ public final class CompletableFutureUtils {
      * @param cfs the stages
      * @return a new CompletableFuture that is completed when all the given stages complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see com.google.common.util.concurrent.Futures#allAsList(com.google.common.util.concurrent.ListenableFuture[]) guava#allAsList() method
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1466,7 +1467,7 @@ public final class CompletableFutureUtils {
         return isMinStageCf(f) ? f.toCompletableFuture() : copy(f);
     }
 
-    private static boolean isMinStageCf(CompletableFuture<?> cf) {
+    static boolean isMinStageCf(CompletableFuture<?> cf) {
         return "java.util.concurrent.CompletableFuture$MinimalStage".equals(cf.getClass().getName());
     }
 
@@ -4483,7 +4484,7 @@ public final class CompletableFutureUtils {
     /**
      * Default executor -- ForkJoinPool.commonPool() unless it cannot support parallelism.
      */
-    private static final Executor ASYNC_POOL = _asyncPool0();
+    static final Executor ASYNC_POOL = _asyncPool0();
 
     private static Executor _asyncPool0() {
         if (IS_JAVA9_PLUS) return completedFuture(null).defaultExecutor();
