@@ -4280,7 +4280,6 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
 
 
-
     /**
      * A convenient util method for converting input {@link ListenableFuture} to  {@link CompletableFuture}
      */
@@ -4289,14 +4288,14 @@ public final class CompletableFutureUtils {
         requireNonNull(listenableFuture, "listenableFuture is null");
 
         CompletableFuture<T> completableFuture = new CompletableFuture();
-        listenableFuture.addListener(()->{
-            try{
+        listenableFuture.addListener(() -> {
+            try {
                 T value = listenableFuture.get();
                 completableFuture.complete(value);
-            }catch (InterruptedException  | ExecutionException e){
+            } catch (InterruptedException | ExecutionException e) {
                 completableFuture.completeExceptionally(e);
             }
-        },MoreExecutors.directExecutor());
+        }, MoreExecutors.directExecutor());
         return completableFuture;
     }
 
@@ -4308,10 +4307,12 @@ public final class CompletableFutureUtils {
         requireNonNull(stage, "stage is null");
         CompletableFuture<T> completableFuture = toNonMinCf(stage);
 
-        CompletableFuturebackedValueSource  completableFuturebackedValueSource = new CompletableFuturebackedValueSource(completableFuture);
+        CompletableFuturebackedValueSource completableFuturebackedValueSource = new CompletableFuturebackedValueSource(completableFuture);
 
 
-        return new ValueSourceFutureBackedListenableFuture<>(completableFuturebackedValueSource);
+        ValueSourceFutureBackedListenableFuture listenableFuture = new ValueSourceFutureBackedListenableFuture<>(completableFuturebackedValueSource);
+
+        return listenableFuture;
     }
 
     private static class ValueSourceFutureBackedListenableFuture<T> extends FutureWrapper<T> implements ListenableFuture<T> {
