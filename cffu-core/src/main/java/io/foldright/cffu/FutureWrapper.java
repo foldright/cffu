@@ -10,9 +10,9 @@ public class FutureWrapper<T> implements Future<T> {
     private final Future<T> wrappedFuture;
 
     protected FutureWrapper(Future<T> wrappedFuture) {
-        if (wrappedFuture == null) {
-            throw new NullPointerException("Wrapped future can not be null");
-        }
+//         if (wrappedFuture == null) {
+//             throw new NullPointerException("Wrapped future can not be null");
+//         }
         this.wrappedFuture = wrappedFuture;
     }
 
