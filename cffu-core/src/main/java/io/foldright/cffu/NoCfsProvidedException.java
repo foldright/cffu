@@ -8,6 +8,7 @@ import java.util.concurrent.CompletionStage;
  * Exception indicates that NO cfs({@link Cffu} / {@link CompletableFuture}) are provided
  * for methods require cf arguments.
  *
+ * @author Jerry Lee (oldratlee at gmail dot com)
  * @see CffuFactory#anySuccessOf(CompletionStage[])
  * @see CompletableFutureUtils#anySuccessOf(CompletionStage[])
  */

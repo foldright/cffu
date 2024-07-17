@@ -17,6 +17,8 @@ ij_any_line_comment_add_space = true
 ij_any_line_comment_add_space_on_reformat = true
 # ij_any_line_comment_at_first_column = true
 
+ij_any_variable_annotation_wrap = on_every_item
+
 [*.{java,kt}]
 indent_size = 4
 ij_continuation_indent_size = 8

@@ -36,6 +36,7 @@ import static java.util.Objects.requireNonNull;
  * </ul>
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
+ * @author HuHao (995483610 at qq dot com)
  * @see Cffu
  * @see CompletableFuture
  */
@@ -187,6 +188,46 @@ public final class CffuFactory {
     /**
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the Cffu's default asynchronous execution facility
+     * with the successful values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier failed, use the given valueIfFailed.
+     *
+     * @param valueIfFailed the value to return if not failed
+     * @param suppliers     the suppliers returning the value to be used to complete the returned Cffu
+     * @param <T>           the suppliers' return type
+     * @return the new Cffu
+     * @see #allSuccessResultsOf(Object, CompletionStage[])
+     */
+    @SafeVarargs
+    public final <T> Cffu<List<T>> mSupplyAllSuccessAsync(
+            @Nullable T valueIfFailed, Supplier<? extends T>... suppliers) {
+        return mSupplyAllSuccessAsync(valueIfFailed, defaultExecutor, suppliers);
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the given Executor with the successfully values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier failed, use the given valueIfFailed.
+     *
+     * @param valueIfFailed the value to return if not failed
+     * @param executor      the executor to use for asynchronous execution
+     * @param suppliers     the suppliers returning the value to be used to complete the returned Cffu
+     * @param <T>           the suppliers' return type
+     * @return the new Cffu
+     * @see #allSuccessResultsOf(Object, CompletionStage[])
+     */
+    @SafeVarargs
+    public final <T> Cffu<List<T>> mSupplyAllSuccessAsync(
+            @Nullable T valueIfFailed, Executor executor, Supplier<? extends T>... suppliers) {
+        return create(CompletableFutureUtils.mSupplyAllSuccessAsync(valueIfFailed, executor, suppliers));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the Cffu's default asynchronous execution facility
      * with the most values obtained by calling the given Suppliers
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
@@ -267,6 +308,82 @@ public final class CffuFactory {
     }
 
     /**
+     * Returns a new Cffu that is asynchronously successful
+     * when any of tasks running in the Cffu's default asynchronous execution facility
+     * by calling the given Suppliers success, with the same result.
+     * Otherwise, all the given tasks complete exceptionally,
+     * the returned Cffu also does so, with a CompletionException holding
+     * an exception from any of the given stages as its cause.
+     * If no suppliers are provided, returns a new Cffu that is already completed exceptionally
+     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
+     *
+     * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
+     * @param <T>       the suppliers' return type
+     * @return the new Cffu
+     * @see #anySuccessOf(CompletionStage[])
+     */
+    @SafeVarargs
+    public final <T> Cffu<T> mSupplyAnySuccessAsync(Supplier<? extends T>... suppliers) {
+        return mSupplyAnySuccessAsync(defaultExecutor, suppliers);
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously successful
+     * when any of tasks running in the given executor by calling the given Suppliers success, with the same result.
+     * Otherwise, all the given tasks complete exceptionally,
+     * the returned Cffu also does so, with a CompletionException holding
+     * an exception from any of the given stages as its cause.
+     * If no suppliers are provided, returns a new Cffu that is already completed exceptionally
+     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
+     *
+     * @param executor  the executor to use for asynchronous execution
+     * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
+     * @param <T>       the suppliers' return type
+     * @return the new Cffu
+     * @see #anySuccessOf(CompletionStage[])
+     */
+    @SafeVarargs
+    public final <T> Cffu<T> mSupplyAnySuccessAsync(Executor executor, Supplier<? extends T>... suppliers) {
+        return create(CompletableFutureUtils.mSupplyAnySuccessAsync(executor, suppliers));
+    }
+
+    /**
+     * Returns a new Cffu that is completed
+     * when any of tasks running in the Cffu's default asynchronous execution facility
+     * by calling the given Suppliers complete, with the same result.
+     * Otherwise, if it completed exceptionally, the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
+     * If no suppliers are provided, returns an incomplete Cffu.
+     *
+     * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
+     * @param <T>       the suppliers' return type
+     * @return the new Cffu
+     * @see #anyOf(CompletionStage[])
+     */
+    @SafeVarargs
+    public final <T> Cffu<T> mSupplyAnyAsync(Supplier<? extends T>... suppliers) {
+        return mSupplyAnyAsync(defaultExecutor, suppliers);
+    }
+
+    /**
+     * Returns a new Cffu that is completed
+     * when any of tasks running in the given Executor by calling the given Suppliers complete, with the same result.
+     * Otherwise, if it completed exceptionally, the returned Cffu also does so,
+     * with a CompletionException holding this exception as its cause.
+     * If no suppliers are provided, returns an incomplete Cffu.
+     *
+     * @param executor  the executor to use for asynchronous execution
+     * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
+     * @param <T>       the suppliers' return type
+     * @return the new Cffu
+     * @see #anyOf(CompletionStage[])
+     */
+    @SafeVarargs
+    public final <T> Cffu<T> mSupplyAnyAsync(Executor executor, Supplier<? extends T>... suppliers) {
+        return create(CompletableFutureUtils.mSupplyAnyAsync(executor, suppliers));
+    }
+
+    /**
      * Returns a new Cffu that is asynchronously completed
      * by tasks running in the Cffu's default asynchronous execution facility
      * after runs the given actions.
@@ -316,6 +433,56 @@ public final class CffuFactory {
      */
     public Cffu<Void> mRunAsync(Executor executor, Runnable... actions) {
         return create(CompletableFutureUtils.mRunAsync(executor, actions));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously successful
+     * when any tasks running in the Cffu's default asynchronous execution facility success.
+     *
+     * @param actions the actions to run before completing the returned Cffu
+     * @return the new Cffu
+     * @see #anySuccessOf(CompletionStage[])
+     */
+    public Cffu<Void> mRunAnySuccessAsync(Runnable... actions) {
+        return mRunAnySuccessAsync(defaultExecutor, actions);
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * when any tasks running in the Cffu's default asynchronous execution facility.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to run before completing the returned Cffu
+     * @return the new Cffu
+     * @see #anySuccessOf(CompletionStage[])
+     */
+    public Cffu<Void> mRunAnySuccessAsync(Executor executor, Runnable... actions) {
+        return create(CompletableFutureUtils.mRunAnySuccessAsync(executor, actions));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * when any tasks running in the Cffu's default asynchronous execution facility.
+     *
+     * @param actions the actions to run before completing the returned Cffu
+     * @return the new Cffu
+     * @see #anyOf(CompletionStage[])
+     */
+    public Cffu<Void> mRunAnyAsync(Runnable... actions) {
+        return mRunAnyAsync(defaultExecutor, actions);
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * when any tasks running in the given executor complete.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @param actions  the actions to run before completing the returned Cffu
+     * @return the new Cffu
+     * @see #anyOf(CompletionStage[])
+     */
+    public Cffu<Void> mRunAnyAsync(Executor executor, Runnable... actions) {
+        return create(CompletableFutureUtils.mRunAnyAsync(executor, actions));
     }
 
     // endregion
@@ -437,9 +604,140 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
+     * by tasks running in the Cffu's default asynchronous execution facility
+     * with the successful values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier failed, use {@code null}.
      *
+     * @return the new Cffu
+     */
+    public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyAllSuccessAsync(
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
+        return tupleMSupplyAllSuccessAsync(defaultExecutor, supplier1, supplier2);
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier failed, use {@code null}.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @return the new Cffu
+     */
+    public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyAllSuccessAsync(
+            Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
+        return create(CompletableFutureUtils.tupleMSupplyAllSuccessAsync(executor, supplier1, supplier2));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the Cffu's default asynchronous execution facility
+     * with the successful values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier failed, use {@code null}.
+     *
+     * @return the new Cffu
+     */
+    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyAllSuccessAsync(
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
+        return tupleMSupplyAllSuccessAsync(defaultExecutor, supplier1, supplier2, supplier3);
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier failed, use {@code null}.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @return the new Cffu
+     */
+    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyAllSuccessAsync(
+            Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
+        return create(CompletableFutureUtils.tupleMSupplyAllSuccessAsync(executor, supplier1, supplier2, supplier3));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the Cffu's default asynchronous execution facility
+     * with the successful values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier failed, use {@code null}.
+     *
+     * @return the new Cffu
+     */
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyAllSuccessAsync(
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+            Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
+        return tupleMSupplyAllSuccessAsync(defaultExecutor, supplier1, supplier2, supplier3, supplier4);
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier failed, use {@code null}.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @return the new Cffu
+     */
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyAllSuccessAsync(
+            Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+            Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
+        return create(CompletableFutureUtils.tupleMSupplyAllSuccessAsync(executor, supplier1, supplier2, supplier3, supplier4));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the Cffu's default asynchronous execution facility
+     * with the successful values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier failed, use {@code null}.
+     *
+     * @return the new Cffu
+     */
+    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAllSuccessAsync(
+            Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+            Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
+        return tupleMSupplyAllSuccessAsync(defaultExecutor, supplier1, supplier2, supplier3, supplier4, supplier5);
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier failed, use {@code null}.
+     *
+     * @param executor the executor to use for asynchronous execution
+     * @return the new Cffu
+     */
+    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAllSuccessAsync(
+            Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+            Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
+        return create(CompletableFutureUtils.tupleMSupplyAllSuccessAsync(executor, supplier1, supplier2, supplier3, supplier4, supplier5));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed
+     * by tasks running in the Cffu's default asynchronous execution facility
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
+     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise {@code null}.
+     *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new Cffu
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
@@ -448,11 +746,17 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * Returns a new Cffu that is asynchronously completed by tasks running in the given Executor
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise {@code null}.
      *
      * @param executor the executor to use for asynchronous execution
+     * @param timeout  how long to wait in units of {@code unit}
+     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new Cffu
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
@@ -463,9 +767,16 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
+     * by tasks running in the Cffu's default asynchronous execution facility
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise {@code null}.
      *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new Cffu
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
@@ -475,11 +786,17 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * Returns a new Cffu that is asynchronously completed by tasks running in the given Executor
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise {@code null}.
      *
      * @param executor the executor to use for asynchronous execution
+     * @param timeout  how long to wait in units of {@code unit}
+     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new Cffu
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
@@ -491,9 +808,16 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
+     * by tasks running in the Cffu's default asynchronous execution facility
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise {@code null}.
      *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new Cffu
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
@@ -503,11 +827,17 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * Returns a new Cffu that is asynchronously completed by tasks running in the given Executor
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise {@code null}.
      *
      * @param executor the executor to use for asynchronous execution
+     * @param timeout  how long to wait in units of {@code unit}
+     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new Cffu
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
@@ -519,9 +849,16 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
+     * by tasks running in the Cffu's default asynchronous execution facility
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise {@code null}.
      *
+     * @param timeout how long to wait in units of {@code unit}
+     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new Cffu
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
@@ -531,11 +868,17 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * Returns a new Cffu that is asynchronously completed by tasks running in the given Executor
+     * with the most values obtained by calling the given Suppliers
+     * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
+     * <p>
+     * If the given supplier is successful in the given time, the return result is the completed value;
+     * Otherwise {@code null}.
      *
      * @param executor the executor to use for asynchronous execution
+     * @param timeout  how long to wait in units of {@code unit}
+     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new Cffu
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
@@ -684,15 +1027,32 @@ public final class CffuFactory {
     }
 
     /**
+     * Returns a new Cffu that is successful with the results in the <strong>same order</strong>
+     * of the given stages arguments when all the given stages completed;
+     * If the given stage complete exceptionally, treat it successful with value valueIfFailed.
+     * If no stages are provided, returns a Cffu completed with the value empty list.
+     *
+     * @param valueIfFailed the value to return if not completed successfully
+     * @param cfs           the stages
+     * @throws NullPointerException if the array or any of its elements are {@code null}
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    public final <T> Cffu<List<T>> allSuccessResultsOf(
+            @Nullable T valueIfFailed, CompletionStage<? extends T>... cfs) {
+        return create(CompletableFutureUtils.allSuccessResultsOf(valueIfFailed, cfs));
+    }
+
+    /**
      * Returns a new Cffu with the most results in the <strong>same order</strong> of
      * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
-     * @param timeout           how long to wait in units of {@code unit}
-     * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param cfs               the stages
+     * @param timeout       how long to wait in units of {@code unit}
+     * @param unit          a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param cfs           the stages
      * @see Cffu#getSuccessNow(Object)
      */
     @Contract(pure = true)
@@ -902,6 +1262,68 @@ public final class CffuFactory {
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
         return create(CompletableFutureUtils.allTupleFastFailOf(cf1, cf2, cf3, cf4, cf5));
+    }
+
+    /**
+     * Returns a new Cffu that is successful
+     * with the results of the given stages arguments when all the given stages completed;
+     * If the given stage complete exceptionally, treat it successful with value valueIfFailed.
+     *
+     * @return a new Cffu
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allSuccessResultsOf(Object, CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T1, T2> Cffu<Tuple2<T1, T2>> allSuccessTupleOf(
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
+        return create(CompletableFutureUtils.allSuccessTupleOf(cf1, cf2));
+    }
+
+    /**
+     * Returns a new Cffu that is successful
+     * with the results of the given stages arguments when all the given stages completed;
+     * If the given stage complete exceptionally, treat it successful with value valueIfFailed.
+     *
+     * @return a new Cffu
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allSuccessResultsOf(Object, CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allSuccessTupleOf(
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
+        return create(CompletableFutureUtils.allSuccessTupleOf(cf1, cf2, cf3));
+    }
+
+    /**
+     * Returns a new Cffu that is successful
+     * with the results of the given stages arguments when all the given stages completed;
+     * If the given stage complete exceptionally, treat it successful with value valueIfFailed.
+     *
+     * @return a new Cffu
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allSuccessResultsOf(Object, CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allSuccessTupleOf(
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+            CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
+        return create(CompletableFutureUtils.allSuccessTupleOf(cf1, cf2, cf3, cf4));
+    }
+
+    /**
+     * Returns a new Cffu that is successful
+     * with the results of the given stages arguments when all the given stages completed;
+     * If the given stage complete exceptionally, treat it successful with value valueIfFailed.
+     *
+     * @return a new Cffu
+     * @throws NullPointerException if any of the given stages are {@code null}
+     * @see #allSuccessResultsOf(Object, CompletionStage[])
+     */
+    @Contract(pure = true)
+    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allSuccessTupleOf(
+            CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
+            CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
+        return create(CompletableFutureUtils.allSuccessTupleOf(cf1, cf2, cf3, cf4, cf5));
     }
 
     /**
@@ -1221,7 +1643,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public static <T> Cffu<T>[] cffuListToArray(List<Cffu<T>> cffuList) {
         @SuppressWarnings("unchecked")
-        final Cffu<T>[] a = new Cffu[cffuList.size()];
+        Cffu<T>[] a = new Cffu[cffuList.size()];
         return cffuList.toArray(a);
     }
 

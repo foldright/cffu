@@ -5,6 +5,7 @@
  * the key user class is {@link io.foldright.cffu.CompletableFutureUtils}
  * which contains the enhanced and backport methods for {@link java.util.concurrent.CompletableFuture}.
  *
+ * @author Jerry Lee (oldratlee at gmail dot com)
  * @see io.foldright.cffu.Cffu
  * @see io.foldright.cffu.CffuFactory
  * @see io.foldright.cffu.CffuFactoryBuilder
