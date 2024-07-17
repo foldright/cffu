@@ -803,18 +803,23 @@ class CffuFactoryTest {
     @Test
     void test_toCffu() throws Exception {
         Cffu<Integer> cf = cffuFactory.toCffu(completedFuture(n));
-
         assertEquals(n, cf.get());
         shouldNotBeMinimalStage(cf);
 
+        final Cffu<Integer> cffu_in = cffuFactory.completedFuture(42);
+
         CffuFactory fac = CffuFactory.builder(anotherExecutorService).forbidObtrudeMethods(true).build();
-        Cffu<Integer> cffu = fac.toCffu(cffuFactory.completedFuture(42));
+        Cffu<Integer> cffu = fac.toCffu(cffu_in);
+        assertNotSame(cffu_in, cffu);
         assertSame(anotherExecutorService, cffu.defaultExecutor());
         assertSame(fac, cffu.cffuFactory());
-
         assertEquals("obtrude methods is forbidden by cffu", assertThrowsExactly(UnsupportedOperationException.class, () ->
                 cffu.obtrudeValue(44)
         ).getMessage());
+
+        assertSame(cffu_in, cffuFactory.toCffu(cffu_in));
+        final CompletionStage<Integer> minCffu = cffuFactory.completedStage(n);
+        assertNotSame(minCffu, cffuFactory.toCffu(minCffu));
     }
 
     @Test
