@@ -1,6 +1,7 @@
 package io.foldright.cffu;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
+import io.foldright.cffu.retry.RetryStrategy;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
 import io.foldright.cffu.tuple.Tuple4;
@@ -8,6 +9,7 @@ import io.foldright.cffu.tuple.Tuple5;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.Contract;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,15 +18,16 @@ import java.util.function.*;
 
 import static io.foldright.cffu.Delayer.atCfDelayerThread;
 import static io.foldright.cffu.ExceptionReporter.reportException;
+import static io.foldright.cffu.retry.ImmutableRetryStrategy.*;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
-
 
 /**
  * This class contains the new enhanced and backport methods for {@link CompletableFuture}.
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @author HuHao (995483610 at qq dot com)
+ * @author Eric Lin (linqinghua4 at gmail dot com)
  */
 public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
@@ -1999,6 +2002,87 @@ public final class CompletableFutureUtils {
     }
 
     // endregion
+    ////////////////////////////////////////////////////////////
+    // region## Retry Support
+    ////////////////////////////////////////////////////////////
+
+    /**
+     * Retry the given completable future supplier according to max attempts retry strategy.
+     * <p>
+     * The implementation uses {@code Executors.newSingleThreadScheduledExecutor()} as default delayer.
+     * For more configurable retry strategies, consider using
+     * {@link CompletableFutureUtils#retry(RetryStrategy, ScheduledExecutorService, Supplier)}
+     *
+     * @param <T>      the type parameter of CompletableFuture
+     * @param attempts the attempts(including first execution before retry)
+     * @param supplier the functions to use to compute the values of the returned CompletableFuture
+     * @return the new retryable CompletableFuture
+     */
+    public static <T> CompletableFuture<T> retry(long attempts, Supplier<CompletionStage<T>> supplier) {
+        return retry(ofAttempts(attempts), Executors.newSingleThreadScheduledExecutor(), supplier);
+    }
+
+    /**
+     * Retry the given completable future supplier according to timeout retry strategy.
+     * <p>
+     * The implementation uses {@code Executors.newSingleThreadScheduledExecutor()} as default delayer.
+     * For more configurable retry strategies, consider using
+     * {@link CompletableFutureUtils#retry(RetryStrategy, ScheduledExecutorService, Supplier)}
+     *
+     * @param <T>      the type parameter of CompletableFuture
+     * @param supplier the functions to use to compute the values of the returned CompletableFuture
+     * @return the new retryable CompletableFuture
+     */
+    public static <T> CompletableFuture<T> retryWithTimeout(Duration timeout, Supplier<CompletionStage<T>> supplier) {
+        return retry(ofTimeout(timeout), Executors.newSingleThreadScheduledExecutor(), supplier);
+    }
+
+    /**
+     * Retry the given completable future supplier according to retry strategy.
+     * The implementation uses {@code Executors.newSingleThreadScheduledExecutor()} as default delayer.
+     * For more configurable retry strategies, consider using
+     * {@link CompletableFutureUtils#retry(RetryStrategy, ScheduledExecutorService, Supplier)}
+     *
+     * @param <T>      the type parameter of CompletableFuture
+     * @param retry    the retry strategy
+     * @param supplier the functions to use to compute the values of the returned CompletableFuture
+     * @return the new retryable CompletableFuture
+     */
+    public static <T> CompletableFuture<T> retry(RetryStrategy<T> retry, Supplier<CompletionStage<T>> supplier) {
+        return retry(retry, Executors.newSingleThreadScheduledExecutor(), supplier);
+    }
+
+    /**
+     * Retry the given completable future supplier according to retry strategy.
+     * <h3>Example</h3>
+     *
+     * <pre>{@code
+     * AtomicInteger errorCount = new AtomicInteger();
+     * RetryStrategy<Integer> retry = ImmutableRetryStrategy.<Integer>builder()
+     *          .triggerStrategy(TriggerStrategy.byThrowable())
+     *          .delayStrategy(DelayStrategy.fixedDuration(50))
+     *          .terminateStrategy(TerminateStrategy.utilSuccess())
+     *          .addErrorListeners(e -> errorCount.getAndIncrement())
+     *          .build();
+     * CompletableFuture<Integer> cf = CompletableFutureUtils.<Integer>retry(retry, scheduler, () -> supplyAsync(task));
+     * }</pre>
+     *
+     * @param <T>      the type parameter of CompletableFuture
+     * @param retry    the retry strategy
+     * @param delayer  the delayer to execute delayed retryable task
+     * @param supplier the supplier to use to compute the values of CompletableFuture for each attempts
+     * @return the new retryable CompletableFuture
+     * @see RetryStrategy
+     * @see io.foldright.cffu.retry.ImmutableRetryStrategy
+     */
+    public static <T> CompletableFuture<T> retry(RetryStrategy<T> retry, ScheduledExecutorService delayer,
+                                                 Supplier<CompletionStage<T>> supplier) {
+        requireNonNull(retry, "retry strategy is null");
+        requireNonNull(delayer, "delayer is null");
+        requireNonNull(supplier, "completion stage supplier is null");
+        return new RetryingCompletableFuture<>(retry).toCompletableFuture(supplier, delayer);
+    }
+
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
     // region# CF Instance Methods(including new enhanced + backport methods)

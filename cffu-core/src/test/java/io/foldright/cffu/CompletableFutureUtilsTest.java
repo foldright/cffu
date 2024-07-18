@@ -1,5 +1,6 @@
 package io.foldright.cffu;
 
+import io.foldright.cffu.retry.*;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
 import io.foldright.cffu.tuple.Tuple4;
@@ -9,10 +10,12 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -25,6 +28,7 @@ import static io.foldright.cffu.CompletableFutureUtils.*;
 import static io.foldright.test_utils.TestUtils.*;
 import static java.lang.Thread.currentThread;
 import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static java.util.function.Function.identity;
 import static org.junit.jupiter.api.Assertions.*;
@@ -914,6 +918,97 @@ class CompletableFutureUtilsTest {
         Executor delayer = delayedExecutor(1, TimeUnit.MILLISECONDS);
         CompletableFuture.runAsync(() -> holder.set(testName), delayer).get();
         assertEquals(testName, holder.get());
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////
+    // region## retry* methods
+    ////////////////////////////////////////////////////////////
+
+    @Test
+    void test_retry__successful_attempts() throws Exception {
+        AtomicInteger times = new AtomicInteger();
+        Supplier<Integer> task = () -> {
+            if (times.getAndIncrement() < 3) {
+                throw new RuntimeException("异常结果");
+            } else {
+                return 42;
+            }
+        };
+        Integer result = CompletableFutureUtils.<Integer>retry(4, () -> supplyAsync(task))
+                .join();
+        assertEquals(result, 42);
+    }
+
+    @Test
+    void test_retryWithTimeout__failure_attempts() throws Exception {
+        AtomicInteger times = new AtomicInteger();
+        Supplier<Integer> task = () -> {
+            if (times.getAndIncrement() < 3) {
+                throw new RuntimeException("异常结果");
+            } else {
+                return 42;
+            }
+        };
+        CompletableFuture<Integer> retry = CompletableFutureUtils.<Integer>retry(3, () -> supplyAsync(task));
+        CompletionException exception = assertThrows(CompletionException.class, retry::join);
+        assertEquals(exception.getCause().getClass(), RuntimeException.class);
+    }
+
+    @Test
+    void test_retryWithTimeout__successful_timeout() throws Exception {
+        AtomicInteger times = new AtomicInteger();
+        Supplier<Integer> task = () -> {
+            if (times.getAndIncrement() < 3) {
+                throw new RuntimeException("异常结果");
+            } else {
+                return 42;
+            }
+        };
+        CompletableFuture<Integer> retry =
+                CompletableFutureUtils.<Integer>retryWithTimeout(Duration.ofMillis(450), () -> supplyAsync(task));
+        assertEquals(42, retry.join());
+    }
+
+    @Test
+    void test_retry__failure_timeout() throws Exception {
+        AtomicInteger times = new AtomicInteger();
+        Supplier<Integer> task = () -> {
+            sleep(100);
+            if (times.getAndIncrement() < 3) {
+                throw new RuntimeException("异常结果");
+            } else {
+                return 42;
+            }
+        };
+        CompletableFuture<Integer> retry =
+                CompletableFutureUtils.<Integer>retryWithTimeout(Duration.ofMillis(350), () -> supplyAsync(task));
+        CompletionException exception = assertThrows(CompletionException.class, retry::join);
+        assertEquals(exception.getCause().getClass(), TimeoutException.class);
+    }
+
+    @Test
+    void test_retry__success_fixedDuration() throws Exception {
+        AtomicInteger times = new AtomicInteger();
+        Supplier<Integer> task = () -> {
+            sleep(100);
+            if (times.getAndIncrement() < 3) {
+                throw new RuntimeException("异常结果");
+            } else {
+                return 42;
+            }
+        };
+        AtomicInteger errorCount = new AtomicInteger();
+        RetryStrategy<Integer> retry = ImmutableRetryStrategy.<Integer>builder()
+                .triggerStrategy(TriggerStrategy.byThrowable())
+                .delayStrategy(DelayStrategy.fixedDuration(50))
+                .terminateStrategy(TerminateStrategy.utilSuccess())
+                .addErrorListeners(e -> errorCount.getAndIncrement())
+                .build();
+        CompletableFuture<Integer> cf =
+                CompletableFutureUtils.<Integer>retry(retry, () -> supplyAsync(task));
+        assertEquals(42, cf.join());
+        assertEquals(3, errorCount.get());
     }
 
     // endregion
