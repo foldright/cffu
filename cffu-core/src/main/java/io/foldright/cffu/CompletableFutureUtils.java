@@ -2054,7 +2054,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Retry the given completable future supplier according to retry strategy.
-     * <h3>Example</h3>
+     * <p>Example
      *
      * <pre>{@code
      * AtomicInteger errorCount = new AtomicInteger();
