@@ -3827,8 +3827,8 @@ public final class CompletableFutureUtils {
             if (!atCfDelayerThread()) completeCf(ret, v, ex);
             else delayedExecutor(0, TimeUnit.SECONDS, asyncExecutor)
                     .execute(() -> completeCf(ret, v, ex));
-            // use `cf.handle` method(instead of `whenComplete`) and return null,
-            // in order to prevent below `exceptionally` reporting the handled argument exception in this action
+            // use `cf.handle` method(instead of `cf.whenComplete`) and return null
+            // in order to prevent reporting the handled argument exception in this `action` in subsequent `exceptionally`
             return null;
         }).exceptionally(ex -> reportException("Exception occurred in handle of executor hop", ex));
 
@@ -3998,7 +3998,12 @@ public final class CompletableFutureUtils {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(action, "action is null");
 
-        cfThis.whenComplete(action).exceptionally(ex -> reportException("Exception occurred in the action of peek", ex));
+        // use `cf.handle` method(instead of `cf.whenComplete`) and return null
+        // in order to prevent reporting the handled argument exception in this `action` in subsequent `exceptionally`
+        cfThis.handle((v, ex) -> {
+            action.accept(v, ex);
+            return null;
+        }).exceptionally(ex -> reportException("Exception occurred in the action of peek", ex));
         return cfThis;
     }
 
@@ -4050,8 +4055,12 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        cfThis.whenCompleteAsync(action, executor).exceptionally(ex ->
-                reportException("Exception occurred in the action of peekAsync", ex));
+        // use `cf.handleAsync` method(instead of `cf.whenCompleteAsync`) and return null
+        // in order to prevent reporting the handled argument exception in this `action` in subsequent `exceptionally`
+        cfThis.handleAsync((v, ex) -> {
+            action.accept(v, ex);
+            return null;
+        }, executor).exceptionally(ex -> reportException("Exception occurred in the action of peekAsync", ex));
         return cfThis;
     }
 

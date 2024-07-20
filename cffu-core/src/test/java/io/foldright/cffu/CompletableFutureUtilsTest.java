@@ -1596,6 +1596,7 @@ class CompletableFutureUtilsTest {
         assertSame(peek(failed, c), failed);
         assertSame(peekAsync(failed, c), failed);
         assertSame(peekAsync(failed, c, executorService), failed);
+
         assertSame(peek(failed, ec), failed);
         assertSame(peekAsync(failed, ec), failed);
         assertSame(peekAsync(failed, ec, executorService), failed);
@@ -1604,6 +1605,7 @@ class CompletableFutureUtilsTest {
         assertEquals(n, peek(success, c).get());
         assertEquals(n, peekAsync(success, c).get());
         assertEquals(n, peekAsync(success, c).get());
+
         assertEquals(n, peek(success, ec).get());
         assertEquals(n, peekAsync(success, ec).get());
         assertEquals(n, peekAsync(success, ec).get());
