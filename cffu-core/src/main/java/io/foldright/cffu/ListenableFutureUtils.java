@@ -44,7 +44,24 @@ public class ListenableFutureUtils {
     public static <T> CompletableFuture<T> toCompletableFuture(ListenableFuture<T> lf, Executor executor) {
         requireNonNull(lf, "listenableFuture is null");
 
-        CompletableFuture<T> ret = new CompletableFuture<>();
+        CompletableFuture<T> ret = new CompletableFuture<T>() {
+            @Override
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                // propagate cancellation from outer adapter to LF
+                final boolean ret = lf.cancel(mayInterruptIfRunning);
+                super.cancel(mayInterruptIfRunning);
+                return ret;
+            }
+
+            @Override
+            public String toString() {
+                return "CompletableFutureAdapter@ListenableFutureUtils.toCompletableFuture" +
+                        " of ListenableFuture(" + lf + "), " + super.toString();
+            }
+        };
+        // propagate cancellation by CancellationException from outer adapter to LF
+        CompletableFutureUtils.peek(ret, (v, ex) -> lf.cancel(false));
+
         Futures.addCallback(lf, new FutureCallback<T>() {
             @Override
             public void onSuccess(T result) {

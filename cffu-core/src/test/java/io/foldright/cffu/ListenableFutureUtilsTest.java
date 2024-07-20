@@ -184,7 +184,7 @@ class ListenableFutureUtilsTest {
     // region# Test helper methods/fields
     ////////////////////////////////////////////////////////////////////////////////
 
-    void waitForAllLfsToComplete(ListenableFuture<?>... lfs) throws Exception {
+    static void waitForAllLfsToComplete(ListenableFuture<?>... lfs) throws Exception {
         for (ListenableFuture<?> lf : lfs) {
             try {
                 lf.get(2, TimeUnit.SECONDS);
@@ -195,7 +195,7 @@ class ListenableFutureUtilsTest {
         }
     }
 
-    void waitForAllCfsToComplete(CompletableFuture<?>... cfs) throws Exception {
+    static void waitForAllCfsToComplete(CompletableFuture<?>... cfs) throws Exception {
         CompletableFutureUtils.mostSuccessResultsOf(null, 2, TimeUnit.SECONDS, cfs).join();
     }
 
