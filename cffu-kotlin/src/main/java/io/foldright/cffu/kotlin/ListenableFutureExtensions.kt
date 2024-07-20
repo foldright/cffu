@@ -21,15 +21,7 @@ import java.util.concurrent.Executor
 */
 
 /**
- * A convenient util method for converting input [ListenableFuture] to [CompletableFuture].
- *
- * Callback from ListenableFuture is executed using CompletableFuture's default asynchronous execution facility.
- */
-fun <T> ListenableFuture<T>.toCompletableFuture(): CompletableFuture<T> =
-    ListenableFutureUtils.toCompletableFuture(this)
-
-/**
- * A convenient util method for converting input [ListenableFuture] to [CompletableFuture].
+ * Converts input [ListenableFuture] to [CompletableFuture].
  *
  * Callback from ListenableFuture is executed using the given executor,
  * use {[MoreExecutors.directExecutor]} if you need skip executor switch.
@@ -38,7 +30,7 @@ fun <T> ListenableFuture<T>.toCompletableFuture(executor: Executor): Completable
     ListenableFutureUtils.toCompletableFuture(this, executor)
 
 /**
- * A convenient util method for converting input [ListenableFuture] to [Cffu].
+ * Converts input [ListenableFuture] to [Cffu].
  *
  * Callback from ListenableFuture is executed using cffuFactory's default executor.
  */
@@ -47,13 +39,13 @@ fun <T> ListenableFuture<T>.toCffu(cffuFactory: CffuFactory): Cffu<T> {
 }
 
 /**
- * A convenient util method for converting input [CompletableFuture] to [ListenableFuture].
+ * Converts input [CompletableFuture] to [ListenableFuture].
  */
 fun <T> CompletableFuture<T>.toListenableFuture(): ListenableFuture<T> =
     ListenableFutureUtils.toListenableFuture(this)
 
 /**
- * A convenient util method for converting input [Cffu] to [ListenableFuture].
+ * Converts input [Cffu] to [ListenableFuture].
  */
 fun <T> Cffu<T>.toListenableFuture(): ListenableFuture<T> =
     ListenableFutureUtils.toListenableFuture(this)

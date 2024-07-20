@@ -22,8 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ListenableFutureUtilsTest {
     @Test
     void test_toCompletableFuture() throws Exception {
-        ListenableFuture<Integer> lf = Futures.immediateFuture(n);
-        assertEquals(n, toCompletableFuture(lf).get());
+        final ListenableFuture<Integer> lf = Futures.immediateFuture(n);
         final CompletableFuture<Integer> cf = toCompletableFuture(lf, executorService);
         assertEquals(n, cf.get());
         assertTrue(cf.toString().startsWith(
@@ -32,7 +31,7 @@ class ListenableFutureUtilsTest {
 
         ListenableFuture<Integer> failed = Futures.immediateFailedFuture(rte);
         assertSame(rte, assertThrowsExactly(ExecutionException.class,
-                () -> toCompletableFuture(failed).get()
+                () -> toCompletableFuture(failed, executorService).get()
         ).getCause());
     }
 
@@ -103,7 +102,7 @@ class ListenableFutureUtilsTest {
     @Test
     void test_lf2cf_cancellationAndPropagation() throws Exception {
         final ListenableFuture<Integer> lf = SettableFuture.create();
-        final CompletableFuture<Integer> cf = toCompletableFuture(lf);
+        final CompletableFuture<Integer> cf = toCompletableFuture(lf, executorService);
 
         assertTrue(cf.cancel(false));
         waitForAllCfsToComplete(cf);
@@ -118,7 +117,7 @@ class ListenableFutureUtilsTest {
     @Test
     void test_lf2cf_setCancellationExceptionToCf_cancellationAndPropagation() throws Exception {
         final ListenableFuture<Integer> lf = SettableFuture.create();
-        final CompletableFuture<Integer> cf = toCompletableFuture(lf);
+        final CompletableFuture<Integer> cf = toCompletableFuture(lf, executorService);
 
         assertTrue(cf.completeExceptionally(new CancellationException()));
         waitForAllCfsToComplete(cf);

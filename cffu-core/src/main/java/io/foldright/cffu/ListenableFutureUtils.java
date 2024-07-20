@@ -25,17 +25,7 @@ public class ListenableFutureUtils {
      */
 
     /**
-     * A convenient util method for converting input {@link ListenableFuture} to {@link CompletableFuture}.
-     * <p>
-     * Callback from ListenableFuture is executed using CompletableFuture's default asynchronous execution facility.
-     */
-    @Contract(pure = true)
-    public static <T> CompletableFuture<T> toCompletableFuture(ListenableFuture<T> lf) {
-        return toCompletableFuture(lf, CompletableFutureUtils.ASYNC_POOL);
-    }
-
-    /**
-     * A convenient util method for converting input {@link ListenableFuture} to {@link CompletableFuture}.
+     * Converts input {@link ListenableFuture} to {@link CompletableFuture}.
      * <p>
      * Callback from ListenableFuture is executed using the given executor,
      * use {{@link MoreExecutors#directExecutor()}} if you need skip executor switch.
@@ -77,7 +67,7 @@ public class ListenableFutureUtils {
     }
 
     /**
-     * A convenient util method for converting input {@link ListenableFuture} to {@link Cffu}.
+     * Converts input {@link ListenableFuture} to {@link Cffu}.
      * <p>
      * Callback from ListenableFuture is executed using cffuFactory's default executor.
      */
@@ -87,7 +77,7 @@ public class ListenableFutureUtils {
     }
 
     /**
-     * A convenient util method for converting input {@link CompletableFuture} to {@link ListenableFuture}.
+     * Converts input {@link CompletableFuture} to {@link ListenableFuture}.
      */
     @Contract(pure = true)
     public static <T> ListenableFuture<T> toListenableFuture(CompletableFuture<T> cf) {
@@ -133,7 +123,7 @@ public class ListenableFutureUtils {
     }
 
     /**
-     * A convenient util method for converting input {@link Cffu} to {@link ListenableFuture}.
+     * Converts input {@link Cffu} to {@link ListenableFuture}.
      */
     @Contract(pure = true)
     public static <T> ListenableFuture<T> toListenableFuture(Cffu<T> cf) {
