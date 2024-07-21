@@ -50,7 +50,16 @@ public class ListenableFutureUtils {
             }
         };
         // propagate cancellation by CancellationException from outer adapter to LF
-        CompletableFutureUtils.peek(ret, (v, ex) -> lf.cancel(false));
+        ret.whenComplete((result, throwable) -> {
+            if (ret.isCancelled()) {
+                lf.cancel(false);
+            } else {
+                Throwable cause = CompletableFutureUtils.unwrapCfException(throwable);
+                if (cause instanceof CancellationException) {
+                    lf.cancel(false);
+                }
+            }
+        });
 
         Futures.addCallback(lf, new FutureCallback<T>() {
             @Override
