@@ -2,6 +2,7 @@ package io.foldright.cffu;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.SettableFuture;
 import io.foldright.test_utils.TestThreadPoolManager;
 import org.junit.jupiter.api.AfterAll;
@@ -116,17 +117,59 @@ class ListenableFutureUtilsTest {
 
     @Test
     void test_lf2cf_setCancellationExceptionToCf_cancellationAndPropagation() throws Exception {
-        final ListenableFuture<Integer> lf = SettableFuture.create();
-        final CompletableFuture<Integer> cf = toCompletableFuture(lf, executorService, true);
+        {
+            final ListenableFuture<Integer> lf = SettableFuture.create();
+            final CompletableFuture<Integer> cf = toCompletableFuture(lf, executorService, true);
 
-        assertTrue(cf.completeExceptionally(new CancellationException()));
-        waitForAllCfsToComplete(cf);
-        waitForAllLfsToComplete(lf);
+            assertTrue(cf.completeExceptionally(new CancellationException()));
+            waitForAllCfsToComplete(cf);
+            waitForAllLfsToComplete(lf);
 
-        assertTrue(lf.isCancelled());
-        assertThrowsExactly(CancellationException.class, lf::get);
-        assertTrue(cf.isCancelled());
-        assertThrowsExactly(CancellationException.class, cf::get);
+            assertTrue(lf.isCancelled());
+            assertThrowsExactly(CancellationException.class, lf::get);
+            assertTrue(cf.isCancelled());
+            assertThrowsExactly(CancellationException.class, cf::get);
+        }
+        {
+            final ListenableFuture<Integer> lf = SettableFuture.create();
+            final CompletableFuture<Integer> cf = toCompletableFuture(lf, executorService, true);
+
+            assertTrue(cf.completeExceptionally(new IllegalArgumentException()));
+            sleep(100);
+            waitForAllCfsToComplete(cf);
+
+            assertFalse(lf.isDone());
+        }
+    }
+
+    @Test
+    void test_lf2cf_dependentLf() throws Exception {
+        {
+            CompletableFuture<Integer> cf = CompletableFuture.supplyAsync(() -> n, executorService);
+            CompletableFuture<Integer> cfWrapperOfLf = cf.thenCompose(v -> {
+                ListenableFuture<Integer> lf = Futures.submit(() -> v + 1, executorService);
+                return toCompletableFuture(lf, MoreExecutors.directExecutor(), true);
+            });
+            assertEquals(n + 1, cfWrapperOfLf.join());
+        }
+        {
+            final ListenableFuture<Integer> lf = SettableFuture.create();
+            CompletableFuture<Integer> cf = new CompletableFuture<>();
+
+            CompletableFuture<Integer> cfWrapperOfLf = cf.thenCompose(v ->
+                    toCompletableFuture(lf, MoreExecutors.directExecutor(), true));
+
+            cf.cancel(false);
+            sleep(20);
+
+            assertTrue(cf.isCancelled());
+            assertThrowsExactly(CancellationException.class, cf::get);
+            assertFalse(cfWrapperOfLf.isCancelled());
+            final ExecutionException ee = assertThrowsExactly(ExecutionException.class, cfWrapperOfLf::get);
+            assertInstanceOf(CancellationException.class, ee.getCause());
+
+            assertFalse(lf.isDone());
+        }
     }
 
     @Test
@@ -174,8 +217,8 @@ class ListenableFutureUtilsTest {
         // 🚫 CompletableFuture does NOT SUPPORT the propagation of cancellation
         //    the CancellationException is wrapped by CompletionException or ExecutionException
         assertFalse(transform.isCancelled());
-        final ExecutionException ce = assertThrowsExactly(ExecutionException.class, transform::get);
-        assertInstanceOf(CancellationException.class, ce.getCause());
+        final ExecutionException ee = assertThrowsExactly(ExecutionException.class, transform::get);
+        assertInstanceOf(CancellationException.class, ee.getCause());
     }
 
     // endregion
