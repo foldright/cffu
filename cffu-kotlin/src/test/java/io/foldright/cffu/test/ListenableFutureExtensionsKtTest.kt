@@ -17,18 +17,18 @@ import java.util.concurrent.ExecutionException
 class ListenableFutureExtensionsKtTest : FunSpec({
     test("toCompletableFuture") {
         val lf = Futures.immediateFuture(n)
-        lf.toCompletableFuture(testThreadPoolExecutor).get() shouldBe n
+        lf.toCompletableFuture(testThreadPoolExecutor, true).get() shouldBe n
 
         val failed = Futures.immediateFailedFuture<Int>(rte)
-        shouldThrowExactly<ExecutionException> { failed.toCompletableFuture(testThreadPoolExecutor).get() }.cause shouldBeSameInstanceAs rte
+        shouldThrowExactly<ExecutionException> { failed.toCompletableFuture(testThreadPoolExecutor, true).get() }.cause shouldBeSameInstanceAs rte
     }
 
     test("toCffu") {
         val lf = Futures.immediateFuture(n)
-        lf.toCffu(testCffuFactory).get() shouldBe n
+        lf.toCffu(testCffuFactory, true).get() shouldBe n
 
         val failed = Futures.immediateFailedFuture<Int>(rte)
-        shouldThrowExactly<ExecutionException> { failed.toCffu(testCffuFactory).get() }.cause shouldBeSameInstanceAs rte
+        shouldThrowExactly<ExecutionException> { failed.toCffu(testCffuFactory, true).get() }.cause shouldBeSameInstanceAs rte
     }
 
     test("toListenableFuture") {

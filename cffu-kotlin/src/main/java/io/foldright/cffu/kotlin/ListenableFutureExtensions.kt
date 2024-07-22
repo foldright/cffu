@@ -26,16 +26,16 @@ import java.util.concurrent.Executor
  * Callback from ListenableFuture is executed using the given executor,
  * use {[MoreExecutors.directExecutor]} if you need skip executor switch.
  */
-fun <T> ListenableFuture<T>.toCompletableFuture(executor: Executor): CompletableFuture<T> =
-    ListenableFutureUtils.toCompletableFuture(this, executor)
+fun <T> ListenableFuture<T>.toCompletableFuture(executor: Executor, mayInterruptIfRunning: Boolean): CompletableFuture<T> =
+    ListenableFutureUtils.toCompletableFuture(this, executor, mayInterruptIfRunning)
 
 /**
  * Converts input [ListenableFuture] to [Cffu].
  *
  * Callback from ListenableFuture is executed using cffuFactory's default executor.
  */
-fun <T> ListenableFuture<T>.toCffu(cffuFactory: CffuFactory): Cffu<T> {
-    return ListenableFutureUtils.toCffu(this, cffuFactory)
+fun <T> ListenableFuture<T>.toCffu(cffuFactory: CffuFactory, mayInterruptIfRunning: Boolean): Cffu<T> {
+    return ListenableFutureUtils.toCffu(this, cffuFactory, mayInterruptIfRunning)
 }
 
 /**

@@ -23,7 +23,7 @@ class ListenableFutureUtilsTest {
     @Test
     void test_toCompletableFuture() throws Exception {
         final ListenableFuture<Integer> lf = Futures.immediateFuture(n);
-        final CompletableFuture<Integer> cf = toCompletableFuture(lf, executorService);
+        final CompletableFuture<Integer> cf = toCompletableFuture(lf, executorService, true);
         assertEquals(n, cf.get());
         assertTrue(cf.toString().startsWith(
                 "CompletableFutureAdapter@ListenableFutureUtils.toCompletableFuture of ListenableFuture(" + lf + "), ")
@@ -31,18 +31,18 @@ class ListenableFutureUtilsTest {
 
         ListenableFuture<Integer> failed = Futures.immediateFailedFuture(rte);
         assertSame(rte, assertThrowsExactly(ExecutionException.class,
-                () -> toCompletableFuture(failed, executorService).get()
+                () -> toCompletableFuture(failed, executorService, true).get()
         ).getCause());
     }
 
     @Test
     void test_toCffu() throws Exception {
         ListenableFuture<Integer> lf = Futures.immediateFuture(n);
-        assertEquals(n, toCffu(lf, cffuFactory).get());
+        assertEquals(n, toCffu(lf, cffuFactory, true).get());
 
         ListenableFuture<Integer> failed = Futures.immediateFailedFuture(rte);
         assertSame(rte, assertThrowsExactly(ExecutionException.class,
-                () -> toCffu(failed, cffuFactory).get()
+                () -> toCffu(failed, cffuFactory, true).get()
         ).getCause());
     }
 
@@ -102,7 +102,7 @@ class ListenableFutureUtilsTest {
     @Test
     void test_lf2cf_cancellationAndPropagation() throws Exception {
         final ListenableFuture<Integer> lf = SettableFuture.create();
-        final CompletableFuture<Integer> cf = toCompletableFuture(lf, executorService);
+        final CompletableFuture<Integer> cf = toCompletableFuture(lf, executorService, true);
 
         assertTrue(cf.cancel(false));
         waitForAllCfsToComplete(cf);
@@ -117,7 +117,7 @@ class ListenableFutureUtilsTest {
     @Test
     void test_lf2cf_setCancellationExceptionToCf_cancellationAndPropagation() throws Exception {
         final ListenableFuture<Integer> lf = SettableFuture.create();
-        final CompletableFuture<Integer> cf = toCompletableFuture(lf, executorService);
+        final CompletableFuture<Integer> cf = toCompletableFuture(lf, executorService, true);
 
         assertTrue(cf.completeExceptionally(new CancellationException()));
         waitForAllCfsToComplete(cf);

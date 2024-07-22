@@ -28,10 +28,25 @@ public class ListenableFutureUtils {
      * Converts input {@link ListenableFuture} to {@link CompletableFuture}.
      * <p>
      * Callback from ListenableFuture is executed using the given executor,
-     * use {{@link MoreExecutors#directExecutor()}} if you need skip executor switch.
+     * use {@link MoreExecutors#directExecutor()} if you need skip executor switch.
+     * <p>
+     * Cancelling the result {@link CompletableFuture} will also cancel inner {@link ListenableFuture}.
+     * Use param {@code mayInterruptIfRunning} to control whether to interrupt the thread of {@link ListenableFuture}.
+     * <p>
+     * Note: CompletionException caused by this CancellationException is also considered cancellation.
+     * <p>
+     * We encourage you to avoid using direct write methods in {@link CompletableFuture} so that the underlying
+     * {@link ListenableFuture} can benefit from cancel propagation.
+     *
+     * @param lf                    the wrapped ListenableFuture
+     * @param executor              the executor
+     * @param mayInterruptIfRunning {@code true} if the thread of {@link ListenableFuture} should be interrupted when
+     * {@link CompletableFuture} canceled (if the thread is known to the implementation).
+     * @return the completable future
+     * @see CompletableFuture#cancel(boolean)
      */
     @Contract(pure = true)
-    public static <T> CompletableFuture<T> toCompletableFuture(ListenableFuture<T> lf, Executor executor) {
+    public static <T> CompletableFuture<T> toCompletableFuture(ListenableFuture<T> lf, Executor executor, boolean mayInterruptIfRunning) {
         requireNonNull(lf, "listenableFuture is null");
 
         CompletableFuture<T> ret = new CompletableFuture<T>() {
@@ -50,14 +65,10 @@ public class ListenableFutureUtils {
             }
         };
         // propagate cancellation by CancellationException from outer adapter to LF
-        ret.whenComplete((result, throwable) -> {
-            if (ret.isCancelled()) {
-                lf.cancel(false);
-            } else {
-                Throwable cause = CompletableFutureUtils.unwrapCfException(throwable);
-                if (cause instanceof CancellationException) {
-                    lf.cancel(false);
-                }
+        ret.whenComplete((v, ex) -> {
+            ex = CompletableFutureUtils.unwrapCfException(ex);
+            if (ex instanceof CancellationException) {
+                lf.cancel(mayInterruptIfRunning);
             }
         });
 
@@ -81,8 +92,8 @@ public class ListenableFutureUtils {
      * Callback from ListenableFuture is executed using cffuFactory's default executor.
      */
     @Contract(pure = true)
-    public static <T> Cffu<T> toCffu(ListenableFuture<T> lf, CffuFactory cffuFactory) {
-        return cffuFactory.toCffu(toCompletableFuture(lf, cffuFactory.defaultExecutor()));
+    public static <T> Cffu<T> toCffu(ListenableFuture<T> lf, CffuFactory cffuFactory, boolean mayInterruptIfRunning) {
+        return cffuFactory.toCffu(toCompletableFuture(lf, cffuFactory.defaultExecutor(), mayInterruptIfRunning));
     }
 
     /**
