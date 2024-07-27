@@ -2722,10 +2722,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu with the given CffuFactory(contained configuration)
-     * that is completed normally with the same value as this Cffu when it completes normally.
-     * If this Cffu completes exceptionally, then the returned Cffu completes exceptionally
-     * with a CompletionException with this exception as cause.
+     * Returns a new Cffu with the given defaultExecutor.
+     */
+    @Contract(pure = true)
+    public Cffu<T> resetDefaultExecutor(Executor defaultExecutor) {
+        return new Cffu<>(fac.resetDefaultExecutor(defaultExecutor), isMinimalStage, cf);
+    }
+
+    /**
+     * Returns a new Cffu with the given CffuFactory(contained configuration).
      * <p>
      * demo code about re-config methods of Cffu:
      *

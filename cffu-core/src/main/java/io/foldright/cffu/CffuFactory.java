@@ -66,6 +66,14 @@ public final class CffuFactory {
         return new CffuFactoryBuilder(CompletableFutureUtils.screenExecutor(defaultExecutor));
     }
 
+    /**
+     * Returns a new CffuFactory from this CffuFactory that reset the defaultExecutor.
+     */
+    @Contract(pure = true)
+    CffuFactory resetDefaultExecutor(Executor defaultExecutor) {
+        return new CffuFactory(defaultExecutor, forbidObtrudeMethods);
+    }
+
     @Contract(pure = true)
     private <T> Cffu<T> create(CompletableFuture<T> cf) {
         return new Cffu<>(this, false, cf);
@@ -1050,9 +1058,9 @@ public final class CffuFactory {
      * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
-     * @param timeout       how long to wait in units of {@code unit}
-     * @param unit          a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param cfs           the stages
+     * @param timeout           how long to wait in units of {@code unit}
+     * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param cfs               the stages
      * @see Cffu#getSuccessNow(Object)
      */
     @Contract(pure = true)

@@ -483,6 +483,11 @@ class CffuTest {
         assertSame(cffuFactory, cf.cffuFactory());
 
         assertSame(forbidObtrudeMethodsCffuFactory, cf.resetCffuFactory(forbidObtrudeMethodsCffuFactory).cffuFactory());
+
+        Executor executor = Runnable::run;
+        final Cffu<Integer> f2 = cf.resetDefaultExecutor(executor);
+        assertSame(executor, f2.defaultExecutor());
+        assertEquals(cffuFactory.forbidObtrudeMethods(), f2.cffuFactory().forbidObtrudeMethods());
     }
 
     // endregion

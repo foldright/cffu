@@ -919,6 +919,10 @@ class CffuFactoryTest {
         CffuFactory fac = CffuFactory.builder(anotherExecutorService).forbidObtrudeMethods(true).build();
         assertSame(anotherExecutorService, fac.defaultExecutor());
         assertTrue(fac.forbidObtrudeMethods());
+
+        final CffuFactory fac2 = cffuFactory.resetDefaultExecutor(anotherExecutorService);
+        assertSame(anotherExecutorService, fac2.defaultExecutor());
+        assertEquals(cffuFactory.forbidObtrudeMethods(), fac2.forbidObtrudeMethods());
     }
 
     @Test
