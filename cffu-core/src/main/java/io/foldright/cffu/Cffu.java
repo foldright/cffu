@@ -2845,23 +2845,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns the underlying CompletableFuture.
-     * <p>
-     * {@link CffuFactory#toCffu(CompletionStage)} is inverse operation to this method.
-     * {@link CffuFactory#cffuArrayUnwrap(Cffu[])} is the batch operation to this method.
-     *
-     * @return the underlying CompletableFuture
-     * @see CffuFactory#toCffu(CompletionStage)
-     * @see CffuFactory#cffuArrayUnwrap(Cffu[])
-     * @see #toCompletableFuture()
-     */
-    @Contract(pure = true)
-    @SuppressFBWarnings("EI_EXPOSE_REP")
-    public CompletableFuture<T> cffuUnwrap() {
-        return cf;
-    }
-
-    /**
      * Returns the estimated number of Cffus whose completions are awaiting completion of this Cffu.
      * This method is designed for use in monitoring system state, not for synchronization control.
      *
@@ -2880,6 +2863,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //  - dangerous
     //    - obtrudeValue(value)
     //    - obtrudeException(ex)
+    //    - cffuUnwrap()
     //  - for API compatibility of CompletableFuture
     //    - newIncompleteFuture()
     ////////////////////////////////////////////////////////////////////////////////
@@ -2914,6 +2898,23 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         checkMinimalStage();
         checkForbidObtrudeMethods();
         cf.obtrudeException(ex);
+    }
+
+    /**
+     * Returns the underlying CompletableFuture.
+     * In general, you should NEVER use this method, use {@link #toCompletableFuture()} instead.
+     * <p>
+     * {@link CffuFactory#cffuArrayUnwrap(Cffu[])} is the batch operation to this method.
+     *
+     * @return the underlying CompletableFuture
+     * @see #toCompletableFuture()
+     * @see CffuFactory#cffuArrayUnwrap(Cffu[])
+     * @see #toCompletableFuture()
+     */
+    @Contract(pure = true)
+    @SuppressFBWarnings("EI_EXPOSE_REP")
+    public CompletableFuture<T> cffuUnwrap() {
+        return cf;
     }
 
     /**
