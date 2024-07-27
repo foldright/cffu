@@ -3574,6 +3574,7 @@ public final class CompletableFutureUtils {
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
     C catching(C cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
         requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
 
         return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
@@ -3616,6 +3617,7 @@ public final class CompletableFutureUtils {
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
     C catchingAsync(C cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
         requireNonNull(executor, "executor is null");
 
@@ -3872,7 +3874,9 @@ public final class CompletableFutureUtils {
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
     C catchingCompose(C cfThis, Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
         requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
+
         return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
                 ? cfThis : fallback.apply((X) ex)
         ).thenCompose(x -> x);
@@ -3913,8 +3917,10 @@ public final class CompletableFutureUtils {
             C cfThis, Class<X> exceptionType,
             Function<? super X, ? extends CompletionStage<T>> fallback, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
         requireNonNull(executor, "executor is null");
+
         return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
                 ? cfThis : cfThis.handleAsync((v1, ex1) -> fallback.apply((X) ex1), executor).thenCompose(x -> x)
         ).thenCompose(x -> x);
@@ -4412,7 +4418,7 @@ public final class CompletableFutureUtils {
     // endregion
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# Util Methods(static methods)
+    // region# Convenient Util Methods
     //
     //    - toCompletableFutureArray:     CompletionStage[](including Cffu) -> CF[]
     //    - completableFutureListToArray: List<CF> -> CF[]
