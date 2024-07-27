@@ -655,23 +655,4 @@ class CffuExtensionsTest : FunSpec({
             it.shouldNotBeTypeOf<Array<CompletionStage<*>>>()
         }
     }
-
-    ////////////////////////////////////////
-    // cffuUnwrap
-    ////////////////////////////////////////
-
-    test("cffuUnwrap for Cffu collection/array") {
-        val range = 0 until 10
-        val cfs: List<CompletableFuture<Int>> = range.map {
-            CompletableFuture.completedFuture(it)
-        }
-        val cfArray = cfs.toTypedArray()
-
-        val cffus: List<Cffu<Int>> = cfs.toCffu(testCffuFactory)
-        cffus.cffuUnwrap() shouldBe cfs
-        cffus.toSet().cffuUnwrap() shouldBe cfs
-
-        val cffuArray: Array<Cffu<Int>> = cffus.toTypedArray()
-        cffuArray.cffuUnwrap() shouldBe cfArray
-    }
 })

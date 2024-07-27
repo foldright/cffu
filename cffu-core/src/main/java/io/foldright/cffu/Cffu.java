@@ -2903,12 +2903,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns the underlying CompletableFuture.
      * In general, you should NEVER use this method, use {@link #toCompletableFuture()} instead.
-     * <p>
-     * {@link CffuFactory#cffuArrayUnwrap(Cffu[])} is the batch operation to this method.
      *
      * @return the underlying CompletableFuture
-     * @see #toCompletableFuture()
-     * @see CffuFactory#cffuArrayUnwrap(Cffu[])
      * @see #toCompletableFuture()
      */
     @Contract(pure = true)

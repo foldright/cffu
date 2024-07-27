@@ -600,28 +600,3 @@ fun <T> Collection<CompletionStage<out T>>.anyOfCffu(cffuFactory: CffuFactory): 
  */
 fun <T> Array<out CompletionStage<out T>>.anyOfCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.anyOf(*this)
-
-// endregion
-////////////////////////////////////////////////////////////////////////////////
-// region# cffuUnwrap methods for Collection/Array
-////////////////////////////////////////////////////////////////////////////////
-
-/**
- * Unwrap input [Cffu] collection elements by [Cffu.cffuUnwrap].
- *
- * This method is the same as [CffuFactory.cffuArrayUnwrap], providing this method is convenient for method chaining.
- *
- * @see CffuFactory.cffuArrayUnwrap
- */
-fun <T> Collection<Cffu<T>>.cffuUnwrap(): List<CompletableFuture<T>> =
-    map { it.cffuUnwrap() }
-
-/**
- * Unwrap input [Cffu] array elements by [Cffu.cffuUnwrap].
- *
- * This method is the same as [CffuFactory.cffuArrayUnwrap], providing this method is convenient for method chaining.
- *
- * @see CffuFactory.cffuArrayUnwrap
- */
-fun <T> Array<out Cffu<T>>.cffuUnwrap(): Array<CompletableFuture<T>> =
-    CffuFactory.cffuArrayUnwrap(*this)

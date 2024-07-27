@@ -1611,29 +1611,10 @@ public final class CffuFactory {
 
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# Conversion Methods(static methods)
+    // region# Conversion Methods
     //
-    //    - cffuArrayUnwrap: Cffu[] -> CompletableFuture[]
     //    - cffuListToArray: List<Cffu> -> Cffu[]
     ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * A convenient util method for unwrap input {@link Cffu} array elements by {@link Cffu#cffuUnwrap()}.
-     *
-     * @param cfs the Cffus
-     * @see CompletableFutureUtils#toCompletableFutureArray(CompletionStage[])
-     * @see Cffu#cffuUnwrap()
-     */
-    @Contract(pure = true)
-    @SafeVarargs
-    public static <T> CompletableFuture<T>[] cffuArrayUnwrap(Cffu<T>... cfs) {
-        @SuppressWarnings("unchecked")
-        CompletableFuture<T>[] ret = new CompletableFuture[cfs.length];
-        for (int i = 0; i < cfs.length; i++) {
-            ret[i] = requireNonNull(cfs[i], "cf" + (i + 1) + " is null").cffuUnwrap();
-        }
-        return ret;
-    }
 
     /**
      * Convert Cffu list to Cffu array.
