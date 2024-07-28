@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 
+import java.time.Duration;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static io.foldright.cffu.ListenableFutureUtils.*;
 import static io.foldright.test_utils.TestUtils.*;
@@ -129,10 +131,42 @@ class ListenableFutureUtilsTest {
             assertTrue(cf.isCancelled());
             assertThrowsExactly(CancellationException.class, cf::get);
         }
+        // check interruption happened
+        {
+            final AtomicBoolean interrupted = new AtomicBoolean(false);
+            final ListenableFuture<Integer> lf = Futures.submit(() -> {
+                try {
+                    Thread.sleep(Duration.ofSeconds(10));
+                } catch (InterruptedException ex) {
+                    interrupted.set(true);
+                }
+                return n;
+            }, executorService);
+            final CompletableFuture<Integer> cf = toCompletableFuture(lf, executorService, true);
+
+            // need nap to ensure Lf execution started before cancellation
+            // it's ok for testing code...
+            nap();
+            assertTrue(cf.completeExceptionally(new CancellationException()));
+            waitForAllCfsToComplete(cf);
+            waitForAllLfsToComplete(lf);
+
+            assertTrue(lf.isCancelled());
+            assertThrowsExactly(CancellationException.class, lf::get);
+            assertTrue(cf.isCancelled());
+            assertThrowsExactly(CancellationException.class, cf::get);
+
+            // need nap for interruption check
+            // it's ok for testing code...
+            snoreZzz();
+            assertTrue(interrupted.get());
+        }
+
         {
             final ListenableFuture<Integer> lf = SettableFuture.create();
             final CompletableFuture<Integer> cf = toCompletableFuture(lf, executorService, true);
 
+            // Cf completeExceptionally with non-CancellationException
             assertTrue(cf.completeExceptionally(new IllegalArgumentException()));
             snoreZzz();
             waitForAllCfsToComplete(cf);
