@@ -33,7 +33,7 @@ public class ListenableFutureUtils {
      * Cancelling the result {@link CompletableFuture} will also cancel inner {@link ListenableFuture}.
      * Use param {@code mayInterruptIfRunning} to control whether to interrupt the thread of {@link ListenableFuture}.
      * <p>
-     * Note: CompletionException caused by this CancellationException is also considered cancellation.
+     * Note: CompletionException caused by CancellationException is also considered cancellation.
      * <p>
      * We encourage you to avoid using direct write methods in {@link CompletableFuture} so that the underlying
      * {@link ListenableFuture} can benefit from cancel propagation.

@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 
+import java.time.Duration;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static io.foldright.cffu.ListenableFutureUtils.*;
 import static io.foldright.test_utils.TestUtils.*;
@@ -127,6 +129,30 @@ class ListenableFutureUtilsTest {
         assertThrowsExactly(CancellationException.class, lf::get);
         assertTrue(cf.isCancelled());
         assertThrowsExactly(CancellationException.class, cf::get);
+    }
+
+    @Test
+    void test_lf2cf_setCancellationExceptionToCf_cancellationAndPropagation_interruption() throws Exception {
+        final AtomicBoolean interrupted = new AtomicBoolean(false);
+        final ListenableFuture<Integer> lf = Futures.submit(() -> {
+            try {
+                Thread.sleep(Duration.ofSeconds(10));
+            } catch (InterruptedException ex) {
+                interrupted.set(true);
+            }
+            return 42;
+        }, Executors.newCachedThreadPool());
+        final CompletableFuture<Integer> cf = toCompletableFuture(lf, executorService, true);
+
+        assertTrue(cf.completeExceptionally(new CancellationException()));
+        waitForAllCfsToComplete(cf);
+        waitForAllLfsToComplete(lf);
+
+        assertTrue(lf.isCancelled());
+        assertThrowsExactly(CancellationException.class, lf::get);
+        assertTrue(cf.isCancelled());
+        assertThrowsExactly(CancellationException.class, cf::get);
+        assertTrue(interrupted.get());
     }
 
     @Test
