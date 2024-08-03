@@ -43,7 +43,7 @@
   - [2. `cffu`功能介绍](#2-cffu%E5%8A%9F%E8%83%BD%E4%BB%8B%E7%BB%8D)
     - [2.1 返回多个运行`CF`的结果](#21-%E8%BF%94%E5%9B%9E%E5%A4%9A%E4%B8%AA%E8%BF%90%E8%A1%8Ccf%E7%9A%84%E7%BB%93%E6%9E%9C)
     - [2.2 支持设置缺省的业务线程池并封装携带](#22-%E6%94%AF%E6%8C%81%E8%AE%BE%E7%BD%AE%E7%BC%BA%E7%9C%81%E7%9A%84%E4%B8%9A%E5%8A%A1%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%B9%B6%E5%B0%81%E8%A3%85%E6%90%BA%E5%B8%A6)
-    - [2.3 高效灵活的并发执行策略（`AllFastFail`/`AnySuccess`/`MostSuccess`）](#23-%E9%AB%98%E6%95%88%E7%81%B5%E6%B4%BB%E7%9A%84%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E7%AD%96%E7%95%A5allfastfailanysuccessmostsuccess)
+    - [2.3 高效灵活的并发执行策略（`AllFastFail`/`AnySuccess`/`AllSuccess`/`MostSuccess`）](#23-%E9%AB%98%E6%95%88%E7%81%B5%E6%B4%BB%E7%9A%84%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E7%AD%96%E7%95%A5allfastfailanysuccessallsuccessmostsuccess)
     - [2.4 支持超时的`join`的方法](#24-%E6%94%AF%E6%8C%81%E8%B6%85%E6%97%B6%E7%9A%84join%E7%9A%84%E6%96%B9%E6%B3%95)
     - [2.5 `Backport`支持`Java 8`](#25-backport%E6%94%AF%E6%8C%81java-8)
     - [2.6 返回具体类型的`anyOf`方法](#26-%E8%BF%94%E5%9B%9E%E5%85%B7%E4%BD%93%E7%B1%BB%E5%9E%8B%E7%9A%84anyof%E6%96%B9%E6%B3%95)
@@ -70,10 +70,13 @@
       如方法`allTupleFastFailOf` / `allTupleOf` / `tupleMSupplyFastFailAsync` / `thenTupleMApplyFastFailAsync`
     - 支持直接运行多个`action`，而不是要先包装成`CompletableFuture`  
       如方法`tupleMSupplyFastFailAsync` / `mSupplyMostSuccessAsync` / `thenTupleMApplyFastFailAsync` / `thenMRunFastFailAsync`
+    - 支持处理指定异常类型的`catching`方法，而不是处理所有异常`Throwable`（`CompletableFuture#exceptionally`）
   - ⚙️ 更高效灵活的并发执行策略，如
     - `AllFastFail`策略：当输入的多个`CF`有失败时快速失败返回，而不再于事无补地等待所有`CF`运行完成（`allOf`）
     - `AnySuccess`策略：返回首个成功的`CF`结果，而不是首个完成（但可能失败）的`CF`（`anyOf`）
-    - `MostSuccess`策略：指定时间内返回多个`CF`中成功的结果，忽略失败或还没有运行完成的`CF`（返回指定的缺省值）
+    - `AllSuccess`策略：返回多个`CF`中成功的结果，对于失败的`CF`返回指定的缺省值
+    - `MostSuccess`策略：指定时间内返回多个`CF`中成功的结果，对于失败或还没有运行完成的`CF`返回指定的缺省值
+    - `All(Complete)`/`Any(Complete)`策略：这2个是`CompletableFuture`已有支持的策略
   - 🦺 更安全的使用方式，如
     - 支持设置缺省的业务线程池并封装携带，`CffuFactory#builder(executor)`方法
     - 支持超时的`join`的方法，`join(timeout, unit)`方法
@@ -87,7 +90,8 @@
     - 非阻塞地获取成功结果，`getSuccessNow`方法
     - 解包装`CF`异常成业务异常，`unwrapCfException`方法
 - 💪 **已有功能的增强**，如
-  - `anySuccessOf`/`anyOf`方法：返回具体类型`T`（类型安全），而不是返回`Object`（`CompletableFuture#anyOf`）
+  - `anyOf`方法：返回具体类型`T`（类型安全），而不是返回`Object`（`CompletableFuture#anyOf`）
+  - `allof`/`anyOf`方法：输入更宽泛的`CompletionStage`参数类型，而不是`CompletableFuture`类（`CompletableFuture#allOf/anyOf`）
 - ⏳ **`Backport`支持`Java 8`**，`Java 9+`高版本的所有`CF`新功能在`Java 8`低版本直接可用，如
   - 超时控制：`orTimeout`/`completeOnTimeout`方法
   - 延迟执行：`delayedExecutor`方法
@@ -435,7 +439,7 @@ public class DefaultExecutorSettingForCffu {
 
 > \# 完整可运行的Demo代码参见[`DefaultExecutorSettingForCffu.java`](cffu-core/src/test/java/io/foldright/demo/DefaultExecutorSettingForCffu.java)。
 
-### 2.3 高效灵活的并发执行策略（`AllFastFail`/`AnySuccess`/`MostSuccess`）
+### 2.3 高效灵活的并发执行策略（`AllFastFail`/`AnySuccess`/`AllSuccess`/`MostSuccess`）
 
 - `CompletableFuture`的`allOf`方法会等待所有输入`CF`运行完成；即使有`CF`失败了也要等待后续`CF`都运行完成，再返回一个失败的`CF`。
   - 对于业务逻辑来说，这样失败且继续等待策略，减慢了业务响应性；会希望如果有输入`CF`失败了，则快速失败不再做于事无补的等待
@@ -445,7 +449,11 @@ public class DefaultExecutorSettingForCffu {
   - 对于业务逻辑来说，会希望赛马模式返回首个成功的`CF`结果，而不是首个完成但失败的`CF`
   - `cffu`提供了相应的`anySuccessOf`等方法
   - `anySuccessOf`只有当所有的输入`CF`都失败时，才返回失败结果
-- 返回指定时间内多个`CF`中成功的结果，忽略失败或还没有运行完成的`CF`（返回指定的缺省值）
+- 返回多个`CF`中成功的结果，对于失败的`CF`返回指定的缺省值
+  - 业务有容错逻辑时，有处理出错时可以使用成功那部分结果，而不是整体失败
+  - `cffu`提供了相应的`allSuccessOf`等方法
+- 返回指定时间内多个`CF`中成功的结果，对于失败或还没有运行完成的`CF`返回指定的缺省值
+- 忽略失败或还没有运行完成的`CF`（返回指定的缺省值）
   - 业务最终一致性时，能返回就尽量返回有的；对于没有及时返回还在运行中处理的`CF`，结果会写到分布式缓存中避免重复计算，下次就有了
   - 这是个常见业务使用模式，`cffu`提供了相应的`mostSuccessResultsOf`等方法
 
