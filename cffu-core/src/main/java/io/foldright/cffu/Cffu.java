@@ -2703,18 +2703,16 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If this Cffu completes exceptionally, then the returned CompletionStage completes
      * exceptionally with a CompletionException with this exception as cause.
      * <p>
-     * <strong>CAUTION:<br></strong>
-     * if run on old Java 8, just return a Cffu with
-     * a *normal* underlying CompletableFuture which is NOT with a *minimal* CompletionStage.
-     * <p>
      * demo code about re-config methods of Cffu:
      *
      * <pre>{@code cffu2 = cffu
-     *     .resetCffuFactory(cffuFactory2) // reset to use config from cffuFactory2
-     *     .minimalCompletionStage();      // restrict to methods of CompletionStage
+     *     .resetDefaultExecutor(executor2) // reset to use executor2
+     *     .minimalCompletionStage();       // restrict to methods of CompletionStage
      * }</pre>
-     *
-     * @see #resetCffuFactory(CffuFactory)
+     * <p>
+     * <strong>CAUTION:<br></strong>
+     * if run on old Java 8(not support *minimal* CompletionStage), just return a Cffu with
+     * a *normal* underlying CompletableFuture which is NOT with a *minimal* CompletionStage.
      */
     @Contract(pure = true)
     public CompletionStage<T> minimalCompletionStage() {
@@ -2723,10 +2721,19 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns a new Cffu with the given defaultExecutor.
+     * <p>
+     * demo code about re-config methods of Cffu:
+     *
+     * <pre>{@code cffu2 = cffu
+     *     .resetDefaultExecutor(executor2) // reset to use executor2
+     *     .minimalCompletionStage();       // restrict to methods of CompletionStage
+     * }</pre>
+     *
+     * @see #minimalCompletionStage()
      */
     @Contract(pure = true)
     public Cffu<T> resetDefaultExecutor(Executor defaultExecutor) {
-        return new Cffu<>(fac.resetDefaultExecutor(defaultExecutor), isMinimalStage, cf);
+        return resetCffuFactory(fac.resetDefaultExecutor(defaultExecutor));
     }
 
     /**

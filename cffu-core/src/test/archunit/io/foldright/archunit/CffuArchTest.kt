@@ -21,16 +21,17 @@ import io.foldright.cffu.CffuFactoryBuilder
 internal object CffuArchTest {
     @ArchTest
     private val constructorOfCffuFactory: ArchRule = run {
-        val description = ": Accessing CffuFactory constructor is only allowed by class CffuFactoryBuilder"
+        val description = "only contain the constructors that only accessed by class CffuFactoryBuilder," +
+                " aka. accessing CffuFactory constructor is only allowed by class CffuFactoryBuilder"
 
         val condition = object : ArchCondition<JavaClass>(description) {
             val cffuFactoryBuilderClass = CffuFactoryBuilder::class.java
 
-            override fun check(javaClass: JavaClass, events: ConditionEvents) {
-                val codeUnitAccesses = javaClass.constructorCallsToSelf + javaClass.constructorReferencesToSelf
+            override fun check(clazz: JavaClass, events: ConditionEvents) {
+                val codeUnitAccesses = clazz.constructorCallsToSelf + clazz.constructorReferencesToSelf
 
                 codeUnitAccesses.filterNot { it.originOwner.isEquivalentTo(cffuFactoryBuilderClass) }.forEach {
-                    val msg = "Accessing constructor of ${it.target.fullName} is not allowed" +
+                    val msg = "Accessing constructor `${it.target.fullName}` is not allowed" +
                             " by class ${it.originOwner.name}${it.sourceCodeLocation}"
                     events.add(SimpleConditionEvent.violated(it, msg))
                 }

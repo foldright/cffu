@@ -1922,7 +1922,8 @@ public final class CompletableFutureUtils {
      * and supports only those methods in interface {@link CompletionStage}.
      * <p>
      * <strong>CAUTION:<br></strong>
-     * if run on old Java 8, just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
+     * if run on old Java 8(not support *minimal* CompletionStage),
+     * just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @param value the value
      * @param <T>   the type of the value
@@ -1941,7 +1942,8 @@ public final class CompletableFutureUtils {
      * the given exception and supports only those methods in interface {@link CompletionStage}.
      * <p>
      * <strong>CAUTION:<br></strong>
-     * if run on old Java 8, just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
+     * if run on old Java 8(not support *minimal* CompletionStage),
+     * just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @param ex  the exception
      * @param <T> the type of the value
@@ -4366,7 +4368,8 @@ public final class CompletableFutureUtils {
      * with a CompletionException with given exception as cause.
      * <p>
      * <strong>CAUTION:<br></strong>
-     * if run on old Java 8, just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
+     * if run on old Java 8(not support *minimal* CompletionStage),
+     * just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @return the new CompletionStage
      * @see CompletableFuture#minimalCompletionStage()
