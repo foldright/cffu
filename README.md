@@ -47,6 +47,7 @@
     - [2.4 支持超时的`join`的方法](#24-%E6%94%AF%E6%8C%81%E8%B6%85%E6%97%B6%E7%9A%84join%E7%9A%84%E6%96%B9%E6%B3%95)
     - [2.5 `Backport`支持`Java 8`](#25-backport%E6%94%AF%E6%8C%81java-8)
     - [2.6 返回具体类型的`anyOf`方法](#26-%E8%BF%94%E5%9B%9E%E5%85%B7%E4%BD%93%E7%B1%BB%E5%9E%8B%E7%9A%84anyof%E6%96%B9%E6%B3%95)
+    - [2.7 输入宽泛类型的`allof/anyOf`方法](#27-%E8%BE%93%E5%85%A5%E5%AE%BD%E6%B3%9B%E7%B1%BB%E5%9E%8B%E7%9A%84allofanyof%E6%96%B9%E6%B3%95)
     - [更多功能说明](#%E6%9B%B4%E5%A4%9A%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E)
   - [3. 如何从直接使用`CompletableFuture`类迁移到`Cffu`类](#3-%E5%A6%82%E4%BD%95%E4%BB%8E%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8completablefuture%E7%B1%BB%E8%BF%81%E7%A7%BB%E5%88%B0cffu%E7%B1%BB)
 - [🔌 API Docs](#-api-docs)
@@ -81,13 +82,14 @@
     - 支持设置缺省的业务线程池并封装携带，`CffuFactory#builder(executor)`方法
     - 支持超时的`join`的方法，`join(timeout, unit)`方法
     - 超时执行安全的`cffuOrTimeout`/`cffuCompleteOnTimeout`方法
-    - 一定不会修改结果的处理`peek`方法
+    - 一定不会修改结果的`peek`处理方法  
+      （`CompletableFuture#whenComplete`方法会修改输入`CF`的结果）
     - 支持禁止强制篡改，`CffuFactoryBuilder#forbidObtrudeMethods`方法
     - 在类方法附加完善的代码质量注解，在编码时`IDE`能尽早提示出问题  
       如`@NonNull`、`@Nullable`、`@CheckReturnValue`、`@Contract`等
   - 🧩 缺失的基础基本功能，除了上面面向安全而新实现方法（如`join(timeout, unit)`/`cffuOrTimeout`/`peek`），还有
     - 异步异常完成，`completeExceptionallyAsync`方法
-    - 非阻塞地获取成功结果，`getSuccessNow`方法
+    - 非阻塞地获取成功结果，如果`CF`失败或还没有运行完成则返回指定的缺省值，`getSuccessNow`方法
     - 解包装`CF`异常成业务异常，`unwrapCfException`方法
 - 💪 **已有功能的增强**，如
   - `anyOf`方法：返回具体类型`T`（类型安全），而不是返回`Object`（`CompletableFuture#anyOf`）
@@ -453,7 +455,6 @@ public class DefaultExecutorSettingForCffu {
   - 业务有容错逻辑时，有处理出错时可以使用成功那部分结果，而不是整体失败
   - `cffu`提供了相应的`allSuccessOf`等方法
 - 返回指定时间内多个`CF`中成功的结果，对于失败或还没有运行完成的`CF`返回指定的缺省值
-- 忽略失败或还没有运行完成的`CF`（返回指定的缺省值）
   - 业务最终一致性时，能返回就尽量返回有的；对于没有及时返回还在运行中处理的`CF`，结果会写到分布式缓存中避免重复计算，下次就有了
   - 这是个常见业务使用模式，`cffu`提供了相应的`mostSuccessResultsOf`等方法
 
@@ -557,7 +558,15 @@ public class ConcurrencyStrategyDemo {
 
 `cffu`提供的`anySuccessOf`/`anyOf`方法，返回具体类型`T`，而不是返回`Object`。
 
-这个新方法使用简单类似，不附代码示例。
+这个方法使用简单类似，不附代码示例。
+
+### 2.7 输入宽泛类型的`allof/anyOf`方法
+
+`CompletableFuture#allof/anyOf`方法输入参数类型是`CompletableFuture`，而输入更宽泛的`CompletionStage`类型；对于`CompletionStage`类型的输入，则需要调用`CompletionStage#toCompletableFuture`方法做转换。
+
+`cffu`提供的`allof`/`anyOf`方法输入更宽泛的`CompletionStage`参数类型，使用更方便。
+
+这个方法使用简单类似，不附代码示例。
 
 ### 更多功能说明
 

@@ -24,12 +24,53 @@ import static java.util.Objects.requireNonNull;
  */
 @ThreadSafe
 public final class CffuFactoryBuilder {
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Internal constructor and fields
+    ////////////////////////////////////////////////////////////////////////////////
+
     private final Executor defaultExecutor;
 
     private volatile boolean forbidObtrudeMethods = false;
 
     CffuFactoryBuilder(Executor defaultExecutor) {
         this.defaultExecutor = makeExecutor(defaultExecutor);
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Builder Methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Sets {@code forbidObtrudeMethods} or not.
+     *
+     * @see CffuFactory#forbidObtrudeMethods()
+     * @see Cffu#obtrudeValue(Object)
+     * @see Cffu#obtrudeException(Throwable)
+     */
+    public CffuFactoryBuilder forbidObtrudeMethods(boolean forbid) {
+        this.forbidObtrudeMethods = forbid;
+        return this;
+    }
+
+    /**
+     * Builds the cffu factory.
+     *
+     * @return the built cffu factory
+     */
+    @Contract(pure = true)
+    public CffuFactory build() {
+        return new CffuFactory(defaultExecutor, forbidObtrudeMethods);
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Internal helper methods and fields
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Contract(pure = true)
+    static CffuFactory resetDefaultExecutor(CffuFactory fac, Executor defaultExecutor) {
+        return new CffuFactory(makeExecutor(defaultExecutor), fac.forbidObtrudeMethods());
     }
 
     private static Executor makeExecutor(Executor executor) {
@@ -66,37 +107,6 @@ public final class CffuFactoryBuilder {
 
         @VisibleForTesting
         Executor unwrap();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // Builder Methods
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Sets {@code forbidObtrudeMethods} or not.
-     *
-     * @see CffuFactory#forbidObtrudeMethods()
-     * @see Cffu#obtrudeValue(Object)
-     * @see Cffu#obtrudeException(Throwable)
-     */
-    public CffuFactoryBuilder forbidObtrudeMethods(boolean forbid) {
-        this.forbidObtrudeMethods = forbid;
-        return this;
-    }
-
-    /**
-     * Builds the cffu factory.
-     *
-     * @return the built cffu factory
-     */
-    @Contract(pure = true)
-    public CffuFactory build() {
-        return new CffuFactory(defaultExecutor, forbidObtrudeMethods);
-    }
-
-    @Contract(pure = true)
-    static CffuFactory resetDefaultExecutor(CffuFactory fac, Executor defaultExecutor) {
-        return new CffuFactory(makeExecutor(defaultExecutor), fac.forbidObtrudeMethods());
     }
 
     private static Executor wrapExecutorByProviders(Executor executor) {
