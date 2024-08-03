@@ -7,7 +7,10 @@ import com.google.common.util.concurrent.MoreExecutors;
 import org.jetbrains.annotations.Contract;
 
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
+import static io.foldright.cffu.ExceptionReporter.reportException;
 import static java.util.Objects.requireNonNull;
 
 
@@ -23,6 +26,71 @@ public class ListenableFutureUtils {
      * Otherwise `NoClassDefFoundError` when loading `CompletableFutureUtils`
      * if `ListenableFuture` class(`ClassNotFoundException` aka. `Guava` dependency) is absent.
      */
+
+    /**
+     * @param fn
+     * @param executor
+     * @param interruptLfWhenCancellationException
+     * @param <T>
+     * @param <U>
+     * @return
+     */
+    public static <T, U> CompletableFuture<U> thenApplyBasedInterruptableLf(
+            CompletableFuture<T> cfThis, Function<? super T, ? extends U> fn,
+            Executor executor, boolean interruptLfWhenCancellationException) {
+        final CompletableFuture<U> ret = new CompletableFuture<U>() {
+            @Override
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                if (mayInterruptIfRunning) return completeExceptionally(new InterruptionCancellationException());
+                else return super.cancel(false);
+            }
+
+            @Override
+            public String toString() {
+                return "CompletableFutureAdapter@ListenableFutureUtils.thenApplyBasedInterruptableLf" + super.toString();
+            }
+        };
+        final AtomicBoolean preemption = new AtomicBoolean();
+
+        final CompletableFuture<ListenableFuture<U>> handleByLf = cfThis.handle((v, ex) -> {
+            if (ex != null || !preemption.compareAndSet(false, true)) return null;
+
+            final ListenableFuture<U> lf = Futures.submit(() -> fn.apply(v), executor);
+            transferLfResultToCf(lf, executor, ret);
+            return lf;
+        }).exceptionally(ex -> reportException("Exception occurred in handle of thenApplyLf XXX", ex));
+
+        ret.handle((v, ex) -> ex == null || preemption.compareAndSet(false, true) ? null : ex)
+                .thenAcceptBoth(handleByLf, (outerEx, innerLf) -> {
+                    if (outerEx != null && innerLf != null)
+                        propagateCancellationToLf(outerEx, interruptLfWhenCancellationException, innerLf);
+                });
+
+        return ret;
+    }
+
+    private static <T> void transferLfResultToCf(ListenableFuture<T> lf, Executor executor, CompletableFuture<T> cf) {
+        Futures.addCallback(lf, new FutureCallback<T>() {
+            @Override
+            public void onSuccess(T result) {
+                cf.complete(result);
+            }
+
+            @Override
+            public void onFailure(Throwable ex) {
+                cf.completeExceptionally(ex);
+            }
+        }, executor);
+    }
+
+    private static <T> void propagateCancellationToLf(Throwable ex, boolean interruptLfWhenCancellationException, ListenableFuture<T> lf) {
+        ex = CompletableFutureUtils.unwrapCfException(ex);
+        if (ex instanceof InterruptionCancellationException) lf.cancel(true);
+        else if (ex instanceof CancellationException) lf.cancel(interruptLfWhenCancellationException);
+    }
+
+    private static class InterruptionCancellationException extends CancellationException {
+    }
 
     /**
      * Converts input {@link ListenableFuture} to {@link CompletableFuture}.
@@ -72,24 +140,10 @@ public class ListenableFutureUtils {
             }
         };
         // propagate cancellation by CancellationException from outer adapter to LF
-        CompletableFutureUtils.peek(ret, (v, ex) -> {
-            ex = CompletableFutureUtils.unwrapCfException(ex);
-            if (ex instanceof CancellationException) {
-                lf.cancel(interruptLfWhenCancellationException);
-            }
-        });
+        CompletableFutureUtils.peek(
+                ret, (v, ex) -> propagateCancellationToLf(ex, interruptLfWhenCancellationException, lf));
 
-        Futures.addCallback(lf, new FutureCallback<T>() {
-            @Override
-            public void onSuccess(T result) {
-                ret.complete(result);
-            }
-
-            @Override
-            public void onFailure(Throwable ex) {
-                ret.completeExceptionally(ex);
-            }
-        }, executor);
+        transferLfResultToCf(lf, executor, ret);
         return ret;
     }
 

@@ -4,7 +4,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 
-class TupleTest : FunSpec({
+internal class TupleTest : FunSpec({
     val e1 = 1
     val e2 = "2"
     val e3 = 3.14
