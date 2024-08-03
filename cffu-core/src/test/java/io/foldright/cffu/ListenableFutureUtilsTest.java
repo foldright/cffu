@@ -4,9 +4,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.SettableFuture;
-import io.foldright.test_utils.TestThreadPoolManager;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import io.foldright.test_utils.TestingExecutorUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
@@ -15,6 +13,7 @@ import java.util.concurrent.*;
 
 import static io.foldright.cffu.ListenableFutureUtils.*;
 import static io.foldright.test_utils.TestUtils.*;
+import static io.foldright.test_utils.TestingConstants.*;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -66,7 +65,7 @@ class ListenableFutureUtilsTest {
                 () -> toListenableFuture(failed).get()
         ).getCause());
 
-        cf = new CompletableFuture<>();
+        cf = incompleteCf();
         lf = toListenableFuture(cf);
         lf.cancel(false);
         assertTrue(lf.isCancelled());
@@ -135,7 +134,7 @@ class ListenableFutureUtilsTest {
             final CompletableFuture<Integer> cf = toCompletableFuture(lf, executorService, true);
 
             assertTrue(cf.completeExceptionally(new IllegalArgumentException()));
-            sleep(100);
+            snoreZzz();
             waitForAllCfsToComplete(cf);
 
             assertFalse(lf.isDone());
@@ -154,13 +153,13 @@ class ListenableFutureUtilsTest {
         }
         {
             final ListenableFuture<Integer> lf = SettableFuture.create();
-            CompletableFuture<Integer> cf = new CompletableFuture<>();
+            CompletableFuture<Integer> cf = incompleteCf();
 
             CompletableFuture<Integer> cfWrapperOfLf = cf.thenCompose(v ->
                     toCompletableFuture(lf, MoreExecutors.directExecutor(), true));
 
             cf.cancel(false);
-            sleep(20);
+            nap();
 
             assertTrue(cf.isCancelled());
             assertThrowsExactly(CancellationException.class, cf::get);
@@ -174,7 +173,7 @@ class ListenableFutureUtilsTest {
 
     @Test
     void test_cf2lf_cancellationAndPropagation() throws Exception {
-        final CompletableFuture<Integer> cf = new CompletableFuture<>();
+        final CompletableFuture<Integer> cf = incompleteCf();
         final ListenableFuture<Integer> lf = toListenableFuture(cf);
 
         assertTrue(lf.cancel(false));
@@ -205,7 +204,7 @@ class ListenableFutureUtilsTest {
 
     @Test
     void showCase_CompletableFuture_cancellationAndPropagation() throws Exception {
-        final CompletableFuture<Integer> cf = new CompletableFuture<>();
+        final CompletableFuture<Integer> cf = incompleteCf();
         final CompletableFuture<Integer> transform = cf.thenApplyAsync(x -> x + 1, executorService);
 
         assertTrue(cf.cancel(false));
@@ -241,19 +240,12 @@ class ListenableFutureUtilsTest {
         CompletableFutureUtils.mostSuccessResultsOf(null, 2, TimeUnit.SECONDS, cfs).join();
     }
 
-    private static ExecutorService executorService;
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Test helper fields
+    ////////////////////////////////////////////////////////////////////////////////
 
-    private static CffuFactory cffuFactory;
+    private final CffuFactory cffuFactory = TestingExecutorUtils.getTestCffuFactory();
 
-    @BeforeAll
-    static void beforeAll() {
-        executorService = TestThreadPoolManager.createThreadPool("ListenableFutureUtilsTest");
-
-        cffuFactory = CffuFactory.builder(executorService).build();
-    }
-
-    @AfterAll
-    static void afterAll() {
-        TestThreadPoolManager.shutdownExecutorService(executorService);
-    }
+    private final ExecutorService executorService = TestingExecutorUtils.getTestThreadPoolExecutor();
 }

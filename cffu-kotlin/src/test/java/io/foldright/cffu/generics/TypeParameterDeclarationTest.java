@@ -1,13 +1,10 @@
 package io.foldright.cffu.generics;
 
 import io.foldright.cffu.CompletableFutureUtils;
-import io.foldright.test_utils.TestThreadPoolManager;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -20,7 +17,7 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 /**
  * Checks type parameter declaration, Variance(covariance/contravariance)
  */
-@SuppressWarnings({"UnnecessaryLocalVariable", "unused", "RedundantThrows"})
+@SuppressWarnings({"unused", "RedundantThrows"})
 public class TypeParameterDeclarationTest {
 
     private static final CompletableFuture<Integer> f = completedFuture(42);
@@ -34,12 +31,12 @@ public class TypeParameterDeclarationTest {
         };
         CompletableFutureUtils.peek(fe, c).get();
         CompletableFutureUtils.peekAsync(fe, c).get();
-        CompletableFutureUtils.peekAsync(fe, c, executorService).get();
+        CompletableFutureUtils.peekAsync(fe, c, executor).get();
 
         final Supplier<? extends Integer> s = () -> 0;
         fs.complete(0);
         CompletableFutureUtils.completeAsync(fs, s).complete(1);
-        CompletableFutureUtils.completeAsync(fs, s, executorService).complete(1);
+        CompletableFutureUtils.completeAsync(fs, s, executor).complete(1);
 
         CompletableFuture<? extends Integer> ffe = orTimeout(fe, 1, TimeUnit.MILLISECONDS);
         CompletableFuture<? super Integer> ffs = orTimeout(fs, 1, TimeUnit.MILLISECONDS);
@@ -62,15 +59,6 @@ public class TypeParameterDeclarationTest {
         Object iq = fq.get();
     }
 
-    private static ExecutorService executorService;
+    private final Executor executor = Runnable::run;
 
-    @BeforeAll
-    static void beforeAll() {
-        executorService = TestThreadPoolManager.createThreadPool("TypeParameterDeclarationTest");
-    }
-
-    @AfterAll
-    static void afterAll() {
-        TestThreadPoolManager.shutdownExecutorService(executorService);
-    }
 }

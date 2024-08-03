@@ -4,9 +4,8 @@ import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
 import io.foldright.cffu.tuple.Tuple4;
 import io.foldright.cffu.tuple.Tuple5;
-import io.foldright.test_utils.TestThreadPoolManager;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import io.foldright.test_utils.TestUtils;
+import io.foldright.test_utils.TestingExecutorUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
@@ -17,10 +16,11 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 
+import static io.foldright.cffu.CffuTestHelper.unwrapMadeExecutor;
 import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
 import static io.foldright.cffu.CompletableFutureUtils.toCompletableFutureArray;
-import static io.foldright.cffu.DefaultExecutorTestUtils.unwrapMadeExecutor;
 import static io.foldright.test_utils.TestUtils.*;
+import static io.foldright.test_utils.TestingConstants.*;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static java.util.function.Function.identity;
@@ -28,9 +28,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
- * see io.foldright.compatibility_test.CffuApiCompatibilityTest
+ * @see io.foldright.compatibility_test.CffuApiCompatibilityTest
  */
-@SuppressWarnings("RedundantThrows")
+@SuppressWarnings({"RedundantThrows", "DataFlowIssue", "JavadocReference"})
 class CffuFactoryTest {
     ////////////////////////////////////////////////////////////////////////////////
     // region# Constructor Method
@@ -53,7 +53,7 @@ class CffuFactoryTest {
 
     @Test
     void test_mRun() throws Exception {
-        final Runnable runnable = () -> sleep(100);
+        final Runnable runnable = TestUtils::snoreZzz;
 
         final long tick = System.currentTimeMillis();
         @SuppressWarnings("unchecked")
@@ -63,8 +63,8 @@ class CffuFactoryTest {
                 cffuFactory.mRunAnySuccessAsync(runnable, runnable),
                 cffuFactory.mRunAnyAsync(runnable, runnable),
         };
-
         assertTrue(System.currentTimeMillis() - tick < 50);
+
         for (Cffu<Void> cf : cfs) {
             assertNull(cf.get());
         }
@@ -72,13 +72,9 @@ class CffuFactoryTest {
 
     @Test
     void test_mSupply() throws Exception {
-        final Supplier<Integer> supplier = () -> {
-            sleep(100);
-            return n;
-        };
+        final Supplier<Integer> supplier = supplyLater(n);
 
         final long tick = System.currentTimeMillis();
-
         @SuppressWarnings("unchecked")
         Cffu<List<Integer>>[] cfs = new Cffu[]{
                 cffuFactory.mSupplyFastFailAsync(supplier, supplier),
@@ -90,14 +86,13 @@ class CffuFactoryTest {
                 cffuFactory.mSupplyAsync(supplier, supplier),
                 cffuFactory.mSupplyAsync(executorService, supplier, supplier),
         };
-
         assertTrue(System.currentTimeMillis() - tick < 50);
+
         for (Cffu<List<Integer>> cf : cfs) {
             assertEquals(Arrays.asList(n, n), cf.get());
         }
 
         final long tick1 = System.currentTimeMillis();
-
         @SuppressWarnings("unchecked")
         Cffu<Integer>[] cfs1 = new Cffu[]{
                 cffuFactory.mSupplyAnySuccessAsync(supplier, supplier),
@@ -105,8 +100,8 @@ class CffuFactoryTest {
                 cffuFactory.mSupplyAnyAsync(supplier, supplier),
                 cffuFactory.mSupplyAnyAsync(executorService, supplier, supplier),
         };
-
         assertTrue(System.currentTimeMillis() - tick1 < 50);
+
         for (Cffu<Integer> cf : cfs1) {
             assertEquals(n, cf.get());
         }
@@ -119,27 +114,11 @@ class CffuFactoryTest {
 
     @Test
     void test_tupleMSupplyAsync() throws Exception {
-        final Supplier<Integer> supplier_n = () -> {
-            sleep(100);
-            return n;
-        };
-        final Supplier<String> supplier_s = () -> {
-            sleep(100);
-            return s;
-        };
-
-        final Supplier<Double> supplier_d = () -> {
-            sleep(100);
-            return d;
-        };
-        final Supplier<Integer> supplier_an = () -> {
-            sleep(100);
-            return anotherN;
-        };
-        final Supplier<Integer> supplier_nn = () -> {
-            sleep(100);
-            return n + n;
-        };
+        final Supplier<Integer> supplier_n = supplyLater(n);
+        final Supplier<String> supplier_s = supplyLater(s);
+        final Supplier<Double> supplier_d = supplyLater(d);
+        final Supplier<Integer> supplier_an = supplyLater(anotherN);
+        final Supplier<Integer> supplier_nnn = supplyLater(nnn);
 
         assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s).get());
         assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s).get());
@@ -147,8 +126,8 @@ class CffuFactoryTest {
         assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s, supplier_d).get());
         assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
         assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), cffuFactory.tupleMSupplyFastFailAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nnn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), cffuFactory.tupleMSupplyFastFailAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nnn).get());
 
         assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyAllSuccessAsync(supplier_n, supplier_s).get());
         assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyAllSuccessAsync(executorService, supplier_n, supplier_s).get());
@@ -156,8 +135,8 @@ class CffuFactoryTest {
         assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyAllSuccessAsync(executorService, supplier_n, supplier_s, supplier_d).get());
         assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyAllSuccessAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
         assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyAllSuccessAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyAllSuccessAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyAllSuccessAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), cffuFactory.tupleMSupplyAllSuccessAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nnn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), cffuFactory.tupleMSupplyAllSuccessAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nnn).get());
 
         assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyAsync(supplier_n, supplier_s).get());
         assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyAsync(executorService, supplier_n, supplier_s).get());
@@ -165,32 +144,32 @@ class CffuFactoryTest {
         assertEquals(Tuple3.of(n, s, d), cffuFactory.tupleMSupplyAsync(executorService, supplier_n, supplier_s, supplier_d).get());
         assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
         assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), cffuFactory.tupleMSupplyAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nnn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), cffuFactory.tupleMSupplyAsync(executorService, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nnn).get());
     }
 
     @Test
     void test_tupleMSupplyMostSuccessAsync() throws Exception {
         final Supplier<Integer> supplier_n = () -> {
-            sleep(10);
+            nap();
             return n;
         };
         final Supplier<String> supplier_s = () -> {
-            sleep(10);
+            nap();
             return s;
         };
 
         final Supplier<Double> supplier_d = () -> {
-            sleep(10);
+            nap();
             return d;
         };
         final Supplier<Integer> supplier_an = () -> {
-            sleep(10);
+            nap();
             return anotherN;
         };
         final Supplier<Integer> supplier_nn = () -> {
-            sleep(10);
-            return n + n;
+            nap();
+            return nnn;
         };
         assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s).get());
         assertEquals(Tuple2.of(n, s), cffuFactory.tupleMSupplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s).get());
@@ -201,8 +180,8 @@ class CffuFactoryTest {
         assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an).get());
         assertEquals(Tuple4.of(n, s, d, anotherN), cffuFactory.tupleMSupplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an).get());
 
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.tupleMSupplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), cffuFactory.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), cffuFactory.tupleMSupplyMostSuccessAsync(executorService, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
     }
 
     // endregion
@@ -312,8 +291,8 @@ class CffuFactoryTest {
         final Cffu<Integer> completed = cffuFactory.completedFuture(n);
         final CompletionStage<Integer> completedStage = cffuFactory.completedStage(n);
         final Cffu<Integer> failed = cffuFactory.failedFuture(rte);
-        final Cffu<Integer> cancelled = cffuFactory.toCffu(createCancelledFuture());
-        final Cffu<Integer> incomplete = cffuFactory.toCffu(createIncompleteFuture());
+        final Cffu<Integer> cancelled = cffuFactory.toCffu(cancelledFuture());
+        final Cffu<Integer> incomplete = cffuFactory.toCffu(incompleteCf());
 
         assertEquals(0, cffuFactory.mostSuccessResultsOf(null, 10, TimeUnit.MILLISECONDS).get().size());
 
@@ -340,9 +319,9 @@ class CffuFactoryTest {
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
-    void test_anyOf() throws Exception {
+    void test_anyOf_anySuccessOf() throws Exception {
         assertEquals(n, cffuFactory.anyOf(
-                createIncompleteFuture(),
+                incompleteCf(),
                 completedFuture(n)
         ).get());
         assertEquals(n, cffuFactory.anyOf(
@@ -361,7 +340,7 @@ class CffuFactoryTest {
 
         ////////////////////////////////////////
 
-        assertEquals(n, cffuFactory.anySuccessOf(createIncompleteFuture(), completedFuture(n)).get());
+        assertEquals(n, cffuFactory.anySuccessOf(incompleteCf(), completedFuture(n)).get());
         assertEquals(n, cffuFactory.anySuccessOf(completedFuture(n)).get());
 
         assertSame(NoCfsProvidedException.class, cffuFactory.anySuccessOf().exceptionNow().getClass());
@@ -404,16 +383,16 @@ class CffuFactoryTest {
         // even later cfs normally completed!
 
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cffuFactory.anyOf(createIncompleteFuture(), failedFuture(rte), createIncompleteFuture()).get()
+                cffuFactory.anyOf(incompleteCf(), failedFuture(rte), incompleteCf()).get()
         ).getCause());
 
         // first normally completed anyOf cf win,
         // even later cfs exceptionally completed!
 
         assertEquals(n, cffuFactory.anyOf(
-                createIncompleteFuture(),
+                incompleteCf(),
                 completedFuture(n),
-                createIncompleteFuture()
+                incompleteCf()
         ).get());
     }
 
@@ -423,33 +402,21 @@ class CffuFactoryTest {
         assertEquals(n, cffuFactory.anySuccessOf(
                 cffuFactory.newIncompleteCffu(),
                 cffuFactory.newIncompleteCffu(),
-                cffuFactory.supplyAsync(() -> {
-                    sleep(300);
-                    return anotherN;
-                }),
+                cffuFactory.supplyAsync(supplyLater(anotherN)),
                 cffuFactory.completedFuture(n)
         ).get());
         // success then failed
         assertEquals(n, cffuFactory.anySuccessOf(
                 cffuFactory.newIncompleteCffu(),
                 cffuFactory.newIncompleteCffu(),
-                cffuFactory.supplyAsync(() -> {
-                    sleep(300);
-                    throw rte;
-                }),
+                cffuFactory.supplyAsync(supplyLater(rte)),
                 cffuFactory.completedFuture(n)
         ).get());
 
         // all success
         assertEquals(n, cffuFactory.anySuccessOf(
-                cffuFactory.supplyAsync(() -> {
-                    sleep(300);
-                    return anotherN;
-                }),
-                cffuFactory.supplyAsync(() -> {
-                    sleep(300);
-                    return anotherN;
-                }),
+                cffuFactory.supplyAsync(supplyLater(anotherN)),
+                cffuFactory.supplyAsync(supplyLater(anotherN)),
                 cffuFactory.completedFuture(n)
         ).get());
 
@@ -457,35 +424,23 @@ class CffuFactoryTest {
 
         // success then success
         assertEquals(n, cffuFactory.anySuccessOf(
-                createIncompleteFuture(),
-                createIncompleteFuture(),
-                CompletableFuture.supplyAsync(() -> {
-                    sleep(300);
-                    return anotherN;
-                }),
+                incompleteCf(),
+                incompleteCf(),
+                CompletableFuture.supplyAsync(supplyLater(anotherN)),
                 completedFuture(n)
         ).get());
         // success then failed
         assertEquals(n, cffuFactory.anySuccessOf(
-                createIncompleteFuture(),
-                createIncompleteFuture(),
-                CompletableFuture.supplyAsync(() -> {
-                    sleep(300);
-                    throw rte;
-                }),
+                incompleteCf(),
+                incompleteCf(),
+                CompletableFuture.supplyAsync(supplyLater(rte)),
                 completedFuture(n)
         ).get());
 
         // all success
         assertEquals(n, cffuFactory.anySuccessOf(
-                CompletableFuture.supplyAsync(() -> {
-                    sleep(300);
-                    return anotherN;
-                }),
-                CompletableFuture.supplyAsync(() -> {
-                    sleep(300);
-                    return anotherN;
-                }),
+                CompletableFuture.supplyAsync(supplyLater(anotherN)),
+                CompletableFuture.supplyAsync(supplyLater(anotherN)),
                 completedFuture(n)
         ).get());
 
@@ -519,12 +474,12 @@ class CffuFactoryTest {
                 completedFuture(anotherN)
         ).get());
 
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.allTupleFastFailOf(
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), cffuFactory.allTupleFastFailOf(
                 completedFuture(n),
                 completedFuture(s),
                 completedFuture(d),
                 completedFuture(anotherN),
-                completedFuture(n + n)
+                completedFuture(nnn)
         ).get());
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -547,12 +502,12 @@ class CffuFactoryTest {
                 cffuFactory.completedFuture(anotherN)
         ).get());
 
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.allTupleFastFailOf(
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), cffuFactory.allTupleFastFailOf(
                 cffuFactory.completedFuture(n),
                 cffuFactory.completedFuture(s),
                 cffuFactory.completedFuture(d),
                 cffuFactory.completedFuture(anotherN),
-                cffuFactory.completedFuture(n + n)
+                cffuFactory.completedFuture(nnn)
         ).get());
     }
 
@@ -597,12 +552,12 @@ class CffuFactoryTest {
                 completedFuture(anotherN)
         ).get());
 
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.allSuccessTupleOf(
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), cffuFactory.allSuccessTupleOf(
                 completedFuture(n),
                 completedFuture(s),
                 completedFuture(d),
                 completedFuture(anotherN),
-                completedFuture(n + n)
+                completedFuture(nnn)
         ).get());
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -625,12 +580,12 @@ class CffuFactoryTest {
                 cffuFactory.completedFuture(anotherN)
         ).get());
 
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.allSuccessTupleOf(
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), cffuFactory.allSuccessTupleOf(
                 cffuFactory.completedFuture(n),
                 cffuFactory.completedFuture(s),
                 cffuFactory.completedFuture(d),
                 cffuFactory.completedFuture(anotherN),
-                cffuFactory.completedFuture(n + n)
+                cffuFactory.completedFuture(nnn)
         ).get());
     }
 
@@ -639,8 +594,8 @@ class CffuFactoryTest {
         final Cffu<Integer> completed = cffuFactory.completedFuture(n);
         final CompletionStage<String> anotherCompleted = cffuFactory.completedStage(s);
         final Cffu<Integer> failed = cffuFactory.failedFuture(rte);
-        final Cffu<Integer> cancelled = cffuFactory.toCffu(createCancelledFuture());
-        final Cffu<Integer> incomplete = cffuFactory.toCffu(createIncompleteFuture());
+        final Cffu<Integer> cancelled = cffuFactory.toCffu(cancelledFuture());
+        final Cffu<Integer> incomplete = cffuFactory.toCffu(incompleteCf());
 
         assertEquals(Tuple2.of(n, s), cffuFactory.mostSuccessTupleOf(
                 10, TimeUnit.MILLISECONDS, completed, anotherCompleted
@@ -688,12 +643,12 @@ class CffuFactoryTest {
                 completedFuture(anotherN)
         ).get());
 
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.allTupleOf(
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), cffuFactory.allTupleOf(
                 completedFuture(n),
                 completedFuture(s),
                 completedFuture(d),
                 completedFuture(anotherN),
-                completedFuture(n + n)
+                completedFuture(nnn)
         ).get());
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -716,12 +671,12 @@ class CffuFactoryTest {
                 cffuFactory.completedFuture(anotherN)
         ).get());
 
-        assertEquals(Tuple5.of(n, s, d, anotherN, n + n), cffuFactory.allTupleOf(
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), cffuFactory.allTupleOf(
                 cffuFactory.completedFuture(n),
                 cffuFactory.completedFuture(s),
                 cffuFactory.completedFuture(d),
                 cffuFactory.completedFuture(anotherN),
-                cffuFactory.completedFuture(n + n)
+                cffuFactory.completedFuture(nnn)
         ).get());
     }
 
@@ -807,15 +762,15 @@ class CffuFactoryTest {
         assertEquals(n, cf.get());
         shouldNotBeMinimalStage(cf);
 
-        final Cffu<Integer> cffu_in = cffuFactory.completedFuture(42);
+        final Cffu<Integer> cffu_in = cffuFactory.completedFuture(n);
 
-        CffuFactory fac = CffuFactory.builder(anotherExecutorService).forbidObtrudeMethods(true).build();
+        CffuFactory fac = CffuFactory.builder(dummyExecutor).forbidObtrudeMethods(true).build();
         Cffu<Integer> cffu = fac.toCffu(cffu_in);
         assertNotSame(cffu_in, cffu);
-        assertSame(anotherExecutorService, unwrapMadeExecutor(cffu));
+        assertSame(dummyExecutor, unwrapMadeExecutor(cffu));
         assertSame(fac, cffu.cffuFactory());
         assertEquals("obtrude methods is forbidden by cffu", assertThrowsExactly(UnsupportedOperationException.class, () ->
-                cffu.obtrudeValue(44)
+                cffu.obtrudeValue(anotherN)
         ).getMessage());
 
         assertSame(cffu_in, cffuFactory.toCffu(cffu_in));
@@ -920,12 +875,12 @@ class CffuFactoryTest {
         assertSame(executorService, unwrapMadeExecutor(cffuFactory));
         assertFalse(cffuFactory.forbidObtrudeMethods());
 
-        CffuFactory fac = CffuFactory.builder(anotherExecutorService).forbidObtrudeMethods(true).build();
-        assertSame(anotherExecutorService, unwrapMadeExecutor(fac));
+        CffuFactory fac = CffuFactory.builder(dummyExecutor).forbidObtrudeMethods(true).build();
+        assertSame(dummyExecutor, unwrapMadeExecutor(fac));
         assertTrue(fac.forbidObtrudeMethods());
 
-        final CffuFactory fac2 = cffuFactory.resetDefaultExecutor(anotherExecutorService);
-        assertSame(anotherExecutorService, unwrapMadeExecutor(fac2));
+        final CffuFactory fac2 = cffuFactory.resetDefaultExecutor(dummyExecutor);
+        assertSame(dummyExecutor, unwrapMadeExecutor(fac2));
         assertEquals(cffuFactory.forbidObtrudeMethods(), fac2.forbidObtrudeMethods());
 
         final CffuFactory fac3 = cffuFactory.resetDefaultExecutor(fac2.defaultExecutor());
@@ -940,7 +895,7 @@ class CffuFactoryTest {
         Cffu<Object> cf = fac2.newIncompleteCffu();
 
         assertEquals("obtrude methods is forbidden by cffu", assertThrowsExactly(UnsupportedOperationException.class, () ->
-                cf.obtrudeValue(42)).getMessage()
+                cf.obtrudeValue(n)).getMessage()
         );
         assertEquals("obtrude methods is forbidden by cffu", assertThrowsExactly(UnsupportedOperationException.class, () ->
                 cf.obtrudeException(rte)).getMessage()
@@ -959,31 +914,17 @@ class CffuFactoryTest {
             assertTrue(executorClassName.endsWith("$ThreadPerTaskExecutor"));
         }
 
-        assertEquals(42, fac.supplyAsync(() -> 42).get());
+        assertEquals(n, fac.supplyAsync(() -> n).get());
     }
-
 
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# Test helper methods/fields
+    // region# Test helper fields
     ////////////////////////////////////////////////////////////////////////////////
 
-    private static CffuFactory cffuFactory;
+    private final CffuFactory cffuFactory = TestingExecutorUtils.getTestCffuFactory();
 
-    private static ExecutorService executorService;
+    private final ExecutorService executorService = TestingExecutorUtils.getTestThreadPoolExecutor();
 
-    private static ExecutorService anotherExecutorService;
-
-    @BeforeAll
-    static void beforeAll() {
-        executorService = TestThreadPoolManager.createThreadPool("CffuFactoryTest");
-        anotherExecutorService = TestThreadPoolManager.createThreadPool("CffuFactoryTest-Another", true);
-
-        cffuFactory = CffuFactory.builder(executorService).build();
-    }
-
-    @AfterAll
-    static void afterAll() {
-        TestThreadPoolManager.shutdownExecutorService(executorService, anotherExecutorService);
-    }
+    private final Executor dummyExecutor = Runnable::run;
 }
