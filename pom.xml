@@ -69,6 +69,7 @@
 		<maven.deploy.skip>false</maven.deploy.skip>
 		<maven.enforcer.pom.version.regex>^\d(\.\d+)?\.(\d+|x)-SNAPSHOT$</maven.enforcer.pom.version.regex>
 		<release.pom.version.regex>^\d\.\d+\.\d+(-(Alpha|Beta|RC)\d+)?$</release.pom.version.regex>
+		<dokka.skip>false</dokka.skip>
 
 		<spotbugs.annotations.version>4.8.6</spotbugs.annotations.version>
 		<jsr305.version>3.0.2</jsr305.version>
@@ -485,10 +486,10 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>logging-dependencies-default</id>
+			<id>default-logging-dependencies</id>
 			<activation>
 				<property>
-					<name>!skipDefaultProfile</name>
+					<name>!enableLog4j2LoggingDependencies</name>
 				</property>
 			</activation>
 			<dependencies>
@@ -511,7 +512,12 @@
 			</dependencies>
 		</profile>
 		<profile>
-			<id>logging-dependencies-log4j2</id>
+			<id>enable-log4j2-logging-dependencies</id>
+			<activation>
+				<property>
+					<name>enableLog4j2LoggingDependencies</name>
+				</property>
+			</activation>
 			<dependencies>
 				<dependency>
 					<groupId>org.slf4j</groupId>
@@ -562,6 +568,56 @@
 			</build>
 		</profile>
 		<profile>
+			<id>enable-arch-unit-test</id>
+			<activation>
+				<property>
+					<name>!skipDefaultProfileArchUnitTest</name>
+				</property>
+			</activation>
+			<dependencies>
+				<!-- https://www.archunit.org/ -->
+				<dependency>
+					<groupId>com.tngtech.archunit</groupId>
+					<artifactId>archunit-junit5</artifactId>
+					<version>1.3.0</version>
+					<scope>test</scope>
+					<exclusions>
+						<exclusion>
+							<groupId>org.slf4j</groupId>
+							<artifactId>slf4j-api</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<!--
+							Add more source directories to your project
+							https://www.mojohaus.org/build-helper-maven-plugin/usage.html
+						-->
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>3.6.0</version>
+						<executions>
+							<execution>
+								<id>add-test-source</id>
+								<phase>generate-test-sources</phase>
+								<goals>
+									<goal>add-test-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>${project.basedir}/src/test/archunit</source>
+									</sources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
 			<id>disable-javac-options-warning-for-java21+</id>
 			<activation>
 				<jdk>[21,)</jdk>
@@ -605,6 +661,9 @@
 										<!-- https://www.mojohaus.org/extra-enforcer-rules/enforceBytecodeVersion.html -->
 										<enforceBytecodeVersion>
 											<maxJdkVersion>${maven.compiler.source}</maxJdkVersion>
+											<ignoredScopes>
+												<ignoredScope>test</ignoredScope>
+											</ignoredScopes>
 										</enforceBytecodeVersion>
 									</rules>
 								</configuration>

@@ -157,6 +157,7 @@
 									<packageListUrl>file://${javadoc.package.list.dir}/java/package-list</packageListUrl>
 								</link>
 							</externalDocumentationLinks>
+							<skip>${dokka.skip}</skip>
 						</configuration>
 					</plugin>
 				</plugins>
