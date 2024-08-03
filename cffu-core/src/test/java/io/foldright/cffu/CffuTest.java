@@ -18,6 +18,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static io.foldright.cffu.DefaultExecutorTestUtils.unwrapMadeExecutor;
 import static io.foldright.test_utils.TestUtils.*;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.function.Function.identity;
@@ -486,7 +487,7 @@ class CffuTest {
 
         Executor executor = Runnable::run;
         final Cffu<Integer> f2 = cf.resetDefaultExecutor(executor);
-        assertSame(executor, f2.defaultExecutor());
+        assertSame(executor, unwrapMadeExecutor(f2));
         assertEquals(cffuFactory.forbidObtrudeMethods(), f2.cffuFactory().forbidObtrudeMethods());
     }
 

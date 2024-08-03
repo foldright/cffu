@@ -2,6 +2,7 @@ package io.foldright.cffu.test
 
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
+import io.foldright.cffu.DefaultExecutorTestUtils
 import io.foldright.cffu.NoCfsProvidedException
 import io.foldright.cffu.kotlin.*
 import io.foldright.test_utils.testCffuFactory
@@ -17,16 +18,14 @@ import io.kotest.matchers.types.shouldBeTypeOf
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import io.kotest.matchers.types.shouldNotBeTypeOf
 import kotlinx.coroutines.future.await
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletionStage
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.*
 
 const val n = 42
 const val anotherN = 4242
 const val s = "43"
 const val d = 44.0
 val rte = RuntimeException("Bang")
+
 
 class CffuExtensionsTest : FunSpec({
     ////////////////////////////////////////
@@ -36,12 +35,12 @@ class CffuExtensionsTest : FunSpec({
     suspend fun checkToCffu(cffu: Cffu<Int>, n: Int) {
         cffu.await() shouldBe n
 
-        cffu.defaultExecutor() shouldBeSameInstanceAs testThreadPoolExecutor
+        cffu.unwrapMadeExecutor() shouldBeSameInstanceAs testThreadPoolExecutor
         cffu.cffuFactory() shouldBeSameInstanceAs testCffuFactory
 
         val fac2 = CffuFactory.builder(testForkJoinPoolExecutor).build()
         cffu.resetCffuFactory(fac2).let {
-            it.defaultExecutor() shouldBeSameInstanceAs testForkJoinPoolExecutor
+            it.unwrapMadeExecutor() shouldBeSameInstanceAs testForkJoinPoolExecutor
             it.cffuFactory() shouldBeSameInstanceAs fac2
         }
     }
@@ -656,3 +655,9 @@ class CffuExtensionsTest : FunSpec({
         }
     }
 })
+
+fun CffuFactory.unwrapMadeExecutor(): Executor =
+    DefaultExecutorTestUtils.unwrapMadeExecutor(this)
+
+fun Cffu<*>.unwrapMadeExecutor(): Executor =
+    DefaultExecutorTestUtils.unwrapMadeExecutor(this)

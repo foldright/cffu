@@ -63,15 +63,15 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public static CffuFactoryBuilder builder(Executor defaultExecutor) {
-        return new CffuFactoryBuilder(CompletableFutureUtils.screenExecutor(defaultExecutor));
+        return new CffuFactoryBuilder(defaultExecutor);
     }
 
     /**
      * Returns a new CffuFactory from this CffuFactory that reset the defaultExecutor.
      */
     @Contract(pure = true)
-    CffuFactory resetDefaultExecutor(Executor defaultExecutor) {
-        return new CffuFactory(defaultExecutor, forbidObtrudeMethods);
+    public CffuFactory resetDefaultExecutor(Executor defaultExecutor) {
+        return CffuFactoryBuilder.resetDefaultExecutor(this, defaultExecutor);
     }
 
     @Contract(pure = true)
