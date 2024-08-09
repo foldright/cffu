@@ -17,21 +17,6 @@ import java.util.concurrent.*
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// constants for testing
-////////////////////////////////////////////////////////////////////////////////
-
-const val n = 42
-const val anotherN = 424242
-const val s = "S42"
-const val d = 42.1
-
-@JvmField
-val rte = RuntimeException("Bang")
-
-@JvmField
-val anotherRte = RuntimeException("AnotherBang")
-
-////////////////////////////////////////////////////////////////////////////////
 // util methods for testing
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -84,15 +69,15 @@ fun assertCompletableFutureRunInDefaultThread(executorService: ExecutorService) 
 }
 
 fun assertCompletableFutureRunInThreadOf(executorService: ExecutorService) {
-    assertRunInExecutor(executorService)
+    assertRunningInExecutor(executorService)
 }
 
 fun assertCffuRunInDefaultThread(executorService: ExecutorService) {
-    assertRunInExecutor(executorService)
+    assertRunningInExecutor(executorService)
 }
 
 fun assertCffuRunInThreadOf(executorService: ExecutorService) {
-    assertRunInExecutor(executorService)
+    assertRunningInExecutor(executorService)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

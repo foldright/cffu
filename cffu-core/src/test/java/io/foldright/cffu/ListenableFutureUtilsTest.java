@@ -14,7 +14,8 @@ import org.junit.jupiter.api.condition.JRE;
 import java.util.concurrent.*;
 
 import static io.foldright.cffu.ListenableFutureUtils.*;
-import static io.foldright.test_utils.TestUtils.*;
+import static io.foldright.test_utils.CffuTestConstants.*;
+import static io.foldright.test_utils.TestUtils.sleep;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static org.junit.jupiter.api.Assertions.*;
 

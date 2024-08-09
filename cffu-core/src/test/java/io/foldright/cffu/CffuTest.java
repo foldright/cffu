@@ -18,8 +18,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static io.foldright.cffu.DefaultExecutorTestUtils.unwrapMadeExecutor;
-import static io.foldright.test_utils.TestUtils.*;
+import static io.foldright.cffu.CffuTestHelper.unwrapMadeExecutor;
+import static io.foldright.test_utils.CffuTestConstants.*;
+import static io.foldright.test_utils.TestUtils.sleep;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.function.Function.identity;
 import static org.junit.jupiter.api.Assertions.*;

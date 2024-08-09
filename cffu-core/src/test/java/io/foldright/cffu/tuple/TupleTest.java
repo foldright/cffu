@@ -8,7 +8,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@SuppressWarnings({"AssertBetweenInconvertibleTypes", "EqualsWithItself", "SimplifiableAssertion", "ConstantValue", "EqualsBetweenInconvertibleTypes"})
+@SuppressWarnings({"EqualsWithItself", "SimplifiableAssertion", "ConstantValue", "EqualsBetweenInconvertibleTypes"})
 public class TupleTest {
     int e1 = 1;
     String e2 = "2";

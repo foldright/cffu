@@ -14,13 +14,26 @@ import java.util.concurrent.atomic.AtomicLong
 import kotlin.random.Random
 import kotlin.random.nextULong
 
+////////////////////////////////////////////////////////////////////////////////
+// region## test executors for kotest
+////////////////////////////////////////////////////////////////////////////////
 
 val THREAD_COUNT_OF_POOL: Int = (Runtime.getRuntime().availableProcessors() * 2).coerceAtLeast(4).coerceAtMost(15)
+
+val testThreadPoolExecutor: ExecutorService =
+    createThreadPool("CompletableFutureUseTest_ThreadPool")
+
+val testCffuFactory: CffuFactory = CffuFactory.builder(testThreadPoolExecutor).build()
+
+val testForkJoinPoolExecutor: ExecutorService =
+    createThreadPool("CompletableFutureUseTest_ForkJoinPool", true)
+
+val testForkJoinCffuFactory: CffuFactory = CffuFactory.builder(testForkJoinPoolExecutor).build()
 
 @JvmOverloads
 fun createThreadPool(threadNamePrefix: String, isForkJoin: Boolean = false): ExecutorService {
     val counter = AtomicLong()
-    val prefix = "${threadNamePrefix}_${Random.nextULong()}"
+    val prefix = "${threadNamePrefix}_${Random.nextULong()}_"
 
     val executorService = if (!isForkJoin)
         ThreadPoolExecutor(
@@ -29,7 +42,7 @@ fun createThreadPool(threadNamePrefix: String, isForkJoin: Boolean = false): Exe
             /* workQueue = */ ArrayBlockingQueue(5000)
         ) { r ->
             Thread(r).apply {
-                name = "${prefix}_${counter.getAndIncrement()}"
+                name = "${prefix}${counter.getAndIncrement()}"
                 isDaemon = true
             }
         }
@@ -37,38 +50,50 @@ fun createThreadPool(threadNamePrefix: String, isForkJoin: Boolean = false): Exe
         ForkJoinPool(
             /* parallelism = */ THREAD_COUNT_OF_POOL,/* factory = */ { fjPool ->
                 ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(fjPool).apply {
-                    name = "${prefix}_${counter.getAndIncrement()}"
+                    name = "${prefix}${counter.getAndIncrement()}"
                 }
             }, /* handler = */ null, /* asyncMode = */ false
         )
 
     return object : ExecutorService by executorService, ThreadPoolAcquaintance {
-        override fun isMyThread(thread: Thread): Boolean = thread.name.startsWith(prefix)
+        override fun own(thread: Thread): Boolean = thread.name.startsWith(prefix)
 
         override fun unwrap(): ExecutorService = executorService
 
-        override fun toString(): String = "test ${if (isForkJoin) "ForkJoinPool" else "ThreadPoolExecutor"} $prefix"
+        override fun toString(): String =
+            "test ${if (isForkJoin) "ForkJoinPool" else "ThreadPoolExecutor"} with prefix $prefix"
     }
 }
 
-private fun Executor.doesOwnThread(thread: Thread): Boolean = (this as ThreadPoolAcquaintance).isMyThread(thread)
-
 private interface ThreadPoolAcquaintance {
-    fun isMyThread(thread: Thread): Boolean
+    fun own(thread: Thread): Boolean
 
     fun unwrap(): ExecutorService
 }
 
-fun isRunInExecutor(executor: Executor): Boolean =
-    executor.doesOwnThread(currentThread())
+// endregion
+////////////////////////////////////////////////////////////////////////////////
+// region# check methods for thread/executor relationship
+////////////////////////////////////////////////////////////////////////////////
 
-fun assertRunInExecutor(executor: Executor) {
-    isRunInExecutor(executor).shouldBeTrue()
+fun assertRunningInExecutor(executor: Executor) {
+    isRunningInExecutor(executor).shouldBeTrue()
 }
 
-fun assertNotRunInExecutor(executor: Executor) {
-    executor.doesOwnThread(currentThread()).shouldBeFalse()
+fun assertNotRunningInExecutor(executor: Executor) {
+    isRunningInExecutor(executor).shouldBeFalse()
 }
+
+private fun isRunningInExecutor(executor: Executor): Boolean =
+    currentThread().belongsTo(executor)
+
+private fun Thread.belongsTo(executor: Executor): Boolean =
+    (executor as ThreadPoolAcquaintance).own(this)
+
+// endregion
+////////////////////////////////////////////////////////////////////////////////
+// region# util method for executors
+////////////////////////////////////////////////////////////////////////////////
 
 fun warmupExecutorService(vararg executors: ExecutorService) {
     executors.flatMap { executor ->
@@ -90,17 +115,10 @@ fun shutdownExecutorService(vararg executors: ExecutorService) {
     }
 }
 
+// endregion
 ////////////////////////////////////////////////////////////////////////////////
-// executors for kotest
+// region# Kotest Listener
 ////////////////////////////////////////////////////////////////////////////////
-
-val testThreadPoolExecutor: ExecutorService =
-    createThreadPool("CompletableFutureUseTest_ThreadPool")
-
-val testCffuFactory: CffuFactory = CffuFactory.builder(testThreadPoolExecutor).build()
-
-val testForkJoinPoolExecutor: ExecutorService =
-    createThreadPool("CompletableFutureUseTest_ForkJoinPool", true)
 
 /**
  * https://kotest.io/docs/framework/project-config.html

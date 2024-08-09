@@ -17,9 +17,10 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 
+import static io.foldright.cffu.CffuTestHelper.unwrapMadeExecutor;
 import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
 import static io.foldright.cffu.CompletableFutureUtils.toCompletableFutureArray;
-import static io.foldright.cffu.DefaultExecutorTestUtils.unwrapMadeExecutor;
+import static io.foldright.test_utils.CffuTestConstants.*;
 import static io.foldright.test_utils.TestUtils.*;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;

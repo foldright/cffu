@@ -4,9 +4,7 @@ import io.foldright.cffu.CffuState
 import io.foldright.cffu.CompletableFutureUtils
 import io.foldright.cffu.NoCfsProvidedException
 import io.foldright.cffu.kotlin.*
-import io.foldright.test_utils.createIncompleteFuture
-import io.foldright.test_utils.sleep
-import io.foldright.test_utils.testThreadPoolExecutor
+import io.foldright.test_utils.*
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeFalse

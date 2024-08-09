@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static io.foldright.cffu.CompletableFutureUtils.*;
+import static io.foldright.test_utils.CffuTestConstants.*;
+import static io.foldright.test_utils.TestThreadPoolManager.assertRunningInExecutor;
 import static io.foldright.test_utils.TestUtils.*;
 import static java.lang.Thread.currentThread;
 import static java.util.concurrent.CompletableFuture.completedFuture;
@@ -1507,7 +1509,7 @@ class CompletableFutureUtilsTest {
                 cffuOrTimeout(createIncompleteFuture(), executorService, 100, TimeUnit.MILLISECONDS).handle((v, ex) -> {
                     assertInstanceOf(TimeoutException.class, ex);
                     assertFalse(Delayer.atCfDelayerThread());
-                    assertTrue(TestThreadPoolManager.isRunInExecutor(executorService));
+                    assertRunningInExecutor(executorService);
                     return i;
                 })
         ).collect(Collectors.toList()).stream().map(CompletableFuture::join).collect(Collectors.toList()));
@@ -1538,7 +1540,7 @@ class CompletableFutureUtilsTest {
                 cffuCompleteOnTimeout(createIncompleteFuture(), i, executorService, 100, TimeUnit.MILLISECONDS).handle((v, ex) -> {
                     assertNull(ex);
                     assertFalse(Delayer.atCfDelayerThread());
-                    assertTrue(TestThreadPoolManager.isRunInExecutor(executorService));
+                    assertRunningInExecutor(executorService);
                     return v;
                 })
         ).collect(Collectors.toList()).stream().map(CompletableFuture::join).collect(Collectors.toList()));

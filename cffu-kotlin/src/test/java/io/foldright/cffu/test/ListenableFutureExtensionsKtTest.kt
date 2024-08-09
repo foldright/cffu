@@ -5,6 +5,8 @@ import io.foldright.cffu.CompletableFutureUtils.failedFuture
 import io.foldright.cffu.kotlin.toCffu
 import io.foldright.cffu.kotlin.toCompletableFuture
 import io.foldright.cffu.kotlin.toListenableFuture
+import io.foldright.test_utils.n
+import io.foldright.test_utils.rte
 import io.foldright.test_utils.testCffuFactory
 import io.foldright.test_utils.testThreadPoolExecutor
 import io.kotest.assertions.throwables.shouldThrowExactly
@@ -20,7 +22,9 @@ class ListenableFutureExtensionsKtTest : FunSpec({
         lf.toCompletableFuture(testThreadPoolExecutor, true).get() shouldBe n
 
         val failed = Futures.immediateFailedFuture<Int>(rte)
-        shouldThrowExactly<ExecutionException> { failed.toCompletableFuture(testThreadPoolExecutor, true).get() }.cause shouldBeSameInstanceAs rte
+        shouldThrowExactly<ExecutionException> {
+            failed.toCompletableFuture(testThreadPoolExecutor, true).get()
+        }.cause shouldBeSameInstanceAs rte
     }
 
     test("toCffu") {
@@ -28,7 +32,9 @@ class ListenableFutureExtensionsKtTest : FunSpec({
         lf.toCffu(testCffuFactory, true).get() shouldBe n
 
         val failed = Futures.immediateFailedFuture<Int>(rte)
-        shouldThrowExactly<ExecutionException> { failed.toCffu(testCffuFactory, true).get() }.cause shouldBeSameInstanceAs rte
+        shouldThrowExactly<ExecutionException> {
+            failed.toCffu(testCffuFactory, true).get()
+        }.cause shouldBeSameInstanceAs rte
     }
 
     test("toListenableFuture") {
