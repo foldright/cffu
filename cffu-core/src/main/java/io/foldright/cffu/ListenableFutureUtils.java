@@ -60,9 +60,8 @@ public class ListenableFutureUtils {
             @Override
             public boolean cancel(boolean mayInterruptIfRunning) {
                 // propagate cancellation from outer adapter to LF
-                final boolean ret = lf.cancel(mayInterruptIfRunning);
-                super.cancel(mayInterruptIfRunning);
-                return ret;
+                lf.cancel(mayInterruptIfRunning);
+                return super.cancel(mayInterruptIfRunning);
             }
 
             @Override
