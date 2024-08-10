@@ -5,7 +5,6 @@ import io.foldright.cffu.tuple.Tuple3;
 import io.foldright.cffu.tuple.Tuple4;
 import io.foldright.cffu.tuple.Tuple5;
 import io.foldright.test_utils.TestUtils;
-import io.foldright.test_utils.TestingExecutorUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -24,6 +23,7 @@ import static io.foldright.cffu.CompletableFutureUtils.*;
 import static io.foldright.test_utils.TestUtils.*;
 import static io.foldright.test_utils.TestingConstants.*;
 import static io.foldright.test_utils.TestingExecutorUtils.assertRunningInExecutor;
+import static io.foldright.test_utils.TestingExecutorUtils.testExecutor;
 import static java.lang.Thread.currentThread;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;
@@ -52,13 +52,13 @@ class CompletableFutureUtilsTest {
         @SuppressWarnings("unchecked")
         CompletableFuture<List<Integer>>[] cfs = new CompletableFuture[]{
                 mSupplyFastFailAsync(supplier, supplier),
-                mSupplyFastFailAsync(executorService, supplier, supplier),
+                mSupplyFastFailAsync(testExecutor, supplier, supplier),
                 mSupplyAllSuccessAsync(anotherN, supplier, supplier),
-                mSupplyAllSuccessAsync(anotherN, executorService, supplier, supplier),
+                mSupplyAllSuccessAsync(anotherN, testExecutor, supplier, supplier),
                 mSupplyMostSuccessAsync(anotherN, 500, TimeUnit.MILLISECONDS, supplier, supplier),
-                mSupplyMostSuccessAsync(anotherN, executorService, 500, TimeUnit.MILLISECONDS, supplier, supplier),
+                mSupplyMostSuccessAsync(anotherN, testExecutor, 500, TimeUnit.MILLISECONDS, supplier, supplier),
                 mSupplyAsync(supplier, supplier),
-                mSupplyAsync(executorService, supplier, supplier),
+                mSupplyAsync(testExecutor, supplier, supplier),
         };
         assertTrue(System.currentTimeMillis() - tick < 50);
 
@@ -70,9 +70,9 @@ class CompletableFutureUtilsTest {
         @SuppressWarnings("unchecked")
         CompletableFuture<Integer>[] cfs1 = new CompletableFuture[]{
                 mSupplyAnySuccessAsync(supplier, supplier),
-                mSupplyAnySuccessAsync(executorService, supplier, supplier),
+                mSupplyAnySuccessAsync(testExecutor, supplier, supplier),
                 mSupplyAnyAsync(supplier, supplier),
-                mSupplyAnyAsync(executorService, supplier, supplier),
+                mSupplyAnyAsync(testExecutor, supplier, supplier),
         };
         assertTrue(System.currentTimeMillis() - tick1 < 50);
 
@@ -89,13 +89,13 @@ class CompletableFutureUtilsTest {
         @SuppressWarnings("unchecked")
         CompletableFuture<Void>[] cfs = new CompletableFuture[]{
                 mRunFastFailAsync(runnable, runnable),
-                mRunFastFailAsync(executorService, runnable, runnable),
+                mRunFastFailAsync(testExecutor, runnable, runnable),
                 mRunAsync(runnable, runnable),
-                mRunAsync(executorService, runnable, runnable),
+                mRunAsync(testExecutor, runnable, runnable),
                 mRunAnySuccessAsync(runnable, runnable),
-                mRunAnySuccessAsync(executorService, runnable, runnable),
+                mRunAnySuccessAsync(testExecutor, runnable, runnable),
                 mRunAnyAsync(runnable, runnable),
-                mRunAnyAsync(executorService, runnable, runnable),
+                mRunAnyAsync(testExecutor, runnable, runnable),
         };
         assertTrue(System.currentTimeMillis() - tick < 50);
 
@@ -934,13 +934,13 @@ class CompletableFutureUtilsTest {
         @SuppressWarnings("unchecked")
         CompletableFuture<Void>[] cfs = new CompletableFuture[]{
                 thenMRunAsync(completed, runnable, runnable),
-                thenMRunAsync(completed, executorService, runnable, runnable),
+                thenMRunAsync(completed, testExecutor, runnable, runnable),
                 thenMRunFastFailAsync(completed, runnable, runnable),
-                thenMRunFastFailAsync(completed, executorService, runnable, runnable),
+                thenMRunFastFailAsync(completed, testExecutor, runnable, runnable),
                 thenMRunAnySuccessAsync(completed, runnable, runnable),
-                thenMRunAnySuccessAsync(completed, executorService, runnable, runnable),
+                thenMRunAnySuccessAsync(completed, testExecutor, runnable, runnable),
                 thenMRunAnyAsync(completed, runnable, runnable),
-                thenMRunAnyAsync(completed, executorService, runnable, runnable),
+                thenMRunAnyAsync(completed, testExecutor, runnable, runnable),
         };
         assertTrue(System.currentTimeMillis() - tick < 50);
 
@@ -961,13 +961,13 @@ class CompletableFutureUtilsTest {
         @SuppressWarnings("unchecked")
         CompletableFuture<Void>[] cfs = new CompletableFuture[]{
                 thenMAcceptAsync(completed, consumer, consumer),
-                thenMAcceptAsync(completed, executorService, consumer, consumer),
+                thenMAcceptAsync(completed, testExecutor, consumer, consumer),
                 thenMAcceptFastFailAsync(completed, consumer, consumer),
-                thenMAcceptFastFailAsync(completed, executorService, consumer, consumer),
+                thenMAcceptFastFailAsync(completed, testExecutor, consumer, consumer),
                 thenMAcceptAnySuccessAsync(completed, consumer, consumer),
-                thenMAcceptAnySuccessAsync(completed, executorService, consumer, consumer),
+                thenMAcceptAnySuccessAsync(completed, testExecutor, consumer, consumer),
                 thenMAcceptAnyAsync(completed, consumer, consumer),
-                thenMAcceptAnyAsync(completed, executorService, consumer, consumer),
+                thenMAcceptAnyAsync(completed, testExecutor, consumer, consumer),
         };
         assertTrue(System.currentTimeMillis() - tick < 50);
 
@@ -988,13 +988,13 @@ class CompletableFutureUtilsTest {
         @SuppressWarnings("unchecked")
         CompletableFuture<List<Integer>>[] cfs = new CompletableFuture[]{
                 thenMApplyFastFailAsync(completed, supplier, supplier),
-                thenMApplyFastFailAsync(completed, executorService, supplier, supplier),
+                thenMApplyFastFailAsync(completed, testExecutor, supplier, supplier),
                 thenMApplyAllSuccessAsync(completed, anotherN, supplier, supplier),
-                thenMApplyAllSuccessAsync(completed, anotherN, executorService, supplier, supplier),
+                thenMApplyAllSuccessAsync(completed, anotherN, testExecutor, supplier, supplier),
                 thenMApplyMostSuccessAsync(completed, anotherN, 500, TimeUnit.MILLISECONDS, supplier, supplier),
-                thenMApplyMostSuccessAsync(completed, anotherN, executorService, 500, TimeUnit.MILLISECONDS, supplier, supplier),
+                thenMApplyMostSuccessAsync(completed, anotherN, testExecutor, 500, TimeUnit.MILLISECONDS, supplier, supplier),
                 thenMApplyAsync(completed, supplier, supplier),
-                thenMApplyAsync(completed, executorService, supplier, supplier),
+                thenMApplyAsync(completed, testExecutor, supplier, supplier),
         };
         assertTrue(System.currentTimeMillis() - tick < 50);
 
@@ -1006,9 +1006,9 @@ class CompletableFutureUtilsTest {
         @SuppressWarnings("unchecked")
         CompletableFuture<Integer>[] cfs1 = new CompletableFuture[]{
                 thenMApplyAnySuccessAsync(completed, supplier, supplier),
-                thenMApplyAnySuccessAsync(completed, executorService, supplier, supplier),
+                thenMApplyAnySuccessAsync(completed, testExecutor, supplier, supplier),
                 thenMApplyAnyAsync(completed, supplier, supplier),
-                thenMApplyAnyAsync(completed, executorService, supplier, supplier),
+                thenMApplyAnyAsync(completed, testExecutor, supplier, supplier),
         };
         assertTrue(System.currentTimeMillis() - tick1 < 50);
 
@@ -1172,28 +1172,28 @@ class CompletableFutureUtilsTest {
         // with `executorWhenTimeout`
 
         assertEquals(Tuple2.of(n, s), mostSuccessTupleOf(
-                executorService, 10, TimeUnit.MILLISECONDS, completed, anotherCompleted
+                testExecutor, 10, TimeUnit.MILLISECONDS, completed, anotherCompleted
         ).get());
         assertEquals(Tuple2.of(n, null), mostSuccessTupleOf(
-                executorService, 10, TimeUnit.MILLISECONDS, completed, failed
+                testExecutor, 10, TimeUnit.MILLISECONDS, completed, failed
         ).get());
 
         assertEquals(Tuple3.of(n, s, null), mostSuccessTupleOf(
-                executorService, 10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled
+                testExecutor, 10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled
         ).get());
         assertEquals(Tuple3.of(null, null, s), mostSuccessTupleOf(
-                executorService, 10, TimeUnit.MILLISECONDS, incomplete, failed, anotherCompleted
+                testExecutor, 10, TimeUnit.MILLISECONDS, incomplete, failed, anotherCompleted
         ).get());
 
         assertEquals(Tuple4.of(n, s, null, null), mostSuccessTupleOf(
-                executorService, 10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled, incomplete
+                testExecutor, 10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled, incomplete
         ).get());
         assertEquals(Tuple4.of(null, null, null, null), mostSuccessTupleOf(
-                executorService, 10, TimeUnit.MILLISECONDS, incomplete, failed, cancelled, incomplete
+                testExecutor, 10, TimeUnit.MILLISECONDS, incomplete, failed, cancelled, incomplete
         ).get());
 
         assertEquals(Tuple5.of(null, n, s, null, null), mostSuccessTupleOf(
-                executorService, 10, TimeUnit.MILLISECONDS, cancelled, completed, anotherCompleted, incomplete, failed
+                testExecutor, 10, TimeUnit.MILLISECONDS, cancelled, completed, anotherCompleted, incomplete, failed
         ).get());
     }
 
@@ -1211,17 +1211,17 @@ class CompletableFutureUtilsTest {
         };
         assertNull(runAfterBothFastFail(cf_n, cf_nn, runnable).get());
         assertNull(runAfterBothFastFailAsync(cf_n, cf_nn, runnable).get());
-        assertNull(runAfterBothFastFailAsync(cf_n, cf_nn, runnable, executorService).get());
+        assertNull(runAfterBothFastFailAsync(cf_n, cf_nn, runnable, testExecutor).get());
 
         BiConsumer<Integer, Integer> bc = (i1, i2) -> {
         };
         assertNull(thenAcceptBothFastFail(cf_n, cf_nn, bc).get());
         assertNull(thenAcceptBothFastFailAsync(cf_n, cf_nn, bc).get());
-        assertNull(thenAcceptBothFastFailAsync(cf_n, cf_nn, bc, executorService).get());
+        assertNull(thenAcceptBothFastFailAsync(cf_n, cf_nn, bc, testExecutor).get());
 
         assertEquals(3 * n, thenCombineFastFail(cf_n, cf_nn, Integer::sum).get());
         assertEquals(3 * n, thenCombineFastFailAsync(cf_n, cf_nn, Integer::sum).get());
-        assertEquals(3 * n, thenCombineFastFailAsync(cf_n, cf_nn, Integer::sum, executorService).get());
+        assertEquals(3 * n, thenCombineFastFailAsync(cf_n, cf_nn, Integer::sum, testExecutor).get());
     }
 
     @Test
@@ -1239,7 +1239,7 @@ class CompletableFutureUtilsTest {
                 runAfterBothFastFailAsync(cf_n, failed, runnable).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                runAfterBothFastFailAsync(cf_n, failed, runnable, executorService).get(1, TimeUnit.MILLISECONDS)
+                runAfterBothFastFailAsync(cf_n, failed, runnable, testExecutor).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 runAfterBothFastFail(failed, cf_n, runnable).get(1, TimeUnit.MILLISECONDS)
@@ -1248,7 +1248,7 @@ class CompletableFutureUtilsTest {
                 runAfterBothFastFailAsync(failed, cf_n, runnable).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                runAfterBothFastFailAsync(failed, cf_n, runnable, executorService).get(1, TimeUnit.MILLISECONDS)
+                runAfterBothFastFailAsync(failed, cf_n, runnable, testExecutor).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 runAfterBothFastFail(failed, cf_ee, runnable).get(1, TimeUnit.MILLISECONDS)
@@ -1257,7 +1257,7 @@ class CompletableFutureUtilsTest {
                 runAfterBothFastFailAsync(failed, cf_ee, runnable).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                runAfterBothFastFailAsync(failed, cf_ee, runnable, executorService).get(1, TimeUnit.MILLISECONDS)
+                runAfterBothFastFailAsync(failed, cf_ee, runnable, testExecutor).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
 
         BiConsumer<Integer, Integer> bc = (i1, i2) -> {
@@ -1269,7 +1269,7 @@ class CompletableFutureUtilsTest {
                 thenAcceptBothFastFailAsync(cf_n, failed, bc).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                thenAcceptBothFastFailAsync(cf_n, failed, bc, executorService).get(1, TimeUnit.MILLISECONDS)
+                thenAcceptBothFastFailAsync(cf_n, failed, bc, testExecutor).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 thenAcceptBothFastFail(failed, cf_n, bc).get(1, TimeUnit.MILLISECONDS)
@@ -1278,7 +1278,7 @@ class CompletableFutureUtilsTest {
                 thenAcceptBothFastFailAsync(failed, cf_n, bc).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                thenAcceptBothFastFailAsync(failed, cf_n, bc, executorService).get(1, TimeUnit.MILLISECONDS)
+                thenAcceptBothFastFailAsync(failed, cf_n, bc, testExecutor).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 thenAcceptBothFastFail(failed, cf_ee, bc).get(1, TimeUnit.MILLISECONDS)
@@ -1287,7 +1287,7 @@ class CompletableFutureUtilsTest {
                 thenAcceptBothFastFailAsync(failed, cf_ee, bc).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                thenAcceptBothFastFailAsync(failed, cf_ee, bc, executorService).get(1, TimeUnit.MILLISECONDS)
+                thenAcceptBothFastFailAsync(failed, cf_ee, bc, testExecutor).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
 
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
@@ -1297,7 +1297,7 @@ class CompletableFutureUtilsTest {
                 thenCombineFastFailAsync(cf_n, failed, Integer::sum).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                thenCombineFastFailAsync(cf_n, failed, Integer::sum, executorService).get(1, TimeUnit.MILLISECONDS)
+                thenCombineFastFailAsync(cf_n, failed, Integer::sum, testExecutor).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 thenCombineFastFail(failed, cf_n, Integer::sum).get(1, TimeUnit.MILLISECONDS)
@@ -1306,7 +1306,7 @@ class CompletableFutureUtilsTest {
                 thenCombineFastFailAsync(failed, cf_n, Integer::sum).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                thenCombineFastFailAsync(failed, cf_n, Integer::sum, executorService).get(1, TimeUnit.MILLISECONDS)
+                thenCombineFastFailAsync(failed, cf_n, Integer::sum, testExecutor).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 thenCombineFastFail(failed, cf_ee, Integer::sum).get(1, TimeUnit.MILLISECONDS)
@@ -1315,7 +1315,7 @@ class CompletableFutureUtilsTest {
                 thenCombineFastFailAsync(failed, cf_ee, Integer::sum).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                thenCombineFastFailAsync(failed, cf_ee, Integer::sum, executorService).get(1, TimeUnit.MILLISECONDS)
+                thenCombineFastFailAsync(failed, cf_ee, Integer::sum, testExecutor).get(1, TimeUnit.MILLISECONDS)
         ).getCause());
     }
 
@@ -1333,17 +1333,17 @@ class CompletableFutureUtilsTest {
         };
         assertNull(runAfterEitherSuccess(cf_n, incomplete, runnable).get());
         assertNull(runAfterEitherSuccessAsync(cf_n, incomplete, runnable).get());
-        assertNull(runAfterEitherSuccessAsync(cf_n, incomplete, runnable, executorService).get());
+        assertNull(runAfterEitherSuccessAsync(cf_n, incomplete, runnable, testExecutor).get());
 
         Consumer<Integer> c = i -> {
         };
         assertNull(acceptEitherSuccess(cf_n, incomplete, c).get());
         assertNull(acceptEitherSuccessAsync(cf_n, incomplete, c).get());
-        assertNull(acceptEitherSuccessAsync(cf_n, incomplete, c, executorService).get());
+        assertNull(acceptEitherSuccessAsync(cf_n, incomplete, c, testExecutor).get());
 
         assertEquals(n, applyToEitherSuccess(cf_n, incomplete, identity()).get());
         assertEquals(n, applyToEitherSuccessAsync(cf_n, incomplete, identity()).get());
-        assertEquals(n, applyToEitherSuccessAsync(cf_n, incomplete, identity(), executorService).get());
+        assertEquals(n, applyToEitherSuccessAsync(cf_n, incomplete, identity(), testExecutor).get());
     }
 
     @Test
@@ -1356,10 +1356,10 @@ class CompletableFutureUtilsTest {
         };
         assertNull(runAfterEitherSuccess(cf, failed, runnable).get());
         assertNull(runAfterEitherSuccessAsync(cf, failed, runnable).get());
-        assertNull(runAfterEitherSuccessAsync(cf, failed, runnable, executorService).get());
+        assertNull(runAfterEitherSuccessAsync(cf, failed, runnable, testExecutor).get());
         assertNull(runAfterEitherSuccess(failed, cf, runnable).get());
         assertNull(runAfterEitherSuccessAsync(failed, cf, runnable).get());
-        assertNull(runAfterEitherSuccessAsync(failed, cf, runnable, executorService).get());
+        assertNull(runAfterEitherSuccessAsync(failed, cf, runnable, testExecutor).get());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 runAfterEitherSuccess(failed, cf_ee, runnable).get()
         ).getCause());
@@ -1367,17 +1367,17 @@ class CompletableFutureUtilsTest {
                 runAfterEitherSuccessAsync(failed, cf_ee, runnable).get()
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                runAfterEitherSuccessAsync(failed, cf_ee, runnable, executorService).get()
+                runAfterEitherSuccessAsync(failed, cf_ee, runnable, testExecutor).get()
         ).getCause());
 
         Consumer<Integer> c = i -> {
         };
         assertNull(acceptEitherSuccess(cf, failed, c).get());
         assertNull(acceptEitherSuccessAsync(cf, failed, c).get());
-        assertNull(acceptEitherSuccessAsync(cf, failed, c, executorService).get());
+        assertNull(acceptEitherSuccessAsync(cf, failed, c, testExecutor).get());
         assertNull(acceptEitherSuccess(failed, cf, c).get());
         assertNull(acceptEitherSuccessAsync(failed, cf, c).get());
-        assertNull(acceptEitherSuccessAsync(failed, cf, c, executorService).get());
+        assertNull(acceptEitherSuccessAsync(failed, cf, c, testExecutor).get());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 acceptEitherSuccess(failed, cf_ee, c).get()
         ).getCause());
@@ -1385,15 +1385,15 @@ class CompletableFutureUtilsTest {
                 acceptEitherSuccessAsync(failed, cf_ee, c).get()
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                acceptEitherSuccessAsync(failed, cf_ee, c, executorService).get()
+                acceptEitherSuccessAsync(failed, cf_ee, c, testExecutor).get()
         ).getCause());
 
         assertEquals(n, applyToEitherSuccess(cf, failed, identity()).get());
         assertEquals(n, applyToEitherSuccessAsync(cf, failed, identity()).get());
-        assertEquals(n, applyToEitherSuccessAsync(cf, failed, identity(), executorService).get());
+        assertEquals(n, applyToEitherSuccessAsync(cf, failed, identity(), testExecutor).get());
         assertEquals(n, applyToEitherSuccess(failed, cf, identity()).get());
         assertEquals(n, applyToEitherSuccessAsync(failed, cf, identity()).get());
-        assertEquals(n, applyToEitherSuccessAsync(failed, cf, identity(), executorService).get());
+        assertEquals(n, applyToEitherSuccessAsync(failed, cf, identity(), testExecutor).get());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 applyToEitherSuccess(failed, cf_ee, identity()).get()
         ).getCause());
@@ -1401,7 +1401,7 @@ class CompletableFutureUtilsTest {
                 applyToEitherSuccessAsync(failed, cf_ee, identity()).get()
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                applyToEitherSuccessAsync(failed, cf_ee, identity(), executorService).get()
+                applyToEitherSuccessAsync(failed, cf_ee, identity(), testExecutor).get()
         ).getCause());
     }
 
@@ -1500,10 +1500,10 @@ class CompletableFutureUtilsTest {
                 })
         ).collect(Collectors.toList()).stream().map(CompletableFuture::join).collect(Collectors.toList()));
         assertEquals(results, results.stream().map(i ->
-                cffuOrTimeout(incompleteCf(), executorService, 100, TimeUnit.MILLISECONDS).handle((v, ex) -> {
+                cffuOrTimeout(incompleteCf(), testExecutor, 100, TimeUnit.MILLISECONDS).handle((v, ex) -> {
                     assertInstanceOf(TimeoutException.class, ex);
                     assertFalse(Delayer.atCfDelayerThread());
-                    assertRunningInExecutor(executorService);
+                    assertRunningInExecutor(testExecutor);
                     return i;
                 })
         ).collect(Collectors.toList()).stream().map(CompletableFuture::join).collect(Collectors.toList()));
@@ -1531,10 +1531,10 @@ class CompletableFutureUtilsTest {
                 })
         ).collect(Collectors.toList()).stream().map(CompletableFuture::join).collect(Collectors.toList()));
         assertEquals(results, results.stream().map(i ->
-                cffuCompleteOnTimeout(incompleteCf(), i, executorService, 100, TimeUnit.MILLISECONDS).handle((v, ex) -> {
+                cffuCompleteOnTimeout(incompleteCf(), i, testExecutor, 100, TimeUnit.MILLISECONDS).handle((v, ex) -> {
                     assertNull(ex);
                     assertFalse(Delayer.atCfDelayerThread());
-                    assertRunningInExecutor(executorService);
+                    assertRunningInExecutor(testExecutor);
                     return v;
                 })
         ).collect(Collectors.toList()).stream().map(CompletableFuture::join).collect(Collectors.toList()));
@@ -1591,11 +1591,11 @@ class CompletableFutureUtilsTest {
         CompletableFuture<Object> failed = failedFuture(rte);
         assertSame(peek(failed, c), failed);
         assertSame(peekAsync(failed, c), failed);
-        assertSame(peekAsync(failed, c, executorService), failed);
+        assertSame(peekAsync(failed, c, testExecutor), failed);
 
         assertSame(peek(failed, ec), failed);
         assertSame(peekAsync(failed, ec), failed);
-        assertSame(peekAsync(failed, ec, executorService), failed);
+        assertSame(peekAsync(failed, ec, testExecutor), failed);
 
         CompletableFuture<Integer> success = completedFuture(n);
         assertEquals(n, peek(success, c).get());
@@ -1857,8 +1857,6 @@ class CompletableFutureUtilsTest {
     ////////////////////////////////////////////////////////////////////////////////
     // region# Test helper fields
     ////////////////////////////////////////////////////////////////////////////////
-
-    private final ExecutorService executorService = TestingExecutorUtils.getTestThreadPoolExecutor();
 
     private static final String testName = "CompletableFutureUtilsTest";
 }

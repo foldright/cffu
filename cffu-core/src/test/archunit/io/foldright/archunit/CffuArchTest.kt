@@ -28,9 +28,9 @@ internal object CffuArchTest {
             val cffuFactoryBuilderClass = CffuFactoryBuilder::class.java
 
             override fun check(clazz: JavaClass, events: ConditionEvents) {
-                val codeUnitAccesses = clazz.constructorCallsToSelf + clazz.constructorReferencesToSelf
+                val accessesToConstructors = clazz.constructorCallsToSelf + clazz.constructorReferencesToSelf
 
-                codeUnitAccesses.filterNot { it.originOwner.isEquivalentTo(cffuFactoryBuilderClass) }.forEach {
+                accessesToConstructors.filterNot { it.originOwner.isEquivalentTo(cffuFactoryBuilderClass) }.forEach {
                     val msg = "Accessing constructor `${it.target.fullName}` is not allowed" +
                             " by class ${it.originOwner.name}${it.sourceCodeLocation}"
                     events.add(SimpleConditionEvent.violated(it, msg))

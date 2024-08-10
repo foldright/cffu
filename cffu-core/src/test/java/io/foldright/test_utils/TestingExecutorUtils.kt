@@ -17,15 +17,17 @@ import kotlin.random.nextULong
 // region# test executors for kotest
 ////////////////////////////////////////////////////////////////////////////////
 
+@JvmField
 val THREAD_COUNT_OF_POOL: Int = (Runtime.getRuntime().availableProcessors() * 2).coerceAtLeast(4).coerceAtMost(15)
 
-val testThreadPoolExecutor: ExecutorService =
-    createThreadPool("CompletableFutureUseTest_ThreadPool")
+@JvmField
+val testExecutor = createThreadPool("ThreadPoolForCffuTesting")
 
-val testCffuFactory: CffuFactory = CffuFactory.builder(testThreadPoolExecutor).build()
+@JvmField
+val testCffuFac: CffuFactory = CffuFactory.builder(testExecutor).build()
 
-val testForkJoinPoolExecutor: ExecutorService =
-    createThreadPool("CompletableFutureUseTest_ForkJoinPool", true)
+@JvmField
+val testFjExecutor = createThreadPool("ForkJoinPoolForCffuTesting", true)
 
 @JvmOverloads
 fun createThreadPool(threadNamePrefix: String, isForkJoin: Boolean = false): ExecutorService {
@@ -45,7 +47,7 @@ fun createThreadPool(threadNamePrefix: String, isForkJoin: Boolean = false): Exe
         }
     else
         ForkJoinPool(
-            /* parallelism = */ THREAD_COUNT_OF_POOL,/* factory = */ { fjPool ->
+            /* parallelism = */ THREAD_COUNT_OF_POOL, /* factory = */ { fjPool ->
                 ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(fjPool).apply {
                     name = "${prefix}${counter.getAndIncrement()}"
                 }
@@ -132,6 +134,6 @@ object CffuKotestProjectConfig : AbstractProjectConfig(), BeforeProjectListener 
         println("CI env var:                      ${System.getenv("CI")} (is ci env: ${isCiEnv()})")
         println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 
-        warmupExecutorService(testThreadPoolExecutor, testForkJoinPoolExecutor)
+        warmupExecutorService(testExecutor, testFjExecutor)
     }
 }

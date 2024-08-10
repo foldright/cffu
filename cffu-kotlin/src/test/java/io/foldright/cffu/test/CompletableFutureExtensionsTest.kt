@@ -115,13 +115,13 @@ class CompletableFutureExtensionsTest : FunSpec({
         listOf(CompletableFuture(), completedFuture(n))
             .mostSuccessResultsOfCompletableFuture(null, 10, TimeUnit.MILLISECONDS).await() shouldBe listOf(null, n)
         listOf(CompletableFuture(), completedFuture(n))
-            .mostSuccessResultsOfCompletableFuture(null, testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS)
+            .mostSuccessResultsOfCompletableFuture(null, testExecutor, 10, TimeUnit.MILLISECONDS)
             .await() shouldBe listOf(null, n)
 
         arrayOf(CompletableFuture(), completedFuture(n))
             .mostSuccessResultsOfCompletableFuture(null, 10, TimeUnit.MILLISECONDS).await() shouldBe listOf(null, n)
         arrayOf(CompletableFuture(), completedFuture(n))
-            .mostSuccessResultsOfCompletableFuture(null, testThreadPoolExecutor, 10, TimeUnit.MILLISECONDS)
+            .mostSuccessResultsOfCompletableFuture(null, testExecutor, 10, TimeUnit.MILLISECONDS)
             .await() shouldBe listOf(null, n)
     }
 
@@ -240,7 +240,7 @@ class CompletableFutureExtensionsTest : FunSpec({
             cf.runAfterBothFastFailAsync(failed, runnable)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
         shouldThrowExactly<ExecutionException> {
-            cf.runAfterBothFastFailAsync(failed, runnable, testThreadPoolExecutor)[1, TimeUnit.MILLISECONDS]
+            cf.runAfterBothFastFailAsync(failed, runnable, testExecutor)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
 
         val bc = BiConsumer { _: Int, _: Int -> }
@@ -251,7 +251,7 @@ class CompletableFutureExtensionsTest : FunSpec({
             cf.thenAcceptBothFastFailAsync(failed, bc)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
         shouldThrowExactly<ExecutionException> {
-            cf.thenAcceptBothFastFailAsync(failed, bc, testThreadPoolExecutor)[1, TimeUnit.MILLISECONDS]
+            cf.thenAcceptBothFastFailAsync(failed, bc, testExecutor)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
 
         shouldThrowExactly<ExecutionException> {
@@ -261,7 +261,7 @@ class CompletableFutureExtensionsTest : FunSpec({
             cf.thenCombineFastFailAsync(failed, Integer::sum)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
         shouldThrowExactly<ExecutionException> {
-            cf.thenCombineFastFailAsync(failed, Integer::sum, testThreadPoolExecutor)[1, TimeUnit.MILLISECONDS]
+            cf.thenCombineFastFailAsync(failed, Integer::sum, testExecutor)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
     }
 
@@ -276,16 +276,16 @@ class CompletableFutureExtensionsTest : FunSpec({
         val runnable = Runnable {}
         failed.runAfterEitherSuccess(cf, runnable).get().shouldBeNull()
         failed.runAfterEitherSuccessAsync(cf, runnable).get().shouldBeNull()
-        failed.runAfterEitherSuccessAsync(cf, runnable, testThreadPoolExecutor).get().shouldBeNull()
+        failed.runAfterEitherSuccessAsync(cf, runnable, testExecutor).get().shouldBeNull()
 
         val c = Consumer<Int> {}
         failed.acceptEitherSuccess(cf, c).get().shouldBeNull()
         failed.acceptEitherSuccessAsync(cf, c).get().shouldBeNull()
-        failed.acceptEitherSuccessAsync(cf, c, testThreadPoolExecutor).get().shouldBeNull()
+        failed.acceptEitherSuccessAsync(cf, c, testExecutor).get().shouldBeNull()
 
         failed.applyToEitherSuccess(cf, identity()).get() shouldBe n
         failed.applyToEitherSuccessAsync(cf, identity()).get() shouldBe n
-        failed.applyToEitherSuccessAsync(cf, identity(), testThreadPoolExecutor).get() shouldBe n
+        failed.applyToEitherSuccessAsync(cf, identity(), testExecutor).get() shouldBe n
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -299,10 +299,10 @@ class CompletableFutureExtensionsTest : FunSpec({
         val failed = CompletableFutureUtils.failedFuture<Any>(rte)
         failed.peek(c) shouldBeSameInstanceAs failed
         failed.peekAsync(c) shouldBeSameInstanceAs failed
-        failed.peekAsync(c, testThreadPoolExecutor) shouldBeSameInstanceAs failed
+        failed.peekAsync(c, testExecutor) shouldBeSameInstanceAs failed
         failed.peek(ec) shouldBeSameInstanceAs failed
         failed.peekAsync(ec) shouldBeSameInstanceAs failed
-        failed.peekAsync(ec, testThreadPoolExecutor) shouldBeSameInstanceAs failed
+        failed.peekAsync(ec, testExecutor) shouldBeSameInstanceAs failed
 
         val success = completedFuture(n)
         success.peek(c).get() shouldBe n
@@ -331,7 +331,7 @@ class CompletableFutureExtensionsTest : FunSpec({
             failed.catchingAsync(IndexOutOfBoundsException::class.java) { n }.await()
         } shouldBeSameInstanceAs rte
         shouldThrowExactly<RuntimeException> {
-            failed.catchingAsync(IndexOutOfBoundsException::class.java, { n }, testThreadPoolExecutor).await()
+            failed.catchingAsync(IndexOutOfBoundsException::class.java, { n }, testExecutor).await()
         } shouldBeSameInstanceAs rte
 
         val success = completedFuture(n)
@@ -341,14 +341,14 @@ class CompletableFutureExtensionsTest : FunSpec({
 
         success.catchingAsync(RuntimeException::class.java) { anotherN }.await() shouldBe n
         success.catchingAsync(IndexOutOfBoundsException::class.java) { anotherN }.await() shouldBe n
-        success.catchingAsync(IndexOutOfBoundsException::class.java, { anotherN }, testThreadPoolExecutor)
+        success.catchingAsync(IndexOutOfBoundsException::class.java, { anotherN }, testExecutor)
             .await() shouldBe n
     }
 
     test("exceptionallyAsync") {
         val cf = CompletableFutureUtils.failedFuture<Int>(rte)
         cf.exceptionallyAsync { n }.get() shouldBe n
-        cf.exceptionallyAsync({ n }, testThreadPoolExecutor).get() shouldBe n
+        cf.exceptionallyAsync({ n }, testExecutor).get() shouldBe n
     }
 
     test("timeout") {
@@ -359,12 +359,12 @@ class CompletableFutureExtensionsTest : FunSpec({
             CompletableFuture<Int>().cffuOrTimeout(1, TimeUnit.MILLISECONDS).get()
         }.cause.shouldBeTypeOf<TimeoutException>()
         shouldThrowExactly<ExecutionException> {
-            CompletableFuture<Int>().cffuOrTimeout(testThreadPoolExecutor, 1, TimeUnit.MILLISECONDS).get()
+            CompletableFuture<Int>().cffuOrTimeout(testExecutor, 1, TimeUnit.MILLISECONDS).get()
         }.cause.shouldBeTypeOf<TimeoutException>()
 
         CompletableFuture<Int>().completeOnTimeout(n, 1, TimeUnit.MILLISECONDS).get() shouldBe n
         CompletableFuture<Int>().cffuCompleteOnTimeout(n, 1, TimeUnit.MILLISECONDS).get() shouldBe n
-        CompletableFuture<Int>().cffuCompleteOnTimeout(n, testThreadPoolExecutor, 1, TimeUnit.MILLISECONDS)
+        CompletableFuture<Int>().cffuCompleteOnTimeout(n, testExecutor, 1, TimeUnit.MILLISECONDS)
             .get() shouldBe n
     }
 
@@ -384,7 +384,7 @@ class CompletableFutureExtensionsTest : FunSpec({
             failed.catchingComposeAsync(
                 IndexOutOfBoundsException::class.java,
                 { completedFuture(n) },
-                testThreadPoolExecutor
+                testExecutor
             ).await()
         } shouldBeSameInstanceAs rte
 
@@ -399,7 +399,7 @@ class CompletableFutureExtensionsTest : FunSpec({
         success.catchingComposeAsync(
             IndexOutOfBoundsException::class.java,
             { completedFuture(anotherN) },
-            testThreadPoolExecutor
+            testExecutor
         ).await() shouldBe n
     }
 
@@ -407,7 +407,7 @@ class CompletableFutureExtensionsTest : FunSpec({
         val cf = CompletableFutureUtils.failedFuture<Int>(rte)
         cf.exceptionallyCompose { completedFuture(n) }.get() shouldBe n
         cf.exceptionallyComposeAsync { completedFuture(n) }.get() shouldBe n
-        cf.exceptionallyComposeAsync({ completedFuture(n) }, testThreadPoolExecutor)
+        cf.exceptionallyComposeAsync({ completedFuture(n) }, testExecutor)
             .get() shouldBe n
     }
 
@@ -426,14 +426,14 @@ class CompletableFutureExtensionsTest : FunSpec({
 
     test("write methods") {
         incompleteCf<Int>().completeAsync { n }.get() shouldBe n
-        incompleteCf<Int>().completeAsync({ n }, testThreadPoolExecutor).get() shouldBe n
+        incompleteCf<Int>().completeAsync({ n }, testExecutor).get() shouldBe n
 
         shouldThrowExactly<ExecutionException> {
             incompleteCf<Int>().completeExceptionallyAsync { rte }.get()
         }.cause shouldBeSameInstanceAs rte
 
         shouldThrowExactly<ExecutionException> {
-            incompleteCf<Int>().completeExceptionallyAsync({ rte }, testThreadPoolExecutor).get()
+            incompleteCf<Int>().completeExceptionallyAsync({ rte }, testExecutor).get()
         }.cause shouldBeSameInstanceAs rte
     }
 
