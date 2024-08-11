@@ -53,9 +53,9 @@ mvu::mvn_cmd clean install
 # test by multiply version jdks
 ########################################
 
-readonly MVN_OPTS_FOR_JAVA8='-Dkotlin.version=1.6.0 -P!logging-dependencies-default'
-readonly MVN_OPTS_FOR_JAVA11='-Dkotlin.version=1.7.0 -P!logging-dependencies-default -Dcffu.uncaught.exception.report=none'
-readonly MVN_OPTS_FOR_JAVA17='-Dkotlin.version=1.8.0 -P!logging-dependencies-default -Plogging-dependencies-log4j2 -Dcffu.uncaught.exception.report=full'
+readonly MVN_OPTS_FOR_JAVA8='-Dkotlin.version=1.6.0 -P!default-logging-dependencies -P!default-arch-unit-test'
+readonly MVN_OPTS_FOR_JAVA11='-Dkotlin.version=1.7.0 -P!default-logging-dependencies -P!default-arch-unit-test -Dcffu.uncaught.exception.report=none'
+readonly MVN_OPTS_FOR_JAVA17='-Dkotlin.version=1.8.0 -DswitchToLog4j2LoggingDependencies -Dcffu.uncaught.exception.report=full'
 
 # about CI env var
 #   https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables

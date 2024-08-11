@@ -2,6 +2,7 @@ package io.foldright.cffu;
 
 import io.foldright.cffu.spi.ExecutorWrapperProvider;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.List;
@@ -23,16 +24,21 @@ import static java.util.Objects.requireNonNull;
  */
 @ThreadSafe
 public final class CffuFactoryBuilder {
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Internal constructor and fields
+    ////////////////////////////////////////////////////////////////////////////////
+
     private final Executor defaultExecutor;
 
     private volatile boolean forbidObtrudeMethods = false;
 
     CffuFactoryBuilder(Executor defaultExecutor) {
-        this.defaultExecutor = wrapExecutor(defaultExecutor);
+        this.defaultExecutor = makeExecutor(defaultExecutor);
     }
 
+    // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // Builder Methods
+    // region# Builder Methods
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -57,7 +63,53 @@ public final class CffuFactoryBuilder {
         return new CffuFactory(defaultExecutor, forbidObtrudeMethods);
     }
 
-    private static Executor wrapExecutor(Executor executor) {
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Internal helper methods and fields
+    ////////////////////////////////////////////////////////////////////////////////
+
+    @Contract(pure = true)
+    static CffuFactory resetDefaultExecutor(CffuFactory fac, Executor defaultExecutor) {
+        return new CffuFactory(makeExecutor(defaultExecutor), fac.forbidObtrudeMethods());
+    }
+
+    private static Executor makeExecutor(Executor executor) {
+        // check CffuMadeExecutor interface to avoid re-wrapping.
+        if (executor instanceof CffuMadeExecutor) return executor;
+
+        Executor wrapByProviders = wrapExecutorByProviders(CompletableFutureUtils.screenExecutor(executor));
+        return wrapMadeInterface(wrapByProviders);
+    }
+
+    private static CffuMadeExecutor wrapMadeInterface(Executor executor) {
+        return new CffuMadeExecutor() {
+            @Override
+            public void execute(Runnable command) {
+                executor.execute(command);
+            }
+
+            @Override
+            public Executor unwrap() {
+                return executor;
+            }
+
+            @Override
+            public String toString() {
+                return "CffuMadeExecutor of executor(" + executor + ")";
+            }
+        };
+    }
+
+    /**
+     * An interface for avoiding re-wrapping.
+     */
+    @VisibleForTesting
+    interface CffuMadeExecutor extends Executor {
+        @VisibleForTesting
+        Executor unwrap();
+    }
+
+    private static Executor wrapExecutorByProviders(Executor executor) {
         for (ExecutorWrapperProvider provider : EXECUTOR_WRAPPER_PROVIDERS) {
             Supplier<String> msg = () -> provider + "(class: " + provider.getClass().getName() + ") return null";
             executor = requireNonNull(provider.wrap(executor), msg);

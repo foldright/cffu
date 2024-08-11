@@ -63,15 +63,15 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public static CffuFactoryBuilder builder(Executor defaultExecutor) {
-        return new CffuFactoryBuilder(CompletableFutureUtils.screenExecutor(defaultExecutor));
+        return new CffuFactoryBuilder(defaultExecutor);
     }
 
     /**
      * Returns a new CffuFactory from this CffuFactory that reset the defaultExecutor.
      */
     @Contract(pure = true)
-    CffuFactory resetDefaultExecutor(Executor defaultExecutor) {
-        return new CffuFactory(defaultExecutor, forbidObtrudeMethods);
+    public CffuFactory resetDefaultExecutor(Executor defaultExecutor) {
+        return CffuFactoryBuilder.resetDefaultExecutor(this, defaultExecutor);
     }
 
     @Contract(pure = true)
@@ -1495,7 +1495,7 @@ public final class CffuFactory {
      * and supports only those methods in interface {@link CompletionStage}.
      * <p>
      * <strong>CAUTION:<br></strong>
-     * if run on old Java 8, just return a Cffu with
+     * if run on old Java 8(not support *minimal* CompletionStage), just return a Cffu with
      * a *normal* underlying CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @param value the value
@@ -1524,7 +1524,7 @@ public final class CffuFactory {
      * with the given exception and supports only those methods in interface {@link CompletionStage}.
      * <p>
      * <strong>CAUTION:<br></strong>
-     * if run on old Java 8, just return a Cffu with
+     * if run on old Java 8(not support *minimal* CompletionStage), just return a Cffu with
      * a *normal* underlying CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @param ex  the exception
