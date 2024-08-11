@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 
-import java.time.Duration;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -137,7 +136,7 @@ class ListenableFutureUtilsTest {
             final AtomicBoolean interrupted = new AtomicBoolean(false);
             final ListenableFuture<Integer> lf = Futures.submit(() -> {
                 try {
-                    Thread.sleep(Duration.ofSeconds(10));
+                    Thread.sleep(2000);
                 } catch (InterruptedException ex) {
                     interrupted.set(true);
                 }
