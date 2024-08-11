@@ -136,7 +136,7 @@ class ListenableFutureUtilsTest {
             final AtomicBoolean interrupted = new AtomicBoolean(false);
             final ListenableFuture<Integer> lf = Futures.submit(() -> {
                 try {
-                    Thread.sleep(Duration.ofSeconds(10));
+                    Thread.sleep(Duration.ofSeconds(10).toMillis());
                 } catch (InterruptedException ex) {
                     interrupted.set(true);
                 }
