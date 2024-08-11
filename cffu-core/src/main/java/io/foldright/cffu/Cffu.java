@@ -2722,10 +2722,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu with the given CffuFactory(contained configuration)
-     * that is completed normally with the same value as this Cffu when it completes normally.
-     * If this Cffu completes exceptionally, then the returned Cffu completes exceptionally
-     * with a CompletionException with this exception as cause.
+     * Returns a new Cffu with the given defaultExecutor.
+     */
+    @Contract(pure = true)
+    public Cffu<T> resetDefaultExecutor(Executor defaultExecutor) {
+        return new Cffu<>(fac.resetDefaultExecutor(defaultExecutor), isMinimalStage, cf);
+    }
+
+    /**
+     * Returns a new Cffu with the given CffuFactory(contained configuration).
      * <p>
      * demo code about re-config methods of Cffu:
      *
@@ -2845,23 +2850,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns the underlying CompletableFuture.
-     * <p>
-     * {@link CffuFactory#toCffu(CompletionStage)} is inverse operation to this method.
-     * {@link CffuFactory#cffuArrayUnwrap(Cffu[])} is the batch operation to this method.
-     *
-     * @return the underlying CompletableFuture
-     * @see CffuFactory#toCffu(CompletionStage)
-     * @see CffuFactory#cffuArrayUnwrap(Cffu[])
-     * @see #toCompletableFuture()
-     */
-    @Contract(pure = true)
-    @SuppressFBWarnings("EI_EXPOSE_REP")
-    public CompletableFuture<T> cffuUnwrap() {
-        return cf;
-    }
-
-    /**
      * Returns the estimated number of Cffus whose completions are awaiting completion of this Cffu.
      * This method is designed for use in monitoring system state, not for synchronization control.
      *
@@ -2880,6 +2868,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //  - dangerous
     //    - obtrudeValue(value)
     //    - obtrudeException(ex)
+    //    - cffuUnwrap()
     //  - for API compatibility of CompletableFuture
     //    - newIncompleteFuture()
     ////////////////////////////////////////////////////////////////////////////////
@@ -2914,6 +2903,19 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
         checkMinimalStage();
         checkForbidObtrudeMethods();
         cf.obtrudeException(ex);
+    }
+
+    /**
+     * Returns the underlying CompletableFuture.
+     * In general, you should NEVER use this method, use {@link #toCompletableFuture()} instead.
+     *
+     * @return the underlying CompletableFuture
+     * @see #toCompletableFuture()
+     */
+    @Contract(pure = true)
+    @SuppressFBWarnings("EI_EXPOSE_REP")
+    public CompletableFuture<T> cffuUnwrap() {
+        return cf;
     }
 
     /**

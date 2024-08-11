@@ -860,24 +860,8 @@ class CffuFactoryTest {
     ////////////////////////////////////////////////////////////////////////////////
     // region# Conversion Methods(static methods)
     //
-    //    - cffuArrayUnwrap: Cffu[] -> CompletableFuture[]
     //    - cffuListToArray: List<Cffu> -> Cffu[]
     ////////////////////////////////////////////////////////////////////////////////
-
-    @Test
-    void test_cffuArrayUnwrap() {
-        @SuppressWarnings("unchecked")
-        CompletableFuture<Integer>[] cfArray = new CompletableFuture[]{
-                completedFuture(n),
-                completedFuture(anotherN)
-        };
-        @SuppressWarnings("unchecked")
-        Cffu<Integer>[] input = new Cffu[]{
-                cffuFactory.toCffu(cfArray[0]),
-                cffuFactory.toCffu(cfArray[1]),
-        };
-        assertArrayEquals(cfArray, CffuFactory.cffuArrayUnwrap(input));
-    }
 
     @Test
     void test_toCompletableFutureArray() {
@@ -935,6 +919,10 @@ class CffuFactoryTest {
         CffuFactory fac = CffuFactory.builder(anotherExecutorService).forbidObtrudeMethods(true).build();
         assertSame(anotherExecutorService, fac.defaultExecutor());
         assertTrue(fac.forbidObtrudeMethods());
+
+        final CffuFactory fac2 = cffuFactory.resetDefaultExecutor(anotherExecutorService);
+        assertSame(anotherExecutorService, fac2.defaultExecutor());
+        assertEquals(cffuFactory.forbidObtrudeMethods(), fac2.forbidObtrudeMethods());
     }
 
     @Test

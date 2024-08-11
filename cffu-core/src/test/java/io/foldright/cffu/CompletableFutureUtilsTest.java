@@ -1488,15 +1488,15 @@ class CompletableFutureUtilsTest {
         final List<Integer> results = IntStream.range(0, 10).boxed().collect(Collectors.toList());
 
         assertEquals(results, results.stream().map(i ->
-                orTimeout(createIncompleteFuture(), 100, TimeUnit.MILLISECONDS).handle((r1, ex1) -> {
-                    assertInstanceOf(TimeoutException.class, ex1);
+                orTimeout(createIncompleteFuture(), 100, TimeUnit.MILLISECONDS).handle((v, ex) -> {
+                    assertInstanceOf(TimeoutException.class, ex);
                     assertTrue(Delayer.atCfDelayerThread());
                     return i;
                 })
         ).collect(Collectors.toList()).stream().map(CompletableFuture::join).collect(Collectors.toList()));
 
         assertEquals(results, results.stream().map(i ->
-                cffuOrTimeout(createIncompleteFuture(), 100, TimeUnit.MILLISECONDS).handle((r, ex) -> {
+                cffuOrTimeout(createIncompleteFuture(), 100, TimeUnit.MILLISECONDS).handle((v, ex) -> {
                     assertInstanceOf(TimeoutException.class, ex);
                     assertFalse(Delayer.atCfDelayerThread());
                     assertNotSame(testThread, currentThread());
@@ -1504,7 +1504,7 @@ class CompletableFutureUtilsTest {
                 })
         ).collect(Collectors.toList()).stream().map(CompletableFuture::join).collect(Collectors.toList()));
         assertEquals(results, results.stream().map(i ->
-                cffuOrTimeout(createIncompleteFuture(), executorService, 100, TimeUnit.MILLISECONDS).handle((r, ex) -> {
+                cffuOrTimeout(createIncompleteFuture(), executorService, 100, TimeUnit.MILLISECONDS).handle((v, ex) -> {
                     assertInstanceOf(TimeoutException.class, ex);
                     assertFalse(Delayer.atCfDelayerThread());
                     assertTrue(TestThreadPoolManager.isRunInExecutor(executorService));
@@ -1519,27 +1519,27 @@ class CompletableFutureUtilsTest {
         final List<Integer> results = IntStream.range(0, 10).boxed().collect(Collectors.toList());
 
         assertEquals(results, results.stream().map(i ->
-                completeOnTimeout(createIncompleteFuture(), i, 100, TimeUnit.MILLISECONDS).handle((r, ex) -> {
+                completeOnTimeout(createIncompleteFuture(), i, 100, TimeUnit.MILLISECONDS).handle((v, ex) -> {
                     assertNull(ex);
                     assertTrue(Delayer.atCfDelayerThread());
-                    return r;
+                    return v;
                 })
         ).collect(Collectors.toList()).stream().map(CompletableFuture::join).collect(Collectors.toList()));
 
         assertEquals(results, results.stream().map(i ->
-                cffuCompleteOnTimeout(createIncompleteFuture(), i, 100, TimeUnit.MILLISECONDS).handle((r, ex) -> {
+                cffuCompleteOnTimeout(createIncompleteFuture(), i, 100, TimeUnit.MILLISECONDS).handle((v, ex) -> {
                     assertNull(ex);
                     assertFalse(Delayer.atCfDelayerThread());
                     assertNotSame(testThread, currentThread());
-                    return r;
+                    return v;
                 })
         ).collect(Collectors.toList()).stream().map(CompletableFuture::join).collect(Collectors.toList()));
         assertEquals(results, results.stream().map(i ->
-                cffuCompleteOnTimeout(createIncompleteFuture(), i, executorService, 100, TimeUnit.MILLISECONDS).handle((r, ex) -> {
+                cffuCompleteOnTimeout(createIncompleteFuture(), i, executorService, 100, TimeUnit.MILLISECONDS).handle((v, ex) -> {
                     assertNull(ex);
                     assertFalse(Delayer.atCfDelayerThread());
                     assertTrue(TestThreadPoolManager.isRunInExecutor(executorService));
-                    return r;
+                    return v;
                 })
         ).collect(Collectors.toList()).stream().map(CompletableFuture::join).collect(Collectors.toList()));
     }
