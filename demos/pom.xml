@@ -22,7 +22,7 @@
 		<demo.module.name/>
 
 		<!-- testing dependencies versions -->
-		<junit5.version>5.10.3</junit5.version>
+		<junit5.version>5.11.0</junit5.version>
 	</properties>
 
 	<modules>
@@ -147,7 +147,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
-					<version>3.2.4</version>
+					<version>3.2.5</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -167,7 +167,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
-					<version>3.4.0</version>
+					<version>3.4.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
