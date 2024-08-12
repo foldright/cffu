@@ -59,6 +59,7 @@
 		<!-- cffu SPI extension implementation modules -->
 		<module>cffu-ttl-executor-wrapper</module>
 		<module>cffu-listenable-future</module>
+		<module>cffu-archunit-rules</module>
 	</modules>
 
 	<properties>
@@ -96,6 +97,7 @@
 
 		<!-- testing dependencies versions -->
 		<junit5.version>5.13.3</junit5.version>
+		<archunit.version>1.3.0</archunit.version>
 		<kotest.version>5.8.1</kotest.version>
 	</properties>
 
@@ -237,6 +239,17 @@
 			</dependency>
 
 			<!-- testing libs -->
+			<!-- https://www.archunit.org/ -->
+			<dependency>
+				<groupId>com.tngtech.archunit</groupId>
+				<artifactId>archunit-junit5</artifactId>
+				<version>${archunit.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.tngtech.archunit</groupId>
+				<artifactId>archunit</artifactId>
+				<version>${archunit.version}</version>
+			</dependency>
 			<!-- https://github.com/kotlintest/kotlintest -->
 			<dependency>
 				<groupId>io.kotest</groupId>
@@ -579,7 +592,6 @@
 				</property>
 			</activation>
 			<dependencies>
-				<!-- https://www.archunit.org/ -->
 				<dependency>
 					<groupId>com.tngtech.archunit</groupId>
 					<artifactId>archunit-junit5</artifactId>
