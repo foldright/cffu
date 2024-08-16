@@ -1132,7 +1132,7 @@ public final class CompletableFutureUtils {
         if (len == 0) return completedFuture(arrayList());
         // Defensive copy input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
         // in order to ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
-        if (len == 1) return toNonMinCfCopy(cfs[0]).thenApply(CompletableFutureUtils::arrayList);
+        if (len == 1) return toNonMinCf(cfs[0]).thenApply(CompletableFutureUtils::arrayList);
 
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[len];
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
