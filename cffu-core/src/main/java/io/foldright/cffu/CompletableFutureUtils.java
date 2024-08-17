@@ -3731,7 +3731,7 @@ public final class CompletableFutureUtils {
      * <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
      * <a href="https://github.com/openjdk/jdk/pull/13059">PR review openjdk/jdk/13059</a>
      * and <a href="https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a">JDK bugfix commit</a>.
-     * The cffu backport logic(for Java 8) has merged the fix of this JDK bug.
+     * The cffu backport logic(for Java 20-) has merged the fix of this JDK bug.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -3743,7 +3743,9 @@ public final class CompletableFutureUtils {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(unit, "unit is null");
         // NOTE: No need check minimal stage, since checked at cf.orTimeout() / cf.isDone()
-        if (IS_JAVA9_PLUS) {
+
+        // because of bug JDK-8303742, delegate to CompletableFuture.orTimeout() when Java 21+(not Java 9+)
+        if (IS_JAVA21_PLUS) {
             cfThis.orTimeout(timeout, unit);
         } else {
             // below code is copied from CompletableFuture#orTimeout with small adoption
@@ -4530,6 +4532,8 @@ public final class CompletableFutureUtils {
 
     private static final boolean IS_JAVA19_PLUS;
 
+    private static final boolean IS_JAVA21_PLUS;
+
     static {
         boolean b;
 
@@ -4560,6 +4564,15 @@ public final class CompletableFutureUtils {
             b = false;
         }
         IS_JAVA19_PLUS = b;
+
+        try {
+            // `List.reversed` is the new method since java 21
+            new ArrayList<>().reversed();
+            b = true;
+        } catch (NoSuchMethodError e) {
+            b = false;
+        }
+        IS_JAVA21_PLUS = b;
     }
 
     private CompletableFutureUtils() {
