@@ -1785,10 +1785,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * is executed with this stage's exception as the argument to the supplied function.
      * Otherwise, if this stage completes normally,
      * then the returned stage also completes normally with the same value.
+     * <p>
+     * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
+     * <strong>Strong recommend</strong> using {@link #catching(Class, Function)}
+     * instead in your biz application.
      *
      * @param fn the function to use to compute the value of the returned Cffu
      *           if this Cffu completed exceptionally
      * @return the new Cffu
+     * @see #catching(Class, Function)
      */
     @Override
     public Cffu<T> exceptionally(Function<Throwable, ? extends T> fn) {
@@ -1801,10 +1806,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * using {@link #defaultExecutor()}.
      * Otherwise, if this stage completes normally,
      * then the returned stage also completes normally with the same value.
+     * <p>
+     * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
+     * <strong>Strong recommend</strong> using {@link #catchingAsync(Class, Function)}
+     * instead in your biz application.
      *
      * @param fn the function to use to compute the value of the returned Cffu
      *           if this Cffu completed exceptionally
      * @return the new Cffu
+     * @see #catchingAsync(Class, Function)
      */
     @Override
     public Cffu<T> exceptionallyAsync(Function<Throwable, ? extends T> fn) {
@@ -1816,11 +1826,16 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * is executed with this stage's exception as the argument to the supplied function,
      * using the supplied Executor. Otherwise, if this stage completes normally,
      * then the returned stage also completes normally with the same value.
+     * <p>
+     * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
+     * <strong>Strong recommend</strong> using {@link #catchingAsync(Class, Function, Executor)}
+     * instead in your biz application.
      *
      * @param fn       the function to use to compute the value of the returned Cffu
      *                 if this Cffu completed exceptionally
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
+     * @see #catchingAsync(Class, Function, Executor)
      */
     @Override
     public Cffu<T> exceptionallyAsync(Function<Throwable, ? extends T> fn, Executor executor) {
@@ -2091,10 +2106,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new CompletionStage that, when this stage completes exceptionally,
      * is composed using the results of the supplied function applied to this stage's exception.
+     * <p>
+     * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
+     * <strong>Strong recommend</strong> using {@link #catchingCompose(Class, Function)}
+     * instead in your biz application.
      *
      * @param fn the function to use to compute the returned CompletionStage
      *           if this CompletionStage completed exceptionally
      * @return the new CompletionStage
+     * @see #catchingCompose(Class, Function)
      */
     @Override
     public Cffu<T> exceptionallyCompose(Function<Throwable, ? extends CompletionStage<T>> fn) {
@@ -2105,10 +2125,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Returns a new Cffu that, when this stage completes exceptionally,
      * is composed using the results of the supplied function applied to this stage's exception,
      * using {@link #defaultExecutor()}.
+     * <p>
+     * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
+     * <strong>Strong recommend</strong> using {@link #catchingComposeAsync(Class, Function)}
+     * instead in your biz application.
      *
      * @param fn the function to use to compute the returned CompletionStage
      *           if this Cffu completed exceptionally
      * @return the new Cffu
+     * @see #catchingComposeAsync(Class, Function)
      */
     @Override
     public Cffu<T> exceptionallyComposeAsync(Function<Throwable, ? extends CompletionStage<T>> fn) {
@@ -2119,11 +2144,16 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Returns a new Cffu that, when this stage completes exceptionally,
      * is composed using the results of the supplied function applied to this stage's exception,
      * using the supplied Executor.
+     * <p>
+     * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
+     * <strong>Strong recommend</strong> using {@link #catchingComposeAsync(Class, Function, Executor)}
+     * instead in your biz application.
      *
      * @param fn       the function to use to compute the returned CompletionStage
      *                 if this Cffu completed exceptionally
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
+     * @see #catchingComposeAsync(Class, Function, Executor)
      */
     @Override
     public Cffu<T> exceptionallyComposeAsync(

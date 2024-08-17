@@ -3634,10 +3634,15 @@ public final class CompletableFutureUtils {
      * stage's exception as the argument to the supplied function, using given stage's
      * default asynchronous execution facility. Otherwise, if given stage completes normally,
      * then the returned stage also completes normally with the same value.
+     * <p>
+     * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
+     * <strong>Strong recommend</strong> using {@link #catchingAsync(CompletionStage, Class, Function)}
+     * instead in your biz application.
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
      *           if given CompletionStage completed exceptionally
      * @return the new CompletableFuture
+     * @see #catchingAsync(CompletionStage, Class, Function)
      */
     public static <T, C extends CompletionStage<? super T>>
     C exceptionallyAsync(C cfThis, Function<Throwable, ? extends T> fn) {
@@ -3648,11 +3653,16 @@ public final class CompletableFutureUtils {
      * Returns a new CompletionStage that, when given stage completes exceptionally, is executed with given
      * stage's exception as the argument to the supplied function, using the supplied Executor. Otherwise,
      * if given stage completes normally, then the returned stage also completes normally with the same value.
+     * <p>
+     * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
+     * <strong>Strong recommend</strong> using {@link #catchingAsync(CompletionStage, Class, Function, Executor)}
+     * instead in your biz application.
      *
      * @param fn       the function to use to compute the value of the returned CompletableFuture
      *                 if given CompletionStage completed exceptionally
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
+     * @see #catchingAsync(CompletionStage, Class, Function, Executor)
      */
     @SuppressWarnings("unchecked")
     public static <T, C extends CompletionStage<? super T>>
@@ -3940,10 +3950,15 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when given CompletableFuture completes exceptionally,
      * is composed using the results of the supplied function applied to given stage's exception.
+     * <p>
+     * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
+     * <strong>Strong recommend</strong> using {@link #catchingCompose(CompletionStage, Class, Function)}
+     * instead in your biz application.
      *
      * @param fn the function to use to compute the returned CompletableFuture
      *           if given CompletionStage completed exceptionally
      * @return the new CompletableFuture
+     * @see #catchingCompose(CompletionStage, Class, Function)
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T, C extends CompletionStage<? super T>>
@@ -3961,10 +3976,15 @@ public final class CompletableFutureUtils {
      * Returns a new CompletableFuture that, when given CompletableFuture completes exceptionally,
      * is composed using the results of the supplied function applied to given stage's exception,
      * using given CompletableFuture's default asynchronous execution facility.
+     * <p>
+     * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
+     * <strong>Strong recommend</strong> using {@link #catchingComposeAsync(CompletionStage, Class, Function)}
+     * instead in your biz application.
      *
      * @param fn the function to use to compute the returned CompletableFuture
      *           if given CompletionStage completed exceptionally
      * @return the new CompletableFuture
+     * @see #catchingComposeAsync(CompletionStage, Class, Function)
      */
     public static <T, C extends CompletionStage<? super T>>
     C exceptionallyComposeAsync(C cfThis, Function<Throwable, ? extends CompletionStage<T>> fn) {
@@ -3974,11 +3994,16 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when given CompletableFuture completes exceptionally, is composed using
      * the results of the supplied function applied to given stage's exception, using the supplied Executor.
+     * <p>
+     * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
+     * <strong>Strong recommend</strong> using {@link #catchingComposeAsync(CompletionStage, Class, Function, Executor)}
+     * instead in your biz application.
      *
      * @param fn       the function to use to compute the returned CompletableFuture
      *                 if given CompletionStage completed exceptionally
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
+     * @see #catchingComposeAsync(CompletionStage, Class, Function, Executor)
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T, C extends CompletionStage<? super T>>
