@@ -1,6 +1,7 @@
 package io.foldright.cffu;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.spi.LocationAwareLogger;
 
 
@@ -17,19 +18,21 @@ class ExceptionReporter {
     private static final LoggerAdapter logger = getLogger();
 
     @Nullable
+    @Contract("_, _ -> null")
     @SuppressWarnings("StatementWithEmptyBody")
-    static <T> T reportException(String msg, Throwable ex) {
+    static <T> T reportUncaughtException(String where, Throwable ex) {
         final String fullReport = "full";
         final String shortReport = "short";
         final String noneReport = "none";
 
-        String report = System.getProperty("cffu.uncaught.exception.report", shortReport);
+        final String report = System.getProperty("cffu.uncaught.exception.report", shortReport);
+        final String msgHead = "Uncaught exception occurred at ";
         if (noneReport.equalsIgnoreCase(report)) {
             // pass silently when explicitly silenced.
         } else if (fullReport.equalsIgnoreCase(report)) {
-            logger.error(msg, ex);
+            logger.error(msgHead + where, ex);
         } else {
-            logger.error(msg + ", " + ex, null);
+            logger.error(msgHead + where + ", " + ex, null);
         }
 
         return null;
