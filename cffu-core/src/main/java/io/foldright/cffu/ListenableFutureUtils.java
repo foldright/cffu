@@ -13,6 +13,10 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * Integration with guava {@link ListenableFuture}.
+ *
+ * @author Jerry Lee (oldratlee at gmail dot com)
+ * @author HuHao (995483610 at qq dot com)
+ * @author Eric Lin (linqinghua4 at gmail dot com)
  */
 public class ListenableFutureUtils {
 

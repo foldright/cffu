@@ -1043,6 +1043,7 @@ public final class CffuFactory {
      * @param valueIfFailed the value to return if not completed successfully
      * @param cfs           the stages
      * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see com.google.common.util.concurrent.Futures#successfulAsList(com.google.common.util.concurrent.ListenableFuture[]) Guava method successfulAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1084,6 +1085,7 @@ public final class CffuFactory {
      * @param cfs the stages
      * @return a new Cffu that is completed when all the given stages complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @see com.google.common.util.concurrent.Futures#allAsList(com.google.common.util.concurrent.ListenableFuture[]) Guava method allAsList()
      */
     @Contract(pure = true)
     @SafeVarargs

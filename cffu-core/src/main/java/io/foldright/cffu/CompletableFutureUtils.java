@@ -25,6 +25,7 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @author HuHao (995483610 at qq dot com)
+ * @author Eric Lin (linqinghua4 at gmail dot com)
  */
 public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
@@ -1130,8 +1131,8 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cfs);
         final int len = cfs.length;
         if (len == 0) return completedFuture(arrayList());
-        // convert input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
-        // in order to ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
+        // convert input cf to non-minimal-stage instance for SINGLE input in order to ensure that
+        // the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
         if (len == 1) return toNonMinCf(cfs[0]).thenApply(CompletableFutureUtils::arrayList);
 
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[len];
@@ -1157,7 +1158,7 @@ public final class CompletableFutureUtils {
      * @param cfs           the stages
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #getSuccessNow(CompletableFuture, Object)
-     * @see com.google.common.util.concurrent.Futures#successfulAsList(com.google.common.util.concurrent.ListenableFuture[]) guava#successfulAsList() method
+     * @see com.google.common.util.concurrent.Futures#successfulAsList(com.google.common.util.concurrent.ListenableFuture[]) Guava method successfulAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1180,7 +1181,6 @@ public final class CompletableFutureUtils {
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @param cfs               the stages
      * @see #getSuccessNow(CompletableFuture, Object)
-     * @see com.google.common.util.concurrent.Futures#successfulAsList(com.google.common.util.concurrent.ListenableFuture[]) guava#successfulAsList() method
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1241,7 +1241,7 @@ public final class CompletableFutureUtils {
      * @param cfs the stages
      * @return a new CompletableFuture that is completed when all the given stages complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see com.google.common.util.concurrent.Futures#allAsList(com.google.common.util.concurrent.ListenableFuture[]) guava#allAsList() method
+     * @see com.google.common.util.concurrent.Futures#allAsList(com.google.common.util.concurrent.ListenableFuture[]) Guava method allAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1249,8 +1249,8 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cfs);
         final int len = cfs.length;
         if (len == 0) return completedFuture(arrayList());
-        // convert input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
-        // in order to ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
+        // convert input cf to non-minimal-stage instance for SINGLE input in order to ensure that
+        // the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
         if (len == 1) return toNonMinCf(cfs[0]).thenApply(CompletableFutureUtils::arrayList);
 
         final Object[] result = new Object[len];
@@ -1345,8 +1345,8 @@ public final class CompletableFutureUtils {
     public static CompletableFuture<Void> allOf(CompletionStage<?>... cfs) {
         requireNonNull(cfs, "cfs is null");
         if (cfs.length == 0) return completedFuture(null);
-        // convert input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
-        // in order to ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
+        // convert input cf to non-minimal-stage instance for SINGLE input in order to ensure that
+        // the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
         if (cfs.length == 1) return toNonMinCf(requireNonNull(cfs[0], "cf1 is null")).thenApply(unused -> null);
         return CompletableFuture.allOf(f_toCfArray(cfs));
     }
@@ -1458,9 +1458,9 @@ public final class CompletableFutureUtils {
     /**
      * Converts CompletionStage to a non-minimal-stage CompletableFuture copy. This method is type safe.
      * <p>
-     * <strong>Implementation Note:</strong> The return of {@code copy} methods
-     * ({@link #copy(CompletableFuture)}/{@link CompletableFuture#copy()}) on {@code minimal-stage}
-     * is still a {@code minimal-stage}(e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()})
+     * <strong>Implementation Note:</strong> The returned instances of calling {@code copy} methods
+     * ({@link #copy(CompletableFuture)}/{@link CompletableFuture#copy()}) on {@code minimal-stage} instances
+     * is still {@code minimal-stage}(e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()})
      */
     private static <T> CompletableFuture<T> toNonMinCfCopy(CompletionStage<? extends T> s) {
         final CompletableFuture<T> f = f_toCf(s);
@@ -1498,7 +1498,7 @@ public final class CompletableFutureUtils {
         final int len = cfs.length;
         if (len == 0) return failedFuture(new NoCfsProvidedException());
         // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
-        // 1. avoid writing the input cf unexpectedly it by caller code
+        // 1. avoid writing the input cf unexpectedly by caller code
         // 2. the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
         if (len == 1) return toNonMinCfCopy(cfs[0]);
 
@@ -1537,7 +1537,7 @@ public final class CompletableFutureUtils {
         requireNonNull(cfs, "cfs is null");
         if (cfs.length == 0) return new CompletableFuture<>();
         // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
-        // 1. avoid writing the input cf unexpectedly it by caller code
+        // 1. avoid writing the input cf unexpectedly by caller code
         // 2. the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
         if (cfs.length == 1) return toNonMinCfCopy(requireNonNull(cfs[0], "cf1 is null"));
         CompletableFuture<Object> ret = CompletableFuture.anyOf(f_toCfArray(cfs));
@@ -3570,7 +3570,7 @@ public final class CompletableFutureUtils {
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
-     * @see com.google.common.util.concurrent.Futures#catching(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.base.Function, Executor) guava#catching() method
+     * @see com.google.common.util.concurrent.Futures#catching(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.base.Function, Executor) Guava method catching()
      */
     @SuppressWarnings("unchecked")
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
@@ -3595,7 +3595,7 @@ public final class CompletableFutureUtils {
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
-     * @see com.google.common.util.concurrent.Futures#catching(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.base.Function, Executor) guava#catching() method
+     * @see com.google.common.util.concurrent.Futures#catching(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.base.Function, Executor) Guava method catching()
      */
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
     C catchingAsync(C cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
@@ -3613,7 +3613,7 @@ public final class CompletableFutureUtils {
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
      * @param executor      the executor to use for asynchronous execution
-     * @see com.google.common.util.concurrent.Futures#catching(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.base.Function, Executor) guava#catching() method
+     * @see com.google.common.util.concurrent.Futures#catching(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.base.Function, Executor) Guava method catching()
      */
     @SuppressWarnings("unchecked")
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
@@ -3877,7 +3877,7 @@ public final class CompletableFutureUtils {
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
-     * @see com.google.common.util.concurrent.Futures#catchingAsync(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) guava#catchingAsync() method
+     * @see com.google.common.util.concurrent.Futures#catchingAsync(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) Guava method catchingAsync()
      */
     @SuppressWarnings("unchecked")
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
@@ -3901,7 +3901,7 @@ public final class CompletableFutureUtils {
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
-     * @see com.google.common.util.concurrent.Futures#catchingAsync(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) guava#catchingAsync() method
+     * @see com.google.common.util.concurrent.Futures#catchingAsync(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) Guava method catchingAsync()
      */
     public static <T, X extends Throwable, C extends CompletionStage<? super T>> C catchingComposeAsync(
             C cfThis, Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
@@ -3919,7 +3919,7 @@ public final class CompletableFutureUtils {
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
      * @param executor      the executor to use for asynchronous execution
-     * @see com.google.common.util.concurrent.Futures#catchingAsync(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) guava#catchingAsync() method
+     * @see com.google.common.util.concurrent.Futures#catchingAsync(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) Guava method catchingAsync()
      */
     @SuppressWarnings("unchecked")
     public static <T, X extends Throwable, C extends CompletionStage<? super T>> C catchingComposeAsync(
@@ -4319,7 +4319,7 @@ public final class CompletableFutureUtils {
         if (IS_JAVA9_PLUS) {
             cfThis.completeAsync(supplier, executor);
         } else {
-            // NOTE: No need check minimal stage, because on Java 8(not Java 9+) NOT support minimal stage
+            // NOTE: No need check minimal stage, because Java 8(not Java 9+) NOT support minimal stage
 
             // below code is copied from CompletableFuture#completeAsync with small adoption
             executor.execute(new CfCompleterBySupplier<>(cfThis, supplier));

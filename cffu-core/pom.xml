@@ -67,6 +67,18 @@
 			<organization>FoldRight</organization>
 			<organizationUrl>https://foldright.io</organizationUrl>
 		</developer>
+		<developer>
+			<name>Eric Lin</name>
+			<id>linzee1</id>
+			<email>linqinghua4@gmail.com</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+8</timezone>
+			<url>https://github.com/linzee1</url>
+			<organization>FoldRight</organization>
+			<organizationUrl>https://foldright.io</organizationUrl>
+		</developer>
 	</developers>
 
 	<dependencies>

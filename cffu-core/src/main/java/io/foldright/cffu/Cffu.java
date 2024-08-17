@@ -1738,7 +1738,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
-     * @see com.google.common.util.concurrent.Futures#catching(ListenableFuture, Class, com.google.common.base.Function, Executor) guava#catching() method
+     * @see com.google.common.util.concurrent.Futures#catching(ListenableFuture, Class, com.google.common.base.Function, Executor) Guava method catching()
      */
     public <X extends Throwable> Cffu<T> catching(Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
         return reset0(CompletableFutureUtils.catching(cf, exceptionType, fallback));
@@ -1755,7 +1755,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
-     * @see com.google.common.util.concurrent.Futures#catching(ListenableFuture, Class, com.google.common.base.Function, Executor) guava#catching() method
+     * @see com.google.common.util.concurrent.Futures#catching(ListenableFuture, Class, com.google.common.base.Function, Executor) Guava method catching()
      */
     public <X extends Throwable> Cffu<T> catchingAsync(
             Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
@@ -1773,7 +1773,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
      * @param executor      the executor to use for asynchronous execution
-     * @see com.google.common.util.concurrent.Futures#catching(ListenableFuture, Class, com.google.common.base.Function, Executor) guava#catching() method
+     * @see com.google.common.util.concurrent.Futures#catching(ListenableFuture, Class, com.google.common.base.Function, Executor) Guava method catching()
      */
     public <X extends Throwable> Cffu<T> catchingAsync(
             Class<X> exceptionType, Function<? super X, ? extends T> fallback, Executor executor) {
@@ -2046,7 +2046,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
-     * @see com.google.common.util.concurrent.Futures#catchingAsync(ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) guava#catchingAsync() method
+     * @see com.google.common.util.concurrent.Futures#catchingAsync(ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) Guava method catchingAsync()
      */
     public <X extends Throwable> Cffu<T> catchingCompose(
             Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
@@ -2063,7 +2063,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
-     * @see com.google.common.util.concurrent.Futures#catchingAsync(ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) guava#catchingAsync() method
+     * @see com.google.common.util.concurrent.Futures#catchingAsync(ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) Guava method catchingAsync()
      */
     public <X extends Throwable> Cffu<T> catchingComposeAsync(
             Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
@@ -2081,7 +2081,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
      * @param executor      the executor to use for asynchronous execution
-     * @see com.google.common.util.concurrent.Futures#catchingAsync(ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) guava#catchingAsync() method
+     * @see com.google.common.util.concurrent.Futures#catchingAsync(ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) Guava method catchingAsync()
      */
     public <X extends Throwable> Cffu<T> catchingComposeAsync(
             Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback, Executor executor) {
@@ -2758,14 +2758,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a {@link CompletableFuture} maintaining the same completion properties as this Cffu.
      * <p>
-     * Call {@link CompletableFuture#toCompletableFuture()} method of the underlying CompletableFuture:
-     * {@code underlyingCf.toCompletableFuture()}; If you need the underlying CompletableFuture instance,
-     * call method {@link #cffuUnwrap()}.
-     * <p>
-     * {@link CompletableFutureUtils#toCompletableFutureArray(CompletionStage[])} is the batch operation to this method.
+     * Calling this method is same as calling the {@link CompletableFuture#toCompletableFuture()} method
+     * of the underlying CompletableFuture: {@code underlyingCf.toCompletableFuture()};
+     * {@link CompletableFutureUtils#toCompletableFutureArray(CompletionStage[])} is the batch operation of this method.
+     * If you need the underlying CompletableFuture instance, call method {@link #cffuUnwrap()}.
      *
      * @return the CompletableFuture
-     * @see #cffuUnwrap()
      * @see CompletableFutureUtils#toCompletableFutureArray(CompletionStage[])
      */
     @Contract(pure = true)
