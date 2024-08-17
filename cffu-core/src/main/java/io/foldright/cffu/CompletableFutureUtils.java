@@ -4526,53 +4526,26 @@ public final class CompletableFutureUtils {
     // region# Internal Java version check logic for compatibility
     ////////////////////////////////////////////////////////////////////////////////
 
-    private static final boolean IS_JAVA9_PLUS;
+    // `completedStage` is the new method of CompletableFuture since java 9
+    private static final boolean IS_JAVA9_PLUS = methodExists(() -> CompletableFuture.completedStage(null));
 
-    private static final boolean IS_JAVA12_PLUS;
+    // `exceptionallyCompose` is the new method of CompletableFuture since java 12
+    private static final boolean IS_JAVA12_PLUS = methodExists(() ->
+            completedFuture(null).exceptionallyCompose(ex -> null));
 
-    private static final boolean IS_JAVA19_PLUS;
+    // `resultNow` is the new method of CompletableFuture since java 19
+    private static final boolean IS_JAVA19_PLUS = methodExists(() -> completedFuture(null).resultNow());
 
-    private static final boolean IS_JAVA21_PLUS;
+    // `List.reversed` is the new method since java 21
+    private static final boolean IS_JAVA21_PLUS = methodExists(() -> new ArrayList<>().reversed());
 
-    static {
-        boolean b;
-
+    private static boolean methodExists(Runnable methodCallCheck) {
         try {
-            // `completedStage` is the new method of CompletableFuture since java 9
-            CompletableFuture.completedStage(null);
-            b = true;
+            methodCallCheck.run();
+            return true;
         } catch (NoSuchMethodError e) {
-            b = false;
+            return false;
         }
-        IS_JAVA9_PLUS = b;
-
-        final CompletableFuture<Integer> cf = completedFuture(42);
-        try {
-            // `exceptionallyCompose` is the new method of CompletableFuture since java 12
-            cf.exceptionallyCompose(v -> cf);
-            b = true;
-        } catch (NoSuchMethodError e) {
-            b = false;
-        }
-        IS_JAVA12_PLUS = b;
-
-        try {
-            // `resultNow` is the new method of CompletableFuture since java 19
-            cf.resultNow();
-            b = true;
-        } catch (NoSuchMethodError e) {
-            b = false;
-        }
-        IS_JAVA19_PLUS = b;
-
-        try {
-            // `List.reversed` is the new method since java 21
-            new ArrayList<>().reversed();
-            b = true;
-        } catch (NoSuchMethodError e) {
-            b = false;
-        }
-        IS_JAVA21_PLUS = b;
     }
 
     private CompletableFutureUtils() {
