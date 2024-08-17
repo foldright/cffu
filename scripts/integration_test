@@ -1,12 +1,17 @@
 #!/bin/bash
 set -eEuo pipefail
-cd "$(dirname "$(readlink -f "$0")")"
+# the canonical path of this script
+SELF_PATH=$(realpath -- "$0")
+readonly SELF_PATH SELF_DIR=${SELF_PATH%/*}
 
-BASH_BUDDY_ROOT="$(readlink -f bash-buddy)"
-readonly BASH_BUDDY_ROOT
+readonly BASH_BUDDY_ROOT="$SELF_DIR/bash-buddy"
+# shellcheck disable=SC1091
 source "$BASH_BUDDY_ROOT/lib/trap_error_info.sh"
+# shellcheck disable=SC1091
 source "$BASH_BUDDY_ROOT/lib/common_utils.sh"
+# shellcheck disable=SC1091
 source "$BASH_BUDDY_ROOT/lib/java_utils.sh"
+# shellcheck disable=SC1091
 source "$BASH_BUDDY_ROOT/lib/maven_utils.sh"
 
 ################################################################################
@@ -14,7 +19,6 @@ source "$BASH_BUDDY_ROOT/lib/maven_utils.sh"
 ################################################################################
 
 readonly default_build_jdk_version=21
-# shellcheck disable=SC2034
 readonly JDK_VERSIONS=(
   8
   11
@@ -32,11 +36,15 @@ readonly JDK_VERSIONS=(
 # shellcheck disable=SC2034
 readonly MVU_MVN_OPTS=(
   "${MVU_DEFAULT_MVN_OPTS[@]}"
-  -DperformRelease -P'!gen-sign' -P'!enforce-project-version-when-release'
+  -DperformRelease
   ${CI_MORE_MVN_OPTS:+${CI_MORE_MVN_OPTS}}
+  -P!gen-sign -P!enforce-project-version-when-release
+  dependency:tree
 )
 
-cd ..
+# cd to the project root directory
+readonly PROJECT_ROOT=${SELF_DIR%/*}
+cd "$PROJECT_ROOT"
 
 ########################################
 # build and test by default version jdk
@@ -53,16 +61,32 @@ mvu::mvn_cmd clean install
 # test by multiply version jdks
 ########################################
 
-readonly MVN_OPTS_FOR_JAVA8='-Dkotlin.version=1.6.0 -P!default-logging-dependencies -P!default-arch-unit-test'
-readonly MVN_OPTS_FOR_JAVA11='-Dkotlin.version=1.7.0 -P!default-logging-dependencies -P!default-arch-unit-test -Dcffu.uncaught.exception.report=none'
-readonly MVN_OPTS_FOR_JAVA17='-Dkotlin.version=1.8.0 -DswitchToLog4j2LoggingDependencies -Dcffu.uncaught.exception.report=full'
-readonly MVN_OPTS_FOR_JAVA22='-Dkotlin.version=1.9.0'
+# shellcheck disable=SC2034
+readonly MVN_OPTS_FOR_JAVA8=(
+  -Dkotlin.version=1.6.0 -Dguava.version=29.0-jre
+  -P!default-logging-dependencies -P!default-arch-unit-test
+)
+# shellcheck disable=SC2034
+readonly MVN_OPTS_FOR_JAVA11=(
+  -Dkotlin.version=1.7.0
+  -DswitchToLog4j2LoggingDependencies -Pswitch-slf4j-to-v1
+)
+# shellcheck disable=SC2034
+readonly MVN_OPTS_FOR_JAVA17=(
+  -Dkotlin.version=1.8.0
+  -DswitchToLog4j2LoggingDependencies -Dcffu.uncaught.exception.report=full
+)
+# shellcheck disable=SC2034
+readonly MVN_OPTS_FOR_JAVA22=(
+  -Dkotlin.version=1.9.0
+  -Dcffu.uncaught.exception.report=none
+)
 
+SUREFIRE_TEST_GOAL=(surefire:test)
 # about CI env var
 #   https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
-if [ "${CI:-}" = true ]; then
-  readonly CI_MORE_BEGIN_OPTS=jacoco:prepare-agent CI_MORE_END_OPTS=jacoco:report
-fi
+[ "${CI:-}" = true ] && SUREFIRE_TEST_GOAL=(jacoco:prepare-agent "${SUREFIRE_TEST_GOAL[@]}" jacoco:report)
+readonly SUREFIRE_TEST_GOAL
 
 for jdk_version in "${JDK_VERSIONS[@]}"; do
   # skip default jdk, already tested above
@@ -70,19 +94,19 @@ for jdk_version in "${JDK_VERSIONS[@]}"; do
 
   jvu::switch_to_jdk "$jdk_version"
 
-  # just test without build
-  cu::head_line_echo "test with Java $jdk_version: $JAVA_HOME"
-
   # skip kotlin module test for low java version(19-)
   # need recompile and test later(more info see the comments)
-  pl=
+  pl=()
   if ((jdk_version < default_build_jdk_version && jdk_version < 19)); then
-    pl='-pl cffu-core,cffu-ttl-executor-wrapper'
+    pl=(-pl 'cffu-core,cffu-ttl-executor-wrapper')
   fi
 
-  mvn_opts_for_java_version_var_name="MVN_OPTS_FOR_JAVA${jdk_version}"
+  mvn_opts_for_java_version_var_name="MVN_OPTS_FOR_JAVA${jdk_version}[@]"
 
-  mvu::mvn_cmd ${pl:-} ${CI_MORE_BEGIN_OPTS:-} dependency:properties surefire:test ${CI_MORE_END_OPTS:-} ${!mvn_opts_for_java_version_var_name:-}
+  # just test without build
+  cu::head_line_echo "test with Java $jdk_version: $JAVA_HOME"
+  mvu::mvn_cmd ${!mvn_opts_for_java_version_var_name:+"${!mvn_opts_for_java_version_var_name}"} \
+    ${pl[@]:+"${pl[@]}"} "${SUREFIRE_TEST_GOAL[@]}"
 done
 
 # test the kotlin extension methods works
@@ -96,23 +120,25 @@ done
 #
 # RECOMPILE cffu-kotlin and run test
 
-cu::head_line_echo "recompile and test cffu-kotlin with Java 8: $JAVA_HOME"
-
 cd cffu-kotlin
 rm -rf target/*test*
 jvu::switch_to_jdk 8
-mvu::mvn_cmd -P'!gen-git-properties' -Dmaven.main.skip -Denforcer.skip ${CI_MORE_BEGIN_OPTS:-} dependency:properties test-compile surefire:test ${CI_MORE_END_OPTS:-}
+
+cu::head_line_echo "recompile and test cffu-kotlin with Java 8: $JAVA_HOME"
+mvu::mvn_cmd -Dmaven.main.skip -Denforcer.skip -P!gen-git-properties \
+  test-compile "${SUREFIRE_TEST_GOAL[@]}"
 
 for jdk_version in "${JDK_VERSIONS[@]}"; do
-  # skip default jdk, already tested above
+  # skip jdk 8, already tested above
   ((jdk_version == 8)) && continue
 
   jvu::switch_to_jdk "$jdk_version"
 
+  mvn_opts_for_java_version_var_name="MVN_OPTS_FOR_JAVA${jdk_version}[@]"
+
   # just test without build
   cu::head_line_echo "test cffu-kotlin with Java $jdk_version: $JAVA_HOME"
-
-  mvn_opts_for_java_version_var_name="MVN_OPTS_FOR_JAVA${jdk_version}"
-
-  mvu::mvn_cmd -Dmaven.main.skip -Denforcer.skip ${CI_MORE_BEGIN_OPTS:-} dependency:properties surefire:test ${CI_MORE_END_OPTS:-} ${!mvn_opts_for_java_version_var_name:-}
+  mvu::mvn_cmd -Dmaven.main.skip -Denforcer.skip \
+    ${!mvn_opts_for_java_version_var_name:+"${!mvn_opts_for_java_version_var_name}"} \
+    "${SUREFIRE_TEST_GOAL[@]}"
 done

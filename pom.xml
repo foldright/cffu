@@ -82,6 +82,7 @@
 
 		<slf4j.version>2.0.16</slf4j.version>
 		<log4j2.version>2.23.1</log4j2.version>
+		<log4j2.slf4j.impl.aid>log4j-slf4j2-impl</log4j2.slf4j.impl.aid>
 		<guava.version>33.3.0-jre</guava.version>
 
 		<!-- testing dependencies versions -->
@@ -208,10 +209,13 @@
 			<!-- logging libs -->
 			<dependency>
 				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-bom</artifactId>
+				<artifactId>slf4j-api</artifactId>
 				<version>${slf4j.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-simple</artifactId>
+				<version>${slf4j.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
@@ -219,12 +223,6 @@
 				<version>${log4j2.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>io.github.oshai</groupId>
-				<artifactId>kotlin-logging-jvm</artifactId>
-				<version>7.0.0</version>
-				<scope>test</scope>
 			</dependency>
 
 			<!-- testing libs -->
@@ -467,6 +465,11 @@
 					<version>3.5.0</version>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>3.8.0</version>
+				</plugin>
+				<plugin>
 					<groupId>io.github.git-commit-id</groupId>
 					<artifactId>git-commit-id-maven-plugin</artifactId>
 					<version>9.0.1</version>
@@ -499,21 +502,15 @@
 					<artifactId>slf4j-api</artifactId>
 					<optional>true</optional>
 				</dependency>
-				<!-- logging libs -->
 				<dependency>
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-simple</artifactId>
 					<scope>test</scope>
 				</dependency>
-				<dependency>
-					<groupId>io.github.oshai</groupId>
-					<artifactId>kotlin-logging-jvm</artifactId>
-					<scope>test</scope>
-				</dependency>
 			</dependencies>
 		</profile>
 		<profile>
-			<id>enable-log4j2-logging-dependencies</id>
+			<id>switch-to-log4j2-logging-dependencies</id>
 			<activation>
 				<property>
 					<name>switchToLog4j2LoggingDependencies</name>
@@ -523,15 +520,17 @@
 			<dependencies>
 				<dependency>
 					<groupId>org.apache.logging.log4j</groupId>
-					<artifactId>log4j-slf4j2-impl</artifactId>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>io.github.oshai</groupId>
-					<artifactId>kotlin-logging-jvm</artifactId>
+					<artifactId>${log4j2.slf4j.impl.aid}</artifactId>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
+		</profile>
+		<profile>
+			<id>switch-slf4j-to-v1</id>
+			<properties>
+				<slf4j.version>1.7.0</slf4j.version>
+				<log4j2.slf4j.impl.aid>log4j-slf4j-impl</log4j2.slf4j.impl.aid>
+			</properties>
 		</profile>
 		<profile>
 			<id>default-arch-unit-test</id>
