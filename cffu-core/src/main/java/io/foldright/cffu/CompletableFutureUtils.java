@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Contract;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.function.*;
 
@@ -4526,6 +4527,12 @@ public final class CompletableFutureUtils {
     // region# Internal Java version check logic for compatibility
     ////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * a naive black hole to prevent code elimination, more info see
+     * <a href="https://github.com/openjdk/jmh/blob/1.37/jmh-core/src/main/java/org/openjdk/jmh/infra/Blackhole.java">JMH black hole</a>
+     */
+    private static volatile int BLACK_HOLE = 0xF0F0F0F0;
+
     // `completedStage` is the new method of CompletableFuture since java 9
     private static final boolean IS_JAVA9_PLUS = methodExists(() -> CompletableFuture.completedStage(null));
 
@@ -4539,9 +4546,10 @@ public final class CompletableFutureUtils {
     // `List.reversed` is the new method since java 21
     private static final boolean IS_JAVA21_PLUS = methodExists(() -> new ArrayList<>().reversed());
 
-    private static boolean methodExists(Runnable methodCallCheck) {
+    private static boolean methodExists(Supplier<?> methodCallCheck) {
         try {
-            methodCallCheck.run();
+            int i = BLACK_HOLE; // volatile read
+            BLACK_HOLE = Objects.hashCode(methodCallCheck.get()) ^ i;
             return true;
         } catch (NoSuchMethodError e) {
             return false;
