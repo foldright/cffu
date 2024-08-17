@@ -36,7 +36,7 @@ final class Delayer {
      * @return a Future can be used to cancel the delayed task(timeout CF)
      * @see FutureCanceller
      */
-    static ScheduledFuture<?> delayToTimoutCf(CompletableFuture<?> cf, long delay, TimeUnit unit) {
+    static ScheduledFuture<?> delayToTimeoutCf(CompletableFuture<?> cf, long delay, TimeUnit unit) {
         return delay(new CfTimeout(cf), delay, unit);
     }
 
@@ -188,7 +188,7 @@ final class CfCompleter<T> implements Runnable {
  * code is copied from {@link CompletableFuture.Canceller} with small adoption.
  *
  * @see Delayer#delay(Runnable, long, TimeUnit)
- * @see Delayer#delayToTimoutCf(CompletableFuture, long, TimeUnit)
+ * @see Delayer#delayToTimeoutCf(CompletableFuture, long, TimeUnit)
  * @see Delayer#delayToCompleteCf(CompletableFuture, Object, long, TimeUnit)
  */
 @SuppressWarnings("JavadocReference")
@@ -202,7 +202,7 @@ final class FutureCanceller implements BiConsumer<Object, Throwable> {
 
     @Override
     public void accept(Object ignore, @Nullable Throwable ex) {
-        if (ex == null && f != null && !f.isDone())
+        if (f != null && !f.isDone())
             f.cancel(false);
     }
 }

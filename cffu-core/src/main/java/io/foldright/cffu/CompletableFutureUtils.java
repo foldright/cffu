@@ -3725,6 +3725,10 @@ public final class CompletableFutureUtils {
      * Unless all subsequent actions of dependent CompletableFutures is ensured executing async
      * (aka. the dependent CompletableFutures is created by async methods), using this method and {@link CompletableFuture#orTimeout(long, TimeUnit)}
      * is one less thread switch of task execution when triggered by timeout.
+     * <p>
+     * Note: Before JDK21, CompletableFuture.orTimeout can leak if the future completes exceptionally.
+     * @see <a href="https://bugs.openjdk.org/browse/JDK-8303742">JDK-8303742</a>
+     * @see <a href="https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a">JDK bugfix commit</a>
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -3741,7 +3745,7 @@ public final class CompletableFutureUtils {
         } else {
             // below code is copied from CompletableFuture#orTimeout with small adoption
             if (!cfThis.isDone()) {
-                ScheduledFuture<?> f = Delayer.delayToTimoutCf(cfThis, timeout, unit);
+                ScheduledFuture<?> f = Delayer.delayToTimeoutCf(cfThis, timeout, unit);
                 cfThis.whenComplete(new FutureCanceller(f));
             }
         }
