@@ -25,6 +25,7 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @author HuHao (995483610 at qq dot com)
+ * @author EricLin (linqinghua4 at gmail dot com)
  */
 public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
