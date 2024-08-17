@@ -3833,13 +3833,12 @@ public final class CompletableFutureUtils {
     }
 
     @SuppressWarnings("unchecked")
-    private static <C extends CompletableFuture<?>> C hopExecutorIfAtCfDelayerThread(C cf, Executor asyncExecutor) {
+    private static <C extends CompletableFuture<?>> C hopExecutorIfAtCfDelayerThread(C cf, Executor executor) {
         CompletableFuture<Object> ret = newIncompleteFuture(cf);
 
         cf.handle((v, ex) -> {
             if (!atCfDelayerThread()) completeCf(ret, v, ex);
-            else delayedExecutor(0, TimeUnit.SECONDS, asyncExecutor)
-                    .execute(() -> completeCf(ret, v, ex));
+            else executor.execute(() -> completeCf(ret, v, ex));
             // use `cf.handle` method(instead of `cf.whenComplete`) and return null
             // in order to prevent reporting the handled argument exception in this `action` in subsequent `exceptionally`
             return null;
