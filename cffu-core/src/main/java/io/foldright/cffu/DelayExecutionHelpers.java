@@ -200,6 +200,13 @@ final class FutureCanceller implements BiConsumer<Object, Throwable> {
         this.f = requireNonNull(f);
     }
 
+    /**
+     * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout(long, TimeUnit)}
+     * leaks if the future completes exceptionally, more info see
+     * <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
+     * <a href="https://github.com/openjdk/jdk/pull/13059">PR review openjdk/jdk/13059</a>
+     * and <a href="https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a">JDK bugfix commit</a>.
+     */
     @Override
     public void accept(Object ignore, @Nullable Throwable ex) {
         if (f != null && !f.isDone())
