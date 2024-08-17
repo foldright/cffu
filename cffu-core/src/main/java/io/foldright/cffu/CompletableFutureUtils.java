@@ -1130,7 +1130,7 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cfs);
         final int len = cfs.length;
         if (len == 0) return completedFuture(arrayList());
-        // Defensive copy input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
+        // convert input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
         // in order to ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
         if (len == 1) return toNonMinCf(cfs[0]).thenApply(CompletableFutureUtils::arrayList);
 
@@ -1249,9 +1249,9 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cfs);
         final int len = cfs.length;
         if (len == 0) return completedFuture(arrayList());
-        // Defensive copy input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
+        // convert input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
         // in order to ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
-        if (len == 1) return toNonMinCfCopy(cfs[0]).thenApply(CompletableFutureUtils::arrayList);
+        if (len == 1) return toNonMinCf(cfs[0]).thenApply(CompletableFutureUtils::arrayList);
 
         final Object[] result = new Object[len];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(cfs, result);
@@ -1296,9 +1296,9 @@ public final class CompletableFutureUtils {
         requireCfsAndEleNonNull(cfs);
         final int len = cfs.length;
         if (len == 0) return completedFuture(null);
-        // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
+        // convert input cf to non-minimal-stage instance for SINGLE input in order to ensure that
         // the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
-        if (len == 1) return toNonMinCfCopy(cfs[0]).thenApply(unused -> null);
+        if (len == 1) return toNonMinCf(cfs[0]).thenApply(unused -> null);
 
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[len];
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
@@ -1345,9 +1345,9 @@ public final class CompletableFutureUtils {
     public static CompletableFuture<Void> allOf(CompletionStage<?>... cfs) {
         requireNonNull(cfs, "cfs is null");
         if (cfs.length == 0) return completedFuture(null);
-        // Defensive copy input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
+        // convert input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
         // in order to ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
-        if (cfs.length == 1) return toNonMinCfCopy(requireNonNull(cfs[0], "cf1 is null")).thenApply(unused -> null);
+        if (cfs.length == 1) return toNonMinCf(requireNonNull(cfs[0], "cf1 is null")).thenApply(unused -> null);
         return CompletableFuture.allOf(f_toCfArray(cfs));
     }
 
