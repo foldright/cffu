@@ -128,8 +128,8 @@ fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
     CompletableFutureUtils.mostSuccessResultsOf(valueIfNotSuccess, executorWhenTimeout, timeout, unit, *this)
 
 /**
- * Returns a new CompletableFuture with the results in the **same order** of all the given
- * CompletableFutures arguments, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
+ * Returns a new CompletableFuture with the results in the **same order** of all the given CompletableFutures arguments,
+ * the returned new CompletableFuture is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so, with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
@@ -146,8 +146,8 @@ fun <T> Collection<CompletionStage<out T>>.allResultsOfCompletableFuture(): Comp
     CompletableFutureUtils.allResultsOf(*toTypedArray())
 
 /**
- * Returns a new CompletableFuture with the results in the **same order** of all the given
- * CompletableFutures arguments, the returned new CompletableFuture is completed when all the given CompletableFutures complete.
+ * Returns a new CompletableFuture with the results in the **same order** of all the given CompletableFutures arguments,
+ * the returned new CompletableFuture is completed when all the given CompletableFutures complete.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so, with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
@@ -165,8 +165,8 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfCompletableFuture(): Compl
 
 /**
  * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
- * the results(`CompletableFuture<Void>`) of the given CompletableFutures are not reflected in the returned CompletableFuture,
- * but may be obtained by inspecting them individually.
+ * the results(`CompletableFuture<Void>`) of the given CompletableFutures are not reflected
+ * in the returned CompletableFuture, but may be obtained by inspecting them individually.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so *without* waiting other incomplete given CompletableFutures,
  * with a CompletionException holding this exception as its cause.
@@ -186,8 +186,8 @@ fun Collection<CompletionStage<*>>.allFastFailOfCompletableFuture(): Completable
 
 /**
  * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
- * the results(`CompletableFuture<Void>`) of the given CompletableFutures are not reflected in the returned CompletableFuture,
- * but may be obtained by inspecting them individually.
+ * the results(`CompletableFuture<Void>`) of the given CompletableFutures are not reflected
+ * in the returned CompletableFuture, but may be obtained by inspecting them individually.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so *without* waiting other incomplete given CompletableFutures,
  * with a CompletionException holding this exception as its cause.

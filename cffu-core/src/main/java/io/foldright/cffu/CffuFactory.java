@@ -556,7 +556,8 @@ public final class CffuFactory {
      * @see #allResultsFastFailOf(CompletionStage[])
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
-            Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
+            Executor executor, Supplier<? extends T1> supplier1,
+            Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
         return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(executor, supplier1, supplier2, supplier3));
     }
 
@@ -675,7 +676,8 @@ public final class CffuFactory {
      * @return the new Cffu
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyAllSuccessAsync(
-            Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
+            Executor executor, Supplier<? extends T1> supplier1,
+            Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
         return create(CompletableFutureUtils.tupleMSupplyAllSuccessAsync(executor, supplier1, supplier2, supplier3));
     }
 
@@ -882,7 +884,8 @@ public final class CffuFactory {
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return tupleMSupplyMostSuccessAsync(defaultExecutor, timeout, unit, supplier1, supplier2, supplier3, supplier4, supplier5);
+        return tupleMSupplyMostSuccessAsync(defaultExecutor, timeout, unit,
+                supplier1, supplier2, supplier3, supplier4, supplier5);
     }
 
     /**
@@ -1017,7 +1020,8 @@ public final class CffuFactory {
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return create(CompletableFutureUtils.tupleMSupplyAsync(executor, supplier1, supplier2, supplier3, supplier4, supplier5));
+        return create(CompletableFutureUtils.tupleMSupplyAsync(
+                executor, supplier1, supplier2, supplier3, supplier4, supplier5));
     }
 
     // endregion
@@ -1351,8 +1355,8 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the most results in the <strong>same order</strong> of
-     * the given two stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Returns a new Cffu with the most results in the <strong>same order</strong> of the given two stages arguments
+     * in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
      *
@@ -1369,8 +1373,8 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the most results in the <strong>same order</strong> of
-     * the given three stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Returns a new Cffu with the most results in the <strong>same order</strong> of the given three stages arguments
+     * in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
      *
@@ -1388,8 +1392,8 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the most results in the <strong>same order</strong> of
-     * the given four stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Returns a new Cffu with the most results in the <strong>same order</strong> of the given four stages arguments
+     * in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
      *
@@ -1408,8 +1412,8 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the most results in the <strong>same order</strong> of
-     * the given five stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Returns a new Cffu with the most results in the <strong>same order</strong> of the given five stages arguments
+     * in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
      *

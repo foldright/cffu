@@ -107,7 +107,8 @@ public final class ListenableFutureUtils {
     @Contract(pure = true)
     public static <T> Cffu<T> toCffu(
             ListenableFuture<T> lf, CffuFactory cffuFactory, boolean interruptLfWhenCancellationException) {
-        return cffuFactory.toCffu(toCompletableFuture(lf, cffuFactory.defaultExecutor(), interruptLfWhenCancellationException));
+        return cffuFactory.toCffu(toCompletableFuture(
+                lf, cffuFactory.defaultExecutor(), interruptLfWhenCancellationException));
     }
 
     /**
