@@ -8,7 +8,7 @@ jobs:
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#choosing-github-hosted-runners
     runs-on: ${{ matrix.os }}
     timeout-minutes: 5
-    name: fast CI on OS ${{ matrix.os }}
+    name: Fast CI on OS ${{ matrix.os }}
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest ]

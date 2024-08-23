@@ -12,6 +12,7 @@ import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import org.apache.commons.lang3.JavaVersion
+import org.apache.commons.lang3.SystemUtils
 import org.apache.commons.lang3.SystemUtils.isJavaVersionAtLeast
 import java.util.concurrent.*
 import java.util.function.Supplier
@@ -801,6 +802,8 @@ fun isJava19Plus(): Boolean = isJavaVersionAtLeast(JavaVersion.JAVA_19)
 // about CI env var
 // https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
 fun isCiEnv(): Boolean = System.getenv("CI")?.lowercase() == "true"
+
+fun isCiMacEnv(): Boolean = isCiEnv() && SystemUtils.IS_OS_MAC
 
 // endregion
 ////////////////////////////////////////////////////////////////////////////////

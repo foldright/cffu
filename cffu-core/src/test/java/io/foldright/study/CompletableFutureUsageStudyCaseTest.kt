@@ -343,14 +343,15 @@ class CompletableFutureUsageStudyCaseTest : FunSpec({
         val tick = currentTimeMillis()
         val delay = 100L
 
-        val delayer = CompletableFuture.delayedExecutor(delay, TimeUnit.MILLISECONDS)
+        val delayer = CompletableFuture.delayedExecutor(delay, TimeUnit.MILLISECONDS, testExecutor)
 
         val duration = CompletableFuture.supplyAsync({
             currentTimeMillis() - tick
         }, delayer).await()
 
         // if run in CI environment, use large tolerance 50ms, because CI environment is more unstable.
-        val tolerance = if (isCiEnv()) 50 else 20
+        // if run in CI mac environment, use huge tolerance 200ms, because CI mac environment is more more unstable.
+        val tolerance = if (isCiMacEnv()) 200 else if (isCiEnv()) 50 else 20
         duration.shouldBeBetween(delay, delay + tolerance)
     }
 

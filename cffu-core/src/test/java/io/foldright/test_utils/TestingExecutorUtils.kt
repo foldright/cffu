@@ -18,7 +18,7 @@ import kotlin.random.nextULong
 ////////////////////////////////////////////////////////////////////////////////
 
 @JvmField
-val THREAD_COUNT_OF_POOL: Int = (Runtime.getRuntime().availableProcessors() * 2).coerceAtLeast(4).coerceAtMost(15)
+val THREAD_COUNT_OF_POOL: Int = (Runtime.getRuntime().availableProcessors() * 3).coerceAtLeast(8).coerceAtMost(20)
 
 @JvmField
 val testExecutor = createThreadPool("ThreadPoolForCffuTesting")
