@@ -1,5 +1,7 @@
 package io.foldright.cffu;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
@@ -35,6 +37,9 @@ public final class CompletableFutureUtils {
 
     ////////////////////////////////////////////////////////////
     // region## Multi-Actions(M*) Methods(create by actions)
+    //
+    //    - Supplier<T>[] -> CompletableFuture<List<T>>
+    //    - Runnable[] -> CompletableFuture<Void>
     ////////////////////////////////////////////////////////////
 
     /**
@@ -1111,6 +1116,8 @@ public final class CompletableFutureUtils {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## allOf* Methods(including mostSuccessResultsOf)
+    //
+    //    CompletionStage<T>[] -> CompletableFuture<List<T>>
     ////////////////////////////////////////////////////////////
 
     /**
@@ -1159,7 +1166,7 @@ public final class CompletableFutureUtils {
      * @param cfs           the stages
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #getSuccessNow(CompletableFuture, Object)
-     * @see com.google.common.util.concurrent.Futures#successfulAsList(com.google.common.util.concurrent.ListenableFuture[]) Guava method successfulAsList()
+     * @see Futures#successfulAsList(ListenableFuture[]) Guava method successfulAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1242,7 +1249,7 @@ public final class CompletableFutureUtils {
      * @param cfs the stages
      * @return a new CompletableFuture that is completed when all the given stages complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see com.google.common.util.concurrent.Futures#allAsList(com.google.common.util.concurrent.ListenableFuture[]) Guava method allAsList()
+     * @see Futures#allAsList(ListenableFuture[]) Guava method allAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1284,8 +1291,8 @@ public final class CompletableFutureUtils {
      * If you need the successful results of given stages in the given time, prefer below methods:
      * <ul>
      * <li>{@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
-     * <li>{@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage)} /
-     *     {@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * <li>{@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage)} / {@link #mostSuccessTupleOf(long,
+     *      TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      * </ul>
      *
      * @param cfs the stages
@@ -1335,8 +1342,8 @@ public final class CompletableFutureUtils {
      * If you need the successful results of given stages in the given time, prefer below methods:
      * <ul>
      * <li>{@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
-     * <li>{@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage)} /
-     *     {@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * <li>{@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage)} / {@link #mostSuccessTupleOf(long,
+     *      TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      * </ul>
      *
      * @param cfs the stages
@@ -1475,6 +1482,8 @@ public final class CompletableFutureUtils {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## anyOf* Methods
+    //
+    //    CompletionStage<T>[] -> CompletableFuture<T>
     ////////////////////////////////////////////////////////////
 
     /**
@@ -2014,6 +2023,10 @@ public final class CompletableFutureUtils {
 
     ////////////////////////////////////////////////////////////
     // region## Then-Multi-Actions(thenM*) Methods
+    //
+    //    - thenMApply*:  Function<U>[] -> CompletableFuture<List<U>>
+    //    - thenMAccept*: Consumer[] -> CompletableFuture<Void>
+    //    - thenMRun*:    Runnable[] -> CompletableFuture<Void>
     ////////////////////////////////////////////////////////////
 
     /**
@@ -3254,8 +3267,9 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Implementation Note: Calling this method is necessary to keep the runtime type(including `minimal-stage`) of
-     * return same as `cfThis`, because `Cffu` internal use type `CompletableFuture` to represent `minimal-stage`(NOT type safe)
+     * Implementation Note:
+     * Calling this method is necessary to keep the runtime type(including `minimal-stage`) of returned cf
+     * same as input `cfThis`, because `Cffu` internal use type `CompletableFuture` to represent `minimal-stage`(NOT type safe)
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static <T1, T2> CompletableFuture<Tuple2<T1, T2>> bothFastFail0(
@@ -3440,8 +3454,9 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Implementation Note: Calling this method is necessary to keep the runtime type(including `minimal-stage`) of
-     * return same as `cfThis`, because `Cffu` internal use type `CompletableFuture` to represent `minimal-stage`(NOT type safe)
+     * Implementation Note:
+     * Calling this method is necessary to keep the runtime type(including `minimal-stage`) of returned cf
+     * same as input `cfThis`, because `Cffu` internal use type `CompletableFuture` to represent `minimal-stage`(NOT type safe)
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static <T> CompletableFuture<T> eitherSuccess0(
@@ -3571,7 +3586,7 @@ public final class CompletableFutureUtils {
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
-     * @see com.google.common.util.concurrent.Futures#catching(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.base.Function, Executor) Guava method catching()
+     * @see Futures#catching Guava method catching()
      */
     @SuppressWarnings("unchecked")
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
@@ -3596,7 +3611,7 @@ public final class CompletableFutureUtils {
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
-     * @see com.google.common.util.concurrent.Futures#catching(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.base.Function, Executor) Guava method catching()
+     * @see Futures#catching Guava method catching()
      */
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
     C catchingAsync(C cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
@@ -3614,7 +3629,7 @@ public final class CompletableFutureUtils {
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
      * @param executor      the executor to use for asynchronous execution
-     * @see com.google.common.util.concurrent.Futures#catching(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.base.Function, Executor) Guava method catching()
+     * @see Futures#catching Guava method catching()
      */
     @SuppressWarnings("unchecked")
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
@@ -3704,7 +3719,8 @@ public final class CompletableFutureUtils {
      * if not otherwise completed before the given timeout.
      *
      * @param executorWhenTimeout the async executor when triggered by timeout
-     * @param timeout             how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
+     * @param timeout             how long to wait before completing exceptionally with a TimeoutException,
+     *                            in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new CompletableFuture
      */
@@ -3733,9 +3749,9 @@ public final class CompletableFutureUtils {
      * <strong>Strong recommend</strong> using the safe method {@link #cffuOrTimeout(CompletableFuture, long, TimeUnit)}
      * instead of this method and {@link CompletableFuture#orTimeout(long, TimeUnit)}.
      * <p>
-     * Unless all subsequent actions of dependent CompletableFutures is ensured executing async
-     * (aka. the dependent CompletableFutures is created by async methods), using this method and {@link CompletableFuture#orTimeout(long, TimeUnit)}
-     * is one less thread switch of task execution when triggered by timeout.
+     * Unless all subsequent actions of dependent CompletableFutures is ensured executing async(aka. the dependent
+     * CompletableFutures is created by async methods), using this method and {@link CompletableFuture#orTimeout(long,
+     * TimeUnit)} is one less thread switch of task execution when triggered by timeout.
      * <p>
      * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout(long, TimeUnit)}
      * leaks if the future completes exceptionally, more info see
@@ -3814,11 +3830,12 @@ public final class CompletableFutureUtils {
      * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
      * (including delay execution and timeout).
      * <p>
-     * <strong>Strong recommend</strong> using the safe method {@link #cffuCompleteOnTimeout(CompletableFuture, Object, long, TimeUnit)}
-     * instead of this method and {@link CompletableFuture#completeOnTimeout(Object, long, TimeUnit)}.
+     * <strong>Strong recommend</strong>
+     * using the safe method {@link #cffuCompleteOnTimeout(CompletableFuture, Object, long, TimeUnit)}
+     * instead of this method and {@link CompletableFuture#completeOnTimeout}.
      * <p>
-     * Unless all subsequent actions of dependent CompletableFutures is ensured executing async
-     * (aka. the dependent CompletableFutures is created by async methods), using this method and {@link CompletableFuture#completeOnTimeout(Object, long, TimeUnit)}
+     * Unless all subsequent actions of dependent CompletableFutures is ensured executing async(aka. the dependent
+     * CompletableFutures is created by async methods), using this method and {@link CompletableFuture#completeOnTimeout}
      * is one less thread switch of task execution when triggered by timeout.
      *
      * @param value   the value to use upon timeout
@@ -3889,7 +3906,7 @@ public final class CompletableFutureUtils {
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
-     * @see com.google.common.util.concurrent.Futures#catchingAsync(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) Guava method catchingAsync()
+     * @see Futures#catchingAsync Guava method catchingAsync()
      */
     @SuppressWarnings("unchecked")
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
@@ -3913,7 +3930,7 @@ public final class CompletableFutureUtils {
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
-     * @see com.google.common.util.concurrent.Futures#catchingAsync(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) Guava method catchingAsync()
+     * @see Futures#catchingAsync Guava method catchingAsync()
      */
     public static <T, X extends Throwable, C extends CompletionStage<? super T>> C catchingComposeAsync(
             C cfThis, Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
@@ -3931,7 +3948,7 @@ public final class CompletableFutureUtils {
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
      * @param executor      the executor to use for asynchronous execution
-     * @see com.google.common.util.concurrent.Futures#catchingAsync(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) Guava method catchingAsync()
+     * @see Futures#catchingAsync Guava method catchingAsync()
      */
     @SuppressWarnings("unchecked")
     public static <T, X extends Throwable, C extends CompletionStage<? super T>> C catchingComposeAsync(
@@ -4111,6 +4128,27 @@ public final class CompletableFutureUtils {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## Read(explicitly) Methods of CompletableFuture(including Future)
+    //
+    //    - get()               // BLOCKING!
+    //    - get(timeout, unit)  // BLOCKING!
+    //    - join()              // BLOCKING!
+    //    - join(timeout, unit) // BLOCKING!
+    //    - getNow(T valueIfAbsent)
+    //    - getSuccessNow(T valueIfAbsent)
+    //    - resultNow()
+    //    - exceptionNow()
+    //
+    //    - isDone()
+    //    - isCompletedExceptionally()
+    //    - isCancelled()
+    //    - state()
+    //    - cffuState()
+    //
+    // NOTE about ExecutionException or CompletionException when the computation threw an exception:
+    //   - get methods throw ExecutionException(checked exception)
+    //     these old methods existed in `Future` interface since Java 5
+    //   - getNow/join throw CompletionException(unchecked exception),
+    //     these new methods existed in `CompletableFuture` since Java 8
     ////////////////////////////////////////////////////////////
 
     /**
@@ -4462,12 +4500,13 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * A convenient util method for converting input {@link CompletionStage} (including
+     * A convenient util method for converting input {@link CompletionStage}(including
      * {@link Cffu}/{@link CompletableFuture}) array element by {@link CompletionStage#toCompletableFuture()}.
      *
-     * @see Cffu#toCompletableFuture()
-     * @see CompletableFuture#toCompletableFuture()
+     * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see CompletionStage#toCompletableFuture()
+     * @see CompletableFuture#toCompletableFuture()
+     * @see Cffu#toCompletableFuture()
      * @see CffuFactory#toCffuArray(CompletionStage[])
      */
     @Contract(pure = true)
@@ -4553,10 +4592,10 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * a naive black hole to prevent code elimination, more info see
-     * <a href="https://github.com/openjdk/jmh/blob/1.37/jmh-core/src/main/java/org/openjdk/jmh/infra/Blackhole.java">JMH black hole</a>
+     * a naive black hole to prevent code elimination, more info see <a href=
+     * "https://github.com/openjdk/jmh/blob/1.37/jmh-core/src/main/java/org/openjdk/jmh/infra/Blackhole.java">JMH black hole</a>
      */
-    private static volatile int BLACK_HOLE = 0xF0F0F0F0;
+    private static volatile int BLACK_HOLE = 0xCFF0CFF0;
 
     // `completedStage` is the new method of CompletableFuture since java 9
     private static final boolean IS_JAVA9_PLUS = methodExists(() -> CompletableFuture.completedStage(null));
