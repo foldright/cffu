@@ -4,7 +4,7 @@
 
 	<groupId>io.foldright</groupId>
 	<artifactId>cffu-parent</artifactId>
-	<version>1.x-SNAPSHOT</version>
+	<version>1.0.0-Alpha20</version>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
 	<description>cffu parent</description>
