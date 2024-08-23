@@ -18,7 +18,7 @@ import static java.util.Objects.requireNonNull;
  * @author HuHao (995483610 at qq dot com)
  * @author Eric Lin (linqinghua4 at gmail dot com)
  */
-public class ListenableFutureUtils {
+public final class ListenableFutureUtils {
 
     /*
      * Implementation Note:

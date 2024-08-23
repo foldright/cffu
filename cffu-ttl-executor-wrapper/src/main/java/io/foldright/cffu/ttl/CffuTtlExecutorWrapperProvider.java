@@ -14,7 +14,7 @@ import static java.util.Objects.requireNonNull;
  * Cffu executor wrapper provider({@link ExecutorWrapperProvider}) SPI implementation for
  * <a href="https://github.com/alibaba/transmittable-thread-local">📌 TransmittableThreadLocal (TTL)</a>.
  */
-public class CffuTtlExecutorWrapperProvider implements ExecutorWrapperProvider {
+public final class CffuTtlExecutorWrapperProvider implements ExecutorWrapperProvider {
     /**
      * Returns the <a href="https://github.com/alibaba/transmittable-thread-local">{@code TTL}</a>
      * executor wrapper of the given executor.

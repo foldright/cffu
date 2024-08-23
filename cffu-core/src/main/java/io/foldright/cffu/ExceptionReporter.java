@@ -11,7 +11,7 @@ import org.slf4j.spi.LocationAwareLogger;
  * @author HuHao (995483610 at qq dot com)
  * @author Jerry Lee (oldratlee at gmail dot com)
  */
-class ExceptionReporter {
+final class ExceptionReporter {
     private static final String FQCN = ExceptionReporter.class.getName();
     private static final String CFFU_PACKAGE_NAME = FQCN.replaceFirst("\\.[^.]*$", "");
 
@@ -50,7 +50,7 @@ class ExceptionReporter {
         void error(String msg, @Nullable Throwable ex);
     }
 
-    private static class Slf4jLoggerAdapter implements LoggerAdapter {
+    private static final class Slf4jLoggerAdapter implements LoggerAdapter {
         private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CFFU_PACKAGE_NAME);
 
         @Override
@@ -63,7 +63,7 @@ class ExceptionReporter {
         }
     }
 
-    private static class JulLoggerAdapter implements LoggerAdapter {
+    private static final class JulLoggerAdapter implements LoggerAdapter {
         private final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CFFU_PACKAGE_NAME);
 
         @Override
