@@ -32,7 +32,7 @@ public class ListenableFutureUtils {
      * Converts input {@link ListenableFuture} to {@link CompletableFuture}.
      * <p>
      * Callback from ListenableFuture is executed using the given executor,
-     * use {@link MoreExecutors#directExecutor()} if you need skip executor switch.
+     * use {@link MoreExecutors#directExecutor()} if you need skip the execution switch.
      * <p>
      * Cancelling({@link Future#cancel(boolean)}) the returned CompletableFuture
      * will also cancel underlying ListenableFuture.
@@ -50,7 +50,8 @@ public class ListenableFutureUtils {
      *
      * @param lf                                   the underlying ListenableFuture
      * @param executor                             the executor to use for ListenableFuture callback execution
-     * @param interruptLfWhenCancellationException whether to cancel ListenableFuture with interruption when CancellationException occurred
+     * @param interruptLfWhenCancellationException whether to cancel ListenableFuture with interruption
+     *                                             when CancellationException occurred
      * @return the CompletableFuture adapter
      * @see CompletableFuture#cancel(boolean)
      */

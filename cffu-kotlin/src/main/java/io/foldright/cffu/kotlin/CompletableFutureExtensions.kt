@@ -817,8 +817,8 @@ fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
  * **Strong recommend** using the safe method [cffuCompleteOnTimeout]
  * instead of this method and [CompletableFuture.completeOnTimeout].
  *
- * Unless all subsequent actions of dependent CompletableFutures is ensured executing async
- * (aka. the dependent CompletableFutures is created by async methods), using this method and [CompletableFuture.completeOnTimeout]
+ * Unless all subsequent actions of dependent CompletableFutures is ensured executing async(aka. the dependent
+ * CompletableFutures is created by async methods), using this method and [CompletableFuture.completeOnTimeout]
  * is one less thread switch of task execution when triggered by timeout.
  *
  * @param value   the value to use upon timeout

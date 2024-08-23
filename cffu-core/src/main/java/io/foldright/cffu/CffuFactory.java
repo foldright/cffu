@@ -1,5 +1,7 @@
 package io.foldright.cffu;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.foldright.cffu.tuple.Tuple2;
@@ -103,6 +105,9 @@ public final class CffuFactory {
 
     ////////////////////////////////////////////////////////////////////////////////
     // region## supplyAsync*/runAsync* Methods(create by action)
+    //
+    //    - Supplier<T> -> Cffu<T>
+    //    - Runnable -> Cffu<Void>
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -159,6 +164,9 @@ public final class CffuFactory {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## Multi-Actions(M*) Methods(create by actions)
+    //
+    //    - Supplier<T>[] -> Cffu<List<T>>
+    //    - Runnable[] -> Cffu<Void>
     ////////////////////////////////////////////////////////////
 
     /**
@@ -607,7 +615,8 @@ public final class CffuFactory {
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(executor, supplier1, supplier2, supplier3, supplier4, supplier5));
+        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(
+                executor, supplier1, supplier2, supplier3, supplier4, supplier5));
     }
 
     /**
@@ -731,7 +740,8 @@ public final class CffuFactory {
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAllSuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return create(CompletableFutureUtils.tupleMSupplyAllSuccessAsync(executor, supplier1, supplier2, supplier3, supplier4, supplier5));
+        return create(CompletableFutureUtils.tupleMSupplyAllSuccessAsync(
+                executor, supplier1, supplier2, supplier3, supplier4, supplier5));
     }
 
     /**
@@ -1013,6 +1023,8 @@ public final class CffuFactory {
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
     // region## allOf* Methods(including mostSuccessResultsOf)
+    //
+    //    CompletionStage<T>[] -> Cffu<List<T>>
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -1043,7 +1055,7 @@ public final class CffuFactory {
      * @param valueIfFailed the value to return if not completed successfully
      * @param cfs           the stages
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see com.google.common.util.concurrent.Futures#successfulAsList(com.google.common.util.concurrent.ListenableFuture[]) Guava method successfulAsList()
+     * @see Futures#successfulAsList(ListenableFuture[]) Guava method successfulAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1085,7 +1097,7 @@ public final class CffuFactory {
      * @param cfs the stages
      * @return a new Cffu that is completed when all the given stages complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see com.google.common.util.concurrent.Futures#allAsList(com.google.common.util.concurrent.ListenableFuture[]) Guava method allAsList()
+     * @see Futures#allAsList(ListenableFuture[]) Guava method allAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1114,8 +1126,8 @@ public final class CffuFactory {
      * If you need the successful results of given stages in the given time, prefer below methods:
      * <ul>
      * <li>{@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
-     * <li>{@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage)} /
-     *     {@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * <li>{@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage)} / {@link #mostSuccessTupleOf(long,
+     *      TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      * </ul>
      *
      * @param cfs the stages
@@ -1148,8 +1160,8 @@ public final class CffuFactory {
      * If you need the successful results of given stages in the given time, prefer below methods:
      * <ul>
      * <li>{@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
-     * <li>{@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage)} /
-     *     {@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * <li>{@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage)} / {@link #mostSuccessTupleOf (long,
+     *      TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      * </ul>
      *
      * @param cfs the stages
@@ -1164,6 +1176,8 @@ public final class CffuFactory {
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
     // region## anyOf* Methods
+    //
+    //    CompletionStage<T>[] -> Cffu<T>
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -1566,11 +1580,12 @@ public final class CffuFactory {
     }
 
     /**
-     * A convenient util method for wrap input {@link CompletableFuture} / {@link CompletionStage} / {@link Cffu}
+     * A convenient util method for converting input {@link CompletionStage}(including {@link CompletableFuture})
      * array element by {@link #toCffu(CompletionStage)}.
      *
      * @throws NullPointerException if the array or any of its elements are {@code null}
      * @see #toCffu(CompletionStage)
+     * @see CompletableFutureUtils#toCompletableFutureArray(CompletionStage[])
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1629,6 +1644,7 @@ public final class CffuFactory {
     /**
      * Convert Cffu list to Cffu array.
      *
+     * @see #toCffuArray(CompletionStage[])
      * @see CompletableFutureUtils#completableFutureListToArray(List)
      */
     @Contract(pure = true)
