@@ -38,7 +38,7 @@ fun createThreadPool(threadNamePrefix: String, isForkJoin: Boolean = false): Exe
         ThreadPoolExecutor(
             /* corePoolSize = */ THREAD_COUNT_OF_POOL, /* maximumPoolSize = */ THREAD_COUNT_OF_POOL,
             /* keepAliveTime = */ 2, TimeUnit.MINUTES,
-            /* workQueue = */ ArrayBlockingQueue(5000)
+            /* workQueue = */ ArrayBlockingQueue((THREAD_COUNT_OF_POOL * 500).coerceAtLeast(5000))
         ) { r ->
             Thread(r).apply {
                 name = "${prefix}${counter.getAndIncrement()}"
