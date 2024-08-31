@@ -1161,8 +1161,8 @@ public final class CffuFactory {
      * Cffu({@code Cffu<Void>}), but may be obtained by inspecting them individually.
      * If no stages are provided, returns a Cffu completed with the value {@code null}.
      * <p>
-     * This method is the same as {@link CompletableFuture#allOf(CompletableFuture[])},
-     * except that the parameter type is more generic {@link CompletionStage} instead of {@link CompletableFuture}.
+     * Among the applications of this method is to await completion of a set of independent stages
+     * before continuing a program, as in: {@code cffuFactory.allOf(c1, c2, c3).join();}.
      * <p>
      * If you need the results of given stages, prefer below methods:
      * <ul>
@@ -1182,6 +1182,7 @@ public final class CffuFactory {
      * @return a new Cffu that is completed when all the given stages complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; forget to call its `join()` method?")
     @Contract(pure = true)
     public Cffu<Void> allOf(CompletionStage<?>... cfs) {
         return create(CompletableFutureUtils.allOf(cfs));

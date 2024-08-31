@@ -2,6 +2,7 @@ package io.foldright.cffu;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
@@ -1374,6 +1375,9 @@ public final class CompletableFutureUtils {
      * CompletableFuture({@code CompletableFuture<Void>}), but may be obtained by inspecting them individually.
      * If no stages are provided, returns a CompletableFuture completed with the value {@code null}.
      * <p>
+     * Among the applications of this method is to await completion of a set of independent stages
+     * before continuing a program, as in: {@code CompletableFuture.allOf(c1, c2, c3).join();}.
+     * <p>
      * This method is the same as {@link CompletableFuture#allOf(CompletableFuture[])},
      * except that the parameter type is more generic {@link CompletionStage} instead of {@link CompletableFuture}.
      * <p>
@@ -1395,6 +1399,8 @@ public final class CompletableFutureUtils {
      * @return a new CompletableFuture that is completed when all the given stages complete
      * @throws NullPointerException if the array or any of its elements are {@code null}
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; forget to call its `join()` method?")
+    @Contract(pure = true)
     public static CompletableFuture<Void> allOf(CompletionStage<?>... cfs) {
         requireCfsAndEleNonNull(cfs);
         if (cfs.length == 0) return completedFuture(null);
