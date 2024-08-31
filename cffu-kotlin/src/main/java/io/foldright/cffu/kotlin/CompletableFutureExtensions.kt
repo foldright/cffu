@@ -319,9 +319,9 @@ fun <T> Array<out CompletionStage<out T>>.anyOfCompletableFuture(): CompletableF
 ////////////////////////////////////////////////////////////
 // region## thenBoth* Methods(binary input) with fast-fail support
 //
-//    - thenCombineFastFail*(BiFunction):    (T1, T2) -> U
-//    - thenAcceptBothFastFail*(BiConsumer): (T1, T2) -> Void
-//    - runAfterBothFastFail*(Runnable):     Void, Void -> Void
+//    - thenCombineFastFail*   (BiFunction: (T, U) -> V)    -> CompletableFuture<U>
+//    - thenAcceptBothFastFail*(BiConsumer: (T, U) -> Void) -> CompletableFuture<Void>
+//    - runAfterBothFastFail*  (Runnable:   Void -> Void)   -> CompletableFuture<Void>
 ////////////////////////////////////////////////////////////
 
 /**
@@ -482,9 +482,9 @@ fun CompletableFuture<*>.runAfterBothFastFailAsync(
 ////////////////////////////////////////////////////////////
 // region## thenEither* Methods(binary input) with either(any)-success support
 //
-//    - applyToEitherSuccess*(Function): (T, T) -> U
-//    - acceptEitherSuccess*(Consumer):  (T, T) -> Void
-//    - runAfterEitherSuccess*(Runnable):  Void, Void -> Void
+//    - applyToEitherSuccess* (Function: (T) -> U)     -> CompletableFuture<U>
+//    - acceptEitherSuccess*  (Consumer: (T) -> Void)  -> CompletableFuture<Void>
+//    - runAfterEitherSuccess*(Runnable: Void -> Void) -> CompletableFuture<Void>
 ////////////////////////////////////////////////////////////
 
 /**

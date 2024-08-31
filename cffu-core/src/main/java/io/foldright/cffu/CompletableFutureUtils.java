@@ -53,7 +53,7 @@ public final class CompletableFutureUtils {
     // region## Multi-Actions(M*) Methods(create by actions)
     //
     //    - Supplier<T>[] -> CompletableFuture<List<T>>
-    //    - Runnable[] -> CompletableFuture<Void>
+    //    - Runnable[]    -> CompletableFuture<Void>
     ////////////////////////////////////////////////////////////
 
     /**
@@ -2074,9 +2074,9 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
     // region## Then-Multi-Actions(thenM*) Methods
     //
-    //    - thenMApply*:  Function<U>[] -> CompletableFuture<List<U>>
-    //    - thenMAccept*: Consumer[] -> CompletableFuture<Void>
-    //    - thenMRun*:    Runnable[] -> CompletableFuture<Void>
+    //    - thenMApply* (Function[]: T -> U)       -> CompletableFuture<List<U>>
+    //    - thenMAccept*(Consumer[]: T -> Void)    -> CompletableFuture<Void>
+    //    - thenMRun*   (Runnable[]: Void -> Void) -> CompletableFuture<Void>
     ////////////////////////////////////////////////////////////
 
     /**
@@ -3247,9 +3247,9 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
     // region## thenBoth* Methods(binary input) with fast-fail support
     //
-    //    - thenCombineFastFail*(BiFunction):    (T1, T2) -> U
-    //    - thenAcceptBothFastFail*(BiConsumer): (T1, T2) -> Void
-    //    - runAfterBothFastFail*(Runnable):     Void, Void -> Void
+    //    - thenCombineFastFail*   (BiFunction: (T, U) -> V)    -> CompletableFuture<U>
+    //    - thenAcceptBothFastFail*(BiConsumer: (T, U) -> Void) -> CompletableFuture<Void>
+    //    - runAfterBothFastFail*  (Runnable:   Void -> Void)   -> CompletableFuture<Void>
     ////////////////////////////////////////////////////////////
 
     /**
@@ -3448,9 +3448,9 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
     // region## thenEither* Methods(binary input) with either(any)-success support
     //
-    //    - applyToEitherSuccess*(Function): (T, T) -> U
-    //    - acceptEitherSuccess*(Consumer):  (T, T) -> Void
-    //    - runAfterEitherSuccess*(Runnable):  Void, Void -> Void
+    //    - applyToEitherSuccess* (Function: (T) -> U)     -> CompletableFuture<U>
+    //    - acceptEitherSuccess*  (Consumer: (T) -> Void)  -> CompletableFuture<Void>
+    //    - runAfterEitherSuccess*(Runnable: Void -> Void) -> CompletableFuture<Void>
     ////////////////////////////////////////////////////////////
 
     /**
@@ -3818,7 +3818,7 @@ public final class CompletableFutureUtils {
     public static <C extends CompletableFuture<?>> C orTimeout(C cfThis, long timeout, TimeUnit unit) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(unit, "unit is null");
-        // NOTE: No need check minimal stage, since checked at cf.orTimeout() / cf.isDone()
+        // NOTE: No need check minimal stage, because checked in cfThis.orTimeout() / cfThis.isDone() below
 
         // because of bug JDK-8303742, delegate to CompletableFuture.orTimeout() when Java 21+(not Java 9+)
         if (IS_JAVA21_PLUS) {
@@ -3898,7 +3898,7 @@ public final class CompletableFutureUtils {
     C completeOnTimeout(C cfThis, @Nullable T value, long timeout, TimeUnit unit) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(unit, "unit is null");
-        // NOTE: No need check minimal stage, since checked at cf.completeOnTimeout() / cf.isDone()
+        // NOTE: No need check minimal stage, because checked in cfThis.completeOnTimeout() / cfThis.isDone() below
         if (IS_JAVA9_PLUS) {
             cfThis.completeOnTimeout(value, timeout, unit);
         } else {
@@ -4195,9 +4195,9 @@ public final class CompletableFutureUtils {
     //
     // NOTE about ExecutionException or CompletionException when the computation threw an exception:
     //   - get methods throw ExecutionException(checked exception)
-    //     these old methods existed in `Future` interface since Java 5
+    //     these old methods exists in `Future` interface since Java 5
     //   - getNow/join throw CompletionException(unchecked exception),
-    //     these new methods existed in `CompletableFuture` since Java 8
+    //     these new methods exists in `CompletableFuture` since Java 8
     ////////////////////////////////////////////////////////////
 
     /**
@@ -4254,7 +4254,7 @@ public final class CompletableFutureUtils {
     @Nullable
     public static <T> T getSuccessNow(CompletableFuture<? extends T> cfThis, @Nullable T valueIfNotSuccess) {
         requireNonNull(cfThis, "cfThis is null");
-        // NOTE: No need check minimal stage, since checked at cf.isDone()
+        // NOTE: No need check minimal stage, because checked in cfThis.isDone() below
         return cfThis.isDone() && !cfThis.isCompletedExceptionally() ? cfThis.join() : valueIfNotSuccess;
     }
 
@@ -4646,14 +4646,14 @@ public final class CompletableFutureUtils {
      */
     private static volatile int BLACK_HOLE = 0xCFF0CFF0;
 
-    // `completedStage` is the new method of CompletableFuture since java 9
+    // `CompletableFuture.completedStage` is the new method since java 9
     private static final boolean IS_JAVA9_PLUS = methodExists(() -> CompletableFuture.completedStage(null));
 
-    // `exceptionallyCompose` is the new method of CompletableFuture since java 12
+    // `CompletableFuture.exceptionallyCompose` is the new method since java 12
     private static final boolean IS_JAVA12_PLUS = methodExists(() ->
             completedFuture(null).exceptionallyCompose(ex -> null));
 
-    // `resultNow` is the new method of CompletableFuture since java 19
+    // `CompletableFuture.resultNow` is the new method since java 19
     private static final boolean IS_JAVA19_PLUS = methodExists(() -> completedFuture(null).resultNow());
 
     // `List.reversed` is the new method since java 21
