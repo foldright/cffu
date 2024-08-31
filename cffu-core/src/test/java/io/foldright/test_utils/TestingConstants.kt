@@ -18,3 +18,7 @@ val rte = RuntimeException("Bang")
 
 @JvmField
 val anotherRte = RuntimeException("AnotherBang")
+
+const val LONG_WAIT_MS = 1000L
+const val MEDIAN_WAIT_MS = 100L
+const val SHORT_WAIT_MS = 10L

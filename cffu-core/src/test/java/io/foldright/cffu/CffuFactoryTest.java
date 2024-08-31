@@ -24,6 +24,7 @@ import static io.foldright.test_utils.TestingExecutorUtils.testCffuFac;
 import static io.foldright.test_utils.TestingExecutorUtils.testExecutor;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.function.Function.identity;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -82,8 +83,8 @@ class CffuFactoryTest {
                 testCffuFac.mSupplyFastFailAsync(testExecutor, supplier, supplier),
                 testCffuFac.mSupplyAllSuccessAsync(anotherN, supplier, supplier),
                 testCffuFac.mSupplyAllSuccessAsync(anotherN, testExecutor, supplier, supplier),
-                testCffuFac.mSupplyMostSuccessAsync(anotherN, 500, TimeUnit.MILLISECONDS, supplier, supplier),
-                testCffuFac.mSupplyMostSuccessAsync(anotherN, testExecutor, 500, TimeUnit.MILLISECONDS, supplier, supplier),
+                testCffuFac.mSupplyMostSuccessAsync(anotherN, LONG_WAIT_MS, MILLISECONDS, supplier, supplier),
+                testCffuFac.mSupplyMostSuccessAsync(anotherN, testExecutor, LONG_WAIT_MS, MILLISECONDS, supplier, supplier),
                 testCffuFac.mSupplyAsync(supplier, supplier),
                 testCffuFac.mSupplyAsync(testExecutor, supplier, supplier),
         };
@@ -172,17 +173,17 @@ class CffuFactoryTest {
             nap();
             return nnn;
         };
-        assertEquals(Tuple2.of(n, s), testCffuFac.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s).get());
-        assertEquals(Tuple2.of(n, s), testCffuFac.tupleMSupplyMostSuccessAsync(testExecutor, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s).get());
+        assertEquals(Tuple2.of(n, s), testCffuFac.tupleMSupplyMostSuccessAsync(100, MILLISECONDS, supplier_n, supplier_s).get());
+        assertEquals(Tuple2.of(n, s), testCffuFac.tupleMSupplyMostSuccessAsync(testExecutor, 100, MILLISECONDS, supplier_n, supplier_s).get());
 
-        assertEquals(Tuple3.of(n, s, d), testCffuFac.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d).get());
-        assertEquals(Tuple3.of(n, s, d), testCffuFac.tupleMSupplyMostSuccessAsync(testExecutor, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple3.of(n, s, d), testCffuFac.tupleMSupplyMostSuccessAsync(100, MILLISECONDS, supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple3.of(n, s, d), testCffuFac.tupleMSupplyMostSuccessAsync(testExecutor, 100, MILLISECONDS, supplier_n, supplier_s, supplier_d).get());
 
-        assertEquals(Tuple4.of(n, s, d, anotherN), testCffuFac.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an).get());
-        assertEquals(Tuple4.of(n, s, d, anotherN), testCffuFac.tupleMSupplyMostSuccessAsync(testExecutor, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), testCffuFac.tupleMSupplyMostSuccessAsync(100, MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), testCffuFac.tupleMSupplyMostSuccessAsync(testExecutor, 100, MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an).get());
 
-        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), testCffuFac.tupleMSupplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), testCffuFac.tupleMSupplyMostSuccessAsync(testExecutor, 100, TimeUnit.MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), testCffuFac.tupleMSupplyMostSuccessAsync(100, MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), testCffuFac.tupleMSupplyMostSuccessAsync(testExecutor, 100, MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
     }
 
     // endregion
@@ -295,22 +296,22 @@ class CffuFactoryTest {
         final Cffu<Integer> cancelled = testCffuFac.toCffu(cancelledFuture());
         final Cffu<Integer> incomplete = testCffuFac.toCffu(incompleteCf());
 
-        assertEquals(0, testCffuFac.mostSuccessResultsOf(null, 10, TimeUnit.MILLISECONDS).get().size());
+        assertEquals(0, testCffuFac.mostSuccessResultsOf(null, SHORT_WAIT_MS, MILLISECONDS).get().size());
 
         assertEquals(Arrays.asList(n, null, null, null), testCffuFac.mostSuccessResultsOf(
-                null, 10, TimeUnit.MILLISECONDS, completed, failed, cancelled, incomplete
+                null, SHORT_WAIT_MS, MILLISECONDS, completed, failed, cancelled, incomplete
         ).get());
         assertEquals(Arrays.asList(n, anotherN, anotherN, anotherN), testCffuFac.mostSuccessResultsOf(
-                anotherN, 10, TimeUnit.MILLISECONDS, completedStage, failed, cancelled, incomplete
+                anotherN, SHORT_WAIT_MS, MILLISECONDS, completedStage, failed, cancelled, incomplete
         ).get());
 
         assertEquals(Arrays.asList(anotherN, anotherN, anotherN), testCffuFac.mostSuccessResultsOf(
-                anotherN, 10, TimeUnit.MILLISECONDS, failed, cancelled, incomplete
+                anotherN, SHORT_WAIT_MS, MILLISECONDS, failed, cancelled, incomplete
         ).get());
 
         // do not wait for failed and cancelled
         assertEquals(Arrays.asList(anotherN, anotherN), testCffuFac.mostSuccessResultsOf(
-                anotherN, 10, TimeUnit.DAYS, failed, cancelled
+                anotherN, Long.MAX_VALUE, MILLISECONDS, failed, cancelled
         ).get());
     }
 
@@ -599,28 +600,28 @@ class CffuFactoryTest {
         final Cffu<Integer> incomplete = testCffuFac.toCffu(incompleteCf());
 
         assertEquals(Tuple2.of(n, s), testCffuFac.mostSuccessTupleOf(
-                10, TimeUnit.MILLISECONDS, completed, anotherCompleted
+                SHORT_WAIT_MS, MILLISECONDS, completed, anotherCompleted
         ).get());
         assertEquals(Tuple2.of(n, null), testCffuFac.mostSuccessTupleOf(
-                10, TimeUnit.MILLISECONDS, completed, failed
+                SHORT_WAIT_MS, MILLISECONDS, completed, failed
         ).get());
 
         assertEquals(Tuple3.of(n, s, null), testCffuFac.mostSuccessTupleOf(
-                10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled
+                SHORT_WAIT_MS, MILLISECONDS, completed, anotherCompleted, cancelled
         ).get());
         assertEquals(Tuple3.of(null, null, s), testCffuFac.mostSuccessTupleOf(
-                10, TimeUnit.MILLISECONDS, incomplete, failed, anotherCompleted
+                SHORT_WAIT_MS, MILLISECONDS, incomplete, failed, anotherCompleted
         ).get());
 
         assertEquals(Tuple4.of(n, s, null, null), testCffuFac.mostSuccessTupleOf(
-                10, TimeUnit.MILLISECONDS, completed, anotherCompleted, cancelled, incomplete
+                SHORT_WAIT_MS, MILLISECONDS, completed, anotherCompleted, cancelled, incomplete
         ).get());
         assertEquals(Tuple4.of(null, null, null, null), testCffuFac.mostSuccessTupleOf(
-                10, TimeUnit.MILLISECONDS, incomplete, failed, cancelled, incomplete
+                SHORT_WAIT_MS, MILLISECONDS, incomplete, failed, cancelled, incomplete
         ).get());
 
         assertEquals(Tuple5.of(null, n, s, null, null), testCffuFac.mostSuccessTupleOf(
-                10, TimeUnit.MILLISECONDS, cancelled, completed, anotherCompleted, incomplete, failed
+                SHORT_WAIT_MS, MILLISECONDS, cancelled, completed, anotherCompleted, incomplete, failed
         ).get());
     }
 
