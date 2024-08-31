@@ -63,9 +63,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     // region# Simple then* Methods of CompletionStage
     //
-    //    - thenApply*(Function):  T -> U
-    //    - thenAccept*(Consumer): T -> Void
-    //    - thenRun*(Runnable):    Void -> Void
+    //    - thenApply* (Function: T -> U)       -> Cffu<U>
+    //    - thenAccept*(Consumer: T -> Void)    -> Cffu<Void>
+    //    - thenRun*   (Runnable: Void -> Void) -> Cffu<Void>
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -212,9 +212,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////
     // region# Then-Multi-Actions(thenM*) Methods
     //
-    //    - thenMApply*:  Function<U>[] -> Cffu<List<U>>
-    //    - thenMAccept*: Consumer[] -> Cffu<Void>
-    //    - thenMRun*:    Runnable[] -> Cffu<Void>
+    //    - thenMApply* (Function[]: T -> U)       -> Cffu<List<U>>
+    //    - thenMAccept*(Consumer[]: T -> Void)    -> Cffu<Void>
+    //    - thenMRun*   (Runnable[]: Void -> Void) -> Cffu<Void>
     ////////////////////////////////////////////////////////////
 
     /**
@@ -1110,9 +1110,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     // region# thenBoth* Methods(binary input) of CompletionStage
     //
-    //    - thenCombine*(BiFunction):    (T1, T2) -> U
-    //    - thenAcceptBoth*(BiConsumer): (T1, T2) -> Void
-    //    - runAfterBoth*(Runnable):     Void, Void -> Void
+    //    - thenCombine*   (BiFunction: (T, U) -> V)    -> Cffu<V>
+    //    - thenAcceptBoth*(BiConsumer: (T, U) -> Void) -> Cffu<Void>
+    //    - runAfterBoth*  (Runnable:   Void -> Void)   -> Cffu<Void>
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -1430,9 +1430,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     // region# thenEither* Methods(binary input) of CompletionStage
     //
-    //    - applyToEither*(Function): (T, T) -> U
-    //    - acceptEither*(Consumer):  (T, T) -> Void
-    //    - runAfterEither*(Runnable):  Void, Void -> Void
+    //    - applyToEither* (Function: (T) -> U)     -> Cffu<U>
+    //    - acceptEither*  (Consumer: (T) -> Void)  -> Cffu<Void>
+    //    - runAfterEither*(Runnable: Void -> Void) -> Cffu<Void>
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -2357,9 +2357,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //
     // NOTE about ExecutionException or CompletionException when the computation threw an exception:
     //   - get methods throw ExecutionException(checked exception)
-    //     these old methods existed in `Future` interface since Java 5
+    //     these old methods exists in `Future` interface since Java 5
     //   - getNow/join throw CompletionException(unchecked exception),
-    //     these new methods existed in `CompletableFuture` since Java 8
+    //     these new methods exists in `CompletableFuture` since Java 8
     ////////////////////////////////////////////////////////////////////////////////
 
     /**

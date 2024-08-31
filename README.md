@@ -71,7 +71,7 @@
       如方法`allTupleFastFailOf` / `allTupleOf` / `tupleMSupplyFastFailAsync` / `thenTupleMApplyFastFailAsync`
     - 支持直接运行多个`action`，而不是要先包装成`CompletableFuture`  
       如方法`tupleMSupplyFastFailAsync` / `mSupplyMostSuccessAsync` / `thenTupleMApplyFastFailAsync` / `thenMRunFastFailAsync`
-    - 支持处理指定异常类型的`catching`方法，而不是处理所有异常`Throwable`（`CompletableFuture#exceptionally`）
+    - 支持处理指定异常类型的`catching`方法，而不是处理所有异常`Throwable`（`exceptionally`）
   - ⚙️ 更高效灵活的并发执行策略，如
     - `AllFastFail`策略：当输入的多个`CF`有失败时快速失败返回，而不再于事无补地等待所有`CF`运行完成（`allOf`）
     - `AnySuccess`策略：返回首个成功的`CF`结果，而不是首个完成（但可能失败）的`CF`（`anyOf`）
@@ -83,7 +83,7 @@
     - 支持超时的`join`的方法，`join(timeout, unit)`方法
     - 超时执行安全的`cffuOrTimeout`/`cffuCompleteOnTimeout`方法
     - 一定不会修改结果的`peek`处理方法  
-      （`CompletableFuture#whenComplete`方法会修改输入`CF`的结果）
+      （`whenComplete`方法会修改输入`CF`的结果）
     - 支持禁止强制篡改，`CffuFactoryBuilder#forbidObtrudeMethods`方法
     - 在类方法附加完善的代码质量注解，在编码时`IDE`能尽早提示出问题  
       如`@NonNull`、`@Nullable`、`@CheckReturnValue`、`@Contract`等
@@ -577,8 +577,8 @@ public class ConcurrencyStrategyDemo {
   - [`Kotlin API`文档](https://foldright.io/api-docs/cffu-kotlin/)
 - 实现源码
   - `cffu`：[`Cffu.java`](cffu-core/src/main/java/io/foldright/cffu/Cffu.java)、[`CffuFactory.java`](cffu-core/src/main/java/io/foldright/cffu/CffuFactory.java)
-  - `CompletableFuture utils`：[`CompletableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu/CompletableFutureUtils.java)
-  - `Kotlin extensions`：[`CffuExtensions.kt`](cffu-kotlin/src/main/java/io/foldright/cffu/kotlin/CffuExtensions.kt)、[`CompletableFutureExtensions.kt`](cffu-kotlin/src/main/java/io/foldright/cffu/kotlin/CompletableFutureExtensions.kt)
+  - `CompletableFuture utils`：[`CompletableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu/CompletableFutureUtils.java)、[`ListenableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu/ListenableFutureUtils.java)
+  - `Kotlin extensions`：[`CffuExtensions.kt`](cffu-kotlin/src/main/java/io/foldright/cffu/kotlin/CffuExtensions.kt)、[`CompletableFutureExtensions.kt`](cffu-kotlin/src/main/java/io/foldright/cffu/kotlin/CompletableFutureExtensions.kt)、[`ListenableFutureExtensions.kt`](cffu-kotlin/src/main/java/io/foldright/cffu/kotlin/ListenableFutureExtensions.kt)
 
 ## 3. 如何从直接使用`CompletableFuture`类迁移到`Cffu`类
 
@@ -610,18 +610,18 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>1.0.0-Alpha20</version>
+      <version>1.0.0-Alpha21</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu:1.0.0-Alpha20")
+    implementation("io.foldright:cffu:1.0.0-Alpha21")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu:1.0.0-Alpha20'
+    implementation 'io.foldright:cffu:1.0.0-Alpha21'
     ```
 - `cffu Kotlin`支持库:
   - For `Maven` projects:
@@ -630,18 +630,18 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-kotlin</artifactId>
-      <version>1.0.0-Alpha20</version>
+      <version>1.0.0-Alpha21</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha20")
+    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha21")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha20'
+    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha21'
     ```
 - `cffu bom`:
   - For `Maven` projects:
@@ -650,7 +650,7 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-bom</artifactId>
-      <version>1.0.0-Alpha20</version>
+      <version>1.0.0-Alpha21</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -659,11 +659,11 @@ public class ConcurrencyStrategyDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha20"))
+    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha21"))
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha20')
+    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha21')
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local)的[`cffu executor wrapper SPI`实现](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -672,7 +672,7 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>1.0.0-Alpha20</version>
+      <version>1.0.0-Alpha21</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -680,11 +680,11 @@ public class ConcurrencyStrategyDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha20")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha21")
     ```
     ```groovy
     // Gradle Groovy DSL
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha20'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha21'
     ```
 
 # 📚 更多资料

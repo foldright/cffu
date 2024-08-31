@@ -107,7 +107,7 @@ public final class CffuFactory {
     // region## supplyAsync*/runAsync* Methods(create by action)
     //
     //    - Supplier<T> -> Cffu<T>
-    //    - Runnable -> Cffu<Void>
+    //    - Runnable    -> Cffu<Void>
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -166,7 +166,7 @@ public final class CffuFactory {
     // region## Multi-Actions(M*) Methods(create by actions)
     //
     //    - Supplier<T>[] -> Cffu<List<T>>
-    //    - Runnable[] -> Cffu<Void>
+    //    - Runnable[]    -> Cffu<Void>
     ////////////////////////////////////////////////////////////
 
     /**
@@ -1560,7 +1560,7 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
     // region## CompletionStage Argument Factory Methods
     //
-    //    - toCffu:      CF/CompletionStage -> Cffu
+    //    - toCffu:      CF/CompletionStage   -> Cffu
     //    - toCffuArray: CF/CompletionStage[] -> Cffu[]
     ////////////////////////////////////////////////////////////////////////////////
 
