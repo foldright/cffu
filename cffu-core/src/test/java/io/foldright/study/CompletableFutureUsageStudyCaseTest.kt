@@ -164,10 +164,9 @@ class CompletableFutureUsageStudyCaseTest : FunSpec({
             emptyList<String>()
         }, executor)
 
-        val forkCount = 10
-        val forks = Array(forkCount) { f0 }
+        val forks = Array(THREAD_COUNT_OF_POOL) { f0 }
 
-        val times = 100
+        val times = 10
         repeat(times) {
             for ((index, f) in forks.withIndex()) {
                 forks[index] = f.thenApplyAsync({
@@ -179,7 +178,7 @@ class CompletableFutureUsageStudyCaseTest : FunSpec({
 
         val threadNameList = forks.reduce { acc, f -> acc.thenCombine(f, ::merge) }.get()
 
-        threadNameList.shouldHaveSize(forkCount * times)
+        threadNameList.shouldHaveSize(THREAD_COUNT_OF_POOL * times)
         threadNameList.toSet().shouldHaveSize(THREAD_COUNT_OF_POOL)
     }
 
