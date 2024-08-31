@@ -8,6 +8,10 @@ readonly SELF_PATH SELF_DIR=${SELF_PATH%/*}
 readonly PROJECT_ROOT=${SELF_DIR%/*}
 cd "$PROJECT_ROOT"
 
+# cd to the project root directory
+readonly PROJECT_ROOT=${SELF_DIR%/*}
+cd "$PROJECT_ROOT"
+
 source "scripts/bash-buddy/lib/java_utils.sh"
 
 jvu::switch_to_jdk 21
