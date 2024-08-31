@@ -256,7 +256,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
-     * If the given Functions failed, use the given valueIfFailed.
+     * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}.
      *
      * @param valueIfFailed the value to return if not completed successfully
      * @param fns           the functions to use to compute the values of the returned Cffu
@@ -275,7 +275,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
-     * If the given Functions failed, use the given valueIfFailed.
+     * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}.
      *
      * @param valueIfFailed the value to return if not completed successfully
      * @param fns           the functions to use to compute the values of the returned Cffu
@@ -296,8 +296,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
+     * If any of the provided functions does not success(fails or incomplete) in given time,
+     * its corresponding position will contain {@code valueIfNotSuccess}.
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param timeout           how long to wait in units of {@code unit}
@@ -319,8 +319,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
+     * If any of the provided functions does not success(fails or incomplete) in given time,
+     * its corresponding position will contain {@code valueIfNotSuccess}.
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param executor          the executor to use for asynchronous execution
@@ -751,7 +751,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the successful values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions).
      * <p>
-     * If the given Functions failed, use {@code null}.
+     * If any of the provided functions fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the function having a successful value of {@code null}).
      *
      * @return the new Cffu
      */
@@ -765,7 +766,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the successful values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions).
      * <p>
-     * If the given Functions failed, use {@code null}.
+     * If any of the provided functions fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the function having a successful value of {@code null}).
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
@@ -780,7 +782,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the successful values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions).
      * <p>
-     * If the given Functions failed, use {@code null}.
+     * If any of the provided functions fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the function having a successful value of {@code null}).
      *
      * @return the new Cffu
      */
@@ -795,7 +798,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the successful values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions).
      * <p>
-     * If the given Functions failed, use {@code null}.
+     * If any of the provided functions fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the function having a successful value of {@code null}).
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
@@ -811,7 +815,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the successful values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions).
      * <p>
-     * If the given Functions failed, use {@code null}.
+     * If any of the provided functions fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the function having a successful value of {@code null}).
      *
      * @return the new Cffu
      */
@@ -826,7 +831,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the successful values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions).
      * <p>
-     * If the given Functions failed, use {@code null}.
+     * If any of the provided functions fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the function having a successful value of {@code null}).
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
@@ -842,7 +848,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the successful values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions).
      * <p>
-     * If the given Functions failed, use {@code null}.
+     * If any of the provided functions fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the function having a successful value of {@code null}).
      *
      * @return the new Cffu
      */
@@ -858,7 +865,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * with the successful values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions).
      * <p>
-     * If the given Functions failed, use {@code null}.
+     * If any of the provided functions fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the function having a successful value of {@code null}).
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu

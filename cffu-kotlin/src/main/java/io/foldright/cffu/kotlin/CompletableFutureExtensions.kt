@@ -65,7 +65,8 @@ fun <T> Array<out CompletionStage<out T>>.allResultsFastFailOfCompletableFuture(
  * Returns a new CompletableFuture with the most results in the **same order** of
  * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
+ * If any of the provided stages does not success(fails or incomplete) in given time,
+ * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param timeout       how long to wait in units of `unit`
  * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
@@ -81,7 +82,8 @@ fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture
  * Returns a new CompletableFuture with the most results in the **same order** of
  * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
+ * If any of the provided stages does not success(fails or incomplete) in given time,
+ * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param timeout       how long to wait in units of `unit`
  * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
@@ -97,7 +99,8 @@ fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
  * Returns a new CompletableFuture with the most results in the **same order** of
  * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
+ * If any of the provided stages does not success(fails or incomplete) in given time,
+ * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param executorWhenTimeout the async executor when triggered by timeout
  * @param timeout       how long to wait in units of `unit`
@@ -114,7 +117,8 @@ fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture
  * Returns a new CompletableFuture with the most results in the **same order** of
  * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
+ * If any of the provided stages does not success(fails or incomplete) in given time,
+ * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param executorWhenTimeout the async executor when triggered by timeout
  * @param timeout       how long to wait in units of `unit`

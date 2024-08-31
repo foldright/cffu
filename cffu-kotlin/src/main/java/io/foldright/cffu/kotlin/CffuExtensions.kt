@@ -150,7 +150,8 @@ fun <T> Array<out CompletionStage<out T>>.allResultsFastFailOfCffu(cffuFactory: 
  * Returns a new Cffu with the most results in the **same order** of
  * the given Cffus arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If the given Cffu is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
+ * If any of the provided stages does not success(fails or incomplete) in given time,
+ * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param timeout       how long to wait in units of `unit`
  * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
@@ -171,7 +172,8 @@ fun <T> Collection<Cffu<out T>>.mostSuccessResultsOfCffu(
  * Returns a new Cffu with the most results in the **same order** of
  * the given Cffus arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If the given Cffu is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
+ * If any of the provided stages does not success(fails or incomplete) in given time,
+ * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param timeout       how long to wait in units of `unit`
  * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
@@ -192,7 +194,8 @@ fun <T> Array<out Cffu<out T>>.mostSuccessResultsOfCffu(
  * Returns a new Cffu with the most results in the **same order** of
  * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
+ * If any of the provided stages does not success(fails or incomplete) in given time,
+ * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param timeout       how long to wait in units of `unit`
  * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
@@ -211,8 +214,8 @@ fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCffu(
  * Returns a new Cffu with the most results in the **same order** of
  * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
- * (aka the result extraction logic is [Cffu.getSuccessNow]).
+ * If any of the provided stages does not success(fails or incomplete) in given time,
+ * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param timeout       how long to wait in units of `unit`
  * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter

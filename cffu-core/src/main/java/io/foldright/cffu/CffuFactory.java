@@ -207,7 +207,7 @@ public final class CffuFactory {
      * with the successful values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If the given supplier failed, use the given valueIfFailed.
+     * If any of the provided suppliers fails, its corresponding position will contain {@code valueIfFailed}.
      *
      * @param valueIfFailed the value to return if not failed
      * @param suppliers     the suppliers returning the value to be used to complete the returned Cffu
@@ -226,7 +226,7 @@ public final class CffuFactory {
      * by tasks running in the given Executor with the successfully values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If the given supplier failed, use the given valueIfFailed.
+     * If any of the provided suppliers fails, its corresponding position will contain {@code valueIfFailed}.
      *
      * @param valueIfFailed the value to return if not failed
      * @param executor      the executor to use for asynchronous execution
@@ -248,8 +248,8 @@ public final class CffuFactory {
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
+     * If any of the provided suppliers does not success(fails or incomplete) in given time,
+     * its corresponding position will contain {@code valueIfNotSuccess}.
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param timeout           how long to wait in units of {@code unit}
@@ -271,8 +271,8 @@ public final class CffuFactory {
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
+     * If any of the provided suppliers does not success(fails or incomplete) in given time,
+     * its corresponding position will contain {@code valueIfNotSuccess}.
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param executor          the executor to use for asynchronous execution
@@ -626,7 +626,8 @@ public final class CffuFactory {
      * with the successful values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If the given supplier failed, use {@code null}.
+     * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      *
      * @return the new Cffu
      */
@@ -640,7 +641,8 @@ public final class CffuFactory {
      * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If the given supplier failed, use {@code null}.
+     * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
@@ -656,7 +658,8 @@ public final class CffuFactory {
      * with the successful values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If the given supplier failed, use {@code null}.
+     * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      *
      * @return the new Cffu
      */
@@ -670,7 +673,8 @@ public final class CffuFactory {
      * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If the given supplier failed, use {@code null}.
+     * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
@@ -687,7 +691,8 @@ public final class CffuFactory {
      * with the successful values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If the given supplier failed, use {@code null}.
+     * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      *
      * @return the new Cffu
      */
@@ -702,7 +707,8 @@ public final class CffuFactory {
      * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If the given supplier failed, use {@code null}.
+     * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
@@ -719,7 +725,8 @@ public final class CffuFactory {
      * with the successful values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If the given supplier failed, use {@code null}.
+     * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      *
      * @return the new Cffu
      */
@@ -734,7 +741,8 @@ public final class CffuFactory {
      * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If the given supplier failed, use {@code null}.
+     * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      *
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
@@ -1053,8 +1061,9 @@ public final class CffuFactory {
     /**
      * Returns a new Cffu that is successful with the results in the <strong>same order</strong>
      * of the given stages arguments when all the given stages completed;
-     * If the given stage complete exceptionally, treat it successful with value valueIfFailed.
      * If no stages are provided, returns a Cffu completed with the value empty list.
+     * <p>
+     * If any of the provided stages fails, its corresponding position will contain {@code valueIfFailed}.
      *
      * @param valueIfFailed the value to return if not completed successfully
      * @param cfs           the stages
@@ -1072,7 +1081,8 @@ public final class CffuFactory {
      * Returns a new Cffu with the most results in the <strong>same order</strong> of
      * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
+     * If any of the provided stages does not success(fails or incomplete) in given time,
+     * its corresponding position will contain {@code valueIfNotSuccess}.
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param timeout           how long to wait in units of {@code unit}
@@ -1294,8 +1304,10 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is successful
-     * with the results of the given stages arguments when all the given stages completed;
-     * If the given stage complete exceptionally, treat it successful with value valueIfFailed.
+     * with the results of the given stages arguments when all the given stages completed.
+     * <p>
+     * If any of the provided stages fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the stage having a successful value of {@code null}).
      *
      * @return a new Cffu
      * @throws NullPointerException if any of the given stages are {@code null}
@@ -1309,8 +1321,10 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is successful
-     * with the results of the given stages arguments when all the given stages completed;
-     * If the given stage complete exceptionally, treat it successful with value valueIfFailed.
+     * with the results of the given stages arguments when all the given stages completed.
+     * <p>
+     * If any of the provided stages fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the stage having a successful value of {@code null}).
      *
      * @return a new Cffu
      * @throws NullPointerException if any of the given stages are {@code null}
@@ -1324,8 +1338,10 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is successful
-     * with the results of the given stages arguments when all the given stages completed;
-     * If the given stage complete exceptionally, treat it successful with value valueIfFailed.
+     * with the results of the given stages arguments when all the given stages completed.
+     * <p>
+     * If any of the provided stages fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the stage having a successful value of {@code null}).
      *
      * @return a new Cffu
      * @throws NullPointerException if any of the given stages are {@code null}
@@ -1340,8 +1356,10 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is successful
-     * with the results of the given stages arguments when all the given stages completed;
-     * If the given stage complete exceptionally, treat it successful with value valueIfFailed.
+     * with the results of the given stages arguments when all the given stages completed.
+     * <p>
+     * If any of the provided stages fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the stage having a successful value of {@code null}).
      *
      * @return a new Cffu
      * @throws NullPointerException if any of the given stages are {@code null}
