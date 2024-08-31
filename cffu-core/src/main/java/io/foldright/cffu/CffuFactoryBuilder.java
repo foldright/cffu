@@ -1,5 +1,6 @@
 package io.foldright.cffu;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.foldright.cffu.spi.ExecutorWrapperProvider;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -61,6 +62,18 @@ public final class CffuFactoryBuilder {
     @Contract(pure = true)
     public CffuFactory build() {
         return new CffuFactory(defaultExecutor, forbidObtrudeMethods);
+    }
+
+    /**
+     * A poison object of type CffuFactory.
+     * because poison object is dysfunctional, in general you should NEVER use it in your application logic.
+     */
+    public static final CffuFactory POISON_FACTORY = _poisonObject();
+
+    @SuppressFBWarnings(value = "NP_NONNULL_PARAM_VIOLATION", justification = "null executor param is intentional for poison")
+    @SuppressWarnings("DataFlowIssue")
+    private static CffuFactory _poisonObject() {
+        return new CffuFactory(null, false);
     }
 
     // endregion
