@@ -25,14 +25,14 @@ import java.util.function.Supplier
 fun <T> incompleteCf(): CompletableFuture<T> = CompletableFuture()
 
 @JvmOverloads
-fun <T> completeLaterCf(value: T, millis: Long = 100): CompletableFuture<T> = CompletableFuture.supplyAsync {
+fun <T> completeLaterCf(value: T, millis: Long = MEDIAN_WAIT_MS): CompletableFuture<T> = CompletableFuture.supplyAsync {
     sleep(millis)
     value
 }
 
 @JvmOverloads
 fun <T> completeLaterCf(
-    value: () -> T, millis: Long = 100, executor: Executor = DEFAULT_EXECUTOR
+    value: () -> T, millis: Long = MEDIAN_WAIT_MS, executor: Executor = DEFAULT_EXECUTOR
 ): CompletableFuture<T> {
     val action = Supplier {
         sleep(millis)
@@ -50,13 +50,13 @@ fun <T> cancelledFuture(mayInterruptIfRunning: Boolean = false): CompletableFutu
 private val DEFAULT_EXECUTOR: Executor = Executor { /* do nothing */ }
 
 @JvmOverloads
-fun <T> supplyLater(value: T, millis: Long = 100) = Supplier<T> {
+fun <T> supplyLater(value: T, millis: Long = MEDIAN_WAIT_MS) = Supplier<T> {
     sleep(millis)
     value
 }
 
 @JvmOverloads
-fun <T> supplyLater(ex: Throwable, millis: Long = 100) = Supplier<T> {
+fun <T> supplyLater(ex: Throwable, millis: Long = MEDIAN_WAIT_MS) = Supplier<T> {
     sleep(millis)
     throw ex
 }
@@ -110,7 +110,7 @@ fun assertCffuRunInThreadOf(executorService: ExecutorService) {
  * sleep without throwing checked exception
  */
 @JvmOverloads
-fun sleep(millis: Long = 10) {
+fun sleep(millis: Long = SHORT_WAIT_MS) {
     Thread.sleep(millis)
 }
 
@@ -118,7 +118,7 @@ fun sleep(millis: Long = 10) {
  * sleep short time
  */
 @JvmOverloads
-fun nap(millis: Long = 10) {
+fun nap(millis: Long = SHORT_WAIT_MS) {
     Thread.sleep(millis)
 }
 
@@ -126,7 +126,7 @@ fun nap(millis: Long = 10) {
  * sleep long time
  */
 @JvmOverloads
-fun snoreZzz(millis: Long = 100) {
+fun snoreZzz(millis: Long = MEDIAN_WAIT_MS) {
     Thread.sleep(millis)
 }
 
