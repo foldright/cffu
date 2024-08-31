@@ -81,6 +81,11 @@
 		</developer>
 	</developers>
 
+	<properties>
+		<!-- https://maven.apache.org/plugins/maven-javadoc-plugin/javadoc-mojo.html#overview -->
+		<overview>${maven.multiModuleProjectDirectory}/src/main/javadoc/overview.html</overview>
+	</properties>
+
 	<dependencies>
 		<!-- testing libs -->
 		<dependency>
@@ -89,27 +94,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<profiles>
-		<profile>
-			<id>gen-api-doc</id>
-			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<configuration>
-							<overview>${maven.multiModuleProjectDirectory}/src/main/javadoc/overview.html</overview>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>

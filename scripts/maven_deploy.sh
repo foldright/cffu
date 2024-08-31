@@ -3,8 +3,6 @@ set -eEuo pipefail
 # the canonical path of this script
 SELF_PATH=$(realpath -- "$0")
 readonly SELF_PATH SELF_DIR=${SELF_PATH%/*}
-# cd to script dir
-cd "$SELF_DIR"
 
 # cd to the project root directory
 readonly PROJECT_ROOT=${SELF_DIR%/*}

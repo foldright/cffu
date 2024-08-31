@@ -3,6 +3,7 @@ set -eEuo pipefail
 # the canonical path of this script
 SELF_PATH=$(realpath -- "$0")
 readonly SELF_PATH SELF_DIR=${SELF_PATH%/*}
+
 # cd to demo project
 cd "$SELF_DIR/.."
 
