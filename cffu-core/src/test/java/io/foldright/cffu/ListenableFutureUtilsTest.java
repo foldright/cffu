@@ -17,6 +17,7 @@ import static io.foldright.test_utils.TestingConstants.*;
 import static io.foldright.test_utils.TestingExecutorUtils.testCffuFac;
 import static io.foldright.test_utils.TestingExecutorUtils.testExecutor;
 import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -54,7 +55,7 @@ class ListenableFutureUtilsTest {
 
         ListenableFuture<Integer> lf = toListenableFuture(cf);
         assertEquals(n, lf.get());
-        assertEquals(n, lf.get(10, TimeUnit.MILLISECONDS));
+        assertEquals(n, lf.get(SHORT_WAIT_MS, MILLISECONDS));
         assertTrue(lf.isDone());
         assertEquals("ListenableFutureAdapter@ListenableFutureUtils.toListenableFuture of " + cf, lf.toString());
 
@@ -136,7 +137,7 @@ class ListenableFutureUtilsTest {
             final AtomicBoolean interrupted = new AtomicBoolean(false);
             final ListenableFuture<Integer> lf = Futures.submit(() -> {
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(LONG_WAIT_MS);
                 } catch (InterruptedException ex) {
                     interrupted.set(true);
                 }
@@ -262,7 +263,7 @@ class ListenableFutureUtilsTest {
     static void waitForAllLfsToComplete(ListenableFuture<?>... lfs) throws Exception {
         for (ListenableFuture<?> lf : lfs) {
             try {
-                lf.get(2, TimeUnit.SECONDS);
+                lf.get(LONG_WAIT_MS, MILLISECONDS);
             } catch (TimeoutException ex) {
                 throw ex;
             } catch (Exception ignored) {
@@ -271,6 +272,6 @@ class ListenableFutureUtilsTest {
     }
 
     static void waitForAllCfsToComplete(CompletableFuture<?>... cfs) throws Exception {
-        CompletableFutureUtils.mostSuccessResultsOf(null, 2, TimeUnit.SECONDS, cfs).join();
+        CompletableFutureUtils.mostSuccessResultsOf(null, LONG_WAIT_MS, MILLISECONDS, cfs).join();
     }
 }

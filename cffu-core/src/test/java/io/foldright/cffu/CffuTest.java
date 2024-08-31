@@ -23,6 +23,7 @@ import static io.foldright.test_utils.TestingConstants.*;
 import static io.foldright.test_utils.TestingExecutorUtils.testCffuFac;
 import static io.foldright.test_utils.TestingExecutorUtils.testExecutor;
 import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.function.Function.identity;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -67,8 +68,8 @@ class CffuTest {
                 completed.thenMApplyFastFailAsync(testExecutor, function_n, function_n),
                 completed.thenMApplyAllSuccessAsync(anotherN, function_n, function_n),
                 completed.thenMApplyAllSuccessAsync(anotherN, testExecutor, function_n, function_n),
-                completed.thenMApplyMostSuccessAsync(100, 500, TimeUnit.MILLISECONDS, function_n, function_n),
-                completed.thenMApplyMostSuccessAsync(100, testExecutor, 500, TimeUnit.MILLISECONDS, function_n, function_n),
+                completed.thenMApplyMostSuccessAsync(anotherN, LONG_WAIT_MS, MILLISECONDS, function_n, function_n),
+                completed.thenMApplyMostSuccessAsync(anotherN, testExecutor, LONG_WAIT_MS, MILLISECONDS, function_n, function_n),
                 completed.thenMApplyAsync(function_n, function_n),
                 completed.thenMApplyAsync(testExecutor, function_n, function_n)
         };
@@ -194,14 +195,14 @@ class CffuTest {
         assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, nnn + n), completed.thenTupleMApplyAllSuccessAsync(function_n, function_s, function_d, function_an, function_nnn).get());
         assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, nnn + n), completed.thenTupleMApplyAllSuccessAsync(testExecutor, function_n, function_s, function_d, function_an, function_nnn).get());
 
-        assertEquals(Tuple2.of(n + n, s + n), completed.thenTupleMApplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, function_n, function_s).get());
-        assertEquals(Tuple2.of(n + n, s + n), completed.thenTupleMApplyMostSuccessAsync(testExecutor, 100, TimeUnit.MILLISECONDS, function_n, function_s).get());
-        assertEquals(Tuple3.of(n + n, s + n, d + n), completed.thenTupleMApplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, function_n, function_s, function_d).get());
-        assertEquals(Tuple3.of(n + n, s + n, d + n), completed.thenTupleMApplyMostSuccessAsync(testExecutor, 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d).get());
-        assertEquals(Tuple4.of(n + n, s + n, d + n, anotherN + n), completed.thenTupleMApplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an).get());
-        assertEquals(Tuple4.of(n + n, s + n, d + n, anotherN + n), completed.thenTupleMApplyMostSuccessAsync(testExecutor, 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an).get());
-        assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, nnn + n), completed.thenTupleMApplyMostSuccessAsync(100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an, function_nnn).get());
-        assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, nnn + n), completed.thenTupleMApplyMostSuccessAsync(testExecutor, 100, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an, function_nnn).get());
+        assertEquals(Tuple2.of(n + n, s + n), completed.thenTupleMApplyMostSuccessAsync(MEDIAN_WAIT_MS, MILLISECONDS, function_n, function_s).get());
+        assertEquals(Tuple2.of(n + n, s + n), completed.thenTupleMApplyMostSuccessAsync(testExecutor, MEDIAN_WAIT_MS, MILLISECONDS, function_n, function_s).get());
+        assertEquals(Tuple3.of(n + n, s + n, d + n), completed.thenTupleMApplyMostSuccessAsync(MEDIAN_WAIT_MS, MILLISECONDS, function_n, function_s, function_d).get());
+        assertEquals(Tuple3.of(n + n, s + n, d + n), completed.thenTupleMApplyMostSuccessAsync(testExecutor, MEDIAN_WAIT_MS, MILLISECONDS, function_n, function_s, function_d).get());
+        assertEquals(Tuple4.of(n + n, s + n, d + n, anotherN + n), completed.thenTupleMApplyMostSuccessAsync(MEDIAN_WAIT_MS, MILLISECONDS, function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple4.of(n + n, s + n, d + n, anotherN + n), completed.thenTupleMApplyMostSuccessAsync(testExecutor, MEDIAN_WAIT_MS, MILLISECONDS, function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, nnn + n), completed.thenTupleMApplyMostSuccessAsync(MEDIAN_WAIT_MS, MILLISECONDS, function_n, function_s, function_d, function_an, function_nnn).get());
+        assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, nnn + n), completed.thenTupleMApplyMostSuccessAsync(testExecutor, MEDIAN_WAIT_MS, MILLISECONDS, function_n, function_s, function_d, function_an, function_nnn).get());
 
         assertEquals(Tuple2.of(n + n, s + n), completed.thenTupleMApplyAsync(function_n, function_s).get());
         assertEquals(Tuple2.of(n + n, s + n), completed.thenTupleMApplyAsync(testExecutor, function_n, function_s).get());
@@ -221,7 +222,7 @@ class CffuTest {
     @Test
     void both_fastFail() throws Exception {
         Cffu<Integer> cf = testCffuFac.supplyAsync(() -> {
-            snoreZzz(2_000);
+            snoreZzz(LONG_WAIT_MS);
             return n;
         });
         final Cffu<Integer> failed = testCffuFac.failedFuture(rte);
@@ -229,35 +230,35 @@ class CffuTest {
         final Runnable runnable = () -> {
         };
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.runAfterBothFastFail(failed, runnable).get(1, TimeUnit.MILLISECONDS)
+                cf.runAfterBothFastFail(failed, runnable).get(1, MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.runAfterBothFastFailAsync(failed, runnable).get(1, TimeUnit.MILLISECONDS)
+                cf.runAfterBothFastFailAsync(failed, runnable).get(1, MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.runAfterBothFastFailAsync(failed, runnable, testExecutor).get(1, TimeUnit.MILLISECONDS)
+                cf.runAfterBothFastFailAsync(failed, runnable, testExecutor).get(1, MILLISECONDS)
         ).getCause());
 
         BiConsumer<Integer, Integer> bc = (i1, i2) -> {
         };
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.thenAcceptBothFastFail(failed, bc).get(1, TimeUnit.MILLISECONDS)
+                cf.thenAcceptBothFastFail(failed, bc).get(1, MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.thenAcceptBothFastFailAsync(failed, bc).get(1, TimeUnit.MILLISECONDS)
+                cf.thenAcceptBothFastFailAsync(failed, bc).get(1, MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.thenAcceptBothFastFailAsync(failed, bc, testExecutor).get(1, TimeUnit.MILLISECONDS)
+                cf.thenAcceptBothFastFailAsync(failed, bc, testExecutor).get(1, MILLISECONDS)
         ).getCause());
 
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.thenCombineFastFail(failed, Integer::sum).get(1, TimeUnit.MILLISECONDS)
+                cf.thenCombineFastFail(failed, Integer::sum).get(1, MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.thenCombineFastFailAsync(failed, Integer::sum).get(1, TimeUnit.MILLISECONDS)
+                cf.thenCombineFastFailAsync(failed, Integer::sum).get(1, MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.thenCombineFastFailAsync(failed, Integer::sum, testExecutor).get(1, TimeUnit.MILLISECONDS)
+                cf.thenCombineFastFailAsync(failed, Integer::sum, testExecutor).get(1, MILLISECONDS)
         ).getCause());
     }
 
@@ -325,32 +326,32 @@ class CffuTest {
     @Test
     void test_timeout() throws Exception {
         assertInstanceOf(TimeoutException.class, assertThrowsExactly(ExecutionException.class, () ->
-                testCffuFac.newIncompleteCffu().orTimeout(1, TimeUnit.MILLISECONDS).get()
+                testCffuFac.newIncompleteCffu().orTimeout(1, MILLISECONDS).get()
         ).getCause());
         assertInstanceOf(TimeoutException.class, assertThrowsExactly(ExecutionException.class, () ->
-                testCffuFac.newIncompleteCffu().orTimeout(testExecutor, 1, TimeUnit.MILLISECONDS).get()
+                testCffuFac.newIncompleteCffu().orTimeout(testExecutor, 1, MILLISECONDS).get()
         ).getCause());
         assertInstanceOf(TimeoutException.class, assertThrowsExactly(ExecutionException.class, () ->
-                testCffuFac.newIncompleteCffu().unsafeOrTimeout(1, TimeUnit.MILLISECONDS).get()
+                testCffuFac.newIncompleteCffu().unsafeOrTimeout(1, MILLISECONDS).get()
         ).getCause());
 
-        assertEquals(n, testCffuFac.completedFuture(n).orTimeout(1, TimeUnit.MILLISECONDS).get());
-        assertEquals(n, testCffuFac.completedFuture(n).orTimeout(testExecutor, 1, TimeUnit.MILLISECONDS).get());
-        assertEquals(n, testCffuFac.completedFuture(n).unsafeOrTimeout(1, TimeUnit.MILLISECONDS).get());
+        assertEquals(n, testCffuFac.completedFuture(n).orTimeout(1, MILLISECONDS).get());
+        assertEquals(n, testCffuFac.completedFuture(n).orTimeout(testExecutor, 1, MILLISECONDS).get());
+        assertEquals(n, testCffuFac.completedFuture(n).unsafeOrTimeout(1, MILLISECONDS).get());
 
         assertEquals(n, testCffuFac.newIncompleteCffu().completeOnTimeout(
-                n, 1, TimeUnit.MILLISECONDS).get());
+                n, 1, MILLISECONDS).get());
         assertEquals(n, testCffuFac.newIncompleteCffu().completeOnTimeout(
-                n, testExecutor, 1, TimeUnit.MILLISECONDS).get());
+                n, testExecutor, 1, MILLISECONDS).get());
         assertEquals(n, testCffuFac.newIncompleteCffu().unsafeCompleteOnTimeout(
-                n, 1, TimeUnit.MILLISECONDS).get());
+                n, 1, MILLISECONDS).get());
 
         assertEquals(n, testCffuFac.completedFuture(n).completeOnTimeout(
-                anotherN, 1, TimeUnit.MILLISECONDS).get());
+                anotherN, 1, MILLISECONDS).get());
         assertEquals(n, testCffuFac.completedFuture(n).completeOnTimeout(
-                anotherN, testExecutor, 1, TimeUnit.MILLISECONDS).get());
+                anotherN, testExecutor, 1, MILLISECONDS).get());
         assertEquals(n, testCffuFac.completedFuture(n).unsafeCompleteOnTimeout(
-                anotherN, 1, TimeUnit.MILLISECONDS).get());
+                anotherN, 1, MILLISECONDS).get());
     }
 
     // endregion
@@ -414,18 +415,18 @@ class CffuTest {
     @Test
     void test_cffuJoin() {
         // Completed Future
-        assertEquals(n, testCffuFac.completedFuture(n).join(1, TimeUnit.MILLISECONDS));
+        assertEquals(n, testCffuFac.completedFuture(n).join(1, MILLISECONDS));
 
         // Incomplete Future -> CompletionException with TimeoutException
         Cffu<Object> incomplete = testCffuFac.newIncompleteCffu();
         assertInstanceOf(TimeoutException.class, assertThrowsExactly(CompletionException.class, () ->
-                incomplete.join(1, TimeUnit.MILLISECONDS)
+                incomplete.join(1, MILLISECONDS)
         ).getCause());
 
         // Failed Future -> CompletionException
         Cffu<Object> failed = testCffuFac.failedFuture(rte);
         assertSame(rte, assertThrowsExactly(CompletionException.class, () ->
-                failed.join(1, TimeUnit.MILLISECONDS)
+                failed.join(1, MILLISECONDS)
         ).getCause());
 
         // Incomplete Future -> join before timeout
@@ -434,7 +435,7 @@ class CffuTest {
             snoreZzz();
             return n;
         });
-        assertEquals(n, cffu.join(3, TimeUnit.SECONDS));
+        assertEquals(n, cffu.join(LONG_WAIT_MS, MILLISECONDS));
     }
 
     @Test
