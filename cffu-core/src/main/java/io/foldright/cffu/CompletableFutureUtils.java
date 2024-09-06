@@ -1443,11 +1443,10 @@ public final class CompletableFutureUtils {
     private static <T> void fill0(CompletionStage<? extends T>[] stages,
                                   CompletableFuture<? extends T>[] successOrBeIncomplete,
                                   CompletableFuture<? extends T>[] failedOrBeIncomplete) {
-        final CompletableFuture<T> incomplete = new CompletableFuture<>();
         for (int i = 0; i < stages.length; i++) {
             final CompletableFuture<T> f = f_toCf0(stages[i]);
-            successOrBeIncomplete[i] = exceptionallyCompose(f, ex -> incomplete);
-            failedOrBeIncomplete[i] = f.thenCompose(v -> incomplete);
+            successOrBeIncomplete[i] = exceptionallyCompose(f, ex -> new CompletableFuture<>());
+            failedOrBeIncomplete[i] = f.thenCompose(v -> new CompletableFuture<>());
         }
     }
 
