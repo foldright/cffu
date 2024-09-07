@@ -1527,7 +1527,7 @@ public final class CompletableFutureUtils {
     }
 
     static boolean isMinStageCf(CompletableFuture<?> cf) {
-        return "java.util.concurrent.CompletableFuture$MinimalStage".equals(cf.getClass().getName());
+        return cf.getClass().equals(MIN_STAGE_CLASS);
     }
 
     // endregion
@@ -4689,6 +4689,17 @@ public final class CompletableFutureUtils {
         } catch (NoSuchMethodError e) {
             return false;
         }
+    }
+
+    /**
+     * <strong>CAUTION / Implementation Note:</strong> do NOT move this static field before {@link #IS_JAVA9_PLUS},
+     * otherwise will use uninitialized {@link #IS_JAVA9_PLUS}!
+     */
+    private static final Class<?> MIN_STAGE_CLASS;
+
+    static {
+        if (!IS_JAVA9_PLUS) MIN_STAGE_CLASS = null;
+        else MIN_STAGE_CLASS = CompletableFuture.completedStage(null).getClass();
     }
 
     private CompletableFutureUtils() {
