@@ -70,6 +70,8 @@
 		<maven.enforcer.pom.version.regex>^\d(\.\d+)?\.(\d+|x)-SNAPSHOT$</maven.enforcer.pom.version.regex>
 		<release.pom.version.regex>^\d\.\d+\.\d+(-(Alpha|Beta|RC)\d+)?$</release.pom.version.regex>
 		<dokka.skip>false</dokka.skip>
+		<!-- dummy default value, overridden by profile -->
+		<main.run.debug.java.opt>-ea</main.run.debug.java.opt>
 
 		<spotbugs.annotations.version>4.8.6</spotbugs.annotations.version>
 		<jsr305.version>3.0.2</jsr305.version>
@@ -165,11 +167,7 @@
 				make qa libs optional, smaller deployment
 			-->
 			<dependency>
-				<!--
-					JSR305 is already Dormant status, so SpotBugs does not release jsr305 jar file.
-					Please continue using findbugs’ one, depend on spotbugs-annotations instead.
-						https://spotbugs.readthedocs.io/en/stable/migration.html
-				-->
+				<!-- https://spotbugs.readthedocs.io/en/stable/migration.html -->
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-annotations</artifactId>
 				<version>${spotbugs.annotations.version}</version>
@@ -484,6 +482,34 @@
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<version>0.8.12</version>
 				</plugin>
+				<plugin>
+					<!--
+							https://www.mojohaus.org/exec-maven-plugin/
+							https://www.mojohaus.org/exec-maven-plugin/exec-mojo.html
+					-->
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>3.4.1</version>
+					<configuration>
+						<executable>${java.home}/bin/java</executable>
+						<classpathScope>test</classpathScope>
+						<arguments>
+							<argument>-Xmx256m</argument>
+							<argument>-Xms256m</argument>
+							<argument>-ea</argument>
+							<argument>-Duser.language=en</argument>
+							<argument>-Duser.country=US</argument>
+							<argument>-Dfile.encoding=UTF-8</argument>
+
+							<argument>${main.run.debug.java.opt}</argument>
+
+							<argument>-classpath</argument>
+							<classpath/>
+
+							<argument>${exec.mainClass}</argument>
+						</arguments>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -632,6 +658,14 @@
 					</plugin>
 				</plugins>
 			</build>
+		</profile>
+		<profile>
+			<id>enable-java-main-run-debug</id>
+			<properties>
+				<main.run.debug.java.opt>
+					-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005
+				</main.run.debug.java.opt>
+			</properties>
 		</profile>
 
 		<profile>
