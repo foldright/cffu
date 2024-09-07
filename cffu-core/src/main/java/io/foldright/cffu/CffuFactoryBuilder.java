@@ -44,10 +44,11 @@ public final class CffuFactoryBuilder {
 
     /**
      * Sets {@code forbidObtrudeMethods} or not.
+     * <p>
+     * {@code obtrude methods} are {@link Cffu#obtrudeValue(Object)} and {@link Cffu#obtrudeException(Throwable)}.
      *
      * @see CffuFactory#forbidObtrudeMethods()
-     * @see Cffu#obtrudeValue(Object)
-     * @see Cffu#obtrudeException(Throwable)
+     * @see Cffu#forbidObtrudeMethods()
      */
     public CffuFactoryBuilder forbidObtrudeMethods(boolean forbid) {
         this.forbidObtrudeMethods = forbid;

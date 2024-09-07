@@ -2353,7 +2353,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //    - join()              // BLOCKING!
     //    - join(timeout, unit) // BLOCKING!
     //    - getNow(T valueIfAbsent)
-    //    - getSuccessNow(T valueIfAbsent)
+    //    - getSuccessNow(T valueIfNotSuccess)
     //    - resultNow()
     //    - exceptionNow()
     //
@@ -2837,9 +2837,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Returns {@code forbidObtrudeMethods} or not.
      * This can be re-configured by {@link #resetCffuFactory(CffuFactory)}.
      *
-     * @see Cffu#obtrudeValue(Object)
-     * @see Cffu#obtrudeException(Throwable)
-     * @see CffuFactory#forbidObtrudeMethods()
      * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
      */
     @Contract(pure = true)

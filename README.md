@@ -1,4 +1,4 @@
-# <div align="center"><a href="#dummy"><img src="https://github.com/foldright/cffu/assets/1063891/124658cd-025f-471e-8da1-7eea0e482915" alt="🦝 CompletableFuture Fu (CF-Fu)"></a></div>
+# <div align="center"><a href="#dummy"><img src="https://github.com/foldright/cffu/assets/1063891/124658cd-025f-471e-8da1-7eea0e482915" alt="🦝 CompletableFuture-Fu(CF-Fu)"></a></div>
 
 <p align="center">
 <a href="https://github.com/foldright/cffu/actions/workflows/fast_ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/fast_ci.yaml?branch=main&logo=github&logoColor=white&label=fast ci" alt="Github Workflow Build Status"></a>
@@ -19,14 +19,14 @@
 <a href="https://gitpod.io/#https://github.com/foldright/cffu"><img src="https://img.shields.io/badge/Gitpod-ready to code-339933?label=gitpod&logo=gitpod&logoColor=white" alt="gitpod: Ready to Code"></a>
 </p>
 
-👉 `cffu`（`CompletableFuture Fu` 🦝）是一个小小的[`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)辅助增强库，提升`CF`使用体验并减少误用，在业务中更方便高效安全地使用`CF`。
+👉 `cffu`（`CompletableFuture-Fu` 🦝）是一个小小的[`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)辅助增强库，提升`CF`使用体验并减少误用，在业务中更方便高效安全地使用`CF`。
 
 欢迎 👏 💖
 
+<a href="#dummy"><img src="https://user-images.githubusercontent.com/1063891/230850403-87ff74de-1acb-4aff-b9b4-632e4e51e225.png" width="23%" align="right" alt="shifu" /></a>
+
 - 建议和提问，[提交 Issue](https://github.com/foldright/cffu/issues/new)
 - 贡献和改进，[Fork 后提通过 Pull Request 贡献代码](https://github.com/foldright/cffu/fork)
-
-<a href="#dummy"><img src="https://user-images.githubusercontent.com/1063891/230850403-87ff74de-1acb-4aff-b9b4-632e4e51e225.png" width="23%" align="right" alt="shifu" /></a>
 
 --------------------------------------------------------------------------------
 
@@ -94,11 +94,12 @@
 - 💪 **已有功能的增强**，如
   - `anyOf`方法：返回具体类型`T`（类型安全），而不是返回`Object`（`CompletableFuture#anyOf`）
   - `allof`/`anyOf`方法：输入更宽泛的`CompletionStage`参数类型，而不是`CompletableFuture`类（`CompletableFuture#allOf/anyOf`）
-- ⏳ **`Backport`支持`Java 8`**，`Java 9+`高版本的所有`CF`新功能在`Java 8`低版本直接可用，如
-  - 超时控制：`orTimeout`/`completeOnTimeout`方法
-  - 延迟执行：`delayedExecutor`方法
+- ⏳ **`Backport`支持`Java 8`**，`Java 9+`高版本的所有`CF`新功能方法在`Java 8`低版本直接可用，如
+  - 超时控制：`orTimeout`/`completeOnTimeout`
+  - 延迟执行：`delayedExecutor`
   - 工厂方法：`failedFuture` / `completedStage` / `failedStage`
   - 处理操作：`completeAsync` / `exceptionallyAsync` / `exceptionallyCompose` / `copy`
+  - 非阻塞读：`resultNow` / `exceptionNow` / `state`
 - 🍩 **一等公民支持`Kotlin`**
 
 更多`cffu`的使用方式与功能说明详见 [User Guide](#-user-guide)。
@@ -124,7 +125,7 @@
   - 当然基本的并发关注方面及其复杂性，与具体使用哪个工具无关，都是要理解与注意的
 - **高层抽象**
   - 或说 以业务流程的形式表达技术的并发流程
-  - 可以不使用繁琐易错的基础并发协调工具，如锁（[`Lock`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/locks/package-summary.html)）、[`CountDownLatch`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CountDownLatch.html)、信号量（[`Semaphore`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Semaphore.html)）、[`CyclicBarrier`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CyclicBarrier.html)
+  - 避免或减少使用繁琐易错的基础并发协调工具，如锁（[`Lock`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/locks/package-summary.html)）、[`CountDownLatch`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CountDownLatch.html)、[`CyclicBarrier`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CyclicBarrier.html)、[`Phaser`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Phaser.html)
 
 和其它并发工具、框架一样，`CompletableFuture`用于
 
@@ -541,14 +542,15 @@ public class ConcurrencyStrategyDemo {
 
 ### 2.5 `Backport`支持`Java 8`
 
-`Java 9+`高版本的所有`CF`新功能在`Java 8`低版本直接可用。
+`Java 9+`高版本的所有`CF`新功能方法在`Java 8`低版本直接可用。
 
 其中重要的Backport功能有：
 
-- 超时控制：`orTimeout`/`completeOnTimeout`方法
-- 延迟执行：`delayedExecutor`方法
+- 超时控制：`orTimeout`/`completeOnTimeout`
+- 延迟执行：`delayedExecutor`
 - 工厂方法：`failedFuture` / `completedStage` / `failedStage`
 - 处理操作：`completeAsync` / `exceptionallyAsync` / `exceptionallyCompose` / `copy`
+- 非阻塞读：`resultNow` / `exceptionNow` / `state`
 
 这些`backport`的方法是`CompletableFuture`的已有功能，不附代码示例。
 
@@ -610,18 +612,18 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>1.0.0-Alpha21</version>
+      <version>1.0.0-Alpha22</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu:1.0.0-Alpha21")
+    implementation("io.foldright:cffu:1.0.0-Alpha22")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu:1.0.0-Alpha21'
+    implementation 'io.foldright:cffu:1.0.0-Alpha22'
     ```
 - `cffu Kotlin`支持库:
   - For `Maven` projects:
@@ -630,18 +632,18 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-kotlin</artifactId>
-      <version>1.0.0-Alpha21</version>
+      <version>1.0.0-Alpha22</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha21")
+    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha22")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha21'
+    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha22'
     ```
 - `cffu bom`:
   - For `Maven` projects:
@@ -650,7 +652,7 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-bom</artifactId>
-      <version>1.0.0-Alpha21</version>
+      <version>1.0.0-Alpha22</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -659,11 +661,11 @@ public class ConcurrencyStrategyDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha21"))
+    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha22"))
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha21')
+    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha22')
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local)的[`cffu executor wrapper SPI`实现](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -672,7 +674,7 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>1.0.0-Alpha21</version>
+      <version>1.0.0-Alpha22</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -680,11 +682,11 @@ public class ConcurrencyStrategyDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha21")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha22")
     ```
     ```groovy
     // Gradle Groovy DSL
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha21'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha22'
     ```
 
 # 📚 更多资料
