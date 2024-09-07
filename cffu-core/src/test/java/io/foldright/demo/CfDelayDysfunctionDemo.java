@@ -12,7 +12,13 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 
 /**
- * This demo needs Java 9+ to run, because uses the new method({@link CompletableFuture#orTimeout}) of Java 9.
+ * This demo shows the dysfunction of CompletableFuture Timeout.
+ * <p>
+ * Needs Java 9+ to run, because uses the new {@link CompletableFuture#orTimeout} method since Java 9.
+ * <p>
+ * Run by maven: {@code
+ * mvn -pl cffu-core test-compile exec:exec -Dexec.mainClass=io.foldright.demo.CfDelayDysfunctionDemo
+ * }
  */
 public class CfDelayDysfunctionDemo {
     public static void main(String[] args) {
