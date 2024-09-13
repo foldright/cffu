@@ -2068,17 +2068,6 @@ public final class CompletableFutureUtils {
         return new DelayedExecutor(delay, unit, executor);
     }
 
-    /**
-     * Returns the default Executor used for async methods that do not specify an Executor.
-     * This class uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread,
-     * or else an Executor using one thread per async task.<br>
-     * <strong>CAUTION:</strong> This executor may be not suitable for common biz use(io intensive).
-     */
-    @Contract(pure = true)
-    public static Executor defaultExecutor() {
-        return ASYNC_POOL;
-    }
-
     // endregion
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
@@ -4560,6 +4549,18 @@ public final class CompletableFutureUtils {
             return cfThis.copy();
         }
         return cfThis.thenApply(x -> x);
+    }
+
+    /**
+     * Returns the default Executor used for async methods that do not specify an Executor.
+     * This class uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread,
+     * or else an Executor using one thread per async task.<br>
+     * <strong>CAUTION:</strong> This executor may be not suitable for common biz use(io intensive).
+     */
+    @Contract(pure = true)
+    public static Executor defaultExecutor(CompletableFuture<?> cf) {
+        if (IS_JAVA9_PLUS) return cf.defaultExecutor();
+        else return ASYNC_POOL;
     }
 
     /**

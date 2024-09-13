@@ -1795,7 +1795,7 @@ class CompletableFutureUtilsTest {
 
     @Test
     void test_executor() {
-        Executor executor = defaultExecutor();
+        Executor executor = defaultExecutor(completedFuture(null));
         assertIsCfDefaultExecutor(executor);
 
         assertIsCfDefaultExecutor(screenExecutor(commonPool()));
