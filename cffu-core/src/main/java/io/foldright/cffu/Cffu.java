@@ -1846,6 +1846,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * if not otherwise completed before the given timeout.
      * <p>
      * Uses {@link #defaultExecutor()} as {@code executorWhenTimeout}.
+     * <p>
+     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the original
+     * CF method {@link CompletableFuture#orTimeout} and its backport method {@link #unsafeOrTimeout}, because the returning new CF instance
+     * avoids the subsequent usage of the delay thread. More info see the javadoc of {@link #unsafeOrTimeout} and the demo <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java">DelayDysfunctionDemo</a>.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -1859,6 +1864,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Exceptionally completes this Cffu with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
+     * <p>
+     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the original
+     * CF method {@link CompletableFuture#orTimeout} and its backport method {@link #unsafeOrTimeout}, because the returning new CF instance
+     * avoids the subsequent usage of the delay thread. More info see the javadoc of {@link #unsafeOrTimeout} and the demo <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java">DelayDysfunctionDemo</a>.
      *
      * @param executorWhenTimeout the async executor when triggered by timeout
      * @param timeout             how long to wait before completing exceptionally with a TimeoutException,
@@ -1889,6 +1899,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Unless all subsequent actions of dependent cfs is ensured executing async
      * (aka. the dependent cfs is created by async methods), using this method
      * is one less thread switch of task execution when triggered by timeout.
+     * <p>
+     * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout(long, TimeUnit)}
+     * leaks if the future completes exceptionally, more info see
+     * <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
+     * <a href="https://github.com/openjdk/jdk/pull/13059">PR review openjdk/jdk/13059</a>
+     * and <a href="https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a">JDK bugfix commit</a>.
+     * The cffu backport logic(for Java 20-) has merged the fix of this JDK bug.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -1906,6 +1923,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Completes this Cffu with the given value if not otherwise completed before the given timeout.
      * <p>
      * Uses {@link #defaultExecutor()} as {@code executorWhenTimeout}.
+     * <p>
+     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the original
+     * CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #unsafeCompleteOnTimeout},
+     * because the returning new CF instance avoids the subsequent usage of the delay thread.
+     * More info see the javadoc of {@link #unsafeCompleteOnTimeout} and the demo <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java">DelayDysfunctionDemo</a>.
      *
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
@@ -1919,6 +1942,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Completes this Cffu with the given value if not otherwise completed before the given timeout.
+     * <p>
+     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the original
+     * CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #unsafeCompleteOnTimeout},
+     * because the returning new CF instance avoids the subsequent usage of the delay thread.
+     * More info see the javadoc of {@link #unsafeCompleteOnTimeout} and the demo <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java">DelayDysfunctionDemo</a>.
      *
      * @param value               the value to use upon timeout
      * @param executorWhenTimeout the async executor when triggered by timeout
