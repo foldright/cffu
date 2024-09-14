@@ -1050,7 +1050,7 @@ public final class CffuFactory {
      *
      * @param cfs the stages
      * @return a new Cffu that is successful when all the given stages success
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1067,7 +1067,7 @@ public final class CffuFactory {
      *
      * @param valueIfFailed the value to return if not completed successfully
      * @param cfs           the stages
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see Futures#successfulAsList(ListenableFuture[]) Guava method successfulAsList()
      */
     @Contract(pure = true)
@@ -1088,6 +1088,7 @@ public final class CffuFactory {
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @param cfs               the stages
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see Cffu#getSuccessNow(Object)
      */
     @Contract(pure = true)
@@ -1110,7 +1111,7 @@ public final class CffuFactory {
      *
      * @param cfs the stages
      * @return a new Cffu that is completed when all the given stages complete
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see Futures#allAsList(ListenableFuture[]) Guava method allAsList()
      */
     @Contract(pure = true)
@@ -1146,7 +1147,7 @@ public final class CffuFactory {
      *
      * @param cfs the stages
      * @return a new Cffu that is successful when all the given stages success
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @Contract(pure = true)
     public Cffu<Void> allFastFailOf(CompletionStage<?>... cfs) {
@@ -1180,7 +1181,7 @@ public final class CffuFactory {
      *
      * @param cfs the stages
      * @return a new Cffu that is completed when all the given stages complete
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; forget to call its `join()` method?")
     @Contract(pure = true)
@@ -1208,7 +1209,7 @@ public final class CffuFactory {
      *
      * @param cfs the stages
      * @return a new Cffu that is successful when any of the given stages success, with the same result
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @SafeVarargs
     public final <T> Cffu<T> anySuccessOf(CompletionStage<? extends T>... cfs) {
@@ -1228,7 +1229,7 @@ public final class CffuFactory {
      * @param cfs the stages
      * @return a new Cffu that is completed with the result or exception
      * from any of the given stages when one completes
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1247,7 +1248,6 @@ public final class CffuFactory {
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      *
      * @return a new Cffu that is successful when the given two stages success
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsFastFailOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -1262,7 +1262,6 @@ public final class CffuFactory {
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      *
      * @return a new Cffu that is successful when the given three stages success
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsFastFailOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -1277,7 +1276,6 @@ public final class CffuFactory {
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      *
      * @return a new Cffu that is successful when the given four stages success
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsFastFailOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -1293,7 +1291,6 @@ public final class CffuFactory {
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      *
      * @return a new Cffu that is successful when the given five stages success
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsFastFailOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -1311,7 +1308,6 @@ public final class CffuFactory {
      * (which is indistinguishable from the stage having a successful value of {@code null}).
      *
      * @return a new Cffu
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @Contract(pure = true)
@@ -1328,7 +1324,6 @@ public final class CffuFactory {
      * (which is indistinguishable from the stage having a successful value of {@code null}).
      *
      * @return a new Cffu
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @Contract(pure = true)
@@ -1345,7 +1340,6 @@ public final class CffuFactory {
      * (which is indistinguishable from the stage having a successful value of {@code null}).
      *
      * @return a new Cffu
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @Contract(pure = true)
@@ -1363,7 +1357,6 @@ public final class CffuFactory {
      * (which is indistinguishable from the stage having a successful value of {@code null}).
      *
      * @return a new Cffu
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @Contract(pure = true)
@@ -1456,7 +1449,6 @@ public final class CffuFactory {
      * with a CompletionException holding this exception as its cause.
      *
      * @return a new Cffu that is completed when the given two stages complete
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -1471,7 +1463,6 @@ public final class CffuFactory {
      * with a CompletionException holding this exception as its cause.
      *
      * @return a new Cffu that is completed when the given three stages complete
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -1486,7 +1477,6 @@ public final class CffuFactory {
      * with a CompletionException holding this exception as its cause.
      *
      * @return a new Cffu that is completed when the given four stages complete
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -1502,7 +1492,6 @@ public final class CffuFactory {
      * with a CompletionException holding this exception as its cause.
      *
      * @return a new Cffu that is completed when the given five stages complete
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -1606,7 +1595,7 @@ public final class CffuFactory {
      * A convenient util method for converting input {@link CompletionStage}(including {@link CompletableFuture})
      * array element by {@link #toCffu(CompletionStage)}.
      *
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the stages param or any of its elements are {@code null}
      * @see #toCffu(CompletionStage)
      * @see CompletableFutureUtils#toCompletableFutureArray(CompletionStage[])
      */
@@ -1698,8 +1687,6 @@ public final class CffuFactory {
     /**
      * Returns {@code forbidObtrudeMethods} or not.
      *
-     * @see Cffu#obtrudeValue(Object)
-     * @see Cffu#obtrudeException(Throwable)
      * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
      */
     @Contract(pure = true)

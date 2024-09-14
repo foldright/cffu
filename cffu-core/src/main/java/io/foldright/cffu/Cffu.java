@@ -2837,9 +2837,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Returns {@code forbidObtrudeMethods} or not.
      * This can be re-configured by {@link #resetCffuFactory(CffuFactory)}.
      *
-     * @see Cffu#obtrudeValue(Object)
-     * @see Cffu#obtrudeException(Throwable)
-     * @see CffuFactory#forbidObtrudeMethods()
      * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
      */
     @Contract(pure = true)
@@ -2870,10 +2867,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns the estimated number of Cffus whose completions are awaiting completion of this Cffu.
+     * Returns the estimated number of CompletableFuture(including Cffu Wrapper)
+     * whose completions are awaiting completion of this Cffu(aka its underlying CompletableFuture).
      * This method is designed for use in monitoring system state, not for synchronization control.
      *
-     * @return the number of dependent CompletableFutures(Cffus)
+     * @return the estimated number of dependent CompletableFutures(including Cffu Wrapper)
+     * @see CompletableFuture#getNumberOfDependents()
      */
     @Contract(pure = true)
     public int getNumberOfDependents() {

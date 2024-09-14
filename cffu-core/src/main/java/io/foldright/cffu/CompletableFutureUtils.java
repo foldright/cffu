@@ -43,7 +43,7 @@ public final class CompletableFutureUtils {
      * - methods with `0` suffix means no parameter validation, e.g.
      *    - no null check
      *
-     * because these methods is not safe, caller SHOULD pay attention to keep implementation logic correct.
+     * because these methods is not safe, caller logic SHOULD pay attention to keep implementation correct.
      */
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -1158,7 +1158,7 @@ public final class CompletableFutureUtils {
      *
      * @param cfs the stages
      * @return a new CompletableFuture that is successful when all the given stages success
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1169,8 +1169,8 @@ public final class CompletableFutureUtils {
     private static <T> CompletableFuture<List<T>> allResultsFastFailOf0(CompletionStage<? extends T>[] cfs) {
         final int len = cfs.length;
         if (len == 0) return completedFuture(arrayList());
-        // convert input cf to non-minimal-stage instance for SINGLE input in order to ensure that
-        // the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
+        // convert input cf to non-minimal-stage CF instance for SINGLE input in order to
+        // ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
         if (len == 1) return toNonMinCf0(cfs[0]).thenApply(CompletableFutureUtils::arrayList);
 
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[len];
@@ -1194,7 +1194,7 @@ public final class CompletableFutureUtils {
      *
      * @param valueIfFailed the value to return if not completed successfully
      * @param cfs           the stages
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see #getSuccessNow(CompletableFuture, Object)
      * @see Futures#successfulAsList(ListenableFuture[]) Guava method successfulAsList()
      */
@@ -1222,6 +1222,7 @@ public final class CompletableFutureUtils {
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @param cfs               the stages
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
@@ -1243,6 +1244,7 @@ public final class CompletableFutureUtils {
      * @param timeout             how long to wait in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @param cfs                 the stages
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
@@ -1264,7 +1266,7 @@ public final class CompletableFutureUtils {
         if (cfs.length == 1) {
             // Defensive copy input cf to non-minimal-stage instance in order to
             // 1. avoid writing it by `cffuCompleteOnTimeout` and is able to read its result(`getSuccessNow`)
-            // 2. ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
+            // 2. ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
             final CompletableFuture<T> f = toNonMinCfCopy0(cfs[0]);
             return cffuCompleteOnTimeout(f, valueIfNotSuccess, executorWhenTimeout, timeout, unit)
                     .handle((unused, ex) -> arrayList(getSuccessNow(f, valueIfNotSuccess)));
@@ -1289,7 +1291,7 @@ public final class CompletableFutureUtils {
      *
      * @param cfs the stages
      * @return a new CompletableFuture that is completed when all the given stages complete
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see Futures#allAsList(ListenableFuture[]) Guava method allAsList()
      */
     @Contract(pure = true)
@@ -1301,8 +1303,8 @@ public final class CompletableFutureUtils {
     private static <T> CompletableFuture<List<T>> allResultsOf0(CompletionStage<? extends T>[] cfs) {
         final int len = cfs.length;
         if (len == 0) return completedFuture(arrayList());
-        // convert input cf to non-minimal-stage instance for SINGLE input in order to ensure that
-        // the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
+        // convert input cf to non-minimal-stage CF instance for SINGLE input in order to
+        // ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
         if (len == 1) return toNonMinCf0(cfs[0]).thenApply(CompletableFutureUtils::arrayList);
 
         final Object[] result = new Object[len];
@@ -1341,7 +1343,7 @@ public final class CompletableFutureUtils {
      *
      * @param cfs the stages
      * @return a new CompletableFuture that is successful when all the given stages success
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @Contract(pure = true)
     public static CompletableFuture<Void> allFastFailOf(CompletionStage<?>... cfs) {
@@ -1351,8 +1353,8 @@ public final class CompletableFutureUtils {
     private static CompletableFuture<Void> allFastFailOf0(CompletionStage<?>[] cfs) {
         final int len = cfs.length;
         if (len == 0) return completedFuture(null);
-        // convert input cf to non-minimal-stage instance for SINGLE input in order to ensure that
-        // the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
+        // convert input cf to non-minimal-stage CF instance for SINGLE input in order to
+        // ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
         if (len == 1) return toNonMinCf0(cfs[0]).thenApply(unused -> null);
 
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[len];
@@ -1397,15 +1399,15 @@ public final class CompletableFutureUtils {
      *
      * @param cfs the stages
      * @return a new CompletableFuture that is completed when all the given stages complete
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; forget to call its `join()` method?")
     @Contract(pure = true)
     public static CompletableFuture<Void> allOf(CompletionStage<?>... cfs) {
         requireCfsAndEleNonNull(cfs);
         if (cfs.length == 0) return completedFuture(null);
-        // convert input cf to non-minimal-stage instance for SINGLE input in order to ensure that
-        // the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
+        // convert input cf to non-minimal-stage CF instance for SINGLE input in order to
+        // ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
         if (cfs.length == 1) return toNonMinCf0(cfs[0]).thenApply(unused -> null);
         return CompletableFuture.allOf(f_toCfArray0(cfs));
     }
@@ -1492,7 +1494,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>CAUTION:</strong> This method is NOT type safe! Because reused the CF instance,
      * The returned cf may be a minimal-stage, MUST NOT be written or read(explicitly)
-     * (e.g. complete(Object)); Otherwise, the caller usage of cf may throw UnsupportedOperationException.
+     * (e.g. {@link CompletableFuture#complete}); Otherwise, the caller usage of cf may throw UnsupportedOperationException.
      */
     @SuppressWarnings("unchecked")
     private static <T> CompletableFuture<T> f_toCf0(CompletionStage<? extends T> s) {
@@ -1505,7 +1507,7 @@ public final class CompletableFutureUtils {
      * Converts CompletionStage to non-minimal-stage CompletableFuture, reuse cf instance as many as possible.
      * <p>
      * <strong>CAUTION:</strong> because reused the CF instance, if the caller need defensive copy
-     * instead of writing it directly use method {@link #toNonMinCfCopy0(CompletionStage)}).
+     * instead of writing it directly, use method {@link #toNonMinCfCopy0(CompletionStage)}).
      */
     private static <T> CompletableFuture<T> toNonMinCf0(CompletionStage<? extends T> s) {
         final CompletableFuture<T> f = f_toCf0(s);
@@ -1516,7 +1518,7 @@ public final class CompletableFutureUtils {
      * Converts CompletionStage to a non-minimal-stage CompletableFuture copy. This method is type safe.
      * <p>
      * <strong>Implementation Note:</strong> The returned instances of calling {@code copy} methods
-     * ({@link #copy(CompletableFuture)}/{@link CompletableFuture#copy()}) on {@code minimal-stage} instances
+     * ({@link #copy}/{@link CompletableFuture#copy}) on {@code minimal-stage} instances
      * is still {@code minimal-stage}(e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()})
      */
     private static <T> CompletableFuture<T> toNonMinCfCopy0(CompletionStage<? extends T> s) {
@@ -1525,7 +1527,7 @@ public final class CompletableFutureUtils {
     }
 
     static boolean isMinStageCf(CompletableFuture<?> cf) {
-        return "java.util.concurrent.CompletableFuture$MinimalStage".equals(cf.getClass().getName());
+        return cf.getClass().equals(MIN_STAGE_CLASS);
     }
 
     // endregion
@@ -1548,7 +1550,7 @@ public final class CompletableFutureUtils {
      *
      * @param cfs the stages
      * @return a new CompletableFuture that is successful when any of the given stages success, with the same result
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1561,7 +1563,7 @@ public final class CompletableFutureUtils {
         if (len == 0) return failedFuture(new NoCfsProvidedException());
         // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
         // 1. avoid writing the input cf unexpectedly by caller code
-        // 2. the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
+        // 2. the returned cf is not minimal-stage instance(UnsupportedOperationException)
         if (len == 1) return toNonMinCfCopy0(cfs[0]);
 
         // NOTE: fill ONE MORE element of successOrBeIncompleteCfs LATER
@@ -1589,7 +1591,7 @@ public final class CompletableFutureUtils {
      * @param cfs the stages
      * @return a new CompletableFuture that is completed with the result or exception
      * from any of the given stages when one completes
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see #anySuccessOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -1599,7 +1601,7 @@ public final class CompletableFutureUtils {
         if (cfs.length == 0) return new CompletableFuture<>();
         // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
         // 1. avoid writing the input cf unexpectedly by caller code
-        // 2. the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
+        // 2. the returned cf is not minimal-stage instance(UnsupportedOperationException)
         if (cfs.length == 1) return toNonMinCfCopy0(cfs[0]);
         return f_cast(CompletableFuture.anyOf(f_toCfArray0(cfs)));
     }
@@ -1615,7 +1617,6 @@ public final class CompletableFutureUtils {
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      *
      * @return a new CompletableFuture that is successful when the given stages success
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsFastFailOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -1630,7 +1631,6 @@ public final class CompletableFutureUtils {
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      *
      * @return a new CompletableFuture that is successful when the given stages success
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsFastFailOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -1645,7 +1645,6 @@ public final class CompletableFutureUtils {
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      *
      * @return a new CompletableFuture that is successful when the given stages success
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsFastFailOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -1661,7 +1660,6 @@ public final class CompletableFutureUtils {
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      *
      * @return a new CompletableFuture that is successful when the given stages success
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsFastFailOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -1679,7 +1677,6 @@ public final class CompletableFutureUtils {
      * (which is indistinguishable from the stage having a successful value of {@code null}).
      *
      * @return a new CompletableFuture
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @Contract(pure = true)
@@ -1696,7 +1693,6 @@ public final class CompletableFutureUtils {
      * (which is indistinguishable from the stage having a successful value of {@code null}).
      *
      * @return a new CompletableFuture
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @Contract(pure = true)
@@ -1713,7 +1709,6 @@ public final class CompletableFutureUtils {
      * (which is indistinguishable from the stage having a successful value of {@code null}).
      *
      * @return a new CompletableFuture
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @Contract(pure = true)
@@ -1731,7 +1726,6 @@ public final class CompletableFutureUtils {
      * (which is indistinguishable from the stage having a successful value of {@code null}).
      *
      * @return a new CompletableFuture
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @Contract(pure = true)
@@ -1922,7 +1916,6 @@ public final class CompletableFutureUtils {
      * with a CompletionException holding this exception as its cause.
      *
      * @return a new CompletableFuture that is completed when the given stages complete
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -1937,7 +1930,6 @@ public final class CompletableFutureUtils {
      * with a CompletionException holding this exception as its cause.
      *
      * @return a new CompletableFuture that is completed when the given stages complete
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -1952,7 +1944,6 @@ public final class CompletableFutureUtils {
      * with a CompletionException holding this exception as its cause.
      *
      * @return a new CompletableFuture that is completed when the given stages complete
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -1968,7 +1959,6 @@ public final class CompletableFutureUtils {
      * with a CompletionException holding this exception as its cause.
      *
      * @return a new CompletableFuture that is completed when the given stages complete
-     * @throws NullPointerException if any of the given stages are {@code null}
      * @see #allResultsOf(CompletionStage[])
      */
     @Contract(pure = true)
@@ -3348,9 +3338,9 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Implementation Note:
-     * Calling this method is necessary to keep the runtime type(including `minimal-stage`) of returned cf same as
-     * input `cfThis`, because `Cffu` internal use type `CompletableFuture` to represent `minimal-stage`(NOT type safe)
+     * Implementation Note: Calling this method is necessary to keep the runtime type(including `minimal-stage`) of
+     * return cf same as input `cfThis` argument. The runtime type of method {@link #allResultsFastFailOf(CompletionStage[])}
+     * return cf is always CompletableFuture, does NOT keep the runtime type of input `cfThis` argument.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static <T1, T2> CompletableFuture<Tuple2<T1, T2>> bothFastFail0(
@@ -3535,9 +3525,9 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Implementation Note:
-     * Calling this method is necessary to keep the runtime type(including `minimal-stage`) of returned cf same as
-     * input `cfThis`, because `Cffu` internal use type `CompletableFuture` to represent `minimal-stage`(NOT type safe)
+     * Implementation Note: Calling this method is necessary to keep the runtime type(including `minimal-stage`) of
+     * return cf same as input `cfThis` argument. The runtime type of method {@link #anySuccessOf(CompletionStage[])}
+     * return cf is always CompletableFuture, does NOT keep the runtime type of input `cfThis` argument.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static <T> CompletableFuture<T> eitherSuccess0(
@@ -4584,7 +4574,7 @@ public final class CompletableFutureUtils {
      * A convenient util method for converting input {@link CompletionStage}(including
      * {@link Cffu}/{@link CompletableFuture}) array element by {@link CompletionStage#toCompletableFuture()}.
      *
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see CompletionStage#toCompletableFuture()
      * @see CompletableFuture#toCompletableFuture()
      * @see Cffu#toCompletableFuture()
@@ -4704,6 +4694,17 @@ public final class CompletableFutureUtils {
         } catch (NoSuchMethodError e) {
             return false;
         }
+    }
+
+    /**
+     * <strong>CAUTION / Implementation Note:</strong> do NOT move this static field before {@link #IS_JAVA9_PLUS},
+     * otherwise will use uninitialized {@link #IS_JAVA9_PLUS}!
+     */
+    private static final Class<?> MIN_STAGE_CLASS;
+
+    static {
+        if (!IS_JAVA9_PLUS) MIN_STAGE_CLASS = null;
+        else MIN_STAGE_CLASS = CompletableFuture.completedStage(null).getClass();
     }
 
     private CompletableFutureUtils() {
