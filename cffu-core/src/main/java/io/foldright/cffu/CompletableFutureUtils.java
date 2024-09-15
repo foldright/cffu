@@ -3778,8 +3778,7 @@ public final class CompletableFutureUtils {
      * <p>
      * Note: This method behaves different from the original JDK implementation.
      * The returning CompletableFuture is a new instance to avoid subsequent usage of the delay thread.
-     * See more info <a href="https://github.com/foldright/cffu/blob/dev-orl/cffu-core/src/test/java/io/foldright/demo
-     * /CfDelayDysfunctionDemo.java">DelayDysfunctionDemo</a>.
+     * See more info <a href="https://github.com/foldright/cffu/blob/dev-orl/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java">DelayDysfunctionDemo</a>.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -3796,8 +3795,7 @@ public final class CompletableFutureUtils {
      * <p>
      * Note: This method behaves different from the original JDK implementation.
      * The returning CompletableFuture is a new instance to avoid subsequent usage of the delay thread.
-     * See more info <a href="https://github.com/foldright/cffu/blob/dev-orl/cffu-core/src/test/java/io/foldright/demo
-     * /CfDelayDysfunctionDemo.java">DelayDysfunctionDemo</a>.
+     * See more info <a href="https://github.com/foldright/cffu/blob/dev-orl/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java">DelayDysfunctionDemo</a>.
      *
      * @param executorWhenTimeout the async executor when triggered by timeout
      * @param timeout             how long to wait before completing exceptionally with a TimeoutException,
