@@ -3609,7 +3609,7 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterEitherSuccessAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
-        return runAfterEitherSuccessAsync(cfThis, other, action, defaultExecutor(f_toCf0(cfThis)));
+        return runAfterEitherSuccessAsync(cfThis, other, action, defaultExecutor(cfThis));
     }
 
     /**
@@ -3675,7 +3675,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
     C catchingAsync(C cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
-        return catchingAsync(cfThis, exceptionType, fallback, defaultExecutor(f_toCf0(cfThis)));
+        return catchingAsync(cfThis, exceptionType, fallback, defaultExecutor(cfThis));
     }
 
     /**
@@ -3721,7 +3721,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, C extends CompletionStage<? super T>>
     C exceptionallyAsync(C cfThis, Function<Throwable, ? extends T> fn) {
-        return exceptionallyAsync(cfThis, fn, defaultExecutor(f_toCf0(cfThis)));
+        return exceptionallyAsync(cfThis, fn, defaultExecutor(cfThis));
     }
 
     /**
@@ -4016,7 +4016,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, X extends Throwable, C extends CompletionStage<? super T>> C catchingComposeAsync(
             C cfThis, Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
-        return catchingComposeAsync(cfThis, exceptionType, fallback, defaultExecutor(f_toCf0(cfThis)));
+        return catchingComposeAsync(cfThis, exceptionType, fallback, defaultExecutor(cfThis));
     }
 
     /**
@@ -4087,7 +4087,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, C extends CompletionStage<? super T>>
     C exceptionallyComposeAsync(C cfThis, Function<Throwable, ? extends CompletionStage<T>> fn) {
-        return exceptionallyComposeAsync(cfThis, fn, defaultExecutor(f_toCf0(cfThis)));
+        return exceptionallyComposeAsync(cfThis, fn, defaultExecutor(cfThis));
     }
 
     /**
@@ -4171,7 +4171,7 @@ public final class CompletableFutureUtils {
     @Contract("_, _ -> param1")
     public static <T, C extends CompletionStage<? extends T>>
     C peekAsync(C cfThis, BiConsumer<? super T, ? super Throwable> action) {
-        return peekAsync(cfThis, action, defaultExecutor(f_toCf0(cfThis)));
+        return peekAsync(cfThis, action, defaultExecutor(cfThis));
     }
 
     /**
@@ -4556,11 +4556,17 @@ public final class CompletableFutureUtils {
      * This class uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread,
      * or else an Executor using one thread per async task.<br>
      * <strong>CAUTION:</strong> This executor may be not suitable for common biz use(io intensive).
+     *
+     * @see CompletableFuture#defaultExecutor()
      */
     @Contract(pure = true)
-    public static Executor defaultExecutor(CompletableFuture<?> cf) {
-        if (IS_JAVA9_PLUS) return cf.defaultExecutor();
-        else return ASYNC_POOL;
+    public static Executor defaultExecutor(CompletionStage<?> cf) {
+        // FIXME hard-code type(CompletableFuture and Cffu)...
+        //       need a SPI, so it's able to support and treat other CompletionStage equivalently
+        if (cf instanceof CompletableFuture)
+            return IS_JAVA9_PLUS ? ((CompletableFuture<?>) cf).defaultExecutor() : ASYNC_POOL;
+        if (cf instanceof Cffu) return ((Cffu<?>) cf).defaultExecutor();
+        throw new IllegalArgumentException("Unknown CompletionStage subclass: " + cf.getClass());
     }
 
     /**
@@ -4665,7 +4671,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Default executor -- ForkJoinPool.commonPool() unless it cannot support parallelism.
+     * Default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses
+     * of CompletableFuture) -- {@link ForkJoinPool#commonPool()} unless it cannot support parallelism.
      */
     static final Executor ASYNC_POOL = _asyncPool();
 
