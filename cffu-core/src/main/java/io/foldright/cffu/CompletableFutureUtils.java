@@ -4551,21 +4551,23 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns the default Executor used for async methods that do not specify an Executor.
-     * This class uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread,
-     * or else an Executor using one thread per async task.<br>
-     * <strong>CAUTION:</strong> This executor may be not suitable for common biz use(io intensive).
+     * Returns the default Executor of parameter cfThis used for async methods that do not specify an Executor.
+     * <p>
+     * The default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses of CompletableFuture)
+     * uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread, or else an Executor using
+     * one thread per async task. <strong>CAUTION:</strong> This executor may be not suitable for common biz use(io intensive).
      *
      * @see CompletableFuture#defaultExecutor()
      */
     @Contract(pure = true)
-    public static Executor defaultExecutor(CompletionStage<?> cf) {
-        // FIXME hard-code type(CompletableFuture and Cffu)...
-        //       need a SPI, so it's able to support and treat other CompletionStage equivalently
-        if (cf instanceof CompletableFuture)
-            return IS_JAVA9_PLUS ? ((CompletableFuture<?>) cf).defaultExecutor() : ASYNC_POOL;
-        if (cf instanceof Cffu) return ((Cffu<?>) cf).defaultExecutor();
-        throw new IllegalArgumentException("Unknown CompletionStage subclass: " + cf.getClass());
+    public static Executor defaultExecutor(CompletionStage<?> cfThis) {
+        requireNonNull(cfThis, "cfThis is null");
+        // FIXME hard-code type(CompletableFuture and Cffu...
+        //       need a SPI in order to support other CompletionStage subclasses equivalently
+        if (cfThis instanceof CompletableFuture)
+            return IS_JAVA9_PLUS ? ((CompletableFuture<?>) cfThis).defaultExecutor() : ASYNC_POOL;
+        if (cfThis instanceof Cffu) return ((Cffu<?>) cfThis).defaultExecutor();
+        throw new UnsupportedOperationException("Unsupported CompletionStage subclass: " + cfThis.getClass());
     }
 
     /**

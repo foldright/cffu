@@ -1803,7 +1803,7 @@ class CompletableFutureUtilsTest {
         assertSame(testExecutor, unwrapMadeExecutor(defaultExecutor(testCffuFac.completedFuture(null))));
 
 
-        final IllegalArgumentException ex = assertThrowsExactly(IllegalArgumentException.class, () -> {
+        final UnsupportedOperationException ex = assertThrowsExactly(UnsupportedOperationException.class, () -> {
             defaultExecutor(new CompletionStage<Object>() {
                 @Override
                 public <U> CompletionStage<U> thenApply(Function<? super Object, ? extends U> fn) {
@@ -1996,6 +1996,7 @@ class CompletableFutureUtilsTest {
                 }
             });
         });
+        assertTrue(ex.getMessage().startsWith("Unsupported CompletionStage subclass: "));
     }
 
     // endregion
