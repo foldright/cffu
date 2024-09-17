@@ -2068,17 +2068,6 @@ public final class CompletableFutureUtils {
         return new DelayedExecutor(delay, unit, executor);
     }
 
-    /**
-     * Returns the default Executor used for async methods that do not specify an Executor.
-     * This class uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread,
-     * or else an Executor using one thread per async task.<br>
-     * <strong>CAUTION:</strong> This executor may be not suitable for common biz use(io intensive).
-     */
-    @Contract(pure = true)
-    public static Executor defaultExecutor() {
-        return ASYNC_POOL;
-    }
-
     // endregion
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
@@ -2107,7 +2096,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
-        return thenMApplyFastFailAsync(cfThis, ASYNC_POOL, fns);
+        return thenMApplyFastFailAsync(cfThis, defaultExecutor(cfThis), fns);
     }
 
     /**
@@ -2148,7 +2137,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
-        return thenMApplyAllSuccessAsync(cfThis, valueIfFailed, ASYNC_POOL, fns);
+        return thenMApplyAllSuccessAsync(cfThis, valueIfFailed, defaultExecutor(cfThis), fns);
     }
 
     /**
@@ -2197,7 +2186,7 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<List<U>> thenMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, @Nullable U valueIfNotSuccess,
             long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
-        return thenMApplyMostSuccessAsync(cfThis, valueIfNotSuccess, ASYNC_POOL, timeout, unit, fns);
+        return thenMApplyMostSuccessAsync(cfThis, valueIfNotSuccess, defaultExecutor(cfThis), timeout, unit, fns);
     }
 
     /**
@@ -2245,7 +2234,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
-        return thenMApplyAsync(cfThis, ASYNC_POOL, fns);
+        return thenMApplyAsync(cfThis, defaultExecutor(cfThis), fns);
     }
 
     /**
@@ -2282,7 +2271,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
-        return thenMApplyAnySuccessAsync(cfThis, ASYNC_POOL, fns);
+        return thenMApplyAnySuccessAsync(cfThis, defaultExecutor(cfThis), fns);
     }
 
     /**
@@ -2318,7 +2307,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
-        return thenMApplyAnyAsync(cfThis, ASYNC_POOL, fns);
+        return thenMApplyAnyAsync(cfThis, defaultExecutor(cfThis), fns);
     }
 
     /**
@@ -2363,7 +2352,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptFastFailAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
-        return thenMAcceptFastFailAsync(cfThis, ASYNC_POOL, actions);
+        return thenMAcceptFastFailAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -2395,7 +2384,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
-        return thenMAcceptAsync(cfThis, ASYNC_POOL, actions);
+        return thenMAcceptAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -2427,7 +2416,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
-        return thenMAcceptAnySuccessAsync(cfThis, ASYNC_POOL, actions);
+        return thenMAcceptAnySuccessAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -2459,7 +2448,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnyAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
-        return thenMAcceptAnyAsync(cfThis, ASYNC_POOL, actions);
+        return thenMAcceptAnyAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -2500,7 +2489,7 @@ public final class CompletableFutureUtils {
      * @see #allFastFailOf(CompletionStage[])
      */
     public static CompletableFuture<Void> thenMRunFastFailAsync(CompletableFuture<?> cfThis, Runnable... actions) {
-        return thenMRunFastFailAsync(cfThis, ASYNC_POOL, actions);
+        return thenMRunFastFailAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -2532,7 +2521,7 @@ public final class CompletableFutureUtils {
      * @see #allOf(CompletionStage[])
      */
     public static CompletableFuture<Void> thenMRunAsync(CompletableFuture<?> cfThis, Runnable... actions) {
-        return thenMRunAsync(cfThis, ASYNC_POOL, actions);
+        return thenMRunAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -2564,7 +2553,7 @@ public final class CompletableFutureUtils {
      * @see #anySuccessOf(CompletionStage[])
      */
     public static CompletableFuture<Void> thenMRunAnySuccessAsync(CompletableFuture<?> cfThis, Runnable... actions) {
-        return thenMRunAnySuccessAsync(cfThis, ASYNC_POOL, actions);
+        return thenMRunAnySuccessAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -2596,7 +2585,7 @@ public final class CompletableFutureUtils {
      * @see #anyOf(CompletionStage[])
      */
     public static CompletableFuture<Void> thenMRunAnyAsync(CompletableFuture<?> cfThis, Runnable... actions) {
-        return thenMRunAnyAsync(cfThis, ASYNC_POOL, actions);
+        return thenMRunAnyAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -2635,7 +2624,7 @@ public final class CompletableFutureUtils {
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyFastFailAsync(cfThis, ASYNC_POOL, fn1, fn2);
+        return thenTupleMApplyFastFailAsync(cfThis, defaultExecutor(cfThis), fn1, fn2);
     }
 
     /**
@@ -2669,7 +2658,7 @@ public final class CompletableFutureUtils {
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyFastFailAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3);
+        return thenTupleMApplyFastFailAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3);
     }
 
     /**
@@ -2704,7 +2693,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyFastFailAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3, fn4);
+        return thenTupleMApplyFastFailAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4);
     }
 
     /**
@@ -2740,7 +2729,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyFastFailAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3, fn4, fn5);
+        return thenTupleMApplyFastFailAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
@@ -2777,7 +2766,7 @@ public final class CompletableFutureUtils {
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyAllSuccessAsync(cfThis, ASYNC_POOL, fn1, fn2);
+        return thenTupleMApplyAllSuccessAsync(cfThis, defaultExecutor(cfThis), fn1, fn2);
     }
 
     /**
@@ -2817,7 +2806,7 @@ public final class CompletableFutureUtils {
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyAllSuccessAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3);
+        return thenTupleMApplyAllSuccessAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3);
     }
 
     /**
@@ -2859,7 +2848,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyAllSuccessAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3, fn4);
+        return thenTupleMApplyAllSuccessAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4);
     }
 
     /**
@@ -2901,7 +2890,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyAllSuccessAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3, fn4, fn5);
+        return thenTupleMApplyAllSuccessAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
@@ -2945,7 +2934,7 @@ public final class CompletableFutureUtils {
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyMostSuccessAsync(cfThis, ASYNC_POOL, timeout, unit, fn1, fn2);
+        return thenTupleMApplyMostSuccessAsync(cfThis, defaultExecutor(cfThis), timeout, unit, fn1, fn2);
     }
 
     /**
@@ -2993,7 +2982,7 @@ public final class CompletableFutureUtils {
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyMostSuccessAsync(cfThis, ASYNC_POOL, timeout, unit, fn1, fn2, fn3);
+        return thenTupleMApplyMostSuccessAsync(cfThis, defaultExecutor(cfThis), timeout, unit, fn1, fn2, fn3);
     }
 
     /**
@@ -3043,7 +3032,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyMostSuccessAsync(cfThis, ASYNC_POOL, timeout, unit, fn1, fn2, fn3, fn4);
+        return thenTupleMApplyMostSuccessAsync(cfThis, defaultExecutor(cfThis), timeout, unit, fn1, fn2, fn3, fn4);
     }
 
     /**
@@ -3093,7 +3082,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyMostSuccessAsync(cfThis, ASYNC_POOL, timeout, unit, fn1, fn2, fn3, fn4, fn5);
+        return thenTupleMApplyMostSuccessAsync(cfThis, defaultExecutor(cfThis), timeout, unit, fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
@@ -3137,7 +3126,7 @@ public final class CompletableFutureUtils {
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyAsync(cfThis, ASYNC_POOL, fn1, fn2);
+        return thenTupleMApplyAsync(cfThis, defaultExecutor(cfThis), fn1, fn2);
     }
 
     /**
@@ -3171,7 +3160,7 @@ public final class CompletableFutureUtils {
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3);
+        return thenTupleMApplyAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3);
     }
 
     /**
@@ -3206,7 +3195,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3, fn4);
+        return thenTupleMApplyAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4);
     }
 
     /**
@@ -3242,7 +3231,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3, fn4, fn5);
+        return thenTupleMApplyAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
@@ -3307,7 +3296,7 @@ public final class CompletableFutureUtils {
     public static <T, U, V> CompletableFuture<V> thenCombineFastFailAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiFunction<? super T, ? super U, ? extends V> fn) {
-        return thenCombineFastFailAsync(cfThis, other, fn, ASYNC_POOL);
+        return thenCombineFastFailAsync(cfThis, other, fn, defaultExecutor(cfThis));
     }
 
     /**
@@ -3391,7 +3380,7 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<Void> thenAcceptBothFastFailAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiConsumer<? super T, ? super U> action) {
-        return thenAcceptBothFastFailAsync(cfThis, other, action, ASYNC_POOL);
+        return thenAcceptBothFastFailAsync(cfThis, other, action, defaultExecutor(cfThis));
     }
 
     /**
@@ -3444,7 +3433,7 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterBothFastFailAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
-        return runAfterBothFastFailAsync(cfThis, other, action, ASYNC_POOL);
+        return runAfterBothFastFailAsync(cfThis, other, action, defaultExecutor(cfThis));
     }
 
     /**
@@ -3502,7 +3491,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other, Function<? super T, ? extends U> fn) {
-        return applyToEitherSuccessAsync(cfThis, other, fn, ASYNC_POOL);
+        return applyToEitherSuccessAsync(cfThis, other, fn, defaultExecutor(cfThis));
     }
 
     /**
@@ -3570,7 +3559,7 @@ public final class CompletableFutureUtils {
      */
     public static <T> CompletableFuture<Void> acceptEitherSuccessAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other, Consumer<? super T> action) {
-        return acceptEitherSuccessAsync(cfThis, other, action, ASYNC_POOL);
+        return acceptEitherSuccessAsync(cfThis, other, action, defaultExecutor(cfThis));
     }
 
     /**
@@ -3620,7 +3609,7 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterEitherSuccessAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
-        return runAfterEitherSuccessAsync(cfThis, other, action, ASYNC_POOL);
+        return runAfterEitherSuccessAsync(cfThis, other, action, defaultExecutor(cfThis));
     }
 
     /**
@@ -3686,7 +3675,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
     C catchingAsync(C cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
-        return catchingAsync(cfThis, exceptionType, fallback, ASYNC_POOL);
+        return catchingAsync(cfThis, exceptionType, fallback, defaultExecutor(cfThis));
     }
 
     /**
@@ -3732,7 +3721,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, C extends CompletionStage<? super T>>
     C exceptionallyAsync(C cfThis, Function<Throwable, ? extends T> fn) {
-        return exceptionallyAsync(cfThis, fn, ASYNC_POOL);
+        return exceptionallyAsync(cfThis, fn, defaultExecutor(cfThis));
     }
 
     /**
@@ -3787,7 +3776,7 @@ public final class CompletableFutureUtils {
      * @see #cffuOrTimeout(CompletableFuture, Executor, long, TimeUnit)
      */
     public static <C extends CompletableFuture<?>> C cffuOrTimeout(C cfThis, long timeout, TimeUnit unit) {
-        return cffuOrTimeout(cfThis, ASYNC_POOL, timeout, unit);
+        return cffuOrTimeout(cfThis, defaultExecutor(cfThis), timeout, unit);
     }
 
     /**
@@ -3884,7 +3873,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, C extends CompletableFuture<? super T>>
     C cffuCompleteOnTimeout(C cfThis, @Nullable T value, long timeout, TimeUnit unit) {
-        return cffuCompleteOnTimeout(cfThis, value, ASYNC_POOL, timeout, unit);
+        return cffuCompleteOnTimeout(cfThis, value, defaultExecutor(cfThis), timeout, unit);
     }
 
     /**
@@ -4027,7 +4016,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, X extends Throwable, C extends CompletionStage<? super T>> C catchingComposeAsync(
             C cfThis, Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
-        return catchingComposeAsync(cfThis, exceptionType, fallback, ASYNC_POOL);
+        return catchingComposeAsync(cfThis, exceptionType, fallback, defaultExecutor(cfThis));
     }
 
     /**
@@ -4098,7 +4087,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, C extends CompletionStage<? super T>>
     C exceptionallyComposeAsync(C cfThis, Function<Throwable, ? extends CompletionStage<T>> fn) {
-        return exceptionallyComposeAsync(cfThis, fn, ASYNC_POOL);
+        return exceptionallyComposeAsync(cfThis, fn, defaultExecutor(cfThis));
     }
 
     /**
@@ -4182,7 +4171,7 @@ public final class CompletableFutureUtils {
     @Contract("_, _ -> param1")
     public static <T, C extends CompletionStage<? extends T>>
     C peekAsync(C cfThis, BiConsumer<? super T, ? super Throwable> action) {
-        return peekAsync(cfThis, action, ASYNC_POOL);
+        return peekAsync(cfThis, action, defaultExecutor(cfThis));
     }
 
     /**
@@ -4451,7 +4440,7 @@ public final class CompletableFutureUtils {
      */
     @Contract("_, _ -> param1")
     public static <T, C extends CompletableFuture<? super T>> C completeAsync(C cfThis, Supplier<? extends T> supplier) {
-        return completeAsync(cfThis, supplier, ASYNC_POOL);
+        return completeAsync(cfThis, supplier, defaultExecutor(cfThis));
     }
 
     /**
@@ -4491,7 +4480,7 @@ public final class CompletableFutureUtils {
     @Contract("_, _ -> param1")
     public static <C extends CompletableFuture<?>>
     C completeExceptionallyAsync(C cfThis, Supplier<? extends Throwable> supplier) {
-        return completeExceptionallyAsync(cfThis, supplier, ASYNC_POOL);
+        return completeExceptionallyAsync(cfThis, supplier, defaultExecutor(cfThis));
     }
 
     /**
@@ -4560,6 +4549,24 @@ public final class CompletableFutureUtils {
             return cfThis.copy();
         }
         return cfThis.thenApply(x -> x);
+    }
+
+    /**
+     * Returns the default Executor used for async methods that do not specify an Executor.
+     * This class uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread,
+     * or else an Executor using one thread per async task.<br>
+     * <strong>CAUTION:</strong> This executor may be not suitable for common biz use(io intensive).
+     *
+     * @see CompletableFuture#defaultExecutor()
+     */
+    @Contract(pure = true)
+    public static Executor defaultExecutor(CompletionStage<?> cf) {
+        // FIXME hard-code type(CompletableFuture and Cffu)...
+        //       need a SPI, so it's able to support and treat other CompletionStage equivalently
+        if (cf instanceof CompletableFuture)
+            return IS_JAVA9_PLUS ? ((CompletableFuture<?>) cf).defaultExecutor() : ASYNC_POOL;
+        if (cf instanceof Cffu) return ((Cffu<?>) cf).defaultExecutor();
+        throw new IllegalArgumentException("Unknown CompletionStage subclass: " + cf.getClass());
     }
 
     /**
@@ -4664,7 +4671,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Default executor -- ForkJoinPool.commonPool() unless it cannot support parallelism.
+     * Default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses
+     * of CompletableFuture) -- {@link ForkJoinPool#commonPool()} unless it cannot support parallelism.
      */
     static final Executor ASYNC_POOL = _asyncPool();
 

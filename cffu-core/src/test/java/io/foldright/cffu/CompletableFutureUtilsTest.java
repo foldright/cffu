@@ -12,18 +12,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static io.foldright.cffu.CffuTestHelper.unwrapMadeExecutor;
 import static io.foldright.cffu.CompletableFutureUtils.*;
 import static io.foldright.test_utils.TestUtils.*;
 import static io.foldright.test_utils.TestingConstants.*;
-import static io.foldright.test_utils.TestingExecutorUtils.assertRunningInExecutor;
-import static io.foldright.test_utils.TestingExecutorUtils.testExecutor;
+import static io.foldright.test_utils.TestingExecutorUtils.*;
 import static java.lang.Thread.currentThread;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;
@@ -1794,14 +1791,211 @@ class CompletableFutureUtilsTest {
     }
 
     @Test
-    void test_executor() {
-        Executor executor = defaultExecutor();
-        assertIsCfDefaultExecutor(executor);
+    void test_defaultExecutor() {
+        assertIsCfDefaultExecutor(defaultExecutor(completedFuture(null)));
 
         assertIsCfDefaultExecutor(screenExecutor(commonPool()));
 
         ExecutorService e = Executors.newCachedThreadPool();
         assertSame(e, screenExecutor(e));
+
+        // Cffu
+        assertSame(testExecutor, unwrapMadeExecutor(defaultExecutor(testCffuFac.completedFuture(null))));
+
+
+        final IllegalArgumentException ex = assertThrowsExactly(IllegalArgumentException.class, () -> {
+            defaultExecutor(new CompletionStage<Object>() {
+                @Override
+                public <U> CompletionStage<U> thenApply(Function<? super Object, ? extends U> fn) {
+                    return null;
+                }
+
+                @Override
+                public <U> CompletionStage<U> thenApplyAsync(Function<? super Object, ? extends U> fn) {
+                    return null;
+                }
+
+                @Override
+                public <U> CompletionStage<U> thenApplyAsync(Function<? super Object, ? extends U> fn, Executor executor) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Void> thenAccept(Consumer<? super Object> action) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Void> thenAcceptAsync(Consumer<? super Object> action) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Void> thenAcceptAsync(Consumer<? super Object> action, Executor executor) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Void> thenRun(Runnable action) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Void> thenRunAsync(Runnable action) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Void> thenRunAsync(Runnable action, Executor executor) {
+                    return null;
+                }
+
+                @Override
+                public <U, V> CompletionStage<V> thenCombine(CompletionStage<? extends U> other, BiFunction<? super Object, ? super U, ? extends V> fn) {
+                    return null;
+                }
+
+                @Override
+                public <U, V> CompletionStage<V> thenCombineAsync(CompletionStage<? extends U> other, BiFunction<? super Object, ? super U, ? extends V> fn) {
+                    return null;
+                }
+
+                @Override
+                public <U, V> CompletionStage<V> thenCombineAsync(CompletionStage<? extends U> other, BiFunction<? super Object, ? super U, ? extends V> fn, Executor executor) {
+                    return null;
+                }
+
+                @Override
+                public <U> CompletionStage<Void> thenAcceptBoth(CompletionStage<? extends U> other, BiConsumer<? super Object, ? super U> action) {
+                    return null;
+                }
+
+                @Override
+                public <U> CompletionStage<Void> thenAcceptBothAsync(CompletionStage<? extends U> other, BiConsumer<? super Object, ? super U> action) {
+                    return null;
+                }
+
+                @Override
+                public <U> CompletionStage<Void> thenAcceptBothAsync(CompletionStage<? extends U> other, BiConsumer<? super Object, ? super U> action, Executor executor) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Void> runAfterBoth(CompletionStage<?> other, Runnable action) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action, Executor executor) {
+                    return null;
+                }
+
+                @Override
+                public <U> CompletionStage<U> applyToEither(CompletionStage<?> other, Function<? super Object, U> fn) {
+                    return null;
+                }
+
+                @Override
+                public <U> CompletionStage<U> applyToEitherAsync(CompletionStage<?> other, Function<? super Object, U> fn) {
+                    return null;
+                }
+
+                @Override
+                public <U> CompletionStage<U> applyToEitherAsync(CompletionStage<?> other, Function<? super Object, U> fn, Executor executor) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Void> acceptEither(CompletionStage<?> other, Consumer<? super Object> action) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Void> acceptEitherAsync(CompletionStage<?> other, Consumer<? super Object> action) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Void> acceptEitherAsync(CompletionStage<?> other, Consumer<? super Object> action, Executor executor) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Void> runAfterEither(CompletionStage<?> other, Runnable action) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action, Executor executor) {
+                    return null;
+                }
+
+                @Override
+                public <U> CompletionStage<U> thenCompose(Function<? super Object, ? extends CompletionStage<U>> fn) {
+                    return null;
+                }
+
+                @Override
+                public <U> CompletionStage<U> thenComposeAsync(Function<? super Object, ? extends CompletionStage<U>> fn) {
+                    return null;
+                }
+
+                @Override
+                public <U> CompletionStage<U> thenComposeAsync(Function<? super Object, ? extends CompletionStage<U>> fn, Executor executor) {
+                    return null;
+                }
+
+                @Override
+                public <U> CompletionStage<U> handle(BiFunction<? super Object, Throwable, ? extends U> fn) {
+                    return null;
+                }
+
+                @Override
+                public <U> CompletionStage<U> handleAsync(BiFunction<? super Object, Throwable, ? extends U> fn) {
+                    return null;
+                }
+
+                @Override
+                public <U> CompletionStage<U> handleAsync(BiFunction<? super Object, Throwable, ? extends U> fn, Executor executor) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Object> whenComplete(BiConsumer<? super Object, ? super Throwable> action) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Object> whenCompleteAsync(BiConsumer<? super Object, ? super Throwable> action) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Object> whenCompleteAsync(BiConsumer<? super Object, ? super Throwable> action, Executor executor) {
+                    return null;
+                }
+
+                @Override
+                public CompletionStage<Object> exceptionally(Function<Throwable, ?> fn) {
+                    return null;
+                }
+
+                @Override
+                public CompletableFuture<Object> toCompletableFuture() {
+                    return null;
+                }
+            });
+        });
     }
 
     // endregion
