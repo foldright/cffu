@@ -2005,10 +2005,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static <T> CompletionStage<T> completedStage(@Nullable T value) {
-        if (IS_JAVA9_PLUS) {
-            return CompletableFuture.completedStage(value);
-        }
-        return completedFuture(value);
+        return IS_JAVA9_PLUS ? CompletableFuture.completedStage(value) : completedFuture(value);
     }
 
     /**
@@ -2025,10 +2022,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static <T> CompletionStage<T> failedStage(Throwable ex) {
-        if (IS_JAVA9_PLUS) {
-            return CompletableFuture.failedStage(ex);
-        }
-        return failedFuture(ex);
+        return IS_JAVA9_PLUS ? CompletableFuture.failedStage(ex) : failedFuture(ex);
     }
 
     // endregion
@@ -2062,10 +2056,8 @@ public final class CompletableFutureUtils {
     public static Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
         requireNonNull(unit, "unit is null");
         requireNonNull(executor, "executor is null");
-        if (IS_JAVA9_PLUS) {
-            return CompletableFuture.delayedExecutor(delay, unit, executor);
-        }
-        return new DelayedExecutor(delay, unit, executor);
+        return IS_JAVA9_PLUS ? CompletableFuture.delayedExecutor(delay, unit, executor)
+                : new DelayedExecutor(delay, unit, executor);
     }
 
     // endregion
@@ -4525,10 +4517,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <T> CompletionStage<T> minimalCompletionStage(CompletableFuture<T> cfThis) {
         requireNonNull(cfThis, "cfThis is null");
-        if (IS_JAVA9_PLUS) {
-            return cfThis.minimalCompletionStage();
-        }
-        return cfThis.thenApply(x -> x);
+        return IS_JAVA9_PLUS ? cfThis.minimalCompletionStage() : cfThis.thenApply(x -> x);
     }
 
     /**
@@ -4544,10 +4533,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <T> CompletableFuture<T> copy(CompletableFuture<T> cfThis) {
         requireNonNull(cfThis, "cfThis is null");
-        if (IS_JAVA9_PLUS) {
-            return cfThis.copy();
-        }
-        return cfThis.thenApply(x -> x);
+        return IS_JAVA9_PLUS ? cfThis.copy() : cfThis.thenApply(x -> x);
     }
 
     /**
@@ -4580,10 +4566,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <U> CompletableFuture<U> newIncompleteFuture(CompletableFuture<?> cfThis) {
         requireNonNull(cfThis, "cfThis is null");
-        if (IS_JAVA9_PLUS) {
-            return cfThis.newIncompleteFuture();
-        }
-        return new CompletableFuture<>();
+        return IS_JAVA9_PLUS ? cfThis.newIncompleteFuture() : new CompletableFuture<U>();
     }
 
     // endregion
