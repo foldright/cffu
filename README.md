@@ -125,7 +125,7 @@
   - 当然基本的并发关注方面及其复杂性，与具体使用哪个工具无关，都是要理解与注意的
 - **高层抽象**
   - 或说 以业务流程的形式表达技术的并发流程
-  - 避免或减少使用繁琐易错的基础并发协调工具，如锁（[`Lock`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/locks/package-summary.html)）、[`CountDownLatch`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CountDownLatch.html)、[`CyclicBarrier`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CyclicBarrier.html)、[`Phaser`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Phaser.html)
+  - 可以避免或减少使用繁琐易错的基础并发协调工具：[同步器`Synchronizers`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/package-summary.html#synchronizers-heading)（如[`CountDownLatch`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CountDownLatch.html)、[`CyclicBarrier`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CyclicBarrier.html)、[`Phaser`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Phaser.html)）和[锁`Locks`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/locks/package-summary.html)
 
 和其它并发工具、框架一样，`CompletableFuture`用于
 
@@ -612,18 +612,18 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>1.0.0-Alpha22</version>
+      <version>1.0.0-Alpha23</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu:1.0.0-Alpha22")
+    implementation("io.foldright:cffu:1.0.0-Alpha23")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu:1.0.0-Alpha22'
+    implementation 'io.foldright:cffu:1.0.0-Alpha23'
     ```
 - `cffu Kotlin`支持库:
   - For `Maven` projects:
@@ -632,18 +632,18 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-kotlin</artifactId>
-      <version>1.0.0-Alpha22</version>
+      <version>1.0.0-Alpha23</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha22")
+    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha23")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha22'
+    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha23'
     ```
 - `cffu bom`:
   - For `Maven` projects:
@@ -652,7 +652,7 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-bom</artifactId>
-      <version>1.0.0-Alpha22</version>
+      <version>1.0.0-Alpha23</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -661,11 +661,11 @@ public class ConcurrencyStrategyDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha22"))
+    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha23"))
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha22')
+    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha23')
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local)的[`cffu executor wrapper SPI`实现](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -674,7 +674,7 @@ public class ConcurrencyStrategyDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>1.0.0-Alpha22</version>
+      <version>1.0.0-Alpha23</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -682,11 +682,11 @@ public class ConcurrencyStrategyDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha22")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha23")
     ```
     ```groovy
     // Gradle Groovy DSL
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha22'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha23'
     ```
 
 # 📚 更多资料

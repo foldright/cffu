@@ -2084,7 +2084,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
@@ -2122,7 +2122,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the CompletableFuture's default asynchronous execution facility
+     * is executed in the default executor of parameter cfThis
      * with the successful values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
@@ -2166,7 +2166,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the most values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the given time({@code timeout}, aka as many results as possible in the given time)
@@ -2222,7 +2222,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
@@ -2260,7 +2260,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with any successful value obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions).
      *
@@ -2296,7 +2296,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with any completed result obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions).
      *
@@ -2343,7 +2343,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the given stage's result as the argument to the given actions.
      *
      * @param actions the actions to perform before completing the returned CompletableFuture
@@ -2375,7 +2375,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the given stage's result as the argument to the given actions.
      *
      * @param actions the actions to perform before completing the returned CompletableFuture
@@ -2407,7 +2407,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the given stage's result as the argument to the given actions.
      *
      * @param actions the actions to perform before completing the returned CompletableFuture
@@ -2439,7 +2439,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the given stage's result as the argument to the given actions.
      *
      * @param actions the actions to perform before completing the returned CompletableFuture
@@ -2481,7 +2481,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * executes the given actions using the CompletableFuture's default asynchronous execution facility.
+     * executes the given actions using the default executor of parameter cfThis.
      *
      * @param actions the actions to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
@@ -2513,7 +2513,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * executes the given actions using the CompletableFuture's default asynchronous execution facility.
+     * executes the given actions using the default executor of parameter cfThis.
      *
      * @param actions the actions to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
@@ -2545,7 +2545,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * executes the given actions using the CompletableFuture's default asynchronous execution facility.
+     * executes the given actions using the default executor of parameter cfThis.
      *
      * @param actions the actions to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
@@ -2577,7 +2577,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * executes the given actions using the CompletableFuture's default asynchronous execution facility.
+     * executes the given actions using the default executor of parameter cfThis.
      *
      * @param actions the actions to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
@@ -2614,7 +2614,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
@@ -2648,7 +2648,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
@@ -2682,7 +2682,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
@@ -2718,7 +2718,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
@@ -2754,7 +2754,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the CompletableFuture's default asynchronous execution facility
+     * is executed in the default executor of parameter cfThis,
      * with the successful values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions).
      * <p>
@@ -2793,7 +2793,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the CompletableFuture's default asynchronous execution facility
+     * is executed in the default executor of parameter cfThis,
      * with the successful values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
@@ -2834,7 +2834,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the CompletableFuture's default asynchronous execution facility
+     * is executed in the default executor of parameter cfThis,
      * with the successful values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
@@ -2876,7 +2876,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the CompletableFuture's default asynchronous execution facility
+     * is executed in the default executor of parameter cfThis,
      * with the successful values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
@@ -2918,7 +2918,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the most values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the given time({@code timeout}, aka as many results as possible in the given time)
@@ -2966,7 +2966,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the most values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the given time({@code timeout}, aka as many results as possible in the given time)
@@ -3015,7 +3015,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the most values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the given time({@code timeout}, aka as many results as possible in the given time)
@@ -3065,7 +3065,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the most values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the given time({@code timeout}, aka as many results as possible in the given time)
@@ -3116,7 +3116,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
@@ -3150,7 +3150,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
@@ -3184,7 +3184,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
@@ -3220,7 +3220,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
@@ -3284,7 +3284,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
-     * is executed using CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the two results as arguments to the supplied function.
      * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
      * *without* waiting other incomplete given CompletionStage,
@@ -3368,7 +3368,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
-     * is executed using CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the two results as arguments to the supplied action.
      * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
      * *without* waiting other incomplete given CompletionStage,
@@ -3423,7 +3423,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when two given stages both complete normally,
-     * executes the given action using CompletableFuture's default asynchronous execution facility.
+     * executes the given action using the default executor of parameter cfThis.
      * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
@@ -3482,7 +3482,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when either given stage success,
-     * is executed using this CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the corresponding result as argument to the supplied function.
      *
      * @param fn  the function to use to compute the value of the returned CompletableFuture
@@ -3551,7 +3551,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when either given stage success,
-     * is executed using this CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the corresponding result as argument to the supplied action.
      *
      * @param action the action to perform before completing the returned CompletableFuture
@@ -3599,7 +3599,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when either given stage success, executes the given action
-     * using CompletableFuture's default asynchronous execution facility.
+     * using the default executor of parameter cfThis.
      * Otherwise, all two given CompletionStage complete exceptionally,
      * the returned CompletableFuture also does so, with a CompletionException holding
      * an exception from any of the given CompletionStage as its cause.
@@ -3663,7 +3663,7 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
      * is executed with given stage's exception as the argument to the supplied function,
-     * using the given stage's default asynchronous execution facility.
+     * using the default executor of parameter cfThis.
      * Otherwise, the returned stage contains same result as input CompletionStage.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
@@ -3706,9 +3706,8 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletionStage that, when given stage completes exceptionally, is executed with given
-     * stage's exception as the argument to the supplied function, using given stage's
-     * default asynchronous execution facility. Otherwise, if given stage completes normally,
-     * then the returned stage also completes normally with the same value.
+     * stage's exception as the argument to the supplied function, using the default executor of parameter cfThis.
+     * Otherwise, if given stage completes normally, then the returned stage also completes normally with the same value.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strong recommend</strong> using {@link #catchingAsync(CompletionStage, Class, Function)}
@@ -3763,7 +3762,7 @@ public final class CompletableFutureUtils {
      * Exceptionally completes given CompletableFuture with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
      * <p>
-     * Uses CompletableFuture's default asynchronous execution facility as {@code executorWhenTimeout}.
+     * Uses the default executor of parameter cfThis as {@code executorWhenTimeout}.
      * <p>
      * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the original
      * CF method {@link CompletableFuture#orTimeout} and its backport method {@link #orTimeout}, because the returning new CF instance
@@ -3857,7 +3856,7 @@ public final class CompletableFutureUtils {
     /**
      * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
      * <p>
-     * Uses CompletableFuture's default asynchronous execution facility as {@code executorWhenTimeout}.
+     * Uses the default executor of parameter cfThis as {@code executorWhenTimeout}.
      * <p>
      * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the original
      * CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout},
@@ -4005,7 +4004,7 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
      * is composed using the results of the supplied function applied to given stage's exception,
-     * using given stage's default asynchronous execution facility.
+     * using the default executor of parameter cfThis.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
      *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
@@ -4074,7 +4073,7 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when given CompletableFuture completes exceptionally,
      * is composed using the results of the supplied function applied to given stage's exception,
-     * using given CompletableFuture's default asynchronous execution facility.
+     * using the default executor of parameter cfThis.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strong recommend</strong> using {@link #catchingComposeAsync(CompletionStage, Class, Function)}
@@ -4152,7 +4151,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Peeks the result by executing the given action when given stage completes,
-     * executes the given action using given stage's default asynchronous execution facility,
+     * executes the given action using the default executor of parameter cfThis,
      * returns the given stage.
      * <p>
      * When the given stage is complete, the given action is invoked with the result (or {@code null} if none)
@@ -4432,7 +4431,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Completes given CompletableFuture with the result of the given Supplier function invoked
-     * from an asynchronous task using the default executor.
+     * from an asynchronous task using the default executor of parameter cfThis.
      *
      * @param supplier a function returning the value to be used to complete given CompletableFuture
      * @return the given CompletableFuture
@@ -4471,7 +4470,7 @@ public final class CompletableFutureUtils {
 
     /**
      * If not already completed, completes given CompletableFuture with the exception result
-     * of the given Supplier function invoked from an asynchronous task using the default executor.
+     * of the given Supplier function invoked from an asynchronous task using the default executor of parameter cfThis.
      *
      * @param supplier a function returning the value to be used to complete given CompletableFuture
      * @return the given CompletableFuture
