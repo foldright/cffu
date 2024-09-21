@@ -180,6 +180,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #allResultsFastFailOf(CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyFastFailAsync(Supplier<? extends T>... suppliers) {
         return mSupplyFastFailAsync(defaultExecutor, suppliers);
@@ -196,6 +197,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #allResultsFastFailOf(CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyFastFailAsync(Executor executor, Supplier<? extends T>... suppliers) {
         return create(CompletableFutureUtils.mSupplyFastFailAsync(executor, suppliers));
@@ -216,6 +218,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyAllSuccessAsync(
             @Nullable T valueIfFailed, Supplier<? extends T>... suppliers) {
@@ -237,6 +240,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyAllSuccessAsync(
             @Nullable T valueIfFailed, Executor executor, Supplier<? extends T>... suppliers) {
@@ -262,6 +266,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyMostSuccessAsync(
             @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit, Supplier<? extends T>... suppliers) {
@@ -287,6 +292,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyMostSuccessAsync(
             @Nullable T valueIfNotSuccess, Executor executor, long timeout, TimeUnit unit,
@@ -305,6 +311,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #allResultsOf(CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyAsync(Supplier<? extends T>... suppliers) {
         return mSupplyAsync(defaultExecutor, suppliers);
@@ -321,6 +328,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #allResultsOf(CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyAsync(
             Executor executor, Supplier<? extends T>... suppliers) {
@@ -342,6 +350,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #anySuccessOf(CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     @SafeVarargs
     public final <T> Cffu<T> mSupplyAnySuccessAsync(Supplier<? extends T>... suppliers) {
         return mSupplyAnySuccessAsync(defaultExecutor, suppliers);
@@ -362,6 +371,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #anySuccessOf(CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     @SafeVarargs
     public final <T> Cffu<T> mSupplyAnySuccessAsync(Executor executor, Supplier<? extends T>... suppliers) {
         return create(CompletableFutureUtils.mSupplyAnySuccessAsync(executor, suppliers));
@@ -380,6 +390,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #anyOf(CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     @SafeVarargs
     public final <T> Cffu<T> mSupplyAnyAsync(Supplier<? extends T>... suppliers) {
         return mSupplyAnyAsync(defaultExecutor, suppliers);
@@ -398,6 +409,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #anyOf(CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     @SafeVarargs
     public final <T> Cffu<T> mSupplyAnyAsync(Executor executor, Supplier<? extends T>... suppliers) {
         return create(CompletableFutureUtils.mSupplyAnyAsync(executor, suppliers));
@@ -412,6 +424,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #allFastFailOf(CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     public Cffu<Void> mRunFastFailAsync(Runnable... actions) {
         return mRunFastFailAsync(defaultExecutor, actions);
     }
@@ -425,6 +438,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #allFastFailOf(CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     public Cffu<Void> mRunFastFailAsync(Executor executor, Runnable... actions) {
         return create(CompletableFutureUtils.mRunFastFailAsync(executor, actions));
     }
@@ -463,6 +477,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #anySuccessOf(CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     public Cffu<Void> mRunAnySuccessAsync(Runnable... actions) {
         return mRunAnySuccessAsync(defaultExecutor, actions);
     }
@@ -476,6 +491,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #anySuccessOf(CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     public Cffu<Void> mRunAnySuccessAsync(Executor executor, Runnable... actions) {
         return create(CompletableFutureUtils.mRunAnySuccessAsync(executor, actions));
     }
@@ -488,6 +504,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #anyOf(CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     public Cffu<Void> mRunAnyAsync(Runnable... actions) {
         return mRunAnyAsync(defaultExecutor, actions);
     }
@@ -501,6 +518,7 @@ public final class CffuFactory {
      * @return the new Cffu
      * @see #anyOf(CompletionStage[])
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsync`")
     public Cffu<Void> mRunAnyAsync(Executor executor, Runnable... actions) {
         return create(CompletableFutureUtils.mRunAnyAsync(executor, actions));
     }
