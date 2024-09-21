@@ -4007,7 +4007,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>CAUTION:<br></strong>
      * if run on old Java 8(not support *minimal* CompletionStage),
-     * just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
+     * just return a *normal* CompletableFuture which is NOT a *minimal* CompletionStage.
      *
      * @return the new CompletionStage
      * @see CompletableFuture#minimalCompletionStage()
