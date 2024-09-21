@@ -256,7 +256,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
-     * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}.
+     * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}
+     * (which is indistinguishable from the function having a successful value of {@code valueIfFailed}).
      *
      * @param valueIfFailed the value to return if not completed successfully
      * @param fns           the functions to use to compute the values of the returned Cffu
@@ -275,7 +276,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
-     * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}.
+     * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}
+     * (which is indistinguishable from the function having a successful value of {@code valueIfFailed}).
      *
      * @param valueIfFailed the value to return if not completed successfully
      * @param fns           the functions to use to compute the values of the returned Cffu
@@ -297,7 +299,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
      * If any of the provided functions does not success(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}.
+     * its corresponding position will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the function having a successful value of {@code valueIfNotSuccess}).
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param timeout           how long to wait in units of {@code unit}
@@ -320,7 +323,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
      * If any of the provided functions does not success(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}.
+     * its corresponding position will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the function having a successful value of {@code valueIfNotSuccess}).
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param executor          the executor to use for asynchronous execution
@@ -631,12 +635,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyFastFailAsync(Function[])}.
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyFastFailAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -644,13 +643,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyFastFailAsync(Executor, Function[])}.
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyFastFailAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -658,12 +651,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyFastFailAsync(Function[])}.
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyFastFailAsync(
             Function<? super T, ? extends U1> fn1,
@@ -672,13 +660,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyFastFailAsync(Executor, Function[])}.
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyFastFailAsync(
             Executor executor, Function<? super T, ? extends U1> fn1,
@@ -687,12 +669,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyFastFailAsync(Function[])}.
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFastFailAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -701,13 +678,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyFastFailAsync(Executor, Function[])}.
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFastFailAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -716,12 +687,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyFastFailAsync(Function[])}.
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFastFailAsync(
             Function<? super T, ? extends U1> fn1,
@@ -731,13 +697,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyFastFailAsync(Executor, Function[])}.
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFastFailAsync(
             Executor executor, Function<? super T, ? extends U1> fn1,
@@ -747,14 +707,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
-     *
-     * @return the new Cffu
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyAllSuccessAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -762,15 +718,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Object, Executor, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyAllSuccessAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -778,14 +729,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
-     *
-     * @return the new Cffu
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyAllSuccessAsync(
             Function<? super T, ? extends U1> fn1,
@@ -794,15 +741,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Object, Executor, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyAllSuccessAsync(
             Executor executor, Function<? super T, ? extends U1> fn1,
@@ -811,14 +753,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
-     *
-     * @return the new Cffu
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAllSuccessAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -827,15 +765,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Object, Executor, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAllSuccessAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -844,14 +777,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
-     *
-     * @return the new Cffu
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAllSuccessAsync(
             Function<? super T, ? extends U1> fn1,
@@ -861,15 +790,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Object, Executor, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAllSuccessAsync(
             Executor executor, Function<? super T, ? extends U1> fn1,
@@ -879,12 +803,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
+     * <p>
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
             long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -892,13 +815,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, Executor, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
+     * <p>
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit,
@@ -907,12 +828,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
+     * <p>
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
             long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
@@ -921,13 +841,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, Executor, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
+     * <p>
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
@@ -936,12 +854,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
+     * <p>
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyMostSuccessAsync(
             long timeout, TimeUnit unit,
@@ -951,13 +868,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, Executor, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
+     * <p>
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit,
@@ -967,12 +882,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
+     * <p>
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyMostSuccessAsync(
             long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
@@ -982,13 +896,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, Executor, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
+     * <p>
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
@@ -999,12 +911,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyAsync(Function[])}.
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -1012,13 +919,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyAsync(Executor, Function[])}.
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -1026,12 +927,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyAsync(Function[])}.
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -1040,13 +936,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyAsync(Executor, Function[])}.
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -1055,12 +945,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyAsync(Function[])}.
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -1069,13 +954,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyAsync(Executor, Function[])}.
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -1084,12 +963,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyAsync(Function[])}.
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -1099,13 +973,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes normally, is executed using the supplied Executor,
-     * with the values obtained by calling the given Functions
-     * (with this Cffu's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
+     * Tuple variance of {@link #thenMApplyAsync(Executor, Function[])}.
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -1847,10 +1715,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * Uses {@link #defaultExecutor()} as {@code executorWhenTimeout}.
      * <p>
-     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the original
-     * CF method {@link CompletableFuture#orTimeout} and its backport method {@link #unsafeOrTimeout}, because the returning new CF instance
-     * avoids the subsequent usage of the delay thread. More info see the javadoc of {@link #unsafeOrTimeout} and the demo <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java">DelayDysfunctionDemo</a>.
+     * <strong>CAUTION:</strong> This method returns a new Cffu and this behavior is different from
+     * the original CF method {@link CompletableFuture#orTimeout} and its backport method {@link #unsafeOrTimeout},
+     * because the returning new Cffu instance avoids the subsequent usage of the delay thread.
+     * More info see the javadoc of {@link #unsafeOrTimeout} and the demo <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * >DelayDysfunctionDemo</a>.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -1865,10 +1735,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Exceptionally completes this Cffu with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
      * <p>
-     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the original
-     * CF method {@link CompletableFuture#orTimeout} and its backport method {@link #unsafeOrTimeout}, because the returning new CF instance
-     * avoids the subsequent usage of the delay thread. More info see the javadoc of {@link #unsafeOrTimeout} and the demo <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java">DelayDysfunctionDemo</a>.
+     * <strong>CAUTION:</strong> This method returns a new Cffu and this behavior is different from
+     * the original CF method {@link CompletableFuture#orTimeout} and its backport method {@link #unsafeOrTimeout},
+     * because the returning new Cffu instance avoids the subsequent usage of the delay thread.
+     * More info see the javadoc of {@link #unsafeOrTimeout} and the demo <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * >DelayDysfunctionDemo</a>.
      *
      * @param executorWhenTimeout the async executor when triggered by timeout
      * @param timeout             how long to wait before completing exceptionally with a TimeoutException,
@@ -1924,11 +1796,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * Uses {@link #defaultExecutor()} as {@code executorWhenTimeout}.
      * <p>
-     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the original
+     * <strong>CAUTION:</strong> This method returns a new Cffu and this behavior is different from the original
      * CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #unsafeCompleteOnTimeout},
-     * because the returning new CF instance avoids the subsequent usage of the delay thread.
+     * because the returning new Cffu instance avoids the subsequent usage of the delay thread.
      * More info see the javadoc of {@link #unsafeCompleteOnTimeout} and the demo <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java">DelayDysfunctionDemo</a>.
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * >DelayDysfunctionDemo</a>.
      *
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
@@ -1943,11 +1816,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Completes this Cffu with the given value if not otherwise completed before the given timeout.
      * <p>
-     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the original
+     * <strong>CAUTION:</strong> This method returns a new Cffu and this behavior is different from the original
      * CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #unsafeCompleteOnTimeout},
-     * because the returning new CF instance avoids the subsequent usage of the delay thread.
+     * because the returning new Cffu instance avoids the subsequent usage of the delay thread.
      * More info see the javadoc of {@link #unsafeCompleteOnTimeout} and the demo <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java">DelayDysfunctionDemo</a>.
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * >DelayDysfunctionDemo</a>.
      *
      * @param value               the value to use upon timeout
      * @param executorWhenTimeout the async executor when triggered by timeout

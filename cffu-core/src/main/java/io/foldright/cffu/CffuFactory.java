@@ -207,7 +207,8 @@ public final class CffuFactory {
      * with the successful values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If any of the provided suppliers fails, its corresponding position will contain {@code valueIfFailed}.
+     * If any of the provided suppliers fails, its corresponding position will contain {@code valueIfFailed}
+     * (which is indistinguishable from the supplier having a successful value of {@code valueIfFailed}).
      *
      * @param valueIfFailed the value to return if not failed
      * @param suppliers     the suppliers returning the value to be used to complete the returned Cffu
@@ -226,7 +227,8 @@ public final class CffuFactory {
      * by tasks running in the given Executor with the successfully values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If any of the provided suppliers fails, its corresponding position will contain {@code valueIfFailed}.
+     * If any of the provided suppliers fails, its corresponding position will contain {@code valueIfFailed}
+     * (which is indistinguishable from the supplier having a successful value of {@code valueIfFailed}).
      *
      * @param valueIfFailed the value to return if not failed
      * @param executor      the executor to use for asynchronous execution
@@ -249,7 +251,8 @@ public final class CffuFactory {
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
      * If any of the provided suppliers does not success(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}.
+     * its corresponding position will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the supplier having a successful value of {@code valueIfNotSuccess}).
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param timeout           how long to wait in units of {@code unit}
@@ -272,7 +275,8 @@ public final class CffuFactory {
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
      * If any of the provided suppliers does not success(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}.
+     * its corresponding position will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the supplier having a successful value of {@code valueIfNotSuccess}).
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param executor          the executor to use for asynchronous execution
@@ -507,12 +511,7 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new Cffu
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -520,13 +519,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -534,12 +527,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new Cffu
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -547,13 +535,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1,
@@ -562,12 +544,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new Cffu
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -576,13 +553,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -591,12 +562,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new Cffu
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -605,13 +571,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -621,15 +581,10 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the Cffu's default asynchronous execution facility
-     * with the successful values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     *
-     * @return the new Cffu
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyAllSuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -637,15 +592,10 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Executor, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyAllSuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -653,15 +603,10 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the Cffu's default asynchronous execution facility
-     * with the successful values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     *
-     * @return the new Cffu
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyAllSuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -669,15 +614,10 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Executor, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyAllSuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1,
@@ -686,15 +626,10 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the Cffu's default asynchronous execution facility
-     * with the successful values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     *
-     * @return the new Cffu
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyAllSuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -703,15 +638,10 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Executor, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyAllSuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -720,15 +650,10 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the Cffu's default asynchronous execution facility
-     * with the successful values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     *
-     * @return the new Cffu
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAllSuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -737,15 +662,10 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Executor, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAllSuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -755,18 +675,10 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the Cffu's default asynchronous execution facility
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new Cffu
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -774,18 +686,11 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed by tasks running in the given Executor
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new Cffu
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit,
@@ -794,18 +699,10 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the Cffu's default asynchronous execution facility
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new Cffu
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit,
@@ -814,18 +711,11 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed by tasks running in the given Executor
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new Cffu
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit,
@@ -835,18 +725,10 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the Cffu's default asynchronous execution facility
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new Cffu
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
@@ -855,18 +737,11 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed by tasks running in the given Executor
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new Cffu
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
@@ -876,18 +751,10 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the Cffu's default asynchronous execution facility
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new Cffu
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -897,18 +764,11 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed by tasks running in the given Executor
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new Cffu
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
@@ -919,12 +779,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new Cffu
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -932,13 +787,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -946,12 +795,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new Cffu
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -959,13 +803,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1,
@@ -974,12 +812,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new Cffu
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -988,13 +821,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -1003,12 +830,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the {@link #defaultExecutor()} with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new Cffu
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -1017,13 +839,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -1063,7 +879,8 @@ public final class CffuFactory {
      * of the given stages arguments when all the given stages completed;
      * If no stages are provided, returns a Cffu completed with the value empty list.
      * <p>
-     * If any of the provided stages fails, its corresponding position will contain {@code valueIfFailed}.
+     * If any of the provided stages fails, its corresponding position will contain {@code valueIfFailed}
+     * (which is indistinguishable from the stage having a successful value of {@code valueIfFailed}).
      *
      * @param valueIfFailed the value to return if not completed successfully
      * @param cfs           the stages
@@ -1082,7 +899,8 @@ public final class CffuFactory {
      * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If any of the provided stages does not success(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}.
+     * its corresponding position will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the stage having a successful value of {@code valueIfNotSuccess}).
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param timeout           how long to wait in units of {@code unit}
@@ -1243,12 +1061,7 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu that is successful when the given two stages success.
-     * If any of the given stages complete exceptionally, then the returned Cffu also does so
-     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
-     *
-     * @return a new Cffu that is successful when the given two stages success
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleFastFailOf(
@@ -1257,12 +1070,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is successful when the given three stages success.
-     * If any of the given stages complete exceptionally, then the returned Cffu also does so
-     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
-     *
-     * @return a new Cffu that is successful when the given three stages success
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleFastFailOf(
@@ -1271,12 +1079,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is successful when the given four stages success.
-     * If any of the given stages complete exceptionally, then the returned Cffu also does so
-     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
-     *
-     * @return a new Cffu that is successful when the given four stages success
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleFastFailOf(
@@ -1286,12 +1089,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is successful when the given five stages success.
-     * If any of the given stages complete exceptionally, then the returned Cffu also does so
-     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
-     *
-     * @return a new Cffu that is successful when the given five stages success
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleFastFailOf(
@@ -1301,14 +1099,10 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is successful
-     * with the results of the given stages arguments when all the given stages completed.
+     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
-     *
-     * @return a new Cffu
-     * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> allSuccessTupleOf(
@@ -1317,14 +1111,10 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is successful
-     * with the results of the given stages arguments when all the given stages completed.
+     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
-     *
-     * @return a new Cffu
-     * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allSuccessTupleOf(
@@ -1333,14 +1123,10 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is successful
-     * with the results of the given stages arguments when all the given stages completed.
+     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
-     *
-     * @return a new Cffu
-     * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allSuccessTupleOf(
@@ -1350,14 +1136,10 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is successful
-     * with the results of the given stages arguments when all the given stages completed.
+     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
-     *
-     * @return a new Cffu
-     * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allSuccessTupleOf(
@@ -1367,16 +1149,11 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the most results in the <strong>same order</strong> of the given two stages arguments
-     * in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new Cffu that is completed when the given two stages complete
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see Cffu#getSuccessNow(Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> mostSuccessTupleOf(
@@ -1385,16 +1162,11 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the most results in the <strong>same order</strong> of the given three stages arguments
-     * in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new Cffu that is completed when the given three stages complete
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see Cffu#getSuccessNow(Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mostSuccessTupleOf(
@@ -1404,16 +1176,11 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the most results in the <strong>same order</strong> of the given four stages arguments
-     * in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new Cffu that is completed when the given four stages complete
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see Cffu#getSuccessNow(Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mostSuccessTupleOf(
@@ -1424,16 +1191,11 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the most results in the <strong>same order</strong> of the given five stages arguments
-     * in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new Cffu that is completed when the given five stages complete
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see Cffu#getSuccessNow(Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mostSuccessTupleOf(
@@ -1444,12 +1206,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is completed when the given two stages complete.
-     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new Cffu that is completed when the given two stages complete
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOf(
@@ -1458,12 +1215,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is completed when the given three stages complete.
-     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new Cffu that is completed when the given three stages complete
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOf(
@@ -1472,12 +1224,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is completed when the given four stages complete.
-     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new Cffu that is completed when the given four stages complete
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOf(
@@ -1487,12 +1234,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is completed when the given five stages complete.
-     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new Cffu that is completed when the given five stages complete
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(

@@ -101,7 +101,8 @@ public final class CompletableFutureUtils {
      * with the successful values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If any of the provided suppliers fails, its corresponding position will contain {@code valueIfFailed}.
+     * If any of the provided suppliers fails, its corresponding position will contain {@code valueIfFailed}
+     * (which is indistinguishable from the supplier having a successful value of {@code valueIfFailed}).
      *
      * @param valueIfFailed the value to return if not failed
      * @param suppliers     the suppliers returning the value to be used to complete the returned CompletableFuture
@@ -121,7 +122,8 @@ public final class CompletableFutureUtils {
      * by tasks running in the given Executor with the successfully values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If any of the provided suppliers fails, its corresponding position will contain {@code valueIfFailed}.
+     * If any of the provided suppliers fails, its corresponding position will contain {@code valueIfFailed}
+     * (which is indistinguishable from the supplier having a successful value of {@code valueIfFailed}).
      *
      * @param valueIfFailed the value to return if not failed
      * @param executor      the executor to use for asynchronous execution
@@ -148,7 +150,8 @@ public final class CompletableFutureUtils {
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
      * If any of the provided suppliers does not success(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}.
+     * its corresponding position will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the supplier having a successful value of {@code valueIfNotSuccess}).
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param timeout           how long to wait in units of {@code unit}
@@ -172,7 +175,8 @@ public final class CompletableFutureUtils {
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
      * If any of the provided suppliers does not success(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}.
+     * its corresponding position will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the supplier having a successful value of {@code valueIfNotSuccess}).
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param executor          the executor to use for asynchronous execution
@@ -475,13 +479,7 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -489,13 +487,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Executor, Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -506,14 +498,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new CompletableFuture
-     * @see #allResultsFastFailOf(CompletionStage[])
-     * @see #mSupplyFastFailAsync(Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -521,13 +506,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Executor, Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
             Executor executor,
@@ -539,13 +518,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -554,13 +527,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Executor, Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -572,13 +539,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -587,13 +548,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Executor, Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -633,16 +588,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the successful values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyAllSuccessAsync(Object, Supplier[])
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAllSuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -650,16 +599,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Executor, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyAllSuccessAsync(Object, Executor, Supplier[])
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAllSuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -670,16 +613,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the successful values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyAllSuccessAsync(Object, Supplier[])
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAllSuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -687,16 +624,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Executor, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyAllSuccessAsync(Object, Executor, Supplier[])
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAllSuccessAsync(
             Executor executor,
@@ -708,16 +639,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the successful values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyAllSuccessAsync(Object, Supplier[])
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAllSuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -726,16 +651,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Executor, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyAllSuccessAsync(Object, Executor, Supplier[])
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAllSuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -747,16 +666,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the successful values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyAllSuccessAsync(Object, Supplier[])
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAllSuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -765,16 +678,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Executor, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyAllSuccessAsync(Object, Executor, Supplier[])
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAllSuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -802,19 +709,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
-     * @see #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -822,19 +720,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the given Executor
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
-     * @see #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit,
@@ -847,19 +737,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
-     * @see #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit,
@@ -868,19 +749,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the given Executor
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
-     * @see #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit,
@@ -893,19 +766,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
-     * @see #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
@@ -914,19 +778,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the given Executor
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
-     * @see #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
@@ -939,19 +795,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
-     * @see #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
@@ -961,19 +808,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the given Executor
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
-     * @see #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
@@ -1012,13 +851,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyAsync(Supplier[])
+     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -1026,13 +859,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Executor, Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -1043,13 +870,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyAsync(Supplier[])
+     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -1057,13 +878,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Executor, Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAsync(
             Executor executor,
@@ -1075,13 +890,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyAsync(Supplier[])
+     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -1090,13 +899,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Executor, Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -1108,13 +911,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyAsync(Supplier[])
+     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -1123,13 +920,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Executor, Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -1190,7 +981,8 @@ public final class CompletableFutureUtils {
      * of the given stages arguments when all the given stages completed;
      * If no stages are provided, returns a CompletableFuture completed with the value empty list.
      * <p>
-     * If any of the provided stages fails, its corresponding position will contain {@code valueIfFailed}.
+     * If any of the provided stages fails, its corresponding position will contain {@code valueIfFailed}
+     * (which is indistinguishable from the stage having a successful value of {@code valueIfFailed}).
      *
      * @param valueIfFailed the value to return if not completed successfully
      * @param cfs           the stages
@@ -1216,7 +1008,8 @@ public final class CompletableFutureUtils {
      * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If any of the provided stages does not success(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}.
+     * its corresponding position will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the stage having a successful value of {@code valueIfNotSuccess}).
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param timeout           how long to wait in units of {@code unit}
@@ -1237,7 +1030,8 @@ public final class CompletableFutureUtils {
      * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
      * If any of the provided stages does not success(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}.
+     * its corresponding position will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the stage having a successful value of {@code valueIfNotSuccess}).
      *
      * @param valueIfNotSuccess   the value to return if not completed successfully
      * @param executorWhenTimeout the async executor when triggered by timeout
@@ -1612,12 +1406,7 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture that is successful when the given stages success.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is successful when the given stages success
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleFastFailOf(
@@ -1626,12 +1415,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is successful when the given stages success.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is successful when the given stages success
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleFastFailOf(
@@ -1640,12 +1424,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is successful when the given stages success.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is successful when the given stages success
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleFastFailOf(
@@ -1655,12 +1434,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is successful when the given stages success.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is successful when the given stages success
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleFastFailOf(
@@ -1670,14 +1444,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is successful
-     * with the results of the given stages arguments when all the given stages completed.
+     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
-     *
-     * @return a new CompletableFuture
-     * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allSuccessTupleOf(
@@ -1686,14 +1456,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is successful
-     * with the results of the given stages arguments when all the given stages completed.
+     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
-     *
-     * @return a new CompletableFuture
-     * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allSuccessTupleOf(
@@ -1702,14 +1468,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is successful
-     * with the results of the given stages arguments when all the given stages completed.
+     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
-     *
-     * @return a new CompletableFuture
-     * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allSuccessTupleOf(
@@ -1719,14 +1481,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is successful
-     * with the results of the given stages arguments when all the given stages completed.
+     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
-     *
-     * @return a new CompletableFuture
-     * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allSuccessTupleOf(
@@ -1736,16 +1494,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new CompletableFuture
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see #getSuccessNow(CompletableFuture, Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mostSuccessTupleOf(
@@ -1754,17 +1507,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, Executor, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param executorWhenTimeout the async executor when triggered by timeout
-     * @param timeout             how long to wait in units of {@code unit}
-     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new CompletableFuture
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see #getSuccessNow(CompletableFuture, Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mostSuccessTupleOf(
@@ -1778,16 +1525,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new CompletableFuture
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see #getSuccessNow(CompletableFuture, Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mostSuccessTupleOf(
@@ -1797,17 +1539,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, Executor, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param executorWhenTimeout the async executor when triggered by timeout
-     * @param timeout             how long to wait in units of {@code unit}
-     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new CompletableFuture
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see #getSuccessNow(CompletableFuture, Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mostSuccessTupleOf(
@@ -1821,16 +1557,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new CompletableFuture
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see #getSuccessNow(CompletableFuture, Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mostSuccessTupleOf(
@@ -1841,17 +1572,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, Executor, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param executorWhenTimeout the async executor when triggered by timeout
-     * @param timeout             how long to wait in units of {@code unit}
-     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new CompletableFuture
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see #getSuccessNow(CompletableFuture, Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mostSuccessTupleOf(
@@ -1866,16 +1591,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new CompletableFuture
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see #getSuccessNow(CompletableFuture, Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mostSuccessTupleOf(
@@ -1886,17 +1606,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, Executor, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param executorWhenTimeout the async executor when triggered by timeout
-     * @param timeout             how long to wait in units of {@code unit}
-     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new CompletableFuture
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see #getSuccessNow(CompletableFuture, Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mostSuccessTupleOf(
@@ -1911,12 +1625,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is completed when the given stages complete.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is completed when the given stages complete
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOf(
@@ -1925,12 +1634,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is completed when the given stages complete.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is completed when the given stages complete
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOf(
@@ -1939,12 +1643,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is completed when the given stages complete.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is completed when the given stages complete
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOf(
@@ -1954,12 +1653,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is completed when the given stages complete.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is completed when the given stages complete
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
@@ -2119,7 +1813,8 @@ public final class CompletableFutureUtils {
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
-     * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}.
+     * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}
+     * (which is indistinguishable from the function having a successful value of {@code valueIfFailed}).
      *
      * @param valueIfFailed the value to return if not completed successfully
      * @param fns           the functions to use to compute the values of the returned CompletableFuture
@@ -2138,7 +1833,8 @@ public final class CompletableFutureUtils {
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
-     * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}.
+     * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}
+     * (which is indistinguishable from the function having a successful value of {@code valueIfFailed}).
      *
      * @param valueIfFailed the value to return if not completed successfully
      * @param fns           the functions to use to compute the values of the returned CompletableFuture
@@ -2165,7 +1861,8 @@ public final class CompletableFutureUtils {
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
      * If any of the provided functions does not success(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}.
+     * its corresponding position will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the function having a successful value of {@code valueIfNotSuccess}).
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param timeout           how long to wait in units of {@code unit}
@@ -2189,7 +1886,8 @@ public final class CompletableFutureUtils {
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
      * If any of the provided functions does not success(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}.
+     * its corresponding position will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the function having a successful value of {@code valueIfNotSuccess}).
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param executor          the executor to use for asynchronous execution
@@ -2605,13 +2303,7 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis,
@@ -2620,13 +2312,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
@@ -2639,13 +2325,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
@@ -2654,13 +2334,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
@@ -2673,13 +2347,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis,
@@ -2689,13 +2357,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
@@ -2709,13 +2371,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
@@ -2725,13 +2381,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
@@ -2745,15 +2395,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the default executor of parameter cfThis,
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Function[])}
+     * with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
-     *
-     * @return the new CompletableFuture
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis,
@@ -2762,16 +2408,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the given Executor with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Executor, Function[])}
+     * with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
@@ -2784,16 +2425,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the default executor of parameter cfThis,
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Function[])}
+     * with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
-     *
-     * @return the new CompletableFuture
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
@@ -2802,16 +2438,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the given Executor with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     * <p>
-     * If any of the provided functions fails, its corresponding position will contain {@code null}
-     * (which is indistinguishable from the function having a successful value of {@code null}).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Executor, Function[])}
+     * with {@code null} valueIfFailed.
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
@@ -2825,16 +2453,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the default executor of parameter cfThis,
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Function[])}
+     * with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
-     *
-     * @return the new CompletableFuture
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis,
@@ -2844,16 +2467,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the given Executor with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Executor, Function[])}
+     * with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
@@ -2867,16 +2485,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the default executor of parameter cfThis,
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Function[])}
+     * with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
-     *
-     * @return the new CompletableFuture
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
@@ -2886,16 +2499,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the given Executor with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Executor, Function[])}
+     * with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
@@ -2909,19 +2517,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Object, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit,
@@ -2930,20 +2530,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor,
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(
+     *CompletableFuture, Object, Executor, long, TimeUnit, Function[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, long timeout, TimeUnit unit,
@@ -2957,19 +2548,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Object, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
@@ -2978,20 +2561,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor,
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(
+     *CompletableFuture, Object, Executor, long, TimeUnit, Function[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, long timeout, TimeUnit unit,
@@ -3006,19 +2580,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Object, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit,
@@ -3028,20 +2594,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor,
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(
+     *CompletableFuture, Object, Executor, long, TimeUnit, Function[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, long timeout, TimeUnit unit,
@@ -3056,19 +2613,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Object, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
@@ -3078,20 +2627,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor,
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(
+     *CompletableFuture, Object, Executor, long, TimeUnit, Function[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, long timeout, TimeUnit unit,
@@ -3107,13 +2647,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis,
@@ -3122,13 +2656,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
@@ -3141,13 +2669,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
@@ -3156,13 +2678,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
@@ -3175,13 +2691,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
@@ -3191,13 +2701,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
@@ -3211,13 +2715,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
@@ -3227,13 +2725,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
@@ -3756,10 +3248,12 @@ public final class CompletableFutureUtils {
      * <p>
      * Uses the default executor of parameter cfThis as {@code executorWhenTimeout}.
      * <p>
-     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the original
-     * CF method {@link CompletableFuture#orTimeout} and its backport method {@link #orTimeout}, because the returning new CF instance
-     * avoids the subsequent usage of the delay thread. More info see the javadoc of {@link #orTimeout} and the demo <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java">DelayDysfunctionDemo</a>.
+     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from
+     * the original CF method {@link CompletableFuture#orTimeout} and its backport method {@link #orTimeout},
+     * because the returning new CF instance avoids the subsequent usage of the delay thread.
+     * More info see the javadoc of {@link #orTimeout} and the demo <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * >DelayDysfunctionDemo</a>.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -3774,10 +3268,12 @@ public final class CompletableFutureUtils {
      * Exceptionally completes given CompletableFuture with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
      * <p>
-     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the original
-     * CF method {@link CompletableFuture#orTimeout} and its backport method {@link #orTimeout}, because the returning new CF instance
-     * avoids the subsequent usage of the delay thread. More info see the javadoc of {@link #orTimeout} and the demo <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java">DelayDysfunctionDemo</a>.
+     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from
+     * the original CF method {@link CompletableFuture#orTimeout} and its backport method {@link #orTimeout},
+     * because the returning new CF instance avoids the subsequent usage of the delay thread.
+     * More info see the javadoc of {@link #orTimeout} and the demo <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * >DelayDysfunctionDemo</a>.
      *
      * @param executorWhenTimeout the async executor when triggered by timeout
      * @param timeout             how long to wait before completing exceptionally with a TimeoutException,
@@ -3850,11 +3346,12 @@ public final class CompletableFutureUtils {
      * <p>
      * Uses the default executor of parameter cfThis as {@code executorWhenTimeout}.
      * <p>
-     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the original
-     * CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout},
+     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the
+     * original CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout},
      * because the returning new CF instance avoids the subsequent usage of the delay thread.
      * More info see the javadoc of {@link #completeOnTimeout} and the demo <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java">DelayDysfunctionDemo</a>.
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * >DelayDysfunctionDemo</a>.
      *
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
@@ -3870,11 +3367,12 @@ public final class CompletableFutureUtils {
     /**
      * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
      * <p>
-     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the original
-     * CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout},
+     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the
+     * original CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout},
      * because the returning new CF instance avoids the subsequent usage of the delay thread.
      * More info see the javadoc of {@link #completeOnTimeout} and the demo <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java">DelayDysfunctionDemo</a>.
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * >DelayDysfunctionDemo</a>.
      *
      * @param value               the value to use upon timeout
      * @param executorWhenTimeout the async executor when triggered by timeout
@@ -4566,7 +4064,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <U> CompletableFuture<U> newIncompleteFuture(CompletableFuture<?> cfThis) {
         requireNonNull(cfThis, "cfThis is null");
-        return IS_JAVA9_PLUS ? cfThis.newIncompleteFuture() : new CompletableFuture<U>();
+        return IS_JAVA9_PLUS ? cfThis.newIncompleteFuture() : new CompletableFuture<>();
     }
 
     // endregion
@@ -4658,7 +4156,7 @@ public final class CompletableFutureUtils {
      * Default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses
      * of CompletableFuture) -- {@link ForkJoinPool#commonPool()} unless it cannot support parallelism.
      */
-    static final Executor ASYNC_POOL = _asyncPool();
+    private static final Executor ASYNC_POOL = _asyncPool();
 
     private static Executor _asyncPool() {
         if (IS_JAVA9_PLUS) return completedFuture(null).defaultExecutor();
