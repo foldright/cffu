@@ -733,7 +733,7 @@ fun <T, C : CompletionStage<in T>> C.exceptionallyAsync(fn: Function<Throwable, 
  * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
  * @return the new CompletableFuture
  */
-fun <T, C : CompletableFuture<out T>> C.cffuOrTimeout(timeout: Long, unit: TimeUnit): C =
+fun <C : CompletableFuture<*>> C.cffuOrTimeout(timeout: Long, unit: TimeUnit): C =
     CompletableFutureUtils.cffuOrTimeout(this, timeout, unit)
 
 /**
@@ -745,7 +745,7 @@ fun <T, C : CompletableFuture<out T>> C.cffuOrTimeout(timeout: Long, unit: TimeU
  * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
  * @return the new CompletableFuture
  */
-fun <T, C : CompletableFuture<out T>> C.cffuOrTimeout(executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit): C =
+fun <C : CompletableFuture<*>> C.cffuOrTimeout(executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit): C =
     CompletableFutureUtils.cffuOrTimeout(this, executorWhenTimeout, timeout, unit)
 
 /**
@@ -772,7 +772,7 @@ fun <T, C : CompletableFuture<out T>> C.cffuOrTimeout(executorWhenTimeout: Execu
  * @return this CompletableFuture
  * @see cffuOrTimeout
  */
-fun <T, C : CompletableFuture<out T>> C.orTimeout(timeout: Long, unit: TimeUnit): C =
+fun <C : CompletableFuture<*>> C.orTimeout(timeout: Long, unit: TimeUnit): C =
     CompletableFutureUtils.orTimeout(this, timeout, unit)
 
 /**
@@ -1024,7 +1024,7 @@ fun <T, C : CompletionStage<out T>> C.peekAsync(action: BiConsumer<in T, in Thro
  * @see CompletableFuture.join
  */
 @Suppress("UNCHECKED_CAST")
-fun <T> CompletableFuture<T>.join(timeout: Long, unit: TimeUnit): T =
+fun <T> CompletableFuture<out T>.join(timeout: Long, unit: TimeUnit): T =
     CompletableFutureUtils.join(this, timeout, unit) as T
 
 /**
@@ -1037,7 +1037,7 @@ fun <T> CompletableFuture<T>.join(timeout: Long, unit: TimeUnit): T =
  * @return the result value, if completed successfully, else the given valueIfNotSuccess
  */
 @Suppress("UNCHECKED_CAST")
-fun <T> CompletableFuture<T>.getSuccessNow(valueIfNotSuccess: T): T =
+fun <T> CompletableFuture<out T>.getSuccessNow(valueIfNotSuccess: T): T =
     CompletableFutureUtils.getSuccessNow(this, valueIfNotSuccess) as T
 
 /**
@@ -1054,7 +1054,7 @@ fun <T> CompletableFuture<T>.getSuccessNow(valueIfNotSuccess: T): T =
  * ```
  */
 @Suppress("UNCHECKED_CAST")
-fun <T> Future<T>.resultNow(): T =
+fun <T> Future<out T>.resultNow(): T =
     CompletableFutureUtils.resultNow(this) as T
 
 /**
