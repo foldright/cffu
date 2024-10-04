@@ -3696,7 +3696,7 @@ public final class CompletableFutureUtils {
      */
     @Blocking
     @Nullable
-    public static <T> T join(CompletableFuture<T> cfThis, long timeout, TimeUnit unit) {
+    public static <T> T join(CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(unit, "unit is null");
         // defensive copy input cf to avoid writing it by `orTimeout`
@@ -3738,7 +3738,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @Nullable
-    public static <T> T resultNow(Future<T> cfThis) {
+    public static <T> T resultNow(Future<? extends T> cfThis) {
         requireNonNull(cfThis, "cfThis is null");
         if (IS_JAVA19_PLUS) {
             return cfThis.resultNow();
