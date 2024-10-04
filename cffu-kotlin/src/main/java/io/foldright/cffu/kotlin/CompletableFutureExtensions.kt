@@ -645,11 +645,6 @@ fun CompletableFuture<*>.runAfterEitherSuccessAsync(
 // region## Error Handling Methods of CompletionStage
 ////////////////////////////////////////////////////////////
 
-// endregion
-////////////////////////////////////////////////////////////
-// region## Error Handling Methods of CompletionStage
-////////////////////////////////////////////////////////////
-
 /**
  * Returns a new CompletionStage that, when this stage completes exceptionally with the given exceptionType,
  * is executed with this stage's exception as the argument to the supplied function.
@@ -843,14 +838,6 @@ fun <T, C : CompletableFuture<in T>> C.completeOnTimeout(value: T, timeout: Long
 //   - handle successful and failed result together(handle*/whenComplete*/peek*)
 ////////////////////////////////////////////////////////////
 
-// endregion
-////////////////////////////////////////////////////////////
-// region## Advanced Methods of CompletionStage(compose* and handle-like methods)
-//
-// NOTE about advanced meaning:
-//   - `compose` methods, input function argument return CompletionStage
-//   - handle successful and failed result together(handle*/whenComplete*/peek*)
-////////////////////////////////////////////////////////////
 /**
  * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
  * is composed using the results of the supplied function applied to given stage's exception.
@@ -936,11 +923,17 @@ fun <T, C : CompletionStage<in T>> C.exceptionallyComposeAsync(
 /**
  * Peeks the result by executing the given action when this stage completes, returns this stage.
  *
- * When this stage is complete, the given action is invoked with the result (or `null` if none)
- * and the exception (or `null` if none) of given stage as arguments. Whether the supplied action
- * throws an exception or not, this stage is **NOT** affected.
+ * When this stage is complete, the given action is invoked with the result(or `null` if none)
+ * and the exception (or `null` if none) of this stage as arguments.
  *
- * Unlike method [handle][CompletionStage.handle] and like method [whenComplete][CompletionStage.whenComplete],
+ * **CAUTION: ** The return stage of method [CompletionStage.whenComplete]
+ * will contain **DIFFERENT** result to the input stage when the input stage is successful
+ * but the supplied action throws an exception. This behavior of method `whenComplete` is subtle,
+ * and common misused if you just want to **peek** the input stage without affecting the result(e.g.
+ * logging the cf result).<br/>For this `peek` method, whether the supplied action throws an exception or not,
+ * the result of return stage(aka. this stage) is **NOT** affected.
+ *
+ * Unlike method [CompletionStage.handle] and like method [CompletionStage.whenComplete],
  * this method is not designed to translate completion outcomes.
  *
  * @param action the action to perform
@@ -952,14 +945,20 @@ fun <T, C : CompletionStage<out T>> C.peek(action: BiConsumer<in T, in Throwable
     CompletableFutureUtils.peek(this, action)
 
 /**
- * Peeks the result by executing the given action when this stage completes,
- * executes the given action using this stage's default asynchronous execution facility, returns this stage.
+ * Peeks the result by executing the given action using the default executor of this stage
+ * when this stage completes, returns this stage.
  *
- * When this stage is complete, the given action is invoked with the result (or `null` if none)
- * and the exception (or `null` if none) of given stage as arguments. Whether the supplied action
- * throws an exception or not, this stage is **NOT** affected.
+ * When this stage is complete, the given action is invoked with the result(or `null` if none)
+ * and the exception (or `null` if none) of this as arguments.
  *
- * Unlike method [handle][CompletionStage.handle] and like method [whenComplete][CompletionStage.whenComplete],
+ * **CAUTION: ** The return stage of method [CompletionStage.whenCompleteAsync]
+ * will contain **DIFFERENT** result to the input stage when the input stage is successful
+ * but the supplied action throws an exception. This behavior of method `whenComplete` is subtle,
+ * and common misused if you just want to **peek** the input stage without affecting the result(e.g.
+ * logging the cf result).<br/>For this `peek` method, whether the supplied action throws an exception or not,
+ * the result of return stage(aka. this stage) is **NOT** affected.
+ *
+ * Unlike method [CompletionStage.handleAsync] and like method [CompletionStage.whenCompleteAsync],
  * this method is not designed to translate completion outcomes.
  *
  * @param action the action to perform
@@ -971,14 +970,20 @@ fun <T, C : CompletionStage<out T>> C.peekAsync(action: BiConsumer<in T, in Thro
     CompletableFutureUtils.peekAsync(this, action)
 
 /**
- * Peeks the result by executing the given action when this stage completes,
- * executes the given action using the supplied Executor, returns this stage.
+ * Peeks the result by executing the given action using the supplied executor
+ * when this stage completes, returns this stage.
  *
- * When this stage is complete, the given action is invoked with the result (or `null` if none)
- * and the exception (or `null` if none) of given stage as arguments. Whether the supplied action
- * throws an exception or not, this stage is **NOT** affected.
+ * When this stage is complete, the given action is invoked with the result(or `null` if none)
+ * and the exception (or `null` if none) of this stage as arguments.
  *
- * Unlike method [handle][CompletionStage.handle] and like method [whenComplete][CompletionStage.whenComplete],
+ * **CAUTION: ** The return stage of method [CompletionStage.whenCompleteAsync]
+ * will contain **DIFFERENT** result to the input stage when the input stage is successful
+ * but the supplied action throws an exception. This behavior of method `whenComplete` is subtle,
+ * and common misused if you just want to **peek** the input stage without affecting the result(e.g.
+ * logging the cf result).<br/>For this `peek` method, whether the supplied action throws an exception or not,
+ * the result of return stage(aka. this stage) is **NOT** affected.
+ *
+ * Unlike method [CompletionStage.handleAsync] and like method [CompletionStage.whenCompleteAsync],
  * this method is not designed to translate completion outcomes.
  *
  * @param action the action to perform
