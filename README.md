@@ -41,10 +41,11 @@
     - [2.1 返回多个`CF`的整体运行结果](#21-%E8%BF%94%E5%9B%9E%E5%A4%9A%E4%B8%AAcf%E7%9A%84%E6%95%B4%E4%BD%93%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C)
     - [2.2 支持设置缺省的业务线程池并封装携带](#22-%E6%94%AF%E6%8C%81%E8%AE%BE%E7%BD%AE%E7%BC%BA%E7%9C%81%E7%9A%84%E4%B8%9A%E5%8A%A1%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%B9%B6%E5%B0%81%E8%A3%85%E6%90%BA%E5%B8%A6)
     - [2.3 高效灵活的并发执行策略（`AllFastFail` / `AnySuccess` / `AllSuccess` / `MostSuccess`）](#23-%E9%AB%98%E6%95%88%E7%81%B5%E6%B4%BB%E7%9A%84%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E7%AD%96%E7%95%A5allfastfail--anysuccess--allsuccess--mostsuccess)
-    - [2.4 支持超时的`join`的方法](#24-%E6%94%AF%E6%8C%81%E8%B6%85%E6%97%B6%E7%9A%84join%E7%9A%84%E6%96%B9%E6%B3%95)
-    - [2.5 `Backport`支持`Java 8`](#25-backport%E6%94%AF%E6%8C%81java-8)
-    - [2.6 返回具体类型的`anyOf`方法](#26-%E8%BF%94%E5%9B%9E%E5%85%B7%E4%BD%93%E7%B1%BB%E5%9E%8B%E7%9A%84anyof%E6%96%B9%E6%B3%95)
-    - [2.7 输入宽泛类型的`allof/anyOf`方法](#27-%E8%BE%93%E5%85%A5%E5%AE%BD%E6%B3%9B%E7%B1%BB%E5%9E%8B%E7%9A%84allofanyof%E6%96%B9%E6%B3%95)
+    - [2.4 支持直接运行多个`Action`，而不是要先包装成`CompletableFuture`](#24-%E6%94%AF%E6%8C%81%E7%9B%B4%E6%8E%A5%E8%BF%90%E8%A1%8C%E5%A4%9A%E4%B8%AAaction%E8%80%8C%E4%B8%8D%E6%98%AF%E8%A6%81%E5%85%88%E5%8C%85%E8%A3%85%E6%88%90completablefuture)
+    - [2.5 支持超时的`join`的方法](#25-%E6%94%AF%E6%8C%81%E8%B6%85%E6%97%B6%E7%9A%84join%E7%9A%84%E6%96%B9%E6%B3%95)
+    - [2.6 `Backport`支持`Java 8`](#26-backport%E6%94%AF%E6%8C%81java-8)
+    - [2.7 返回具体类型的`anyOf`方法](#27-%E8%BF%94%E5%9B%9E%E5%85%B7%E4%BD%93%E7%B1%BB%E5%9E%8B%E7%9A%84anyof%E6%96%B9%E6%B3%95)
+    - [2.8 输入宽泛类型的`allof/anyOf`方法](#28-%E8%BE%93%E5%85%A5%E5%AE%BD%E6%B3%9B%E7%B1%BB%E5%9E%8B%E7%9A%84allofanyof%E6%96%B9%E6%B3%95)
     - [更多功能说明](#%E6%9B%B4%E5%A4%9A%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E)
   - [3. 如何从直接使用`CompletableFuture`类迁移到`Cffu`类](#3-%E5%A6%82%E4%BD%95%E4%BB%8E%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8completablefuture%E7%B1%BB%E8%BF%81%E7%A7%BB%E5%88%B0cffu%E7%B1%BB)
 - [🔌 API Docs](#-api-docs)
@@ -66,7 +67,7 @@
       如方法`allResultsFastFailOf` / `allResultsOf` / `mSupplyFastFailAsync` / `thenMApplyFastFailAsync`
     - 支持返回多个不同类型的`CF`结果，而不是同一类型  
       如方法`allTupleFastFailOf` / `allTupleOf` / `tupleMSupplyFastFailAsync` / `thenTupleMApplyFastFailAsync`
-    - 支持直接运行多个`action`，而不是要先包装成`CompletableFuture`  
+    - 支持直接运行多个`Action`，而不是要先包装成`CompletableFuture`  
       如方法`tupleMSupplyFastFailAsync` / `mSupplyMostSuccessAsync` / `thenTupleMApplyFastFailAsync` / `thenMRunFastFailAsync`
     - 支持处理指定异常类型的`catching`方法，而不是处理所有异常`Throwable`（`exceptionally`）
   - 🚦 更高效灵活的并发执行策略，如
@@ -407,7 +408,69 @@ public class ConcurrencyStrategyDemo {
 
 > \# 完整可运行的Demo代码参见[`ConcurrencyStrategyDemo.java`](cffu-core/src/test/java/io/foldright/demo/ConcurrencyStrategyDemo.java)。
 
-### 2.4 支持超时的`join`的方法
+### 2.4 支持直接运行多个`Action`，而不是要先包装成`CompletableFuture`
+
+`CompletableFuture`的`allOf/anyOF`方法输入的是`CompletableFuture`，当业务直接有要编排业务逻辑方法时仍然需要先包装成`CompletableFuture`再运行：
+
+- 繁琐
+- 也模糊了业务流程
+
+`cffu`提供了直接运行多个`Action`的方法，方便直接明了地表达业务编排流程。
+
+示例代码如下：
+
+```java
+public class MultiplyActionsDemo {
+  static void mRunAsyncDemo() {
+    // MUST wrap tasks to CompletableFuture first, AWKWARD! 😖
+    CompletableFuture.allOf(
+        CompletableFuture.runAsync(() -> System.out.println("task1")),
+        CompletableFuture.runAsync(() -> System.out.println("task2")),
+        CompletableFuture.runAsync(() -> System.out.println("task3"))
+    );
+
+    // just run multiply actions, fresh and cool 😋
+    CompletableFutureUtils.mRunAsync(
+        () -> System.out.println("task1"),
+        () -> System.out.println("task2"),
+        () -> System.out.println("task3")
+    );
+  }
+}
+```
+
+这些多`Action`方法也配套实现了「不同的并发执行策略」与「返回多个运行结果」的支持。
+
+示例代码如下：
+
+```java
+public class MultiplyActionsDemo {
+  static void thenMApplyAsyncDemo() {
+    // MUST wrap tasks to CompletableFuture first, AWKWARD! 😖
+    completedFuture(42).thenCompose(v ->
+        CompletableFutureUtils.allResultsFastFailOf(
+            CompletableFuture.supplyAsync(() -> v + 1),
+            CompletableFuture.supplyAsync(() -> v + 2),
+            CompletableFuture.supplyAsync(() -> v + 3)
+        )
+    ).thenAccept(System.out::println);
+    // output: [43, 44, 45]
+
+    // just run multiply actions, fresh and cool 😋
+    CompletableFutureUtils.thenMApplyFastFailAsync(
+        completedFuture(42),
+        v -> v + 1,
+        v -> v + 2,
+        v -> v + 3
+    ).thenAccept(System.out::println);
+    // output: [43, 44, 45]
+  }
+}
+```
+
+> \# 完整可运行的Demo代码参见[`MultiplyActionsDemo.java`](cffu-core/src/test/java/io/foldright/demo/MultiplyActionsDemo.java)。
+
+### 2.5 支持超时的`join`的方法
 
 `cf.join()`会「不超时永远等待」，在业务中很危险❗️当意外出现长时间等待时，会导致：
 
@@ -418,7 +481,7 @@ public class ConcurrencyStrategyDemo {
 
 这个新方法使用简单类似，不附代码示例。
 
-### 2.5 `Backport`支持`Java 8`
+### 2.6 `Backport`支持`Java 8`
 
 `Java 9+`高版本的所有`CF`新功能方法在`Java 8`低版本直接可用。
 
@@ -432,7 +495,7 @@ public class ConcurrencyStrategyDemo {
 
 这些`backport`的方法是`CompletableFuture`的已有功能，不附代码示例。
 
-### 2.6 返回具体类型的`anyOf`方法
+### 2.7 返回具体类型的`anyOf`方法
 
 `CompletableFuture.anyOf`方法返回类型是`Object`，丢失具体类型，不类型安全，使用时需要转型也不方便。
 
@@ -440,7 +503,7 @@ public class ConcurrencyStrategyDemo {
 
 这个方法使用简单类似，不附代码示例。
 
-### 2.7 输入宽泛类型的`allof/anyOf`方法
+### 2.8 输入宽泛类型的`allof/anyOf`方法
 
 `CompletableFuture#allof/anyOf`方法输入参数类型是`CompletableFuture`，而输入更宽泛的`CompletionStage`类型；对于`CompletionStage`类型的输入，则需要调用`CompletionStage#toCompletableFuture`方法做转换。
 
