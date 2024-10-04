@@ -2186,16 +2186,22 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Peeks the result by executing the given action when this cffu completes, returns this cffu.
      * <p>
-     * When this cffu is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this cffu as arguments. Whether the supplied action
-     * throws an exception or not, this cffu is <strong>NOT</strong> affected.
+     * When this cffu is complete, the given action is invoked with the result(or {@code null} if none)
+     * and the exception (or {@code null} if none) of this cffu as arguments.
      * <p>
-     * Unlike method {@link CompletionStage#handle handle} and like method
-     * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
+     * <strong>CAUTION: </strong> The return cffu of method {@link #whenComplete(BiConsumer)}
+     * will contain <strong>DIFFERENT</strong> result to this cffu when this cffu is successful
+     * but the supplied action throws an exception. This behavior of method {@code whenComplete} is subtle,
+     * and common misused if you just want to <strong>peek</strong> this cffu without affecting the result(e.g.
+     * logging the cf result).<br>For this {@code peek} method, whether the supplied action throws an exception or not,
+     * the result of return cffu(aka. this cffu) is <strong>NOT</strong> affected.
+     * <p>
+     * Unlike method {@link #handle(BiFunction)} and like method {@link #whenComplete(BiConsumer)},
      * this method is not designed to translate completion outcomes.
      *
      * @param action the action to perform
      * @return this Cffu
+     * @see #whenComplete(BiConsumer)
      * @see java.util.stream.Stream#peek(Consumer)
      */
     @Contract("_ -> this")
@@ -2205,19 +2211,25 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Peeks the result by executing the given action when this cffu completes,
-     * executes the given action using {@link #defaultExecutor()}, returns this cffu.
+     * Peeks the result by executing the given action using {@link #defaultExecutor()}
+     * when this cffu completes, returns this cffu.
      * <p>
-     * When this cffu is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this cffu as arguments. Whether the supplied action
-     * throws an exception or not, this cffu is <strong>NOT</strong> affected.
+     * When this cffu is complete, the given action is invoked with the result(or {@code null} if none)
+     * and the exception (or {@code null} if none) of this cffu as arguments.
      * <p>
-     * Unlike method {@link CompletionStage#handle handle} and like method
-     * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
+     * <strong>CAUTION: </strong> The return cffu of method {@link #whenCompleteAsync(BiConsumer)}
+     * will contain <strong>DIFFERENT</strong> result to this cffu when this cffu is successful
+     * but the supplied action throws an exception. This behavior of method {@code whenComplete} is subtle,
+     * and common misused if you just want to <strong>peek</strong> this cffu without affecting the result(e.g.
+     * logging the cf result).<br>For this {@code peek} method, whether the supplied action throws an exception or not,
+     * the result of return cffu(aka. this cffu) is <strong>NOT</strong> affected.
+     * <p>
+     * Unlike method {@link #handleAsync(BiFunction)} and like method {@link #whenCompleteAsync(BiConsumer)},
      * this method is not designed to translate completion outcomes.
      *
      * @param action the action to perform
      * @return this Cffu
+     * @see #whenCompleteAsync(BiConsumer)
      * @see java.util.stream.Stream#peek(Consumer)
      */
     @Contract("_ -> this")
@@ -2226,19 +2238,25 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Peeks the result by executing the given action when this cffu completes,
-     * that executes the given action using the supplied Executor when this cffu completes, returns this cffu.
+     * Peeks the result by executing the given action using the supplied executor
+     * when this cffu completes, returns this cffu.
      * <p>
-     * When this cffu is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this cffu as arguments. Whether the supplied action
-     * throws an exception or not, this cffu is <strong>NOT</strong> affected.
+     * When this cffu is complete, the given action is invoked with the result(or {@code null} if none)
+     * and the exception (or {@code null} if none) of this cffu as arguments.
      * <p>
-     * Unlike method {@link CompletionStage#handle handle} and like method
-     * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
-     * this method is not designed to translate completion outcomes.
+     * <strong>CAUTION: </strong> The return cffu of method {@link #whenCompleteAsync(BiConsumer, Executor)}
+     * will contain <strong>DIFFERENT</strong> result to this cffu when this cffu is successful
+     * but the supplied action throws an exception. This behavior of method {@code whenComplete} is subtle,
+     * and common misused if you just want to <strong>peek</strong> this cffu without affecting the result(e.g.
+     * logging the cf result).<br>For this {@code peek} method, whether the supplied action throws an exception or not,
+     * the result of return cffu(aka. this cffu) is <strong>NOT</strong> affected.
+     * <p>
+     * Unlike method {@link #handleAsync(BiFunction, Executor)} and like method {@link
+     * #whenCompleteAsync(BiConsumer, Executor)}, this method is not designed to translate completion outcomes.
      *
      * @param action the action to perform
      * @return this Cffu
+     * @see #whenCompleteAsync(BiConsumer, Executor)
      * @see java.util.stream.Stream#peek(Consumer)
      */
     @Contract("_, _ -> this")

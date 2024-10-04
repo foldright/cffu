@@ -3537,15 +3537,20 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Peeks the result by executing the given action when given stage completes, returns the given stage.
+     * Peeks the result by executing the given action when the given stage completes, returns the given stage.
      * <p>
-     * When the given stage is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of given stage as arguments. Whether the supplied action
-     * throws an exception or not, the given stage is <strong>NOT</strong> affected.
+     * When the given stage is complete, the given action is invoked with the result(or {@code null} if none)
+     * and the exception (or {@code null} if none) of given stage as arguments.
      * <p>
-     * Unlike method {@link CompletionStage#handle handle} and like method
-     * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
-     * this method is not designed to translate completion outcomes.
+     * <strong>CAUTION: </strong> The return stage of method {@link CompletionStage#whenComplete(BiConsumer)}
+     * will contain <strong>DIFFERENT</strong> result to the input stage when the input stage is successful
+     * but the supplied action throws an exception. This behavior of method {@code whenComplete} is subtle,
+     * and common misused if you just want to <strong>peek</strong> the input stage without affecting the result(e.g.
+     * logging the cf result).<br>For this {@code peek} method, whether the supplied action throws an exception or not,
+     * the result of return stage(aka. the given stage) is <strong>NOT</strong> affected.
+     * <p>
+     * Unlike method {@link CompletionStage#handle(BiFunction)} and like method
+     * {@link CompletionStage#whenComplete(BiConsumer)}, this method is not designed to translate completion outcomes.
      *
      * @param action the action to perform
      * @return the given stage
@@ -3568,17 +3573,21 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Peeks the result by executing the given action when given stage completes,
-     * executes the given action using the default executor of parameter cfThis,
-     * returns the given stage.
+     * Peeks the result by executing the given action using the default executor of parameter cfThis
+     * when the given stage completes, returns the given stage.
      * <p>
-     * When the given stage is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of given stage as arguments. Whether the supplied action
-     * throws an exception or not, the given stage is <strong>NOT</strong> affected.
+     * When the given stage is complete, the given action is invoked with the result(or {@code null} if none)
+     * and the exception (or {@code null} if none) of given stage as arguments.
      * <p>
-     * Unlike method {@link CompletionStage#handle handle} and like method
-     * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
-     * this method is not designed to translate completion outcomes.
+     * <strong>CAUTION: </strong> The return stage of method {@link CompletionStage#whenCompleteAsync(BiConsumer)}
+     * will contain <strong>DIFFERENT</strong> result to the input stage when the input stage is successful
+     * but the supplied action throws an exception. This behavior of method {@code whenComplete} is subtle,
+     * and common misused if you just want to <strong>peek</strong> the input stage without affecting the result(e.g.
+     * logging the cf result).<br>For this {@code peek} method, whether the supplied action throws an exception or not,
+     * the result of return stage(aka. the given stage) is <strong>NOT</strong> affected.
+     * <p>
+     * Unlike method {@link CompletionStage#handleAsync(BiFunction)} and like method {@link
+     * CompletionStage#whenCompleteAsync(BiConsumer)}, this method is not designed to translate completion outcomes.
      *
      * @param action the action to perform
      * @return the given stage
@@ -3592,16 +3601,21 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Peeks the result by executing the given action when given stage completes,
-     * executes the given action using the supplied Executor, returns the given stage.
+     * Peeks the result by executing the given action using the supplied executor
+     * when the given stage completes, returns the given stage.
      * <p>
-     * When the given stage is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of given stage as arguments. Whether the supplied action
-     * throws an exception or not, the given stage is <strong>NOT</strong> affected.
+     * When the given stage is complete, the given action is invoked with the result(or {@code null} if none)
+     * and the exception (or {@code null} if none) of given stage as arguments.
      * <p>
-     * Unlike method {@link CompletionStage#handle handle} and like method
-     * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
-     * this method is not designed to translate completion outcomes.
+     * <strong>CAUTION: </strong> The return stage of method {@link CompletionStage#whenCompleteAsync(BiConsumer, Executor)}
+     * will contain <strong>DIFFERENT</strong> result to the input stage when the input stage is successful
+     * but the supplied action throws an exception. This behavior of method {@code whenComplete} is subtle,
+     * and common misused if you just want to <strong>peek</strong> the input stage without affecting the result(e.g.
+     * logging the cf result).<br>For this {@code peek} method, whether the supplied action throws an exception or not,
+     * the result of return stage(aka. the given stage) is <strong>NOT</strong> affected.
+     * <p>
+     * Unlike method {@link CompletionStage#handleAsync(BiFunction, Executor)} and like method {@link
+     * CompletionStage#whenCompleteAsync(BiConsumer, Executor)}, this method is not designed to translate completion outcomes.
      *
      * @param action the action to perform
      * @return the given stage
