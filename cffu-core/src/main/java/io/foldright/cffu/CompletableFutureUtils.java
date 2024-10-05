@@ -2367,6 +2367,9 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Executor, Function[])}
      * with {@code null} valueIfFailed.
+     * <p>
+     * If any of the provided functions fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the function having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
