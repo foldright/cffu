@@ -5,7 +5,9 @@ import io.foldright.cffu.CffuFactory
 import io.foldright.cffu.CffuFactoryBuilder
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
+import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
+import java.util.function.Supplier
 
 
 /*
@@ -49,6 +51,312 @@ fun <T> Collection<CompletionStage<T>>.toCffu(cffuFactory: CffuFactory): List<Cf
  */
 fun <T> Array<out CompletionStage<T>>.toCffu(cffuFactory: CffuFactory): Array<Cffu<T>> =
     cffuFactory.toCffuArray(*this)
+
+// endregion
+////////////////////////////////////////////////////////////
+// region# Multi-Actions(M*) Methods(create by actions)
+//
+//    - Supplier<T>[] -> Cffu<List<T>>
+//    - Runnable[]    -> Cffu<Void>
+////////////////////////////////////////////////////////////
+
+/**
+ * Returns a new Cffu that is asynchronously completed
+ * by tasks running in the Cffu's default asynchronous execution facility
+ * with the values obtained by calling the given Suppliers in the **same order** of the given Suppliers arguments.
+ *
+ * @param <T>       the suppliers' return type
+ * @return the new Cffu
+ * @see allResultsFastFailOfCffu
+ */
+fun <T> Collection<Supplier<out T>>.mSupplyFastFailAsyncCffu(
+    cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<List<T>> = cffuFactory.mSupplyFastFailAsync(executor, *toTypedArray())
+
+/**
+ * Returns a new Cffu that is asynchronously completed
+ * by tasks running in the Cffu's default asynchronous execution facility
+ * with the values obtained by calling the given Suppliers in the **same order** of the given Suppliers arguments.
+ *
+ * @param <T>       the suppliers' return type
+ * @return the new Cffu
+ * @see allResultsFastFailOfCffu
+ */
+fun <T> Array<out Supplier<out T>>.mSupplyFastFailAsyncCffu(
+    cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<List<T>> = cffuFactory.mSupplyFastFailAsync(executor, *this)
+
+/**
+ * Returns a new Cffu that is asynchronously completed
+ * by tasks running in the Cffu's default asynchronous execution facility
+ * with the successful values obtained by calling the given Suppliers
+ * in the **same order** of the given Suppliers arguments.
+ *
+ * If any of the provided suppliers fails, its corresponding position will contain `valueIfFailed`
+ * (which is indistinguishable from the supplier having a successful value of `valueIfFailed`).
+ *
+ * @param valueIfFailed the value to return if not failed
+ * @param <T>           the suppliers' return type
+ * @return the new Cffu
+ * @see allSuccessResultsOfCffu
+ */
+fun <T> Collection<Supplier<out T>>.mSupplyAllSuccessAsyncCffu(
+    cffuFactory: CffuFactory, valueIfFailed: T, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<List<T>> = cffuFactory.mSupplyAllSuccessAsync(valueIfFailed, executor, *toTypedArray())
+
+/**
+ * Returns a new Cffu that is asynchronously completed
+ * by tasks running in the Cffu's default asynchronous execution facility
+ * with the successful values obtained by calling the given Suppliers
+ * in the **same order** of the given Suppliers arguments.
+ *
+ * If any of the provided suppliers fails, its corresponding position will contain `valueIfFailed`
+ * (which is indistinguishable from the supplier having a successful value of `valueIfFailed`).
+ *
+ * @param valueIfFailed the value to return if not failed
+ * @param <T>           the suppliers' return type
+ * @return the new Cffu
+ * @see allSuccessResultsOfCffu
+ */
+fun <T> Array<out Supplier<out T>>.mSupplyAllSuccessAsyncCffu(
+    cffuFactory: CffuFactory, valueIfFailed: T, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<List<T>> = cffuFactory.mSupplyAllSuccessAsync(valueIfFailed, executor, *this)
+
+/**
+ * Returns a new Cffu that is asynchronously completed
+ * by tasks running in the Cffu's default asynchronous execution facility
+ * with the most values obtained by calling the given Suppliers
+ * in the given time(`timeout`, aka as many results as possible in the given time)
+ * in the **same order** of the given Suppliers arguments.
+ *
+ *
+ * If any of the provided suppliers does not success(fails or incomplete) in given time,
+ * its corresponding position will contain `valueIfNotSuccess`
+ * (which is indistinguishable from the supplier having a successful value of `valueIfNotSuccess`).
+ *
+ * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param timeout           how long to wait in units of `unit`
+ * @param unit              a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param <T>               the suppliers' return type
+ * @return the new Cffu
+ * @see mostSuccessResultsOfCffu
+ */
+fun <T> Collection<Supplier<out T>>.mSupplyMostSuccessAsyncCffu(
+    cffuFactory: CffuFactory, valueIfNotSuccess: T,
+    timeout: Long, unit: TimeUnit, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<List<T>> = cffuFactory.mSupplyMostSuccessAsync(valueIfNotSuccess, executor, timeout, unit, *toTypedArray())
+
+/**
+ * Returns a new Cffu that is asynchronously completed
+ * by tasks running in the Cffu's default asynchronous execution facility
+ * with the most values obtained by calling the given Suppliers
+ * in the given time(`timeout`, aka as many results as possible in the given time)
+ * in the **same order** of the given Suppliers arguments.
+ *
+ *
+ * If any of the provided suppliers does not success(fails or incomplete) in given time,
+ * its corresponding position will contain `valueIfNotSuccess`
+ * (which is indistinguishable from the supplier having a successful value of `valueIfNotSuccess`).
+ *
+ * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param timeout           how long to wait in units of `unit`
+ * @param unit              a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param <T>               the suppliers' return type
+ * @return the new Cffu
+ * @see mostSuccessResultsOfCffu
+ */
+fun <T> Array<out Supplier<out T>>.mSupplyMostSuccessAsyncCffu(
+    cffuFactory: CffuFactory, valueIfNotSuccess: T,
+    timeout: Long, unit: TimeUnit, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<List<T>> = cffuFactory.mSupplyMostSuccessAsync(valueIfNotSuccess, executor, timeout, unit, *this)
+
+/**
+ * Returns a new Cffu that is asynchronously completed
+ * by tasks running in the Cffu's default asynchronous execution facility
+ * with the values obtained by calling the given Suppliers
+ * in the **same order** of the given Suppliers arguments.
+ *
+ * @param <T>       the suppliers' return type
+ * @return the new Cffu
+ * @see allResultsOfCffu
+ */
+fun <T> Collection<Supplier<out T>>.mSupplyAsyncCffu(
+    cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<List<T>> = cffuFactory.mSupplyAsync(executor, *toTypedArray())
+
+/**
+ * Returns a new Cffu that is asynchronously completed
+ * by tasks running in the Cffu's default asynchronous execution facility
+ * with the values obtained by calling the given Suppliers
+ * in the **same order** of the given Suppliers arguments.
+ *
+ * @param <T>       the suppliers' return type
+ * @return the new Cffu
+ * @see allResultsOfCffu
+ */
+fun <T> Array<out Supplier<out T>>.mSupplyAsyncCffu(
+    cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<List<T>> = cffuFactory.mSupplyAsync(executor, *this)
+
+/**
+ * Returns a new Cffu that is asynchronously successful
+ * when any of tasks running in the Cffu's default asynchronous execution facility
+ * by calling the given Suppliers success, with the same result.
+ * Otherwise, all the given tasks complete exceptionally,
+ * the returned Cffu also does so, with a CompletionException holding
+ * an exception from any of the given stages as its cause.
+ * If no suppliers are provided, returns a new Cffu that is already completed exceptionally
+ * with a CompletionException holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
+ *
+ * @param <T>       the suppliers' return type
+ * @return the new Cffu
+ * @see anySuccessOfCffu
+ */
+fun <T> Collection<Supplier<out T>>.mSupplyAnySuccessAsyncCffu(
+    cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<T> = cffuFactory.mSupplyAnySuccessAsync(executor, *toTypedArray())
+
+/**
+ * Returns a new Cffu that is asynchronously successful
+ * when any of tasks running in the Cffu's default asynchronous execution facility
+ * by calling the given Suppliers success, with the same result.
+ * Otherwise, all the given tasks complete exceptionally,
+ * the returned Cffu also does so, with a CompletionException holding
+ * an exception from any of the given stages as its cause.
+ * If no suppliers are provided, returns a new Cffu that is already completed exceptionally
+ * with a CompletionException holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
+ *
+ * @param <T>       the suppliers' return type
+ * @return the new Cffu
+ * @see anySuccessOfCffu
+ */
+fun <T> Array<out Supplier<out T>>.mSupplyAnySuccessAsyncCffu(
+    cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<T> = cffuFactory.mSupplyAnySuccessAsync(executor, *this)
+
+/**
+ * Returns a new Cffu that is completed
+ * when any of tasks running in the Cffu's default asynchronous execution facility
+ * by calling the given Suppliers complete, with the same result.
+ * Otherwise, if it completed exceptionally, the returned Cffu also does so,
+ * with a CompletionException holding this exception as its cause.
+ * If no suppliers are provided, returns an incomplete Cffu.
+ *
+ * @param <T>       the suppliers' return type
+ * @return the new Cffu
+ * @see anyOfCffu
+ */
+fun <T> Collection<Supplier<out T>>.mSupplyAnyAsyncCffu(
+    cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<T> = cffuFactory.mSupplyAnyAsync(executor, *toTypedArray())
+
+/**
+ * Returns a new Cffu that is completed
+ * when any of tasks running in the Cffu's default asynchronous execution facility
+ * by calling the given Suppliers complete, with the same result.
+ * Otherwise, if it completed exceptionally, the returned Cffu also does so,
+ * with a CompletionException holding this exception as its cause.
+ * If no suppliers are provided, returns an incomplete Cffu.
+ *
+ * @param <T>       the suppliers' return type
+ * @return the new Cffu
+ * @see anyOfCffu
+ */
+fun <T> Array<out Supplier<out T>>.mSupplyAnyAsyncCffu(
+    cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<T> = cffuFactory.mSupplyAnyAsync(executor, *this)
+
+/**
+ * Returns a new Cffu that is asynchronously completed
+ * by tasks running in the Cffu's default asynchronous execution facility
+ * after runs the given actions.
+ *
+ * @return the new Cffu
+ * @see allFastFailOfCffu
+ */
+fun Collection<Runnable>.mRunFastFailAsyncCffu(
+    cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<Void> = cffuFactory.mRunFastFailAsync(executor, *toTypedArray())
+
+/**
+ * Returns a new Cffu that is asynchronously completed
+ * by tasks running in the Cffu's default asynchronous execution facility
+ * after runs the given actions.
+ *
+ * @return the new Cffu
+ * @see allFastFailOfCffu
+ */
+fun Array<out Runnable>.mRunFastFailAsyncCffu(
+    cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<Void> = cffuFactory.mRunFastFailAsync(executor, *this)
+
+/**
+ * Returns a new Cffu that is asynchronously completed
+ * by tasks running in the Cffu's default asynchronous execution facility
+ * after runs the given actions.
+ *
+ * @return the new Cffu
+ * @see allOfCffu
+ */
+fun Collection<Runnable>.mRunAsyncCffu(
+    cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<Void> = cffuFactory.mRunAsync(executor, *toTypedArray())
+
+/**
+ * Returns a new Cffu that is asynchronously completed
+ * by tasks running in the Cffu's default asynchronous execution facility
+ * after runs the given actions.
+ *
+ * @return the new Cffu
+ * @see allOfCffu
+ */
+fun Array<out Runnable>.mRunAsyncCffu(
+    cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<Void> = cffuFactory.mRunAsync(executor, *this)
+
+/**
+ * Returns a new Cffu that is asynchronously successful
+ * when any tasks running in the Cffu's default asynchronous execution facility success.
+ *
+ * @return the new Cffu
+ * @see anySuccessOfCffu
+ */
+fun Collection<Runnable>.mRunAnySuccessAsyncCffu(
+    cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<Void> = cffuFactory.mRunAnySuccessAsync(executor, *toTypedArray())
+
+/**
+ * Returns a new Cffu that is asynchronously successful
+ * when any tasks running in the Cffu's default asynchronous execution facility success.
+ *
+ * @return the new Cffu
+ * @see anySuccessOfCffu
+ */
+fun Array<out Runnable>.mRunAnySuccessAsyncCffu(
+    cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<Void> = cffuFactory.mRunAnySuccessAsync(executor, *this)
+
+/**
+ * Returns a new Cffu that is asynchronously completed
+ * when any tasks running in the Cffu's default asynchronous execution facility.
+ *
+ * @return the new Cffu
+ * @see anyOfCffu
+ */
+fun Collection<Runnable>.mRunAnyAsyncCffu(
+    cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<Void> = cffuFactory.mRunAnyAsync(executor, *toTypedArray())
+
+/**
+ * Returns a new Cffu that is asynchronously completed
+ * when any tasks running in the Cffu's default asynchronous execution facility.
+ *
+ * @return the new Cffu
+ * @see anyOfCffu
+ */
+fun Array<out Runnable>.mRunAnyAsyncCffu(
+    cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
+): Cffu<Void> = cffuFactory.mRunAnyAsync(executor, *this)
 
 // endregion
 ////////////////////////////////////////////////////////////////////////////////
@@ -142,6 +450,94 @@ fun <T> Collection<CompletionStage<out T>>.allResultsFastFailOfCffu(cffuFactory:
  */
 fun <T> Array<out CompletionStage<out T>>.allResultsFastFailOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
     cffuFactory.allResultsFastFailOf(*this)
+
+/**
+ * Returns a new Cffu that is successful with the results in the **same order**
+ * of the given stages arguments when all the given stages completed;
+ * If no stages are provided, returns a Cffu completed with the value empty list.
+ *
+ * If any of the provided stages fails, its corresponding position will contain `valueIfFailed`
+ * (which is indistinguishable from the stage having a successful value of `valueIfFailed`).
+ *
+ * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
+ * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
+ *
+ * This method is the same as [CffuFactory.allSuccessResultsOf], providing this method is convenient for method chaining.
+ *
+ * @param valueIfFailed the value to return if not completed successfully
+ * @throws NullPointerException if the cfs param or any of its elements are `null`
+ * @see com.google.common.util.concurrent.Futures.successfulAsList
+ */
+fun <T> Collection<Cffu<out T>>.allSuccessResultsOfCffu(
+    valueIfFailed: T, cffuFactory: CffuFactory = ABSENT
+): Cffu<List<T>> {
+    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
+    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
+    return factory.allSuccessResultsOf(valueIfFailed, *toTypedArray())
+}
+
+/**
+ * Returns a new Cffu that is successful with the results in the **same order**
+ * of the given stages arguments when all the given stages completed;
+ * If no stages are provided, returns a Cffu completed with the value empty list.
+ *
+ * If any of the provided stages fails, its corresponding position will contain `valueIfFailed`
+ * (which is indistinguishable from the stage having a successful value of `valueIfFailed`).
+ *
+ * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
+ * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
+ *
+ * This method is the same as [CffuFactory.allSuccessResultsOf], providing this method is convenient for method chaining.
+ *
+ * @param valueIfFailed the value to return if not completed successfully
+ * @throws NullPointerException if the cfs param or any of its elements are `null`
+ * @see com.google.common.util.concurrent.Futures.successfulAsList
+ */
+fun <T> Array<out Cffu<out T>>.allSuccessResultsOfCffu(
+    valueIfFailed: T, cffuFactory: CffuFactory = ABSENT
+): Cffu<List<T>> {
+    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
+    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
+    return factory.allSuccessResultsOf(valueIfFailed, *this)
+}
+
+/**
+ * Returns a new Cffu that is successful with the results in the **same order**
+ * of the given stages arguments when all the given stages completed;
+ * If no stages are provided, returns a Cffu completed with the value empty list.
+ *
+ * If any of the provided stages fails, its corresponding position will contain `valueIfFailed`
+ * (which is indistinguishable from the stage having a successful value of `valueIfFailed`).
+ *
+ * This method is the same as [CffuFactory.allSuccessResultsOf], providing this method is convenient for method chaining.
+ *
+ * @param valueIfFailed the value to return if not completed successfully
+ * @throws NullPointerException if the cfs param or any of its elements are `null`
+ * @see com.google.common.util.concurrent.Futures.successfulAsList
+ */
+@JvmName("allSuccessResultsOfCffuCs")
+fun <T> Collection<CompletionStage<out T>>.allSuccessResultsOfCffu(
+    valueIfFailed: T, cffuFactory: CffuFactory
+): Cffu<List<T>> = cffuFactory.allSuccessResultsOf(valueIfFailed, *toTypedArray())
+
+/**
+ * Returns a new Cffu that is successful with the results in the **same order**
+ * of the given stages arguments when all the given stages completed;
+ * If no stages are provided, returns a Cffu completed with the value empty list.
+ *
+ * If any of the provided stages fails, its corresponding position will contain `valueIfFailed`
+ * (which is indistinguishable from the stage having a successful value of `valueIfFailed`).
+ *
+ * This method is the same as [CffuFactory.allSuccessResultsOf], providing this method is convenient for method chaining.
+ *
+ * @param valueIfFailed the value to return if not completed successfully
+ * @throws NullPointerException if the cfs param or any of its elements are `null`
+ * @see com.google.common.util.concurrent.Futures.successfulAsList
+ */
+@JvmName("allSuccessResultsOfCffuCs")
+fun <T> Array<out CompletionStage<out T>>.allSuccessResultsOfCffu(
+    valueIfFailed: T, cffuFactory: CffuFactory
+): Cffu<List<T>> = cffuFactory.allSuccessResultsOf(valueIfFailed, *this)
 
 /**
  * Returns a new Cffu with the most results in the **same order** of
