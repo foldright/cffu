@@ -1705,16 +1705,19 @@ class CompletableFutureUtilsTest {
 
     @Test
     void test_write() throws Exception {
+        // tests in ForkJoinPool(commonPool)
         assertEquals(n, completeAsync(incompleteCf(), () -> n).get());
-        assertEquals(n, completeAsync(incompleteCf(), () -> n, commonPool()).get());
+        // tests in ThreadPoolExecutor
+        assertEquals(n, completeAsync(incompleteCf(), () -> n, testExecutor).get());
+
         if (isJava9Plus()) {
             CompletableFuture<Integer> f = (CompletableFuture<Integer>) completedStage(n);
             assertThrowsExactly(UnsupportedOperationException.class, () ->
-                    completeAsync(f, () -> null)
+                    completeAsync(f, () -> anotherN)
             );
         } else {
             CompletableFuture<Integer> f = (CompletableFuture<Integer>) completedStage(n);
-            completeAsync(f, () -> null);
+            assertEquals(n, completeAsync(f, () -> anotherN).get());
         }
 
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
@@ -1723,14 +1726,19 @@ class CompletableFutureUtilsTest {
                 }).get()
         ).getCause());
 
-        CompletableFuture<Integer> completed = completedFuture(n);
-        assertEquals(n, completeAsync(completed, () -> anotherN).get());
+        assertEquals(n, completeAsync(completedFuture(n), () -> anotherN).get());
 
         ////////////////////////////////////////
 
+        // tests in ForkJoinPool(commonPool)
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 completeExceptionallyAsync(incompleteCf(), () -> rte).get()
         ).getCause());
+        // tests in ThreadPoolExecutor
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                completeExceptionallyAsync(incompleteCf(), () -> rte, testExecutor).get()
+        ).getCause());
+
         if (isJava9Plus()) {
             CompletableFuture<Integer> f = (CompletableFuture<Integer>) completedStage(n);
             assertThrowsExactly(UnsupportedOperationException.class, () ->
@@ -1738,8 +1746,14 @@ class CompletableFutureUtilsTest {
             );
         } else {
             CompletableFuture<Integer> f = (CompletableFuture<Integer>) completedStage(n);
-            completeExceptionallyAsync(f, () -> rte);
+            assertEquals(n, completeExceptionallyAsync(f, () -> rte).get());
         }
+
+        assertSame(anotherRte, assertThrowsExactly(ExecutionException.class, () ->
+                completeExceptionallyAsync(incompleteCf(), () -> {
+                    throw anotherRte;
+                }).get()
+        ).getCause());
 
         assertEquals(n, completeExceptionallyAsync(completedFuture(n), () -> rte).get());
     }
