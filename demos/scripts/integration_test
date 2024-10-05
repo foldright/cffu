@@ -17,7 +17,7 @@ readonly JDK_VERSIONS=(
   11
   17
   21
-  22
+  23
 )
 
 for jdk_version in "${JDK_VERSIONS[@]}"; do
