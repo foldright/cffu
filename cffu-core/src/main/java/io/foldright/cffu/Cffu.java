@@ -1717,7 +1717,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * <strong>CAUTION:</strong> This method returns a new Cffu and this behavior is different from
      * the original CF method {@link CompletableFuture#orTimeout} and its backport method {@link #unsafeOrTimeout},
-     * because the returning new Cffu instance avoids the subsequent usage of the delay thread.
+     * because the returned new Cffu instance avoids the subsequent usage of the delay thread.
      * More info see the javadoc of {@link #unsafeOrTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
@@ -1737,7 +1737,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * <strong>CAUTION:</strong> This method returns a new Cffu and this behavior is different from
      * the original CF method {@link CompletableFuture#orTimeout} and its backport method {@link #unsafeOrTimeout},
-     * because the returning new Cffu instance avoids the subsequent usage of the delay thread.
+     * because the returned new Cffu instance avoids the subsequent usage of the delay thread.
      * More info see the javadoc of {@link #unsafeOrTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
@@ -1766,9 +1766,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (including delay execution and timeout).
      * <p>
      * <strong>Strong recommend</strong> using the safe method {@link #orTimeout(long, TimeUnit)}
-     * instead of this method.
-     * <p>
-     * Unless all subsequent actions of dependent cfs is ensured executing async
+     * instead of this method.<br>Unless all subsequent actions of dependent cfs is ensured executing async
      * (aka. the dependent cfs is created by async methods), using this method
      * is one less thread switch of task execution when triggered by timeout.
      * <p>
@@ -1798,7 +1796,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * <strong>CAUTION:</strong> This method returns a new Cffu and this behavior is different from the original
      * CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #unsafeCompleteOnTimeout},
-     * because the returning new Cffu instance avoids the subsequent usage of the delay thread.
+     * because the returned new Cffu instance avoids the subsequent usage of the delay thread.
      * More info see the javadoc of {@link #unsafeCompleteOnTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
@@ -1818,7 +1816,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * <strong>CAUTION:</strong> This method returns a new Cffu and this behavior is different from the original
      * CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #unsafeCompleteOnTimeout},
-     * because the returning new Cffu instance avoids the subsequent usage of the delay thread.
+     * because the returned new Cffu instance avoids the subsequent usage of the delay thread.
      * More info see the javadoc of {@link #unsafeCompleteOnTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
@@ -1846,9 +1844,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (including delay execution and timeout).
      * <p>
      * <strong>Strong recommend</strong> using the safe method {@link #completeOnTimeout(Object, long, TimeUnit)}
-     * instead of this method.
-     * <p>
-     * Unless all subsequent actions of dependent cfs is ensured executing async
+     * instead of this method.<br>Unless all subsequent actions of dependent cfs is ensured executing async
      * (aka. the dependent cfs is created by async methods), using this method
      * is one less thread switch of task execution when triggered by timeout.
      *
