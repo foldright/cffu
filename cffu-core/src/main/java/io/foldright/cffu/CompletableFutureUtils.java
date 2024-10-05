@@ -3964,7 +3964,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static Executor defaultExecutor(CompletionStage<?> cfThis) {
         requireNonNull(cfThis, "cfThis is null");
-        // FIXME hard-code type(CompletableFuture and Cffu...
+        // FIXME hard-code runtime type: CompletableFuture and Cffu...
         //       need a SPI in order to support other CompletionStage subclasses equivalently
         if (cfThis instanceof CompletableFuture)
             return IS_JAVA9_PLUS ? ((CompletableFuture<?>) cfThis).defaultExecutor() : ASYNC_POOL;
@@ -4044,46 +4044,6 @@ public final class CompletableFutureUtils {
 
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# Internal helper fields and classes
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Null-checks user executor argument, and translates uses of
-     * commonPool to ASYNC_POOL in case parallelism disabled.
-     */
-    @SuppressWarnings("resource")
-    static Executor screenExecutor(Executor e) {
-        if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool())
-            return ASYNC_POOL;
-        return requireNonNull(e, "defaultExecutor is null");
-    }
-
-    private static final boolean USE_COMMON_POOL = ForkJoinPool.getCommonPoolParallelism() > 1;
-
-    /**
-     * Fallback if ForkJoinPool.commonPool() cannot support parallelism
-     */
-    private static final class ThreadPerTaskExecutor implements Executor {
-        @Override
-        public void execute(Runnable r) {
-            new Thread(requireNonNull(r)).start();
-        }
-    }
-
-    /**
-     * Default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses
-     * of CompletableFuture) -- {@link ForkJoinPool#commonPool()} unless it cannot support parallelism.
-     */
-    private static final Executor ASYNC_POOL = _asyncPool();
-
-    private static Executor _asyncPool() {
-        if (IS_JAVA9_PLUS) return completedFuture(null).defaultExecutor();
-        if (USE_COMMON_POOL) return ForkJoinPool.commonPool();
-        return new ThreadPerTaskExecutor();
-    }
-
-    // endregion
-    ////////////////////////////////////////////////////////////////////////////////
     // region# Internal Java version check logic for compatibility
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -4116,13 +4076,47 @@ public final class CompletableFutureUtils {
         }
     }
 
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Internal helpers
+    ////////////////////////////////////////////////////////////////////////////////
+
     /**
-     * <strong>CAUTION / Implementation Note:</strong> do NOT move this static field before {@link #IS_JAVA9_PLUS},
-     * otherwise will use uninitialized {@link #IS_JAVA9_PLUS}!
+     * Null-checks user executor argument, and translates uses of commonPool to ASYNC_POOL
+     * in case parallelism disabled. code is copied from {@link CompletableFuture#screenExecutor(Executor)}.
      */
+    @SuppressWarnings({"resource", "JavadocReference"})
+    static Executor screenExecutor(Executor e) {
+        if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool())
+            return ASYNC_POOL;
+        return requireNonNull(e, "defaultExecutor is null");
+    }
+
+    /**
+     * Fallback if ForkJoinPool.commonPool() cannot support parallelism
+     */
+    private static final class ThreadPerTaskExecutor implements Executor {
+        @Override
+        public void execute(Runnable r) {
+            new Thread(requireNonNull(r)).start();
+        }
+    }
+
+    private static final boolean USE_COMMON_POOL = ForkJoinPool.getCommonPoolParallelism() > 1;
+
+    /**
+     * Default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses
+     * of CompletableFuture) -- {@link ForkJoinPool#commonPool()} unless it cannot support parallelism.
+     */
+    private static final Executor ASYNC_POOL;
+
     private static final Class<?> MIN_STAGE_CLASS;
 
     static {
+        if (IS_JAVA9_PLUS) ASYNC_POOL = completedFuture(null).defaultExecutor();
+        else if (USE_COMMON_POOL) ASYNC_POOL = ForkJoinPool.commonPool();
+        else ASYNC_POOL = new ThreadPerTaskExecutor();
+
         if (!IS_JAVA9_PLUS) MIN_STAGE_CLASS = null;
         else MIN_STAGE_CLASS = CompletableFuture.completedStage(null).getClass();
     }
