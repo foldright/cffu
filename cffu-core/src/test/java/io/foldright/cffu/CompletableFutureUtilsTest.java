@@ -19,6 +19,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static io.foldright.cffu.CffuTestHelper.assertIsCfDefaultExecutor;
 import static io.foldright.cffu.CffuTestHelper.unwrapMadeExecutor;
 import static io.foldright.cffu.CompletableFutureUtils.*;
 import static io.foldright.test_utils.TestUtils.*;
@@ -890,6 +891,67 @@ class CompletableFutureUtilsTest {
         );
     }
 
+    @Test
+    void test_mostSuccessTupleOf() throws Exception {
+        final CompletableFuture<Integer> completed = completedFuture(n);
+        final CompletionStage<String> anotherCompleted = completedStage(s);
+        final CompletableFuture<Integer> failed = failedFuture(rte);
+        final CompletableFuture<Integer> cancelled = cancelledFuture();
+        final CompletableFuture<Integer> incomplete = incompleteCf();
+
+        assertEquals(Tuple2.of(n, s), mostSuccessTupleOf(
+                SHORT_WAIT_MS, MILLISECONDS, completed, anotherCompleted
+        ).get());
+        assertEquals(Tuple2.of(n, null), mostSuccessTupleOf(
+                SHORT_WAIT_MS, MILLISECONDS, completed, failed
+        ).get());
+
+        assertEquals(Tuple3.of(n, s, null), mostSuccessTupleOf(
+                SHORT_WAIT_MS, MILLISECONDS, completed, anotherCompleted, cancelled
+        ).get());
+        assertEquals(Tuple3.of(null, null, s), mostSuccessTupleOf(
+                SHORT_WAIT_MS, MILLISECONDS, incomplete, failed, anotherCompleted
+        ).get());
+
+        assertEquals(Tuple4.of(n, s, null, null), mostSuccessTupleOf(
+                SHORT_WAIT_MS, MILLISECONDS, completed, anotherCompleted, cancelled, incomplete
+        ).get());
+        assertEquals(Tuple4.of(null, null, null, null), mostSuccessTupleOf(
+                SHORT_WAIT_MS, MILLISECONDS, incomplete, failed, cancelled, incomplete
+        ).get());
+
+        assertEquals(Tuple5.of(null, n, s, null, null), mostSuccessTupleOf(
+                SHORT_WAIT_MS, MILLISECONDS, cancelled, completed, anotherCompleted, incomplete, failed
+        ).get());
+
+        // with `executorWhenTimeout`
+
+        assertEquals(Tuple2.of(n, s), mostSuccessTupleOf(
+                testExecutor, SHORT_WAIT_MS, MILLISECONDS, completed, anotherCompleted
+        ).get());
+        assertEquals(Tuple2.of(n, null), mostSuccessTupleOf(
+                testExecutor, SHORT_WAIT_MS, MILLISECONDS, completed, failed
+        ).get());
+
+        assertEquals(Tuple3.of(n, s, null), mostSuccessTupleOf(
+                testExecutor, SHORT_WAIT_MS, MILLISECONDS, completed, anotherCompleted, cancelled
+        ).get());
+        assertEquals(Tuple3.of(null, null, s), mostSuccessTupleOf(
+                testExecutor, SHORT_WAIT_MS, MILLISECONDS, incomplete, failed, anotherCompleted
+        ).get());
+
+        assertEquals(Tuple4.of(n, s, null, null), mostSuccessTupleOf(
+                testExecutor, SHORT_WAIT_MS, MILLISECONDS, completed, anotherCompleted, cancelled, incomplete
+        ).get());
+        assertEquals(Tuple4.of(null, null, null, null), mostSuccessTupleOf(
+                testExecutor, SHORT_WAIT_MS, MILLISECONDS, incomplete, failed, cancelled, incomplete
+        ).get());
+
+        assertEquals(Tuple5.of(null, n, s, null, null), mostSuccessTupleOf(
+                testExecutor, SHORT_WAIT_MS, MILLISECONDS, cancelled, completed, anotherCompleted, incomplete, failed
+        ).get());
+    }
+
     // endregion
     ////////////////////////////////////////////////////////////
     // region## Immediate Value Argument Factory Methods(backport methods)
@@ -980,6 +1042,7 @@ class CompletableFutureUtilsTest {
     @Test
     void test_thenMApply() throws Exception {
         final Function<Integer, Integer> supplier = x -> {
+            assertEquals(n, x);
             snoreZzz();
             return x + n;
         };
@@ -1024,68 +1087,47 @@ class CompletableFutureUtilsTest {
     ////////////////////////////////////////////////////////////
 
     @Test
-    void test_thenTupleMApplyMostSuccessAsync() throws Exception {
+    void test_thenTuple_methods() throws Exception {
         final CompletableFuture<Integer> completed = completedFuture(n);
         final Function<Integer, Integer> function_n = x -> {
             snoreZzz();
-            return n + n;
+            return n + x;
         };
 
         final Function<Integer, String> function_s = x -> {
             snoreZzz();
-            return s + n;
+            return s + x;
         };
 
         final Function<Integer, Double> function_d = x -> {
             snoreZzz();
-            return d + n;
+            return d + x;
         };
         final Function<Integer, Integer> function_an = x -> {
             snoreZzz();
-            return anotherN + n;
+            return anotherN + x;
         };
         final Function<Integer, Integer> function_nn = x -> {
             snoreZzz();
-            return n + n;
-        };
-        assertEquals(Tuple2.of(n + n, s + n), thenTupleMApplyMostSuccessAsync(completed, LONG_WAIT_MS, MILLISECONDS, function_n, function_s).get());
-        assertEquals(Tuple2.of(n + n, s + n), thenTupleMApplyMostSuccessAsync(completed, testExecutor, LONG_WAIT_MS, MILLISECONDS, function_n, function_s).get());
-
-        assertEquals(Tuple3.of(n + n, s + n, d + n), thenTupleMApplyMostSuccessAsync(completed, LONG_WAIT_MS, MILLISECONDS, function_n, function_s, function_d).get());
-        assertEquals(Tuple3.of(n + n, s + n, d + n), thenTupleMApplyMostSuccessAsync(completed, testExecutor, LONG_WAIT_MS, MILLISECONDS, function_n, function_s, function_d).get());
-
-        assertEquals(Tuple4.of(n + n, s + n, d + n, anotherN + n), thenTupleMApplyMostSuccessAsync(completed, LONG_WAIT_MS, MILLISECONDS, function_n, function_s, function_d, function_an).get());
-        assertEquals(Tuple4.of(n + n, s + n, d + n, anotherN + n), thenTupleMApplyMostSuccessAsync(completed, testExecutor, LONG_WAIT_MS, MILLISECONDS, function_n, function_s, function_d, function_an).get());
-
-        assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n), thenTupleMApplyMostSuccessAsync(completed, LONG_WAIT_MS, MILLISECONDS, function_n, function_s, function_d, function_an, function_nn).get());
-        assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n), thenTupleMApplyMostSuccessAsync(completed, testExecutor, LONG_WAIT_MS, MILLISECONDS, function_n, function_s, function_d, function_an, function_nn).get());
-    }
-
-    @Test
-    void test_thenTupleMApplyAllSuccessAsync() throws Exception {
-        final CompletableFuture<Integer> completed = completedFuture(n);
-        final Function<Integer, Integer> function_n = x -> {
-            snoreZzz();
-            return n + n;
+            return n + x;
         };
 
-        final Function<Integer, String> function_s = x -> {
-            snoreZzz();
-            return s + n;
-        };
+        //  thenTupleMApplyFastFailAsync
 
-        final Function<Integer, Double> function_d = x -> {
-            snoreZzz();
-            return d + n;
-        };
-        final Function<Integer, Integer> function_an = x -> {
-            snoreZzz();
-            return anotherN + n;
-        };
-        final Function<Integer, Integer> function_nn = x -> {
-            snoreZzz();
-            return n + n;
-        };
+        assertEquals(Tuple2.of(n + n, s + n), thenTupleMApplyFastFailAsync(completed, function_n, function_s).get());
+        assertEquals(Tuple2.of(n + n, s + n), thenTupleMApplyFastFailAsync(completed, testExecutor, function_n, function_s).get());
+
+        assertEquals(Tuple3.of(n + n, s + n, d + n), thenTupleMApplyFastFailAsync(completed, function_n, function_s, function_d).get());
+        assertEquals(Tuple3.of(n + n, s + n, d + n), thenTupleMApplyFastFailAsync(completed, testExecutor, function_n, function_s, function_d).get());
+
+        assertEquals(Tuple4.of(n + n, s + n, d + n, anotherN + n), thenTupleMApplyFastFailAsync(completed, function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple4.of(n + n, s + n, d + n, anotherN + n), thenTupleMApplyFastFailAsync(completed, testExecutor, function_n, function_s, function_d, function_an).get());
+
+        assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n), thenTupleMApplyFastFailAsync(completed, function_n, function_s, function_d, function_an, function_nn).get());
+        assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n), thenTupleMApplyFastFailAsync(completed, testExecutor, function_n, function_s, function_d, function_an, function_nn).get());
+
+        // thenTupleMApplyAllSuccessAsync
+
         assertEquals(Tuple2.of(n + n, s + n), thenTupleMApplyAllSuccessAsync(completed, function_n, function_s).get());
         assertEquals(Tuple2.of(n + n, s + n), thenTupleMApplyAllSuccessAsync(completed, testExecutor, function_n, function_s).get());
 
@@ -1097,105 +1139,34 @@ class CompletableFutureUtilsTest {
 
         assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n), thenTupleMApplyAllSuccessAsync(completed, function_n, function_s, function_d, function_an, function_nn).get());
         assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n), thenTupleMApplyAllSuccessAsync(completed, testExecutor, function_n, function_s, function_d, function_an, function_nn).get());
-    }
 
-    @Test
-    void test_thenTupleMApplyAsync() throws Exception {
-        final CompletableFuture<Integer> completed = completedFuture(n);
-        final Function<Integer, Integer> function_n = x -> {
-            snoreZzz();
-            return x + n;
-        };
+        // thenTupleMApplyMostSuccessAsync
 
-        final Function<Integer, String> function_s = x -> {
-            snoreZzz();
-            return s + n;
-        };
+        assertEquals(Tuple2.of(n + n, s + n), thenTupleMApplyMostSuccessAsync(completed, LONG_WAIT_MS, MILLISECONDS, function_n, function_s).get());
+        assertEquals(Tuple2.of(n + n, s + n), thenTupleMApplyMostSuccessAsync(completed, testExecutor, LONG_WAIT_MS, MILLISECONDS, function_n, function_s).get());
 
-        final Function<Integer, Double> function_d = x -> {
-            snoreZzz();
-            return d + n;
-        };
-        final Function<Integer, Integer> function_an = x -> {
-            snoreZzz();
-            return anotherN + n;
-        };
-        final Function<Integer, Integer> function_nn = x -> {
-            snoreZzz();
-            return x + n;
-        };
+        assertEquals(Tuple3.of(n + n, s + n, d + n), thenTupleMApplyMostSuccessAsync(completed, LONG_WAIT_MS, MILLISECONDS, function_n, function_s, function_d).get());
+        assertEquals(Tuple3.of(n + n, s + n, d + n), thenTupleMApplyMostSuccessAsync(completed, testExecutor, LONG_WAIT_MS, MILLISECONDS, function_n, function_s, function_d).get());
+
+        assertEquals(Tuple4.of(n + n, s + n, d + n, anotherN + n), thenTupleMApplyMostSuccessAsync(completed, LONG_WAIT_MS, MILLISECONDS, function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple4.of(n + n, s + n, d + n, anotherN + n), thenTupleMApplyMostSuccessAsync(completed, testExecutor, LONG_WAIT_MS, MILLISECONDS, function_n, function_s, function_d, function_an).get());
+
+        assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n), thenTupleMApplyMostSuccessAsync(completed, LONG_WAIT_MS, MILLISECONDS, function_n, function_s, function_d, function_an, function_nn).get());
+        assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n), thenTupleMApplyMostSuccessAsync(completed, testExecutor, LONG_WAIT_MS, MILLISECONDS, function_n, function_s, function_d, function_an, function_nn).get());
+
+        //  thenTupleMApplyAsync
+
         assertEquals(Tuple2.of(n + n, s + n), thenTupleMApplyAsync(completed, function_n, function_s).get());
-        assertEquals(Tuple2.of(n + n, s + n), thenTupleMApplyFastFailAsync(completed, function_n, function_s).get());
+        assertEquals(Tuple2.of(n + n, s + n), thenTupleMApplyAsync(completed, testExecutor, function_n, function_s).get());
 
         assertEquals(Tuple3.of(n + n, s + n, d + n), thenTupleMApplyAsync(completed, function_n, function_s, function_d).get());
-        assertEquals(Tuple3.of(n + n, s + n, d + n), thenTupleMApplyFastFailAsync(completed, function_n, function_s, function_d).get());
+        assertEquals(Tuple3.of(n + n, s + n, d + n), thenTupleMApplyAsync(completed, testExecutor, function_n, function_s, function_d).get());
 
         assertEquals(Tuple4.of(n + n, s + n, d + n, anotherN + n), thenTupleMApplyAsync(completed, function_n, function_s, function_d, function_an).get());
-        assertEquals(Tuple4.of(n + n, s + n, d + n, anotherN + n), thenTupleMApplyFastFailAsync(completed, function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple4.of(n + n, s + n, d + n, anotherN + n), thenTupleMApplyAsync(completed, testExecutor, function_n, function_s, function_d, function_an).get());
 
         assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n), thenTupleMApplyAsync(completed, function_n, function_s, function_d, function_an, function_nn).get());
-        assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n), thenTupleMApplyFastFailAsync(completed, function_n, function_s, function_d, function_an, function_nn).get());
-    }
-
-    @Test
-    void test_mostSuccessTupleOf() throws Exception {
-        final CompletableFuture<Integer> completed = completedFuture(n);
-        final CompletionStage<String> anotherCompleted = completedStage(s);
-        final CompletableFuture<Integer> failed = failedFuture(rte);
-        final CompletableFuture<Integer> cancelled = cancelledFuture();
-        final CompletableFuture<Integer> incomplete = incompleteCf();
-
-        assertEquals(Tuple2.of(n, s), mostSuccessTupleOf(
-                SHORT_WAIT_MS, MILLISECONDS, completed, anotherCompleted
-        ).get());
-        assertEquals(Tuple2.of(n, null), mostSuccessTupleOf(
-                SHORT_WAIT_MS, MILLISECONDS, completed, failed
-        ).get());
-
-        assertEquals(Tuple3.of(n, s, null), mostSuccessTupleOf(
-                SHORT_WAIT_MS, MILLISECONDS, completed, anotherCompleted, cancelled
-        ).get());
-        assertEquals(Tuple3.of(null, null, s), mostSuccessTupleOf(
-                SHORT_WAIT_MS, MILLISECONDS, incomplete, failed, anotherCompleted
-        ).get());
-
-        assertEquals(Tuple4.of(n, s, null, null), mostSuccessTupleOf(
-                SHORT_WAIT_MS, MILLISECONDS, completed, anotherCompleted, cancelled, incomplete
-        ).get());
-        assertEquals(Tuple4.of(null, null, null, null), mostSuccessTupleOf(
-                SHORT_WAIT_MS, MILLISECONDS, incomplete, failed, cancelled, incomplete
-        ).get());
-
-        assertEquals(Tuple5.of(null, n, s, null, null), mostSuccessTupleOf(
-                SHORT_WAIT_MS, MILLISECONDS, cancelled, completed, anotherCompleted, incomplete, failed
-        ).get());
-
-        // with `executorWhenTimeout`
-
-        assertEquals(Tuple2.of(n, s), mostSuccessTupleOf(
-                testExecutor, SHORT_WAIT_MS, MILLISECONDS, completed, anotherCompleted
-        ).get());
-        assertEquals(Tuple2.of(n, null), mostSuccessTupleOf(
-                testExecutor, SHORT_WAIT_MS, MILLISECONDS, completed, failed
-        ).get());
-
-        assertEquals(Tuple3.of(n, s, null), mostSuccessTupleOf(
-                testExecutor, SHORT_WAIT_MS, MILLISECONDS, completed, anotherCompleted, cancelled
-        ).get());
-        assertEquals(Tuple3.of(null, null, s), mostSuccessTupleOf(
-                testExecutor, SHORT_WAIT_MS, MILLISECONDS, incomplete, failed, anotherCompleted
-        ).get());
-
-        assertEquals(Tuple4.of(n, s, null, null), mostSuccessTupleOf(
-                testExecutor, SHORT_WAIT_MS, MILLISECONDS, completed, anotherCompleted, cancelled, incomplete
-        ).get());
-        assertEquals(Tuple4.of(null, null, null, null), mostSuccessTupleOf(
-                testExecutor, SHORT_WAIT_MS, MILLISECONDS, incomplete, failed, cancelled, incomplete
-        ).get());
-
-        assertEquals(Tuple5.of(null, n, s, null, null), mostSuccessTupleOf(
-                testExecutor, SHORT_WAIT_MS, MILLISECONDS, cancelled, completed, anotherCompleted, incomplete, failed
-        ).get());
+        assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n), thenTupleMApplyAsync(completed, testExecutor, function_n, function_s, function_d, function_an, function_nn).get());
     }
 
     // endregion
@@ -1839,25 +1810,11 @@ class CompletableFutureUtilsTest {
         assertSame(rte, unwrapCfException(ce));
 
         CompletionException nakedCe = new CompletionException() {
+            private static final long serialVersionUID = 0;
         };
         assertSame(nakedCe, unwrapCfException(nakedCe));
 
         assertSame(rte, unwrapCfException(rte));
-    }
-
-    // endregion
-    ////////////////////////////////////////////////////////////////////////////////
-    // region# Test helper methods/fields
-    ////////////////////////////////////////////////////////////////////////////////
-
-    private static void assertIsCfDefaultExecutor(Executor executor) {
-        final boolean USE_COMMON_POOL = ForkJoinPool.getCommonPoolParallelism() > 1;
-        if (USE_COMMON_POOL) {
-            assertSame(commonPool(), executor);
-        } else {
-            String executorClassName = executor.getClass().getName();
-            assertTrue(executorClassName.endsWith("$ThreadPerTaskExecutor"));
-        }
     }
 
     // endregion

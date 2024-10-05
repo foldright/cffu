@@ -2,9 +2,14 @@
 
 package io.foldright.cffu.kotlin
 
+import com.google.common.util.concurrent.Futures
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuState
 import io.foldright.cffu.CompletableFutureUtils
+import io.foldright.cffu.tuple.Tuple2
+import io.foldright.cffu.tuple.Tuple3
+import io.foldright.cffu.tuple.Tuple4
+import io.foldright.cffu.tuple.Tuple5
 import java.util.concurrent.*
 import java.util.function.*
 import java.util.function.Function
@@ -19,6 +24,325 @@ import java.util.function.Function
 // region# CF Factory Methods
 ////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////
+// region## Multi-Actions(M*) Methods(create by actions)
+//
+//    - Supplier<T>[] -> CompletableFuture<List<T>>
+//    - Runnable[]    -> CompletableFuture<Void>
+////////////////////////////////////////////////////////////
+
+/**
+ * The default executor of [CompletableFuture], **NOT** including the customized subclasses of `CompletableFuture`.
+ */
+private val ASYNC_POOL: Executor = CompletableFutureUtils.defaultExecutor(CompletableFuture.completedFuture(null))
+
+/**
+ * Returns a new CompletableFuture that is asynchronously completed
+ * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+ * in the **same order** of the given Suppliers arguments.
+ *
+ * @param executor  the executor to use for asynchronous execution
+ * @param <T>       the suppliers' return type
+ * @return the new CompletableFuture
+ * @see allResultsFastFailOfCompletableFuture
+ * @see CompletableFuture.supplyAsync
+ */
+fun <T> Collection<Supplier<out T>>.mSupplyFastFailAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<List<T>> =
+    CompletableFutureUtils.mSupplyFastFailAsync(executor, *toTypedArray())
+
+/**
+ * Returns a new CompletableFuture that is asynchronously completed
+ * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+ * in the **same order** of the given Suppliers arguments.
+ *
+ * @param executor  the executor to use for asynchronous execution
+ * @param <T>       the suppliers' return type
+ * @return the new CompletableFuture
+ * @see allResultsFastFailOfCompletableFuture
+ * @see CompletableFuture.supplyAsync
+ */
+fun <T> Array<out Supplier<out T>>.mSupplyFastFailAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<List<T>> =
+    CompletableFutureUtils.mSupplyFastFailAsync(executor, *this)
+
+/**
+ * Returns a new CompletableFuture that is asynchronously completed
+ * by tasks running in the given Executor with the successfully values obtained by calling the given Suppliers
+ * in the **same order** of the given Suppliers arguments.
+ *
+ * If any of the provided suppliers fails, its corresponding position will contain `valueIfFailed`
+ * (which is indistinguishable from the supplier having a successful value of `valueIfFailed`).
+ *
+ * @param valueIfFailed the value to return if not failed
+ * @param <T>           the suppliers' return type
+ * @return the new CompletableFuture
+ * @see allSuccessResultsOfCompletableFuture
+ * @see CompletableFuture.supplyAsync
+ */
+fun <T> Collection<Supplier<out T>>.mSupplyAllSuccessAsyncCompletableFuture(
+    valueIfFailed: T, executor: Executor = ASYNC_POOL
+): CompletableFuture<List<T>> =
+    CompletableFutureUtils.mSupplyAllSuccessAsync(valueIfFailed, executor, *toTypedArray())
+
+/**
+ * Returns a new CompletableFuture that is asynchronously completed
+ * by tasks running in the given Executor with the successfully values obtained by calling the given Suppliers
+ * in the **same order** of the given Suppliers arguments.
+ *
+ * If any of the provided suppliers fails, its corresponding position will contain `valueIfFailed`
+ * (which is indistinguishable from the supplier having a successful value of `valueIfFailed`).
+ *
+ * @param valueIfFailed the value to return if not failed
+ * @param <T>           the suppliers' return type
+ * @return the new CompletableFuture
+ * @see allSuccessResultsOfCompletableFuture
+ * @see CompletableFuture.supplyAsync
+ */
+fun <T> Array<out Supplier<out T>>.mSupplyAllSuccessAsyncCompletableFuture(
+    valueIfFailed: T, executor: Executor = ASYNC_POOL
+): CompletableFuture<List<T>> =
+    CompletableFutureUtils.mSupplyAllSuccessAsync(valueIfFailed, executor, *this)
+
+/**
+ * Returns a new CompletableFuture that is asynchronously completed
+ * by tasks running in the given Executor with the most values obtained by calling the given Suppliers
+ * in the given time(`timeout`, aka as many results as possible in the given time)
+ * in the **same order** of the given Suppliers arguments.
+ *
+ * If any of the provided suppliers does not success(fails or incomplete) in given time,
+ * its corresponding position will contain `valueIfNotSuccess`
+ * (which is indistinguishable from the supplier having a successful value of `valueIfNotSuccess`).
+ *
+ * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param executor          the executor to use for asynchronous execution
+ * @param timeout           how long to wait in units of `unit`
+ * @param unit              a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param <T>               the suppliers' return type
+ * @return the new CompletableFuture
+ * @see mostSuccessResultsOfCompletableFuture
+ * @see CompletableFuture.supplyAsync
+ */
+fun <T> Collection<Supplier<out T>>.mSupplyMostSuccessAsyncCompletableFuture(
+    valueIfNotSuccess: T, timeout: Long, unit: TimeUnit, executor: Executor = ASYNC_POOL
+): CompletableFuture<List<T>> =
+    CompletableFutureUtils.mSupplyMostSuccessAsync(valueIfNotSuccess, executor, timeout, unit, *toTypedArray())
+
+/**
+ * Returns a new CompletableFuture that is asynchronously completed
+ * by tasks running in the given Executor with the most values obtained by calling the given Suppliers
+ * in the given time(`timeout`, aka as many results as possible in the given time)
+ * in the **same order** of the given Suppliers arguments.
+ *
+ * If any of the provided suppliers does not success(fails or incomplete) in given time,
+ * its corresponding position will contain `valueIfNotSuccess`
+ * (which is indistinguishable from the supplier having a successful value of `valueIfNotSuccess`).
+ *
+ * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param executor          the executor to use for asynchronous execution
+ * @param timeout           how long to wait in units of `unit`
+ * @param unit              a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param <T>               the suppliers' return type
+ * @return the new CompletableFuture
+ * @see mostSuccessResultsOfCompletableFuture
+ * @see CompletableFuture.supplyAsync
+ */
+fun <T> Array<out Supplier<out T>>.mSupplyMostSuccessAsyncCompletableFuture(
+    valueIfNotSuccess: T, timeout: Long, unit: TimeUnit, executor: Executor = ASYNC_POOL
+): CompletableFuture<List<T>> =
+    CompletableFutureUtils.mSupplyMostSuccessAsync(valueIfNotSuccess, executor, timeout, unit, *this)
+
+/**
+ * Returns a new CompletableFuture that is asynchronously completed
+ * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+ * in the **same order** of the given Suppliers arguments.
+ *
+ * @param executor  the executor to use for asynchronous execution
+ * @param <T>       the suppliers' return type
+ * @return the new CompletableFuture
+ * @see allResultsOfCompletableFuture
+ * @see CompletableFuture.supplyAsync
+ */
+fun <T> Collection<Supplier<out T>>.mSupplyAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<List<T>> =
+    CompletableFutureUtils.mSupplyAsync(executor, *toTypedArray())
+
+/**
+ * Returns a new CompletableFuture that is asynchronously completed
+ * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+ * in the **same order** of the given Suppliers arguments.
+ *
+ * @param executor  the executor to use for asynchronous execution
+ * @param <T>       the suppliers' return type
+ * @return the new CompletableFuture
+ * @see allResultsOfCompletableFuture
+ * @see CompletableFuture.supplyAsync
+ */
+fun <T> Array<out Supplier<out T>>.mSupplyAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<List<T>> =
+    CompletableFutureUtils.mSupplyAsync(executor, *this)
+
+/**
+ * Returns a new CompletableFuture that is asynchronously successful
+ * when any of tasks running in the given executor by calling the given Suppliers success, with the same result.
+ * Otherwise, all the given tasks complete exceptionally,
+ * the returned CompletableFuture also does so, with a CompletionException holding
+ * an exception from any of the given stages as its cause.
+ * If no suppliers are provided, returns a new CompletableFuture that is already completed exceptionally
+ * with a CompletionException holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
+ *
+ * @param executor  the executor to use for asynchronous execution
+ * @param <T>       the suppliers' return type
+ * @return the new CompletableFuture
+ * @see anySuccessOfCompletableFuture
+ * @see CompletableFuture.supplyAsync
+ */
+fun <T> Collection<Supplier<out T>>.mSupplyAnySuccessAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<T> =
+    CompletableFutureUtils.mSupplyAnySuccessAsync(executor, *toTypedArray())
+
+/**
+ * Returns a new CompletableFuture that is asynchronously successful
+ * when any of tasks running in the given executor by calling the given Suppliers success, with the same result.
+ * Otherwise, all the given tasks complete exceptionally,
+ * the returned CompletableFuture also does so, with a CompletionException holding
+ * an exception from any of the given stages as its cause.
+ * If no suppliers are provided, returns a new CompletableFuture that is already completed exceptionally
+ * with a CompletionException holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
+ *
+ * @param executor  the executor to use for asynchronous execution
+ * @param <T>       the suppliers' return type
+ * @return the new CompletableFuture
+ * @see anySuccessOfCompletableFuture
+ * @see CompletableFuture.supplyAsync
+ */
+fun <T> Array<out Supplier<out T>>.mSupplyAnySuccessAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<T> =
+    CompletableFutureUtils.mSupplyAnySuccessAsync(executor, *this)
+
+/**
+ * Returns a new CompletableFuture that is completed
+ * when any of tasks running in the given Executor by calling the given Suppliers complete, with the same result.
+ * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so,
+ * with a CompletionException holding this exception as its cause.
+ * If no suppliers are provided, returns an incomplete CompletableFuture.
+ *
+ * @param executor  the executor to use for asynchronous execution
+ * @param <T>       the suppliers' return type
+ * @return the new CompletableFuture
+ * @see anyOfCompletableFuture
+ * @see CompletableFuture.supplyAsync
+ */
+fun <T> Collection<Supplier<out T>>.mSupplyAnyAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<T> =
+    CompletableFutureUtils.mSupplyAnyAsync(executor, *toTypedArray())
+
+/**
+ * Returns a new CompletableFuture that is completed
+ * when any of tasks running in the given Executor by calling the given Suppliers complete, with the same result.
+ * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so,
+ * with a CompletionException holding this exception as its cause.
+ * If no suppliers are provided, returns an incomplete CompletableFuture.
+ *
+ * @param executor  the executor to use for asynchronous execution
+ * @param <T>       the suppliers' return type
+ * @return the new CompletableFuture
+ * @see anyOfCompletableFuture
+ * @see CompletableFuture.supplyAsync
+ */
+fun <T> Array<out Supplier<out T>>.mSupplyAnyAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<T> =
+    CompletableFutureUtils.mSupplyAnyAsync(executor, *this)
+
+/**
+ * Returns a new CompletableFuture that is asynchronously completed
+ * by tasks running in the given Executor after runs the given actions.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @return the new CompletableFuture
+ * @see allFastFailOfCompletableFuture
+ * @see CompletableFuture.runAsync
+ */
+fun Collection<Runnable>.mRunFastFailAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<Void> =
+    CompletableFutureUtils.mRunFastFailAsync(executor, *toTypedArray())
+
+/**
+ * Returns a new CompletableFuture that is asynchronously completed
+ * by tasks running in the given Executor after runs the given actions.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @return the new CompletableFuture
+ * @see allFastFailOfCompletableFuture
+ * @see CompletableFuture.runAsync
+ */
+fun Array<out Runnable>.mRunFastFailAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<Void> =
+    CompletableFutureUtils.mRunFastFailAsync(executor, *this)
+
+/**
+ * Returns a new CompletableFuture that is asynchronously completed
+ * by tasks running in the given Executor after runs the given actions.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @return the new CompletableFuture
+ * @see allOfCompletableFuture
+ * @see CompletableFuture.runAsync
+ */
+fun Collection<Runnable>.mRunAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<Void> =
+    CompletableFutureUtils.mRunAsync(executor, *toTypedArray())
+
+/**
+ * Returns a new CompletableFuture that is asynchronously completed
+ * by tasks running in the given Executor after runs the given actions.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @return the new CompletableFuture
+ * @see allOfCompletableFuture
+ * @see CompletableFuture.runAsync
+ */
+fun Array<out Runnable>.mRunAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<Void> =
+    CompletableFutureUtils.mRunAsync(executor, *this)
+
+/**
+ * Returns a new CompletableFuture that is asynchronously successful
+ * when any tasks running in the given executor success.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @return the new CompletableFuture
+ * @see anySuccessOfCompletableFuture
+ * @see CompletableFuture.runAsync
+ */
+fun Collection<Runnable>.mRunAnySuccessAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<Void> =
+    CompletableFutureUtils.mRunAnySuccessAsync(executor, *toTypedArray())
+
+/**
+ * Returns a new CompletableFuture that is asynchronously successful
+ * when any tasks running in the given executor success.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @return the new CompletableFuture
+ * @see anySuccessOfCompletableFuture
+ * @see CompletableFuture.runAsync
+ */
+fun Array<out Runnable>.mRunAnySuccessAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<Void> =
+    CompletableFutureUtils.mRunAnySuccessAsync(executor, *this)
+
+/**
+ * Returns a new CompletableFuture that is asynchronously completed
+ * when any tasks running in the given executor complete.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @return the new CompletableFuture
+ * @see anyOfCompletableFuture
+ * @see CompletableFuture.runAsync
+ */
+fun Collection<Runnable>.mRunAnyAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<Void> =
+    CompletableFutureUtils.mRunAnyAsync(executor, *toTypedArray())
+
+/**
+ * Returns a new CompletableFuture that is asynchronously completed
+ * when any tasks running in the given executor complete.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @return the new CompletableFuture
+ * @see anyOfCompletableFuture
+ * @see CompletableFuture.runAsync
+ */
+fun Array<out Runnable>.mRunAnyAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<Void> =
+    CompletableFutureUtils.mRunAnyAsync(executor, *this)
+
+// endregion
 ////////////////////////////////////////////////////////////
 // region## allOf* Methods for Collection/Array(including mostSuccessResultsOf)
 ////////////////////////////////////////////////////////////
@@ -60,8 +384,40 @@ fun <T> Array<out CompletionStage<out T>>.allResultsFastFailOfCompletableFuture(
     CompletableFutureUtils.allResultsFastFailOf(*this)
 
 /**
- * Returns a new CompletableFuture with the most results in the **same order** of
- * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
+ * Returns a new CompletableFuture that is successful with the results in the **same order**
+ * of the given stages arguments when all the given stages completed;
+ * If no stages are provided, returns a CompletableFuture completed with the value empty list.
+ *
+ * If any of the provided stages fails, its corresponding position will contain `valueIfFailed`
+ * (which is indistinguishable from the stage having a successful value of `valueIfFailed`).
+ *
+ * @param valueIfFailed the value to return if not completed successfully
+ * @throws NullPointerException if the cfs param or any of its elements are `null`
+ * @see getSuccessNow
+ * @see Futures.successfulAsList
+ */
+fun <T> Collection<CompletionStage<out T>>.allSuccessResultsOfCompletableFuture(valueIfFailed: T): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allSuccessResultsOf(valueIfFailed, *toTypedArray())
+
+/**
+ * Returns a new CompletableFuture that is successful with the results in the **same order**
+ * of the given stages arguments when all the given stages completed;
+ * If no stages are provided, returns a CompletableFuture completed with the value empty list.
+ *
+ * If any of the provided stages fails, its corresponding position will contain `valueIfFailed`
+ * (which is indistinguishable from the stage having a successful value of `valueIfFailed`).
+ *
+ * @param valueIfFailed the value to return if not completed successfully
+ * @throws NullPointerException if the cfs param or any of its elements are `null`
+ * @see getSuccessNow
+ * @see Futures.successfulAsList
+ */
+fun <T> Array<out CompletionStage<out T>>.allSuccessResultsOfCompletableFuture(valueIfFailed: T): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allSuccessResultsOf(valueIfFailed, *this)
+
+/**
+ * Returns a new CompletableFuture with the most results in the **same order** of the given stages arguments
+ * in the given time(`timeout`, aka as many results as possible in the given time).
  *
  * If any of the provided stages does not success(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
@@ -303,10 +659,723 @@ fun <T> Array<out CompletionStage<out T>>.anyOfCompletableFuture(): CompletableF
 // endregion
 ////////////////////////////////////////////////////////////////////////////////
 // region# CF Instance Methods(including new enhanced + backport methods)
-//
-// backport CF instance methods compatibility for low Java version
 ////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////
+// region## Then-Multi-Actions(thenM*) Methods
+//
+//    - thenMApply* (Function[]: T -> U)       -> CompletableFuture<List<U>>
+//    - thenMAccept*(Consumer[]: T -> Void)    -> CompletableFuture<Void>
+//    - thenMRun*   (Runnable[]: Void -> Void) -> CompletableFuture<Void>
+////////////////////////////////////////////////////////////
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the default executor of parameter this,
+ * with the values obtained by calling the given Functions
+ * (with the given stage's result as the argument to the given functions)
+ * in the **same order** of the given Functions arguments.
+ *
+ * @param fns the functions to use to compute the values of the returned CompletableFuture
+ * @param <U> the functions' return type
+ * @return the new CompletableFuture
+ */
+fun <T, U> CompletableFuture<out T>.thenMApplyFastFailAsync(vararg fns: Function<in T, out U>): CompletableFuture<List<U>> =
+    CompletableFutureUtils.thenMApplyFastFailAsync(this, *fns)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the given Executor, with the values obtained by calling the given Functions
+ * (with the given stage's result as the argument to the given functions)
+ * in the **same order** of the given Functions arguments.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @param fns      the functions to use to compute the values of the returned CompletableFuture
+ * @param <U>      the functions' return type
+ * @return the new CompletableFuture
+ */
+fun <T, U> CompletableFuture<out T>.thenMApplyFastFailAsync(
+    executor: Executor, vararg fns: Function<in T, out U>
+): CompletableFuture<List<U>> = CompletableFutureUtils.thenMApplyFastFailAsync(this, executor, *fns)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed in the default executor of parameter this
+ * with the successful values obtained by calling the given Functions
+ * (with the given stage's result as the argument to the given functions)
+ * in the **same order** of the given Functions arguments.
+ *
+ * If any of the provided functions fails, its corresponding position will contain `valueIfFailed`
+ * (which is indistinguishable from the function having a successful value of `valueIfFailed`).
+ *
+ * @param valueIfFailed the value to return if not completed successfully
+ * @param fns           the functions to use to compute the values of the returned CompletableFuture
+ * @param <U>           the functions' return type
+ * @return the new CompletableFuture
+ */
+fun <T, U> CompletableFuture<out T>.thenMApplyAllSuccessAsync(
+    valueIfFailed: U, vararg fns: Function<in T, out U>
+): CompletableFuture<List<U>> = CompletableFutureUtils.thenMApplyAllSuccessAsync(this, valueIfFailed, *fns)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed in the given Executor with the successful values obtained by calling the given Functions
+ * (with the given stage's result as the argument to the given functions)
+ * in the **same order** of the given Functions arguments.
+ *
+ * If any of the provided functions fails, its corresponding position will contain `valueIfFailed`
+ * (which is indistinguishable from the function having a successful value of `valueIfFailed`).
+ *
+ * @param valueIfFailed the value to return if not completed successfully
+ * @param fns           the functions to use to compute the values of the returned CompletableFuture
+ * @param <U>           the functions' return type
+ * @return the new CompletableFuture
+ */
+fun <T, U> CompletableFuture<out T>.thenMApplyAllSuccessAsync(
+    valueIfFailed: U, executor: Executor, vararg fns: Function<in T, out U>
+): CompletableFuture<List<U>> = CompletableFutureUtils.thenMApplyAllSuccessAsync(this, valueIfFailed, executor, *fns)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the default executor of parameter this,
+ * with the most values obtained by calling the given Functions
+ * (with the given stage's result as the argument to the given functions)
+ * in the given time(`timeout`, aka as many results as possible in the given time)
+ * in the **same order** of the given Functions arguments.
+ *
+ * If any of the provided functions does not success(fails or incomplete) in given time,
+ * its corresponding position will contain `valueIfNotSuccess`
+ * (which is indistinguishable from the function having a successful value of `valueIfNotSuccess`).
+ *
+ * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param timeout           how long to wait in units of `unit`
+ * @param unit              a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param fns               the functions to use to compute the values of the returned CompletableFuture
+ * @param <U>               the functions' return type
+ * @return the new CompletableFuture
+ */
+fun <T, U> CompletableFuture<out T>.thenMApplyMostSuccessAsync(
+    valueIfNotSuccess: U, timeout: Long, unit: TimeUnit, vararg fns: Function<in T, out U>
+): CompletableFuture<List<U>> =
+    CompletableFutureUtils.thenMApplyMostSuccessAsync(this, valueIfNotSuccess, timeout, unit, *fns)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the given Executor, with the most values obtained by calling the given Functions
+ * (with the given stage's result as the argument to the given functions)
+ * in the given time(`timeout`, aka as many results as possible in the given time)
+ * in the **same order** of the given Functions arguments.
+ *
+ * If any of the provided functions does not success(fails or incomplete) in given time,
+ * its corresponding position will contain `valueIfNotSuccess`
+ * (which is indistinguishable from the function having a successful value of `valueIfNotSuccess`).
+ *
+ * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param executor          the executor to use for asynchronous execution
+ * @param timeout           how long to wait in units of `unit`
+ * @param unit              a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param fns               the functions to use to compute the values of the returned CompletableFuture
+ * @param <U>               the functions' return type
+ * @return the new CompletableFuture
+ */
+fun <T, U> CompletableFuture<out T>.thenMApplyMostSuccessAsync(
+    valueIfNotSuccess: U, executor: Executor, timeout: Long, unit: TimeUnit, vararg fns: Function<in T, out U>
+): CompletableFuture<List<U>> =
+    CompletableFutureUtils.thenMApplyMostSuccessAsync(this, valueIfNotSuccess, executor, timeout, unit, *fns)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the default executor of parameter this,
+ * with the values obtained by calling the given Functions
+ * (with the given stage's result as the argument to the given functions)
+ * in the **same order** of the given Functions arguments.
+ *
+ * @param fns the functions to use to compute the values of the returned CompletableFuture
+ * @param <U> the functions' return type
+ * @return the new CompletableFuture
+ */
+fun <T, U> CompletableFuture<out T>.thenMApplyAsync(
+    vararg fns: Function<in T, out U>
+): CompletableFuture<List<U>> = CompletableFutureUtils.thenMApplyAsync(this, *fns)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the given Executor, with the values obtained by calling the given Functions
+ * (with the given stage's result as the argument to the given functions)
+ * in the **same order** of the given Functions arguments.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @param fns      the functions to use to compute the values of the returned CompletableFuture
+ * @param <U>      the functions' return type
+ * @return the new CompletableFuture
+ */
+fun <T, U> CompletableFuture<out T>.thenMApplyAsync(
+    executor: Executor, vararg fns: Function<in T, out U>
+): CompletableFuture<List<U>> = CompletableFutureUtils.thenMApplyAsync(this, executor, *fns)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the default executor of parameter this,
+ * with any successful value obtained by calling the given Functions
+ * (with the given stage's result as the argument to the given functions).
+ *
+ * @param fns the functions to use to compute the values of the returned CompletableFuture
+ * @param <U> the functions' return type
+ * @return the new CompletableFuture
+ */
+fun <T, U> CompletableFuture<out T>.thenMApplyAnySuccessAsync(vararg fns: Function<in T, out U>): CompletableFuture<U> =
+    CompletableFutureUtils.thenMApplyAnySuccessAsync(this, *fns)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the given Executor, with any successful value obtained by calling the given Functions
+ * (with the given stage's result as the argument to the given functions).
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @param fns      the functions to use to compute the values of the returned CompletableFuture
+ * @param <U>      the functions' return type
+ * @return the new CompletableFuture
+ */
+fun <T, U> CompletableFuture<out T>.thenMApplyAnySuccessAsync(
+    executor: Executor, vararg fns: Function<in T, out U>
+): CompletableFuture<U> = CompletableFutureUtils.thenMApplyAnySuccessAsync(this, executor, *fns)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the default executor of parameter this,
+ * with any completed result obtained by calling the given Functions
+ * (with the given stage's result as the argument to the given functions).
+ *
+ * @param fns the functions to use to compute the values of the returned CompletableFuture
+ * @param <U> the functions' return type
+ * @return the new CompletableFuture
+ */
+fun <T, U> CompletableFuture<out T>.thenMApplyAnyAsync(vararg fns: Function<in T, out U>): CompletableFuture<U> =
+    CompletableFutureUtils.thenMApplyAnyAsync(this, *fns)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the given Executor, with any completed result obtained by calling the given Functions
+ * (with the given stage's result as the argument to the given functions).
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @param fns      the functions to use to compute the values of the returned CompletableFuture
+ * @param <U>      the functions' return type
+ * @return the new CompletableFuture
+ */
+fun <T, U> CompletableFuture<out T>.thenMApplyAnyAsync(
+    executor: Executor, vararg fns: Function<in T, out U>
+): CompletableFuture<U> = CompletableFutureUtils.thenMApplyAnyAsync(this, executor, *fns)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the default executor of parameter this,
+ * with the given stage's result as the argument to the given actions.
+ *
+ * @param actions the actions to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ */
+fun <T> CompletableFuture<out T>.thenMAcceptFastFailAsync(vararg actions: Consumer<in T>): CompletableFuture<Void> =
+    CompletableFutureUtils.thenMAcceptFastFailAsync(this, *actions)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the given Executor, with the given stage's result as the argument to the given actions.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @param actions  the actions to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ */
+fun <T> CompletableFuture<out T>.thenMAcceptFastFailAsync(
+    executor: Executor, vararg actions: Consumer<in T>
+): CompletableFuture<Void> = CompletableFutureUtils.thenMAcceptFastFailAsync(this, executor, *actions)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the default executor of parameter this,
+ * with the given stage's result as the argument to the given actions.
+ *
+ * @param actions the actions to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ */
+fun <T> CompletableFuture<out T>.thenMAcceptAsync(vararg actions: Consumer<in T>): CompletableFuture<Void> =
+    CompletableFutureUtils.thenMAcceptAsync(this, *actions)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the given Executor, with the given stage's result as the argument to the given actions.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @param actions  the actions to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ */
+fun <T> CompletableFuture<out T>.thenMAcceptAsync(
+    executor: Executor, vararg actions: Consumer<in T>
+): CompletableFuture<Void> = CompletableFutureUtils.thenMAcceptAsync(this, executor, *actions)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the default executor of parameter this,
+ * with the given stage's result as the argument to the given actions.
+ *
+ * @param actions the actions to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ */
+fun <T> CompletableFuture<out T>.thenMAcceptAnySuccessAsync(vararg actions: Consumer<in T>): CompletableFuture<Void> =
+    CompletableFutureUtils.thenMAcceptAnySuccessAsync(this, *actions)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the given Executor, with the given stage's result as the argument to the given actions.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @param actions  the actions to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ */
+fun <T> CompletableFuture<out T>.thenMAcceptAnySuccessAsync(
+    executor: Executor, vararg actions: Consumer<in T>
+): CompletableFuture<Void> = CompletableFutureUtils.thenMAcceptAnySuccessAsync(this, executor, *actions)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the default executor of parameter this,
+ * with the given stage's result as the argument to the given actions.
+ *
+ * @param actions the actions to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ */
+fun <T> CompletableFuture<out T>.thenMAcceptAnyAsync(vararg actions: Consumer<in T>): CompletableFuture<Void> =
+    CompletableFutureUtils.thenMAcceptAnyAsync(this, *actions)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * is executed using the given Executor, with the given stage's result as the argument to the given actions.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @param actions  the actions to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ */
+fun <T> CompletableFuture<out T>.thenMAcceptAnyAsync(
+    executor: Executor, vararg actions: Consumer<in T>
+): CompletableFuture<Void> = CompletableFutureUtils.thenMAcceptAnyAsync(this, executor, *actions)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * executes the given actions using the default executor of parameter this.
+ *
+ * @param actions the actions to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.thenRunAsync
+ * @see allFastFailOfCompletableFuture
+ */
+fun CompletableFuture<*>.thenMRunFastFailAsync(vararg actions: Runnable): CompletableFuture<Void> =
+    CompletableFutureUtils.thenMRunFastFailAsync(this, *actions)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * executes the given actions using the given Executor.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @param actions  the actions to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.thenRunAsync
+ * @see allFastFailOfCompletableFuture
+ */
+fun CompletableFuture<*>.thenMRunFastFailAsync(executor: Executor, vararg actions: Runnable): CompletableFuture<Void> =
+    CompletableFutureUtils.thenMRunFastFailAsync(this, executor, *actions)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * executes the given actions using the default executor of parameter this.
+ *
+ * @param actions the actions to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.thenRunAsync
+ * @see allOfCompletableFuture
+ */
+fun CompletableFuture<*>.thenMRunAsync(vararg actions: Runnable): CompletableFuture<Void> =
+    CompletableFutureUtils.thenMRunAsync(this, *actions)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * executes the given actions using the given Executor.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @param actions  the actions to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.thenRunAsync
+ * @see allOfCompletableFuture
+ */
+fun CompletableFuture<*>.thenMRunAsync(executor: Executor, vararg actions: Runnable): CompletableFuture<Void> =
+    CompletableFutureUtils.thenMRunAsync(this, executor, *actions)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * executes the given actions using the default executor of parameter this.
+ *
+ * @param actions the actions to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.thenRunAsync
+ * @see anySuccessOfCompletableFuture
+ */
+fun CompletableFuture<*>.thenMRunAnySuccessAsync(vararg actions: Runnable): CompletableFuture<Void> =
+    CompletableFutureUtils.thenMRunAnySuccessAsync(this, *actions)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * executes the given actions using the given Executor.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @param actions  the actions to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.thenRunAsync
+ * @see anySuccessOfCompletableFuture
+ */
+fun CompletableFuture<*>.thenMRunAnySuccessAsync(
+    executor: Executor, vararg actions: Runnable
+): CompletableFuture<Void> = CompletableFutureUtils.thenMRunAnySuccessAsync(this, executor, *actions)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * executes the given actions using the default executor of parameter this.
+ *
+ * @param actions the actions to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.thenRunAsync
+ * @see anyOfCompletableFuture
+ */
+fun CompletableFuture<*>.thenMRunAnyAsync(vararg actions: Runnable): CompletableFuture<Void> =
+    CompletableFutureUtils.thenMRunAnyAsync(this, *actions)
+
+/**
+ * Returns a new CompletableFuture that, when the given stage completes normally,
+ * executes the given actions using the given Executor.
+ *
+ * @param executor the executor to use for asynchronous execution
+ * @param actions  the actions to perform before completing the returned CompletableFuture
+ * @return the new CompletableFuture
+ * @see CompletableFuture.thenRunAsync
+ * @see anyOfCompletableFuture
+ */
+fun CompletableFuture<*>.thenMRunAnyAsync(executor: Executor, vararg actions: Runnable): CompletableFuture<Void> =
+    CompletableFutureUtils.thenMRunAnyAsync(this, executor, *actions)
+
+// endregion
+////////////////////////////////////////////////////////////
+// region## Then-Tuple-Multi-Actions(thenTupleM*) Methods
+////////////////////////////////////////////////////////////
+
+/**
+ * Tuple variance of [thenMApplyFastFailAsync].
+ */
+fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyFastFailAsync(
+    fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
+): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenTupleMApplyFastFailAsync(this, fn1, fn2)
+
+/**
+ * Tuple variance of [thenMApplyFastFailAsync].
+ */
+fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyFastFailAsync(
+    executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
+): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenTupleMApplyFastFailAsync(this, executor, fn1, fn2)
+
+/**
+ * Tuple variance of [thenMApplyFastFailAsync].
+ */
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyFastFailAsync(
+    fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
+): CompletableFuture<Tuple3<U1, U2, U3>> = CompletableFutureUtils.thenTupleMApplyFastFailAsync(this, fn1, fn2, fn3)
+
+/**
+ * Tuple variance of [thenMApplyFastFailAsync].
+ */
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyFastFailAsync(
+    executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
+): CompletableFuture<Tuple3<U1, U2, U3>> =
+    CompletableFutureUtils.thenTupleMApplyFastFailAsync(this, executor, fn1, fn2, fn3)
+
+/**
+ * Tuple variance of [thenMApplyFastFailAsync].
+ */
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyFastFailAsync(
+    fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
+): CompletableFuture<Tuple4<U1, U2, U3, U4>> =
+    CompletableFutureUtils.thenTupleMApplyFastFailAsync(this, fn1, fn2, fn3, fn4)
+
+/**
+ * Tuple variance of [thenMApplyFastFailAsync].
+ */
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyFastFailAsync(
+    executor: Executor, fn1: Function<in T, out U1>,
+    fn2: Function<in T, out U2>, fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
+): CompletableFuture<Tuple4<U1, U2, U3, U4>> =
+    CompletableFutureUtils.thenTupleMApplyFastFailAsync(this, executor, fn1, fn2, fn3, fn4)
+
+/**
+ * Tuple variance of [thenMApplyFastFailAsync].
+ */
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyFastFailAsync(
+    fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
+    fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
+): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
+    CompletableFutureUtils.thenTupleMApplyFastFailAsync(this, fn1, fn2, fn3, fn4, fn5)
+
+/**
+ * Tuple variance of [thenMApplyFastFailAsync].
+ */
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyFastFailAsync(
+    executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
+    fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
+): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
+    CompletableFutureUtils.thenTupleMApplyFastFailAsync(this, executor, fn1, fn2, fn3, fn4, fn5)
+
+
+/**
+ * Tuple variance of [thenMApplyAllSuccessAsync] with `null` valueIfFailed.
+ *
+ * If any of the provided functions fails, its corresponding position will contain `null`
+ * (which is indistinguishable from the function having a successful value of `null`).
+ */
+fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
+    fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
+): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(this, fn1, fn2)
+
+/**
+ * Tuple variance of [thenMApplyAllSuccessAsync] with `null` valueIfFailed.
+ *
+ * If any of the provided functions fails, its corresponding position will contain `null`
+ * (which is indistinguishable from the function having a successful value of `null`).
+ */
+fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
+    executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
+): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(this, executor, fn1, fn2)
+
+/**
+ * Tuple variance of [thenMApplyAllSuccessAsync] with `null` valueIfFailed.
+ *
+ * If any of the provided functions fails, its corresponding position will contain `null`
+ * (which is indistinguishable from the function having a successful value of `null`).
+ */
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
+    fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
+): CompletableFuture<Tuple3<U1, U2, U3>> = CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(this, fn1, fn2, fn3)
+
+/**
+ * Tuple variance of [thenMApplyAllSuccessAsync] with `null` valueIfFailed.
+ *
+ * If any of the provided functions fails, its corresponding position will contain `null`
+ * (which is indistinguishable from the function having a successful value of `null`).
+ */
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
+    executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
+): CompletableFuture<Tuple3<U1, U2, U3>> =
+    CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(this, executor, fn1, fn2, fn3)
+
+/**
+ * Tuple variance of [thenMApplyAllSuccessAsync] with `null` valueIfFailed.
+ *
+ * If any of the provided functions fails, its corresponding position will contain `null`
+ * (which is indistinguishable from the function having a successful value of `null`).
+ */
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
+    fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
+): CompletableFuture<Tuple4<U1, U2, U3, U4>> =
+    CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(this, fn1, fn2, fn3, fn4)
+
+/**
+ * Tuple variance of [thenMApplyAllSuccessAsync] with `null` valueIfFailed.
+ *
+ * If any of the provided functions fails, its corresponding position will contain `null`
+ * (which is indistinguishable from the function having a successful value of `null`).
+ */
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
+    executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
+    fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
+): CompletableFuture<Tuple4<U1, U2, U3, U4>> =
+    CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(this, executor, fn1, fn2, fn3, fn4)
+
+/**
+ * Tuple variance of [thenMApplyAllSuccessAsync] with `null` valueIfFailed.
+ *
+ * If any of the provided functions fails, its corresponding position will contain `null`
+ * (which is indistinguishable from the function having a successful value of `null`).
+ */
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
+    fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
+    fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
+): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
+    CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(this, fn1, fn2, fn3, fn4, fn5)
+
+/**
+ * Tuple variance of [thenMApplyAllSuccessAsync] with `null` valueIfFailed.
+ *
+ * If any of the provided functions fails, its corresponding position will contain `null`
+ * (which is indistinguishable from the function having a successful value of `null`).
+ */
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
+    executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
+    fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
+): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
+    CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(this, executor, fn1, fn2, fn3, fn4, fn5)
+
+/**
+ * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
+ *
+ * If any of the provided suppliers does not success, its corresponding position will contain `null`
+ * (which is indistinguishable from the supplier having a successful value of `null`).
+ */
+fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
+    timeout: Long, unit: TimeUnit, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
+): CompletableFuture<Tuple2<U1, U2>> =
+    CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(this, timeout, unit, fn1, fn2)
+
+/**
+ * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
+ *
+ * If any of the provided suppliers does not success, its corresponding position will contain `null`
+ * (which is indistinguishable from the supplier having a successful value of `null`).
+ */
+fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
+    executor: Executor, timeout: Long, unit: TimeUnit, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
+): CompletableFuture<Tuple2<U1, U2>> =
+    CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(this, executor, timeout, unit, fn1, fn2)
+
+/**
+ * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
+ *
+ * If any of the provided suppliers does not success, its corresponding position will contain `null`
+ * (which is indistinguishable from the supplier having a successful value of `null`).
+ */
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
+    timeout: Long, unit: TimeUnit, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
+): CompletableFuture<Tuple3<U1, U2, U3>> =
+    CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(this, timeout, unit, fn1, fn2, fn3)
+
+/**
+ * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
+ *
+ * If any of the provided suppliers does not success, its corresponding position will contain `null`
+ * (which is indistinguishable from the supplier having a successful value of `null`).
+ */
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
+    executor: Executor, timeout: Long, unit: TimeUnit,
+    fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
+): CompletableFuture<Tuple3<U1, U2, U3>> =
+    CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(this, executor, timeout, unit, fn1, fn2, fn3)
+
+/**
+ * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
+ *
+ * If any of the provided suppliers does not success, its corresponding position will contain `null`
+ * (which is indistinguishable from the supplier having a successful value of `null`).
+ */
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
+    timeout: Long, unit: TimeUnit, fn1: Function<in T, out U1>,
+    fn2: Function<in T, out U2>, fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
+): CompletableFuture<Tuple4<U1, U2, U3, U4>> =
+    CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(this, timeout, unit, fn1, fn2, fn3, fn4)
+
+/**
+ * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
+ *
+ * If any of the provided suppliers does not success, its corresponding position will contain `null`
+ * (which is indistinguishable from the supplier having a successful value of `null`).
+ */
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
+    executor: Executor, timeout: Long, unit: TimeUnit, fn1: Function<in T, out U1>,
+    fn2: Function<in T, out U2>, fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
+): CompletableFuture<Tuple4<U1, U2, U3, U4>> =
+    CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(this, executor, timeout, unit, fn1, fn2, fn3, fn4)
+
+/**
+ * Tuple variance of [thenMApplyMostSuccessAsync]
+ * with `null` valueIfNotSuccess.
+ *
+ *
+ * If any of the provided suppliers does not success, its corresponding position will contain `null`
+ * (which is indistinguishable from the supplier having a successful value of `null`).
+ */
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
+    timeout: Long, unit: TimeUnit, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
+    fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
+): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
+    CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(this, timeout, unit, fn1, fn2, fn3, fn4, fn5)
+
+/**
+ * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
+ *
+ * If any of the provided suppliers does not success, its corresponding position will contain `null`
+ * (which is indistinguishable from the supplier having a successful value of `null`).
+ */
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
+    executor: Executor, timeout: Long, unit: TimeUnit, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
+    fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
+): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
+    CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(this, executor, timeout, unit, fn1, fn2, fn3, fn4, fn5)
+
+/**
+ * Tuple variance of [thenMApplyAsync].
+ */
+fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyAsync(
+    fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
+): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenTupleMApplyAsync(this, fn1, fn2)
+
+/**
+ * Tuple variance of [thenMApplyAsync].
+ */
+fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyAsync(
+    executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
+): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenTupleMApplyAsync(this, executor, fn1, fn2)
+
+/**
+ * Tuple variance of [thenMApplyAsync].
+ */
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyAsync(
+    fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
+): CompletableFuture<Tuple3<U1, U2, U3>> = CompletableFutureUtils.thenTupleMApplyAsync(this, fn1, fn2, fn3)
+
+/**
+ * Tuple variance of [thenMApplyAsync].
+ */
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyAsync(
+    executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
+): CompletableFuture<Tuple3<U1, U2, U3>> = CompletableFutureUtils.thenTupleMApplyAsync(this, executor, fn1, fn2, fn3)
+
+/**
+ * Tuple variance of [thenMApplyAsync].
+ */
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyAsync(
+    fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
+): CompletableFuture<Tuple4<U1, U2, U3, U4>> = CompletableFutureUtils.thenTupleMApplyAsync(this, fn1, fn2, fn3, fn4)
+
+/**
+ * Tuple variance of [thenMApplyAsync].
+ */
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyAsync(
+    executor: Executor,
+    fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
+): CompletableFuture<Tuple4<U1, U2, U3, U4>> =
+    CompletableFutureUtils.thenTupleMApplyAsync(this, executor, fn1, fn2, fn3, fn4)
+
+/**
+ * Tuple variance of [thenMApplyAsync].
+ */
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyAsync(
+    fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
+    fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
+): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
+    CompletableFutureUtils.thenTupleMApplyAsync(this, fn1, fn2, fn3, fn4, fn5)
+
+/**
+ * Tuple variance of [thenMApplyAsync].
+ */
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyAsync(
+    executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
+    fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
+): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
+    CompletableFutureUtils.thenTupleMApplyAsync(this, executor, fn1, fn2, fn3, fn4, fn5)
+
+// endregion
 ////////////////////////////////////////////////////////////
 // region## thenBoth* Methods(binary input) with fast-fail support
 //
@@ -1158,6 +2227,17 @@ fun <T> CompletableFuture<T>.copy(): CompletableFuture<T> =
     CompletableFutureUtils.copy(this)
 
 /**
+ * Returns the default Executor of parameter cfThis used for async methods that do not specify an Executor.
+ *
+ * The default executor of CompletableFuture(**NOT** including the customized subclasses of CompletableFuture)
+ * uses the [ForkJoinPool.commonPool] if it supports more than one parallel thread, or else an Executor using
+ * one thread per async task. **CAUTION:** This executor may be not suitable for common biz use(io intensive).
+ *
+ * @see CompletableFuture.defaultExecutor
+ */
+fun CompletionStage<*>.defaultExecutor(): Executor = CompletableFutureUtils.defaultExecutor(this)
+
+/**
  * Returns a new incomplete CompletableFuture of the type to be returned by a CompletionStage method.
  *
  * @param <T> the type of the value
@@ -1189,4 +2269,3 @@ fun <T> Collection<CompletionStage<T>>.toCompletableFuture(): List<CompletableFu
  */
 fun <T> Array<out CompletionStage<T>>.toCompletableFuture(): Array<CompletableFuture<T>> =
     CompletableFutureUtils.toCompletableFutureArray(*this)
-
