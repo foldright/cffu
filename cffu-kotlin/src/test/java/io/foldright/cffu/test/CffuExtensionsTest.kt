@@ -7,6 +7,7 @@ import io.foldright.cffu.kotlin.*
 import io.foldright.cffu.unwrapMadeExecutor
 import io.foldright.test_utils.*
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.inspectors.shouldForAll
 import io.kotest.matchers.collections.shouldContainExactly
@@ -168,6 +169,8 @@ class CffuExtensionsTest : FunSpec({
             testCffuFac.completedFuture(n + 1),
             testCffuFac.completedFuture(n + 2),
         ).allResultsOfCffu().await() shouldBe listOf(n, n + 1, n + 2)
+        shouldThrowExactly<IllegalArgumentException> { listOf<Cffu<Int>>().allResultsOfCffu() }
+            .message shouldBe "no cffuFactory argument provided when this collection is empty"
 
         setOf(
             testCffuFac.completedFuture(n),
@@ -200,6 +203,8 @@ class CffuExtensionsTest : FunSpec({
             testCffuFac.completedFuture(n + 1),
             testCffuFac.completedFuture(n + 2),
         ).allResultsOfCffu().await() shouldBe listOf(n, n + 1, n + 2)
+        shouldThrowExactly<IllegalArgumentException> { arrayOf<Cffu<Int>>().allResultsOfCffu() }
+            .message shouldBe "no cffuFactory argument provided when this array is empty"
 
         arrayOf(
             CompletableFuture.completedFuture(n),

@@ -65,7 +65,7 @@ fun <T> Array<out CompletionStage<T>>.toCffu(cffuFactory: CffuFactory): Array<Cf
  * by tasks running in the Cffu's default asynchronous execution facility
  * with the values obtained by calling the given Suppliers in the **same order** of the given Suppliers arguments.
  *
- * @param <T>       the suppliers' return type
+ * @param <T> the suppliers' return type
  * @return the new Cffu
  * @see allResultsFastFailOfCffu
  */
@@ -78,7 +78,7 @@ fun <T> Collection<Supplier<out T>>.mSupplyFastFailAsyncCffu(
  * by tasks running in the Cffu's default asynchronous execution facility
  * with the values obtained by calling the given Suppliers in the **same order** of the given Suppliers arguments.
  *
- * @param <T>       the suppliers' return type
+ * @param <T> the suppliers' return type
  * @return the new Cffu
  * @see allResultsFastFailOfCffu
  */
@@ -96,7 +96,7 @@ fun <T> Array<out Supplier<out T>>.mSupplyFastFailAsyncCffu(
  * (which is indistinguishable from the supplier having a successful value of `valueIfFailed`).
  *
  * @param valueIfFailed the value to return if not failed
- * @param <T>           the suppliers' return type
+ * @param <T> the suppliers' return type
  * @return the new Cffu
  * @see allSuccessResultsOfCffu
  */
@@ -114,7 +114,7 @@ fun <T> Collection<Supplier<out T>>.mSupplyAllSuccessAsyncCffu(
  * (which is indistinguishable from the supplier having a successful value of `valueIfFailed`).
  *
  * @param valueIfFailed the value to return if not failed
- * @param <T>           the suppliers' return type
+ * @param <T> the suppliers' return type
  * @return the new Cffu
  * @see allSuccessResultsOfCffu
  */
@@ -129,15 +129,14 @@ fun <T> Array<out Supplier<out T>>.mSupplyAllSuccessAsyncCffu(
  * in the given time(`timeout`, aka as many results as possible in the given time)
  * in the **same order** of the given Suppliers arguments.
  *
- *
  * If any of the provided suppliers does not success(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`
  * (which is indistinguishable from the supplier having a successful value of `valueIfNotSuccess`).
  *
  * @param valueIfNotSuccess the value to return if not completed successfully
- * @param timeout           how long to wait in units of `unit`
- * @param unit              a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param <T>               the suppliers' return type
+ * @param timeout how long to wait in units of `unit`
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param <T> the suppliers' return type
  * @return the new Cffu
  * @see mostSuccessResultsOfCffu
  */
@@ -153,15 +152,14 @@ fun <T> Collection<Supplier<out T>>.mSupplyMostSuccessAsyncCffu(
  * in the given time(`timeout`, aka as many results as possible in the given time)
  * in the **same order** of the given Suppliers arguments.
  *
- *
  * If any of the provided suppliers does not success(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`
  * (which is indistinguishable from the supplier having a successful value of `valueIfNotSuccess`).
  *
  * @param valueIfNotSuccess the value to return if not completed successfully
- * @param timeout           how long to wait in units of `unit`
- * @param unit              a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param <T>               the suppliers' return type
+ * @param timeout how long to wait in units of `unit`
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param <T> the suppliers' return type
  * @return the new Cffu
  * @see mostSuccessResultsOfCffu
  */
@@ -176,7 +174,7 @@ fun <T> Array<out Supplier<out T>>.mSupplyMostSuccessAsyncCffu(
  * with the values obtained by calling the given Suppliers
  * in the **same order** of the given Suppliers arguments.
  *
- * @param <T>       the suppliers' return type
+ * @param <T> the suppliers' return type
  * @return the new Cffu
  * @see allResultsOfCffu
  */
@@ -190,7 +188,7 @@ fun <T> Collection<Supplier<out T>>.mSupplyAsyncCffu(
  * with the values obtained by calling the given Suppliers
  * in the **same order** of the given Suppliers arguments.
  *
- * @param <T>       the suppliers' return type
+ * @param <T> the suppliers' return type
  * @return the new Cffu
  * @see allResultsOfCffu
  */
@@ -208,7 +206,7 @@ fun <T> Array<out Supplier<out T>>.mSupplyAsyncCffu(
  * If no suppliers are provided, returns a new Cffu that is already completed exceptionally
  * with a CompletionException holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
- * @param <T>       the suppliers' return type
+ * @param <T> the suppliers' return type
  * @return the new Cffu
  * @see anySuccessOfCffu
  */
@@ -226,7 +224,7 @@ fun <T> Collection<Supplier<out T>>.mSupplyAnySuccessAsyncCffu(
  * If no suppliers are provided, returns a new Cffu that is already completed exceptionally
  * with a CompletionException holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
- * @param <T>       the suppliers' return type
+ * @param <T> the suppliers' return type
  * @return the new Cffu
  * @see anySuccessOfCffu
  */
@@ -242,7 +240,7 @@ fun <T> Array<out Supplier<out T>>.mSupplyAnySuccessAsyncCffu(
  * with a CompletionException holding this exception as its cause.
  * If no suppliers are provided, returns an incomplete Cffu.
  *
- * @param <T>       the suppliers' return type
+ * @param <T> the suppliers' return type
  * @return the new Cffu
  * @see anyOfCffu
  */
@@ -258,7 +256,7 @@ fun <T> Collection<Supplier<out T>>.mSupplyAnyAsyncCffu(
  * with a CompletionException holding this exception as its cause.
  * If no suppliers are provided, returns an incomplete Cffu.
  *
- * @param <T>       the suppliers' return type
+ * @param <T> the suppliers' return type
  * @return the new Cffu
  * @see anyOfCffu
  */
@@ -367,8 +365,16 @@ fun Array<out Runnable>.mRunAnyAsyncCffu(
  * Placeholder for optional [CffuFactory] argument.
  */
 private val ABSENT: CffuFactory = CffuFactoryBuilder.POISON_FACTORY
-private const val ERROR_MSG_FOR_COLL = "no cffuFactory argument provided when this collection is empty"
-private const val ERROR_MSG_FOR_ARRAY = "no cffuFactory argument provided when this array is empty"
+
+private fun Collection<Cffu<*>>.resolveFac(cffuFactory: CffuFactory): CffuFactory =
+    if (cffuFactory !== ABSENT) cffuFactory
+    else if (isNotEmpty()) first().cffuFactory()
+    else throw IllegalArgumentException("no cffuFactory argument provided when this collection is empty")
+
+private fun Array<out Cffu<*>>.resolveFac(cffuFactory: CffuFactory): CffuFactory =
+    if (cffuFactory !== ABSENT) cffuFactory
+    else if (isNotEmpty()) first().cffuFactory()
+    else throw IllegalArgumentException("no cffuFactory argument provided when this array is empty")
 
 /**
  * Returns a new Cffu with the results in the **same order** of the given Cffus arguments,
@@ -387,11 +393,8 @@ private const val ERROR_MSG_FOR_ARRAY = "no cffuFactory argument provided when t
  * @see allFastFailOfCffu
  * @see CffuFactory.allResultsFastFailOf
  */
-fun <T> Collection<Cffu<out T>>.allResultsFastFailOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.allResultsFastFailOf(*toTypedArray())
-}
+fun <T> Collection<Cffu<out T>>.allResultsFastFailOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> =
+    resolveFac(cffuFactory).allResultsFastFailOf(*toTypedArray())
 
 /**
  * Returns a new Cffu with the results in the **same order** of the given Cffus arguments,
@@ -410,11 +413,8 @@ fun <T> Collection<Cffu<out T>>.allResultsFastFailOfCffu(cffuFactory: CffuFactor
  * @see allFastFailOfCffu
  * @see CffuFactory.allResultsFastFailOf
  */
-fun <T> Array<out Cffu<out T>>.allResultsFastFailOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
-    return factory.allResultsFastFailOf(*this)
-}
+fun <T> Array<out Cffu<out T>>.allResultsFastFailOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> =
+    resolveFac(cffuFactory).allResultsFastFailOf(*this)
 
 /**
  * Returns a new Cffu with the results in the **same order** of the given stages arguments,
@@ -470,11 +470,7 @@ fun <T> Array<out CompletionStage<out T>>.allResultsFastFailOfCffu(cffuFactory: 
  */
 fun <T> Collection<Cffu<out T>>.allSuccessResultsOfCffu(
     valueIfFailed: T, cffuFactory: CffuFactory = ABSENT
-): Cffu<List<T>> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.allSuccessResultsOf(valueIfFailed, *toTypedArray())
-}
+): Cffu<List<T>> = resolveFac(cffuFactory).allSuccessResultsOf(valueIfFailed, *toTypedArray())
 
 /**
  * Returns a new Cffu that is successful with the results in the **same order**
@@ -495,11 +491,7 @@ fun <T> Collection<Cffu<out T>>.allSuccessResultsOfCffu(
  */
 fun <T> Array<out Cffu<out T>>.allSuccessResultsOfCffu(
     valueIfFailed: T, cffuFactory: CffuFactory = ABSENT
-): Cffu<List<T>> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.allSuccessResultsOf(valueIfFailed, *this)
-}
+): Cffu<List<T>> = resolveFac(cffuFactory).allSuccessResultsOf(valueIfFailed, *this)
 
 /**
  * Returns a new Cffu that is successful with the results in the **same order**
@@ -546,8 +538,8 @@ fun <T> Array<out CompletionStage<out T>>.allSuccessResultsOfCffu(
  * If any of the provided stages does not success(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
- * @param timeout       how long to wait in units of `unit`
- * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param timeout how long to wait in units of `unit`
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see CffuFactory.mostSuccessResultsOf
  * @see CffuFactory.mostSuccessTupleOf
@@ -555,11 +547,7 @@ fun <T> Array<out CompletionStage<out T>>.allSuccessResultsOfCffu(
  */
 fun <T> Collection<Cffu<out T>>.mostSuccessResultsOfCffu(
     valueIfNotSuccess: T, timeout: Long, unit: TimeUnit, cffuFactory: CffuFactory = ABSENT
-): Cffu<List<T>> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *toTypedArray())
-}
+): Cffu<List<T>> = resolveFac(cffuFactory).mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *toTypedArray())
 
 /**
  * Returns a new Cffu with the most results in the **same order** of
@@ -568,8 +556,8 @@ fun <T> Collection<Cffu<out T>>.mostSuccessResultsOfCffu(
  * If any of the provided stages does not success(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
- * @param timeout       how long to wait in units of `unit`
- * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param timeout how long to wait in units of `unit`
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see CffuFactory.mostSuccessResultsOf
  * @see CffuFactory.mostSuccessTupleOf
@@ -577,11 +565,7 @@ fun <T> Collection<Cffu<out T>>.mostSuccessResultsOfCffu(
  */
 fun <T> Array<out Cffu<out T>>.mostSuccessResultsOfCffu(
     valueIfNotSuccess: T, timeout: Long, unit: TimeUnit, cffuFactory: CffuFactory = ABSENT
-): Cffu<List<T>> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
-    return factory.mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *this)
-}
+): Cffu<List<T>> = resolveFac(cffuFactory).mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *this)
 
 /**
  * Returns a new Cffu with the most results in the **same order** of
@@ -590,8 +574,8 @@ fun <T> Array<out Cffu<out T>>.mostSuccessResultsOfCffu(
  * If any of the provided stages does not success(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
- * @param timeout       how long to wait in units of `unit`
- * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param timeout how long to wait in units of `unit`
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see CffuFactory.mostSuccessResultsOf
  * @see CffuFactory.mostSuccessTupleOf
@@ -600,8 +584,7 @@ fun <T> Array<out Cffu<out T>>.mostSuccessResultsOfCffu(
 @JvmName("mostSuccessResultsOfCffuCs")
 fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCffu(
     valueIfNotSuccess: T, timeout: Long, unit: TimeUnit, cffuFactory: CffuFactory
-): Cffu<List<T>> =
-    cffuFactory.mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *toTypedArray())
+): Cffu<List<T>> = cffuFactory.mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *toTypedArray())
 
 /**
  * Returns a new Cffu with the most results in the **same order** of
@@ -610,8 +593,8 @@ fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCffu(
  * If any of the provided stages does not success(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
- * @param timeout       how long to wait in units of `unit`
- * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param timeout how long to wait in units of `unit`
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see CffuFactory.mostSuccessResultsOf
  * @see CffuFactory.mostSuccessTupleOf
@@ -619,8 +602,7 @@ fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCffu(
  */
 fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCffu(
     valueIfNotSuccess: T, timeout: Long, unit: TimeUnit, cffuFactory: CffuFactory
-): Cffu<List<T>> =
-    cffuFactory.mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *this)
+): Cffu<List<T>> = cffuFactory.mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *this)
 
 /**
  * Returns a new Cffu with the results in the **same order** of the given Cffus arguments,
@@ -638,11 +620,8 @@ fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCffu(
  * @see allOfCffu
  * @see CffuFactory.allResultsOf
  */
-fun <T> Collection<Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.allResultsOf(*toTypedArray())
-}
+fun <T> Collection<Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> =
+    resolveFac(cffuFactory).allResultsOf(*toTypedArray())
 
 /**
  * Returns a new Cffu with the results in the **same order** of the given Cffus arguments,
@@ -660,11 +639,8 @@ fun <T> Collection<Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSE
  * @see allOfCffu
  * @see CffuFactory.allResultsOf
  */
-fun <T> Array<out Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
-    return factory.allResultsOf(*this)
-}
+fun <T> Array<out Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> =
+    resolveFac(cffuFactory).allResultsOf(*this)
 
 /**
  * Returns a new Cffu with the results in the **same order** of the given stages arguments,
@@ -716,11 +692,8 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfCffu(cffuFactory: CffuFact
  * @see allResultsFastFailOfCffu
  * @see CffuFactory.allFastFailOf
  */
-fun Collection<Cffu<*>>.allFastFailOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.allFastFailOf(*toTypedArray())
-}
+fun Collection<Cffu<*>>.allFastFailOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> =
+    resolveFac(cffuFactory).allFastFailOf(*toTypedArray())
 
 /**
  * Returns a new Cffu that is successful when all the given Cffus success,
@@ -739,11 +712,8 @@ fun Collection<Cffu<*>>.allFastFailOfCffu(cffuFactory: CffuFactory = ABSENT): Cf
  * @see allResultsFastFailOfCffu
  * @see CffuFactory.allFastFailOf
  */
-fun Array<out Cffu<*>>.allFastFailOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
-    return factory.allFastFailOf(*this)
-}
+fun Array<out Cffu<*>>.allFastFailOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> =
+    resolveFac(cffuFactory).allFastFailOf(*this)
 
 /**
  * Returns a new Cffu that is successful when all the given stages success,
@@ -796,11 +766,8 @@ fun Array<out CompletionStage<*>>.allFastFailOfCffu(cffuFactory: CffuFactory): C
  * @see allResultsOfCffu
  * @see CffuFactory.allOf
  */
-fun Collection<Cffu<*>>.allOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.allOf(*toTypedArray())
-}
+fun Collection<Cffu<*>>.allOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> =
+    resolveFac(cffuFactory).allOf(*toTypedArray())
 
 /**
  * Returns a new Cffu that is completed when all the given Cffus complete.
@@ -818,12 +785,8 @@ fun Collection<Cffu<*>>.allOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void>
  * @see allResultsOfCffu
  * @see CffuFactory.allOf
  */
-
-fun Array<out Cffu<*>>.allOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
-    return factory.allOf(*this)
-}
+fun Array<out Cffu<*>>.allOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> =
+    resolveFac(cffuFactory).allOf(*this)
 
 /**
  * Returns a new Cffu that is completed when all the given stages complete.
@@ -879,11 +842,8 @@ fun Array<out CompletionStage<*>>.allOfCffu(cffuFactory: CffuFactory): Cffu<Void
  * @see anyOfCffu
  * @see CffuFactory.anySuccessOf
  */
-fun <T> Collection<Cffu<out T>>.anySuccessOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.anySuccessOf(*toTypedArray())
-}
+fun <T> Collection<Cffu<out T>>.anySuccessOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> =
+    resolveFac(cffuFactory).anySuccessOf(*toTypedArray())
 
 /**
  * Returns a new Cffu that is successful when any of the given Cffus success,
@@ -901,11 +861,8 @@ fun <T> Collection<Cffu<out T>>.anySuccessOfCffu(cffuFactory: CffuFactory = ABSE
  * @see anyOfCffu
  * @see CffuFactory.anySuccessOf
  */
-fun <T> Array<out Cffu<out T>>.anySuccessOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
-    return factory.anySuccessOf(*this)
-}
+fun <T> Array<out Cffu<out T>>.anySuccessOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> =
+    resolveFac(cffuFactory).anySuccessOf(*this)
 
 /**
  * Returns a new Cffu that is successful when any of the given stages success,
@@ -950,11 +907,8 @@ fun <T> Array<out CompletionStage<out T>>.anySuccessOfCffu(cffuFactory: CffuFact
  *
  * @see CffuFactory.anyOf
  */
-fun <T> Collection<Cffu<out T>>.anyOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_COLL)
-    return factory.anyOf(*toTypedArray())
-}
+fun <T> Collection<Cffu<out T>>.anyOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> =
+    resolveFac(cffuFactory).anyOf(*toTypedArray())
 
 /**
  * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.
@@ -966,11 +920,8 @@ fun <T> Collection<Cffu<out T>>.anyOfCffu(cffuFactory: CffuFactory = ABSENT): Cf
  *
  * @see CffuFactory.anyOf
  */
-fun <T> Array<out Cffu<out T>>.anyOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> {
-    val factory: CffuFactory = if (cffuFactory !== ABSENT) cffuFactory
-    else firstOrNull()?.cffuFactory() ?: throw IllegalArgumentException(ERROR_MSG_FOR_ARRAY)
-    return factory.anyOf(*this)
-}
+fun <T> Array<out Cffu<out T>>.anyOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<T> =
+    resolveFac(cffuFactory).anyOf(*this)
 
 /**
  * Returns a new Cffu that is completed when any of the given stages complete, with the same result.

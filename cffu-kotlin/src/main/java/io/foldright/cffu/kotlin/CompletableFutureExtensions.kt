@@ -41,8 +41,8 @@ private val ASYNC_POOL: Executor = CompletableFutureUtils.defaultExecutor(Comple
  * by tasks running in the given Executor with the values obtained by calling the given Suppliers
  * in the **same order** of the given Suppliers arguments.
  *
- * @param executor  the executor to use for asynchronous execution
- * @param <T>       the suppliers' return type
+ * @param executor the executor to use for asynchronous execution
+ * @param <T> the suppliers' return type
  * @return the new CompletableFuture
  * @see allResultsFastFailOfCompletableFuture
  * @see CompletableFuture.supplyAsync
@@ -55,8 +55,8 @@ fun <T> Collection<Supplier<out T>>.mSupplyFastFailAsyncCompletableFuture(execut
  * by tasks running in the given Executor with the values obtained by calling the given Suppliers
  * in the **same order** of the given Suppliers arguments.
  *
- * @param executor  the executor to use for asynchronous execution
- * @param <T>       the suppliers' return type
+ * @param executor the executor to use for asynchronous execution
+ * @param <T> the suppliers' return type
  * @return the new CompletableFuture
  * @see allResultsFastFailOfCompletableFuture
  * @see CompletableFuture.supplyAsync
@@ -73,7 +73,7 @@ fun <T> Array<out Supplier<out T>>.mSupplyFastFailAsyncCompletableFuture(executo
  * (which is indistinguishable from the supplier having a successful value of `valueIfFailed`).
  *
  * @param valueIfFailed the value to return if not failed
- * @param <T>           the suppliers' return type
+ * @param <T> the suppliers' return type
  * @return the new CompletableFuture
  * @see allSuccessResultsOfCompletableFuture
  * @see CompletableFuture.supplyAsync
@@ -92,7 +92,7 @@ fun <T> Collection<Supplier<out T>>.mSupplyAllSuccessAsyncCompletableFuture(
  * (which is indistinguishable from the supplier having a successful value of `valueIfFailed`).
  *
  * @param valueIfFailed the value to return if not failed
- * @param <T>           the suppliers' return type
+ * @param <T> the suppliers' return type
  * @return the new CompletableFuture
  * @see allSuccessResultsOfCompletableFuture
  * @see CompletableFuture.supplyAsync
@@ -113,10 +113,10 @@ fun <T> Array<out Supplier<out T>>.mSupplyAllSuccessAsyncCompletableFuture(
  * (which is indistinguishable from the supplier having a successful value of `valueIfNotSuccess`).
  *
  * @param valueIfNotSuccess the value to return if not completed successfully
- * @param executor          the executor to use for asynchronous execution
- * @param timeout           how long to wait in units of `unit`
- * @param unit              a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param <T>               the suppliers' return type
+ * @param executor the executor to use for asynchronous execution
+ * @param timeout how long to wait in units of `unit`
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param <T> the suppliers' return type
  * @return the new CompletableFuture
  * @see mostSuccessResultsOfCompletableFuture
  * @see CompletableFuture.supplyAsync
@@ -137,10 +137,10 @@ fun <T> Collection<Supplier<out T>>.mSupplyMostSuccessAsyncCompletableFuture(
  * (which is indistinguishable from the supplier having a successful value of `valueIfNotSuccess`).
  *
  * @param valueIfNotSuccess the value to return if not completed successfully
- * @param executor          the executor to use for asynchronous execution
- * @param timeout           how long to wait in units of `unit`
- * @param unit              a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param <T>               the suppliers' return type
+ * @param executor the executor to use for asynchronous execution
+ * @param timeout how long to wait in units of `unit`
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param <T> the suppliers' return type
  * @return the new CompletableFuture
  * @see mostSuccessResultsOfCompletableFuture
  * @see CompletableFuture.supplyAsync
@@ -155,8 +155,8 @@ fun <T> Array<out Supplier<out T>>.mSupplyMostSuccessAsyncCompletableFuture(
  * by tasks running in the given Executor with the values obtained by calling the given Suppliers
  * in the **same order** of the given Suppliers arguments.
  *
- * @param executor  the executor to use for asynchronous execution
- * @param <T>       the suppliers' return type
+ * @param executor the executor to use for asynchronous execution
+ * @param <T> the suppliers' return type
  * @return the new CompletableFuture
  * @see allResultsOfCompletableFuture
  * @see CompletableFuture.supplyAsync
@@ -169,8 +169,8 @@ fun <T> Collection<Supplier<out T>>.mSupplyAsyncCompletableFuture(executor: Exec
  * by tasks running in the given Executor with the values obtained by calling the given Suppliers
  * in the **same order** of the given Suppliers arguments.
  *
- * @param executor  the executor to use for asynchronous execution
- * @param <T>       the suppliers' return type
+ * @param executor the executor to use for asynchronous execution
+ * @param <T> the suppliers' return type
  * @return the new CompletableFuture
  * @see allResultsOfCompletableFuture
  * @see CompletableFuture.supplyAsync
@@ -187,8 +187,8 @@ fun <T> Array<out Supplier<out T>>.mSupplyAsyncCompletableFuture(executor: Execu
  * If no suppliers are provided, returns a new CompletableFuture that is already completed exceptionally
  * with a CompletionException holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
- * @param executor  the executor to use for asynchronous execution
- * @param <T>       the suppliers' return type
+ * @param executor the executor to use for asynchronous execution
+ * @param <T> the suppliers' return type
  * @return the new CompletableFuture
  * @see anySuccessOfCompletableFuture
  * @see CompletableFuture.supplyAsync
@@ -205,8 +205,8 @@ fun <T> Collection<Supplier<out T>>.mSupplyAnySuccessAsyncCompletableFuture(exec
  * If no suppliers are provided, returns a new CompletableFuture that is already completed exceptionally
  * with a CompletionException holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
- * @param executor  the executor to use for asynchronous execution
- * @param <T>       the suppliers' return type
+ * @param executor the executor to use for asynchronous execution
+ * @param <T> the suppliers' return type
  * @return the new CompletableFuture
  * @see anySuccessOfCompletableFuture
  * @see CompletableFuture.supplyAsync
@@ -221,8 +221,8 @@ fun <T> Array<out Supplier<out T>>.mSupplyAnySuccessAsyncCompletableFuture(execu
  * with a CompletionException holding this exception as its cause.
  * If no suppliers are provided, returns an incomplete CompletableFuture.
  *
- * @param executor  the executor to use for asynchronous execution
- * @param <T>       the suppliers' return type
+ * @param executor the executor to use for asynchronous execution
+ * @param <T> the suppliers' return type
  * @return the new CompletableFuture
  * @see anyOfCompletableFuture
  * @see CompletableFuture.supplyAsync
@@ -237,8 +237,8 @@ fun <T> Collection<Supplier<out T>>.mSupplyAnyAsyncCompletableFuture(executor: E
  * with a CompletionException holding this exception as its cause.
  * If no suppliers are provided, returns an incomplete CompletableFuture.
  *
- * @param executor  the executor to use for asynchronous execution
- * @param <T>       the suppliers' return type
+ * @param executor the executor to use for asynchronous execution
+ * @param <T> the suppliers' return type
  * @return the new CompletableFuture
  * @see anyOfCompletableFuture
  * @see CompletableFuture.supplyAsync
@@ -422,8 +422,8 @@ fun <T> Array<out CompletionStage<out T>>.allSuccessResultsOfCompletableFuture(v
  * If any of the provided stages does not success(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
- * @param timeout       how long to wait in units of `unit`
- * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param timeout how long to wait in units of `unit`
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see getSuccessNow
  */
@@ -439,8 +439,8 @@ fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture
  * If any of the provided stages does not success(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
- * @param timeout       how long to wait in units of `unit`
- * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param timeout how long to wait in units of `unit`
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see getSuccessNow
  */
@@ -457,8 +457,8 @@ fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
  * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param executorWhenTimeout the async executor when triggered by timeout
- * @param timeout       how long to wait in units of `unit`
- * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param timeout how long to wait in units of `unit`
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see getSuccessNow
  */
@@ -475,8 +475,8 @@ fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture
  * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param executorWhenTimeout the async executor when triggered by timeout
- * @param timeout       how long to wait in units of `unit`
- * @param unit          a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param timeout how long to wait in units of `unit`
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value to return if not completed successfully
  * @see getSuccessNow
  */
@@ -690,8 +690,8 @@ fun <T, U> CompletableFuture<out T>.thenMApplyFastFailAsync(vararg fns: Function
  * in the **same order** of the given Functions arguments.
  *
  * @param executor the executor to use for asynchronous execution
- * @param fns      the functions to use to compute the values of the returned CompletableFuture
- * @param <U>      the functions' return type
+ * @param fns the functions to use to compute the values of the returned CompletableFuture
+ * @param <U> the functions' return type
  * @return the new CompletableFuture
  */
 fun <T, U> CompletableFuture<out T>.thenMApplyFastFailAsync(
@@ -709,8 +709,8 @@ fun <T, U> CompletableFuture<out T>.thenMApplyFastFailAsync(
  * (which is indistinguishable from the function having a successful value of `valueIfFailed`).
  *
  * @param valueIfFailed the value to return if not completed successfully
- * @param fns           the functions to use to compute the values of the returned CompletableFuture
- * @param <U>           the functions' return type
+ * @param fns the functions to use to compute the values of the returned CompletableFuture
+ * @param <U> the functions' return type
  * @return the new CompletableFuture
  */
 fun <T, U> CompletableFuture<out T>.thenMApplyAllSuccessAsync(
@@ -727,8 +727,8 @@ fun <T, U> CompletableFuture<out T>.thenMApplyAllSuccessAsync(
  * (which is indistinguishable from the function having a successful value of `valueIfFailed`).
  *
  * @param valueIfFailed the value to return if not completed successfully
- * @param fns           the functions to use to compute the values of the returned CompletableFuture
- * @param <U>           the functions' return type
+ * @param fns the functions to use to compute the values of the returned CompletableFuture
+ * @param <U> the functions' return type
  * @return the new CompletableFuture
  */
 fun <T, U> CompletableFuture<out T>.thenMApplyAllSuccessAsync(
@@ -748,10 +748,10 @@ fun <T, U> CompletableFuture<out T>.thenMApplyAllSuccessAsync(
  * (which is indistinguishable from the function having a successful value of `valueIfNotSuccess`).
  *
  * @param valueIfNotSuccess the value to return if not completed successfully
- * @param timeout           how long to wait in units of `unit`
- * @param unit              a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param fns               the functions to use to compute the values of the returned CompletableFuture
- * @param <U>               the functions' return type
+ * @param timeout how long to wait in units of `unit`
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param fns the functions to use to compute the values of the returned CompletableFuture
+ * @param <U> the functions' return type
  * @return the new CompletableFuture
  */
 fun <T, U> CompletableFuture<out T>.thenMApplyMostSuccessAsync(
@@ -771,11 +771,11 @@ fun <T, U> CompletableFuture<out T>.thenMApplyMostSuccessAsync(
  * (which is indistinguishable from the function having a successful value of `valueIfNotSuccess`).
  *
  * @param valueIfNotSuccess the value to return if not completed successfully
- * @param executor          the executor to use for asynchronous execution
- * @param timeout           how long to wait in units of `unit`
- * @param unit              a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param fns               the functions to use to compute the values of the returned CompletableFuture
- * @param <U>               the functions' return type
+ * @param executor the executor to use for asynchronous execution
+ * @param timeout how long to wait in units of `unit`
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param fns the functions to use to compute the values of the returned CompletableFuture
+ * @param <U> the functions' return type
  * @return the new CompletableFuture
  */
 fun <T, U> CompletableFuture<out T>.thenMApplyMostSuccessAsync(
@@ -805,8 +805,8 @@ fun <T, U> CompletableFuture<out T>.thenMApplyAsync(
  * in the **same order** of the given Functions arguments.
  *
  * @param executor the executor to use for asynchronous execution
- * @param fns      the functions to use to compute the values of the returned CompletableFuture
- * @param <U>      the functions' return type
+ * @param fns the functions to use to compute the values of the returned CompletableFuture
+ * @param <U> the functions' return type
  * @return the new CompletableFuture
  */
 fun <T, U> CompletableFuture<out T>.thenMApplyAsync(
@@ -832,8 +832,8 @@ fun <T, U> CompletableFuture<out T>.thenMApplyAnySuccessAsync(vararg fns: Functi
  * (with the given stage's result as the argument to the given functions).
  *
  * @param executor the executor to use for asynchronous execution
- * @param fns      the functions to use to compute the values of the returned CompletableFuture
- * @param <U>      the functions' return type
+ * @param fns the functions to use to compute the values of the returned CompletableFuture
+ * @param <U> the functions' return type
  * @return the new CompletableFuture
  */
 fun <T, U> CompletableFuture<out T>.thenMApplyAnySuccessAsync(
@@ -859,8 +859,8 @@ fun <T, U> CompletableFuture<out T>.thenMApplyAnyAsync(vararg fns: Function<in T
  * (with the given stage's result as the argument to the given functions).
  *
  * @param executor the executor to use for asynchronous execution
- * @param fns      the functions to use to compute the values of the returned CompletableFuture
- * @param <U>      the functions' return type
+ * @param fns the functions to use to compute the values of the returned CompletableFuture
+ * @param <U> the functions' return type
  * @return the new CompletableFuture
  */
 fun <T, U> CompletableFuture<out T>.thenMApplyAnyAsync(
@@ -883,7 +883,7 @@ fun <T> CompletableFuture<out T>.thenMAcceptFastFailAsync(vararg actions: Consum
  * is executed using the given Executor, with the given stage's result as the argument to the given actions.
  *
  * @param executor the executor to use for asynchronous execution
- * @param actions  the actions to perform before completing the returned CompletableFuture
+ * @param actions the actions to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
  */
 fun <T> CompletableFuture<out T>.thenMAcceptFastFailAsync(
@@ -906,7 +906,7 @@ fun <T> CompletableFuture<out T>.thenMAcceptAsync(vararg actions: Consumer<in T>
  * is executed using the given Executor, with the given stage's result as the argument to the given actions.
  *
  * @param executor the executor to use for asynchronous execution
- * @param actions  the actions to perform before completing the returned CompletableFuture
+ * @param actions the actions to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
  */
 fun <T> CompletableFuture<out T>.thenMAcceptAsync(
@@ -929,7 +929,7 @@ fun <T> CompletableFuture<out T>.thenMAcceptAnySuccessAsync(vararg actions: Cons
  * is executed using the given Executor, with the given stage's result as the argument to the given actions.
  *
  * @param executor the executor to use for asynchronous execution
- * @param actions  the actions to perform before completing the returned CompletableFuture
+ * @param actions the actions to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
  */
 fun <T> CompletableFuture<out T>.thenMAcceptAnySuccessAsync(
@@ -952,7 +952,7 @@ fun <T> CompletableFuture<out T>.thenMAcceptAnyAsync(vararg actions: Consumer<in
  * is executed using the given Executor, with the given stage's result as the argument to the given actions.
  *
  * @param executor the executor to use for asynchronous execution
- * @param actions  the actions to perform before completing the returned CompletableFuture
+ * @param actions the actions to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
  */
 fun <T> CompletableFuture<out T>.thenMAcceptAnyAsync(
@@ -976,7 +976,7 @@ fun CompletableFuture<*>.thenMRunFastFailAsync(vararg actions: Runnable): Comple
  * executes the given actions using the given Executor.
  *
  * @param executor the executor to use for asynchronous execution
- * @param actions  the actions to perform before completing the returned CompletableFuture
+ * @param actions the actions to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
  * @see CompletableFuture.thenRunAsync
  * @see allFastFailOfCompletableFuture
@@ -1001,7 +1001,7 @@ fun CompletableFuture<*>.thenMRunAsync(vararg actions: Runnable): CompletableFut
  * executes the given actions using the given Executor.
  *
  * @param executor the executor to use for asynchronous execution
- * @param actions  the actions to perform before completing the returned CompletableFuture
+ * @param actions the actions to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
  * @see CompletableFuture.thenRunAsync
  * @see allOfCompletableFuture
@@ -1026,7 +1026,7 @@ fun CompletableFuture<*>.thenMRunAnySuccessAsync(vararg actions: Runnable): Comp
  * executes the given actions using the given Executor.
  *
  * @param executor the executor to use for asynchronous execution
- * @param actions  the actions to perform before completing the returned CompletableFuture
+ * @param actions the actions to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
  * @see CompletableFuture.thenRunAsync
  * @see anySuccessOfCompletableFuture
@@ -1052,7 +1052,7 @@ fun CompletableFuture<*>.thenMRunAnyAsync(vararg actions: Runnable): Completable
  * executes the given actions using the given Executor.
  *
  * @param executor the executor to use for asynchronous execution
- * @param actions  the actions to perform before completing the returned CompletableFuture
+ * @param actions the actions to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
  * @see CompletableFuture.thenRunAsync
  * @see anyOfCompletableFuture
@@ -1290,7 +1290,6 @@ fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync
 /**
  * Tuple variance of [thenMApplyMostSuccessAsync]
  * with `null` valueIfNotSuccess.
- *
  *
  * If any of the provided suppliers does not success, its corresponding position will contain `null`
  * (which is indistinguishable from the supplier having a successful value of `null`).
@@ -1554,7 +1553,7 @@ fun CompletableFuture<*>.runAfterBothFastFailAsync(
  * This method is the same as [CompletableFuture.applyToEither]
  * except for the either-**success** behavior(not either-**complete**).
  *
- * @param fn  the function to use to compute the value of the returned CompletableFuture
+ * @param fn the function to use to compute the value of the returned CompletableFuture
  * @param <U> the function's return type
  * @return the new CompletableFuture
  * @see CompletionStage.applyToEither
@@ -1571,7 +1570,7 @@ fun <T, U> CompletableFuture<out T>.applyToEitherSuccess(
  * This method is the same as [CompletableFuture.applyToEitherAsync]
  * except for the either-**success** behavior(not either-**complete**).
  *
- * @param fn  the function to use to compute the value of the returned CompletableFuture
+ * @param fn the function to use to compute the value of the returned CompletableFuture
  * @param <U> the function's return type
  * @return the new CompletableFuture
  * @see CompletionStage.applyToEitherAsync
@@ -1587,9 +1586,9 @@ fun <T, U> CompletableFuture<out T>.applyToEitherSuccessAsync(
  * This method is the same as [CompletableFuture.applyToEitherAsync]
  * except for the either-**success** behavior(not either-**complete**).
  *
- * @param fn       the function to use to compute the value of the returned CompletableFuture
+ * @param fn the function to use to compute the value of the returned CompletableFuture
  * @param executor the executor to use for asynchronous execution
- * @param <U>      the function's return type
+ * @param <U> the function's return type
  * @return the new CompletableFuture
  * @see CompletionStage.applyToEitherAsync
  */
@@ -1635,7 +1634,7 @@ fun <T> CompletableFuture<out T>.acceptEitherSuccessAsync(
  * This method is the same as [CompletableFuture.acceptEitherAsync]
  * except for the either-**success** behavior(not either-**complete**).
  *
- * @param action   the action to perform before completing the returned CompletableFuture
+ * @param action the action to perform before completing the returned CompletableFuture
  * @param executor the executor to use for asynchronous execution
  * @return the new CompletableFuture
  * @see CompletionStage.acceptEitherAsync
@@ -1707,7 +1706,7 @@ fun CompletableFuture<*>.runAfterEitherSuccessAsync(
  * @param exceptionType the exception type that triggers use of `fallback`. The exception type is matched
  * against the input's exception. To avoid hiding bugs and other unrecoverable errors,
  * callers should prefer more specific types, avoiding `Throwable.class` in particular.
- * @param fallback      the Function to be called if `input` fails with the expected exception type.
+ * @param fallback the Function to be called if `input` fails with the expected exception type.
  * The function's argument is the input's exception.
  */
 fun <T, X : Throwable, C : CompletionStage<in T>> C.catching(
@@ -1723,7 +1722,7 @@ fun <T, X : Throwable, C : CompletionStage<in T>> C.catching(
  * @param exceptionType the exception type that triggers use of `fallback`. The exception type is matched
  * against the input's exception. To avoid hiding bugs and other unrecoverable errors,
  * callers should prefer more specific types, avoiding `Throwable.class` in particular.
- * @param fallback      the Function to be called if `input` fails with the expected exception type.
+ * @param fallback the Function to be called if `input` fails with the expected exception type.
  * The function's argument is the input's exception.
  */
 fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingAsync(
@@ -1738,9 +1737,9 @@ fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingAsync(
  * @param exceptionType the exception type that triggers use of `fallback`. The exception type is matched
  * against the input's exception. To avoid hiding bugs and other unrecoverable errors,
  * callers should prefer more specific types, avoiding `Throwable.class` in particular.
- * @param fallback      the Function to be called if `input` fails with the expected exception type.
+ * @param fallback the Function to be called if `input` fails with the expected exception type.
  * The function's argument is the input's exception.
- * @param executor      the executor to use for asynchronous execution
+ * @param executor the executor to use for asynchronous execution
  */
 fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingAsync(
     exceptionType: Class<X>, fallback: Function<in X, out T>, executor: Executor
@@ -1764,7 +1763,7 @@ fun <T, C : CompletionStage<in T>> C.exceptionallyAsync(fn: Function<Throwable, 
  * stage's exception as the argument to the supplied function, using the supplied Executor. Otherwise,
  * if this stage completes normally, then the returned stage also completes normally with the same value.
  *
- * @param fn       the function to use to compute the value of the returned CompletionStage
+ * @param fn the function to use to compute the value of the returned CompletionStage
  * if this CompletionStage completed exceptionally
  * @param executor the executor to use for asynchronous execution
  * @return the new CompletionStage
@@ -1784,7 +1783,7 @@ fun <T, C : CompletionStage<in T>> C.exceptionallyAsync(fn: Function<Throwable, 
  * Uses CompletableFuture's default asynchronous execution facility as `executorWhenTimeout`.
  *
  * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of `unit`
- * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @return the new CompletableFuture
  */
 fun <C : CompletableFuture<*>> C.cffuOrTimeout(timeout: Long, unit: TimeUnit): C =
@@ -1796,7 +1795,7 @@ fun <C : CompletableFuture<*>> C.cffuOrTimeout(timeout: Long, unit: TimeUnit): C
  *
  * @param executorWhenTimeout the async executor when triggered by timeout
  * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of `unit`
- * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @return the new CompletableFuture
  */
 fun <C : CompletableFuture<*>> C.cffuOrTimeout(executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit): C =
@@ -1825,7 +1824,7 @@ fun <C : CompletableFuture<*>> C.cffuOrTimeout(executorWhenTimeout: Executor, ti
  * The cffu backport logic(for Java 20-) has merged the fix of this JDK bug.
  *
  * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of `unit`
- * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @return this CompletableFuture
  * @see cffuOrTimeout
  */
@@ -1842,9 +1841,9 @@ fun <C : CompletableFuture<*>> C.orTimeout(timeout: Long, unit: TimeUnit): C =
  * instance avoids the subsequent usage of the delay thread. More info see the javadoc of [completeOnTimeout] and the demo
  * [DelayDysfunctionDemo](https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java).
  *
- * @param value   the value to use upon timeout
+ * @param value the value to use upon timeout
  * @param timeout how long to wait before completing normally with the given value, in units of `unit`
- * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @return the new CompletableFuture
  */
 fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
@@ -1859,10 +1858,10 @@ fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
  * instance avoids the subsequent usage of the delay thread. More info see the javadoc of [completeOnTimeout] and the demo
  * [DelayDysfunctionDemo](https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java).
  *
- * @param value               the value to use upon timeout
+ * @param value the value to use upon timeout
  * @param executorWhenTimeout the async executor when triggered by timeout
- * @param timeout             how long to wait before completing normally with the given value, in units of `unit`
- * @param unit                a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param timeout how long to wait before completing normally with the given value, in units of `unit`
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @return the new CompletableFuture
  */
 fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
@@ -1885,9 +1884,9 @@ fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
  * CompletableFutures is created by async methods), using this method and [CompletableFuture.completeOnTimeout]
  * is one less thread switch of task execution when triggered by timeout.
  *
- * @param value   the value to use upon timeout
+ * @param value the value to use upon timeout
  * @param timeout how long to wait before completing normally with the given value, in units of `unit`
- * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @return this CompletableFuture
  * @see cffuCompleteOnTimeout
  */
@@ -1910,7 +1909,7 @@ fun <T, C : CompletableFuture<in T>> C.completeOnTimeout(value: T, timeout: Long
  * @param exceptionType the exception type that triggers use of `fallback`. The exception type is matched
  * against the input's exception. To avoid hiding bugs and other unrecoverable errors,
  * callers should prefer more specific types, avoiding `Throwable.class` in particular.
- * @param fallback      the Function to be called if `input` fails with the expected exception type.
+ * @param fallback the Function to be called if `input` fails with the expected exception type.
  * The function's argument is the input's exception.
  */
 fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingCompose(
@@ -1925,7 +1924,7 @@ fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingCompose(
  * @param exceptionType the exception type that triggers use of `fallback`. The exception type is matched
  * against the input's exception. To avoid hiding bugs and other unrecoverable errors,
  * callers should prefer more specific types, avoiding `Throwable.class` in particular.
- * @param fallback      the Function to be called if `input` fails with the expected exception type.
+ * @param fallback the Function to be called if `input` fails with the expected exception type.
  * The function's argument is the input's exception.
  */
 fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingComposeAsync(
@@ -1940,9 +1939,9 @@ fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingComposeAsync(
  * @param exceptionType the exception type that triggers use of `fallback`. The exception type is matched
  * against the input's exception. To avoid hiding bugs and other unrecoverable errors,
  * callers should prefer more specific types, avoiding `Throwable.class` in particular.
- * @param fallback      the Function to be called if `input` fails with the expected exception type.
+ * @param fallback the Function to be called if `input` fails with the expected exception type.
  * The function's argument is the input's exception.
- * @param executor      the executor to use for asynchronous execution
+ * @param executor the executor to use for asynchronous execution
  */
 fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingComposeAsync(
     exceptionType: Class<X>, fallback: Function<in X, out CompletionStage<T>>,
@@ -1976,7 +1975,7 @@ fun <T, C : CompletionStage<in T>> C.exceptionallyComposeAsync(fn: Function<Thro
  * Returns a new CompletionStage that, when given stage completes exceptionally, is composed using
  * the results of the supplied function applied to given stage's exception, using the supplied Executor.
  *
- * @param fn       the function to use to compute the returned CompletionStage
+ * @param fn the function to use to compute the returned CompletionStage
  *                 if given CompletionStage completed exceptionally
  * @param executor the executor to use for asynchronous execution
  * @return the new CompletionStage
@@ -2084,7 +2083,7 @@ fun <T, C : CompletionStage<out T>> C.peekAsync(action: BiConsumer<in T, in Thro
  * with the TimeoutException as its cause; NOT throws a (checked) TimeoutException like [CompletableFuture.get].
  *
  * @param timeout the maximum time to wait
- * @param unit    the time unit of the timeout argument
+ * @param unit the time unit of the timeout argument
  * @return the result value
  * @see CompletableFuture.join
  */
