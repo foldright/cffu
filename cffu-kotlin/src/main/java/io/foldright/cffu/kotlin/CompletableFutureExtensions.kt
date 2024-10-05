@@ -24,8 +24,8 @@ import java.util.function.Function
 ////////////////////////////////////////////////////////////
 
 /**
- * Returns a new CompletableFuture with the results in the **same order** of all the given
- * CompletableFutures arguments, the new CompletableFuture success when all the given CompletableFutures success.
+ * Returns a new CompletableFuture with the results in the **same order** of all the given CompletableFutures arguments,
+ * the new CompletableFuture success when all the given CompletableFutures success.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so *without* waiting other incomplete given CompletableFutures,
  * with a CompletionException holding this exception as its cause.
@@ -33,7 +33,6 @@ import java.util.function.Function
  *
  * This method is the same as [allFastFailOfCompletableFuture],
  * except the returned CompletableFuture contains the results of input CompletableFutures.
- *
  * This method is the same as [CompletableFutureUtils.allResultsFastFailOf],
  * providing this method is convenient for method chaining.
  *
@@ -43,8 +42,8 @@ fun <T> Collection<CompletionStage<out T>>.allResultsFastFailOfCompletableFuture
     CompletableFutureUtils.allResultsFastFailOf(*toTypedArray())
 
 /**
- * Returns a new CompletableFuture with the results in the **same order** of all the given
- * CompletableFutures arguments, the new CompletableFuture success when all the given CompletableFutures success.
+ * Returns a new CompletableFuture with the results in the **same order** of all the given CompletableFutures arguments,
+ * the new CompletableFuture success when all the given CompletableFutures success.
  * If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture
  * also does so *without* waiting other incomplete given CompletableFutures,
  * with a CompletionException holding this exception as its cause.
@@ -52,7 +51,6 @@ fun <T> Collection<CompletionStage<out T>>.allResultsFastFailOfCompletableFuture
  *
  * This method is the same as [allFastFailOfCompletableFuture],
  * except the returned CompletableFuture contains the results of input CompletableFutures.
- *
  * This method is the same as [CompletableFutureUtils.allResultsFastFailOf],
  * providing this method is convenient for method chaining.
  *
@@ -79,8 +77,8 @@ fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture
     CompletableFutureUtils.mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *toTypedArray())
 
 /**
- * Returns a new CompletableFuture with the most results in the **same order** of
- * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
+ * Returns a new CompletableFuture with the most results in the **same order** of the given stages arguments
+ * in the given time(`timeout`, aka as many results as possible in the given time).
  *
  * If any of the provided stages does not success(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
@@ -96,8 +94,8 @@ fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
     CompletableFutureUtils.mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *this)
 
 /**
- * Returns a new CompletableFuture with the most results in the **same order** of
- * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
+ * Returns a new CompletableFuture with the most results in the **same order** of the given stages arguments
+ * in the given time(`timeout`, aka as many results as possible in the given time).
  *
  * If any of the provided stages does not success(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
@@ -114,8 +112,8 @@ fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture
     CompletableFutureUtils.mostSuccessResultsOf(valueIfNotSuccess, executorWhenTimeout, timeout, unit, *toTypedArray())
 
 /**
- * Returns a new CompletableFuture with the most results in the **same order** of
- * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
+ * Returns a new CompletableFuture with the most results in the **same order** of the given stages arguments
+ * in the given time(`timeout`, aka as many results as possible in the given time).
  *
  * If any of the provided stages does not success(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
@@ -140,7 +138,6 @@ fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
  *
  * This method is the same as [allOfCompletableFuture],
  * except the returned CompletableFuture contains the results of input CompletableFutures.
- *
  * This method is the same as [CompletableFutureUtils.allResultsOf],
  * providing this method is convenient for method chaining.
  *
@@ -158,7 +155,6 @@ fun <T> Collection<CompletionStage<out T>>.allResultsOfCompletableFuture(): Comp
  *
  * This method is the same as [allOfCompletableFuture],
  * except the returned CompletableFuture contains the results of input CompletableFutures.
- *
  * This method is the same as [CompletableFutureUtils.allResultsOf],
  * providing this method is convenient for method chaining.
  *
@@ -176,9 +172,7 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfCompletableFuture(): Compl
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value `null`.
  *
- * If you need the results of given stages, prefer below methods:
- *
- *  - [allResultsFastFailOfCompletableFuture]
+ * If you need the results of given stages, prefer methods [allResultsFastFailOfCompletableFuture].
  *
  * This method is the same as [CompletableFutureUtils.allFastFailOf],
  * providing this method is convenient for method chaining.
@@ -197,9 +191,7 @@ fun Collection<CompletionStage<*>>.allFastFailOfCompletableFuture(): Completable
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value `null`.
  *
- * If you need the results of given stages, prefer below methods:
- *
- *  - [allResultsFastFailOfCompletableFuture]
+ * If you need the results of given stages, prefer methods [allResultsFastFailOfCompletableFuture]
  *
  * This method is the same as [CompletableFutureUtils.allFastFailOf],
  * providing this method is convenient for method chaining.
@@ -217,9 +209,7 @@ fun Array<out CompletionStage<*>>.allFastFailOfCompletableFuture(): CompletableF
  * in the returned CompletableFuture, but may be obtained by inspecting them individually.
  * If no stages are provided, returns a CompletableFuture completed with the value `null`.
  *
- * If you need the results of given stages, prefer below methods:
- *
- *  - [allResultsOfCompletableFuture]
+ * If you need the results of given stages, prefer methods [allResultsOfCompletableFuture]
  *
  * This method is the same as [CompletableFutureUtils.allOf], providing this method is convenient for method chaining.
  *
@@ -230,15 +220,13 @@ fun Collection<CompletionStage<*>>.allOfCompletableFuture(): CompletableFuture<V
 
 /**
  * Returns a new CompletableFuture that is completed when all the given stages complete.
- * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
- * with a CompletionException holding this exception as its cause.
+ * If any of the given stages complete exceptionally, then the returned CompletableFuture
+ * also does so, with a CompletionException holding this exception as its cause.
  * Otherwise, the results, if any, of the given stages are not reflected
  * in the returned CompletableFuture, but may be obtained by inspecting them individually.
  * If no stages are provided, returns a CompletableFuture completed with the value `null`.
  *
- * If you need the results of given stages, prefer below methods:
- *
- *  - [allResultsOfCompletableFuture]
+ * If you need the results of given stages, prefer methods [allResultsOfCompletableFuture].
  *
  * This method is the same as [CompletableFutureUtils.allOf], providing this method is convenient for method chaining.
  *
@@ -285,9 +273,8 @@ fun <T> Array<out CompletionStage<out T>>.anySuccessOfCompletableFuture(): Compl
     CompletableFutureUtils.anySuccessOf(*this)
 
 /**
- * Returns a new CompletableFuture that is completed
- * when any of the given CompletableFutures complete, with the same result.
- * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so,
+ * Returns a new CompletableFuture that is completed when any of the given CompletableFutures complete,
+ * with the same result. Otherwise, if it completed exceptionally, the returned CompletableFuture also does so,
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
  *
@@ -434,8 +421,8 @@ fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFailAsync(
 
 /**
  * Returns a new CompletableFuture that, when two given stages both complete normally, executes the given action.
- * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
- * **without** waiting other incomplete given CompletionStage,
+ * if any of the given stage complete exceptionally, then the returned CompletableFuture
+ * also does so **without** waiting other incomplete given CompletionStage,
  * with a CompletionException holding this exception as its cause.
  *
  * This method is the same as [CompletableFuture.runAfterBoth] except for the fast-fail behavior.
@@ -450,8 +437,8 @@ fun CompletableFuture<*>.runAfterBothFastFail(other: CompletionStage<*>, action:
 /**
  * Returns a new CompletableFuture that, when two given stages both complete normally,
  * executes the given action using CompletableFuture's default asynchronous execution facility.
- * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
- * **without** waiting other incomplete given CompletionStage,
+ * if any of the given stage complete exceptionally, then the returned CompletableFuture
+ * also does so **without** waiting other incomplete given CompletionStage,
  * with a CompletionException holding this exception as its cause.
  *
  * This method is the same as [CompletableFuture.runAfterBothAsync] except for the fast-fail behavior.
@@ -607,9 +594,8 @@ fun CompletableFuture<*>.runAfterEitherSuccess(other: CompletionStage<*>, action
 /**
  * Returns a new CompletableFuture that, when either given stage success, executes the given action
  * using CompletableFuture's default asynchronous execution facility.
- * Otherwise, all two given CompletionStage complete exceptionally,
- * the returned CompletableFuture also does so, with a CompletionException holding
- * an exception from any of the given CompletionStage as its cause.
+ * Otherwise, all two given CompletionStage complete exceptionally, the returned CompletableFuture also does so,
+ * with a CompletionException holding an exception from any of the given CompletionStage as its cause.
  *
  * This method is the same as [CompletableFuture.runAfterEitherAsync]
  * except for the either-**success** behavior(not either-**complete**).
@@ -624,8 +610,7 @@ fun CompletableFuture<*>.runAfterEitherSuccessAsync(
 
 /**
  * Returns a new CompletableFuture that, when either given stage success, executes the given action
- * using the supplied executor.
- * Otherwise, all two given CompletionStage complete exceptionally,
+ * using the supplied executor. Otherwise, all two given CompletionStage complete exceptionally,
  * the returned CompletableFuture also does so, with a CompletionException holding
  * an exception from any of the given CompletionStage as its cause.
  *
@@ -755,17 +740,20 @@ fun <C : CompletableFuture<*>> C.cffuOrTimeout(executorWhenTimeout: Executor, ti
  * **CAUTION:** This method and [CompletableFuture.orTimeout] is **UNSAFE**!
  *
  * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
- * are performed in the **SINGLE thread builtin executor**
- * of CompletableFuture for delay execution (including timeout function).
- * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
+ * are performed in the **SINGLE thread builtin executor** of CompletableFuture for delay execution (including
+ * timeout function). So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
  * (including delay execution and timeout).
  *
- * **Strong recommend** using the safe method [cffuOrTimeout]
- * instead of this method and [CompletableFuture.orTimeout].
- *
- * Unless all subsequent actions of dependent CompletableFutures is ensured executing async
+ * **Strong recommend** using the safe method [cffuOrTimeout] instead of this method and [CompletableFuture.orTimeout].
+ * <br/>Unless all subsequent actions of dependent CompletableFutures is ensured executing async
  * (aka. the dependent CompletableFutures is created by async methods), using this method and [CompletableFuture.orTimeout]
  * is one less thread switch of task execution when triggered by timeout.
+ *
+ * Note: Before Java 21(Java 20-), [CompletableFuture.orTimeout] leaks if the future completes exceptionally,
+ * more info see [issue JDK-8303742](https://bugs.openjdk.org/browse/JDK-8303742),
+ * [PR review openjdk/jdk/13059](https://github.com/openjdk/jdk/pull/13059)
+ * and [JDK bugfix commit](https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a).
+ * The cffu backport logic(for Java 20-) has merged the fix of this JDK bug.
  *
  * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of `unit`
  * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
@@ -780,6 +768,11 @@ fun <C : CompletableFuture<*>> C.orTimeout(timeout: Long, unit: TimeUnit): C =
  *
  * Uses CompletableFuture's default asynchronous execution facility as `executorWhenTimeout`.
  *
+ * **CAUTION:** This method returns a new CompletableFuture and this behavior is DIFFERENT from the original CF method
+ * [CompletableFuture.completeOnTimeout] and its backport method [completeOnTimeout], because the returned new CF
+ * instance avoids the subsequent usage of the delay thread. More info see the javadoc of [completeOnTimeout] and the demo
+ * [DelayDysfunctionDemo](https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java).
+ *
  * @param value   the value to use upon timeout
  * @param timeout how long to wait before completing normally with the given value, in units of `unit`
  * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
@@ -790,12 +783,17 @@ fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
 ): C = CompletableFutureUtils.cffuCompleteOnTimeout(this, value, timeout, unit)
 
 /**
- * Completes this CompletableFuture with the given value if not otherwise completed before the given timeout.
+ * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
  *
- * @param value   the value to use upon timeout
+ * **CAUTION:** This method returns a new CompletableFuture and this behavior is DIFFERENT from the original CF method
+ * [CompletableFuture.completeOnTimeout] and its backport method [completeOnTimeout], because the returned new CF
+ * instance avoids the subsequent usage of the delay thread. More info see the javadoc of [completeOnTimeout] and the demo
+ * [DelayDysfunctionDemo](https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java).
+ *
+ * @param value               the value to use upon timeout
  * @param executorWhenTimeout the async executor when triggered by timeout
- * @param timeout how long to wait before completing normally with the given value, in units of `unit`
- * @param unit    a `TimeUnit` determining how to interpret the `timeout` parameter
+ * @param timeout             how long to wait before completing normally with the given value, in units of `unit`
+ * @param unit                a `TimeUnit` determining how to interpret the `timeout` parameter
  * @return the new CompletableFuture
  */
 fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
@@ -808,14 +806,12 @@ fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
  * **CAUTION:** This method and [CompletableFuture.completeOnTimeout] is **UNSAFE**!
  *
  * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
- * are performed in the **SINGLE thread builtin executor**
- * of CompletableFuture for delay execution (including timeout function).
- * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
- * (including delay execution and timeout).
+ * are performed in the **SINGLE thread builtin executor** of CompletableFuture for delay execution
+ * (including timeout function). So the long-running subsequent non-async actions lead to
+ * the CompletableFuture dysfunction (including delay execution and timeout).
  *
  * **Strong recommend** using the safe method [cffuCompleteOnTimeout]
- * instead of this method and [CompletableFuture.completeOnTimeout].
- *
+ * instead of this method and [CompletableFuture.completeOnTimeout].<br/>
  * Unless all subsequent actions of dependent CompletableFutures is ensured executing async(aka. the dependent
  * CompletableFutures is created by async methods), using this method and [CompletableFuture.completeOnTimeout]
  * is one less thread switch of task execution when triggered by timeout.
@@ -926,7 +922,7 @@ fun <T, C : CompletionStage<in T>> C.exceptionallyComposeAsync(
  * When this stage is complete, the given action is invoked with the result(or `null` if none)
  * and the exception (or `null` if none) of this stage as arguments.
  *
- * **CAUTION: ** The return stage of method [CompletionStage.whenComplete]
+ * **CAUTION:** The return stage of method [CompletionStage.whenComplete]
  * will contain **DIFFERENT** result to the input stage when the input stage is successful
  * but the supplied action throws an exception. This behavior of method `whenComplete` is subtle,
  * and common misused if you just want to **peek** the input stage without affecting the result(e.g.
@@ -951,7 +947,7 @@ fun <T, C : CompletionStage<out T>> C.peek(action: BiConsumer<in T, in Throwable
  * When this stage is complete, the given action is invoked with the result(or `null` if none)
  * and the exception (or `null` if none) of this as arguments.
  *
- * **CAUTION: ** The return stage of method [CompletionStage.whenCompleteAsync]
+ * **CAUTION:** The return stage of method [CompletionStage.whenCompleteAsync]
  * will contain **DIFFERENT** result to the input stage when the input stage is successful
  * but the supplied action throws an exception. This behavior of method `whenComplete` is subtle,
  * and common misused if you just want to **peek** the input stage without affecting the result(e.g.
@@ -976,7 +972,7 @@ fun <T, C : CompletionStage<out T>> C.peekAsync(action: BiConsumer<in T, in Thro
  * When this stage is complete, the given action is invoked with the result(or `null` if none)
  * and the exception (or `null` if none) of this stage as arguments.
  *
- * **CAUTION: ** The return stage of method [CompletionStage.whenCompleteAsync]
+ * **CAUTION:** The return stage of method [CompletionStage.whenCompleteAsync]
  * will contain **DIFFERENT** result to the input stage when the input stage is successful
  * but the supplied action throws an exception. This behavior of method `whenComplete` is subtle,
  * and common misused if you just want to **peek** the input stage without affecting the result(e.g.

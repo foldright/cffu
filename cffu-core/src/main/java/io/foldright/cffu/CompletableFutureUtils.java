@@ -58,9 +58,8 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
+     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the CompletableFuture's
+     * default asynchronous execution facility with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
      * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
@@ -75,8 +74,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the given Executor
+     * with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
      * @param executor  the executor to use for asynchronous execution
@@ -1046,8 +1045,8 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture with the results in the <strong>same order</strong> of the given stages arguments,
      * the new CompletableFuture is completed when all the given stages complete;
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture
+     * also does so, with a CompletionException holding this exception as its cause.
      * If no stages are provided, returns a CompletableFuture completed with the value empty list.
      * <p>
      * This method is the same as {@link #allOf(CompletionStage[])},
@@ -1135,8 +1134,8 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is completed when all the given stages complete;
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture
+     * also does so, with a CompletionException holding this exception as its cause.
      * Otherwise, the results, if any, of the given stages are not reflected in the returned
      * CompletableFuture({@code CompletableFuture<Void>}), but may be obtained by inspecting them individually.
      * If no stages are provided, returns a CompletableFuture completed with the value {@code null}.
@@ -1314,8 +1313,8 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is completed when any of the given stages complete, with the same result.
-     * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
+     * Otherwise, if it completed exceptionally, the returned CompletableFuture
+     * also does so, with a CompletionException holding this exception as its cause.
      * If no stages are provided, returns an incomplete CompletableFuture.
      * <p>
      * This method is the same as {@link CompletableFuture#anyOf(CompletableFuture[])},
@@ -2678,8 +2677,8 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
@@ -2698,8 +2697,8 @@ public final class CompletableFutureUtils {
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed using the default executor of parameter cfThis,
      * with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
@@ -2715,8 +2714,8 @@ public final class CompletableFutureUtils {
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed using the supplied executor,
      * with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
@@ -2762,8 +2761,8 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
@@ -2782,8 +2781,8 @@ public final class CompletableFutureUtils {
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed using the default executor of parameter cfThis,
      * with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
@@ -2799,8 +2798,8 @@ public final class CompletableFutureUtils {
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed using the supplied executor,
      * with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
@@ -2818,8 +2817,8 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when two given stages both complete normally, executes the given action.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
@@ -2836,8 +2835,8 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when two given stages both complete normally,
      * executes the given action using the default executor of parameter cfThis.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
@@ -2851,8 +2850,8 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when two given stages both complete normally,
      * executes the given action using the supplied executor.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
@@ -3178,7 +3177,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from
      * the original CF method {@link CompletableFuture#orTimeout} and its backport method {@link #orTimeout},
-     * because the returning new CF instance avoids the subsequent usage of the delay thread.
+     * because the returned new CF instance avoids the subsequent usage of the delay thread.
      * More info see the javadoc of {@link #orTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
@@ -3198,7 +3197,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from
      * the original CF method {@link CompletableFuture#orTimeout} and its backport method {@link #orTimeout},
-     * because the returning new CF instance avoids the subsequent usage of the delay thread.
+     * because the returned new CF instance avoids the subsequent usage of the delay thread.
      * More info see the javadoc of {@link #orTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
@@ -3222,8 +3221,7 @@ public final class CompletableFutureUtils {
      * Exceptionally completes given CompletableFuture with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
      * <p>
-     * <strong>CAUTION:</strong> This method and {@link CompletableFuture#orTimeout(long, TimeUnit)}
-     * is <strong>UNSAFE</strong>!
+     * <strong>CAUTION:</strong> This method and {@link CompletableFuture#orTimeout} is <strong>UNSAFE</strong>!
      * <p>
      * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
      * are performed in the <strong>SINGLE thread builtin executor</strong>
@@ -3231,16 +3229,14 @@ public final class CompletableFutureUtils {
      * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
      * (including delay execution and timeout).
      * <p>
-     * <strong>Strong recommend</strong> using the safe method {@link #cffuOrTimeout(CompletableFuture, long, TimeUnit)}
-     * instead of this method and {@link CompletableFuture#orTimeout(long, TimeUnit)}.
-     * <p>
+     * <strong>Strong recommend</strong> using the safe method {@link #cffuOrTimeout(CompletableFuture,
+     * Executor, long, TimeUnit)} instead of this method and {@link CompletableFuture#orTimeout}.<br>
      * Unless all subsequent actions of dependent CompletableFutures is ensured executing async(aka. the dependent
-     * CompletableFutures is created by async methods), using this method and {@link CompletableFuture#orTimeout(long,
-     * TimeUnit)} is one less thread switch of task execution when triggered by timeout.
+     * CompletableFutures is created by async methods), using this method and {@link CompletableFuture#orTimeout}
+     * is one less thread switch of task execution when triggered by timeout.
      * <p>
-     * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout(long, TimeUnit)}
-     * leaks if the future completes exceptionally, more info see
-     * <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
+     * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout} leaks if the future completes exceptionally,
+     * more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
      * <a href="https://github.com/openjdk/jdk/pull/13059">PR review openjdk/jdk/13059</a>
      * and <a href="https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a">JDK bugfix commit</a>.
      * The cffu backport logic(for Java 20-) has merged the fix of this JDK bug.
@@ -3248,7 +3244,7 @@ public final class CompletableFutureUtils {
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the given CompletableFuture
-     * @see #cffuOrTimeout(CompletableFuture, long, TimeUnit)
+     * @see #cffuOrTimeout(CompletableFuture, Executor, long, TimeUnit)
      */
     @Contract("_, _, _ -> param1")
     public static <C extends CompletableFuture<?>> C orTimeout(C cfThis, long timeout, TimeUnit unit) {
@@ -3276,7 +3272,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the
      * original CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout},
-     * because the returning new CF instance avoids the subsequent usage of the delay thread.
+     * because the returned new CF instance avoids the subsequent usage of the delay thread.
      * More info see the javadoc of {@link #completeOnTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
@@ -3295,9 +3291,9 @@ public final class CompletableFutureUtils {
     /**
      * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
      * <p>
-     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the
+     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is DIFFERENT from the
      * original CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout},
-     * because the returning new CF instance avoids the subsequent usage of the delay thread.
+     * because the returned new CF instance avoids the subsequent usage of the delay thread.
      * More info see the javadoc of {@link #completeOnTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
@@ -3320,19 +3316,15 @@ public final class CompletableFutureUtils {
     /**
      * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
      * <p>
-     * <strong>CAUTION:</strong> This method and {@link CompletableFuture#completeOnTimeout(Object, long, TimeUnit)}
-     * is <strong>UNSAFE</strong>!
+     * <strong>CAUTION:</strong> This method and {@link CompletableFuture#completeOnTimeout} is <strong>UNSAFE</strong>!
      * <p>
      * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
-     * are performed in the <strong>SINGLE thread builtin executor</strong>
-     * of CompletableFuture for delay execution (including timeout function).
-     * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
-     * (including delay execution and timeout).
+     * are performed in the <strong>SINGLE thread builtin executor</strong> of CompletableFuture for delay execution
+     * (including timeout function). So the long-running subsequent non-async actions lead to
+     * the CompletableFuture dysfunction (including delay execution and timeout).
      * <p>
-     * <strong>Strong recommend</strong>
-     * using the safe method {@link #cffuCompleteOnTimeout(CompletableFuture, Object, long, TimeUnit)}
-     * instead of this method and {@link CompletableFuture#completeOnTimeout}.
-     * <p>
+     * <strong>Strong recommend</strong> using the safe method {@link #cffuCompleteOnTimeout(CompletableFuture, Object,
+     * Executor, long, TimeUnit)} instead of this method and {@link CompletableFuture#completeOnTimeout}.<br>
      * Unless all subsequent actions of dependent CompletableFutures is ensured executing async(aka. the dependent
      * CompletableFutures is created by async methods), using this method and {@link CompletableFuture#completeOnTimeout}
      * is one less thread switch of task execution when triggered by timeout.
@@ -3341,7 +3333,7 @@ public final class CompletableFutureUtils {
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the given CompletableFuture
-     * @see #cffuCompleteOnTimeout(CompletableFuture, Object, long, TimeUnit)
+     * @see #cffuCompleteOnTimeout(CompletableFuture, Object, Executor, long, TimeUnit)
      */
     @Contract("_, _, _, _ -> param1")
     public static <T, C extends CompletableFuture<? super T>>

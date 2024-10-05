@@ -70,12 +70,11 @@ private const val ERROR_MSG_FOR_ARRAY = "no cffuFactory argument provided when t
  * with a CompletionException holding this exception as its cause.
  * If no Cffus are provided, returns a Cffu completed with the value empty list.
  *
- * This method is the same as [allFastFailOfCffu], except the returned Cffu contains the results of input Cffus.
- *
- * This method is the same as [CffuFactory.allResultsFastFailOf], providing this method is convenient for method chaining.
- *
  * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
+ *
+ * This method is the same as [allFastFailOfCffu], except the returned Cffu contains the results of input Cffus.
+ * This method is the same as [CffuFactory.allResultsFastFailOf], providing this method is convenient for method chaining.
  *
  * @see allFastFailOfCffu
  * @see CffuFactory.allResultsFastFailOf
@@ -94,12 +93,11 @@ fun <T> Collection<Cffu<out T>>.allResultsFastFailOfCffu(cffuFactory: CffuFactor
  * with a CompletionException holding this exception as its cause.
  * If no Cffus are provided, returns a Cffu completed with the value empty list.
  *
- * This method is the same as [allFastFailOfCffu], except the returned Cffu contains the results of input Cffus.
- *
- * This method is the same as [CffuFactory.allResultsFastFailOf], providing this method is convenient for method chaining.
- *
  * If this array is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this array is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
+ *
+ * This method is the same as [allFastFailOfCffu], except the returned Cffu contains the results of input Cffus.
+ * This method is the same as [CffuFactory.allResultsFastFailOf], providing this method is convenient for method chaining.
  *
  * @see allFastFailOfCffu
  * @see CffuFactory.allResultsFastFailOf
@@ -119,7 +117,6 @@ fun <T> Array<out Cffu<out T>>.allResultsFastFailOfCffu(cffuFactory: CffuFactory
  * If no stages are provided, returns a Cffu completed with the value empty list.
  *
  * This method is the same as [allFastFailOfCffu], except the returned Cffu contains the results of input Cffus.
- *
  * This method is the same as [CffuFactory.allResultsFastFailOf], providing this method is convenient for method chaining.
  *
  * @see allFastFailOfCffu
@@ -138,7 +135,6 @@ fun <T> Collection<CompletionStage<out T>>.allResultsFastFailOfCffu(cffuFactory:
  * If no stages are provided, returns a Cffu completed with the value empty list.
  *
  * This method is the same as [allFastFailOfCffu], except the returned Cffu contains the results of input Cffus.
- *
  * This method is the same as [CffuFactory.allResultsFastFailOf], providing this method is convenient for method chaining.
  *
  * @see allFastFailOfCffu
@@ -238,7 +234,6 @@ fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCffu(
  * If no Cffus are provided, returns a Cffu completed with the value empty list.
  *
  * This method is the same as [allOfCffu], except the returned Cffu contains the results of input Cffus.
- *
  * This method is the same as [CffuFactory.allResultsOf], providing this method is convenient for method chaining.
  *
  * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
@@ -260,12 +255,11 @@ fun <T> Collection<Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSE
  * also does so, with a CompletionException holding this exception as its cause.
  * If no Cffus are provided, returns a Cffu completed with the value empty list.
  *
- * This method is the same as [allOfCffu], except the returned Cffu contains the results of input Cffus.
- *
- * This method is the same as [CffuFactory.allResultsOf], providing this method is convenient for method chaining.
- *
  * If this array is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this array is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
+ *
+ * This method is the same as [allOfCffu], except the returned Cffu contains the results of input Cffus.
+ * This method is the same as [CffuFactory.allResultsOf], providing this method is convenient for method chaining.
  *
  * @see allOfCffu
  * @see CffuFactory.allResultsOf
@@ -284,7 +278,6 @@ fun <T> Array<out Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSEN
  * If no stages are provided, returns a Cffu completed with the value empty list.
  *
  * This method is the same as [allOfCffu], except the returned Cffu contains the results of input stages.
- *
  * This method is the same as [CffuFactory.allResultsOf], providing this method is convenient for method chaining.
  *
  * @see allOfCffu
@@ -302,7 +295,6 @@ fun <T> Collection<CompletionStage<out T>>.allResultsOfCffu(cffuFactory: CffuFac
  * If no stages are provided, returns a Cffu completed with the value empty list.
  *
  * This method is the same as [allOfCffu], except the returned Cffu contains the results of input stages.
- *
  * This method is the same as [CffuFactory.allResultsOf], providing this method is convenient for method chaining.
  *
  * @see allOfCffu
@@ -320,10 +312,10 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfCffu(cffuFactory: CffuFact
  * with a CompletionException holding this exception as its cause.
  * If no Cffus are provided, returns a Cffu completed with the value `null`.
  *
- * This method is the same as [CffuFactory.allFastFailOf], providing this method is convenient for method chaining.
- *
  * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
+ *
+ * This method is the same as [CffuFactory.allFastFailOf], providing this method is convenient for method chaining.
  *
  * @see allResultsFastFailOfCffu
  * @see CffuFactory.allFastFailOf
@@ -343,10 +335,10 @@ fun Collection<Cffu<*>>.allFastFailOfCffu(cffuFactory: CffuFactory = ABSENT): Cf
  * with a CompletionException holding this exception as its cause.
  * If no Cffus are provided, returns a Cffu completed with the value `null`.
  *
- * This method is the same as [CffuFactory.allFastFailOf], providing this method is convenient for method chaining.
- *
  * If this array is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this array is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
+ *
+ * This method is the same as [CffuFactory.allFastFailOf], providing this method is convenient for method chaining.
  *
  * @see allResultsFastFailOfCffu
  * @see CffuFactory.allFastFailOf
@@ -400,10 +392,10 @@ fun Array<out CompletionStage<*>>.allFastFailOfCffu(cffuFactory: CffuFactory): C
  * the returned Cffu(`Cffu<Void>`), but may be obtained by inspecting them individually.
  * If no Cffus are provided, returns a Cffu completed with the value `null`.
  *
- * This method is the same as [CffuFactory.allOf], providing this method is convenient for method chaining.
- *
  * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
+ *
+ * This method is the same as [CffuFactory.allOf], providing this method is convenient for method chaining.
  *
  * @see allResultsOfCffu
  * @see CffuFactory.allOf
@@ -422,10 +414,10 @@ fun Collection<Cffu<*>>.allOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void>
  * the returned Cffu(`Cffu<Void>`), but may be obtained by inspecting them individually.
  * If no Cffus are provided, returns a Cffu completed with the value `null`.
  *
- * This method is the same as [CffuFactory.allOf], providing this method is convenient for method chaining.
- *
  * If this array is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this array is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
+ *
+ * This method is the same as [CffuFactory.allOf], providing this method is convenient for method chaining.
  *
  * @see allResultsOfCffu
  * @see CffuFactory.allOf
@@ -483,10 +475,10 @@ fun Array<out CompletionStage<*>>.allOfCffu(cffuFactory: CffuFactory): Cffu<Void
  * returns a new Cffu that is already completed exceptionally with a CompletionException
  * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
- * This method is the same as [CffuFactory.anySuccessOf], providing this method is convenient for method chaining.
- *
  * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
+ *
+ * This method is the same as [CffuFactory.anySuccessOf], providing this method is convenient for method chaining.
  *
  * @see anyOfCffu
  * @see CffuFactory.anySuccessOf
@@ -505,10 +497,10 @@ fun <T> Collection<Cffu<out T>>.anySuccessOfCffu(cffuFactory: CffuFactory = ABSE
  * returns a new Cffu that is already completed exceptionally with a CompletionException
  * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
  *
- * This method is the same as [CffuFactory.anySuccessOf], providing this method is convenient for method chaining.
- *
  * If this array is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this array is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
+ *
+ * This method is the same as [CffuFactory.anySuccessOf], providing this method is convenient for method chaining.
  *
  * @see anyOfCffu
  * @see CffuFactory.anySuccessOf
@@ -555,10 +547,10 @@ fun <T> Array<out CompletionStage<out T>>.anySuccessOfCffu(cffuFactory: CffuFact
 /**
  * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.
  *
- * This method is the same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
- *
  * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
+ *
+ * This method is the same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
  *
  * @see CffuFactory.anyOf
  */
@@ -571,10 +563,10 @@ fun <T> Collection<Cffu<out T>>.anyOfCffu(cffuFactory: CffuFactory = ABSENT): Cf
 /**
  * Returns a new Cffu that is completed when any of the given Cffus complete, with the same result.
  *
- * This method is the same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
- *
  * If this array is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this array is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
+ *
+ * This method is the same as [CffuFactory.anyOf], providing this method is convenient for method chaining.
  *
  * @see CffuFactory.anyOf
  */
