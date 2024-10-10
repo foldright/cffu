@@ -38,6 +38,18 @@
 		<system>GitHub Actions</system>
 		<url>https://github.com/foldright/cffu/actions</url>
 	</ciManagement>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>21</source>
+					<target>21</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<organization>
 		<name>FoldRight</name>
 		<url>https://foldright.io</url>
