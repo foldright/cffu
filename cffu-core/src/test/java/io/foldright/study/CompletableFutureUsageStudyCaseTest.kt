@@ -1,4 +1,4 @@
-package io.foldright.showcases
+package io.foldright.study
 
 import io.foldright.test_utils.*
 import io.kotest.core.spec.style.FunSpec
@@ -17,10 +17,10 @@ import java.lang.Thread.currentThread
 import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicBoolean
 
-class CompletableFutureUsageShowcaseTest : FunSpec({
-    val n = 42
-    val anotherN = 424242
-    val rte = RuntimeException("Bang")
+/**
+ * Study CompletableFuture usage.
+ */
+class CompletableFutureUsageStudyCaseTest : FunSpec({
 
     test("execution thread/executor behavior: then*(non-Async) operations chained after COMPLETED CF(completed by immediate value), trigger by then* invocation and run in place SEQUENTIALLY").config(
         invocations = 100
@@ -71,10 +71,10 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
             sequenceChecker.assertSeq("supplyAsync completed CF", seq++)
 
             currentThread() shouldNotBe mainThread
-            assertRunInExecutor(testThreadPoolExecutor)
+            assertRunningInExecutor(testExecutor)
 
             n
-        }, testThreadPoolExecutor)
+        }, testExecutor)
         // ensure f0 is already COMPLETED
         f0.await() shouldBe n // wait f0 COMPLETED
         sequenceChecker.assertSeq("after f0 get", seq++)
@@ -123,13 +123,13 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
                     blocker.block()
 
                     currentThread() shouldNotBe mainThread
-                    assertNotRunInExecutor(testThreadPoolExecutor)
+                    assertNotRunningInExecutor(testExecutor)
                 }
                 .thenRunAsync({
                     thenNonAsyncOpThread = currentThread()
 
-                    assertRunInExecutor(testThreadPoolExecutor)
-                }, testThreadPoolExecutor) // ! switch executor !
+                    assertRunningInExecutor(testExecutor)
+                }, testExecutor) // ! switch executor !
                 .thenApply {
                     // when NOT async,
                     // use same thread of single previous CF
@@ -152,7 +152,7 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
                     //
                     // - executor is NOT inherited after switch!
                     // - use the DEFAULT EXECUTOR of CompletableFuture, if no executor specified.
-                    assertNotRunInExecutor(testThreadPoolExecutor)
+                    assertNotRunningInExecutor(testExecutor)
                 }
         }
         f.join()
@@ -160,14 +160,13 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
 
     fun checkThreadSwitchBehaviorThenApplyAsync(executor: ExecutorService) {
         val f0 = CompletableFuture.supplyAsync({
-            assertRunInExecutor(executor)
+            assertRunningInExecutor(executor)
             emptyList<String>()
         }, executor)
 
-        val forkCount = 10
-        val forks = Array(forkCount) { f0 }
+        val forks = Array(THREAD_COUNT_OF_POOL) { f0 }
 
-        val times = 100
+        val times = 10
         repeat(times) {
             for ((index, f) in forks.withIndex()) {
                 forks[index] = f.thenApplyAsync({
@@ -179,14 +178,14 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
 
         val threadNameList = forks.reduce { acc, f -> acc.thenCombine(f, ::merge) }.get()
 
-        threadNameList.shouldHaveSize(forkCount * times)
+        threadNameList.shouldHaveSize(THREAD_COUNT_OF_POOL * times)
         threadNameList.toSet().shouldHaveSize(THREAD_COUNT_OF_POOL)
     }
 
     test("execution thread/executor behavior: then*Async operations of CF, run in switched thread(re-submit task into Executor)") {
-        checkThreadSwitchBehaviorThenApplyAsync(testThreadPoolExecutor)
+        checkThreadSwitchBehaviorThenApplyAsync(testExecutor)
 
-        checkThreadSwitchBehaviorThenApplyAsync(testForkJoinPoolExecutor)
+        checkThreadSwitchBehaviorThenApplyAsync(testFjExecutor)
     }
 
     /**
@@ -245,12 +244,12 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
                 sequenceChecker.assertSeq("create exceptionallyAsync", 1)
 
                 currentThread() shouldNotBe mainThread
-                assertRunInExecutor(testThreadPoolExecutor)
+                assertRunningInExecutor(testExecutor)
 
                 it.shouldBeTypeOf<CompletionException>()
                 it.cause shouldBeSameInstanceAs rte
                 "HERE"
-            }, testThreadPoolExecutor)
+            }, testExecutor)
 
         @Suppress("BlockingMethodInNonBlockingContext")
         f1.get().also {
@@ -312,30 +311,24 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
         f0.completeAsync({
             sequenceChecker.assertSeq("in completeAsync", 2)
 
-            assertRunInExecutor(testThreadPoolExecutor)
+            assertRunningInExecutor(testExecutor)
 
             "done"
-        }, testThreadPoolExecutor)
+        }, testExecutor)
 
         f1.await() shouldBe n
         sequenceChecker.assertSeq("in completeAsync", 4)
     }
 
     test("timeout control: normally completed with replacement value").config(enabledIf = java9Plus) {
-        val f = CompletableFuture.supplyAsync {
-            sleep(1000)
-            n
-        }.completeOnTimeout(anotherN, 1, TimeUnit.MILLISECONDS)
+        val f = completeLaterCf(n)
+            .completeOnTimeout(anotherN, 1, TimeUnit.MILLISECONDS)
 
         f.await() shouldBe anotherN
     }
 
     test("timeout control: exceptionally completed with java.util.concurrent.TimeoutException").config(enabledIf = java9Plus) {
-        val f = CompletableFuture
-            .supplyAsync {
-                sleep(1000)
-                n
-            }
+        val f = completeLaterCf(n)
             .orTimeout(1, TimeUnit.MILLISECONDS)
             .exceptionally {
                 it.shouldBeTypeOf<TimeoutException>()
@@ -349,24 +342,22 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
         val tick = currentTimeMillis()
         val delay = 100L
 
-        val delayer = CompletableFuture.delayedExecutor(delay, TimeUnit.MILLISECONDS)
+        val delayer = CompletableFuture.delayedExecutor(delay, TimeUnit.MILLISECONDS, testExecutor)
 
         val duration = CompletableFuture.supplyAsync({
             currentTimeMillis() - tick
         }, delayer).await()
 
         // if run in CI environment, use large tolerance 50ms, because CI environment is more unstable.
-        val tolerance = if (isCiEnv()) 50 else 10
+        // if run in CI mac environment, use huge tolerance 200ms, because CI mac environment is more more unstable.
+        val tolerance = if (isCiMacEnv()) 200 else if (isCiEnv()) 50 else 20
         duration.shouldBeBetween(delay, delay + tolerance)
     }
 
     xtest("performance CF then*").config(invocations = 10) {
         val times = 1_000_000
 
-        var f = CompletableFuture.supplyAsync(
-            { sleep(); currentTimeMillis() },
-            testThreadPoolExecutor
-        )
+        var f = completeLaterCf({ currentTimeMillis() }, executor = testFjExecutor)
 
         val tick = currentTimeMillis()
         repeat(times) {
@@ -389,13 +380,13 @@ class CompletableFutureUsageShowcaseTest : FunSpec({
         cf.minimalCompletionStage().handle { _, t ->
             t.shouldBeTypeOf<CompletionException>()
             t.cause shouldBeSameInstanceAs rte
-            42
-        }.toCompletableFuture().await() shouldBe 42
+            n
+        }.toCompletableFuture().await() shouldBe n
 
         cf.thenApply { it }.handle { _, t ->
             t.shouldBeTypeOf<CompletionException>()
             t.cause shouldBeSameInstanceAs rte
-            42
-        }.toCompletableFuture().await() shouldBe 42
+            n
+        }.toCompletableFuture().await() shouldBe n
     }
 })

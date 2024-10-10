@@ -1,7 +1,10 @@
 #!/bin/bash
 set -eEuo pipefail
-# adjust current dir to script dir
-cd "$(dirname "$(readlink -f "$0")")"
+# the canonical path of this script
+SELF_PATH=$(realpath -- "$0")
+readonly SELF_PATH SELF_DIR=${SELF_PATH%/*}
+# cd to script dir
+cd "$SELF_DIR"
 
 source "$PWD/bash-buddy/lib/trap_error_info.sh"
 source "$PWD/bash-buddy/lib/common_utils.sh"

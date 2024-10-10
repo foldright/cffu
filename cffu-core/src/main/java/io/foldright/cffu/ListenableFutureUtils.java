@@ -13,8 +13,12 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * Integration with guava {@link ListenableFuture}.
+ *
+ * @author Jerry Lee (oldratlee at gmail dot com)
+ * @author HuHao (995483610 at qq dot com)
+ * @author Eric Lin (linqinghua4 at gmail dot com)
  */
-public class ListenableFutureUtils {
+public final class ListenableFutureUtils {
 
     /*
      * Implementation Note:
@@ -28,19 +32,41 @@ public class ListenableFutureUtils {
      * Converts input {@link ListenableFuture} to {@link CompletableFuture}.
      * <p>
      * Callback from ListenableFuture is executed using the given executor,
-     * use {{@link MoreExecutors#directExecutor()}} if you need skip executor switch.
+     * use {@link MoreExecutors#directExecutor()} if you need skip the execution switch.
+     * <p>
+     * Cancelling({@link Future#cancel(boolean)}) the returned CompletableFuture
+     * will also cancel underlying ListenableFuture.
+     * <p>
+     * Use param {@code interruptLfWhenCancellationException} to control whether to cancel ListenableFuture with
+     * interruption when CancellationException occurred (including CompletionException/ExecutionException with
+     * CancellationException cause, more info see {@link CompletableFutureUtils#unwrapCfException(Throwable)}).
+     * <p>
+     * It's recommended to avoid using direct write methods(e.g. {@link CompletableFuture#complete(Object)},
+     * {@link CompletableFuture#completeExceptionally(Throwable)}) of the returned CompletableFuture:
+     * <ul>
+     * <li>the underlying ListenableFuture can benefit from cancellation propagation.
+     * <li>the writing of the returned CompletableFuture won't affect the underlying ListenableFuture.
+     * </ul>
+     *
+     * @param lf                                   the underlying ListenableFuture
+     * @param executor                             the executor to use for ListenableFuture callback execution
+     * @param interruptLfWhenCancellationException whether to cancel ListenableFuture with interruption
+     *                                             when CancellationException occurred
+     * @return the CompletableFuture adapter
+     * @see CompletableFuture#cancel(boolean)
      */
     @Contract(pure = true)
-    public static <T> CompletableFuture<T> toCompletableFuture(ListenableFuture<T> lf, Executor executor) {
+    public static <T> CompletableFuture<T> toCompletableFuture(
+            ListenableFuture<T> lf, Executor executor, boolean interruptLfWhenCancellationException) {
         requireNonNull(lf, "listenableFuture is null");
+        requireNonNull(executor, "executor is null");
 
         CompletableFuture<T> ret = new CompletableFuture<T>() {
             @Override
             public boolean cancel(boolean mayInterruptIfRunning) {
                 // propagate cancellation from outer adapter to LF
-                final boolean ret = lf.cancel(mayInterruptIfRunning);
-                super.cancel(mayInterruptIfRunning);
-                return ret;
+                lf.cancel(mayInterruptIfRunning);
+                return super.cancel(mayInterruptIfRunning);
             }
 
             @Override
@@ -50,14 +76,10 @@ public class ListenableFutureUtils {
             }
         };
         // propagate cancellation by CancellationException from outer adapter to LF
-        ret.whenComplete((result, throwable) -> {
-            if (ret.isCancelled()) {
-                lf.cancel(false);
-            } else {
-                Throwable cause = CompletableFutureUtils.unwrapCfException(throwable);
-                if (cause instanceof CancellationException) {
-                    lf.cancel(false);
-                }
+        CompletableFutureUtils.peek(ret, (v, ex) -> {
+            ex = CompletableFutureUtils.unwrapCfException(ex);
+            if (ex instanceof CancellationException) {
+                lf.cancel(interruptLfWhenCancellationException);
             }
         });
 
@@ -79,10 +101,14 @@ public class ListenableFutureUtils {
      * Converts input {@link ListenableFuture} to {@link Cffu}.
      * <p>
      * Callback from ListenableFuture is executed using cffuFactory's default executor.
+     * <p>
+     * More info see {@link #toCompletableFuture(ListenableFuture, Executor, boolean)}.
      */
     @Contract(pure = true)
-    public static <T> Cffu<T> toCffu(ListenableFuture<T> lf, CffuFactory cffuFactory) {
-        return cffuFactory.toCffu(toCompletableFuture(lf, cffuFactory.defaultExecutor()));
+    public static <T> Cffu<T> toCffu(
+            ListenableFuture<T> lf, CffuFactory cffuFactory, boolean interruptLfWhenCancellationException) {
+        return cffuFactory.toCffu(toCompletableFuture(
+                lf, cffuFactory.defaultExecutor(), interruptLfWhenCancellationException));
     }
 
     /**

@@ -15,9 +15,9 @@ import java.util.concurrent.Executor
   ---------------------
   Implementation Note:
   ---------------------
-  the methods of this file MUST NOT be defined in CompletableFutureExtensions or CffuExtensions;
+  The methods of this file MUST NOT be defined in `CompletableFutureExtensions` or `CffuExtensions`;
   Otherwise `NoClassDefFoundError` when loading CompletableFutureExtensions/CffuExtensions
-  if ListenableFuture class(`ClassNotFoundException` aka. guava dependency) absent.
+  if `ListenableFuture` class(`ClassNotFoundException` aka. `Guava` dependency) is absent.
 */
 
 /**
@@ -26,17 +26,18 @@ import java.util.concurrent.Executor
  * Callback from ListenableFuture is executed using the given executor,
  * use {[MoreExecutors.directExecutor]} if you need skip executor switch.
  */
-fun <T> ListenableFuture<T>.toCompletableFuture(executor: Executor): CompletableFuture<T> =
-    ListenableFutureUtils.toCompletableFuture(this, executor)
+fun <T> ListenableFuture<T>.toCompletableFuture(
+    executor: Executor, interruptLfWhenCancellationException: Boolean
+): CompletableFuture<T> =
+    ListenableFutureUtils.toCompletableFuture(this, executor, interruptLfWhenCancellationException)
 
 /**
  * Converts input [ListenableFuture] to [Cffu].
  *
  * Callback from ListenableFuture is executed using cffuFactory's default executor.
  */
-fun <T> ListenableFuture<T>.toCffu(cffuFactory: CffuFactory): Cffu<T> {
-    return ListenableFutureUtils.toCffu(this, cffuFactory)
-}
+fun <T> ListenableFuture<T>.toCffu(cffuFactory: CffuFactory, interruptLfWhenCancellationException: Boolean): Cffu<T> =
+    ListenableFutureUtils.toCffu(this, cffuFactory, interruptLfWhenCancellationException)
 
 /**
  * Converts input [CompletableFuture] to [ListenableFuture].

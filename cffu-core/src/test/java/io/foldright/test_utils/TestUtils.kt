@@ -12,51 +12,58 @@ import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import org.apache.commons.lang3.JavaVersion
+import org.apache.commons.lang3.SystemUtils
 import org.apache.commons.lang3.SystemUtils.isJavaVersionAtLeast
 import java.util.concurrent.*
+import java.util.function.Supplier
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// constants for testing
+// region# util methods for testing
 ////////////////////////////////////////////////////////////////////////////////
 
-const val n = 42
-const val anotherN = 424242
-const val s = "S42"
-const val d = 42.1
-
-@JvmField
-val rte = RuntimeException("Bang")
-
-@JvmField
-val anotherRte = RuntimeException("AnotherBang")
-
-////////////////////////////////////////////////////////////////////////////////
-// util methods for testing
-////////////////////////////////////////////////////////////////////////////////
-
-fun <T> createIncompleteFuture(): CompletableFuture<T> = CompletableFuture()
+fun <T> incompleteCf(): CompletableFuture<T> = CompletableFuture()
 
 @JvmOverloads
-fun <T> createFutureCompleteLater(value: T, millis: Long = 100): CompletableFuture<T> = CompletableFuture.supplyAsync {
+fun <T> completeLaterCf(value: T, millis: Long = MEDIAN_WAIT_MS): CompletableFuture<T> = CompletableFuture.supplyAsync {
     sleep(millis)
     value
 }
 
-fun <T> createCancelledFuture(): CompletableFuture<T> = CompletableFuture<T>().apply {
-    cancel(false)
-}
-
-/**
- * sleep without throwing checked exception
- */
 @JvmOverloads
-fun sleep(millis: Long = 10) {
-    Thread.sleep(millis)
+fun <T> completeLaterCf(
+    value: () -> T, millis: Long = MEDIAN_WAIT_MS, executor: Executor = DEFAULT_EXECUTOR
+): CompletableFuture<T> {
+    val action = Supplier {
+        sleep(millis)
+        value()
+    }
+    return if (executor === DEFAULT_EXECUTOR) CompletableFuture.supplyAsync(action)
+    else CompletableFuture.supplyAsync(action, executor)
 }
 
+@JvmOverloads
+fun <T> cancelledFuture(mayInterruptIfRunning: Boolean = false): CompletableFuture<T> = CompletableFuture<T>().apply {
+    cancel(mayInterruptIfRunning)
+}
+
+private val DEFAULT_EXECUTOR: Executor = Executor { /* do nothing */ }
+
+@JvmOverloads
+fun <T> supplyLater(value: T, millis: Long = MEDIAN_WAIT_MS) = Supplier<T> {
+    sleep(millis)
+    value
+}
+
+@JvmOverloads
+fun <T> supplyLater(ex: Throwable, millis: Long = MEDIAN_WAIT_MS) = Supplier<T> {
+    sleep(millis)
+    throw ex
+}
+
+// endregion
 ////////////////////////////////////////////////////////////////////////////////
-// Helper functions for api compatibility test:
+// region# Helper functions for API compatibility test
 //  - CompletableFutureApiCompatibilityTest
 //  - CffuApiCompatibilityTest
 ////////////////////////////////////////////////////////////////////////////////
@@ -78,26 +85,52 @@ fun <T> safeNewFailedCffu(executorService: ExecutorService, t: Throwable): Cffu<
     return CffuFactory.builder(executorService).build().failedFuture(t)
 }
 
-@Suppress("UNUSED_PARAMETER")
 fun assertCompletableFutureRunInDefaultThread(executorService: ExecutorService) {
-    // do nothing
+    assertNotRunningInExecutor(executorService)
 }
 
 fun assertCompletableFutureRunInThreadOf(executorService: ExecutorService) {
-    assertRunInExecutor(executorService)
+    assertRunningInExecutor(executorService)
 }
 
 fun assertCffuRunInDefaultThread(executorService: ExecutorService) {
-    assertRunInExecutor(executorService)
+    assertRunningInExecutor(executorService)
 }
 
 fun assertCffuRunInThreadOf(executorService: ExecutorService) {
-    assertRunInExecutor(executorService)
+    assertRunningInExecutor(executorService)
 }
 
+// endregion
 ////////////////////////////////////////////////////////////////////////////////
-// Simple util functions
+// region# some simple util functions
 ////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * sleep without throwing checked exception
+ */
+@JvmOverloads
+fun sleep(millis: Long = SHORT_WAIT_MS) {
+    Thread.sleep(millis)
+}
+
+/**
+ * sleep short time
+ */
+@JvmOverloads
+fun nap(millis: Long = SHORT_WAIT_MS) {
+    Thread.sleep(millis)
+}
+
+/**
+ * sleep long time
+ */
+@JvmOverloads
+fun snoreZzz(millis: Long = MEDIAN_WAIT_MS) {
+    Thread.sleep(millis)
+}
+
+fun sneakyThrow(ex: Throwable): Unit = throw ex
 
 fun <T> merge(list1: List<T>, list2: List<T>) = list1.merge(list2)
 
@@ -109,10 +142,9 @@ infix fun <T> List<T>.merge(other: List<T>): List<T> = mutableListOf<T>().apply 
 
 fun addCurrentThreadName(names: List<String>) = names + Thread.currentThread().name
 
-fun sneakyThrow(ex: Throwable): Unit = throw ex
-
+// endregion
 ////////////////////////////////////////////////////////////////////////////////
-// Assertion functions for CF/Cffu
+// region# Assertion functions for CF/Cffu
 ////////////////////////////////////////////////////////////////////////////////
 
 fun <T> CompletableFuture<T>.shouldBeMinimalStage() {
@@ -756,8 +788,9 @@ private fun <T> CompletionStage<T>.shouldCompletionStageMethodsAllowed(recursive
     toString()
 }
 
+// endregion
 ////////////////////////////////////////////////////////////////////////////////
-// Java Version Checker
+// region# Java Version Checker
 ////////////////////////////////////////////////////////////////////////////////
 
 fun isJava9Plus() = isJavaVersionAtLeast(JavaVersion.JAVA_9)
@@ -770,8 +803,11 @@ fun isJava19Plus(): Boolean = isJavaVersionAtLeast(JavaVersion.JAVA_19)
 // https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
 fun isCiEnv(): Boolean = System.getenv("CI")?.lowercase() == "true"
 
+fun isCiMacEnv(): Boolean = isCiEnv() && SystemUtils.IS_OS_MAC
+
+// endregion
 ////////////////////////////////////////////////////////////////////////////////
-// Kotest conditions
+// region# Kotest conditions
 ////////////////////////////////////////////////////////////////////////////////
 
 val java9Plus: (TestCase) -> Boolean = { isJava9Plus() }

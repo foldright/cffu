@@ -1,5 +1,8 @@
 package io.foldright.cffu;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
@@ -9,13 +12,14 @@ import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.function.*;
 
 import static io.foldright.cffu.Delayer.atCfDelayerThread;
-import static io.foldright.cffu.ExceptionReporter.reportException;
+import static io.foldright.cffu.ExceptionReporter.reportUncaughtException;
+import static io.foldright.cffu.InternalCommonUtils.*;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
@@ -25,20 +29,37 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @author HuHao (995483610 at qq dot com)
+ * @author Eric Lin (linqinghua4 at gmail dot com)
  */
 public final class CompletableFutureUtils {
+
+    /*
+     * Implementation Note about the name convention of internal methods:
+     *
+     * - methods with `f_` prefix means not type-safe, e.g.
+     *    - return type CompletableFuture that may be a minimal-stage
+     *    - force cast to CompletableFuture<T> from any CompletableFuture<?>
+     *    - return generic type T but constrained type TupleX
+     * - methods with `0` suffix means no parameter validation, e.g.
+     *    - no null check
+     *
+     * because these methods is not safe, caller logic SHOULD pay attention to keep implementation correct.
+     */
+
     ////////////////////////////////////////////////////////////////////////////////
     // region# CF Factory Methods(including static methods of CF)
     ////////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
     // region## Multi-Actions(M*) Methods(create by actions)
+    //
+    //    - Supplier<T>[] -> CompletableFuture<List<T>>
+    //    - Runnable[]    -> CompletableFuture<Void>
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
+     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the CompletableFuture's
+     * default asynchronous execution facility with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
      * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
@@ -53,8 +74,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
+     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the given Executor
+     * with the values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      *
      * @param executor  the executor to use for asynchronous execution
@@ -70,7 +91,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
-        return allResultsFastFailOf(wrapSuppliers(executor, suppliers));
+        return allResultsOf0(true, wrapSuppliers0(executor, suppliers));
     }
 
     /**
@@ -79,7 +100,8 @@ public final class CompletableFutureUtils {
      * with the successful values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If the given supplier failed, use the given valueIfFailed.
+     * If any of the provided suppliers fails, its corresponding position will contain {@code valueIfFailed}
+     * (which is indistinguishable from the supplier having a successful value of {@code valueIfFailed}).
      *
      * @param valueIfFailed the value to return if not failed
      * @param suppliers     the suppliers returning the value to be used to complete the returned CompletableFuture
@@ -99,7 +121,8 @@ public final class CompletableFutureUtils {
      * by tasks running in the given Executor with the successfully values obtained by calling the given Suppliers
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If the given supplier failed, use the given valueIfFailed.
+     * If any of the provided suppliers fails, its corresponding position will contain {@code valueIfFailed}
+     * (which is indistinguishable from the supplier having a successful value of {@code valueIfFailed}).
      *
      * @param valueIfFailed the value to return if not failed
      * @param executor      the executor to use for asynchronous execution
@@ -115,7 +138,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
-        return allSuccessResultsOf(valueIfFailed, wrapSuppliers(executor, suppliers));
+        return allSuccessResultsOf0(valueIfFailed, wrapSuppliers0(executor, suppliers));
     }
 
     /**
@@ -125,8 +148,9 @@ public final class CompletableFutureUtils {
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
+     * If any of the provided suppliers does not success(fails or incomplete) in given time,
+     * its corresponding position will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the supplier having a successful value of {@code valueIfNotSuccess}).
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param timeout           how long to wait in units of {@code unit}
@@ -149,8 +173,9 @@ public final class CompletableFutureUtils {
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
+     * If any of the provided suppliers does not success(fails or incomplete) in given time,
+     * its corresponding position will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the supplier having a successful value of {@code valueIfNotSuccess}).
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param executor          the executor to use for asynchronous execution
@@ -170,7 +195,7 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
-        return mostSuccessResultsOf(valueIfNotSuccess, executor, timeout, unit, wrapSuppliers(executor, suppliers));
+        return mostSuccessResultsOf0(valueIfNotSuccess, executor, timeout, unit, wrapSuppliers0(executor, suppliers));
     }
 
     /**
@@ -207,7 +232,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
-        return allResultsOf(wrapSuppliers(executor, suppliers));
+        return allResultsOf0(false, wrapSuppliers0(executor, suppliers));
     }
 
     /**
@@ -253,7 +278,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
-        return anySuccessOf(wrapSuppliers(executor, suppliers));
+        return anySuccessOf0(wrapSuppliers0(executor, suppliers));
     }
 
     /**
@@ -294,26 +319,11 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
-        return f_cast(CompletableFuture.anyOf(wrapSuppliers(executor, suppliers)));
+        return f_cast(CompletableFuture.anyOf(wrapSuppliers0(executor, suppliers)));
     }
 
-    @SafeVarargs
-    private static <T> T[] requireArrayAndEleNonNull(String varName, T... array) {
-        requireNonNull(array, varName + "s is null");
-        for (int i = 0; i < array.length; i++) {
-            requireNonNull(array[i], varName + (i + 1) + " is null");
-        }
-        return array;
-    }
-
-    private static <T> CompletableFuture<? extends T>[] wrapSuppliers(
-            Executor executor, Supplier<? extends T>[] suppliers) {
-        @SuppressWarnings("unchecked")
-        CompletableFuture<? extends T>[] cfs = new CompletableFuture[suppliers.length];
-        for (int i = 0; i < suppliers.length; i++) {
-            cfs[i] = CompletableFuture.supplyAsync(suppliers[i], executor);
-        }
-        return cfs;
+    private static <T> CompletableFuture<? extends T>[] wrapSuppliers0(Executor executor, Supplier<? extends T>[] suppliers) {
+        return mapArray(suppliers, CompletableFuture[]::new, s -> CompletableFuture.supplyAsync(s, executor));
     }
 
     /**
@@ -344,7 +354,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return allFastFailOf(wrapRunnables(executor, actions));
+        return allFastFailOf0(wrapRunnables0(executor, actions));
     }
 
     /**
@@ -375,7 +385,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return CompletableFuture.allOf(wrapRunnables(executor, actions));
+        return CompletableFuture.allOf(wrapRunnables0(executor, actions));
     }
 
     /**
@@ -405,7 +415,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return anySuccessOf(wrapRunnables(executor, actions));
+        return anySuccessOf0(wrapRunnables0(executor, actions));
     }
 
     /**
@@ -435,16 +445,11 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return f_cast(CompletableFuture.anyOf(wrapRunnables(executor, actions)));
+        return f_cast(CompletableFuture.anyOf(wrapRunnables0(executor, actions)));
     }
 
-    private static CompletableFuture<Void>[] wrapRunnables(Executor executor, Runnable[] actions) {
-        @SuppressWarnings("unchecked")
-        CompletableFuture<Void>[] cfs = new CompletableFuture[actions.length];
-        for (int i = 0; i < actions.length; i++) {
-            cfs[i] = CompletableFuture.runAsync(actions[i], executor);
-        }
-        return cfs;
+    private static CompletableFuture<Void>[] wrapRunnables0(Executor executor, Runnable[] actions) {
+        return mapArray(actions, CompletableFuture[]::new, a -> CompletableFuture.runAsync(a, executor));
     }
 
     // endregion
@@ -453,13 +458,7 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -467,31 +466,18 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Executor, Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
 
-        return allTupleOf0(true, wrapSuppliers(executor, suppliers));
+        return f_allTupleOf0(true, wrapSuppliers0(executor, suppliers));
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new CompletableFuture
-     * @see #allResultsFastFailOf(CompletionStage[])
-     * @see #mSupplyFastFailAsync(Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -499,13 +485,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Executor, Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
             Executor executor,
@@ -513,17 +493,11 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3);
 
-        return allTupleOf0(true, wrapSuppliers(executor, suppliers));
+        return f_allTupleOf0(true, wrapSuppliers0(executor, suppliers));
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -532,13 +506,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Executor, Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -546,17 +514,11 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4);
 
-        return allTupleOf0(true, wrapSuppliers(executor, suppliers));
+        return f_allTupleOf0(true, wrapSuppliers0(executor, suppliers));
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -565,13 +527,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Executor, Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -579,22 +535,28 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4, supplier5);
 
-        return allTupleOf0(true, wrapSuppliers(executor, suppliers));
+        return f_allTupleOf0(true, wrapSuppliers0(executor, suppliers));
     }
 
-    private static <T> CompletableFuture<T> allTupleOf0(boolean fastFail, CompletionStage<?>[] css) {
-        final Object[] result = new Object[css.length];
-        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(css, result);
+    /**
+     * Returns {@code CompletableFuture<T>} with generic type {@code T} but constrained to type TupleX.
+     */
+    private static <T> CompletableFuture<T> f_allTupleOf0(boolean fastFail, CompletionStage<?>[] stages) {
+        final Object[] result = new Object[stages.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(stages, result);
 
         final CompletableFuture<Void> resultSetter;
-        if (fastFail) resultSetter = allFastFailOf(resultSetterCfs);
+        if (fastFail) resultSetter = allFastFailOf0(resultSetterCfs);
         else resultSetter = CompletableFuture.allOf(resultSetterCfs);
 
-        return resultSetter.thenApply(unused -> tupleOf0(result));
+        return resultSetter.thenApply(unused -> f_tupleOf0(result));
     }
 
+    /**
+     * Returns generic type {@code T} but constrained to type TupleX.
+     */
     @SuppressWarnings("unchecked")
-    private static <T> T tupleOf0(Object... elements) {
+    private static <T> T f_tupleOf0(Object[] elements) {
         final int len = elements.length;
         final Object ret;
         if (len == 2) ret = Tuple2.of(elements[0], elements[1]);
@@ -605,15 +567,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the successful values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
-     * If the given supplier failed, use {@code null}.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyAllSuccessAsync(Object, Supplier[])
+     * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAllSuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -621,34 +578,24 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Executor, Supplier[])} with {@code null} valueIfFailed.
      * <p>
-     * If the given supplier failed, use {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyAllSuccessAsync(Object, Executor, Supplier[])
+     * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAllSuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
 
-        return allSuccessTupleOf0(wrapSuppliers(executor, suppliers));
+        return f_allSuccessTupleOf0(wrapSuppliers0(executor, suppliers));
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the successful values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
-     * If the given supplier failed, use {@code null}.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyAllSuccessAsync(Object, Supplier[])
+     * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAllSuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -656,15 +603,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Executor, Supplier[])} with {@code null} valueIfFailed.
      * <p>
-     * If the given supplier failed, use {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyAllSuccessAsync(Object, Executor, Supplier[])
+     * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAllSuccessAsync(
             Executor executor,
@@ -672,19 +614,14 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3);
 
-        return allSuccessTupleOf0(wrapSuppliers(executor, suppliers));
+        return f_allSuccessTupleOf0(wrapSuppliers0(executor, suppliers));
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the successful values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
-     * If the given supplier failed, use {@code null}.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyAllSuccessAsync(Object, Supplier[])
+     * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAllSuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -693,15 +630,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Executor, Supplier[])} with {@code null} valueIfFailed.
      * <p>
-     * If the given supplier failed, use {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyAllSuccessAsync(Object, Executor, Supplier[])
+     * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAllSuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -709,19 +641,14 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4);
 
-        return allSuccessTupleOf0(wrapSuppliers(executor, suppliers));
+        return f_allSuccessTupleOf0(wrapSuppliers0(executor, suppliers));
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the successful values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
-     * If the given supplier failed, use {@code null}.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyAllSuccessAsync(Object, Supplier[])
+     * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAllSuccessAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -730,15 +657,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given executor with the successfully values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Executor, Supplier[])} with {@code null} valueIfFailed.
      * <p>
-     * If the given supplier failed, use {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyAllSuccessAsync(Object, Executor, Supplier[])
+     * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAllSuccessAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -746,39 +668,25 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4, supplier5);
 
-        return allSuccessTupleOf0(wrapSuppliers(executor, suppliers));
+        return f_allSuccessTupleOf0(wrapSuppliers0(executor, suppliers));
     }
 
-    private static <T> CompletableFuture<T> allSuccessTupleOf0(CompletionStage<?>... css) {
-        Function<CompletionStage<Object>, CompletionStage<Object>> converter = s -> s.exceptionally(ex -> null);
-        return allTupleOf0(false, convertStageArray0(converter, css));
+    private static <T> CompletableFuture<T> f_allSuccessTupleOf0(CompletionStage<?>[] stages) {
+        return f_allTupleOf0(false, f_convertStageArray0(stages, s -> s.exceptionally(ex -> null)));
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <T, U> CompletionStage<U>[] convertStageArray0(
-            Function<CompletionStage<T>, ? extends CompletionStage<U>> converter,
-            CompletionStage<? extends T>[] stages) {
-        CompletionStage[] ret = new CompletionStage[stages.length];
-        for (int i = 0; i < stages.length; i++) {
-            ret[i] = converter.apply((CompletionStage) stages[i]);
-        }
-        return ret;
+    private static <T, U> CompletionStage<U>[] f_convertStageArray0(
+            CompletionStage<? extends T>[] stages, Function<CompletionStage<T>, CompletionStage<U>> converter) {
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        CompletionStage<T>[] ss = (CompletionStage[]) stages;
+        return mapArray(ss, CompletionStage[]::new, converter);
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
-     * @see #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -786,19 +694,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the given Executor
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
-     * @see #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit,
@@ -807,23 +707,14 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
 
-        return mostSuccessTupleOf0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
+        return f_mostSuccessTupleOf0(executor, timeout, unit, wrapSuppliers0(executor, suppliers));
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
-     * @see #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit,
@@ -832,19 +723,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the given Executor
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
-     * @see #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit,
@@ -853,23 +736,14 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3);
 
-        return mostSuccessTupleOf0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
+        return f_mostSuccessTupleOf0(executor, timeout, unit, wrapSuppliers0(executor, suppliers));
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
-     * @see #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
@@ -878,19 +752,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the given Executor
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
-     * @see #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
@@ -899,23 +765,14 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4);
 
-        return mostSuccessTupleOf0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
+        return f_mostSuccessTupleOf0(executor, timeout, unit, wrapSuppliers0(executor, suppliers));
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
-     * @see #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
@@ -925,19 +782,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the given Executor
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given supplier is successful in the given time, the return result is the completed value;
-     * Otherwise {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
-     * @see #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
             Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
@@ -947,18 +796,16 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4, supplier5);
 
-        return mostSuccessTupleOf0(executor, timeout, unit, wrapSuppliers(executor, suppliers));
+        return f_mostSuccessTupleOf0(executor, timeout, unit, wrapSuppliers0(executor, suppliers));
     }
 
-    private static <T> CompletableFuture<T> mostSuccessTupleOf0(
-            Executor executorWhenTimeout, long timeout, TimeUnit unit, CompletionStage<?>... css) {
-        requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
-        requireNonNull(unit, "unit is null");
+    private static <T> CompletableFuture<T> f_mostSuccessTupleOf0(
+            Executor executorWhenTimeout, long timeout, TimeUnit unit, CompletionStage<?>[] stages) {
         // MUST be *Non-Minimal* CF instances in order to read results(`getSuccessNow`),
         // otherwise UnsupportedOperationException
-        final CompletableFuture<Object>[] cfArray = toNonMinCfArray(css);
+        final CompletableFuture<Object>[] cfArray = toNonMinCfArray0(stages);
         return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, executorWhenTimeout, timeout, unit)
-                .handle((unused, ex) -> tupleOf0(MGetSuccessNow0(null, cfArray)));
+                .handle((unused, ex) -> f_tupleOf0(f_mGetSuccessNow0(null, cfArray)));
     }
 
     /**
@@ -969,22 +816,12 @@ public final class CompletableFutureUtils {
      *            otherwise UnsupportedOperationException
      */
     @SuppressWarnings("unchecked")
-    private static <T> T[] MGetSuccessNow0(@Nullable Object valueIfNotSuccess, CompletableFuture<?>... cfs) {
-        Object[] ret = new Object[cfs.length];
-        for (int i = 0; i < cfs.length; i++) {
-            ret[i] = getSuccessNow(cfs[i], valueIfNotSuccess);
-        }
-        return (T[]) ret;
+    private static <T> T[] f_mGetSuccessNow0(@Nullable T valueIfNotSuccess, CompletableFuture<? extends T>[] cfs) {
+        return (T[]) fillArray(new Object[cfs.length], i -> getSuccessNow(cfs[i], valueIfNotSuccess));
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyAsync(Supplier[])
+     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -992,30 +829,18 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Executor, Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
 
-        return allTupleOf0(false, wrapSuppliers(executor, suppliers));
+        return f_allTupleOf0(false, wrapSuppliers0(executor, suppliers));
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyAsync(Supplier[])
+     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -1023,13 +848,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Executor, Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAsync(
             Executor executor,
@@ -1037,17 +856,11 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3);
 
-        return allTupleOf0(false, wrapSuppliers(executor, suppliers));
+        return f_allTupleOf0(false, wrapSuppliers0(executor, suppliers));
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyAsync(Supplier[])
+     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -1056,13 +869,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Executor, Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -1070,17 +877,11 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4);
 
-        return allTupleOf0(false, wrapSuppliers(executor, suppliers));
+        return f_allTupleOf0(false, wrapSuppliers0(executor, suppliers));
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @return the new CompletableFuture
-     * @see #mSupplyAsync(Supplier[])
+     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -1089,13 +890,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
-     * @see #mSupplyFastFailAsync(Executor, Supplier[])
+     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -1103,12 +898,14 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4, supplier5);
 
-        return allTupleOf0(false, wrapSuppliers(executor, suppliers));
+        return f_allTupleOf0(false, wrapSuppliers0(executor, suppliers));
     }
 
     // endregion
     ////////////////////////////////////////////////////////////
     // region## allOf* Methods(including mostSuccessResultsOf)
+    //
+    //    CompletionStage<T>[] -> CompletableFuture<List<T>>
     ////////////////////////////////////////////////////////////
 
     /**
@@ -1122,65 +919,54 @@ public final class CompletableFutureUtils {
      *
      * @param cfs the stages
      * @return a new CompletableFuture that is successful when all the given stages success
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> allResultsFastFailOf(CompletionStage<? extends T>... cfs) {
-        requireCfsAndEleNonNull(cfs);
-        final int len = cfs.length;
-        if (len == 0) return completedFuture(arrayList());
-        // Defensive copy input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
-        // in order to ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
-        if (len == 1) return toNonMinCfCopy(cfs[0]).thenApply(CompletableFutureUtils::arrayList);
-
-        final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[len];
-        // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
-        final CompletableFuture<?>[] failedOrBeIncomplete = new CompletableFuture[len + 1];
-        fill(cfs, successOrBeIncomplete, failedOrBeIncomplete);
-
-        // NOTE: fill the ONE MORE element of failedOrBeIncomplete HERE:
-        //       a cf that is successful when all given cfs success, otherwise be incomplete
-        failedOrBeIncomplete[len] = allResultsOf(successOrBeIncomplete);
-
-        CompletableFuture<Object> ret = CompletableFuture.anyOf(failedOrBeIncomplete);
-        return f_cast(ret);
+        return allResultsOf0(true, requireCfsAndEleNonNull(cfs));
     }
 
     /**
      * Returns a new CompletableFuture that is successful with the results in the <strong>same order</strong>
      * of the given stages arguments when all the given stages completed;
-     * If the given stage complete exceptionally, treat it successful with value valueIfFailed.
      * If no stages are provided, returns a CompletableFuture completed with the value empty list.
+     * <p>
+     * If any of the provided stages fails, its corresponding position will contain {@code valueIfFailed}
+     * (which is indistinguishable from the stage having a successful value of {@code valueIfFailed}).
      *
      * @param valueIfFailed the value to return if not completed successfully
      * @param cfs           the stages
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see #getSuccessNow(CompletableFuture, Object)
-     * @see com.google.common.util.concurrent.Futures#successfulAsList(com.google.common.util.concurrent.ListenableFuture[]) guava#successfulAsList() method
+     * @see Futures#successfulAsList(ListenableFuture[]) Guava method successfulAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> allSuccessResultsOf(
             @Nullable T valueIfFailed, CompletionStage<? extends T>... cfs) {
-        requireCfsAndEleNonNull(cfs);
+        return allSuccessResultsOf0(valueIfFailed, requireCfsAndEleNonNull(cfs));
+    }
 
-        Function<CompletionStage<T>, CompletionStage<T>> converter = s -> s.exceptionally(ex -> valueIfFailed);
-        return allResultsOf(convertStageArray0(converter, cfs));
+    private static <T> CompletableFuture<List<T>> allSuccessResultsOf0(
+            @Nullable T valueIfFailed, CompletionStage<? extends T>[] cfs) {
+        return allResultsOf0(false, f_convertStageArray0(cfs, s -> s.exceptionally(ex -> valueIfFailed)));
     }
 
     /**
      * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
      * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
+     * If any of the provided stages does not success(fails or incomplete) in given time,
+     * its corresponding position will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the stage having a successful value of {@code valueIfNotSuccess}).
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @param cfs               the stages
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see #getSuccessNow(CompletableFuture, Object)
-     * @see com.google.common.util.concurrent.Futures#successfulAsList(com.google.common.util.concurrent.ListenableFuture[]) guava#successfulAsList() method
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1193,13 +979,16 @@ public final class CompletableFutureUtils {
      * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
      * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the given valueIfNotSuccess.
+     * If any of the provided stages does not success(fails or incomplete) in given time,
+     * its corresponding position will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the stage having a successful value of {@code valueIfNotSuccess}).
      *
      * @param valueIfNotSuccess   the value to return if not completed successfully
      * @param executorWhenTimeout the async executor when triggered by timeout
      * @param timeout             how long to wait in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @param cfs                 the stages
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see #getSuccessNow(CompletableFuture, Object)
      */
     @Contract(pure = true)
@@ -1209,30 +998,36 @@ public final class CompletableFutureUtils {
             CompletionStage<? extends T>... cfs) {
         requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
         requireNonNull(unit, "unit is null");
-        requireNonNull(cfs, "cfs is null");
+        requireCfsAndEleNonNull(cfs);
 
+        return mostSuccessResultsOf0(valueIfNotSuccess, executorWhenTimeout, timeout, unit, cfs);
+    }
+
+    private static <T> CompletableFuture<List<T>> mostSuccessResultsOf0(
+            @Nullable T valueIfNotSuccess, Executor executorWhenTimeout, long timeout, TimeUnit unit,
+            CompletionStage<? extends T>[] cfs) {
         if (cfs.length == 0) return completedFuture(arrayList());
         if (cfs.length == 1) {
             // Defensive copy input cf to non-minimal-stage instance in order to
             // 1. avoid writing it by `cffuCompleteOnTimeout` and is able to read its result(`getSuccessNow`)
-            // 2. ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
-            final CompletableFuture<T> f = toNonMinCfCopy(requireNonNull(cfs[0], "cf1 is null"));
+            // 2. ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
+            final CompletableFuture<T> f = toNonMinCfCopy0(cfs[0]);
             return cffuCompleteOnTimeout(f, valueIfNotSuccess, executorWhenTimeout, timeout, unit)
                     .handle((unused, ex) -> arrayList(getSuccessNow(f, valueIfNotSuccess)));
         }
 
         // MUST be non-minimal-stage CF instances in order to read results(`getSuccessNow`),
         // otherwise UnsupportedOperationException
-        final CompletableFuture<T>[] cfArray = toNonMinCfArray(cfs);
+        final CompletableFuture<T>[] cfArray = toNonMinCfArray0(cfs);
         return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, executorWhenTimeout, timeout, unit)
-                .handle((unused, ex) -> arrayList(MGetSuccessNow0(valueIfNotSuccess, cfArray)));
+                .handle((unused, ex) -> arrayList(f_mGetSuccessNow0(valueIfNotSuccess, cfArray)));
     }
 
     /**
      * Returns a new CompletableFuture with the results in the <strong>same order</strong> of the given stages arguments,
      * the new CompletableFuture is completed when all the given stages complete;
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture
+     * also does so, with a CompletionException holding this exception as its cause.
      * If no stages are provided, returns a CompletableFuture completed with the value empty list.
      * <p>
      * This method is the same as {@link #allOf(CompletionStage[])},
@@ -1240,25 +1035,30 @@ public final class CompletableFutureUtils {
      *
      * @param cfs the stages
      * @return a new CompletableFuture that is completed when all the given stages complete
-     * @throws NullPointerException if the array or any of its elements are {@code null}
-     * @see com.google.common.util.concurrent.Futures#allAsList(com.google.common.util.concurrent.ListenableFuture[]) guava#allAsList() method
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
+     * @see Futures#allAsList(ListenableFuture[]) Guava method allAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> allResultsOf(CompletionStage<? extends T>... cfs) {
-        requireCfsAndEleNonNull(cfs);
+        return allResultsOf0(false, requireCfsAndEleNonNull(cfs));
+    }
+
+    private static <T> CompletableFuture<List<T>> allResultsOf0(boolean fastFail, CompletionStage<? extends T>[] cfs) {
         final int len = cfs.length;
         if (len == 0) return completedFuture(arrayList());
-        // Defensive copy input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
-        // in order to ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
-        if (len == 1) return toNonMinCfCopy(cfs[0]).thenApply(CompletableFutureUtils::arrayList);
+        // convert input cf to non-minimal-stage CF instance for SINGLE input in order to
+        // ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
+        if (len == 1) return toNonMinCf0(cfs[0]).thenApply(InternalCommonUtils::arrayList);
 
         final Object[] result = new Object[len];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(cfs, result);
 
-        CompletableFuture<List<Object>> ret = CompletableFuture.allOf(resultSetterCfs)
-                .thenApply(unused -> arrayList(result));
-        return f_cast(ret);
+        final CompletableFuture<Void> resultSetter;
+        if (fastFail) resultSetter = allFastFailOf0(resultSetterCfs);
+        else resultSetter = CompletableFuture.allOf(resultSetterCfs);
+
+        return f_cast(resultSetter.thenApply(unused -> arrayList(result)));
     }
 
     /**
@@ -1283,43 +1083,48 @@ public final class CompletableFutureUtils {
      * If you need the successful results of given stages in the given time, prefer below methods:
      * <ul>
      * <li>{@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
-     * <li>{@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage)} /
-     *     {@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * <li>{@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage)} / {@link #mostSuccessTupleOf(long,
+     *      TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      * </ul>
      *
      * @param cfs the stages
      * @return a new CompletableFuture that is successful when all the given stages success
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @Contract(pure = true)
     public static CompletableFuture<Void> allFastFailOf(CompletionStage<?>... cfs) {
-        requireCfsAndEleNonNull(cfs);
+        return allFastFailOf0(requireCfsAndEleNonNull(cfs));
+    }
+
+    private static CompletableFuture<Void> allFastFailOf0(CompletionStage<?>[] cfs) {
         final int len = cfs.length;
         if (len == 0) return completedFuture(null);
-        // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
-        // the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
-        if (len == 1) return toNonMinCfCopy(cfs[0]).thenApply(unused -> null);
+        // convert input cf to non-minimal-stage CF instance for SINGLE input in order to
+        // ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
+        if (len == 1) return toNonMinCf0(cfs[0]).thenApply(unused -> null);
 
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[len];
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
         final CompletableFuture<?>[] failedOrBeIncomplete = new CompletableFuture[len + 1];
-        fill(cfs, successOrBeIncomplete, failedOrBeIncomplete);
+        fill0(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of failedOrBeIncomplete HERE:
         //       a cf that is successful when all given cfs success, otherwise be incomplete
         failedOrBeIncomplete[len] = CompletableFuture.allOf(successOrBeIncomplete);
 
-        CompletableFuture<Object> ret = CompletableFuture.anyOf(failedOrBeIncomplete);
-        return f_cast(ret);
+        return f_cast(CompletableFuture.anyOf(failedOrBeIncomplete));
     }
 
     /**
      * Returns a new CompletableFuture that is completed when all the given stages complete;
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture
+     * also does so, with a CompletionException holding this exception as its cause.
      * Otherwise, the results, if any, of the given stages are not reflected in the returned
      * CompletableFuture({@code CompletableFuture<Void>}), but may be obtained by inspecting them individually.
      * If no stages are provided, returns a CompletableFuture completed with the value {@code null}.
+     * <p>
+     * Among the applications of this method is to await completion of a set of independent stages
+     * before continuing a program, as in: {@code CompletableFuture.allOf(c1, c2, c3).join();}.
      * <p>
      * This method is the same as {@link CompletableFuture#allOf(CompletableFuture[])},
      * except that the parameter type is more generic {@link CompletionStage} instead of {@link CompletableFuture}.
@@ -1334,60 +1139,47 @@ public final class CompletableFutureUtils {
      * If you need the successful results of given stages in the given time, prefer below methods:
      * <ul>
      * <li>{@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
-     * <li>{@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage)} /
-     *     {@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * <li>{@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage)} / {@link #mostSuccessTupleOf(long,
+     *      TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      * </ul>
      *
      * @param cfs the stages
      * @return a new CompletableFuture that is completed when all the given stages complete
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; forget to call its `join()` method?")
+    @Contract(pure = true)
     public static CompletableFuture<Void> allOf(CompletionStage<?>... cfs) {
-        requireNonNull(cfs, "cfs is null");
+        requireCfsAndEleNonNull(cfs);
         if (cfs.length == 0) return completedFuture(null);
-        // Defensive copy input cf to non-minimal-stage instance(toNonMinCfCopy) for SINGLE input
-        // in order to ensure that the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
-        if (cfs.length == 1) return toNonMinCfCopy(requireNonNull(cfs[0], "cf1 is null")).thenApply(unused -> null);
-        return CompletableFuture.allOf(f_toCfArray(cfs));
+        // convert input cf to non-minimal-stage CF instance for SINGLE input in order to
+        // ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
+        if (cfs.length == 1) return toNonMinCf0(cfs[0]).thenApply(unused -> null);
+        return CompletableFuture.allOf(f_toCfArray0(cfs));
     }
 
     @SafeVarargs
-    private static <S extends CompletionStage<?>> S[] requireCfsAndEleNonNull(S... css) {
-        return requireArrayAndEleNonNull("cf", css);
-    }
-
-    /**
-     * Returns normal array list instead of unmodifiable or fixed-size list.
-     * Safer for application code which may reuse the returned list as normal collection.
-     */
-    @SafeVarargs
-    private static <T> List<T> arrayList(T... elements) {
-        List<T> ret = new ArrayList<>(elements.length);
-        ret.addAll(Arrays.asList(elements));
-        return ret;
+    private static <S extends CompletionStage<?>> S[] requireCfsAndEleNonNull(S... stages) {
+        return requireArrayAndEleNonNull("cf", stages);
     }
 
     /**
      * Returns a cf array whose elements do the result collection.
      */
-    private static <T> CompletableFuture<Void>[] createResultSetterCfs(CompletionStage<? extends T>[] css, T[] result) {
+    private static <T> CompletableFuture<Void>[] createResultSetterCfs(
+            CompletionStage<? extends T>[] stages, T[] result) {
         @SuppressWarnings("unchecked")
         final CompletableFuture<Void>[] resultSetterCfs = new CompletableFuture[result.length];
-        for (int i = 0; i < result.length; i++) {
-            final int index = i;
-            resultSetterCfs[index] = f_toCf(css[index]).thenAccept(v -> result[index] = v);
-        }
-        return resultSetterCfs;
+        return fillArray(resultSetterCfs, i -> f_toCf0(stages[i]).thenAccept(v -> result[i] = v));
     }
 
-    private static <T> void fill(CompletionStage<? extends T>[] css,
-                                 CompletableFuture<? extends T>[] successOrBeIncomplete,
-                                 CompletableFuture<? extends T>[] failedOrBeIncomplete) {
-        final CompletableFuture<T> incomplete = new CompletableFuture<>();
-        for (int i = 0; i < css.length; i++) {
-            final CompletableFuture<T> f = f_toCf(css[i]);
-            successOrBeIncomplete[i] = exceptionallyCompose(f, ex -> incomplete);
-            failedOrBeIncomplete[i] = f.thenCompose(v -> incomplete);
+    private static <T> void fill0(CompletionStage<? extends T>[] stages,
+                                  CompletableFuture<? extends T>[] successOrBeIncomplete,
+                                  CompletableFuture<? extends T>[] failedOrBeIncomplete) {
+        for (int i = 0; i < stages.length; i++) {
+            final CompletableFuture<T> f = f_toCf0(stages[i]);
+            successOrBeIncomplete[i] = exceptionallyCompose(f, ex -> new CompletableFuture<>());
+            failedOrBeIncomplete[i] = f.thenCompose(v -> new CompletableFuture<>());
         }
     }
 
@@ -1403,41 +1195,29 @@ public final class CompletableFutureUtils {
     /**
      * Force converts {@link CompletionStage} array to {@link CompletableFuture} array,
      * reuse cf instance as many as possible. This method is NOT type safe!
-     * More info see method {@link #f_toCf(CompletionStage)}.
+     * More info see method {@link #f_toCf0(CompletionStage)}.
      */
-    private static <T> CompletableFuture<T>[] f_toCfArray(CompletionStage<? extends T>[] stages) {
-        return toCfArray(CompletableFutureUtils::f_toCf, stages);
+    private static <T> CompletableFuture<T>[] f_toCfArray0(CompletionStage<? extends T>[] stages) {
+        return mapArray(stages, CompletableFuture[]::new, CompletableFutureUtils::f_toCf0);
     }
 
     /**
      * Converts {@link CompletionStage} array to {@link CompletableFuture} array.
-     * More info see method {@link #toNonMinCf(CompletionStage)}.
+     * More info see method {@link #toNonMinCf0(CompletionStage)}.
      */
-    private static <T> CompletableFuture<T>[] toNonMinCfArray(CompletionStage<? extends T>[] stages) {
-        return toCfArray(CompletableFutureUtils::toNonMinCf, stages);
-    }
-
-    private static <T> CompletableFuture<T>[] toCfArray(
-            Function<CompletionStage<? extends T>, CompletableFuture<T>> converter,
-            CompletionStage<? extends T>[] stages) {
-        requireNonNull(stages, "cfs is null");
-        @SuppressWarnings("unchecked")
-        CompletableFuture<T>[] ret = new CompletableFuture[stages.length];
-        for (int i = 0; i < stages.length; i++) {
-            ret[i] = converter.apply(requireNonNull(stages[i], "cf" + (i + 1) + " is null"));
-        }
-        return ret;
+    private static <T> CompletableFuture<T>[] toNonMinCfArray0(CompletionStage<? extends T>[] stages) {
+        return mapArray(stages, CompletableFuture[]::new, CompletableFutureUtils::toNonMinCf0);
     }
 
     /**
      * Force converts CompletionStage to CompletableFuture, reuse cf instance as many as possible.
      * <p>
-     * <strong>CAUTION:</strong> This method is NOT type safe! Because reused the CF instances,
+     * <strong>CAUTION:</strong> This method is NOT type safe! Because reused the CF instance,
      * The returned cf may be a minimal-stage, MUST NOT be written or read(explicitly)
-     * (e.g. complete(Object)); Otherwise, the caller usage of cf may trigger UnsupportedOperationException.
+     * (e.g. {@link CompletableFuture#complete}); Otherwise, the caller usage of cf may throw UnsupportedOperationException.
      */
     @SuppressWarnings("unchecked")
-    private static <T> CompletableFuture<T> f_toCf(CompletionStage<? extends T> s) {
+    private static <T> CompletableFuture<T> f_toCf0(CompletionStage<? extends T> s) {
         if (s instanceof CompletableFuture) return (CompletableFuture<T>) s;
         else if (s instanceof Cffu) return ((Cffu<T>) s).cffuUnwrap();
         else return (CompletableFuture<T>) s.toCompletableFuture();
@@ -1446,34 +1226,31 @@ public final class CompletableFutureUtils {
     /**
      * Converts CompletionStage to non-minimal-stage CompletableFuture, reuse cf instance as many as possible.
      * <p>
-     * <strong>CAUTION:</strong> because reused the CF instances,
-     * so the returned CF instances should NOT be written(e.g. complete(Object));
-     * Otherwise, the caller may need defensive copy instead of writing it directly.
+     * <strong>CAUTION:</strong> because reused the CF instance, if the caller need defensive copy
+     * instead of writing it directly, use method {@link #toNonMinCfCopy0(CompletionStage)}).
      */
-    private static <T> CompletableFuture<T> toNonMinCf(CompletionStage<? extends T> s) {
-        final CompletableFuture<T> f = f_toCf(s);
+    private static <T> CompletableFuture<T> toNonMinCf0(CompletionStage<? extends T> s) {
+        final CompletableFuture<T> f = f_toCf0(s);
         return isMinStageCf(f) ? f.toCompletableFuture() : f;
     }
 
     /**
      * Converts CompletionStage to a non-minimal-stage CompletableFuture copy. This method is type safe.
      * <p>
-     * <strong>Implementation Note:</strong> The return of {@code copy} methods
-     * ({@link #copy(CompletableFuture)}/{@link CompletableFuture#copy()}) on {@code minimal-stage}
-     * is still a {@code minimal-stage}(e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()})
+     * <strong>Implementation Note:</strong> The returned instances of calling {@code copy} methods
+     * ({@link #copy}/{@link CompletableFuture#copy}) on {@code minimal-stage} instances
+     * is still {@code minimal-stage}(e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()})
      */
-    private static <T> CompletableFuture<T> toNonMinCfCopy(CompletionStage<? extends T> s) {
-        final CompletableFuture<T> f = f_toCf(s);
+    private static <T> CompletableFuture<T> toNonMinCfCopy0(CompletionStage<? extends T> s) {
+        final CompletableFuture<T> f = f_toCf0(s);
         return isMinStageCf(f) ? f.toCompletableFuture() : copy(f);
-    }
-
-    static boolean isMinStageCf(CompletableFuture<?> cf) {
-        return "java.util.concurrent.CompletableFuture$MinimalStage".equals(cf.getClass().getName());
     }
 
     // endregion
     ////////////////////////////////////////////////////////////
     // region## anyOf* Methods
+    //
+    //    CompletionStage<T>[] -> CompletableFuture<T>
     ////////////////////////////////////////////////////////////
 
     /**
@@ -1489,36 +1266,38 @@ public final class CompletableFutureUtils {
      *
      * @param cfs the stages
      * @return a new CompletableFuture that is successful when any of the given stages success, with the same result
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<T> anySuccessOf(CompletionStage<? extends T>... cfs) {
-        requireCfsAndEleNonNull(cfs);
+        return anySuccessOf0(requireCfsAndEleNonNull(cfs));
+    }
+
+    private static <T> CompletableFuture<T> anySuccessOf0(CompletionStage<? extends T>[] cfs) {
         final int len = cfs.length;
         if (len == 0) return failedFuture(new NoCfsProvidedException());
         // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
-        // 1. avoid writing the input cf unexpectedly it by caller code
-        // 2. the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
-        if (len == 1) return toNonMinCfCopy(cfs[0]);
+        // 1. avoid writing the input cf unexpectedly by caller code
+        // 2. the returned cf is not minimal-stage instance(UnsupportedOperationException)
+        if (len == 1) return toNonMinCfCopy0(cfs[0]);
 
         // NOTE: fill ONE MORE element of successOrBeIncompleteCfs LATER
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[len + 1];
         final CompletableFuture<?>[] failedOrBeIncomplete = new CompletableFuture[len];
-        fill(cfs, successOrBeIncomplete, failedOrBeIncomplete);
+        fill0(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of successOrBeIncompleteCfs HERE
         //       a cf that is failed when all given cfs fail, otherwise be incomplete
         successOrBeIncomplete[len] = CompletableFuture.allOf(failedOrBeIncomplete);
 
-        CompletableFuture<Object> ret = CompletableFuture.anyOf(successOrBeIncomplete);
-        return f_cast(ret);
+        return f_cast(CompletableFuture.anyOf(successOrBeIncomplete));
     }
 
     /**
      * Returns a new CompletableFuture that is completed when any of the given stages complete, with the same result.
-     * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
+     * Otherwise, if it completed exceptionally, the returned CompletableFuture
+     * also does so, with a CompletionException holding this exception as its cause.
      * If no stages are provided, returns an incomplete CompletableFuture.
      * <p>
      * This method is the same as {@link CompletableFuture#anyOf(CompletableFuture[])},
@@ -1528,20 +1307,19 @@ public final class CompletableFutureUtils {
      * @param cfs the stages
      * @return a new CompletableFuture that is completed with the result or exception
      * from any of the given stages when one completes
-     * @throws NullPointerException if the array or any of its elements are {@code null}
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see #anySuccessOf(CompletionStage[])
      */
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<T> anyOf(CompletionStage<? extends T>... cfs) {
-        requireNonNull(cfs, "cfs is null");
+        requireCfsAndEleNonNull(cfs);
         if (cfs.length == 0) return new CompletableFuture<>();
         // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
-        // 1. avoid writing the input cf unexpectedly it by caller code
-        // 2. the returned cf is not minimal-stage CF instance(UnsupportedOperationException)
-        if (cfs.length == 1) return toNonMinCfCopy(requireNonNull(cfs[0], "cf1 is null"));
-        CompletableFuture<Object> ret = CompletableFuture.anyOf(f_toCfArray(cfs));
-        return f_cast(ret);
+        // 1. avoid writing the input cf unexpectedly by caller code
+        // 2. the returned cf is not minimal-stage instance(UnsupportedOperationException)
+        if (cfs.length == 1) return toNonMinCfCopy0(cfs[0]);
+        return f_cast(CompletableFuture.anyOf(f_toCfArray0(cfs)));
     }
 
     // endregion
@@ -1550,140 +1328,99 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture that is successful when the given stages success.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is successful when the given stages success
-     * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleFastFailOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2));
+        return f_allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2));
     }
 
     /**
-     * Returns a new CompletableFuture that is successful when the given stages success.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is successful when the given stages success
-     * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleFastFailOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2, cf3));
+        return f_allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2, cf3));
     }
 
     /**
-     * Returns a new CompletableFuture that is successful when the given stages success.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is successful when the given stages success
-     * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleFastFailOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
+        return f_allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
     }
 
     /**
-     * Returns a new CompletableFuture that is successful when the given stages success.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is successful when the given stages success
-     * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleFastFailOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
+        return f_allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
     }
 
     /**
-     * Returns a new CompletableFuture that is successful
-     * with the results of the given stages arguments when all the given stages completed;
-     * If the given stage complete exceptionally, treat it successful with value valueIfFailed.
-     *
-     * @return a new CompletableFuture
-     * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allSuccessResultsOf(Object, CompletionStage[])
+     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
+     * <p>
+     * If any of the provided stages fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the stage having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allSuccessTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return allSuccessTupleOf0(requireCfsAndEleNonNull(cf1, cf2));
+        return f_allSuccessTupleOf0(requireCfsAndEleNonNull(cf1, cf2));
     }
 
     /**
-     * Returns a new CompletableFuture that is successful
-     * with the results of the given stages arguments when all the given stages completed;
-     * If the given stage complete exceptionally, treat it successful with value valueIfFailed.
-     *
-     * @return a new CompletableFuture
-     * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allSuccessResultsOf(Object, CompletionStage[])
+     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
+     * <p>
+     * If any of the provided stages fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the stage having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allSuccessTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return allSuccessTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3));
+        return f_allSuccessTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3));
     }
 
     /**
-     * Returns a new CompletableFuture that is successful
-     * with the results of the given stages arguments when all the given stages completed;
-     * If the given stage complete exceptionally, treat it successful with value valueIfFailed.
-     *
-     * @return a new CompletableFuture
-     * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allSuccessResultsOf(Object, CompletionStage[])
+     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
+     * <p>
+     * If any of the provided stages fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the stage having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allSuccessTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return allSuccessTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
+        return f_allSuccessTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
     }
 
     /**
-     * Returns a new CompletableFuture that is successful
-     * with the results of the given stages arguments when all the given stages completed;
-     * If the given stage complete exceptionally, treat it successful with value valueIfFailed.
-     *
-     * @return a new CompletableFuture
-     * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allSuccessResultsOf(Object, CompletionStage[])
+     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
+     * <p>
+     * If any of the provided stages fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the stage having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allSuccessTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return allSuccessTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
+        return f_allSuccessTupleOf0(requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
     }
 
     /**
-     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new CompletableFuture
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see #getSuccessNow(CompletableFuture, Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mostSuccessTupleOf(
@@ -1692,36 +1429,29 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, Executor, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param executorWhenTimeout the async executor when triggered by timeout
-     * @param timeout             how long to wait in units of {@code unit}
-     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new CompletableFuture
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see #getSuccessNow(CompletableFuture, Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mostSuccessTupleOf(
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return mostSuccessTupleOf0(executorWhenTimeout, timeout, unit, cf1, cf2);
+        requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
+        requireNonNull(unit, "unit is null");
+        CompletionStage<?>[] cfs = requireCfsAndEleNonNull(cf1, cf2);
+
+        return f_mostSuccessTupleOf0(executorWhenTimeout, timeout, unit, cfs);
     }
 
     /**
-     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new CompletableFuture
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see #getSuccessNow(CompletableFuture, Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mostSuccessTupleOf(
@@ -1731,36 +1461,29 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, Executor, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param executorWhenTimeout the async executor when triggered by timeout
-     * @param timeout             how long to wait in units of {@code unit}
-     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new CompletableFuture
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see #getSuccessNow(CompletableFuture, Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mostSuccessTupleOf(
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return mostSuccessTupleOf0(executorWhenTimeout, timeout, unit, cf1, cf2, cf3);
+        requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
+        requireNonNull(unit, "unit is null");
+        CompletionStage<?>[] cfs = requireCfsAndEleNonNull(cf1, cf2, cf3);
+
+        return f_mostSuccessTupleOf0(executorWhenTimeout, timeout, unit, cfs);
     }
 
     /**
-     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new CompletableFuture
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see #getSuccessNow(CompletableFuture, Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mostSuccessTupleOf(
@@ -1771,37 +1494,30 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, Executor, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param executorWhenTimeout the async executor when triggered by timeout
-     * @param timeout             how long to wait in units of {@code unit}
-     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new CompletableFuture
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see #getSuccessNow(CompletableFuture, Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mostSuccessTupleOf(
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return mostSuccessTupleOf0(executorWhenTimeout, timeout, unit, cf1, cf2, cf3, cf4);
+        requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
+        requireNonNull(unit, "unit is null");
+        CompletionStage<?>[] cfs = requireCfsAndEleNonNull(cf1, cf2, cf3, cf4);
+
+        return f_mostSuccessTupleOf0(executorWhenTimeout, timeout, unit, cfs);
     }
 
     /**
-     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new CompletableFuture
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see #getSuccessNow(CompletableFuture, Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mostSuccessTupleOf(
@@ -1812,86 +1528,60 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture with the most results in the <strong>same order</strong> of
-     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
+     * Tuple variance of {@link #mostSuccessResultsOf(Object, Executor, long, TimeUnit, CompletionStage[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given stage is successful, its result is the completed value; Otherwise the value {@code null}.
-     *
-     * @param executorWhenTimeout the async executor when triggered by timeout
-     * @param timeout             how long to wait in units of {@code unit}
-     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return a new CompletableFuture
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see #getSuccessNow(CompletableFuture, Object)
+     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mostSuccessTupleOf(
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return mostSuccessTupleOf0(executorWhenTimeout, timeout, unit, cf1, cf2, cf3, cf4, cf5);
+        requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
+        requireNonNull(unit, "unit is null");
+        CompletionStage<?>[] cfs = requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5);
+
+        return f_mostSuccessTupleOf0(executorWhenTimeout, timeout, unit, cfs);
     }
 
     /**
-     * Returns a new CompletableFuture that is completed when the given stages complete.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is completed when the given stages complete
-     * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2));
+        return f_allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2));
     }
 
     /**
-     * Returns a new CompletableFuture that is completed when the given stages complete.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is completed when the given stages complete
-     * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2, cf3));
+        return f_allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2, cf3));
     }
 
     /**
-     * Returns a new CompletableFuture that is completed when the given stages complete.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is completed when the given stages complete
-     * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
+        return f_allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
     }
 
     /**
-     * Returns a new CompletableFuture that is completed when the given stages complete.
-     * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
-     *
-     * @return a new CompletableFuture that is completed when the given stages complete
-     * @throws NullPointerException if any of the given stages are {@code null}
-     * @see #allResultsOf(CompletionStage[])
+     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
+        return f_allTupleOf0(false, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
     }
 
     // endregion
@@ -1922,7 +1612,8 @@ public final class CompletableFutureUtils {
      * and supports only those methods in interface {@link CompletionStage}.
      * <p>
      * <strong>CAUTION:<br></strong>
-     * if run on old Java 8, just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
+     * if run on old Java 8(not support *minimal* CompletionStage),
+     * just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @param value the value
      * @param <T>   the type of the value
@@ -1930,10 +1621,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static <T> CompletionStage<T> completedStage(@Nullable T value) {
-        if (IS_JAVA9_PLUS) {
-            return CompletableFuture.completedStage(value);
-        }
-        return completedFuture(value);
+        return IS_JAVA9_PLUS ? CompletableFuture.completedStage(value) : completedFuture(value);
     }
 
     /**
@@ -1941,7 +1629,8 @@ public final class CompletableFutureUtils {
      * the given exception and supports only those methods in interface {@link CompletionStage}.
      * <p>
      * <strong>CAUTION:<br></strong>
-     * if run on old Java 8, just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
+     * if run on old Java 8(not support *minimal* CompletionStage),
+     * just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
      *
      * @param ex  the exception
      * @param <T> the type of the value
@@ -1949,10 +1638,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static <T> CompletionStage<T> failedStage(Throwable ex) {
-        if (IS_JAVA9_PLUS) {
-            return CompletableFuture.failedStage(ex);
-        }
-        return failedFuture(ex);
+        return IS_JAVA9_PLUS ? CompletableFuture.failedStage(ex) : failedFuture(ex);
     }
 
     // endregion
@@ -1986,21 +1672,8 @@ public final class CompletableFutureUtils {
     public static Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
         requireNonNull(unit, "unit is null");
         requireNonNull(executor, "executor is null");
-        if (IS_JAVA9_PLUS) {
-            return CompletableFuture.delayedExecutor(delay, unit, executor);
-        }
-        return new DelayedExecutor(delay, unit, executor);
-    }
-
-    /**
-     * Returns the default Executor used for async methods that do not specify an Executor.
-     * This class uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread,
-     * or else an Executor using one thread per async task.<br>
-     * <strong>CAUTION:</strong> This executor may be not suitable for common biz use(io intensive).
-     */
-    @Contract(pure = true)
-    public static Executor defaultExecutor() {
-        return ASYNC_POOL;
+        return IS_JAVA9_PLUS ? CompletableFuture.delayedExecutor(delay, unit, executor)
+                : new DelayedExecutor(delay, unit, executor);
     }
 
     // endregion
@@ -2011,11 +1684,15 @@ public final class CompletableFutureUtils {
 
     ////////////////////////////////////////////////////////////
     // region## Then-Multi-Actions(thenM*) Methods
+    //
+    //    - thenMApply* (Function[]: T -> U)       -> CompletableFuture<List<U>>
+    //    - thenMAccept*(Consumer[]: T -> Void)    -> CompletableFuture<Void>
+    //    - thenMRun*   (Runnable[]: Void -> Void) -> CompletableFuture<Void>
     ////////////////////////////////////////////////////////////
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
@@ -2027,7 +1704,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
-        return thenMApplyFastFailAsync(cfThis, ASYNC_POOL, fns);
+        return thenMApplyFastFailAsync(cfThis, defaultExecutor(cfThis), fns);
     }
 
     /**
@@ -2048,17 +1725,18 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", fns);
 
-        return cfThis.thenCompose(v -> allResultsFastFailOf(wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> allResultsOf0(true, wrapFunctions0(executor, v, fns)));
     }
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the CompletableFuture's default asynchronous execution facility
+     * is executed in the default executor of parameter cfThis
      * with the successful values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
-     * If the given Functions failed, use the given valueIfFailed.
+     * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}
+     * (which is indistinguishable from the function having a successful value of {@code valueIfFailed}).
      *
      * @param valueIfFailed the value to return if not completed successfully
      * @param fns           the functions to use to compute the values of the returned CompletableFuture
@@ -2068,7 +1746,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
-        return thenMApplyAllSuccessAsync(cfThis, valueIfFailed, ASYNC_POOL, fns);
+        return thenMApplyAllSuccessAsync(cfThis, valueIfFailed, defaultExecutor(cfThis), fns);
     }
 
     /**
@@ -2077,7 +1755,8 @@ public final class CompletableFutureUtils {
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
-     * If the given Functions failed, use the given valueIfFailed.
+     * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}
+     * (which is indistinguishable from the function having a successful value of {@code valueIfFailed}).
      *
      * @param valueIfFailed the value to return if not completed successfully
      * @param fns           the functions to use to compute the values of the returned CompletableFuture
@@ -2092,19 +1771,20 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", fns);
 
-        return cfThis.thenCompose(v -> allSuccessResultsOf(valueIfFailed, wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> allSuccessResultsOf0(valueIfFailed, wrapFunctions0(executor, v, fns)));
     }
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the most values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
+     * If any of the provided functions does not success(fails or incomplete) in given time,
+     * its corresponding position will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the function having a successful value of {@code valueIfNotSuccess}).
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param timeout           how long to wait in units of {@code unit}
@@ -2117,7 +1797,7 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<List<U>> thenMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, @Nullable U valueIfNotSuccess,
             long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
-        return thenMApplyMostSuccessAsync(cfThis, valueIfNotSuccess, ASYNC_POOL, timeout, unit, fns);
+        return thenMApplyMostSuccessAsync(cfThis, valueIfNotSuccess, defaultExecutor(cfThis), timeout, unit, fns);
     }
 
     /**
@@ -2127,8 +1807,9 @@ public final class CompletableFutureUtils {
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
+     * If any of the provided functions does not success(fails or incomplete) in given time,
+     * its corresponding position will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the function having a successful value of {@code valueIfNotSuccess}).
      *
      * @param valueIfNotSuccess the value to return if not completed successfully
      * @param executor          the executor to use for asynchronous execution
@@ -2147,14 +1828,13 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         requireArrayAndEleNonNull("fn", fns);
 
-        return cfThis.thenCompose(v -> mostSuccessResultsOf(
-                valueIfNotSuccess, executor, timeout, unit, wrapFunctions(executor, v, fns)
-        ));
+        return cfThis.thenCompose(v -> mostSuccessResultsOf0(
+                valueIfNotSuccess, executor, timeout, unit, wrapFunctions0(executor, v, fns)));
     }
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the values obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions)
      * in the <strong>same order</strong> of the given Functions arguments.
@@ -2166,7 +1846,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
-        return thenMApplyAsync(cfThis, ASYNC_POOL, fns);
+        return thenMApplyAsync(cfThis, defaultExecutor(cfThis), fns);
     }
 
     /**
@@ -2187,12 +1867,12 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", fns);
 
-        return cfThis.thenCompose(v -> allResultsOf(wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> allResultsOf0(false, wrapFunctions0(executor, v, fns)));
     }
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with any successful value obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions).
      *
@@ -2203,7 +1883,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
-        return thenMApplyAnySuccessAsync(cfThis, ASYNC_POOL, fns);
+        return thenMApplyAnySuccessAsync(cfThis, defaultExecutor(cfThis), fns);
     }
 
     /**
@@ -2223,12 +1903,12 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", fns);
 
-        return cfThis.thenCompose(v -> anySuccessOf(wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> anySuccessOf0(wrapFunctions0(executor, v, fns)));
     }
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with any completed result obtained by calling the given Functions
      * (with the given stage's result as the argument to the given functions).
      *
@@ -2239,7 +1919,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
-        return thenMApplyAnyAsync(cfThis, ASYNC_POOL, fns);
+        return thenMApplyAnyAsync(cfThis, defaultExecutor(cfThis), fns);
     }
 
     /**
@@ -2259,23 +1939,17 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", fns);
 
-        return cfThis.thenCompose(v -> f_cast(CompletableFuture.anyOf(wrapFunctions(executor, v, fns))));
+        return cfThis.thenCompose(v -> f_cast(CompletableFuture.anyOf(wrapFunctions0(executor, v, fns))));
     }
 
-    private static <T, U> CompletableFuture<U>[] wrapFunctions(
+    private static <T, U> CompletableFuture<U>[] wrapFunctions0(
             Executor executor, @Nullable T v, Function<? super T, ? extends U>[] fns) {
-        @SuppressWarnings("unchecked")
-        CompletableFuture<U>[] cfs = new CompletableFuture[fns.length];
-        for (int i = 0; i < fns.length; i++) {
-            final int idx = i;
-            cfs[i] = CompletableFuture.supplyAsync(() -> fns[idx].apply(v), executor);
-        }
-        return cfs;
+        return mapArray(fns, CompletableFuture[]::new, f -> CompletableFuture.supplyAsync(() -> f.apply(v), executor));
     }
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the given stage's result as the argument to the given actions.
      *
      * @param actions the actions to perform before completing the returned CompletableFuture
@@ -2284,7 +1958,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptFastFailAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
-        return thenMAcceptFastFailAsync(cfThis, ASYNC_POOL, actions);
+        return thenMAcceptFastFailAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -2302,12 +1976,12 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(v -> allFastFailOf(wrapConsumers(executor, v, actions)));
+        return cfThis.thenCompose(v -> allFastFailOf0(wrapConsumers0(executor, v, actions)));
     }
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the given stage's result as the argument to the given actions.
      *
      * @param actions the actions to perform before completing the returned CompletableFuture
@@ -2316,7 +1990,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
-        return thenMAcceptAsync(cfThis, ASYNC_POOL, actions);
+        return thenMAcceptAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -2334,12 +2008,12 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(v -> CompletableFuture.allOf(wrapConsumers(executor, v, actions)));
+        return cfThis.thenCompose(v -> CompletableFuture.allOf(wrapConsumers0(executor, v, actions)));
     }
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the given stage's result as the argument to the given actions.
      *
      * @param actions the actions to perform before completing the returned CompletableFuture
@@ -2348,7 +2022,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
-        return thenMAcceptAnySuccessAsync(cfThis, ASYNC_POOL, actions);
+        return thenMAcceptAnySuccessAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -2366,12 +2040,12 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(v -> anySuccessOf(wrapConsumers(executor, v, actions)));
+        return cfThis.thenCompose(v -> anySuccessOf0(wrapConsumers0(executor, v, actions)));
     }
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the given stage's result as the argument to the given actions.
      *
      * @param actions the actions to perform before completing the returned CompletableFuture
@@ -2380,7 +2054,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnyAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
-        return thenMAcceptAnyAsync(cfThis, ASYNC_POOL, actions);
+        return thenMAcceptAnyAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -2398,22 +2072,16 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(v -> f_cast(CompletableFuture.anyOf(wrapConsumers(executor, v, actions))));
+        return cfThis.thenCompose(v -> f_cast(CompletableFuture.anyOf(wrapConsumers0(executor, v, actions))));
     }
 
-    private static <T> CompletableFuture<Void>[] wrapConsumers(Executor executor, T v, Consumer<? super T>[] actions) {
-        @SuppressWarnings("unchecked")
-        CompletableFuture<Void>[] cfs = new CompletableFuture[actions.length];
-        for (int i = 0; i < actions.length; i++) {
-            final int idx = i;
-            cfs[idx] = CompletableFuture.runAsync(() -> actions[idx].accept(v), executor);
-        }
-        return cfs;
+    private static <T> CompletableFuture<Void>[] wrapConsumers0(Executor executor, T v, Consumer<? super T>[] actions) {
+        return mapArray(actions, CompletableFuture[]::new, a -> CompletableFuture.runAsync(() -> a.accept(v), executor));
     }
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * executes the given actions using the CompletableFuture's default asynchronous execution facility.
+     * executes the given actions using the default executor of parameter cfThis.
      *
      * @param actions the actions to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
@@ -2421,7 +2089,7 @@ public final class CompletableFutureUtils {
      * @see #allFastFailOf(CompletionStage[])
      */
     public static CompletableFuture<Void> thenMRunFastFailAsync(CompletableFuture<?> cfThis, Runnable... actions) {
-        return thenMRunFastFailAsync(cfThis, ASYNC_POOL, actions);
+        return thenMRunFastFailAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -2440,12 +2108,12 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(unused -> allFastFailOf(wrapRunnables(executor, actions)));
+        return cfThis.thenCompose(unused -> allFastFailOf0(wrapRunnables0(executor, actions)));
     }
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * executes the given actions using the CompletableFuture's default asynchronous execution facility.
+     * executes the given actions using the default executor of parameter cfThis.
      *
      * @param actions the actions to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
@@ -2453,7 +2121,7 @@ public final class CompletableFutureUtils {
      * @see #allOf(CompletionStage[])
      */
     public static CompletableFuture<Void> thenMRunAsync(CompletableFuture<?> cfThis, Runnable... actions) {
-        return thenMRunAsync(cfThis, ASYNC_POOL, actions);
+        return thenMRunAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -2472,12 +2140,12 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(unused -> CompletableFuture.allOf(wrapRunnables(executor, actions)));
+        return cfThis.thenCompose(unused -> CompletableFuture.allOf(wrapRunnables0(executor, actions)));
     }
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * executes the given actions using the CompletableFuture's default asynchronous execution facility.
+     * executes the given actions using the default executor of parameter cfThis.
      *
      * @param actions the actions to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
@@ -2485,7 +2153,7 @@ public final class CompletableFutureUtils {
      * @see #anySuccessOf(CompletionStage[])
      */
     public static CompletableFuture<Void> thenMRunAnySuccessAsync(CompletableFuture<?> cfThis, Runnable... actions) {
-        return thenMRunAnySuccessAsync(cfThis, ASYNC_POOL, actions);
+        return thenMRunAnySuccessAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -2504,12 +2172,12 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(unused -> anySuccessOf(wrapRunnables(executor, actions)));
+        return cfThis.thenCompose(unused -> anySuccessOf0(wrapRunnables0(executor, actions)));
     }
 
     /**
      * Returns a new CompletableFuture that, when the given stage completes normally,
-     * executes the given actions using the CompletableFuture's default asynchronous execution facility.
+     * executes the given actions using the default executor of parameter cfThis.
      *
      * @param actions the actions to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
@@ -2517,7 +2185,7 @@ public final class CompletableFutureUtils {
      * @see #anyOf(CompletionStage[])
      */
     public static CompletableFuture<Void> thenMRunAnyAsync(CompletableFuture<?> cfThis, Runnable... actions) {
-        return thenMRunAnyAsync(cfThis, ASYNC_POOL, actions);
+        return thenMRunAnyAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -2536,7 +2204,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(unused -> f_cast(CompletableFuture.anyOf(wrapRunnables(executor, actions))));
+        return cfThis.thenCompose(unused -> f_cast(CompletableFuture.anyOf(wrapRunnables0(executor, actions))));
     }
 
     // endregion
@@ -2545,28 +2213,16 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyFastFailAsync(cfThis, ASYNC_POOL, fn1, fn2);
+        return thenTupleMApplyFastFailAsync(cfThis, defaultExecutor(cfThis), fn1, fn2);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
@@ -2575,32 +2231,20 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2);
 
-        return cfThis.thenCompose(v -> allTupleOf0(true, wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> f_allTupleOf0(true, wrapFunctions0(executor, v, fns)));
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyFastFailAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3);
+        return thenTupleMApplyFastFailAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
@@ -2609,33 +2253,21 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3);
 
-        return cfThis.thenCompose(v -> allTupleOf0(true, wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> f_allTupleOf0(true, wrapFunctions0(executor, v, fns)));
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyFastFailAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3, fn4);
+        return thenTupleMApplyFastFailAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
@@ -2645,33 +2277,21 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4);
 
-        return cfThis.thenCompose(v -> allTupleOf0(true, wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> f_allTupleOf0(true, wrapFunctions0(executor, v, fns)));
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyFastFailAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3, fn4, fn5);
+        return thenTupleMApplyFastFailAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFastFailAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
@@ -2681,35 +2301,28 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4, fn5);
 
-        return cfThis.thenCompose(v -> allTupleOf0(true, wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> f_allTupleOf0(true, wrapFunctions0(executor, v, fns)));
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the CompletableFuture's default asynchronous execution facility
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Function[])}
+     * with {@code null} valueIfFailed.
      * <p>
-     * If the given Functions failed, use {@code null}.
-     *
-     * @return the new CompletableFuture
+     * If any of the provided functions fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the function having a successful value of {@code null}).
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyAllSuccessAsync(cfThis, ASYNC_POOL, fn1, fn2);
+        return thenTupleMApplyAllSuccessAsync(cfThis, defaultExecutor(cfThis), fn1, fn2);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the given Executor with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Executor, Function[])}
+     * with {@code null} valueIfFailed.
      * <p>
-     * If the given Functions failed, use {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * If any of the provided functions fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the function having a successful value of {@code null}).
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
@@ -2718,36 +2331,28 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2);
 
-        return cfThis.thenCompose(v -> allSuccessTupleOf0(wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> f_allSuccessTupleOf0(wrapFunctions0(executor, v, fns)));
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the CompletableFuture's default asynchronous execution facility
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Function[])}
+     * with {@code null} valueIfFailed.
      * <p>
-     * If the given Functions failed, use {@code null}.
-     *
-     * @return the new CompletableFuture
+     * If any of the provided functions fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the function having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyAllSuccessAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3);
+        return thenTupleMApplyAllSuccessAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the given Executor with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Executor, Function[])}
+     * with {@code null} valueIfFailed.
      * <p>
-     * If the given Functions failed, use {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * If any of the provided functions fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the function having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
@@ -2757,37 +2362,29 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3);
 
-        return cfThis.thenCompose(v -> allSuccessTupleOf0(wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> f_allSuccessTupleOf0(wrapFunctions0(executor, v, fns)));
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the CompletableFuture's default asynchronous execution facility
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Function[])}
+     * with {@code null} valueIfFailed.
      * <p>
-     * If the given Functions failed, use {@code null}.
-     *
-     * @return the new CompletableFuture
+     * If any of the provided functions fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the function having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyAllSuccessAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3, fn4);
+        return thenTupleMApplyAllSuccessAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the given Executor with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Executor, Function[])}
+     * with {@code null} valueIfFailed.
      * <p>
-     * If the given Functions failed, use {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * If any of the provided functions fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the function having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
@@ -2797,37 +2394,29 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4);
 
-        return cfThis.thenCompose(v -> allSuccessTupleOf0(wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> f_allSuccessTupleOf0(wrapFunctions0(executor, v, fns)));
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the CompletableFuture's default asynchronous execution facility
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Function[])}
+     * with {@code null} valueIfFailed.
      * <p>
-     * If the given Functions failed, use {@code null}.
-     *
-     * @return the new CompletableFuture
+     * If any of the provided functions fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the function having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyAllSuccessAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3, fn4, fn5);
+        return thenTupleMApplyAllSuccessAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the given Executor with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Executor, Function[])}
+     * with {@code null} valueIfFailed.
      * <p>
-     * If the given Functions failed, use {@code null}.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * If any of the provided functions fails, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the function having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
@@ -2837,45 +2426,28 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4, fn5);
 
-        return cfThis.thenCompose(v -> allSuccessTupleOf0(wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> f_allSuccessTupleOf0(wrapFunctions0(executor, v, fns)));
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Object, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyMostSuccessAsync(cfThis, ASYNC_POOL, timeout, unit, fn1, fn2);
+        return thenTupleMApplyMostSuccessAsync(cfThis, defaultExecutor(cfThis), timeout, unit, fn1, fn2);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor,
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(
+     *CompletableFuture, Object, Executor, long, TimeUnit, Function[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, long timeout, TimeUnit unit,
@@ -2885,45 +2457,28 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2);
 
-        return cfThis.thenCompose(v -> mostSuccessTupleOf0(executor, timeout, unit, wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> f_mostSuccessTupleOf0(executor, timeout, unit, wrapFunctions0(executor, v, fns)));
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Object, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyMostSuccessAsync(cfThis, ASYNC_POOL, timeout, unit, fn1, fn2, fn3);
+        return thenTupleMApplyMostSuccessAsync(cfThis, defaultExecutor(cfThis), timeout, unit, fn1, fn2, fn3);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor,
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(
+     *CompletableFuture, Object, Executor, long, TimeUnit, Function[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, long timeout, TimeUnit unit,
@@ -2934,46 +2489,29 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3);
 
-        return cfThis.thenCompose(v -> mostSuccessTupleOf0(executor, timeout, unit, wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> f_mostSuccessTupleOf0(executor, timeout, unit, wrapFunctions0(executor, v, fns)));
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Object, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyMostSuccessAsync(cfThis, ASYNC_POOL, timeout, unit, fn1, fn2, fn3, fn4);
+        return thenTupleMApplyMostSuccessAsync(cfThis, defaultExecutor(cfThis), timeout, unit, fn1, fn2, fn3, fn4);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor,
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(
+     *CompletableFuture, Object, Executor, long, TimeUnit, Function[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, long timeout, TimeUnit unit,
@@ -2984,46 +2522,29 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4);
 
-        return cfThis.thenCompose(v -> mostSuccessTupleOf0(executor, timeout, unit, wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> f_mostSuccessTupleOf0(executor, timeout, unit, wrapFunctions0(executor, v, fns)));
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Object, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
-     *
-     * @param timeout how long to wait in units of {@code unit}
-     * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyMostSuccessAsync(cfThis, ASYNC_POOL, timeout, unit, fn1, fn2, fn3, fn4, fn5);
+        return thenTupleMApplyMostSuccessAsync(cfThis, defaultExecutor(cfThis), timeout, unit, fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor,
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(
+     *CompletableFuture, Object, Executor, long, TimeUnit, Function[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If the given function is successful in the given time, the return result is the completed value;
-     * Otherwise the given valueIfNotSuccess.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param timeout  how long to wait in units of {@code unit}
-     * @param unit     a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @return the new CompletableFuture
+     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, long timeout, TimeUnit unit,
@@ -3035,32 +2556,20 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4, fn5);
 
-        return cfThis.thenCompose(v -> mostSuccessTupleOf0(executor, timeout, unit, wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> f_mostSuccessTupleOf0(executor, timeout, unit, wrapFunctions0(executor, v, fns)));
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyAsync(cfThis, ASYNC_POOL, fn1, fn2);
+        return thenTupleMApplyAsync(cfThis, defaultExecutor(cfThis), fn1, fn2);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
@@ -3069,32 +2578,20 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2);
 
-        return cfThis.thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> f_allTupleOf0(false, wrapFunctions0(executor, v, fns)));
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3);
+        return thenTupleMApplyAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
@@ -3103,33 +2600,21 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3);
 
-        return cfThis.thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> f_allTupleOf0(false, wrapFunctions0(executor, v, fns)));
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3, fn4);
+        return thenTupleMApplyAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
@@ -3139,33 +2624,21 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4);
 
-        return cfThis.thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> f_allTupleOf0(false, wrapFunctions0(executor, v, fns)));
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the CompletableFuture's default asynchronous execution facility,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyAsync(cfThis, ASYNC_POOL, fn1, fn2, fn3, fn4, fn5);
+        return thenTupleMApplyAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @return the new CompletableFuture
+     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
@@ -3175,23 +2648,23 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4, fn5);
 
-        return cfThis.thenCompose(v -> allTupleOf0(false, wrapFunctions(executor, v, fns)));
+        return cfThis.thenCompose(v -> f_allTupleOf0(false, wrapFunctions0(executor, v, fns)));
     }
 
     // endregion
     ////////////////////////////////////////////////////////////
     // region## thenBoth* Methods(binary input) with fast-fail support
     //
-    //    - thenCombineFastFail*(BiFunction):    (T1, T2) -> U
-    //    - thenAcceptBothFastFail*(BiConsumer): (T1, T2) -> Void
-    //    - runAfterBothFastFail*(Runnable):     Void, Void -> Void
+    //    - thenCombineFastFail*   (BiFunction: (T, U) -> V)    -> CompletableFuture<U>
+    //    - thenAcceptBothFastFail*(BiConsumer: (T, U) -> Void) -> CompletableFuture<Void>
+    //    - runAfterBothFastFail*  (Runnable:   Void -> Void)   -> CompletableFuture<Void>
     ////////////////////////////////////////////////////////////
 
     /**
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
@@ -3208,10 +2681,10 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
-     * is executed using CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
@@ -3220,15 +2693,15 @@ public final class CompletableFutureUtils {
     public static <T, U, V> CompletableFuture<V> thenCombineFastFailAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiFunction<? super T, ? super U, ? extends V> fn) {
-        return thenCombineFastFailAsync(cfThis, other, fn, ASYNC_POOL);
+        return thenCombineFastFailAsync(cfThis, other, fn, defaultExecutor(cfThis));
     }
 
     /**
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed using the supplied executor,
      * with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
@@ -3252,7 +2725,8 @@ public final class CompletableFutureUtils {
 
     /**
      * Implementation Note: Calling this method is necessary to keep the runtime type(including `minimal-stage`) of
-     * return same as `cfThis`, because `Cffu` internal use type `CompletableFuture` to represent `minimal-stage`(NOT type safe)
+     * return cf same as input `cfThis` argument. The runtime type of method {@link #allResultsFastFailOf(CompletionStage[])}
+     * return cf is always CompletableFuture, does NOT keep the runtime type of input `cfThis` argument.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static <T1, T2> CompletableFuture<Tuple2<T1, T2>> bothFastFail0(
@@ -3273,8 +2747,8 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
@@ -3291,10 +2765,10 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
-     * is executed using CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
@@ -3303,15 +2777,15 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<Void> thenAcceptBothFastFailAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiConsumer<? super T, ? super U> action) {
-        return thenAcceptBothFastFailAsync(cfThis, other, action, ASYNC_POOL);
+        return thenAcceptBothFastFailAsync(cfThis, other, action, defaultExecutor(cfThis));
     }
 
     /**
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed using the supplied executor,
      * with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
@@ -3329,8 +2803,8 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when two given stages both complete normally, executes the given action.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
@@ -3346,9 +2820,9 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when two given stages both complete normally,
-     * executes the given action using CompletableFuture's default asynchronous execution facility.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * executes the given action using the default executor of parameter cfThis.
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
@@ -3356,14 +2830,14 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterBothFastFailAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
-        return runAfterBothFastFailAsync(cfThis, other, action, ASYNC_POOL);
+        return runAfterBothFastFailAsync(cfThis, other, action, defaultExecutor(cfThis));
     }
 
     /**
      * Returns a new CompletableFuture that, when two given stages both complete normally,
      * executes the given action using the supplied executor.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture also does so
-     * *without* waiting other incomplete given CompletionStage,
+     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
@@ -3382,9 +2856,9 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
     // region## thenEither* Methods(binary input) with either(any)-success support
     //
-    //    - applyToEitherSuccess*(Function): (T, T) -> U
-    //    - acceptEitherSuccess*(Consumer):  (T, T) -> Void
-    //    - runAfterEitherSuccess*(Runnable):  Void, Void -> Void
+    //    - applyToEitherSuccess* (Function: (T) -> U)     -> CompletableFuture<U>
+    //    - acceptEitherSuccess*  (Consumer: (T) -> Void)  -> CompletableFuture<Void>
+    //    - runAfterEitherSuccess*(Runnable: Void -> Void) -> CompletableFuture<Void>
     ////////////////////////////////////////////////////////////
 
     /**
@@ -3405,7 +2879,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when either given stage success,
-     * is executed using this CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the corresponding result as argument to the supplied function.
      *
      * @param fn  the function to use to compute the value of the returned CompletableFuture
@@ -3414,7 +2888,7 @@ public final class CompletableFutureUtils {
      */
     public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other, Function<? super T, ? extends U> fn) {
-        return applyToEitherSuccessAsync(cfThis, other, fn, ASYNC_POOL);
+        return applyToEitherSuccessAsync(cfThis, other, fn, defaultExecutor(cfThis));
     }
 
     /**
@@ -3438,7 +2912,8 @@ public final class CompletableFutureUtils {
 
     /**
      * Implementation Note: Calling this method is necessary to keep the runtime type(including `minimal-stage`) of
-     * return same as `cfThis`, because `Cffu` internal use type `CompletableFuture` to represent `minimal-stage`(NOT type safe)
+     * return cf same as input `cfThis` argument. The runtime type of method {@link #anySuccessOf(CompletionStage[])}
+     * return cf is always CompletableFuture, does NOT keep the runtime type of input `cfThis` argument.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static <T> CompletableFuture<T> eitherSuccess0(
@@ -3473,7 +2948,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when either given stage success,
-     * is executed using this CompletableFuture's default asynchronous execution facility,
+     * is executed using the default executor of parameter cfThis,
      * with the corresponding result as argument to the supplied action.
      *
      * @param action the action to perform before completing the returned CompletableFuture
@@ -3481,7 +2956,7 @@ public final class CompletableFutureUtils {
      */
     public static <T> CompletableFuture<Void> acceptEitherSuccessAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other, Consumer<? super T> action) {
-        return acceptEitherSuccessAsync(cfThis, other, action, ASYNC_POOL);
+        return acceptEitherSuccessAsync(cfThis, other, action, defaultExecutor(cfThis));
     }
 
     /**
@@ -3521,7 +2996,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when either given stage success, executes the given action
-     * using CompletableFuture's default asynchronous execution facility.
+     * using the default executor of parameter cfThis.
      * Otherwise, all two given CompletionStage complete exceptionally,
      * the returned CompletableFuture also does so, with a CompletionException holding
      * an exception from any of the given CompletionStage as its cause.
@@ -3531,7 +3006,7 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> runAfterEitherSuccessAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
-        return runAfterEitherSuccessAsync(cfThis, other, action, ASYNC_POOL);
+        return runAfterEitherSuccessAsync(cfThis, other, action, defaultExecutor(cfThis));
     }
 
     /**
@@ -3568,14 +3043,16 @@ public final class CompletableFutureUtils {
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
-     * @see com.google.common.util.concurrent.Futures#catching(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.base.Function, Executor) guava#catching() method
+     * @see Futures#catching Guava method catching()
      */
     @SuppressWarnings("unchecked")
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
     C catching(C cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
         requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
-        return (C) cfThis.handle((r, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
+
+        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
                 ? cfThis : completedFuture(fallback.apply((X) ex))
         ).thenCompose(x -> x);
     }
@@ -3583,7 +3060,7 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
      * is executed with given stage's exception as the argument to the supplied function,
-     * using the given stage's default asynchronous execution facility.
+     * using the default executor of parameter cfThis.
      * Otherwise, the returned stage contains same result as input CompletionStage.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
@@ -3591,11 +3068,11 @@ public final class CompletableFutureUtils {
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
-     * @see com.google.common.util.concurrent.Futures#catching(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.base.Function, Executor) guava#catching() method
+     * @see Futures#catching Guava method catching()
      */
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
     C catchingAsync(C cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
-        return catchingAsync(cfThis, exceptionType, fallback, ASYNC_POOL);
+        return catchingAsync(cfThis, exceptionType, fallback, defaultExecutor(cfThis));
     }
 
     /**
@@ -3609,43 +3086,54 @@ public final class CompletableFutureUtils {
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
      * @param executor      the executor to use for asynchronous execution
-     * @see com.google.common.util.concurrent.Futures#catching(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.base.Function, Executor) guava#catching() method
+     * @see Futures#catching Guava method catching()
      */
     @SuppressWarnings("unchecked")
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
     C catchingAsync(C cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
         requireNonNull(executor, "executor is null");
-        return (C) cfThis.handle((r, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
-                ? cfThis : cfThis.<T>handleAsync((r1, ex1) -> fallback.apply((X) ex1), executor)
+
+        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
+                ? cfThis : cfThis.<T>handleAsync((v1, ex1) -> fallback.apply((X) ex1), executor)
         ).thenCompose(x -> x);
     }
 
     /**
      * Returns a new CompletionStage that, when given stage completes exceptionally, is executed with given
-     * stage's exception as the argument to the supplied function, using given stage's
-     * default asynchronous execution facility. Otherwise, if given stage completes normally,
-     * then the returned stage also completes normally with the same value.
+     * stage's exception as the argument to the supplied function, using the default executor of parameter cfThis.
+     * Otherwise, if given stage completes normally, then the returned stage also completes normally with the same value.
+     * <p>
+     * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
+     * <strong>Strong recommend</strong> using {@link #catchingAsync(CompletionStage, Class, Function)}
+     * instead in your biz application.
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
      *           if given CompletionStage completed exceptionally
      * @return the new CompletableFuture
+     * @see #catchingAsync(CompletionStage, Class, Function)
      */
     public static <T, C extends CompletionStage<? super T>>
     C exceptionallyAsync(C cfThis, Function<Throwable, ? extends T> fn) {
-        return exceptionallyAsync(cfThis, fn, ASYNC_POOL);
+        return exceptionallyAsync(cfThis, fn, defaultExecutor(cfThis));
     }
 
     /**
      * Returns a new CompletionStage that, when given stage completes exceptionally, is executed with given
      * stage's exception as the argument to the supplied function, using the supplied Executor. Otherwise,
      * if given stage completes normally, then the returned stage also completes normally with the same value.
+     * <p>
+     * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
+     * <strong>Strong recommend</strong> using {@link #catchingAsync(CompletionStage, Class, Function, Executor)}
+     * instead in your biz application.
      *
      * @param fn       the function to use to compute the value of the returned CompletableFuture
      *                 if given CompletionStage completed exceptionally
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
+     * @see #catchingAsync(CompletionStage, Class, Function, Executor)
      */
     @SuppressWarnings("unchecked")
     public static <T, C extends CompletionStage<? super T>>
@@ -3657,8 +3145,8 @@ public final class CompletableFutureUtils {
             return (C) cfThis.exceptionallyAsync(fn, executor);
         }
         // below code is copied from CompletionStage#exceptionallyAsync
-        return (C) cfThis.handle((r, ex) -> (ex == null) ? cfThis :
-                cfThis.<T>handleAsync((r1, ex1) -> fn.apply(ex1), executor)
+        return (C) cfThis.handle((v, ex) -> (ex == null) ? cfThis :
+                cfThis.<T>handleAsync((v1, ex1) -> fn.apply(ex1), executor)
         ).thenCompose(x -> x);
     }
 
@@ -3671,7 +3159,14 @@ public final class CompletableFutureUtils {
      * Exceptionally completes given CompletableFuture with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
      * <p>
-     * Uses CompletableFuture's default asynchronous execution facility as {@code executorWhenTimeout}.
+     * Uses the default executor of parameter cfThis as {@code executorWhenTimeout}.
+     * <p>
+     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from
+     * the original CF method {@link CompletableFuture#orTimeout} and its backport method {@link #orTimeout},
+     * because the returned new CF instance avoids the subsequent usage of the delay thread.
+     * More info see the javadoc of {@link #orTimeout} and the demo <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * >DelayDysfunctionDemo</a>.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -3679,15 +3174,23 @@ public final class CompletableFutureUtils {
      * @see #cffuOrTimeout(CompletableFuture, Executor, long, TimeUnit)
      */
     public static <C extends CompletableFuture<?>> C cffuOrTimeout(C cfThis, long timeout, TimeUnit unit) {
-        return cffuOrTimeout(cfThis, ASYNC_POOL, timeout, unit);
+        return cffuOrTimeout(cfThis, defaultExecutor(cfThis), timeout, unit);
     }
 
     /**
      * Exceptionally completes given CompletableFuture with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
+     * <p>
+     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from
+     * the original CF method {@link CompletableFuture#orTimeout} and its backport method {@link #orTimeout},
+     * because the returned new CF instance avoids the subsequent usage of the delay thread.
+     * More info see the javadoc of {@link #orTimeout} and the demo <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * >DelayDysfunctionDemo</a>.
      *
      * @param executorWhenTimeout the async executor when triggered by timeout
-     * @param timeout             how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
+     * @param timeout             how long to wait before completing exceptionally with a TimeoutException,
+     *                            in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the new CompletableFuture
      */
@@ -3704,8 +3207,7 @@ public final class CompletableFutureUtils {
      * Exceptionally completes given CompletableFuture with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
      * <p>
-     * <strong>CAUTION:</strong> This method and {@link CompletableFuture#orTimeout(long, TimeUnit)}
-     * is <strong>UNSAFE</strong>!
+     * <strong>CAUTION:</strong> This method and {@link CompletableFuture#orTimeout} is <strong>UNSAFE</strong>!
      * <p>
      * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
      * are performed in the <strong>SINGLE thread builtin executor</strong>
@@ -3713,29 +3215,36 @@ public final class CompletableFutureUtils {
      * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
      * (including delay execution and timeout).
      * <p>
-     * <strong>Strong recommend</strong> using the safe method {@link #cffuOrTimeout(CompletableFuture, long, TimeUnit)}
-     * instead of this method and {@link CompletableFuture#orTimeout(long, TimeUnit)}.
-     * <p>
-     * Unless all subsequent actions of dependent CompletableFutures is ensured executing async
-     * (aka. the dependent CompletableFutures is created by async methods), using this method and {@link CompletableFuture#orTimeout(long, TimeUnit)}
+     * <strong>Strong recommend</strong> using the safe method {@link #cffuOrTimeout(CompletableFuture,
+     * Executor, long, TimeUnit)} instead of this method and {@link CompletableFuture#orTimeout}.<br>
+     * Unless all subsequent actions of dependent CompletableFutures is ensured executing async(aka. the dependent
+     * CompletableFutures is created by async methods), using this method and {@link CompletableFuture#orTimeout}
      * is one less thread switch of task execution when triggered by timeout.
+     * <p>
+     * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout} leaks if the future completes exceptionally,
+     * more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
+     * <a href="https://github.com/openjdk/jdk/pull/13059">PR review openjdk/jdk/13059</a>
+     * and <a href="https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a">JDK bugfix commit</a>.
+     * The cffu backport logic(for Java 20-) has merged the fix of this JDK bug.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the given CompletableFuture
-     * @see #cffuOrTimeout(CompletableFuture, long, TimeUnit)
+     * @see #cffuOrTimeout(CompletableFuture, Executor, long, TimeUnit)
      */
     @Contract("_, _, _ -> param1")
     public static <C extends CompletableFuture<?>> C orTimeout(C cfThis, long timeout, TimeUnit unit) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(unit, "unit is null");
-        // NOTE: No need check minimal stage, since checked at cf.orTimeout() / cf.isDone()
-        if (IS_JAVA9_PLUS) {
+        // NOTE: No need check minimal stage, because checked in cfThis.orTimeout() / cfThis.isDone() below
+
+        // because of bug JDK-8303742, delegate to CompletableFuture.orTimeout() when Java 21+(not Java 9+)
+        if (IS_JAVA21_PLUS) {
             cfThis.orTimeout(timeout, unit);
         } else {
             // below code is copied from CompletableFuture#orTimeout with small adoption
             if (!cfThis.isDone()) {
-                ScheduledFuture<?> f = Delayer.delayToTimoutCf(cfThis, timeout, unit);
+                ScheduledFuture<?> f = Delayer.delayToTimeoutCf(cfThis, timeout, unit);
                 cfThis.whenComplete(new FutureCanceller(f));
             }
         }
@@ -3745,7 +3254,14 @@ public final class CompletableFutureUtils {
     /**
      * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
      * <p>
-     * Uses CompletableFuture's default asynchronous execution facility as {@code executorWhenTimeout}.
+     * Uses the default executor of parameter cfThis as {@code executorWhenTimeout}.
+     * <p>
+     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the
+     * original CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout},
+     * because the returned new CF instance avoids the subsequent usage of the delay thread.
+     * More info see the javadoc of {@link #completeOnTimeout} and the demo <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * >DelayDysfunctionDemo</a>.
      *
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
@@ -3755,11 +3271,18 @@ public final class CompletableFutureUtils {
      */
     public static <T, C extends CompletableFuture<? super T>>
     C cffuCompleteOnTimeout(C cfThis, @Nullable T value, long timeout, TimeUnit unit) {
-        return cffuCompleteOnTimeout(cfThis, value, ASYNC_POOL, timeout, unit);
+        return cffuCompleteOnTimeout(cfThis, value, defaultExecutor(cfThis), timeout, unit);
     }
 
     /**
      * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
+     * <p>
+     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is DIFFERENT from the
+     * original CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout},
+     * because the returned new CF instance avoids the subsequent usage of the delay thread.
+     * More info see the javadoc of {@link #completeOnTimeout} and the demo <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * >DelayDysfunctionDemo</a>.
      *
      * @param value               the value to use upon timeout
      * @param executorWhenTimeout the async executor when triggered by timeout
@@ -3779,34 +3302,31 @@ public final class CompletableFutureUtils {
     /**
      * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
      * <p>
-     * <strong>CAUTION:</strong> This method and {@link CompletableFuture#completeOnTimeout(Object, long, TimeUnit)}
-     * is <strong>UNSAFE</strong>!
+     * <strong>CAUTION:</strong> This method and {@link CompletableFuture#completeOnTimeout} is <strong>UNSAFE</strong>!
      * <p>
      * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
-     * are performed in the <strong>SINGLE thread builtin executor</strong>
-     * of CompletableFuture for delay execution (including timeout function).
-     * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
-     * (including delay execution and timeout).
+     * are performed in the <strong>SINGLE thread builtin executor</strong> of CompletableFuture for delay execution
+     * (including timeout function). So the long-running subsequent non-async actions lead to
+     * the CompletableFuture dysfunction (including delay execution and timeout).
      * <p>
-     * <strong>Strong recommend</strong> using the safe method {@link #cffuCompleteOnTimeout(CompletableFuture, Object, long, TimeUnit)}
-     * instead of this method and {@link CompletableFuture#completeOnTimeout(Object, long, TimeUnit)}.
-     * <p>
-     * Unless all subsequent actions of dependent CompletableFutures is ensured executing async
-     * (aka. the dependent CompletableFutures is created by async methods), using this method and {@link CompletableFuture#completeOnTimeout(Object, long, TimeUnit)}
+     * <strong>Strong recommend</strong> using the safe method {@link #cffuCompleteOnTimeout(CompletableFuture, Object,
+     * Executor, long, TimeUnit)} instead of this method and {@link CompletableFuture#completeOnTimeout}.<br>
+     * Unless all subsequent actions of dependent CompletableFutures is ensured executing async(aka. the dependent
+     * CompletableFutures is created by async methods), using this method and {@link CompletableFuture#completeOnTimeout}
      * is one less thread switch of task execution when triggered by timeout.
      *
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the given CompletableFuture
-     * @see #cffuCompleteOnTimeout(CompletableFuture, Object, long, TimeUnit)
+     * @see #cffuCompleteOnTimeout(CompletableFuture, Object, Executor, long, TimeUnit)
      */
     @Contract("_, _, _, _ -> param1")
     public static <T, C extends CompletableFuture<? super T>>
     C completeOnTimeout(C cfThis, @Nullable T value, long timeout, TimeUnit unit) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(unit, "unit is null");
-        // NOTE: No need check minimal stage, since checked at cf.completeOnTimeout() / cf.isDone()
+        // NOTE: No need check minimal stage, because checked in cfThis.completeOnTimeout() / cfThis.isDone() below
         if (IS_JAVA9_PLUS) {
             cfThis.completeOnTimeout(value, timeout, unit);
         } else {
@@ -3820,17 +3340,16 @@ public final class CompletableFutureUtils {
     }
 
     @SuppressWarnings("unchecked")
-    private static <C extends CompletableFuture<?>> C hopExecutorIfAtCfDelayerThread(C cf, Executor asyncExecutor) {
+    private static <C extends CompletableFuture<?>> C hopExecutorIfAtCfDelayerThread(C cf, Executor executor) {
         CompletableFuture<Object> ret = newIncompleteFuture(cf);
 
+        // use `cf.handle` method(instead of `cf.whenComplete`) and return null in order to
+        // prevent reporting the handled exception argument of this `action` at subsequent `exceptionally`
         cf.handle((v, ex) -> {
             if (!atCfDelayerThread()) completeCf(ret, v, ex);
-            else delayedExecutor(0, TimeUnit.SECONDS, asyncExecutor)
-                    .execute(() -> completeCf(ret, v, ex));
-            // use `cf.handle` method(instead of `cf.whenComplete`) and return null
-            // in order to prevent reporting the handled argument exception in this `action` in subsequent `exceptionally`
+            else executor.execute(() -> completeCf(ret, v, ex));
             return null;
-        }).exceptionally(ex -> reportException("Exception occurred in handle of executor hop", ex));
+        }).exceptionally(ex -> reportUncaughtException("handle of executor hop", ex));
 
         return (C) ret;
     }
@@ -3841,7 +3360,7 @@ public final class CompletableFutureUtils {
             else cf.completeExceptionally(ex);
         } catch (Throwable t) {
             if (ex != null) t.addSuppressed(ex);
-            reportException("Exception occurred in completeCf", t);
+            reportUncaughtException("completeCf", t);
             throw t; // rethrow exception, report to caller
         }
     }
@@ -3864,14 +3383,16 @@ public final class CompletableFutureUtils {
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
-     * @see com.google.common.util.concurrent.Futures#catchingAsync(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) guava#catchingAsync() method
+     * @see Futures#catchingAsync Guava method catchingAsync()
      */
     @SuppressWarnings("unchecked")
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
     C catchingCompose(C cfThis, Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
         requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
-        return (C) cfThis.handle((r, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
+
+        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
                 ? cfThis : fallback.apply((X) ex)
         ).thenCompose(x -> x);
     }
@@ -3879,18 +3400,18 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
      * is composed using the results of the supplied function applied to given stage's exception,
-     * using given stage's default asynchronous execution facility.
+     * using the default executor of parameter cfThis.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
      *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
-     * @see com.google.common.util.concurrent.Futures#catchingAsync(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) guava#catchingAsync() method
+     * @see Futures#catchingAsync Guava method catchingAsync()
      */
     public static <T, X extends Throwable, C extends CompletionStage<? super T>> C catchingComposeAsync(
             C cfThis, Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
-        return catchingComposeAsync(cfThis, exceptionType, fallback, ASYNC_POOL);
+        return catchingComposeAsync(cfThis, exceptionType, fallback, defaultExecutor(cfThis));
     }
 
     /**
@@ -3904,27 +3425,34 @@ public final class CompletableFutureUtils {
      * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
      *                      The function's argument is the input's exception.
      * @param executor      the executor to use for asynchronous execution
-     * @see com.google.common.util.concurrent.Futures#catchingAsync(com.google.common.util.concurrent.ListenableFuture, Class, com.google.common.util.concurrent.AsyncFunction, Executor) guava#catchingAsync() method
+     * @see Futures#catchingAsync Guava method catchingAsync()
      */
     @SuppressWarnings("unchecked")
     public static <T, X extends Throwable, C extends CompletionStage<? super T>> C catchingComposeAsync(
             C cfThis, Class<X> exceptionType,
             Function<? super X, ? extends CompletionStage<T>> fallback, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
         requireNonNull(executor, "executor is null");
-        return (C) cfThis.handle((r, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
-                ? cfThis : cfThis.handleAsync((r1, ex1) -> fallback.apply((X) ex1), executor).thenCompose(x -> x)
+
+        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
+                ? cfThis : cfThis.handleAsync((v1, ex1) -> fallback.apply((X) ex1), executor).thenCompose(x -> x)
         ).thenCompose(x -> x);
     }
 
     /**
      * Returns a new CompletableFuture that, when given CompletableFuture completes exceptionally,
      * is composed using the results of the supplied function applied to given stage's exception.
+     * <p>
+     * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
+     * <strong>Strong recommend</strong> using {@link #catchingCompose(CompletionStage, Class, Function)}
+     * instead in your biz application.
      *
      * @param fn the function to use to compute the returned CompletableFuture
      *           if given CompletionStage completed exceptionally
      * @return the new CompletableFuture
+     * @see #catchingCompose(CompletionStage, Class, Function)
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T, C extends CompletionStage<? super T>>
@@ -3935,31 +3463,41 @@ public final class CompletableFutureUtils {
             return (C) cfThis.exceptionallyCompose((Function) fn);
         }
         // below code is copied from CompletionStage.exceptionallyCompose
-        return (C) cfThis.handle((r, ex) -> (ex == null) ? cfThis : fn.apply(ex)).thenCompose(x -> x);
+        return (C) cfThis.handle((v, ex) -> (ex == null) ? cfThis : fn.apply(ex)).thenCompose(x -> x);
     }
 
     /**
      * Returns a new CompletableFuture that, when given CompletableFuture completes exceptionally,
      * is composed using the results of the supplied function applied to given stage's exception,
-     * using given CompletableFuture's default asynchronous execution facility.
+     * using the default executor of parameter cfThis.
+     * <p>
+     * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
+     * <strong>Strong recommend</strong> using {@link #catchingComposeAsync(CompletionStage, Class, Function)}
+     * instead in your biz application.
      *
      * @param fn the function to use to compute the returned CompletableFuture
      *           if given CompletionStage completed exceptionally
      * @return the new CompletableFuture
+     * @see #catchingComposeAsync(CompletionStage, Class, Function)
      */
     public static <T, C extends CompletionStage<? super T>>
     C exceptionallyComposeAsync(C cfThis, Function<Throwable, ? extends CompletionStage<T>> fn) {
-        return exceptionallyComposeAsync(cfThis, fn, ASYNC_POOL);
+        return exceptionallyComposeAsync(cfThis, fn, defaultExecutor(cfThis));
     }
 
     /**
      * Returns a new CompletableFuture that, when given CompletableFuture completes exceptionally, is composed using
      * the results of the supplied function applied to given stage's exception, using the supplied Executor.
+     * <p>
+     * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
+     * <strong>Strong recommend</strong> using {@link #catchingComposeAsync(CompletionStage, Class, Function, Executor)}
+     * instead in your biz application.
      *
      * @param fn       the function to use to compute the returned CompletableFuture
      *                 if given CompletionStage completed exceptionally
      * @param executor the executor to use for asynchronous execution
      * @return the new CompletableFuture
+     * @see #catchingComposeAsync(CompletionStage, Class, Function, Executor)
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T, C extends CompletionStage<? super T>>
@@ -3971,21 +3509,26 @@ public final class CompletableFutureUtils {
             return (C) cfThis.exceptionallyComposeAsync((Function) fn, executor);
         }
         // below code is copied from CompletionStage.exceptionallyComposeAsync
-        return (C) cfThis.handle((r, ex) -> (ex == null) ? cfThis :
-                cfThis.handleAsync((r1, ex1) -> fn.apply(ex1), executor).thenCompose(x -> x)
+        return (C) cfThis.handle((v, ex) -> (ex == null) ? cfThis :
+                cfThis.handleAsync((v1, ex1) -> fn.apply(ex1), executor).thenCompose(x -> x)
         ).thenCompose(x -> x);
     }
 
     /**
-     * Peeks the result by executing the given action when given stage completes, returns the given stage.
+     * Peeks the result by executing the given action when the given stage completes, returns the given stage.
      * <p>
-     * When the given stage is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of given stage as arguments. Whether the supplied action
-     * throws an exception or not, the given stage is <strong>NOT</strong> affected.
+     * When the given stage is complete, the given action is invoked with the result(or {@code null} if none)
+     * and the exception (or {@code null} if none) of given stage as arguments.
      * <p>
-     * Unlike method {@link CompletionStage#handle handle} and like method
-     * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
-     * this method is not designed to translate completion outcomes.
+     * <strong>CAUTION: </strong> The return stage of method {@link CompletionStage#whenComplete(BiConsumer)}
+     * will contain <strong>DIFFERENT</strong> result to the input stage when the input stage is successful
+     * but the supplied action throws an exception. This behavior of method {@code whenComplete} is subtle,
+     * and common misused if you just want to <strong>peek</strong> the input stage without affecting the result(e.g.
+     * logging the cf result).<br>For this {@code peek} method, whether the supplied action throws an exception or not,
+     * the result of return stage(aka. the given stage) is <strong>NOT</strong> affected.
+     * <p>
+     * Unlike method {@link CompletionStage#handle(BiFunction)} and like method
+     * {@link CompletionStage#whenComplete(BiConsumer)}, this method is not designed to translate completion outcomes.
      *
      * @param action the action to perform
      * @return the given stage
@@ -3998,27 +3541,31 @@ public final class CompletableFutureUtils {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(action, "action is null");
 
-        // use `cf.handle` method(instead of `cf.whenComplete`) and return null
-        // in order to prevent reporting the handled argument exception in this `action` in subsequent `exceptionally`
+        // use `cf.handle` method(instead of `cf.whenComplete`) and return null in order to
+        // prevent reporting the handled exception argument of this `action` at subsequent `exceptionally`
         cfThis.handle((v, ex) -> {
             action.accept(v, ex);
             return null;
-        }).exceptionally(ex -> reportException("Exception occurred in the action of peek", ex));
+        }).exceptionally(ex -> reportUncaughtException("the action of peek", ex));
         return cfThis;
     }
 
     /**
-     * Peeks the result by executing the given action when given stage completes,
-     * executes the given action using given stage's default asynchronous execution facility,
-     * returns the given stage.
+     * Peeks the result by executing the given action using the default executor of parameter cfThis
+     * when the given stage completes, returns the given stage.
      * <p>
-     * When the given stage is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of given stage as arguments. Whether the supplied action
-     * throws an exception or not, the given stage is <strong>NOT</strong> affected.
+     * When the given stage is complete, the given action is invoked with the result(or {@code null} if none)
+     * and the exception (or {@code null} if none) of given stage as arguments.
      * <p>
-     * Unlike method {@link CompletionStage#handle handle} and like method
-     * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
-     * this method is not designed to translate completion outcomes.
+     * <strong>CAUTION: </strong> The return stage of method {@link CompletionStage#whenCompleteAsync(BiConsumer)}
+     * will contain <strong>DIFFERENT</strong> result to the input stage when the input stage is successful
+     * but the supplied action throws an exception. This behavior of method {@code whenComplete} is subtle,
+     * and common misused if you just want to <strong>peek</strong> the input stage without affecting the result(e.g.
+     * logging the cf result).<br>For this {@code peek} method, whether the supplied action throws an exception or not,
+     * the result of return stage(aka. the given stage) is <strong>NOT</strong> affected.
+     * <p>
+     * Unlike method {@link CompletionStage#handleAsync(BiFunction)} and like method {@link
+     * CompletionStage#whenCompleteAsync(BiConsumer)}, this method is not designed to translate completion outcomes.
      *
      * @param action the action to perform
      * @return the given stage
@@ -4028,20 +3575,25 @@ public final class CompletableFutureUtils {
     @Contract("_, _ -> param1")
     public static <T, C extends CompletionStage<? extends T>>
     C peekAsync(C cfThis, BiConsumer<? super T, ? super Throwable> action) {
-        return peekAsync(cfThis, action, ASYNC_POOL);
+        return peekAsync(cfThis, action, defaultExecutor(cfThis));
     }
 
     /**
-     * Peeks the result by executing the given action when given stage completes,
-     * executes the given action using the supplied Executor, returns the given stage.
+     * Peeks the result by executing the given action using the supplied executor
+     * when the given stage completes, returns the given stage.
      * <p>
-     * When the given stage is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of given stage as arguments. Whether the supplied action
-     * throws an exception or not, the given stage is <strong>NOT</strong> affected.
+     * When the given stage is complete, the given action is invoked with the result(or {@code null} if none)
+     * and the exception (or {@code null} if none) of given stage as arguments.
      * <p>
-     * Unlike method {@link CompletionStage#handle handle} and like method
-     * {@link CompletionStage#whenComplete(BiConsumer) whenComplete},
-     * this method is not designed to translate completion outcomes.
+     * <strong>CAUTION: </strong> The return stage of method {@link CompletionStage#whenCompleteAsync(BiConsumer, Executor)}
+     * will contain <strong>DIFFERENT</strong> result to the input stage when the input stage is successful
+     * but the supplied action throws an exception. This behavior of method {@code whenComplete} is subtle,
+     * and common misused if you just want to <strong>peek</strong> the input stage without affecting the result(e.g.
+     * logging the cf result).<br>For this {@code peek} method, whether the supplied action throws an exception or not,
+     * the result of return stage(aka. the given stage) is <strong>NOT</strong> affected.
+     * <p>
+     * Unlike method {@link CompletionStage#handleAsync(BiFunction, Executor)} and like method {@link
+     * CompletionStage#whenCompleteAsync(BiConsumer, Executor)}, this method is not designed to translate completion outcomes.
      *
      * @param action the action to perform
      * @return the given stage
@@ -4055,18 +3607,39 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        // use `cf.handleAsync` method(instead of `cf.whenCompleteAsync`) and return null
-        // in order to prevent reporting the handled argument exception in this `action` in subsequent `exceptionally`
+        // use `cf.handleAsync` method(instead of `cf.whenCompleteAsync`) and return null in order to
+        // prevent reporting the handled exception argument of this `action` at subsequent `exceptionally`
         cfThis.handleAsync((v, ex) -> {
             action.accept(v, ex);
             return null;
-        }, executor).exceptionally(ex -> reportException("Exception occurred in the action of peekAsync", ex));
+        }, executor).exceptionally(ex -> reportUncaughtException("the action of peekAsync", ex));
         return cfThis;
     }
 
     // endregion
     ////////////////////////////////////////////////////////////
     // region## Read(explicitly) Methods of CompletableFuture(including Future)
+    //
+    //    - get()               // BLOCKING!
+    //    - get(timeout, unit)  // BLOCKING!
+    //    - join()              // BLOCKING!
+    //    - join(timeout, unit) // BLOCKING!
+    //    - getNow(T valueIfAbsent)
+    //    - getSuccessNow(T valueIfNotSuccess)
+    //    - resultNow()
+    //    - exceptionNow()
+    //
+    //    - isDone()
+    //    - isCompletedExceptionally()
+    //    - isCancelled()
+    //    - state()
+    //    - cffuState()
+    //
+    // NOTE about ExecutionException or CompletionException when the computation threw an exception:
+    //   - get methods throw ExecutionException(checked exception)
+    //     these old methods exists in `Future` interface since Java 5
+    //   - getNow/join throw CompletionException(unchecked exception),
+    //     these new methods exists in `CompletableFuture` since Java 8
     ////////////////////////////////////////////////////////////
 
     /**
@@ -4101,13 +3674,11 @@ public final class CompletableFutureUtils {
      */
     @Blocking
     @Nullable
-    public static <T> T join(CompletableFuture<T> cfThis, long timeout, TimeUnit unit) {
+    public static <T> T join(CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(unit, "unit is null");
-
-        if (cfThis.isDone()) return cfThis.join();
         // defensive copy input cf to avoid writing it by `orTimeout`
-        return orTimeout(copy(cfThis), timeout, unit).join();
+        return cfThis.isDone() ? cfThis.join() : orTimeout(copy(cfThis), timeout, unit).join();
     }
 
     /**
@@ -4123,7 +3694,7 @@ public final class CompletableFutureUtils {
     @Nullable
     public static <T> T getSuccessNow(CompletableFuture<? extends T> cfThis, @Nullable T valueIfNotSuccess) {
         requireNonNull(cfThis, "cfThis is null");
-        // NOTE: No need check minimal stage, since checked at cf.isDone()
+        // NOTE: No need check minimal stage, because checked in cfThis.isDone() below
         return cfThis.isDone() && !cfThis.isCompletedExceptionally() ? cfThis.join() : valueIfNotSuccess;
     }
 
@@ -4145,7 +3716,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @Nullable
-    public static <T> T resultNow(Future<T> cfThis) {
+    public static <T> T resultNow(Future<? extends T> cfThis) {
         requireNonNull(cfThis, "cfThis is null");
         if (IS_JAVA19_PLUS) {
             return cfThis.resultNow();
@@ -4239,15 +3810,10 @@ public final class CompletableFutureUtils {
         if (!cfThis.isDone()) return CffuState.RUNNING;
         if (cfThis.isCancelled()) return CffuState.CANCELLED;
         // simple path for CompletableFuture/Cffu
-        if (cfThis instanceof CompletableFuture) {
-            if (((CompletableFuture<?>) cfThis).isCompletedExceptionally())
-                return CffuState.FAILED;
-            else return CffuState.SUCCESS;
-        } else if (cfThis instanceof Cffu) {
-            if (((Cffu<?>) cfThis).isCompletedExceptionally())
-                return CffuState.FAILED;
-            else return CffuState.SUCCESS;
-        }
+        if (cfThis instanceof CompletableFuture)
+            return ((CompletableFuture<?>) cfThis).isCompletedExceptionally() ? CffuState.FAILED : CffuState.SUCCESS;
+        else if (cfThis instanceof Cffu)
+            return ((Cffu<?>) cfThis).isCompletedExceptionally() ? CffuState.FAILED : CffuState.SUCCESS;
 
         boolean interrupted = false;
         try {
@@ -4273,7 +3839,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Completes given CompletableFuture with the result of the given Supplier function invoked
-     * from an asynchronous task using the default executor.
+     * from an asynchronous task using the default executor of parameter cfThis.
      *
      * @param supplier a function returning the value to be used to complete given CompletableFuture
      * @return the given CompletableFuture
@@ -4281,7 +3847,7 @@ public final class CompletableFutureUtils {
      */
     @Contract("_, _ -> param1")
     public static <T, C extends CompletableFuture<? super T>> C completeAsync(C cfThis, Supplier<? extends T> supplier) {
-        return completeAsync(cfThis, supplier, ASYNC_POOL);
+        return completeAsync(cfThis, supplier, defaultExecutor(cfThis));
     }
 
     /**
@@ -4302,7 +3868,7 @@ public final class CompletableFutureUtils {
         if (IS_JAVA9_PLUS) {
             cfThis.completeAsync(supplier, executor);
         } else {
-            // NOTE: No need check minimal stage, because on Java 8(not Java 9+) NOT support minimal stage
+            // NOTE: No need check minimal stage, because Java 8(not Java 9+) NOT support minimal stage
 
             // below code is copied from CompletableFuture#completeAsync with small adoption
             executor.execute(new CfCompleterBySupplier<>(cfThis, supplier));
@@ -4312,7 +3878,7 @@ public final class CompletableFutureUtils {
 
     /**
      * If not already completed, completes given CompletableFuture with the exception result
-     * of the given Supplier function invoked from an asynchronous task using the default executor.
+     * of the given Supplier function invoked from an asynchronous task using the default executor of parameter cfThis.
      *
      * @param supplier a function returning the value to be used to complete given CompletableFuture
      * @return the given CompletableFuture
@@ -4321,7 +3887,7 @@ public final class CompletableFutureUtils {
     @Contract("_, _ -> param1")
     public static <C extends CompletableFuture<?>>
     C completeExceptionallyAsync(C cfThis, Supplier<? extends Throwable> supplier) {
-        return completeExceptionallyAsync(cfThis, supplier, ASYNC_POOL);
+        return completeExceptionallyAsync(cfThis, supplier, defaultExecutor(cfThis));
     }
 
     /**
@@ -4358,7 +3924,8 @@ public final class CompletableFutureUtils {
      * with a CompletionException with given exception as cause.
      * <p>
      * <strong>CAUTION:<br></strong>
-     * if run on old Java 8, just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
+     * if run on old Java 8(not support *minimal* CompletionStage),
+     * just return a *normal* CompletableFuture which is NOT a *minimal* CompletionStage.
      *
      * @return the new CompletionStage
      * @see CompletableFuture#minimalCompletionStage()
@@ -4366,10 +3933,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <T> CompletionStage<T> minimalCompletionStage(CompletableFuture<T> cfThis) {
         requireNonNull(cfThis, "cfThis is null");
-        if (IS_JAVA9_PLUS) {
-            return cfThis.minimalCompletionStage();
-        }
-        return cfThis.thenApply(x -> x);
+        return IS_JAVA9_PLUS ? cfThis.minimalCompletionStage() : cfThis.thenApply(x -> x);
     }
 
     /**
@@ -4385,10 +3949,27 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <T> CompletableFuture<T> copy(CompletableFuture<T> cfThis) {
         requireNonNull(cfThis, "cfThis is null");
-        if (IS_JAVA9_PLUS) {
-            return cfThis.copy();
-        }
-        return cfThis.thenApply(x -> x);
+        return IS_JAVA9_PLUS ? cfThis.copy() : cfThis.thenApply(x -> x);
+    }
+
+    /**
+     * Returns the default Executor of parameter cfThis used for async methods that do not specify an Executor.
+     * <p>
+     * The default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses of CompletableFuture)
+     * uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread, or else an Executor using
+     * one thread per async task. <strong>CAUTION:</strong> This executor may be not suitable for common biz use(io intensive).
+     *
+     * @see CompletableFuture#defaultExecutor()
+     */
+    @Contract(pure = true)
+    public static Executor defaultExecutor(CompletionStage<?> cfThis) {
+        requireNonNull(cfThis, "cfThis is null");
+        // FIXME hard-code type(CompletableFuture and Cffu...
+        //       need a SPI in order to support other CompletionStage subclasses equivalently
+        if (cfThis instanceof CompletableFuture)
+            return IS_JAVA9_PLUS ? ((CompletableFuture<?>) cfThis).defaultExecutor() : ASYNC_POOL;
+        if (cfThis instanceof Cffu) return ((Cffu<?>) cfThis).defaultExecutor();
+        throw new UnsupportedOperationException("Unsupported CompletionStage subclass: " + cfThis.getClass());
     }
 
     /**
@@ -4401,28 +3982,26 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <U> CompletableFuture<U> newIncompleteFuture(CompletableFuture<?> cfThis) {
         requireNonNull(cfThis, "cfThis is null");
-        if (IS_JAVA9_PLUS) {
-            return cfThis.newIncompleteFuture();
-        }
-        return new CompletableFuture<>();
+        return IS_JAVA9_PLUS ? cfThis.newIncompleteFuture() : new CompletableFuture<>();
     }
 
     // endregion
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# Util Methods(static methods)
+    // region# Convenient Util Methods
     //
     //    - toCompletableFutureArray:     CompletionStage[](including Cffu) -> CF[]
     //    - completableFutureListToArray: List<CF> -> CF[]
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * A convenient util method for converting input {@link CompletionStage} (including
+     * A convenient util method for converting input {@link CompletionStage}(including
      * {@link Cffu}/{@link CompletableFuture}) array element by {@link CompletionStage#toCompletableFuture()}.
      *
-     * @see Cffu#toCompletableFuture()
-     * @see CompletableFuture#toCompletableFuture()
+     * @throws NullPointerException if any of the given stages are {@code null}
      * @see CompletionStage#toCompletableFuture()
+     * @see CompletableFuture#toCompletableFuture()
+     * @see Cffu#toCompletableFuture()
      * @see CffuFactory#toCffuArray(CompletionStage[])
      */
     @Contract(pure = true)
@@ -4454,7 +4033,8 @@ public final class CompletableFutureUtils {
      * A convenient util method for unwrapping CF exception
      * ({@link CompletionException}/{@link ExecutionException}) to the biz exception.
      */
-    public static Throwable unwrapCfException(Throwable ex) {
+    @Contract(value = "null -> null; !null -> !null", pure = true)
+    public static @Nullable Throwable unwrapCfException(@Nullable Throwable ex) {
         if (!(ex instanceof CompletionException) && !(ex instanceof ExecutionException)) {
             return ex;
         }
@@ -4464,14 +4044,63 @@ public final class CompletableFutureUtils {
 
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
+    // region# Internal Java version check logic for compatibility
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * a naive black hole to prevent code elimination, more info see <a href=
+     * "https://github.com/openjdk/jmh/blob/1.37/jmh-core/src/main/java/org/openjdk/jmh/infra/Blackhole.java">JMH black hole</a>
+     */
+    private static volatile int BLACK_HOLE = 0xCFF0CFF0;
+
+    // `CompletableFuture.completedStage` is the new method since java 9
+    private static final boolean IS_JAVA9_PLUS = methodExists(() -> CompletableFuture.completedStage(null));
+
+    // `CompletableFuture.exceptionallyCompose` is the new method since java 12
+    private static final boolean IS_JAVA12_PLUS = methodExists(() ->
+            completedFuture(null).exceptionallyCompose(ex -> null));
+
+    // `CompletableFuture.resultNow` is the new method since java 19
+    private static final boolean IS_JAVA19_PLUS = methodExists(() -> completedFuture(null).resultNow());
+
+    // `List.reversed` is the new method since java 21
+    private static final boolean IS_JAVA21_PLUS = methodExists(() -> new ArrayList<>().reversed());
+
+    private static boolean methodExists(Supplier<?> methodCallCheck) {
+        try {
+            int i = BLACK_HOLE; // volatile read
+            BLACK_HOLE = Objects.hashCode(methodCallCheck.get()) ^ i;
+            return true;
+        } catch (NoSuchMethodError e) {
+            return false;
+        }
+    }
+
+    /**
+     * <strong>CAUTION / Implementation Note:</strong> do NOT move this static field before {@link #IS_JAVA9_PLUS},
+     * otherwise will use uninitialized {@link #IS_JAVA9_PLUS}!
+     */
+    private static final Class<?> MIN_STAGE_CLASS;
+
+    static {
+        if (!IS_JAVA9_PLUS) MIN_STAGE_CLASS = null;
+        else MIN_STAGE_CLASS = CompletableFuture.completedStage(null).getClass();
+    }
+
+    static boolean isMinStageCf(CompletableFuture<?> cf) {
+        return cf.getClass().equals(MIN_STAGE_CLASS);
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
     // region# Internal helper fields and classes
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Null-checks user executor argument, and translates uses of
-     * commonPool to ASYNC_POOL in case parallelism disabled.
+     * Null-checks user executor argument, and translates uses of commonPool to ASYNC_POOL
+     * in case parallelism disabled. code is copied from {@link CompletableFuture#screenExecutor(Executor)}.
      */
-    @SuppressWarnings("resource")
+    @SuppressWarnings({"resource", "JavadocReference"})
     static Executor screenExecutor(Executor e) {
         if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool())
             return ASYNC_POOL;
@@ -4491,57 +4120,15 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Default executor -- ForkJoinPool.commonPool() unless it cannot support parallelism.
+     * Default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses
+     * of CompletableFuture) -- {@link ForkJoinPool#commonPool()} unless it cannot support parallelism.
      */
-    static final Executor ASYNC_POOL = _asyncPool0();
-
-    private static Executor _asyncPool0() {
-        if (IS_JAVA9_PLUS) return completedFuture(null).defaultExecutor();
-        if (USE_COMMON_POOL) return ForkJoinPool.commonPool();
-        return new ThreadPerTaskExecutor();
-    }
-
-    // endregion
-    ////////////////////////////////////////////////////////////////////////////////
-    // region# Internal Java version check logic for compatibility
-    ////////////////////////////////////////////////////////////////////////////////
-
-    private static final boolean IS_JAVA9_PLUS;
-
-    private static final boolean IS_JAVA12_PLUS;
-
-    private static final boolean IS_JAVA19_PLUS;
+    private static final Executor ASYNC_POOL;
 
     static {
-        boolean b;
-
-        try {
-            // `completedStage` is the new method of CompletableFuture since java 9
-            CompletableFuture.completedStage(null);
-            b = true;
-        } catch (NoSuchMethodError e) {
-            b = false;
-        }
-        IS_JAVA9_PLUS = b;
-
-        final CompletableFuture<Integer> cf = completedFuture(42);
-        try {
-            // `exceptionallyCompose` is the new method of CompletableFuture since java 12
-            cf.exceptionallyCompose(v -> cf);
-            b = true;
-        } catch (NoSuchMethodError e) {
-            b = false;
-        }
-        IS_JAVA12_PLUS = b;
-
-        try {
-            // `resultNow` is the new method of CompletableFuture since java 19
-            cf.resultNow();
-            b = true;
-        } catch (NoSuchMethodError e) {
-            b = false;
-        }
-        IS_JAVA19_PLUS = b;
+        if (IS_JAVA9_PLUS) ASYNC_POOL = completedFuture(null).defaultExecutor();
+        else if (USE_COMMON_POOL) ASYNC_POOL = ForkJoinPool.commonPool();
+        else ASYNC_POOL = new ThreadPerTaskExecutor();
     }
 
     private CompletableFutureUtils() {

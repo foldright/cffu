@@ -4,11 +4,14 @@ import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
 import io.foldright.cffu.NoCfsProvidedException
 import io.foldright.cffu.kotlin.*
-import io.foldright.test_utils.testCffuFactory
-import io.foldright.test_utils.testForkJoinPoolExecutor
-import io.foldright.test_utils.testThreadPoolExecutor
+import io.foldright.cffu.unwrapMadeExecutor
+import io.foldright.test_utils.*
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.inspectors.shouldForAll
+import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.collections.shouldContainOnlyNulls
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -21,12 +24,8 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import java.util.function.Supplier
 
-const val n = 42
-const val anotherN = 4242
-const val s = "43"
-const val d = 44.0
-val rte = RuntimeException("Bang")
 
 class CffuExtensionsTest : FunSpec({
     ////////////////////////////////////////
@@ -36,19 +35,19 @@ class CffuExtensionsTest : FunSpec({
     suspend fun checkToCffu(cffu: Cffu<Int>, n: Int) {
         cffu.await() shouldBe n
 
-        cffu.defaultExecutor() shouldBeSameInstanceAs testThreadPoolExecutor
-        cffu.cffuFactory() shouldBeSameInstanceAs testCffuFactory
+        cffu.unwrapMadeExecutor() shouldBeSameInstanceAs testExecutor
+        cffu.cffuFactory() shouldBeSameInstanceAs testCffuFac
 
-        val fac2 = CffuFactory.builder(testForkJoinPoolExecutor).build()
+        val fac2 = CffuFactory.builder(testFjExecutor).build()
         cffu.resetCffuFactory(fac2).let {
-            it.defaultExecutor() shouldBeSameInstanceAs testForkJoinPoolExecutor
+            it.unwrapMadeExecutor() shouldBeSameInstanceAs testFjExecutor
             it.cffuFactory() shouldBeSameInstanceAs fac2
         }
     }
 
     test("toCffu for CompletableFuture") {
         val cf = CompletableFuture.completedFuture(n)
-        checkToCffu(cf.toCffu(testCffuFactory), n)
+        checkToCffu(cf.toCffu(testCffuFac), n)
     }
 
     test("toCffu for CompletableFuture collection") {
@@ -57,450 +56,598 @@ class CffuExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(it)
         }
 
-        cfs.toCffu(testCffuFactory).forEachIndexed { index, cffu ->
+        cfs.toCffu(testCffuFac).forEachIndexed { index, cffu ->
             checkToCffu(cffu, index)
         }
-        cfs.toSet().toCffu(testCffuFactory).forEachIndexed { index, cffu ->
+        cfs.toSet().toCffu(testCffuFac).forEachIndexed { index, cffu ->
             checkToCffu(cffu, index)
         }
     }
 
     test("toCffu for CompletableFuture array") {
         val cfArray: Array<CompletableFuture<Int>> = Array(10) { CompletableFuture.completedFuture(it) }
-        cfArray.toCffu(testCffuFactory).forEachIndexed { index, cffu -> checkToCffu(cffu, index) }
+        cfArray.toCffu(testCffuFac).forEachIndexed { index, cffu -> checkToCffu(cffu, index) }
 
         val csArray: Array<CompletionStage<Int>> = Array(10) { CompletableFuture.completedFuture(it) }
-        csArray.toCffu(testCffuFactory).forEachIndexed { index, cffu -> checkToCffu(cffu, index) }
+        csArray.toCffu(testCffuFac).forEachIndexed { index, cffu -> checkToCffu(cffu, index) }
+    }
+
+    test("M*") {
+        val supplier = Supplier {
+            snoreZzz()
+            n
+        }
+
+        // mSupply
+
+        listOf(
+            listOf(supplier, supplier).mSupplyFastFailAsyncCffu(testCffuFac),
+            listOf(supplier, supplier).mSupplyFastFailAsyncCffu(testCffuFac, testExecutor),
+            listOf(supplier, supplier).mSupplyAllSuccessAsyncCffu(testCffuFac, anotherN),
+            listOf(supplier, supplier).mSupplyAllSuccessAsyncCffu(testCffuFac, anotherN, testExecutor),
+            listOf(supplier, supplier).mSupplyMostSuccessAsyncCffu(
+                testCffuFac,
+                anotherN, LONG_WAIT_MS, TimeUnit.MILLISECONDS
+            ),
+            listOf(supplier, supplier).mSupplyMostSuccessAsyncCffu(
+                testCffuFac,
+                anotherN, LONG_WAIT_MS, TimeUnit.MILLISECONDS, testExecutor
+            ),
+            listOf(supplier, supplier).mSupplyAsyncCffu(testCffuFac),
+            listOf(supplier, supplier).mSupplyAsyncCffu(testCffuFac, testExecutor),
+        ).map { it.await() }.shouldForAll { it.shouldContainExactly(n, n) }
+
+        arrayOf(
+            arrayOf(supplier, supplier).mSupplyFastFailAsyncCffu(testCffuFac),
+            arrayOf(supplier, supplier).mSupplyFastFailAsyncCffu(testCffuFac, testExecutor),
+            arrayOf(supplier, supplier).mSupplyAllSuccessAsyncCffu(testCffuFac, anotherN),
+            arrayOf(supplier, supplier).mSupplyAllSuccessAsyncCffu(testCffuFac, anotherN, testExecutor),
+            arrayOf(supplier, supplier).mSupplyMostSuccessAsyncCffu(
+                testCffuFac,
+                anotherN, LONG_WAIT_MS, TimeUnit.MILLISECONDS
+            ),
+            arrayOf(supplier, supplier).mSupplyMostSuccessAsyncCffu(
+                testCffuFac,
+                anotherN, LONG_WAIT_MS, TimeUnit.MILLISECONDS, testExecutor
+            ),
+            arrayOf(supplier, supplier).mSupplyAsyncCffu(testCffuFac),
+            arrayOf(supplier, supplier).mSupplyAsyncCffu(testCffuFac, testExecutor),
+        ).map { it.await() }.shouldForAll { it.shouldContainExactly(n, n) }
+
+        listOf(
+            listOf(supplier, supplier).mSupplyAnySuccessAsyncCffu(testCffuFac),
+            listOf(supplier, supplier).mSupplyAnySuccessAsyncCffu(testCffuFac, testExecutor),
+            listOf(supplier, supplier).mSupplyAnyAsyncCffu(testCffuFac),
+            listOf(supplier, supplier).mSupplyAnyAsyncCffu(testCffuFac, testExecutor),
+        ).map { it.await() }.shouldForAll { it shouldBe n }
+
+        arrayOf(
+            arrayOf(supplier, supplier).mSupplyAnySuccessAsyncCffu(testCffuFac),
+            arrayOf(supplier, supplier).mSupplyAnySuccessAsyncCffu(testCffuFac, testExecutor),
+            arrayOf(supplier, supplier).mSupplyAnyAsyncCffu(testCffuFac),
+            arrayOf(supplier, supplier).mSupplyAnyAsyncCffu(testCffuFac, testExecutor),
+        ).map { it.await() }.shouldForAll { it shouldBe n }
+
+        // mRun
+
+        val runnable = Runnable { snoreZzz() }
+
+        listOf(
+            listOf(runnable, runnable).mRunFastFailAsyncCffu(testCffuFac),
+            listOf(runnable, runnable).mRunFastFailAsyncCffu(testCffuFac, testExecutor),
+            listOf(runnable, runnable).mRunAsyncCffu(testCffuFac),
+            listOf(runnable, runnable).mRunAsyncCffu(testCffuFac, testExecutor),
+            listOf(runnable, runnable).mRunAnySuccessAsyncCffu(testCffuFac),
+            listOf(runnable, runnable).mRunAnySuccessAsyncCffu(testCffuFac, testExecutor),
+            listOf(runnable, runnable).mRunAnyAsyncCffu(testCffuFac),
+            listOf(runnable, runnable).mRunAnyAsyncCffu(testCffuFac, testExecutor),
+        ).map { it.await() }.shouldContainOnlyNulls()
+
+        arrayOf(
+            arrayOf(runnable, runnable).mRunFastFailAsyncCffu(testCffuFac),
+            arrayOf(runnable, runnable).mRunFastFailAsyncCffu(testCffuFac, testExecutor),
+            arrayOf(runnable, runnable).mRunAsyncCffu(testCffuFac),
+            arrayOf(runnable, runnable).mRunAsyncCffu(testCffuFac, testExecutor),
+            arrayOf(runnable, runnable).mRunAnySuccessAsyncCffu(testCffuFac),
+            arrayOf(runnable, runnable).mRunAnySuccessAsyncCffu(testCffuFac, testExecutor),
+            arrayOf(runnable, runnable).mRunAnyAsyncCffu(testCffuFac),
+            arrayOf(runnable, runnable).mRunAnyAsyncCffu(testCffuFac, testExecutor),
+        ).map { it.await() }.shouldContainOnlyNulls()
     }
 
     test("allOf*") {
         // collection
 
         listOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
-        ).allResultsOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allResultsOfCffu(testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
 
         listOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
-        ).allResultsOfCffu().await() shouldBe listOf(42, 43, 44)
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allResultsOfCffu().await() shouldBe listOf(n, n + 1, n + 2)
+        shouldThrowExactly<IllegalArgumentException> { listOf<Cffu<Int>>().allResultsOfCffu() }
+            .message shouldBe "no cffuFactory argument provided when this collection is empty"
 
         setOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
-        ).allResultsOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allResultsOfCffu(testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
 
         listOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
-        ).allResultsOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+            CompletableFuture.completedFuture(n),
+            CompletableFuture.completedFuture(n + 1),
+            CompletableFuture.completedFuture(n + 2),
+        ).allResultsOfCffu(testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
 
         setOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
-        ).allResultsOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+            CompletableFuture.completedFuture(n),
+            CompletableFuture.completedFuture(n + 1),
+            CompletableFuture.completedFuture(n + 2),
+        ).allResultsOfCffu(testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
 
         // Array
 
         arrayOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
-        ).allResultsOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allResultsOfCffu(testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
 
         arrayOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
-        ).allResultsOfCffu().await() shouldBe listOf(42, 43, 44)
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allResultsOfCffu().await() shouldBe listOf(n, n + 1, n + 2)
+        shouldThrowExactly<IllegalArgumentException> { arrayOf<Cffu<Int>>().allResultsOfCffu() }
+            .message shouldBe "no cffuFactory argument provided when this array is empty"
 
         arrayOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
-        ).allResultsOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+            CompletableFuture.completedFuture(n),
+            CompletableFuture.completedFuture(n + 1),
+            CompletableFuture.completedFuture(n + 2),
+        ).allResultsOfCffu(testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
 
         // FIXME: java.lang.ClassCastException if not providing the type parameter explicitly:
         //  class [Ljava.lang.Object; cannot be cast to class [Ljava.util.concurrent.CompletionStage;
         arrayOf<CompletionStage<Int>>(
-            CompletableFuture.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
-        ).allResultsOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+            CompletableFuture.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allResultsOfCffu(testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
+
+        ////////////////////////////////////////
+        // collection
+
+        listOf(
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allSuccessResultsOfCffu(anotherN, testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
+
+        listOf(
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allSuccessResultsOfCffu(anotherN).await() shouldBe listOf(n, n + 1, n + 2)
+
+        setOf(
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allSuccessResultsOfCffu(anotherN, testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
+
+        listOf(
+            CompletableFuture.completedFuture(n),
+            CompletableFuture.completedFuture(n + 1),
+            CompletableFuture.completedFuture(n + 2),
+        ).allSuccessResultsOfCffu(anotherN, testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
+
+        setOf(
+            CompletableFuture.completedFuture(n),
+            CompletableFuture.completedFuture(n + 1),
+            CompletableFuture.completedFuture(n + 2),
+        ).allSuccessResultsOfCffu(anotherN, testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
+
+        // Array
+
+        arrayOf(
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allSuccessResultsOfCffu(anotherN, testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
+
+        arrayOf(
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allSuccessResultsOfCffu(anotherN).await() shouldBe listOf(n, n + 1, n + 2)
+
+        arrayOf(
+            CompletableFuture.completedFuture(n),
+            CompletableFuture.completedFuture(n + 1),
+            CompletableFuture.completedFuture(n + 2),
+        ).allSuccessResultsOfCffu(anotherN, testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
+
+        // FIXME: java.lang.ClassCastException if not providing the type parameter explicitly:
+        //  class [Ljava.lang.Object; cannot be cast to class [Ljava.util.concurrent.CompletionStage;
+        arrayOf<CompletionStage<Int>>(
+            CompletableFuture.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allSuccessResultsOfCffu(anotherN, testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
 
         ////////////////////////////////////////
 
         // collection
 
         listOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
-        ).allOfCffu(testCffuFactory).await().shouldBeNull()
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allOfCffu(testCffuFac).await().shouldBeNull()
 
         listOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
         ).allOfCffu().await().shouldBeNull()
 
         setOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
-        ).allOfCffu(testCffuFactory).await().shouldBeNull()
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allOfCffu(testCffuFac).await().shouldBeNull()
 
         listOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
-        ).allOfCffu(testCffuFactory).await().shouldBeNull()
+            CompletableFuture.completedFuture(n),
+            CompletableFuture.completedFuture(n + 1),
+            CompletableFuture.completedFuture(n + 2),
+        ).allOfCffu(testCffuFac).await().shouldBeNull()
 
         setOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
-        ).allOfCffu(testCffuFactory).await().shouldBeNull()
+            CompletableFuture.completedFuture(n),
+            CompletableFuture.completedFuture(n + 1),
+            CompletableFuture.completedFuture(n + 2),
+        ).allOfCffu(testCffuFac).await().shouldBeNull()
 
         // Array
 
         arrayOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
-        ).allOfCffu(testCffuFactory).await().shouldBeNull()
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allOfCffu(testCffuFac).await().shouldBeNull()
 
         arrayOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
         ).allOfCffu().await().shouldBeNull()
 
         arrayOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
-        ).allOfCffu(testCffuFactory).await().shouldBeNull()
+            CompletableFuture.completedFuture(n),
+            CompletableFuture.completedFuture(n + 1),
+            CompletableFuture.completedFuture(n + 2),
+        ).allOfCffu(testCffuFac).await().shouldBeNull()
 
         ////////////////////////////////////////
 
         // collection
 
         listOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
-        ).allResultsFastFailOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allResultsFastFailOfCffu(testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
 
         listOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
-        ).allResultsFastFailOfCffu().await() shouldBe listOf(42, 43, 44)
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allResultsFastFailOfCffu().await() shouldBe listOf(n, n + 1, n + 2)
 
         setOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
-        ).allResultsFastFailOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allResultsFastFailOfCffu(testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
 
         listOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
-        ).allResultsFastFailOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+            CompletableFuture.completedFuture(n),
+            CompletableFuture.completedFuture(n + 1),
+            CompletableFuture.completedFuture(n + 2),
+        ).allResultsFastFailOfCffu(testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
 
         setOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
-        ).allResultsFastFailOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+            CompletableFuture.completedFuture(n),
+            CompletableFuture.completedFuture(n + 1),
+            CompletableFuture.completedFuture(n + 2),
+        ).allResultsFastFailOfCffu(testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
 
         // Array
 
         arrayOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
-        ).allResultsFastFailOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allResultsFastFailOfCffu(testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
 
         arrayOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
-        ).allResultsFastFailOfCffu().await() shouldBe listOf(42, 43, 44)
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allResultsFastFailOfCffu().await() shouldBe listOf(n, n + 1, n + 2)
 
         arrayOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
-        ).allResultsFastFailOfCffu(testCffuFactory).await() shouldBe listOf(42, 43, 44)
+            CompletableFuture.completedFuture(n),
+            CompletableFuture.completedFuture(n + 1),
+            CompletableFuture.completedFuture(n + 2),
+        ).allResultsFastFailOfCffu(testCffuFac).await() shouldBe listOf(n, n + 1, n + 2)
 
         ////////////////////////////////////////
 
         // collection
 
         listOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
-        ).allFastFailOfCffu(testCffuFactory).await().shouldBeNull()
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allFastFailOfCffu(testCffuFac).await().shouldBeNull()
 
         listOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
         ).allFastFailOfCffu().await().shouldBeNull()
 
         setOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
-        ).allFastFailOfCffu(testCffuFactory).await().shouldBeNull()
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allFastFailOfCffu(testCffuFac).await().shouldBeNull()
 
         listOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
-        ).allFastFailOfCffu(testCffuFactory).await().shouldBeNull()
+            CompletableFuture.completedFuture(n),
+            CompletableFuture.completedFuture(n + 1),
+            CompletableFuture.completedFuture(n + 2),
+        ).allFastFailOfCffu(testCffuFac).await().shouldBeNull()
 
         setOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
-        ).allFastFailOfCffu(testCffuFactory).await().shouldBeNull()
+            CompletableFuture.completedFuture(n),
+            CompletableFuture.completedFuture(n + 1),
+            CompletableFuture.completedFuture(n + 2),
+        ).allFastFailOfCffu(testCffuFac).await().shouldBeNull()
 
         // Array
 
         arrayOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
-        ).allFastFailOfCffu(testCffuFactory).await().shouldBeNull()
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
+        ).allFastFailOfCffu(testCffuFac).await().shouldBeNull()
 
         arrayOf(
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.completedFuture(43),
-            testCffuFactory.completedFuture(44),
+            testCffuFac.completedFuture(n),
+            testCffuFac.completedFuture(n + 1),
+            testCffuFac.completedFuture(n + 2),
         ).allFastFailOfCffu().await().shouldBeNull()
 
         arrayOf(
-            CompletableFuture.completedFuture(42),
-            CompletableFuture.completedFuture(43),
-            CompletableFuture.completedFuture(44),
-        ).allFastFailOfCffu(testCffuFactory).await().shouldBeNull()
+            CompletableFuture.completedFuture(n),
+            CompletableFuture.completedFuture(n + 1),
+            CompletableFuture.completedFuture(n + 2),
+        ).allFastFailOfCffu(testCffuFac).await().shouldBeNull()
     }
 
     test("mostSuccessResultsOfCffu") {
         // collection
 
         listOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-        ).mostSuccessResultsOfCffu(-1, 10, TimeUnit.MILLISECONDS, testCffuFactory).await() shouldBe listOf(-1, 42)
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+        ).mostSuccessResultsOfCffu(-1, 10, TimeUnit.MILLISECONDS, testCffuFac).await() shouldBe listOf(-1, n)
 
         setOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-        ).mostSuccessResultsOfCffu(-1, 10, TimeUnit.MILLISECONDS).await() shouldBe listOf(-1, 42)
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+        ).mostSuccessResultsOfCffu(-1, 10, TimeUnit.MILLISECONDS).await() shouldBe listOf(-1, n)
 
         listOf(
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
-        ).mostSuccessResultsOfCffu(-1, 10, TimeUnit.MILLISECONDS, testCffuFactory).await() shouldBe listOf(-1, 42)
+            CompletableFuture.completedFuture(n),
+        ).mostSuccessResultsOfCffu(-1, 10, TimeUnit.MILLISECONDS, testCffuFac).await() shouldBe listOf(-1, n)
 
         // Array
 
         arrayOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-        ).mostSuccessResultsOfCffu(-1, 10, TimeUnit.MILLISECONDS, testCffuFactory).await() shouldBe listOf(-1, 42)
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+        ).mostSuccessResultsOfCffu(-1, 10, TimeUnit.MILLISECONDS, testCffuFac).await() shouldBe listOf(-1, n)
 
         arrayOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-        ).mostSuccessResultsOfCffu(-1, 10, TimeUnit.MILLISECONDS).await() shouldBe listOf(-1, 42)
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+        ).mostSuccessResultsOfCffu(-1, 10, TimeUnit.MILLISECONDS).await() shouldBe listOf(-1, n)
 
         arrayOf(
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
-        ).mostSuccessResultsOfCffu(-1, 10, TimeUnit.MILLISECONDS, testCffuFactory).await() shouldBe listOf(-1, 42)
+            CompletableFuture.completedFuture(n),
+        ).mostSuccessResultsOfCffu(-1, 10, TimeUnit.MILLISECONDS, testCffuFac).await() shouldBe listOf(-1, n)
 
         // FIXME: java.lang.ClassCastException if not providing the type parameter explicitly:
         //  class [Ljava.lang.Object; cannot be cast to class [Ljava.util.concurrent.CompletionStage;
-        arrayOf<CompletionStage<Int>>(CompletableFuture(), testCffuFactory.completedFuture(42))
-            .mostSuccessResultsOfCffu(-1, 10, TimeUnit.MILLISECONDS, testCffuFactory).await() shouldBe listOf(-1, 42)
+        arrayOf<CompletionStage<Int>>(CompletableFuture(), testCffuFac.completedFuture(n))
+            .mostSuccessResultsOfCffu(-1, 10, TimeUnit.MILLISECONDS, testCffuFac).await() shouldBe listOf(-1, n)
     }
 
     test("anyOf*") {
         // collection
 
         listOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-        ).anyOfCffu(testCffuFactory).await() shouldBe 42
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+        ).anyOfCffu(testCffuFac).await() shouldBe n
 
         listOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-        ).anyOfCffu().await() shouldBe 42
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+        ).anyOfCffu().await() shouldBe n
 
         setOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.newIncompleteCffu(),
-        ).anyOfCffu(testCffuFactory).await() shouldBe 42
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+            testCffuFac.newIncompleteCffu(),
+        ).anyOfCffu(testCffuFac).await() shouldBe n
 
         listOf(
             CompletableFuture(),
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
-        ).anyOfCffu(testCffuFactory).await() shouldBe 42
+            CompletableFuture.completedFuture(n),
+        ).anyOfCffu(testCffuFac).await() shouldBe n
 
         setOf(
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
+            CompletableFuture.completedFuture(n),
             CompletableFuture(),
-        ).anyOfCffu(testCffuFactory).await() shouldBe 42
+        ).anyOfCffu(testCffuFac).await() shouldBe n
 
         // Array
 
         arrayOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-        ).anyOfCffu(testCffuFactory).await() shouldBe 42
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+        ).anyOfCffu(testCffuFac).await() shouldBe n
 
         arrayOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-        ).anyOfCffu().await() shouldBe 42
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+        ).anyOfCffu().await() shouldBe n
 
         arrayOf(
             CompletableFuture(),
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
-        ).anyOfCffu(testCffuFactory).await() shouldBe 42
+            CompletableFuture.completedFuture(n),
+        ).anyOfCffu(testCffuFac).await() shouldBe n
 
         ////////////////////////////////////////
 
         // collection
 
         listOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-        ).anyOfCffu(testCffuFactory).await() shouldBe 42
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+        ).anyOfCffu(testCffuFac).await() shouldBe n
 
         listOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-        ).anyOfCffu().await() shouldBe 42
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+        ).anyOfCffu().await() shouldBe n
 
         setOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.newIncompleteCffu(),
-        ).anyOfCffu(testCffuFactory).await() shouldBe 42
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+            testCffuFac.newIncompleteCffu(),
+        ).anyOfCffu(testCffuFac).await() shouldBe n
 
         listOf(
             CompletableFuture(),
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
-        ).anyOfCffu(testCffuFactory).await() shouldBe 42
+            CompletableFuture.completedFuture(n),
+        ).anyOfCffu(testCffuFac).await() shouldBe n
 
         setOf(
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
+            CompletableFuture.completedFuture(n),
             CompletableFuture(),
-        ).anyOfCffu(testCffuFactory).await() shouldBe 42
+        ).anyOfCffu(testCffuFac).await() shouldBe n
 
         // Array
 
         arrayOf(
-            testCffuFactory.newIncompleteCffu<String>(),
-            testCffuFactory.newIncompleteCffu<Double>(),
-            testCffuFactory.completedFuture(42),
-        ).anyOfCffu(testCffuFactory).await() shouldBe 42
+            testCffuFac.newIncompleteCffu<String>(),
+            testCffuFac.newIncompleteCffu<Double>(),
+            testCffuFac.completedFuture(n),
+        ).anyOfCffu(testCffuFac).await() shouldBe n
 
         arrayOf(
-            testCffuFactory.newIncompleteCffu<String>(),
-            testCffuFactory.newIncompleteCffu<Double>(),
-            testCffuFactory.completedFuture(42),
-        ).anyOfCffu().await() shouldBe 42
+            testCffuFac.newIncompleteCffu<String>(),
+            testCffuFac.newIncompleteCffu<Double>(),
+            testCffuFac.completedFuture(n),
+        ).anyOfCffu().await() shouldBe n
 
         arrayOf(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
-            CompletableFuture.completedFuture(42),
-        ).anyOfCffu(testCffuFactory).await() shouldBe 42
+            CompletableFuture.completedFuture(n),
+        ).anyOfCffu(testCffuFac).await() shouldBe n
 
         ////////////////////////////////////////
 
         // collection
 
         listOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-        ).anySuccessOfCffu(testCffuFactory).await() shouldBe 42
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+        ).anySuccessOfCffu(testCffuFac).await() shouldBe n
 
         listOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-        ).anySuccessOfCffu().await() shouldBe 42
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+        ).anySuccessOfCffu().await() shouldBe n
 
         setOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.newIncompleteCffu(),
-        ).anySuccessOfCffu(testCffuFactory).await() shouldBe 42
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+            testCffuFac.newIncompleteCffu(),
+        ).anySuccessOfCffu(testCffuFac).await() shouldBe n
 
         listOf(
             CompletableFuture(),
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
-        ).anySuccessOfCffu(testCffuFactory).await() shouldBe 42
+            CompletableFuture.completedFuture(n),
+        ).anySuccessOfCffu(testCffuFac).await() shouldBe n
 
         setOf(
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
+            CompletableFuture.completedFuture(n),
             CompletableFuture(),
-        ).anySuccessOfCffu(testCffuFactory).await() shouldBe 42
+        ).anySuccessOfCffu(testCffuFac).await() shouldBe n
 
         // Array
 
         arrayOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-        ).anySuccessOfCffu(testCffuFactory).await() shouldBe 42
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+        ).anySuccessOfCffu(testCffuFac).await() shouldBe n
 
         arrayOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-        ).anySuccessOfCffu().await() shouldBe 42
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+        ).anySuccessOfCffu().await() shouldBe n
 
         arrayOf(
             CompletableFuture(),
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
-        ).anySuccessOfCffu(testCffuFactory).await() shouldBe 42
+            CompletableFuture.completedFuture(n),
+        ).anySuccessOfCffu(testCffuFac).await() shouldBe n
 
         shouldThrow<RuntimeException> {
-            arrayOf<CompletableFuture<Int>>().anySuccessOfCffu(testCffuFactory).await()
+            arrayOf<CompletableFuture<Int>>().anySuccessOfCffu(testCffuFac).await()
         }.shouldBeTypeOf<NoCfsProvidedException>()
 
         ////////////////////////////////////////
@@ -508,54 +655,54 @@ class CffuExtensionsTest : FunSpec({
         // collection
 
         listOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-        ).anySuccessOfCffu(testCffuFactory).await() shouldBe 42
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+        ).anySuccessOfCffu(testCffuFac).await() shouldBe n
 
         listOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-        ).anySuccessOfCffu().await() shouldBe 42
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+        ).anySuccessOfCffu().await() shouldBe n
 
         setOf(
-            testCffuFactory.newIncompleteCffu(),
-            testCffuFactory.completedFuture(42),
-            testCffuFactory.newIncompleteCffu(),
-        ).anySuccessOfCffu(testCffuFactory).await() shouldBe 42
+            testCffuFac.newIncompleteCffu(),
+            testCffuFac.completedFuture(n),
+            testCffuFac.newIncompleteCffu(),
+        ).anySuccessOfCffu(testCffuFac).await() shouldBe n
 
         listOf(
             CompletableFuture(),
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
-        ).anySuccessOfCffu(testCffuFactory).await() shouldBe 42
+            CompletableFuture.completedFuture(n),
+        ).anySuccessOfCffu(testCffuFac).await() shouldBe n
 
         setOf(
             CompletableFuture(),
-            CompletableFuture.completedFuture(42),
+            CompletableFuture.completedFuture(n),
             CompletableFuture(),
-        ).anySuccessOfCffu(testCffuFactory).await() shouldBe 42
+        ).anySuccessOfCffu(testCffuFac).await() shouldBe n
 
         // Array
 
         arrayOf(
-            testCffuFactory.newIncompleteCffu<String>(),
-            testCffuFactory.newIncompleteCffu<Double>(),
-            testCffuFactory.completedFuture(42),
-        ).anySuccessOfCffu(testCffuFactory).await() shouldBe 42
+            testCffuFac.newIncompleteCffu<String>(),
+            testCffuFac.newIncompleteCffu<Double>(),
+            testCffuFac.completedFuture(n),
+        ).anySuccessOfCffu(testCffuFac).await() shouldBe n
 
         arrayOf(
-            testCffuFactory.newIncompleteCffu<String>(),
-            testCffuFactory.newIncompleteCffu<Double>(),
-            testCffuFactory.completedFuture(42),
-        ).anySuccessOfCffu().await() shouldBe 42
+            testCffuFac.newIncompleteCffu<String>(),
+            testCffuFac.newIncompleteCffu<Double>(),
+            testCffuFac.completedFuture(n),
+        ).anySuccessOfCffu().await() shouldBe n
 
         arrayOf(
             CompletableFuture<String>(),
             CompletableFuture<Double>(),
-            CompletableFuture.completedFuture(42),
-        ).anySuccessOfCffu(testCffuFactory).await() shouldBe 42
+            CompletableFuture.completedFuture(n),
+        ).anySuccessOfCffu(testCffuFac).await() shouldBe n
     }
 
     val cffuFactoryForOptional = CffuFactory.builder(Executors.newCachedThreadPool()).build()
@@ -576,7 +723,7 @@ class CffuExtensionsTest : FunSpec({
 
     test("optional `cffuFactory`") {
         val cf1 = cffuFactoryForOptional.completedFuture(n)
-        val cf2 = testCffuFactory.completedFuture(n + 1)
+        val cf2 = testCffuFac.completedFuture(n + 1)
 
         val emptyList: List<Cffu<Int>> = listOf()
         val list = listOf(cf1, cf2)
@@ -634,7 +781,7 @@ class CffuExtensionsTest : FunSpec({
         cfArray::class shouldNotBe csArray::class
         cfArray shouldBe csArray // shouldBe ignore the array type!
 
-        val cffus: List<Cffu<Int>> = cfs.toCffu(testCffuFactory)
+        val cffus: List<Cffu<Int>> = cfs.toCffu(testCffuFac)
         cffus.toCompletableFuture() shouldBe cfs
         cffus.toSet().toCompletableFuture() shouldBe cfs
 
@@ -654,24 +801,5 @@ class CffuExtensionsTest : FunSpec({
             it.shouldBeTypeOf<Array<CompletableFuture<*>>>()
             it.shouldNotBeTypeOf<Array<CompletionStage<*>>>()
         }
-    }
-
-    ////////////////////////////////////////
-    // cffuUnwrap
-    ////////////////////////////////////////
-
-    test("cffuUnwrap for Cffu collection/array") {
-        val range = 0 until 10
-        val cfs: List<CompletableFuture<Int>> = range.map {
-            CompletableFuture.completedFuture(it)
-        }
-        val cfArray = cfs.toTypedArray()
-
-        val cffus: List<Cffu<Int>> = cfs.toCffu(testCffuFactory)
-        cffus.cffuUnwrap() shouldBe cfs
-        cffus.toSet().cffuUnwrap() shouldBe cfs
-
-        val cffuArray: Array<Cffu<Int>> = cffus.toTypedArray()
-        cffuArray.cffuUnwrap() shouldBe cfArray
     }
 })

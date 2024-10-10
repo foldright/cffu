@@ -1,9 +1,9 @@
 /**
- * A tiny sidekick library for CompletableFuture to improve user experience and reduce misuse.
- * <p>
- * The core class is {@link io.foldright.cffu.Cffu}. And utils for {@link java.util.concurrent.CompletableFuture},
- * the key user class is {@link io.foldright.cffu.CompletableFutureUtils}
- * which contains the enhanced and backport methods for {@link java.util.concurrent.CompletableFuture}.
+ * A tiny sidekick library to make CompletableFuture usage more convenient, more efficient and safer
+ * in your application. 😋🚀🦺
+ * <p> The core classes are {@link io.foldright.cffu.Cffu}/{@link io.foldright.cffu.CffuFactory}. And the core
+ * util class {@link io.foldright.cffu.CompletableFutureUtils} of {@link java.util.concurrent.CompletableFuture}
+ * contains the enhanced and backport methods for {@link java.util.concurrent.CompletableFuture}.
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @see io.foldright.cffu.Cffu

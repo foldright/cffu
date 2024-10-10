@@ -69,22 +69,26 @@
 		<maven.deploy.skip>false</maven.deploy.skip>
 		<maven.enforcer.pom.version.regex>^\d(\.\d+)?\.(\d+|x)-SNAPSHOT$</maven.enforcer.pom.version.regex>
 		<release.pom.version.regex>^\d\.\d+\.\d+(-(Alpha|Beta|RC)\d+)?$</release.pom.version.regex>
+		<dokka.skip>false</dokka.skip>
+		<!-- dummy default value, overridden by profile -->
+		<main.run.debug.java.opt>-ea</main.run.debug.java.opt>
 
 		<spotbugs.annotations.version>4.8.6</spotbugs.annotations.version>
 		<jsr305.version>3.0.2</jsr305.version>
-		<jetbrains.annotations.version>24.1.0</jetbrains.annotations.version>
+		<jetbrains.annotations.version>26.0.0</jetbrains.annotations.version>
 
-		<kotlin.version>1.9.25</kotlin.version>
+		<kotlin.version>2.0.20</kotlin.version>
 		<kotlin.compiler.jvmTarget>${maven.compiler.source}</kotlin.compiler.jvmTarget>
 		<!-- https://kotlinlang.org/docs/maven.html#specifying-compiler-options -->
-		<kotlin.compiler.apiVersion>1.6</kotlin.compiler.apiVersion>
+		<kotlin.compiler.apiVersion>1.7</kotlin.compiler.apiVersion>
 
-		<slf4j.version>2.0.13</slf4j.version>
-		<log4j2.version>2.23.1</log4j2.version>
-		<guava.version>33.2.1-jre</guava.version>
+		<slf4j.version>2.0.16</slf4j.version>
+		<log4j2.version>2.24.1</log4j2.version>
+		<log4j2.slf4j.impl.aid>log4j-slf4j2-impl</log4j2.slf4j.impl.aid>
+		<guava.version>33.3.1-jre</guava.version>
 
 		<!-- testing dependencies versions -->
-		<junit5.version>5.10.3</junit5.version>
+		<junit5.version>5.11.2</junit5.version>
 		<kotest.version>5.8.1</kotest.version>
 	</properties>
 
@@ -163,11 +167,7 @@
 				make qa libs optional, smaller deployment
 			-->
 			<dependency>
-				<!--
-					JSR305 is already Dormant status, so SpotBugs does not release jsr305 jar file.
-					Please continue using findbugs’ one, depend on spotbugs-annotations instead.
-						https://spotbugs.readthedocs.io/en/stable/migration.html
-				-->
+				<!-- https://spotbugs.readthedocs.io/en/stable/migration.html -->
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-annotations</artifactId>
 				<version>${spotbugs.annotations.version}</version>
@@ -201,16 +201,19 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.15.0</version>
+				<version>3.17.0</version>
 			</dependency>
 
 			<!-- logging libs -->
 			<dependency>
 				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-bom</artifactId>
+				<artifactId>slf4j-api</artifactId>
 				<version>${slf4j.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-simple</artifactId>
+				<version>${slf4j.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
@@ -218,12 +221,6 @@
 				<version>${log4j2.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>io.github.oshai</groupId>
-				<artifactId>kotlin-logging-jvm</artifactId>
-				<version>7.0.0</version>
-				<scope>test</scope>
 			</dependency>
 
 			<!-- testing libs -->
@@ -406,7 +403,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.3.1</version>
+					<version>3.5.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -438,32 +435,37 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.7.0</version>
+					<version>3.10.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
-					<version>3.2.4</version>
+					<version>3.2.7</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>3.12.1</version>
+					<version>3.20.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-install-plugin</artifactId>
-					<version>3.1.2</version>
+					<version>3.1.3</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
-					<version>3.1.2</version>
+					<version>3.1.3</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
 					<version>3.5.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>3.8.0</version>
 				</plugin>
 				<plugin>
 					<groupId>io.github.git-commit-id</groupId>
@@ -473,22 +475,51 @@
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.8.6.2</version>
+					<version>4.8.6.4</version>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<version>0.8.12</version>
 				</plugin>
+				<plugin>
+					<!--
+							https://www.mojohaus.org/exec-maven-plugin/
+							https://www.mojohaus.org/exec-maven-plugin/exec-mojo.html
+					-->
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>3.4.1</version>
+					<configuration>
+						<executable>${java.home}/bin/java</executable>
+						<classpathScope>test</classpathScope>
+						<arguments>
+							<argument>-Xmx256m</argument>
+							<argument>-Xms256m</argument>
+							<argument>-ea</argument>
+							<argument>-Duser.language=en</argument>
+							<argument>-Duser.country=US</argument>
+							<argument>-Dfile.encoding=UTF-8</argument>
+
+							<argument>${main.run.debug.java.opt}</argument>
+
+							<argument>-classpath</argument>
+							<classpath/>
+
+							<argument>${exec.mainClass}</argument>
+						</arguments>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
 	<profiles>
 		<profile>
-			<id>logging-dependencies-default</id>
+			<id>default-logging-dependencies</id>
 			<activation>
 				<property>
-					<name>!skipDefaultProfile</name>
+					<name>switchToLog4j2LoggingDependencies</name>
+					<value>!true</value>
 				</property>
 			</activation>
 			<dependencies>
@@ -497,38 +528,86 @@
 					<artifactId>slf4j-api</artifactId>
 					<optional>true</optional>
 				</dependency>
-				<!-- logging libs -->
 				<dependency>
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-simple</artifactId>
 					<scope>test</scope>
 				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>switch-to-log4j2-logging-dependencies</id>
+			<activation>
+				<property>
+					<name>switchToLog4j2LoggingDependencies</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<dependencies>
 				<dependency>
-					<groupId>io.github.oshai</groupId>
-					<artifactId>kotlin-logging-jvm</artifactId>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>${log4j2.slf4j.impl.aid}</artifactId>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
 		</profile>
 		<profile>
-			<id>logging-dependencies-log4j2</id>
+			<id>switch-slf4j-to-v1</id>
+			<properties>
+				<slf4j.version>1.7.0</slf4j.version>
+				<log4j2.slf4j.impl.aid>log4j-slf4j-impl</log4j2.slf4j.impl.aid>
+			</properties>
+		</profile>
+		<profile>
+			<id>default-arch-unit-test</id>
+			<activation>
+				<property>
+					<name>skipDefaultProfileArchUnitTest</name>
+					<value>!true</value>
+				</property>
+			</activation>
 			<dependencies>
+				<!-- https://www.archunit.org/ -->
 				<dependency>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-					<optional>true</optional>
-				</dependency>
-				<dependency>
-					<groupId>org.apache.logging.log4j</groupId>
-					<artifactId>log4j-slf4j2-impl</artifactId>
+					<groupId>com.tngtech.archunit</groupId>
+					<artifactId>archunit-junit5</artifactId>
+					<version>1.3.0</version>
 					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>io.github.oshai</groupId>
-					<artifactId>kotlin-logging-jvm</artifactId>
-					<scope>test</scope>
+					<exclusions>
+						<exclusion>
+							<groupId>org.slf4j</groupId>
+							<artifactId>slf4j-api</artifactId>
+						</exclusion>
+					</exclusions>
 				</dependency>
 			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<!--
+							Add more source directories to your project
+							https://www.mojohaus.org/build-helper-maven-plugin/usage.html
+						-->
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>3.6.0</version>
+						<executions>
+							<execution>
+								<id>add-test-source</id>
+								<phase>generate-test-sources</phase>
+								<goals>
+									<goal>add-test-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>${project.basedir}/src/test/archunit</source>
+									</sources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 		<profile>
 			<id>enable-test-jar-if-not-maven-skip-test</id>
@@ -580,6 +659,14 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>enable-java-main-run-debug</id>
+			<properties>
+				<main.run.debug.java.opt>
+					-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005
+				</main.run.debug.java.opt>
+			</properties>
+		</profile>
 
 		<profile>
 			<id>enforce-when-release</id>
@@ -602,9 +689,12 @@
 										<requireJavaVersion>
 											<version>21</version>
 										</requireJavaVersion>
-										<!-- https://www.mojohaus.org/extra-enforcer-rules/enforceBytecodeVersion.html -->
 										<enforceBytecodeVersion>
+											<!-- https://www.mojohaus.org/extra-enforcer-rules/enforceBytecodeVersion.html -->
 											<maxJdkVersion>${maven.compiler.source}</maxJdkVersion>
+											<excludes>
+												<exclude>com.tngtech.archunit:archunit</exclude>
+											</excludes>
 										</enforceBytecodeVersion>
 									</rules>
 								</configuration>

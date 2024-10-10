@@ -1,6 +1,7 @@
 package io.foldright.cffu;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.spi.LocationAwareLogger;
 
 
@@ -10,26 +11,28 @@ import org.slf4j.spi.LocationAwareLogger;
  * @author HuHao (995483610 at qq dot com)
  * @author Jerry Lee (oldratlee at gmail dot com)
  */
-class ExceptionReporter {
+final class ExceptionReporter {
     private static final String FQCN = ExceptionReporter.class.getName();
     private static final String CFFU_PACKAGE_NAME = FQCN.replaceFirst("\\.[^.]*$", "");
 
     private static final LoggerAdapter logger = getLogger();
 
     @Nullable
-    @SuppressWarnings("StatementWithEmptyBody")
-    static <T> T reportException(String msg, Throwable ex) {
+    @Contract("_, _ -> null")
+    @SuppressWarnings({"StatementWithEmptyBody", "SameReturnValue"})
+    static <T> T reportUncaughtException(String where, Throwable ex) {
         final String fullReport = "full";
         final String shortReport = "short";
         final String noneReport = "none";
 
-        String report = System.getProperty("cffu.uncaught.exception.report", shortReport);
+        final String report = System.getProperty("cffu.uncaught.exception.report", shortReport);
+        final String msgHead = "Uncaught exception occurred at ";
         if (noneReport.equalsIgnoreCase(report)) {
             // pass silently when explicitly silenced.
         } else if (fullReport.equalsIgnoreCase(report)) {
-            logger.error(msg, ex);
+            logger.error(msgHead + where, ex);
         } else {
-            logger.error(msg + ", " + ex, null);
+            logger.error(msgHead + where + ", " + ex, null);
         }
 
         return null;
@@ -47,7 +50,7 @@ class ExceptionReporter {
         void error(String msg, @Nullable Throwable ex);
     }
 
-    private static class Slf4jLoggerAdapter implements LoggerAdapter {
+    private static final class Slf4jLoggerAdapter implements LoggerAdapter {
         private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CFFU_PACKAGE_NAME);
 
         @Override
@@ -60,7 +63,7 @@ class ExceptionReporter {
         }
     }
 
-    private static class JulLoggerAdapter implements LoggerAdapter {
+    private static final class JulLoggerAdapter implements LoggerAdapter {
         private final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CFFU_PACKAGE_NAME);
 
         @Override

@@ -1,6 +1,12 @@
 #!/bin/bash
 set -eEuo pipefail
-cd "$(dirname "$(readlink -f "$0")")/.."
+# the canonical path of this script
+SELF_PATH=$(realpath -- "$0")
+readonly SELF_PATH SELF_DIR=${SELF_PATH%/*}
+
+# cd to the project root directory
+readonly PROJECT_ROOT=${SELF_DIR%/*}
+cd "$PROJECT_ROOT"
 
 source "scripts/bash-buddy/lib/java_utils.sh"
 

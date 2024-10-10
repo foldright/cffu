@@ -67,7 +67,24 @@
 			<organization>FoldRight</organization>
 			<organizationUrl>https://foldright.io</organizationUrl>
 		</developer>
+		<developer>
+			<name>Eric Lin</name>
+			<id>linzee1</id>
+			<email>linqinghua4(AT)gmail(DOT)com</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+8</timezone>
+			<url>https://github.com/linzee1</url>
+			<organization>FoldRight</organization>
+			<organizationUrl>https://foldright.io</organizationUrl>
+		</developer>
 	</developers>
+
+	<properties>
+		<!-- https://maven.apache.org/plugins/maven-javadoc-plugin/javadoc-mojo.html#overview -->
+		<overview>${maven.multiModuleProjectDirectory}/src/main/javadoc/overview.html</overview>
+	</properties>
 
 	<dependencies>
 		<!-- testing libs -->
@@ -77,27 +94,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<profiles>
-		<profile>
-			<id>gen-api-doc</id>
-			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<configuration>
-							<overview>${maven.multiModuleProjectDirectory}/src/main/javadoc/overview.html</overview>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>

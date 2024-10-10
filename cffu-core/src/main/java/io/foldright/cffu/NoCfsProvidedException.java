@@ -12,7 +12,7 @@ import java.util.concurrent.CompletionStage;
  * @see CffuFactory#anySuccessOf(CompletionStage[])
  * @see CompletableFutureUtils#anySuccessOf(CompletionStage[])
  */
-public class NoCfsProvidedException extends RuntimeException {
+public final class NoCfsProvidedException extends RuntimeException {
     @java.io.Serial
     private static final long serialVersionUID = 0xCFF0;
 
