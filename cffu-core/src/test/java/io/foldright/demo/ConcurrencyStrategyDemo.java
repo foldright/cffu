@@ -19,7 +19,7 @@ public class ConcurrencyStrategyDemo {
 
     public static void main(String[] args) throws Exception {
         ////////////////////////////////////////////////////////////////////////
-        // CffuFactory#allResultsFastFailOf
+        // CffuFactory#allResultsFailFastOf
         // CffuFactory#anySuccessOf
         // CffuFactory#mostSuccessResultsOf
         ////////////////////////////////////////////////////////////////////////
@@ -29,9 +29,9 @@ public class ConcurrencyStrategyDemo {
         });
         final Cffu<Integer> failed = cffuFactory.failedFuture(new RuntimeException("Bang!"));
 
-        Cffu<List<Integer>> fastFailed = cffuFactory.allResultsFastFailOf(successAfterLongTime, failed);
+        Cffu<List<Integer>> failFast = cffuFactory.allResultsFailFastOf(successAfterLongTime, failed);
         // fast failed without waiting successAfterLongTime
-        System.out.println(fastFailed.exceptionNow());
+        System.out.println(failFast.exceptionNow());
 
         Cffu<Integer> anySuccess = cffuFactory.anySuccessOf(successAfterLongTime, failed);
         System.out.println(anySuccess.get());
@@ -41,7 +41,7 @@ public class ConcurrencyStrategyDemo {
         System.out.println(mostSuccess.get());
 
         ////////////////////////////////////////////////////////////////////////
-        // or CompletableFutureUtils#allResultsFastFailOf
+        // or CompletableFutureUtils#allResultsFailFastOf
         //    CompletableFutureUtils#anySuccessOf
         //    CompletableFutureUtils#mostSuccessResultsOf
         ////////////////////////////////////////////////////////////////////////
@@ -51,9 +51,9 @@ public class ConcurrencyStrategyDemo {
         });
         final CompletableFuture<Integer> failedCf = failedFuture(new RuntimeException("Bang!"));
 
-        CompletableFuture<List<Integer>> fastFailed2 = allResultsFastFailOf(successAfterLongTimeCf, failedCf);
+        CompletableFuture<List<Integer>> failFast2 = allResultsFailFastOf(successAfterLongTimeCf, failedCf);
         // fast failed without waiting successAfterLongTime
-        System.out.println(exceptionNow(fastFailed2));
+        System.out.println(exceptionNow(failFast2));
 
         CompletableFuture<Integer> anySuccess2 = anySuccessOf(successAfterLongTimeCf, failedCf);
         System.out.println(anySuccess2.get());

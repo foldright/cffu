@@ -65,12 +65,12 @@ public final class CompletableFutureUtils {
      * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
      * @param <T>       the suppliers' return type
      * @return the new CompletableFuture
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * @see #allResultsFailFastOf(CompletionStage[])
      * @see CompletableFuture#supplyAsync(Supplier)
      */
     @SafeVarargs
-    public static <T> CompletableFuture<List<T>> mSupplyFastFailAsync(Supplier<? extends T>... suppliers) {
-        return mSupplyFastFailAsync(ASYNC_POOL, suppliers);
+    public static <T> CompletableFuture<List<T>> mSupplyFailFastAsync(Supplier<? extends T>... suppliers) {
+        return mSupplyFailFastAsync(ASYNC_POOL, suppliers);
     }
 
     /**
@@ -82,11 +82,11 @@ public final class CompletableFutureUtils {
      * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
      * @param <T>       the suppliers' return type
      * @return the new CompletableFuture
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * @see #allResultsFailFastOf(CompletionStage[])
      * @see CompletableFuture#supplyAsync(Supplier, Executor)
      */
     @SafeVarargs
-    public static <T> CompletableFuture<List<T>> mSupplyFastFailAsync(
+    public static <T> CompletableFuture<List<T>> mSupplyFailFastAsync(
             Executor executor, Supplier<? extends T>... suppliers) {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", suppliers);
@@ -333,11 +333,11 @@ public final class CompletableFutureUtils {
      *
      * @param actions the actions to run before completing the returned CompletableFuture
      * @return the new CompletableFuture
-     * @see #allFastFailOf(CompletionStage[])
+     * @see #allFailFastOf(CompletionStage[])
      * @see CompletableFuture#runAsync(Runnable)
      */
-    public static CompletableFuture<Void> mRunFastFailAsync(Runnable... actions) {
-        return mRunFastFailAsync(ASYNC_POOL, actions);
+    public static CompletableFuture<Void> mRunFailFastAsync(Runnable... actions) {
+        return mRunFailFastAsync(ASYNC_POOL, actions);
     }
 
     /**
@@ -347,14 +347,14 @@ public final class CompletableFutureUtils {
      * @param executor the executor to use for asynchronous execution
      * @param actions  the actions to run before completing the returned CompletableFuture
      * @return the new CompletableFuture
-     * @see #allFastFailOf(CompletionStage[])
+     * @see #allFailFastOf(CompletionStage[])
      * @see CompletableFuture#runAsync(Runnable, Executor)
      */
-    public static CompletableFuture<Void> mRunFastFailAsync(Executor executor, Runnable... actions) {
+    public static CompletableFuture<Void> mRunFailFastAsync(Executor executor, Runnable... actions) {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return allFastFailOf0(wrapRunnables0(executor, actions));
+        return allFailFastOf0(wrapRunnables0(executor, actions));
     }
 
     /**
@@ -458,17 +458,17 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyFastFailAsync(
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return tupleMSupplyFastFailAsync(ASYNC_POOL, supplier1, supplier2);
+        return tupleMSupplyFailFastAsync(ASYNC_POOL, supplier1, supplier2);
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyFastFailAsync(
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
@@ -477,17 +477,17 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
-    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return tupleMSupplyFastFailAsync(ASYNC_POOL, supplier1, supplier2, supplier3);
+        return tupleMSupplyFailFastAsync(ASYNC_POOL, supplier1, supplier2, supplier3);
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
-    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyFailFastAsync(
             Executor executor,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
         requireNonNull(executor, "executor is null");
@@ -497,18 +497,18 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
-    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyFastFailAsync(
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return tupleMSupplyFastFailAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4);
+        return tupleMSupplyFailFastAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4);
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
-    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyFastFailAsync(
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
         requireNonNull(executor, "executor is null");
@@ -518,18 +518,18 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
-    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return tupleMSupplyFastFailAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4, supplier5);
+        return tupleMSupplyFailFastAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4, supplier5);
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
-    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
         requireNonNull(executor, "executor is null");
@@ -541,12 +541,12 @@ public final class CompletableFutureUtils {
     /**
      * Returns {@code CompletableFuture<T>} with generic type {@code T} but constrained to type TupleX.
      */
-    private static <T> CompletableFuture<T> f_allTupleOf0(boolean fastFail, CompletionStage<?>[] stages) {
+    private static <T> CompletableFuture<T> f_allTupleOf0(boolean failFast, CompletionStage<?>[] stages) {
         final Object[] result = new Object[stages.length];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(stages, result);
 
         final CompletableFuture<Void> resultSetter;
-        if (fastFail) resultSetter = allFastFailOf0(resultSetterCfs);
+        if (failFast) resultSetter = allFailFastOf0(resultSetterCfs);
         else resultSetter = CompletableFuture.allOf(resultSetterCfs);
 
         return resultSetter.thenApply(unused -> f_tupleOf0(result));
@@ -829,7 +829,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -848,7 +848,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAsync(
             Executor executor,
@@ -869,7 +869,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -890,7 +890,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -915,7 +915,7 @@ public final class CompletableFutureUtils {
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      * If no stages are provided, returns a CompletableFuture completed with the value empty list.
      * <p>
-     * This method is the same as {@link #allResultsOf(CompletionStage[])} except for the fast-fail behavior.
+     * This method is the same as {@link #allResultsOf(CompletionStage[])} except for the fail-fast behavior.
      *
      * @param cfs the stages
      * @return a new CompletableFuture that is successful when all the given stages success
@@ -923,7 +923,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     @SafeVarargs
-    public static <T> CompletableFuture<List<T>> allResultsFastFailOf(CompletionStage<? extends T>... cfs) {
+    public static <T> CompletableFuture<List<T>> allResultsFailFastOf(CompletionStage<? extends T>... cfs) {
         return allResultsOf0(true, requireCfsAndEleNonNull(cfs));
     }
 
@@ -1044,7 +1044,7 @@ public final class CompletableFutureUtils {
         return allResultsOf0(false, requireCfsAndEleNonNull(cfs));
     }
 
-    private static <T> CompletableFuture<List<T>> allResultsOf0(boolean fastFail, CompletionStage<? extends T>[] cfs) {
+    private static <T> CompletableFuture<List<T>> allResultsOf0(boolean failFast, CompletionStage<? extends T>[] cfs) {
         final int len = cfs.length;
         if (len == 0) return completedFuture(arrayList());
         // convert input cf to non-minimal-stage CF instance for SINGLE input in order to
@@ -1055,7 +1055,7 @@ public final class CompletableFutureUtils {
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(cfs, result);
 
         final CompletableFuture<Void> resultSetter;
-        if (fastFail) resultSetter = allFastFailOf0(resultSetterCfs);
+        if (failFast) resultSetter = allFailFastOf0(resultSetterCfs);
         else resultSetter = CompletableFuture.allOf(resultSetterCfs);
 
         return f_cast(resultSetter.thenApply(unused -> arrayList(result)));
@@ -1070,13 +1070,13 @@ public final class CompletableFutureUtils {
      * but may be obtained by inspecting them individually.
      * If no stages are provided, returns a CompletableFuture completed with the value {@code null}.
      * <p>
-     * This method is the same as {@link #allOf(CompletionStage[])} except for the fast-fail behavior.
+     * This method is the same as {@link #allOf(CompletionStage[])} except for the fail-fast behavior.
      * <p>
      * If you need the results of given stages, prefer below methods:
      * <ul>
-     * <li>{@link #allResultsFastFailOf(CompletionStage[])}
-     * <li>{@link #allTupleFastFailOf(CompletionStage, CompletionStage)} /
-     *     {@link #allTupleFastFailOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * <li>{@link #allResultsFailFastOf(CompletionStage[])}
+     * <li>{@link #allTupleFailFastOf(CompletionStage, CompletionStage)} /
+     *     {@link #allTupleFailFastOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      *     (provided overloaded methods with 2~5 input)
      * </ul>
      * <p>
@@ -1092,11 +1092,11 @@ public final class CompletableFutureUtils {
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @Contract(pure = true)
-    public static CompletableFuture<Void> allFastFailOf(CompletionStage<?>... cfs) {
-        return allFastFailOf0(requireCfsAndEleNonNull(cfs));
+    public static CompletableFuture<Void> allFailFastOf(CompletionStage<?>... cfs) {
+        return allFailFastOf0(requireCfsAndEleNonNull(cfs));
     }
 
-    private static CompletableFuture<Void> allFastFailOf0(CompletionStage<?>[] cfs) {
+    private static CompletableFuture<Void> allFailFastOf0(CompletionStage<?>[] cfs) {
         final int len = cfs.length;
         if (len == 0) return completedFuture(null);
         // convert input cf to non-minimal-stage CF instance for SINGLE input in order to
@@ -1328,38 +1328,38 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
+     * Tuple variance of {@link #allResultsFailFastOf(CompletionStage[])}.
      */
     @Contract(pure = true)
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleFastFailOf(
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleFailFastOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
         return f_allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2));
     }
 
     /**
-     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
+     * Tuple variance of {@link #allResultsFailFastOf(CompletionStage[])}.
      */
     @Contract(pure = true)
-    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleFastFailOf(
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleFailFastOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
         return f_allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2, cf3));
     }
 
     /**
-     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
+     * Tuple variance of {@link #allResultsFailFastOf(CompletionStage[])}.
      */
     @Contract(pure = true)
-    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleFastFailOf(
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleFailFastOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
         return f_allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4));
     }
 
     /**
-     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
+     * Tuple variance of {@link #allResultsFailFastOf(CompletionStage[])}.
      */
     @Contract(pure = true)
-    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleFastFailOf(
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleFailFastOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
         return f_allTupleOf0(true, requireCfsAndEleNonNull(cf1, cf2, cf3, cf4, cf5));
@@ -1702,9 +1702,9 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @SafeVarargs
-    public static <T, U> CompletableFuture<List<U>> thenMApplyFastFailAsync(
+    public static <T, U> CompletableFuture<List<U>> thenMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
-        return thenMApplyFastFailAsync(cfThis, defaultExecutor(cfThis), fns);
+        return thenMApplyFailFastAsync(cfThis, defaultExecutor(cfThis), fns);
     }
 
     /**
@@ -1719,7 +1719,7 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @SafeVarargs
-    public static <T, U> CompletableFuture<List<U>> thenMApplyFastFailAsync(
+    public static <T, U> CompletableFuture<List<U>> thenMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
@@ -1956,9 +1956,9 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @SafeVarargs
-    public static <T> CompletableFuture<Void> thenMAcceptFastFailAsync(
+    public static <T> CompletableFuture<Void> thenMAcceptFailFastAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
-        return thenMAcceptFastFailAsync(cfThis, defaultExecutor(cfThis), actions);
+        return thenMAcceptFailFastAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -1970,13 +1970,13 @@ public final class CompletableFutureUtils {
      * @return the new CompletableFuture
      */
     @SafeVarargs
-    public static <T> CompletableFuture<Void> thenMAcceptFastFailAsync(
+    public static <T> CompletableFuture<Void> thenMAcceptFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(v -> allFastFailOf0(wrapConsumers0(executor, v, actions)));
+        return cfThis.thenCompose(v -> allFailFastOf0(wrapConsumers0(executor, v, actions)));
     }
 
     /**
@@ -2086,10 +2086,10 @@ public final class CompletableFutureUtils {
      * @param actions the actions to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
      * @see CompletableFuture#thenRunAsync(Runnable)
-     * @see #allFastFailOf(CompletionStage[])
+     * @see #allFailFastOf(CompletionStage[])
      */
-    public static CompletableFuture<Void> thenMRunFastFailAsync(CompletableFuture<?> cfThis, Runnable... actions) {
-        return thenMRunFastFailAsync(cfThis, defaultExecutor(cfThis), actions);
+    public static CompletableFuture<Void> thenMRunFailFastAsync(CompletableFuture<?> cfThis, Runnable... actions) {
+        return thenMRunFailFastAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
@@ -2100,15 +2100,15 @@ public final class CompletableFutureUtils {
      * @param actions  the actions to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
      * @see CompletableFuture#thenRunAsync(Runnable, Executor)
-     * @see #allFastFailOf(CompletionStage[])
+     * @see #allFailFastOf(CompletionStage[])
      */
-    public static CompletableFuture<Void> thenMRunFastFailAsync(
+    public static CompletableFuture<Void> thenMRunFailFastAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(unused -> allFastFailOf0(wrapRunnables0(executor, actions)));
+        return cfThis.thenCompose(unused -> allFailFastOf0(wrapRunnables0(executor, actions)));
     }
 
     /**
@@ -2213,18 +2213,18 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Function[])}.
+     * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
      */
-    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyFastFailAsync(
+    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyFastFailAsync(cfThis, defaultExecutor(cfThis), fn1, fn2);
+        return thenTupleMApplyFailFastAsync(cfThis, defaultExecutor(cfThis), fn1, fn2);
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Executor, Function[])}.
+     * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
      */
-    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyFastFailAsync(
+    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
         requireNonNull(cfThis, "cfThis is null");
@@ -2235,18 +2235,18 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Function[])}.
+     * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
      */
-    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyFastFailAsync(
+    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyFastFailAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3);
+        return thenTupleMApplyFailFastAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3);
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Executor, Function[])}.
+     * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
      */
-    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyFastFailAsync(
+    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
         requireNonNull(cfThis, "cfThis is null");
@@ -2257,19 +2257,19 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Function[])}.
+     * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
      */
-    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFastFailAsync(
+    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyFastFailAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4);
+        return thenTupleMApplyFailFastAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4);
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Executor, Function[])}.
+     * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
      */
-    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFastFailAsync(
+    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
@@ -2281,19 +2281,19 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Function[])}.
+     * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
      */
-    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFastFailAsync(
+    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyFastFailAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4, fn5);
+        return thenTupleMApplyFailFastAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFastFailAsync(CompletableFuture, Executor, Function[])}.
+     * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
      */
-    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFastFailAsync(
+    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
@@ -2653,11 +2653,11 @@ public final class CompletableFutureUtils {
 
     // endregion
     ////////////////////////////////////////////////////////////
-    // region## thenBoth* Methods(binary input) with fast-fail support
+    // region## thenBoth* Methods(binary input) with fail-fast support
     //
-    //    - thenCombineFastFail*   (BiFunction: (T, U) -> V)    -> CompletableFuture<U>
-    //    - thenAcceptBothFastFail*(BiConsumer: (T, U) -> Void) -> CompletableFuture<Void>
-    //    - runAfterBothFastFail*  (Runnable:   Void -> Void)   -> CompletableFuture<Void>
+    //    - thenCombineFailFast*   (BiFunction: (T, U) -> V)    -> CompletableFuture<U>
+    //    - thenAcceptBothFailFast*(BiConsumer: (T, U) -> Void) -> CompletableFuture<Void>
+    //    - runAfterBothFailFast*  (Runnable:   Void -> Void)   -> CompletableFuture<Void>
     ////////////////////////////////////////////////////////////
 
     /**
@@ -2670,13 +2670,13 @@ public final class CompletableFutureUtils {
      * @param fn the function to use to compute the value of the returned CompletableFuture
      * @return the new CompletableFuture
      */
-    public static <T, U, V> CompletableFuture<V> thenCombineFastFail(
+    public static <T, U, V> CompletableFuture<V> thenCombineFailFast(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiFunction<? super T, ? super U, ? extends V> fn) {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(fn, "fn is null");
 
-        return bothFastFail0(cfThis, other).thenApply(t -> fn.apply(t._1, t._2));
+        return bothFailFast0(cfThis, other).thenApply(t -> fn.apply(t._1, t._2));
     }
 
     /**
@@ -2690,10 +2690,10 @@ public final class CompletableFutureUtils {
      * @param fn the function to use to compute the value of the returned CompletableFuture
      * @return the new CompletableFuture
      */
-    public static <T, U, V> CompletableFuture<V> thenCombineFastFailAsync(
+    public static <T, U, V> CompletableFuture<V> thenCombineFailFastAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiFunction<? super T, ? super U, ? extends V> fn) {
-        return thenCombineFastFailAsync(cfThis, other, fn, defaultExecutor(cfThis));
+        return thenCombineFailFastAsync(cfThis, other, fn, defaultExecutor(cfThis));
     }
 
     /**
@@ -2707,14 +2707,14 @@ public final class CompletableFutureUtils {
      * @param fn the function to use to compute the value of the returned CompletableFuture
      * @return the new CompletableFuture
      */
-    public static <T, U, V> CompletableFuture<V> thenCombineFastFailAsync(
+    public static <T, U, V> CompletableFuture<V> thenCombineFailFastAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
-        return bothFastFail0(cfThis, other).thenApplyAsync(t -> fn.apply(t._1, t._2), executor);
+        return bothFailFast0(cfThis, other).thenApplyAsync(t -> fn.apply(t._1, t._2), executor);
     }
 
     private static <T> void requireThisAndOtherNonNull(
@@ -2725,11 +2725,11 @@ public final class CompletableFutureUtils {
 
     /**
      * Implementation Note: Calling this method is necessary to keep the runtime type(including `minimal-stage`) of
-     * return cf same as input `cfThis` argument. The runtime type of method {@link #allResultsFastFailOf(CompletionStage[])}
+     * return cf same as input `cfThis` argument. The runtime type of method {@link #allResultsFailFastOf(CompletionStage[])}
      * return cf is always CompletableFuture, does NOT keep the runtime type of input `cfThis` argument.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <T1, T2> CompletableFuture<Tuple2<T1, T2>> bothFastFail0(
+    private static <T1, T2> CompletableFuture<Tuple2<T1, T2>> bothFailFast0(
             CompletableFuture<? extends T1> cfThis, CompletionStage<? extends T2> other) {
         final CompletableFuture incomplete = new CompletableFuture();
 
@@ -2754,13 +2754,13 @@ public final class CompletableFutureUtils {
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
      */
-    public static <T, U> CompletableFuture<Void> thenAcceptBothFastFail(
+    public static <T, U> CompletableFuture<Void> thenAcceptBothFailFast(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiConsumer<? super T, ? super U> action) {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
 
-        return bothFastFail0(cfThis, other).thenAccept(t -> action.accept(t._1, t._2));
+        return bothFailFast0(cfThis, other).thenAccept(t -> action.accept(t._1, t._2));
     }
 
     /**
@@ -2774,10 +2774,10 @@ public final class CompletableFutureUtils {
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
      */
-    public static <T, U> CompletableFuture<Void> thenAcceptBothFastFailAsync(
+    public static <T, U> CompletableFuture<Void> thenAcceptBothFailFastAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiConsumer<? super T, ? super U> action) {
-        return thenAcceptBothFastFailAsync(cfThis, other, action, defaultExecutor(cfThis));
+        return thenAcceptBothFailFastAsync(cfThis, other, action, defaultExecutor(cfThis));
     }
 
     /**
@@ -2791,14 +2791,14 @@ public final class CompletableFutureUtils {
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
      */
-    public static <T, U> CompletableFuture<Void> thenAcceptBothFastFailAsync(
+    public static <T, U> CompletableFuture<Void> thenAcceptBothFailFastAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiConsumer<? super T, ? super U> action, Executor executor) {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return bothFastFail0(cfThis, other).thenAcceptAsync(t -> action.accept(t._1, t._2), executor);
+        return bothFailFast0(cfThis, other).thenAcceptAsync(t -> action.accept(t._1, t._2), executor);
     }
 
     /**
@@ -2810,12 +2810,12 @@ public final class CompletableFutureUtils {
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
      */
-    public static CompletableFuture<Void> runAfterBothFastFail(
+    public static CompletableFuture<Void> runAfterBothFailFast(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
 
-        return bothFastFail0(cfThis, other).thenRun(action);
+        return bothFailFast0(cfThis, other).thenRun(action);
     }
 
     /**
@@ -2828,9 +2828,9 @@ public final class CompletableFutureUtils {
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
      */
-    public static CompletableFuture<Void> runAfterBothFastFailAsync(
+    public static CompletableFuture<Void> runAfterBothFailFastAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
-        return runAfterBothFastFailAsync(cfThis, other, action, defaultExecutor(cfThis));
+        return runAfterBothFailFastAsync(cfThis, other, action, defaultExecutor(cfThis));
     }
 
     /**
@@ -2843,13 +2843,13 @@ public final class CompletableFutureUtils {
      * @param action the action to perform before completing the returned CompletableFuture
      * @return the new CompletableFuture
      */
-    public static CompletableFuture<Void> runAfterBothFastFailAsync(
+    public static CompletableFuture<Void> runAfterBothFailFastAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action, Executor executor) {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return bothFastFail0(cfThis, other).thenRunAsync(action, executor);
+        return bothFailFast0(cfThis, other).thenRunAsync(action, executor);
     }
 
     // endregion

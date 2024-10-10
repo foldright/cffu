@@ -42,7 +42,7 @@ public class MultiplyActionsDemo {
     static void thenMApplyAsyncDemo() {
         // MUST wrap tasks to CompletableFuture first, AWKWARD! 😖
         completedFuture(42).thenCompose(v ->
-                CompletableFutureUtils.allResultsFastFailOf(
+                CompletableFutureUtils.allResultsFailFastOf(
                         CompletableFuture.supplyAsync(() -> v + 1),
                         CompletableFuture.supplyAsync(() -> v + 2),
                         CompletableFuture.supplyAsync(() -> v + 3)
@@ -51,7 +51,7 @@ public class MultiplyActionsDemo {
         // output: [43, 44, 45]
 
         // just run multiply actions, fresh and cool 😋
-        CompletableFutureUtils.thenMApplyFastFailAsync(
+        CompletableFutureUtils.thenMApplyFailFastAsync(
                 completedFuture(42),
                 v -> v + 1,
                 v -> v + 2,

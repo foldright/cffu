@@ -44,11 +44,11 @@ private val ASYNC_POOL: Executor = CompletableFutureUtils.defaultExecutor(Comple
  * @param executor the executor to use for asynchronous execution
  * @param <T> the suppliers' return type
  * @return the new CompletableFuture
- * @see allResultsFastFailOfCompletableFuture
+ * @see allResultsFailFastOfCompletableFuture
  * @see CompletableFuture.supplyAsync
  */
-fun <T> Collection<Supplier<out T>>.mSupplyFastFailAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mSupplyFastFailAsync(executor, *toTypedArray())
+fun <T> Collection<Supplier<out T>>.mSupplyFailFastAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<List<T>> =
+    CompletableFutureUtils.mSupplyFailFastAsync(executor, *toTypedArray())
 
 /**
  * Returns a new CompletableFuture that is asynchronously completed
@@ -58,11 +58,11 @@ fun <T> Collection<Supplier<out T>>.mSupplyFastFailAsyncCompletableFuture(execut
  * @param executor the executor to use for asynchronous execution
  * @param <T> the suppliers' return type
  * @return the new CompletableFuture
- * @see allResultsFastFailOfCompletableFuture
+ * @see allResultsFailFastOfCompletableFuture
  * @see CompletableFuture.supplyAsync
  */
-fun <T> Array<out Supplier<out T>>.mSupplyFastFailAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mSupplyFastFailAsync(executor, *this)
+fun <T> Array<out Supplier<out T>>.mSupplyFailFastAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<List<T>> =
+    CompletableFutureUtils.mSupplyFailFastAsync(executor, *this)
 
 /**
  * Returns a new CompletableFuture that is asynchronously completed
@@ -252,11 +252,11 @@ fun <T> Array<out Supplier<out T>>.mSupplyAnyAsyncCompletableFuture(executor: Ex
  *
  * @param executor the executor to use for asynchronous execution
  * @return the new CompletableFuture
- * @see allFastFailOfCompletableFuture
+ * @see allFailFastOfCompletableFuture
  * @see CompletableFuture.runAsync
  */
-fun Collection<Runnable>.mRunFastFailAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<Void> =
-    CompletableFutureUtils.mRunFastFailAsync(executor, *toTypedArray())
+fun Collection<Runnable>.mRunFailFastAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<Void> =
+    CompletableFutureUtils.mRunFailFastAsync(executor, *toTypedArray())
 
 /**
  * Returns a new CompletableFuture that is asynchronously completed
@@ -264,11 +264,11 @@ fun Collection<Runnable>.mRunFastFailAsyncCompletableFuture(executor: Executor =
  *
  * @param executor the executor to use for asynchronous execution
  * @return the new CompletableFuture
- * @see allFastFailOfCompletableFuture
+ * @see allFailFastOfCompletableFuture
  * @see CompletableFuture.runAsync
  */
-fun Array<out Runnable>.mRunFastFailAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<Void> =
-    CompletableFutureUtils.mRunFastFailAsync(executor, *this)
+fun Array<out Runnable>.mRunFailFastAsyncCompletableFuture(executor: Executor = ASYNC_POOL): CompletableFuture<Void> =
+    CompletableFutureUtils.mRunFailFastAsync(executor, *this)
 
 /**
  * Returns a new CompletableFuture that is asynchronously completed
@@ -355,15 +355,15 @@ fun Array<out Runnable>.mRunAnyAsyncCompletableFuture(executor: Executor = ASYNC
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
  *
- * This method is the same as [allFastFailOfCompletableFuture],
+ * This method is the same as [allFailFastOfCompletableFuture],
  * except the returned CompletableFuture contains the results of input CompletableFutures.
- * This method is the same as [CompletableFutureUtils.allResultsFastFailOf],
+ * This method is the same as [CompletableFutureUtils.allResultsFailFastOf],
  * providing this method is convenient for method chaining.
  *
- * @see allFastFailOfCompletableFuture
+ * @see allFailFastOfCompletableFuture
  */
-fun <T> Collection<CompletionStage<out T>>.allResultsFastFailOfCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allResultsFastFailOf(*toTypedArray())
+fun <T> Collection<CompletionStage<out T>>.allResultsFailFastOfCompletableFuture(): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allResultsFailFastOf(*toTypedArray())
 
 /**
  * Returns a new CompletableFuture with the results in the **same order** of all the given CompletableFutures arguments,
@@ -373,15 +373,15 @@ fun <T> Collection<CompletionStage<out T>>.allResultsFastFailOfCompletableFuture
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value empty list.
  *
- * This method is the same as [allFastFailOfCompletableFuture],
+ * This method is the same as [allFailFastOfCompletableFuture],
  * except the returned CompletableFuture contains the results of input CompletableFutures.
- * This method is the same as [CompletableFutureUtils.allResultsFastFailOf],
+ * This method is the same as [CompletableFutureUtils.allResultsFailFastOf],
  * providing this method is convenient for method chaining.
  *
- * @see allFastFailOfCompletableFuture
+ * @see allFailFastOfCompletableFuture
  */
-fun <T> Array<out CompletionStage<out T>>.allResultsFastFailOfCompletableFuture(): CompletableFuture<List<T>> =
-    CompletableFutureUtils.allResultsFastFailOf(*this)
+fun <T> Array<out CompletionStage<out T>>.allResultsFailFastOfCompletableFuture(): CompletableFuture<List<T>> =
+    CompletableFutureUtils.allResultsFailFastOf(*this)
 
 /**
  * Returns a new CompletableFuture that is successful with the results in the **same order**
@@ -528,15 +528,15 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfCompletableFuture(): Compl
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value `null`.
  *
- * If you need the results of given stages, prefer methods [allResultsFastFailOfCompletableFuture].
+ * If you need the results of given stages, prefer methods [allResultsFailFastOfCompletableFuture].
  *
- * This method is the same as [CompletableFutureUtils.allFastFailOf],
+ * This method is the same as [CompletableFutureUtils.allFailFastOf],
  * providing this method is convenient for method chaining.
  *
- * @see allResultsFastFailOfCompletableFuture
+ * @see allResultsFailFastOfCompletableFuture
  */
-fun Collection<CompletionStage<*>>.allFastFailOfCompletableFuture(): CompletableFuture<Void> =
-    CompletableFutureUtils.allFastFailOf(*toTypedArray())
+fun Collection<CompletionStage<*>>.allFailFastOfCompletableFuture(): CompletableFuture<Void> =
+    CompletableFutureUtils.allFailFastOf(*toTypedArray())
 
 /**
  * Returns a new CompletableFuture that is successful when all the given CompletableFutures success,
@@ -547,15 +547,15 @@ fun Collection<CompletionStage<*>>.allFastFailOfCompletableFuture(): Completable
  * with a CompletionException holding this exception as its cause.
  * If no CompletableFutures are provided, returns a CompletableFuture completed with the value `null`.
  *
- * If you need the results of given stages, prefer methods [allResultsFastFailOfCompletableFuture]
+ * If you need the results of given stages, prefer methods [allResultsFailFastOfCompletableFuture]
  *
- * This method is the same as [CompletableFutureUtils.allFastFailOf],
+ * This method is the same as [CompletableFutureUtils.allFailFastOf],
  * providing this method is convenient for method chaining.
  *
- * @see allResultsFastFailOfCompletableFuture
+ * @see allResultsFailFastOfCompletableFuture
  */
-fun Array<out CompletionStage<*>>.allFastFailOfCompletableFuture(): CompletableFuture<Void> =
-    CompletableFutureUtils.allFastFailOf(*this)
+fun Array<out CompletionStage<*>>.allFailFastOfCompletableFuture(): CompletableFuture<Void> =
+    CompletableFutureUtils.allFailFastOf(*this)
 
 /**
  * Returns a new CompletableFuture that is completed when all the given stages complete.
@@ -680,8 +680,8 @@ fun <T> Array<out CompletionStage<out T>>.anyOfCompletableFuture(): CompletableF
  * @param <U> the functions' return type
  * @return the new CompletableFuture
  */
-fun <T, U> CompletableFuture<out T>.thenMApplyFastFailAsync(vararg fns: Function<in T, out U>): CompletableFuture<List<U>> =
-    CompletableFutureUtils.thenMApplyFastFailAsync(this, *fns)
+fun <T, U> CompletableFuture<out T>.thenMApplyFailFastAsync(vararg fns: Function<in T, out U>): CompletableFuture<List<U>> =
+    CompletableFutureUtils.thenMApplyFailFastAsync(this, *fns)
 
 /**
  * Returns a new CompletableFuture that, when the given stage completes normally,
@@ -694,9 +694,9 @@ fun <T, U> CompletableFuture<out T>.thenMApplyFastFailAsync(vararg fns: Function
  * @param <U> the functions' return type
  * @return the new CompletableFuture
  */
-fun <T, U> CompletableFuture<out T>.thenMApplyFastFailAsync(
+fun <T, U> CompletableFuture<out T>.thenMApplyFailFastAsync(
     executor: Executor, vararg fns: Function<in T, out U>
-): CompletableFuture<List<U>> = CompletableFutureUtils.thenMApplyFastFailAsync(this, executor, *fns)
+): CompletableFuture<List<U>> = CompletableFutureUtils.thenMApplyFailFastAsync(this, executor, *fns)
 
 /**
  * Returns a new CompletableFuture that, when the given stage completes normally,
@@ -875,8 +875,8 @@ fun <T, U> CompletableFuture<out T>.thenMApplyAnyAsync(
  * @param actions the actions to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
  */
-fun <T> CompletableFuture<out T>.thenMAcceptFastFailAsync(vararg actions: Consumer<in T>): CompletableFuture<Void> =
-    CompletableFutureUtils.thenMAcceptFastFailAsync(this, *actions)
+fun <T> CompletableFuture<out T>.thenMAcceptFailFastAsync(vararg actions: Consumer<in T>): CompletableFuture<Void> =
+    CompletableFutureUtils.thenMAcceptFailFastAsync(this, *actions)
 
 /**
  * Returns a new CompletableFuture that, when the given stage completes normally,
@@ -886,9 +886,9 @@ fun <T> CompletableFuture<out T>.thenMAcceptFastFailAsync(vararg actions: Consum
  * @param actions the actions to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
  */
-fun <T> CompletableFuture<out T>.thenMAcceptFastFailAsync(
+fun <T> CompletableFuture<out T>.thenMAcceptFailFastAsync(
     executor: Executor, vararg actions: Consumer<in T>
-): CompletableFuture<Void> = CompletableFutureUtils.thenMAcceptFastFailAsync(this, executor, *actions)
+): CompletableFuture<Void> = CompletableFutureUtils.thenMAcceptFailFastAsync(this, executor, *actions)
 
 /**
  * Returns a new CompletableFuture that, when the given stage completes normally,
@@ -966,10 +966,10 @@ fun <T> CompletableFuture<out T>.thenMAcceptAnyAsync(
  * @param actions the actions to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
  * @see CompletableFuture.thenRunAsync
- * @see allFastFailOfCompletableFuture
+ * @see allFailFastOfCompletableFuture
  */
-fun CompletableFuture<*>.thenMRunFastFailAsync(vararg actions: Runnable): CompletableFuture<Void> =
-    CompletableFutureUtils.thenMRunFastFailAsync(this, *actions)
+fun CompletableFuture<*>.thenMRunFailFastAsync(vararg actions: Runnable): CompletableFuture<Void> =
+    CompletableFutureUtils.thenMRunFailFastAsync(this, *actions)
 
 /**
  * Returns a new CompletableFuture that, when the given stage completes normally,
@@ -979,10 +979,10 @@ fun CompletableFuture<*>.thenMRunFastFailAsync(vararg actions: Runnable): Comple
  * @param actions the actions to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
  * @see CompletableFuture.thenRunAsync
- * @see allFastFailOfCompletableFuture
+ * @see allFailFastOfCompletableFuture
  */
-fun CompletableFuture<*>.thenMRunFastFailAsync(executor: Executor, vararg actions: Runnable): CompletableFuture<Void> =
-    CompletableFutureUtils.thenMRunFastFailAsync(this, executor, *actions)
+fun CompletableFuture<*>.thenMRunFailFastAsync(executor: Executor, vararg actions: Runnable): CompletableFuture<Void> =
+    CompletableFutureUtils.thenMRunFailFastAsync(this, executor, *actions)
 
 /**
  * Returns a new CompletableFuture that, when the given stage completes normally,
@@ -1066,68 +1066,68 @@ fun CompletableFuture<*>.thenMRunAnyAsync(executor: Executor, vararg actions: Ru
 ////////////////////////////////////////////////////////////
 
 /**
- * Tuple variance of [thenMApplyFastFailAsync].
+ * Tuple variance of [thenMApplyFailFastAsync].
  */
-fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyFastFailAsync(
+fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyFailFastAsync(
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
-): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenTupleMApplyFastFailAsync(this, fn1, fn2)
+): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenTupleMApplyFailFastAsync(this, fn1, fn2)
 
 /**
- * Tuple variance of [thenMApplyFastFailAsync].
+ * Tuple variance of [thenMApplyFailFastAsync].
  */
-fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyFastFailAsync(
+fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyFailFastAsync(
     executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
-): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenTupleMApplyFastFailAsync(this, executor, fn1, fn2)
+): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenTupleMApplyFailFastAsync(this, executor, fn1, fn2)
 
 /**
- * Tuple variance of [thenMApplyFastFailAsync].
+ * Tuple variance of [thenMApplyFailFastAsync].
  */
-fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyFastFailAsync(
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyFailFastAsync(
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
-): CompletableFuture<Tuple3<U1, U2, U3>> = CompletableFutureUtils.thenTupleMApplyFastFailAsync(this, fn1, fn2, fn3)
+): CompletableFuture<Tuple3<U1, U2, U3>> = CompletableFutureUtils.thenTupleMApplyFailFastAsync(this, fn1, fn2, fn3)
 
 /**
- * Tuple variance of [thenMApplyFastFailAsync].
+ * Tuple variance of [thenMApplyFailFastAsync].
  */
-fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyFastFailAsync(
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyFailFastAsync(
     executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
 ): CompletableFuture<Tuple3<U1, U2, U3>> =
-    CompletableFutureUtils.thenTupleMApplyFastFailAsync(this, executor, fn1, fn2, fn3)
+    CompletableFutureUtils.thenTupleMApplyFailFastAsync(this, executor, fn1, fn2, fn3)
 
 /**
- * Tuple variance of [thenMApplyFastFailAsync].
+ * Tuple variance of [thenMApplyFailFastAsync].
  */
-fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyFastFailAsync(
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyFailFastAsync(
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
 ): CompletableFuture<Tuple4<U1, U2, U3, U4>> =
-    CompletableFutureUtils.thenTupleMApplyFastFailAsync(this, fn1, fn2, fn3, fn4)
+    CompletableFutureUtils.thenTupleMApplyFailFastAsync(this, fn1, fn2, fn3, fn4)
 
 /**
- * Tuple variance of [thenMApplyFastFailAsync].
+ * Tuple variance of [thenMApplyFailFastAsync].
  */
-fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyFastFailAsync(
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyFailFastAsync(
     executor: Executor, fn1: Function<in T, out U1>,
     fn2: Function<in T, out U2>, fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
 ): CompletableFuture<Tuple4<U1, U2, U3, U4>> =
-    CompletableFutureUtils.thenTupleMApplyFastFailAsync(this, executor, fn1, fn2, fn3, fn4)
+    CompletableFutureUtils.thenTupleMApplyFailFastAsync(this, executor, fn1, fn2, fn3, fn4)
 
 /**
- * Tuple variance of [thenMApplyFastFailAsync].
+ * Tuple variance of [thenMApplyFailFastAsync].
  */
-fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyFastFailAsync(
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyFailFastAsync(
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
     fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
 ): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
-    CompletableFutureUtils.thenTupleMApplyFastFailAsync(this, fn1, fn2, fn3, fn4, fn5)
+    CompletableFutureUtils.thenTupleMApplyFailFastAsync(this, fn1, fn2, fn3, fn4, fn5)
 
 /**
- * Tuple variance of [thenMApplyFastFailAsync].
+ * Tuple variance of [thenMApplyFailFastAsync].
  */
-fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyFastFailAsync(
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyFailFastAsync(
     executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
     fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
 ): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
-    CompletableFutureUtils.thenTupleMApplyFastFailAsync(this, executor, fn1, fn2, fn3, fn4, fn5)
+    CompletableFutureUtils.thenTupleMApplyFailFastAsync(this, executor, fn1, fn2, fn3, fn4, fn5)
 
 
 /**
@@ -1378,9 +1378,9 @@ fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyAsync(
 ////////////////////////////////////////////////////////////
 // region## thenBoth* Methods(binary input) with fast-fail support
 //
-//    - thenCombineFastFail*   (BiFunction: (T, U) -> V)    -> CompletableFuture<U>
-//    - thenAcceptBothFastFail*(BiConsumer: (T, U) -> Void) -> CompletableFuture<Void>
-//    - runAfterBothFastFail*  (Runnable:   Void -> Void)   -> CompletableFuture<Void>
+//    - thenCombineFailFast*   (BiFunction: (T, U) -> V)    -> CompletableFuture<U>
+//    - thenAcceptBothFailFast*(BiConsumer: (T, U) -> Void) -> CompletableFuture<Void>
+//    - runAfterBothFailFast*  (Runnable:   Void -> Void)   -> CompletableFuture<Void>
 ////////////////////////////////////////////////////////////
 
 /**
@@ -1394,9 +1394,9 @@ fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.thenCombine
  */
-fun <T, U, V> CompletableFuture<out T>.thenCombineFastFail(
+fun <T, U, V> CompletableFuture<out T>.thenCombineFailFast(
     other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
-): CompletableFuture<V> = CompletableFutureUtils.thenCombineFastFail(this, other, fn)
+): CompletableFuture<V> = CompletableFutureUtils.thenCombineFailFast(this, other, fn)
 
 /**
  * Returns a new CompletableFuture that, when tow given stage both complete normally,
@@ -1412,9 +1412,9 @@ fun <T, U, V> CompletableFuture<out T>.thenCombineFastFail(
  * @return the new CompletableFuture
  * @see CompletionStage.thenCombineAsync
  */
-fun <T, U, V> CompletableFuture<out T>.thenCombineFastFailAsync(
+fun <T, U, V> CompletableFuture<out T>.thenCombineFailFastAsync(
     other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>
-): CompletableFuture<V> = CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn)
+): CompletableFuture<V> = CompletableFutureUtils.thenCombineFailFastAsync(this, other, fn)
 
 /**
  * Returns a new CompletableFuture that, when tow given stage both complete normally,
@@ -1430,9 +1430,9 @@ fun <T, U, V> CompletableFuture<out T>.thenCombineFastFailAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.thenCombineAsync
  */
-fun <T, U, V> CompletableFuture<out T>.thenCombineFastFailAsync(
+fun <T, U, V> CompletableFuture<out T>.thenCombineFailFastAsync(
     other: CompletionStage<out U>, fn: BiFunction<in T, in U, out V>, executor: Executor
-): CompletableFuture<V> = CompletableFutureUtils.thenCombineFastFailAsync(this, other, fn, executor)
+): CompletableFuture<V> = CompletableFutureUtils.thenCombineFailFastAsync(this, other, fn, executor)
 
 /**
  * Returns a new CompletableFuture that, when tow given stage both complete normally,
@@ -1447,9 +1447,9 @@ fun <T, U, V> CompletableFuture<out T>.thenCombineFastFailAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.thenAcceptBoth
  */
-fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFail(
+fun <T, U> CompletableFuture<out T>.thenAcceptBothFailFast(
     other: CompletionStage<out U>, action: BiConsumer<in T, in U>
-): CompletableFuture<Void> = CompletableFutureUtils.thenAcceptBothFastFail(this, other, action)
+): CompletableFuture<Void> = CompletableFutureUtils.thenAcceptBothFailFast(this, other, action)
 
 /**
  * Returns a new CompletableFuture that, when tow given stage both complete normally,
@@ -1465,9 +1465,9 @@ fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFail(
  * @return the new CompletableFuture
  * @see CompletionStage.thenAcceptBothAsync
  */
-fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFailAsync(
+fun <T, U> CompletableFuture<out T>.thenAcceptBothFailFastAsync(
     other: CompletionStage<out U>, action: BiConsumer<in T, in U>
-): CompletableFuture<Void> = CompletableFutureUtils.thenAcceptBothFastFailAsync(this, other, action)
+): CompletableFuture<Void> = CompletableFutureUtils.thenAcceptBothFailFastAsync(this, other, action)
 
 /**
  * Returns a new CompletableFuture that, when tow given stage both complete normally,
@@ -1483,9 +1483,9 @@ fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFailAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.thenAcceptBothAsync
  */
-fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFailAsync(
+fun <T, U> CompletableFuture<out T>.thenAcceptBothFailFastAsync(
     other: CompletionStage<out U>, action: BiConsumer<in T, in U>, executor: Executor
-): CompletableFuture<Void> = CompletableFutureUtils.thenAcceptBothFastFailAsync(this, other, action, executor)
+): CompletableFuture<Void> = CompletableFutureUtils.thenAcceptBothFailFastAsync(this, other, action, executor)
 
 /**
  * Returns a new CompletableFuture that, when two given stages both complete normally, executes the given action.
@@ -1499,8 +1499,8 @@ fun <T, U> CompletableFuture<out T>.thenAcceptBothFastFailAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.runAfterBoth
  */
-fun CompletableFuture<*>.runAfterBothFastFail(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
-    CompletableFutureUtils.runAfterBothFastFail(this, other, action)
+fun CompletableFuture<*>.runAfterBothFailFast(other: CompletionStage<*>, action: Runnable): CompletableFuture<Void> =
+    CompletableFutureUtils.runAfterBothFailFast(this, other, action)
 
 /**
  * Returns a new CompletableFuture that, when two given stages both complete normally,
@@ -1515,10 +1515,10 @@ fun CompletableFuture<*>.runAfterBothFastFail(other: CompletionStage<*>, action:
  * @return the new CompletableFuture
  * @see CompletionStage.runAfterBothAsync
  */
-fun CompletableFuture<*>.runAfterBothFastFailAsync(
+fun CompletableFuture<*>.runAfterBothFailFastAsync(
     other: CompletionStage<*>,
     action: Runnable
-): CompletableFuture<Void> = CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action)
+): CompletableFuture<Void> = CompletableFutureUtils.runAfterBothFailFastAsync(this, other, action)
 
 /**
  * Returns a new CompletableFuture that, when two given stages both complete normally,
@@ -1533,9 +1533,9 @@ fun CompletableFuture<*>.runAfterBothFastFailAsync(
  * @return the new CompletableFuture
  * @see CompletionStage.runAfterBothAsync
  */
-fun CompletableFuture<*>.runAfterBothFastFailAsync(
+fun CompletableFuture<*>.runAfterBothFailFastAsync(
     other: CompletionStage<*>, action: Runnable, executor: Executor
-): CompletableFuture<Void> = CompletableFutureUtils.runAfterBothFastFailAsync(this, other, action, executor)
+): CompletableFuture<Void> = CompletableFutureUtils.runAfterBothFailFastAsync(this, other, action, executor)
 
 // endregion
 ////////////////////////////////////////////////////////////
