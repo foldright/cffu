@@ -35,27 +35,29 @@ Feel free to:
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [🔧 Features](#-%E5%8A%9F%E8%83%BD)
-  - [About `CompletableFuture`](#%E5%85%B3%E4%BA%8Ecompletablefuture)
+- [🔧 Features](#-features)
+  - [About `CompletableFuture`](#about-completablefuture)
 - [👥 User Guide](#-user-guide)
-  - [1. Three ways to use `CFFU`](#1-cffu%E7%9A%84%E4%B8%89%E7%A7%8D%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F)
-    - [1) `Cffu`Class](#1-cffu%E7%B1%BB)
-    - [2) `CompletableFutureUtils`Utility Class](#2-completablefutureutils%E5%B7%A5%E5%85%B7%E7%B1%BB)
-    - [3) `Kotlin`Extension Methods](#3-kotlin%E6%89%A9%E5%B1%95%E6%96%B9%E6%B3%95)
-  - [2. `cffu`Features Overview](#2-cffu%E5%8A%9F%E8%83%BD%E4%BB%8B%E7%BB%8D)
-    - [2.1 Return results from multiple CompletableFutures](#21-%E8%BF%94%E5%9B%9E%E5%A4%9A%E4%B8%AA%E8%BF%90%E8%A1%8Ccf%E7%9A%84%E7%BB%93%E6%9E%9C)
-    - [2.2 Default business-related thread pool encapsulation](#22-%E6%94%AF%E6%8C%81%E8%AE%BE%E7%BD%AE%E7%BC%BA%E7%9C%81%E7%9A%84%E4%B8%9A%E5%8A%A1%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%B9%B6%E5%B0%81%E8%A3%85%E6%90%BA%E5%B8%A6)
-    - [2.3 Efficient and flexible concurrency strategies (AllFastFail/AnySuccess/MostSuccess)（`AllFastFail`/`AnySuccess`/`MostSuccess`）](#23-%E9%AB%98%E6%95%88%E7%81%B5%E6%B4%BB%E7%9A%84%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E7%AD%96%E7%95%A5allfastfailanysuccessmostsuccess)
-    - [2.4 Timeout `join` support](#24-%E6%94%AF%E6%8C%81%E8%B6%85%E6%97%B6%E7%9A%84join%E7%9A%84%E6%96%B9%E6%B3%95)
-    - [2.5 `Java 8``Backport` support](#25-backport%E6%94%AF%E6%8C%81java-8)
-    - [2.6 Return specific type by anyOf method](#26-%E8%BF%94%E5%9B%9E%E5%85%B7%E4%BD%93%E7%B1%BB%E5%9E%8B%E7%9A%84anyof%E6%96%B9%E6%B3%95)
-    - [More Feature Details](#%E6%9B%B4%E5%A4%9A%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E)
-  - [3. Migrate from CompletableFuture to Cffu](#3-%E5%A6%82%E4%BD%95%E4%BB%8E%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8completablefuture%E7%B1%BB%E8%BF%81%E7%A7%BB%E5%88%B0cffu%E7%B1%BB)
+  - [1. Three ways to use `cffu`](#1-three-ways-to-use-cffu)
+    - [1) `Cffu` class](#1-cffu-class)
+    - [2) `CompletableFutureUtils` utility class](#2-completablefutureutils-utility-class)
+    - [3) `Kotlin` extension class](#3-kotlin-extension-class)
+  - [2. `cffu` Functionality Introduction](#2-cffu-functionality-introduction)
+    - [2.1 Return results from multiple Running `CF`](#21-return-results-from-multiple-running-cf)
+    - [2.1.1 Returning Results from Multiple Different Types of `CF`](#211-returning-results-from-multiple-different-types-of-cf)
+    - [2.2 Default business-related thread pool encapsulation](#22-default-business-related-thread-pool-encapsulation)
+    - [2.3 Efficient and Flexible Concurrent Execution Strategies (`AllFailFast`/`AnySuccess`/`MostSuccess`)](#23-efficient-and-flexible-concurrent-execution-strategies-allfailfastanysuccessmostsuccess)
+    - [2.4 Support for Timed `join` Methods](#24-support-for-timed-join-methods)
+    - [2.5 `Java 8``Backport` support](#25-java-8backport-support)
+    - [2.6 Return Type-Specific `anyOf` Method](#26-return-type-specific-anyof-method)
+    - [More Function Descriptions](#more-function-descriptions)
+  - [3. How to Migrate from Direct Use of `CompletableFuture` to `Cffu`](#3-how-to-migrate-from-direct-use-of-completablefuture-to-cffu)
 - [🔌 API Docs](#-api-docs)
-- [🍪 Dependencies](#%E4%BE%9D%E8%B5%96)
-- [📚 See also](#-%E6%9B%B4%E5%A4%9A%E8%B5%84%E6%96%99)
-- [👋 About the Library Name](#-%E5%85%B3%E4%BA%8E%E5%BA%93%E5%90%8D)
-
+- [🍪Dependencies](#dependencies)
+- [📚 See also](#-see-also)
+    - [Official Documentation](#official-documentation)
+    - [`CompletableFuture` Guide](#completablefuture-guide)
+- [👋 About the Library Name](#-about-the-library-name)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -72,12 +74,12 @@ For more details on the usage and features of cffu, refer to the User Guide.
 The provided features include：
 
 🏪 More convenient methods, such as:
-- Return multiple CF results instead of void (allOf), e.g., `allResultsFastFailOf`, `allResultsOf`, `mSupplyFastFailAsync`, `thenMApplyFastFailAsync`.
-- Return multiple different type CF results instead of the same type, e.g., `allTupleFastFailOf`, `allTupleOf`, `tupleMSupplyFastFailAsync`, `thenTupleMApplyFastFailAsync`.
-- Direct execution of multiple actions without wrapping them into CompletableFuture, e.g., `tupleMSupplyFastFailAsync`, `mSupplyMostSuccessAsync`, `thenTupleMApplyFastFailAsync`, `thenMRunFastFailAsync`.
+- Return multiple CF results instead of void (allOf), e.g., `allResultsFailFastOf`, `allResultsOf`, `mSupplyFailFastAsync`, `thenMApplyFailFastAsync`.
+- Return multiple different type CF results instead of the same type, e.g., `allTupleFailFastOf`, `allTupleOf`, `tupleMSupplyFailFastAsync`, `thenTupleMApplyFailFastAsync`.
+- Direct execution of multiple actions without wrapping them into CompletableFuture, e.g., `tupleMSupplyFailFastAsync`, `mSupplyMostSuccessAsync`, `thenTupleMApplyFailFastAsync`, `thenMRunFailFastAsync`.
 
 ⚙️ More efficient and flexible concurrent execution strategies, such as:
-- **AllFastFail strategy**: Fast Fails and return when any input CF fails, rather than waiting for all CFs to complete (allOf).
+- **AllFailFast strategy**: Fast Fails and return when any input CF fails, rather than waiting for all CFs to complete (allOf).
 - **AnySuccess strategy**: Returns the first successful CF result, rather than the first completed (which might be a failure) (anyOf).
 - **MostSuccess strategy**: Returns the successful results of multiple CFs within a specified time, ignoring failed or incomplete CFs (returns a default value).
 
@@ -302,7 +304,7 @@ The `allOf` method in `CompletableFuture` does not return results directly; it r
 - Alternatively, you can pass an `Action` and set external variables within it, but this requires careful consideration of thread safety ⚠️.
   - It is complex to manage concurrent data transfers across multiple threads, and it is common to mishandle the logic for reading and writing data concurrently in business code.❗️
 
-`cffu` provides `allResultsFastFailOf`/`allResultsOf` methods to facilitate retrieving results from multiple `CF`:
+`cffu` provides `allResultsFailFastOf`/`allResultsOf` methods to facilitate retrieving results from multiple `CF`:
 
 - Convenient and direct retrieval of results using library functions.
 - Reduces the complexity of thread safety and logical errors that come with managing read/write operations across multiple threads.
@@ -350,7 +352,7 @@ public class AllResultsOfDemo {
 
 ### 2.1.1 Returning Results from Multiple Different Types of `CF`
 
-In addition to handling multiple `CF` instances with the same result type, `cffu` also offers methods to handle multiple `CF` instances with different result types using `allTupleFastFailOf`/`allTupleOf` methods.
+In addition to handling multiple `CF` instances with the same result type, `cffu` also offers methods to handle multiple `CF` instances with different result types using `allTupleFailFastOf`/`allTupleOf` methods.
 
 Example code:
 
@@ -361,21 +363,21 @@ public class AllTupleOfDemo {
 
   public static void main(String[] args) throws Exception {
     //////////////////////////////////////////////////
-    // allTupleFastFailOf / allTupleOf
+    // allTupleFailFastOf / allTupleOf
     //////////////////////////////////////////////////
     Cffu<String> cffu1 = cffuFactory.completedFuture("21");
     Cffu<Integer> cffu2 = cffuFactory.completedFuture(42);
 
-    Cffu<Tuple2<String, Integer>> allTuple = cffuFactory.allTupleFastFailOf(cffu1, cffu2);
+    Cffu<Tuple2<String, Integer>> allTuple = cffuFactory.allTupleFailFastOf(cffu1, cffu2);
     System.out.println(allTuple.get());
 
     //////////////////////////////////////////////////
-    // or CompletableFutureUtils.allTupleFastFailOf / allTupleOf
+    // or CompletableFutureUtils.allTupleFailFastOf / allTupleOf
     //////////////////////////////////////////////////
     CompletableFuture<String> cf1 = CompletableFuture.completedFuture("21");
     CompletableFuture<Integer> cf2 = CompletableFuture.completedFuture(42);
 
-    CompletableFuture<Tuple2<String, Integer>> allTuple2 = allTupleFastFailOf(cf1, cf2);
+    CompletableFuture<Tuple2<String, Integer>> allTuple2 = allTupleFailFastOf(cf1, cf2);
     System.out.println(allTuple2.get());
   }
 }
@@ -448,12 +450,12 @@ public class DefaultExecutorSettingForCffu {
 
 > \# See complete runnable demo code in[`DefaultExecutorSettingForCffu.java`](cffu-core/src/test/java/io/foldright/demo/DefaultExecutorSettingForCffu.java)。
 
-### 2.3 Efficient and Flexible Concurrent Execution Strategies (`AllFastFail`/`AnySuccess`/`MostSuccess`)
+### 2.3 Efficient and Flexible Concurrent Execution Strategies (`AllFailFast`/`AnySuccess`/`MostSuccess`)
 
 - The `allOf` method in `CompletableFuture` waits for all input `CF` to complete; even if one `CF` fails, it waits for the remaining `CF` to complete before returning a failed `CF`.
   - For business logic, a fail-and-continue-waiting strategy slows down responsiveness. It's better to fail fast if any input CF fails, so you can avoid unnecessary waiting.
-  - `cffu` provides corresponding methods like `allResultsFastFailOf`.
-  - Both `allOf` and `allResultsFastFailOf` return a successful result only when all input `CF` succeed.
+  - `cffu` provides corresponding methods like `allResultsFailFastOf`.
+  - Both `allOf` and `allResultsFailFastOf` return a successful result only when all input `CF` succeed.
 - The `anyOf` method in `CompletableFuture` returns the first completed `CF` (without waiting for the others to complete, a "race" mode); even if the first completed `CF` is a failure, it returns this failed `CF` result.
   - For business logic, it's preferable for the race mode to return the first successful `CF` result, rather than the first completed but failed `CF`.
   - `cffu` provides corresponding methods like `anySuccessOf`.
@@ -466,7 +468,7 @@ public class DefaultExecutorSettingForCffu {
 >
 > JavaScript Promise provides four concurrent execution methods:
 >
-> - [`Promise.all()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all): Waits for all `Promise` to succeed; if any one fails, it immediately returns a failure (corresponding to `cffu`'s `allResultsFastFailOf` method).
+> - [`Promise.all()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all): Waits for all `Promise` to succeed; if any one fails, it immediately returns a failure (corresponding to `cffu`'s `allResultsFailFastOf` method).
 > - [`Promise.allSettled()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled): Waits for all `Promise` to complete, regardless of success or failure (corresponding to `cffu`'s `allResultsOf` method).
 > - [`Promise.any()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/any): Race mode, immediately returns the first successful `Promise` (corresponding to `cffu`'s `anySuccessOf` method).
 > - [`Promise.race()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race): Race mode, immediately returns the first completed `Promise` (corresponding to `cffu`'s `anyOf` method).
@@ -484,7 +486,7 @@ public class ConcurrencyStrategyDemo {
 
   public static void main(String[] args) throws Exception {
     ////////////////////////////////////////////////////////////////////////
-    // CffuFactory#allResultsFastFailOf
+    // CffuFactory#allResultsFailFastOf
     // CffuFactory#anySuccessOf
     // CffuFactory#mostSuccessResultsOf
     ////////////////////////////////////////////////////////////////////////
@@ -494,9 +496,9 @@ public class ConcurrencyStrategyDemo {
     });
     final Cffu<Integer> failed = cffuFactory.failedFuture(new RuntimeException("Bang!"));
 
-    Cffu<List<Integer>> fastFailed = cffuFactory.allResultsFastFailOf(successAfterLongTime, failed);
-    // fast failed without waiting successAfterLongTime
-    System.out.println(fastFailed.exceptionNow());
+    Cffu<List<Integer>> failFast = cffuFactory.allResultsFailFastOf(successAfterLongTime, failed);
+    // fail fast without waiting successAfterLongTime
+    System.out.println(failFast.exceptionNow());
 
     Cffu<Integer> anySuccess = cffuFactory.anySuccessOf(successAfterLongTime, failed);
     System.out.println(anySuccess.get());
@@ -506,7 +508,7 @@ public class ConcurrencyStrategyDemo {
     System.out.println(mostSuccess.get());
 
     ////////////////////////////////////////////////////////////////////////
-    // or CompletableFutureUtils#allResultsFastFailOf
+    // or CompletableFutureUtils#allResultsFailFastOf
     //    CompletableFutureUtils#anySuccessOf
     //    CompletableFutureUtils#mostSuccessResultsOf
     ////////////////////////////////////////////////////////////////////////
@@ -516,9 +518,9 @@ public class ConcurrencyStrategyDemo {
     });
     final CompletableFuture<Integer> failedCf = failedFuture(new RuntimeException("Bang!"));
 
-    CompletableFuture<List<Integer>> fastFailed2 = allResultsFastFailOf(successAfterLongTimeCf, failedCf);
-    // fast failed without waiting successAfterLongTime
-    System.out.println(exceptionNow(fastFailed2));
+    CompletableFuture<List<Integer>> failFast2 = allResultsFailFastOf(successAfterLongTimeCf, failedCf);
+    // fail fast without waiting successAfterLongTime
+    System.out.println(exceptionNow(failFast2));
 
     CompletableFuture<Integer> anySuccess2 = anySuccessOf(successAfterLongTimeCf, failedCf);
     System.out.println(anySuccess2.get());

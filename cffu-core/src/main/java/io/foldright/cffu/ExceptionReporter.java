@@ -19,7 +19,7 @@ final class ExceptionReporter {
 
     @Nullable
     @Contract("_, _ -> null")
-    @SuppressWarnings("StatementWithEmptyBody")
+    @SuppressWarnings({"StatementWithEmptyBody", "SameReturnValue"})
     static <T> T reportUncaughtException(String where, Throwable ex) {
         final String fullReport = "full";
         final String shortReport = "short";
