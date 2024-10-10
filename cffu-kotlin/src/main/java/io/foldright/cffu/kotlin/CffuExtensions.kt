@@ -67,11 +67,11 @@ fun <T> Array<out CompletionStage<T>>.toCffu(cffuFactory: CffuFactory): Array<Cf
  *
  * @param <T> the suppliers' return type
  * @return the new Cffu
- * @see allResultsFastFailOfCffu
+ * @see allResultsFailFastOfCffu
  */
-fun <T> Collection<Supplier<out T>>.mSupplyFastFailAsyncCffu(
+fun <T> Collection<Supplier<out T>>.mSupplyFailFastAsyncCffu(
     cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
-): Cffu<List<T>> = cffuFactory.mSupplyFastFailAsync(executor, *toTypedArray())
+): Cffu<List<T>> = cffuFactory.mSupplyFailFastAsync(executor, *toTypedArray())
 
 /**
  * Returns a new Cffu that is asynchronously completed
@@ -80,11 +80,11 @@ fun <T> Collection<Supplier<out T>>.mSupplyFastFailAsyncCffu(
  *
  * @param <T> the suppliers' return type
  * @return the new Cffu
- * @see allResultsFastFailOfCffu
+ * @see allResultsFailFastOfCffu
  */
-fun <T> Array<out Supplier<out T>>.mSupplyFastFailAsyncCffu(
+fun <T> Array<out Supplier<out T>>.mSupplyFailFastAsyncCffu(
     cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
-): Cffu<List<T>> = cffuFactory.mSupplyFastFailAsync(executor, *this)
+): Cffu<List<T>> = cffuFactory.mSupplyFailFastAsync(executor, *this)
 
 /**
  * Returns a new Cffu that is asynchronously completed
@@ -270,11 +270,11 @@ fun <T> Array<out Supplier<out T>>.mSupplyAnyAsyncCffu(
  * after runs the given actions.
  *
  * @return the new Cffu
- * @see allFastFailOfCffu
+ * @see allFailFastOfCffu
  */
-fun Collection<Runnable>.mRunFastFailAsyncCffu(
+fun Collection<Runnable>.mRunFailFastAsyncCffu(
     cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
-): Cffu<Void> = cffuFactory.mRunFastFailAsync(executor, *toTypedArray())
+): Cffu<Void> = cffuFactory.mRunFailFastAsync(executor, *toTypedArray())
 
 /**
  * Returns a new Cffu that is asynchronously completed
@@ -282,11 +282,11 @@ fun Collection<Runnable>.mRunFastFailAsyncCffu(
  * after runs the given actions.
  *
  * @return the new Cffu
- * @see allFastFailOfCffu
+ * @see allFailFastOfCffu
  */
-fun Array<out Runnable>.mRunFastFailAsyncCffu(
+fun Array<out Runnable>.mRunFailFastAsyncCffu(
     cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
-): Cffu<Void> = cffuFactory.mRunFastFailAsync(executor, *this)
+): Cffu<Void> = cffuFactory.mRunFailFastAsync(executor, *this)
 
 /**
  * Returns a new Cffu that is asynchronously completed
@@ -387,14 +387,14 @@ private fun Array<out Cffu<*>>.resolveFac(cffuFactory: CffuFactory): CffuFactory
  * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
  *
- * This method is the same as [allFastFailOfCffu], except the returned Cffu contains the results of input Cffus.
- * This method is the same as [CffuFactory.allResultsFastFailOf], providing this method is convenient for method chaining.
+ * This method is the same as [allFailFastOfCffu], except the returned Cffu contains the results of input Cffus.
+ * This method is the same as [CffuFactory.allResultsFailFastOf], providing this method is convenient for method chaining.
  *
- * @see allFastFailOfCffu
- * @see CffuFactory.allResultsFastFailOf
+ * @see allFailFastOfCffu
+ * @see CffuFactory.allResultsFailFastOf
  */
-fun <T> Collection<Cffu<out T>>.allResultsFastFailOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> =
-    resolveFac(cffuFactory).allResultsFastFailOf(*toTypedArray())
+fun <T> Collection<Cffu<out T>>.allResultsFailFastOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> =
+    resolveFac(cffuFactory).allResultsFailFastOf(*toTypedArray())
 
 /**
  * Returns a new Cffu with the results in the **same order** of the given Cffus arguments,
@@ -407,14 +407,14 @@ fun <T> Collection<Cffu<out T>>.allResultsFastFailOfCffu(cffuFactory: CffuFactor
  * If this array is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this array is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
  *
- * This method is the same as [allFastFailOfCffu], except the returned Cffu contains the results of input Cffus.
- * This method is the same as [CffuFactory.allResultsFastFailOf], providing this method is convenient for method chaining.
+ * This method is the same as [allFailFastOfCffu], except the returned Cffu contains the results of input Cffus.
+ * This method is the same as [CffuFactory.allResultsFailFastOf], providing this method is convenient for method chaining.
  *
- * @see allFastFailOfCffu
- * @see CffuFactory.allResultsFastFailOf
+ * @see allFailFastOfCffu
+ * @see CffuFactory.allResultsFailFastOf
  */
-fun <T> Array<out Cffu<out T>>.allResultsFastFailOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> =
-    resolveFac(cffuFactory).allResultsFastFailOf(*this)
+fun <T> Array<out Cffu<out T>>.allResultsFailFastOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> =
+    resolveFac(cffuFactory).allResultsFailFastOf(*this)
 
 /**
  * Returns a new Cffu with the results in the **same order** of the given stages arguments,
@@ -424,15 +424,15 @@ fun <T> Array<out Cffu<out T>>.allResultsFastFailOfCffu(cffuFactory: CffuFactory
  * with a CompletionException holding this exception as its cause.
  * If no stages are provided, returns a Cffu completed with the value empty list.
  *
- * This method is the same as [allFastFailOfCffu], except the returned Cffu contains the results of input Cffus.
- * This method is the same as [CffuFactory.allResultsFastFailOf], providing this method is convenient for method chaining.
+ * This method is the same as [allFailFastOfCffu], except the returned Cffu contains the results of input Cffus.
+ * This method is the same as [CffuFactory.allResultsFailFastOf], providing this method is convenient for method chaining.
  *
- * @see allFastFailOfCffu
- * @see CffuFactory.allResultsFastFailOf
+ * @see allFailFastOfCffu
+ * @see CffuFactory.allResultsFailFastOf
  */
-@JvmName("allResultsFastFailOfCffuCs")
-fun <T> Collection<CompletionStage<out T>>.allResultsFastFailOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
-    cffuFactory.allResultsFastFailOf(*toTypedArray())
+@JvmName("allResultsFailFastOfCffuCs")
+fun <T> Collection<CompletionStage<out T>>.allResultsFailFastOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+    cffuFactory.allResultsFailFastOf(*toTypedArray())
 
 /**
  * Returns a new Cffu with the results in the **same order** of the given stages arguments,
@@ -442,14 +442,14 @@ fun <T> Collection<CompletionStage<out T>>.allResultsFastFailOfCffu(cffuFactory:
  * with a CompletionException holding this exception as its cause.
  * If no stages are provided, returns a Cffu completed with the value empty list.
  *
- * This method is the same as [allFastFailOfCffu], except the returned Cffu contains the results of input Cffus.
- * This method is the same as [CffuFactory.allResultsFastFailOf], providing this method is convenient for method chaining.
+ * This method is the same as [allFailFastOfCffu], except the returned Cffu contains the results of input Cffus.
+ * This method is the same as [CffuFactory.allResultsFailFastOf], providing this method is convenient for method chaining.
  *
- * @see allFastFailOfCffu
- * @see CffuFactory.allResultsFastFailOf
+ * @see allFailFastOfCffu
+ * @see CffuFactory.allResultsFailFastOf
  */
-fun <T> Array<out CompletionStage<out T>>.allResultsFastFailOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
-    cffuFactory.allResultsFastFailOf(*this)
+fun <T> Array<out CompletionStage<out T>>.allResultsFailFastOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+    cffuFactory.allResultsFailFastOf(*this)
 
 /**
  * Returns a new Cffu that is successful with the results in the **same order**
@@ -687,13 +687,13 @@ fun <T> Array<out CompletionStage<out T>>.allResultsOfCffu(cffuFactory: CffuFact
  * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
  *
- * This method is the same as [CffuFactory.allFastFailOf], providing this method is convenient for method chaining.
+ * This method is the same as [CffuFactory.allFailFastOf], providing this method is convenient for method chaining.
  *
- * @see allResultsFastFailOfCffu
- * @see CffuFactory.allFastFailOf
+ * @see allResultsFailFastOfCffu
+ * @see CffuFactory.allFailFastOf
  */
-fun Collection<Cffu<*>>.allFastFailOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> =
-    resolveFac(cffuFactory).allFastFailOf(*toTypedArray())
+fun Collection<Cffu<*>>.allFailFastOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> =
+    resolveFac(cffuFactory).allFailFastOf(*toTypedArray())
 
 /**
  * Returns a new Cffu that is successful when all the given Cffus success,
@@ -707,13 +707,13 @@ fun Collection<Cffu<*>>.allFastFailOfCffu(cffuFactory: CffuFactory = ABSENT): Cf
  * If this array is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this array is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
  *
- * This method is the same as [CffuFactory.allFastFailOf], providing this method is convenient for method chaining.
+ * This method is the same as [CffuFactory.allFailFastOf], providing this method is convenient for method chaining.
  *
- * @see allResultsFastFailOfCffu
- * @see CffuFactory.allFastFailOf
+ * @see allResultsFailFastOfCffu
+ * @see CffuFactory.allFailFastOf
  */
-fun Array<out Cffu<*>>.allFastFailOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> =
-    resolveFac(cffuFactory).allFastFailOf(*this)
+fun Array<out Cffu<*>>.allFailFastOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<Void> =
+    resolveFac(cffuFactory).allFailFastOf(*this)
 
 /**
  * Returns a new Cffu that is successful when all the given stages success,
@@ -724,14 +724,14 @@ fun Array<out Cffu<*>>.allFastFailOfCffu(cffuFactory: CffuFactory = ABSENT): Cff
  * with a CompletionException holding this exception as its cause.
  * If no stages are provided, returns a Cffu completed with the value `null`.
  *
- * This method is the same as [CffuFactory.allFastFailOf], providing this method is convenient for method chaining.
+ * This method is the same as [CffuFactory.allFailFastOf], providing this method is convenient for method chaining.
  *
- * @see allResultsFastFailOfCffu
- * @see CffuFactory.allFastFailOf
+ * @see allResultsFailFastOfCffu
+ * @see CffuFactory.allFailFastOf
  */
-@JvmName("allFastFailOfCffuCs")
-fun Collection<CompletionStage<*>>.allFastFailOfCffu(cffuFactory: CffuFactory): Cffu<Void> =
-    cffuFactory.allFastFailOf(*toTypedArray())
+@JvmName("allFailFastOfCffuCs")
+fun Collection<CompletionStage<*>>.allFailFastOfCffu(cffuFactory: CffuFactory): Cffu<Void> =
+    cffuFactory.allFailFastOf(*toTypedArray())
 
 /**
  * Returns a new Cffu that is successful when all the given stages success,
@@ -742,13 +742,13 @@ fun Collection<CompletionStage<*>>.allFastFailOfCffu(cffuFactory: CffuFactory): 
  * with a CompletionException holding this exception as its cause.
  * If no stages are provided, returns a Cffu completed with the value `null`.
  *
- * This method is the same as [CffuFactory.allFastFailOf], providing this method is convenient for method chaining.
+ * This method is the same as [CffuFactory.allFailFastOf], providing this method is convenient for method chaining.
  *
- * @see allResultsFastFailOfCffu
- * @see CffuFactory.allFastFailOf
+ * @see allResultsFailFastOfCffu
+ * @see CffuFactory.allFailFastOf
  */
-fun Array<out CompletionStage<*>>.allFastFailOfCffu(cffuFactory: CffuFactory): Cffu<Void> =
-    cffuFactory.allFastFailOf(*this)
+fun Array<out CompletionStage<*>>.allFailFastOfCffu(cffuFactory: CffuFactory): Cffu<Void> =
+    cffuFactory.allFailFastOf(*this)
 
 /**
  * Returns a new Cffu that is completed when all the given Cffus complete.
