@@ -920,6 +920,7 @@ public final class CompletableFutureUtils {
      * @param cfs the stages
      * @return a new CompletableFuture that is successful when all the given stages success
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
+     * @see Futures#allAsList(ListenableFuture[]) Guava method allAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1036,7 +1037,6 @@ public final class CompletableFutureUtils {
      * @param cfs the stages
      * @return a new CompletableFuture that is completed when all the given stages complete
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
-     * @see Futures#allAsList(ListenableFuture[]) Guava method allAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -4096,7 +4096,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Fallback if ForkJoinPool.commonPool() cannot support parallelism
+     * Fallback if {@link ForkJoinPool#commonPool()} cannot support parallelism.
+     * code is copied from {@link CompletableFuture.ThreadPerTaskExecutor}.
      */
     @SuppressWarnings("JavadocReference")
     private static final class ThreadPerTaskExecutor implements Executor {

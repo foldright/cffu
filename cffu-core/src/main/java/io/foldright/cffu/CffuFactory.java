@@ -867,6 +867,7 @@ public final class CffuFactory {
      * @param cfs the stages
      * @return a new Cffu that is successful when all the given stages success
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
+     * @see Futures#allAsList(ListenableFuture[]) Guava method allAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -930,7 +931,6 @@ public final class CffuFactory {
      * @param cfs the stages
      * @return a new Cffu that is completed when all the given stages complete
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
-     * @see Futures#allAsList(ListenableFuture[]) Guava method allAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
