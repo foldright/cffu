@@ -4,6 +4,7 @@ import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
 import io.foldright.cffu.tuple.Tuple4;
 import io.foldright.cffu.tuple.Tuple5;
+import io.foldright.test_utils.MinStageTestUtils;
 import io.foldright.test_utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
@@ -722,8 +723,8 @@ class CffuFactoryTest {
         assertEquals(n, sa.toCompletableFuture().get());
 
         // CAUTION: Last check minimal stage, may rewrite the CF by obtrude* methods
-        shouldBeMinimalStage((Cffu<?>) stage);
-        shouldBeMinimalStage((Cffu<?>) sa);
+        MinStageTestUtils.shouldBeMinimalStage((Cffu<?>) stage);
+        MinStageTestUtils.shouldBeMinimalStage((Cffu<?>) sa);
     }
 
     @Test
@@ -733,7 +734,7 @@ class CffuFactoryTest {
         assertSame(rte, assertThrowsExactly(CompletionException.class, cf::join).getCause());
         assertEquals(n, cf.exceptionally(throwable -> n).get());
 
-        shouldNotBeMinimalStage(cf);
+        MinStageTestUtils.shouldNotBeMinimalStage(cf);
     }
 
     @Test
@@ -748,9 +749,9 @@ class CffuFactoryTest {
         assertEquals(n, se.toCompletableFuture().get());
 
         // CAUTION: Last check minimal stage, may rewrite the CF by obtrude* methods
-        shouldBeMinimalStage((Cffu<Integer>) stage);
-        shouldBeMinimalStage((Cffu<Integer>) sa);
-        shouldBeMinimalStage((Cffu<Integer>) se);
+        MinStageTestUtils.shouldBeMinimalStage((Cffu<Integer>) stage);
+        MinStageTestUtils.shouldBeMinimalStage((Cffu<Integer>) sa);
+        MinStageTestUtils.shouldBeMinimalStage((Cffu<Integer>) se);
     }
 
     // endregion
@@ -762,7 +763,7 @@ class CffuFactoryTest {
     void test_toCffu() throws Exception {
         Cffu<Integer> cf = testCffuFac.toCffu(completedFuture(n));
         assertEquals(n, cf.get());
-        shouldNotBeMinimalStage(cf);
+        MinStageTestUtils.shouldNotBeMinimalStage(cf);
 
         final Cffu<Integer> cffu_in = testCffuFac.completedFuture(n);
 
@@ -785,15 +786,15 @@ class CffuFactoryTest {
     void test_toCffu__for_factoryMethods_of_Java9() {
         CompletableFuture<Object> cf1 = CompletableFuture.failedFuture(rte);
         assertFalse(testCffuFac.toCffu(cf1).isMinimalStage());
-        shouldNotBeMinimalStage(cf1);
+        MinStageTestUtils.shouldNotBeMinimalStage(cf1);
 
         Cffu<Integer> cf2 = testCffuFac.toCffu(CompletableFuture.completedStage(n));
         assertFalse(cf2.isMinimalStage());
-        shouldNotBeMinimalStage(cf2);
+        MinStageTestUtils.shouldNotBeMinimalStage(cf2);
 
         Cffu<Object> cf3 = testCffuFac.toCffu(CompletableFuture.failedStage(rte));
         assertFalse(cf3.isMinimalStage());
-        shouldNotBeMinimalStage(cf3);
+        MinStageTestUtils.shouldNotBeMinimalStage(cf3);
     }
 
     @Test
@@ -802,8 +803,8 @@ class CffuFactoryTest {
         Cffu<Integer>[] cffus = testCffuFac.toCffuArray(CompletableFuture.completedStage(n), completedFuture(n));
         assertEquals(n, cffus[1].get());
 
-        shouldNotBeMinimalStage(cffus[0]);
-        shouldNotBeMinimalStage(cffus[1]);
+        MinStageTestUtils.shouldNotBeMinimalStage(cffus[0]);
+        MinStageTestUtils.shouldNotBeMinimalStage(cffus[1]);
     }
 
     // endregion

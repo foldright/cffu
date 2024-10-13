@@ -1,5 +1,6 @@
 package io.foldright.compatibility_test;
 
+import io.foldright.test_utils.MinStageTestUtils;
 import io.foldright.test_utils.TestUtils;
 import io.foldright.test_utils.TestingExecutorUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -40,7 +41,7 @@ class CompletableFutureApiCompatibilityTest {
         // completedFuture
         CompletableFuture<String> f0 = CompletableFuture.completedFuture(hello);
         assertEquals(hello, f0.get());
-        TestUtils.shouldNotBeMinimalStage(f0);
+        MinStageTestUtils.shouldNotBeMinimalStage(f0);
         // below methods is tested in below test method
         // - completedStage
         // - failedFuture
@@ -53,19 +54,19 @@ class CompletableFutureApiCompatibilityTest {
         // completedStage
         CompletableFuture<String> cf = (CompletableFuture<String>) CompletableFuture.completedStage(hello);
         assertEquals(hello, cf.toCompletableFuture().get());
-        TestUtils.shouldBeMinimalStage(cf);
+        MinStageTestUtils.shouldBeMinimalStage(cf);
 
         // failedFuture
         CompletableFuture<String> ff = CompletableFuture.failedFuture(rte);
         assertSame(rte, assertThrowsExactly(ExecutionException.class, ff::get).getCause());
-        TestUtils.shouldNotBeMinimalStage(ff);
+        MinStageTestUtils.shouldNotBeMinimalStage(ff);
 
         // failedStage
         CompletableFuture<String> fs = (CompletableFuture<String>) CompletableFuture.<String>failedStage(rte);
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 fs.toCompletableFuture().get()
         ).getCause());
-        TestUtils.shouldBeMinimalStage(fs);
+        MinStageTestUtils.shouldBeMinimalStage(fs);
     }
 
     @Test
@@ -79,7 +80,7 @@ class CompletableFutureApiCompatibilityTest {
         });
         assertNull(cf.get());
         assertEquals(hello, holder.get());
-        TestUtils.shouldNotBeMinimalStage(cf);
+        MinStageTestUtils.shouldNotBeMinimalStage(cf);
 
         holder.set(null);
         cf = CompletableFuture.runAsync(() -> {
@@ -88,7 +89,7 @@ class CompletableFutureApiCompatibilityTest {
         }, anotherExecutorService);
         assertNull(cf.get());
         assertEquals(hello, holder.get());
-        TestUtils.shouldNotBeMinimalStage(cf);
+        MinStageTestUtils.shouldNotBeMinimalStage(cf);
 
         // supplyAsync
         CompletableFuture<String> s_cf = CompletableFuture.supplyAsync(() -> {
@@ -96,13 +97,13 @@ class CompletableFutureApiCompatibilityTest {
             return hello;
         });
         assertEquals(hello, s_cf.get());
-        TestUtils.shouldNotBeMinimalStage(s_cf);
+        MinStageTestUtils.shouldNotBeMinimalStage(s_cf);
         s_cf = CompletableFuture.supplyAsync(() -> {
             TestUtils.assertCompletableFutureRunInThreadOf(anotherExecutorService);
             return hello;
         }, anotherExecutorService);
         assertEquals(hello, s_cf.get());
-        TestUtils.shouldNotBeMinimalStage(s_cf);
+        MinStageTestUtils.shouldNotBeMinimalStage(s_cf);
     }
 
     @Test
@@ -594,7 +595,7 @@ class CompletableFutureApiCompatibilityTest {
         CompletableFuture<Integer> cf = CompletableFuture.completedFuture(n);
 
         // minimalCompletionStage
-        TestUtils.shouldBeMinimalStage((CompletableFuture<Integer>) cf.minimalCompletionStage());
+        MinStageTestUtils.shouldBeMinimalStage((CompletableFuture<Integer>) cf.minimalCompletionStage());
 
         // copy
         assertEquals(n, cf.copy().get());

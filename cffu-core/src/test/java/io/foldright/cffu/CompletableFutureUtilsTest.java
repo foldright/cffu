@@ -528,7 +528,7 @@ class CompletableFutureUtilsTest {
         final CompletableFuture<Integer> incomplete = incompleteCf();
 
         // 0 input cf
-        assertEquals(0, mostSuccessResultsOf(null, SHORT_WAIT_MS, MILLISECONDS).get().size());
+        assertTrue(mostSuccessResultsOf(null, SHORT_WAIT_MS, MILLISECONDS).get().isEmpty());
 
         // 1 input cf
         assertEquals(Collections.singletonList(n), mostSuccessResultsOf(
