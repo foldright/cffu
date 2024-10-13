@@ -802,7 +802,7 @@
 								How to disable Javadoc warnings in Maven Javadoc Plugin? - Stack Overflow
 								https://stackoverflow.com/questions/39616344
 							-->
-							<doclint>all,-missing</doclint>
+							<doclint>all,-missing,-reference</doclint>
 							<!-- https://maven.apache.org/plugins/maven-javadoc-plugin/examples/exclude-package-names.html -->
 							<excludePackageNames>${javadoc.default.exclude.packages}</excludePackageNames>
 							<!-- https://maven.apache.org/plugins/maven-javadoc-plugin/javadoc-mojo.html#detectOfflineLinks -->

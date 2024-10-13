@@ -215,8 +215,9 @@ final class FutureCanceller implements BiConsumer<Object, Throwable> {
 }
 
 /**
- * code is copied from {@code CompletableFuture.AsyncSupply} with small adoption.
+ * code is copied from {@link CompletableFuture.AsyncSupply} with small adoption.
  */
+@SuppressWarnings("JavadocReference")
 @SuppressFBWarnings("SE_BAD_FIELD")
 final class CfCompleterBySupplier<T> extends ForkJoinTask<Void>
         implements Runnable, CompletableFuture.AsynchronousCompletionTask {
@@ -264,8 +265,9 @@ final class CfCompleterBySupplier<T> extends ForkJoinTask<Void>
 }
 
 /**
- * code is adopted from {@code CompletableFuture.AsyncSupply}.
+ * code is copied from {@link CompletableFuture.AsyncSupply} with small adoption.
  */
+@SuppressWarnings("JavadocReference")
 @SuppressFBWarnings("SE_BAD_FIELD")
 final class CfExCompleterBySupplier extends ForkJoinTask<Void>
         implements Runnable, CompletableFuture.AsynchronousCompletionTask {

@@ -2843,6 +2843,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns the underlying CompletableFuture.
+     * <p>
+     * <strong>CAUTION:</strong> This method is NOT type safe! The returned CompletableFuture may be a minimal-stage.
      * In general, you should NEVER use this method, use {@link #toCompletableFuture()} instead.
      *
      * @return the underlying CompletableFuture

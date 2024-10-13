@@ -4098,6 +4098,7 @@ public final class CompletableFutureUtils {
     /**
      * Fallback if ForkJoinPool.commonPool() cannot support parallelism
      */
+    @SuppressWarnings("JavadocReference")
     private static final class ThreadPerTaskExecutor implements Executor {
         @Override
         public void execute(Runnable r) {
