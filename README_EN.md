@@ -75,8 +75,8 @@ The provided features include：
 
 🏪 More convenient methods, such as:
 - Return multiple CF results instead of void (allOf), e.g., `allResultsFailFastOf`, `allResultsOf`, `mSupplyFailFastAsync`, `thenMApplyFailFastAsync`.
-- Return multiple different type CF results instead of the same type, e.g., `allTupleFailFastOf`, `allTupleOf`, `tupleMSupplyFailFastAsync`, `thenTupleMApplyFailFastAsync`.
-- Direct execution of multiple actions without wrapping them into CompletableFuture, e.g., `tupleMSupplyFailFastAsync`, `mSupplyMostSuccessAsync`, `thenTupleMApplyFailFastAsync`, `thenMRunFailFastAsync`.
+- Return multiple different type CF results instead of the same type, e.g., `allTupleFailFastOf`, `allTupleOf`, `mSupplyTupleFailFastAsync`, `thenMApplyTupleFailFastAsync`.
+- Direct execution of multiple actions without wrapping them into CompletableFuture, e.g., `mSupplyTupleFailFastAsync`, `mSupplyMostSuccessAsync`, `thenMApplyTupleFailFastAsync`, `thenMRunFailFastAsync`.
 
 ⚙️ More efficient and flexible concurrent execution strategies, such as:
 - **AllFailFast strategy**: Fail fast and return when any input CF fails, rather than waiting for all CFs to complete (allOf).

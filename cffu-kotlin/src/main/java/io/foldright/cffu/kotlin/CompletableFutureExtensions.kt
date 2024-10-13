@@ -1068,66 +1068,66 @@ fun CompletableFuture<*>.thenMRunAnyAsync(executor: Executor, vararg actions: Ru
 /**
  * Tuple variance of [thenMApplyFailFastAsync].
  */
-fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyFailFastAsync(
+fun <T, U1, U2> CompletableFuture<out T>.thenMApplyTupleFailFastAsync(
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
-): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenTupleMApplyFailFastAsync(this, fn1, fn2)
+): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenMApplyTupleFailFastAsync(this, fn1, fn2)
 
 /**
  * Tuple variance of [thenMApplyFailFastAsync].
  */
-fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyFailFastAsync(
+fun <T, U1, U2> CompletableFuture<out T>.thenMApplyTupleFailFastAsync(
     executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
-): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenTupleMApplyFailFastAsync(this, executor, fn1, fn2)
+): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenMApplyTupleFailFastAsync(this, executor, fn1, fn2)
 
 /**
  * Tuple variance of [thenMApplyFailFastAsync].
  */
-fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyFailFastAsync(
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenMApplyTupleFailFastAsync(
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
-): CompletableFuture<Tuple3<U1, U2, U3>> = CompletableFutureUtils.thenTupleMApplyFailFastAsync(this, fn1, fn2, fn3)
+): CompletableFuture<Tuple3<U1, U2, U3>> = CompletableFutureUtils.thenMApplyTupleFailFastAsync(this, fn1, fn2, fn3)
 
 /**
  * Tuple variance of [thenMApplyFailFastAsync].
  */
-fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyFailFastAsync(
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenMApplyTupleFailFastAsync(
     executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
 ): CompletableFuture<Tuple3<U1, U2, U3>> =
-    CompletableFutureUtils.thenTupleMApplyFailFastAsync(this, executor, fn1, fn2, fn3)
+    CompletableFutureUtils.thenMApplyTupleFailFastAsync(this, executor, fn1, fn2, fn3)
 
 /**
  * Tuple variance of [thenMApplyFailFastAsync].
  */
-fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyFailFastAsync(
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenMApplyTupleFailFastAsync(
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
 ): CompletableFuture<Tuple4<U1, U2, U3, U4>> =
-    CompletableFutureUtils.thenTupleMApplyFailFastAsync(this, fn1, fn2, fn3, fn4)
+    CompletableFutureUtils.thenMApplyTupleFailFastAsync(this, fn1, fn2, fn3, fn4)
 
 /**
  * Tuple variance of [thenMApplyFailFastAsync].
  */
-fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyFailFastAsync(
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenMApplyTupleFailFastAsync(
     executor: Executor, fn1: Function<in T, out U1>,
     fn2: Function<in T, out U2>, fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
 ): CompletableFuture<Tuple4<U1, U2, U3, U4>> =
-    CompletableFutureUtils.thenTupleMApplyFailFastAsync(this, executor, fn1, fn2, fn3, fn4)
+    CompletableFutureUtils.thenMApplyTupleFailFastAsync(this, executor, fn1, fn2, fn3, fn4)
 
 /**
  * Tuple variance of [thenMApplyFailFastAsync].
  */
-fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyFailFastAsync(
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenMApplyTupleFailFastAsync(
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
     fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
 ): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
-    CompletableFutureUtils.thenTupleMApplyFailFastAsync(this, fn1, fn2, fn3, fn4, fn5)
+    CompletableFutureUtils.thenMApplyTupleFailFastAsync(this, fn1, fn2, fn3, fn4, fn5)
 
 /**
  * Tuple variance of [thenMApplyFailFastAsync].
  */
-fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyFailFastAsync(
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenMApplyTupleFailFastAsync(
     executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
     fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
 ): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
-    CompletableFutureUtils.thenTupleMApplyFailFastAsync(this, executor, fn1, fn2, fn3, fn4, fn5)
+    CompletableFutureUtils.thenMApplyTupleFailFastAsync(this, executor, fn1, fn2, fn3, fn4, fn5)
 
 
 /**
@@ -1136,9 +1136,9 @@ fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyFailFastAsyn
  * If any of the provided functions fails, its corresponding position will contain `null`
  * (which is indistinguishable from the function having a successful value of `null`).
  */
-fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
+fun <T, U1, U2> CompletableFuture<out T>.thenMApplyAllSuccessTupleAsync(
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
-): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(this, fn1, fn2)
+): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(this, fn1, fn2)
 
 /**
  * Tuple variance of [thenMApplyAllSuccessAsync] with `null` valueIfFailed.
@@ -1146,9 +1146,9 @@ fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
  * If any of the provided functions fails, its corresponding position will contain `null`
  * (which is indistinguishable from the function having a successful value of `null`).
  */
-fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
+fun <T, U1, U2> CompletableFuture<out T>.thenMApplyAllSuccessTupleAsync(
     executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
-): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(this, executor, fn1, fn2)
+): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(this, executor, fn1, fn2)
 
 /**
  * Tuple variance of [thenMApplyAllSuccessAsync] with `null` valueIfFailed.
@@ -1156,9 +1156,9 @@ fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
  * If any of the provided functions fails, its corresponding position will contain `null`
  * (which is indistinguishable from the function having a successful value of `null`).
  */
-fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenMApplyAllSuccessTupleAsync(
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
-): CompletableFuture<Tuple3<U1, U2, U3>> = CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(this, fn1, fn2, fn3)
+): CompletableFuture<Tuple3<U1, U2, U3>> = CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(this, fn1, fn2, fn3)
 
 /**
  * Tuple variance of [thenMApplyAllSuccessAsync] with `null` valueIfFailed.
@@ -1166,10 +1166,10 @@ fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
  * If any of the provided functions fails, its corresponding position will contain `null`
  * (which is indistinguishable from the function having a successful value of `null`).
  */
-fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenMApplyAllSuccessTupleAsync(
     executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
 ): CompletableFuture<Tuple3<U1, U2, U3>> =
-    CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(this, executor, fn1, fn2, fn3)
+    CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(this, executor, fn1, fn2, fn3)
 
 /**
  * Tuple variance of [thenMApplyAllSuccessAsync] with `null` valueIfFailed.
@@ -1177,10 +1177,10 @@ fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
  * If any of the provided functions fails, its corresponding position will contain `null`
  * (which is indistinguishable from the function having a successful value of `null`).
  */
-fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenMApplyAllSuccessTupleAsync(
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
 ): CompletableFuture<Tuple4<U1, U2, U3, U4>> =
-    CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(this, fn1, fn2, fn3, fn4)
+    CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(this, fn1, fn2, fn3, fn4)
 
 /**
  * Tuple variance of [thenMApplyAllSuccessAsync] with `null` valueIfFailed.
@@ -1188,11 +1188,11 @@ fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
  * If any of the provided functions fails, its corresponding position will contain `null`
  * (which is indistinguishable from the function having a successful value of `null`).
  */
-fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenMApplyAllSuccessTupleAsync(
     executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
     fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
 ): CompletableFuture<Tuple4<U1, U2, U3, U4>> =
-    CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(this, executor, fn1, fn2, fn3, fn4)
+    CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(this, executor, fn1, fn2, fn3, fn4)
 
 /**
  * Tuple variance of [thenMApplyAllSuccessAsync] with `null` valueIfFailed.
@@ -1200,11 +1200,11 @@ fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
  * If any of the provided functions fails, its corresponding position will contain `null`
  * (which is indistinguishable from the function having a successful value of `null`).
  */
-fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenMApplyAllSuccessTupleAsync(
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
     fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
 ): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
-    CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(this, fn1, fn2, fn3, fn4, fn5)
+    CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(this, fn1, fn2, fn3, fn4, fn5)
 
 /**
  * Tuple variance of [thenMApplyAllSuccessAsync] with `null` valueIfFailed.
@@ -1212,11 +1212,11 @@ fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyAllSuccessAs
  * If any of the provided functions fails, its corresponding position will contain `null`
  * (which is indistinguishable from the function having a successful value of `null`).
  */
-fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyAllSuccessAsync(
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenMApplyAllSuccessTupleAsync(
     executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
     fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
 ): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
-    CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(this, executor, fn1, fn2, fn3, fn4, fn5)
+    CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(this, executor, fn1, fn2, fn3, fn4, fn5)
 
 /**
  * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
@@ -1224,10 +1224,10 @@ fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyAllSuccessAs
  * If any of the provided suppliers does not success, its corresponding position will contain `null`
  * (which is indistinguishable from the supplier having a successful value of `null`).
  */
-fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
+fun <T, U1, U2> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
     timeout: Long, unit: TimeUnit, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
 ): CompletableFuture<Tuple2<U1, U2>> =
-    CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(this, timeout, unit, fn1, fn2)
+    CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(this, timeout, unit, fn1, fn2)
 
 /**
  * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
@@ -1235,10 +1235,10 @@ fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
  * If any of the provided suppliers does not success, its corresponding position will contain `null`
  * (which is indistinguishable from the supplier having a successful value of `null`).
  */
-fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
+fun <T, U1, U2> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
     executor: Executor, timeout: Long, unit: TimeUnit, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
 ): CompletableFuture<Tuple2<U1, U2>> =
-    CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(this, executor, timeout, unit, fn1, fn2)
+    CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(this, executor, timeout, unit, fn1, fn2)
 
 /**
  * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
@@ -1246,10 +1246,10 @@ fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
  * If any of the provided suppliers does not success, its corresponding position will contain `null`
  * (which is indistinguishable from the supplier having a successful value of `null`).
  */
-fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
     timeout: Long, unit: TimeUnit, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
 ): CompletableFuture<Tuple3<U1, U2, U3>> =
-    CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(this, timeout, unit, fn1, fn2, fn3)
+    CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(this, timeout, unit, fn1, fn2, fn3)
 
 /**
  * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
@@ -1257,11 +1257,11 @@ fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
  * If any of the provided suppliers does not success, its corresponding position will contain `null`
  * (which is indistinguishable from the supplier having a successful value of `null`).
  */
-fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
     executor: Executor, timeout: Long, unit: TimeUnit,
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
 ): CompletableFuture<Tuple3<U1, U2, U3>> =
-    CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(this, executor, timeout, unit, fn1, fn2, fn3)
+    CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(this, executor, timeout, unit, fn1, fn2, fn3)
 
 /**
  * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
@@ -1269,11 +1269,11 @@ fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
  * If any of the provided suppliers does not success, its corresponding position will contain `null`
  * (which is indistinguishable from the supplier having a successful value of `null`).
  */
-fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
     timeout: Long, unit: TimeUnit, fn1: Function<in T, out U1>,
     fn2: Function<in T, out U2>, fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
 ): CompletableFuture<Tuple4<U1, U2, U3, U4>> =
-    CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(this, timeout, unit, fn1, fn2, fn3, fn4)
+    CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(this, timeout, unit, fn1, fn2, fn3, fn4)
 
 /**
  * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
@@ -1281,11 +1281,11 @@ fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync
  * If any of the provided suppliers does not success, its corresponding position will contain `null`
  * (which is indistinguishable from the supplier having a successful value of `null`).
  */
-fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
     executor: Executor, timeout: Long, unit: TimeUnit, fn1: Function<in T, out U1>,
     fn2: Function<in T, out U2>, fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
 ): CompletableFuture<Tuple4<U1, U2, U3, U4>> =
-    CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(this, executor, timeout, unit, fn1, fn2, fn3, fn4)
+    CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(this, executor, timeout, unit, fn1, fn2, fn3, fn4)
 
 /**
  * Tuple variance of [thenMApplyMostSuccessAsync]
@@ -1294,11 +1294,11 @@ fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync
  * If any of the provided suppliers does not success, its corresponding position will contain `null`
  * (which is indistinguishable from the supplier having a successful value of `null`).
  */
-fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
     timeout: Long, unit: TimeUnit, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
     fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
 ): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
-    CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(this, timeout, unit, fn1, fn2, fn3, fn4, fn5)
+    CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(this, timeout, unit, fn1, fn2, fn3, fn4, fn5)
 
 /**
  * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
@@ -1306,73 +1306,73 @@ fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyMostSuccessA
  * If any of the provided suppliers does not success, its corresponding position will contain `null`
  * (which is indistinguishable from the supplier having a successful value of `null`).
  */
-fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyMostSuccessAsync(
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
     executor: Executor, timeout: Long, unit: TimeUnit, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
     fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
 ): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
-    CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(this, executor, timeout, unit, fn1, fn2, fn3, fn4, fn5)
+    CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(this, executor, timeout, unit, fn1, fn2, fn3, fn4, fn5)
 
 /**
  * Tuple variance of [thenMApplyAsync].
  */
-fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyAsync(
+fun <T, U1, U2> CompletableFuture<out T>.thenMApplyTupleAsync(
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
-): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenTupleMApplyAsync(this, fn1, fn2)
+): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenMApplyTupleAsync(this, fn1, fn2)
 
 /**
  * Tuple variance of [thenMApplyAsync].
  */
-fun <T, U1, U2> CompletableFuture<out T>.thenTupleMApplyAsync(
+fun <T, U1, U2> CompletableFuture<out T>.thenMApplyTupleAsync(
     executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>
-): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenTupleMApplyAsync(this, executor, fn1, fn2)
+): CompletableFuture<Tuple2<U1, U2>> = CompletableFutureUtils.thenMApplyTupleAsync(this, executor, fn1, fn2)
 
 /**
  * Tuple variance of [thenMApplyAsync].
  */
-fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyAsync(
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenMApplyTupleAsync(
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
-): CompletableFuture<Tuple3<U1, U2, U3>> = CompletableFutureUtils.thenTupleMApplyAsync(this, fn1, fn2, fn3)
+): CompletableFuture<Tuple3<U1, U2, U3>> = CompletableFutureUtils.thenMApplyTupleAsync(this, fn1, fn2, fn3)
 
 /**
  * Tuple variance of [thenMApplyAsync].
  */
-fun <T, U1, U2, U3> CompletableFuture<out T>.thenTupleMApplyAsync(
+fun <T, U1, U2, U3> CompletableFuture<out T>.thenMApplyTupleAsync(
     executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>
-): CompletableFuture<Tuple3<U1, U2, U3>> = CompletableFutureUtils.thenTupleMApplyAsync(this, executor, fn1, fn2, fn3)
+): CompletableFuture<Tuple3<U1, U2, U3>> = CompletableFutureUtils.thenMApplyTupleAsync(this, executor, fn1, fn2, fn3)
 
 /**
  * Tuple variance of [thenMApplyAsync].
  */
-fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyAsync(
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenMApplyTupleAsync(
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
-): CompletableFuture<Tuple4<U1, U2, U3, U4>> = CompletableFutureUtils.thenTupleMApplyAsync(this, fn1, fn2, fn3, fn4)
+): CompletableFuture<Tuple4<U1, U2, U3, U4>> = CompletableFutureUtils.thenMApplyTupleAsync(this, fn1, fn2, fn3, fn4)
 
 /**
  * Tuple variance of [thenMApplyAsync].
  */
-fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenTupleMApplyAsync(
+fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenMApplyTupleAsync(
     executor: Executor,
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>, fn3: Function<in T, out U3>, fn4: Function<in T, out U4>
 ): CompletableFuture<Tuple4<U1, U2, U3, U4>> =
-    CompletableFutureUtils.thenTupleMApplyAsync(this, executor, fn1, fn2, fn3, fn4)
+    CompletableFutureUtils.thenMApplyTupleAsync(this, executor, fn1, fn2, fn3, fn4)
 
 /**
  * Tuple variance of [thenMApplyAsync].
  */
-fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyAsync(
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenMApplyTupleAsync(
     fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
     fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
 ): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
-    CompletableFutureUtils.thenTupleMApplyAsync(this, fn1, fn2, fn3, fn4, fn5)
+    CompletableFutureUtils.thenMApplyTupleAsync(this, fn1, fn2, fn3, fn4, fn5)
 
 /**
  * Tuple variance of [thenMApplyAsync].
  */
-fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyAsync(
+fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenMApplyTupleAsync(
     executor: Executor, fn1: Function<in T, out U1>, fn2: Function<in T, out U2>,
     fn3: Function<in T, out U3>, fn4: Function<in T, out U4>, fn5: Function<in T, out U5>
 ): CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> =
-    CompletableFutureUtils.thenTupleMApplyAsync(this, executor, fn1, fn2, fn3, fn4, fn5)
+    CompletableFutureUtils.thenMApplyTupleAsync(this, executor, fn1, fn2, fn3, fn4, fn5)
 
 // endregion
 ////////////////////////////////////////////////////////////

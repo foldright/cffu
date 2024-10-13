@@ -66,9 +66,9 @@
     - 支持返回多个`CF`的运行结果，而不是不返回`CF`的运行结果（`allOf`）  
       如方法`allResultsFailFastOf` / `allResultsOf` / `mSupplyFailFastAsync` / `thenMApplyFailFastAsync`
     - 支持返回多个不同类型的`CF`结果，而不是同一类型  
-      如方法`allTupleFailFastOf` / `allTupleOf` / `tupleMSupplyFailFastAsync` / `thenTupleMApplyFailFastAsync`
+      如方法`allTupleFailFastOf` / `allTupleOf` / `mSupplyTupleFailFastAsync` / `thenMApplyTupleFailFastAsync`
     - 支持直接运行多个`Action`，而不是要先包装成`CompletableFuture`  
-      如方法`tupleMSupplyFailFastAsync` / `mSupplyMostSuccessAsync` / `thenTupleMApplyFailFastAsync` / `thenMRunFailFastAsync`
+      如方法`mSupplyTupleFailFastAsync` / `mSupplyMostSuccessAsync` / `thenMApplyTupleFailFastAsync` / `thenMRunFailFastAsync`
     - 支持处理指定异常类型的`catching`方法，而不是处理所有异常`Throwable`（`exceptionally`）
   - 🚦 更高效灵活的并发执行策略，如
     - `AllFailFast`策略：当输入的多个`CF`有失败时快速失败返回，而不再于事无补地等待所有`CF`运行完成（`allOf`）
@@ -225,7 +225,7 @@ public class AllResultsOfDemo {
 
 > \# 完整可运行的Demo代码参见[`AllResultsOfDemo.java`](cffu-core/src/test/java/io/foldright/demo/AllResultsOfDemo.java)。
 
-上面是多个相同结果类型的`CF`，`cffu`还提供了返回多个不同类型`CF`结果的`allTupleFailFastOf` / `allTupleOf` / `tupleMSupplyFailFastAsync`等方法。
+上面是多个相同结果类型的`CF`，`cffu`还提供了返回多个不同类型`CF`结果的`allTupleFailFastOf` / `allTupleOf` / `mSupplyTupleFailFastAsync`等方法。
 
 示例代码如下：
 

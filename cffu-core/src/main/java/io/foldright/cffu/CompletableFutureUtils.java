@@ -460,15 +460,15 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyFailFastAsync(
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return tupleMSupplyFailFastAsync(ASYNC_POOL, supplier1, supplier2);
+        return mSupplyTupleFailFastAsync(ASYNC_POOL, supplier1, supplier2);
     }
 
     /**
      * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyFailFastAsync(
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         executor = screenExecutor(executor);
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
@@ -479,15 +479,15 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
-    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyFailFastAsync(
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return tupleMSupplyFailFastAsync(ASYNC_POOL, supplier1, supplier2, supplier3);
+        return mSupplyTupleFailFastAsync(ASYNC_POOL, supplier1, supplier2, supplier3);
     }
 
     /**
      * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
-    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyFailFastAsync(
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyTupleFailFastAsync(
             Executor executor,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
         executor = screenExecutor(executor);
@@ -499,16 +499,16 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
-    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyFailFastAsync(
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return tupleMSupplyFailFastAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4);
+        return mSupplyTupleFailFastAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4);
     }
 
     /**
      * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
-    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyFailFastAsync(
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
         executor = screenExecutor(executor);
@@ -520,16 +520,16 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
-    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFailFastAsync(
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return tupleMSupplyFailFastAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4, supplier5);
+        return mSupplyTupleFailFastAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4, supplier5);
     }
 
     /**
      * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
-    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFailFastAsync(
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
         executor = screenExecutor(executor);
@@ -572,9 +572,9 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAllSuccessAsync(
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyAllSuccessTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return tupleMSupplyAllSuccessAsync(ASYNC_POOL, supplier1, supplier2);
+        return mSupplyAllSuccessTupleAsync(ASYNC_POOL, supplier1, supplier2);
     }
 
     /**
@@ -583,7 +583,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAllSuccessAsync(
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyAllSuccessTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         executor = screenExecutor(executor);
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
@@ -597,9 +597,9 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAllSuccessAsync(
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyAllSuccessTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return tupleMSupplyAllSuccessAsync(ASYNC_POOL, supplier1, supplier2, supplier3);
+        return mSupplyAllSuccessTupleAsync(ASYNC_POOL, supplier1, supplier2, supplier3);
     }
 
     /**
@@ -608,7 +608,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAllSuccessAsync(
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyAllSuccessTupleAsync(
             Executor executor,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
         executor = screenExecutor(executor);
@@ -623,10 +623,10 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAllSuccessAsync(
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyAllSuccessTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return tupleMSupplyAllSuccessAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4);
+        return mSupplyAllSuccessTupleAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4);
     }
 
     /**
@@ -635,7 +635,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAllSuccessAsync(
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyAllSuccessTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
         executor = screenExecutor(executor);
@@ -650,10 +650,10 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAllSuccessAsync(
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyAllSuccessTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return tupleMSupplyAllSuccessAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4, supplier5);
+        return mSupplyAllSuccessTupleAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4, supplier5);
     }
 
     /**
@@ -662,7 +662,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAllSuccessAsync(
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyAllSuccessTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
         executor = screenExecutor(executor);
@@ -688,9 +688,9 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyMostSuccessTupleAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return tupleMSupplyMostSuccessAsync(ASYNC_POOL, timeout, unit, supplier1, supplier2);
+        return mSupplyMostSuccessTupleAsync(ASYNC_POOL, timeout, unit, supplier1, supplier2);
     }
 
     /**
@@ -700,7 +700,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyMostSuccessAsync(
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         executor = screenExecutor(executor);
@@ -716,10 +716,10 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyMostSuccessTupleAsync(
             long timeout, TimeUnit unit,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return tupleMSupplyMostSuccessAsync(ASYNC_POOL, timeout, unit, supplier1, supplier2, supplier3);
+        return mSupplyMostSuccessTupleAsync(ASYNC_POOL, timeout, unit, supplier1, supplier2, supplier3);
     }
 
     /**
@@ -729,7 +729,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyMostSuccessAsync(
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
         executor = screenExecutor(executor);
@@ -745,10 +745,10 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyMostSuccessTupleAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return tupleMSupplyMostSuccessAsync(ASYNC_POOL, timeout, unit, supplier1, supplier2, supplier3, supplier4);
+        return mSupplyMostSuccessTupleAsync(ASYNC_POOL, timeout, unit, supplier1, supplier2, supplier3, supplier4);
     }
 
     /**
@@ -758,7 +758,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyMostSuccessAsync(
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
         executor = screenExecutor(executor);
@@ -774,11 +774,11 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyMostSuccessTupleAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
             Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return tupleMSupplyMostSuccessAsync(ASYNC_POOL, timeout, unit, supplier1, supplier2, supplier3, supplier4, supplier5);
+        return mSupplyMostSuccessTupleAsync(ASYNC_POOL, timeout, unit, supplier1, supplier2, supplier3, supplier4, supplier5);
     }
 
     /**
@@ -788,7 +788,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyMostSuccessAsync(
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
             Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
@@ -823,15 +823,15 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
      */
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAsync(
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return tupleMSupplyAsync(ASYNC_POOL, supplier1, supplier2);
+        return mSupplyTupleAsync(ASYNC_POOL, supplier1, supplier2);
     }
 
     /**
      * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
-    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> tupleMSupplyAsync(
+    public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         executor = screenExecutor(executor);
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
@@ -842,15 +842,15 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
      */
-    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAsync(
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return tupleMSupplyAsync(ASYNC_POOL, supplier1, supplier2, supplier3);
+        return mSupplyTupleAsync(ASYNC_POOL, supplier1, supplier2, supplier3);
     }
 
     /**
      * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
-    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> tupleMSupplyAsync(
+    public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyTupleAsync(
             Executor executor,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
         executor = screenExecutor(executor);
@@ -862,16 +862,16 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
      */
-    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAsync(
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return tupleMSupplyAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4);
+        return mSupplyTupleAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4);
     }
 
     /**
      * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
-    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> tupleMSupplyAsync(
+    public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
         executor = screenExecutor(executor);
@@ -883,16 +883,16 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
      */
-    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAsync(
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return tupleMSupplyAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4, supplier5);
+        return mSupplyTupleAsync(ASYNC_POOL, supplier1, supplier2, supplier3, supplier4, supplier5);
     }
 
     /**
      * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
-    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAsync(
+    public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
         executor = screenExecutor(executor);
@@ -2216,16 +2216,16 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
      */
-    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyFailFastAsync(
+    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyFailFastAsync(cfThis, defaultExecutor(cfThis), fn1, fn2);
+        return thenMApplyTupleFailFastAsync(cfThis, defaultExecutor(cfThis), fn1, fn2);
     }
 
     /**
      * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
      */
-    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyFailFastAsync(
+    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
         requireNonNull(cfThis, "cfThis is null");
@@ -2238,16 +2238,16 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
      */
-    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyFailFastAsync(
+    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyFailFastAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3);
+        return thenMApplyTupleFailFastAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3);
     }
 
     /**
      * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
      */
-    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyFailFastAsync(
+    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
         requireNonNull(cfThis, "cfThis is null");
@@ -2260,17 +2260,17 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
      */
-    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFailFastAsync(
+    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyFailFastAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4);
+        return thenMApplyTupleFailFastAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4);
     }
 
     /**
      * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
      */
-    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFailFastAsync(
+    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
@@ -2284,17 +2284,17 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
      */
-    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFailFastAsync(
+    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyFailFastAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4, fn5);
+        return thenMApplyTupleFailFastAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
      * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
      */
-    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFailFastAsync(
+    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
@@ -2312,10 +2312,10 @@ public final class CompletableFutureUtils {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
-    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyAllSuccessAsync(
+    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyAllSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyAllSuccessAsync(cfThis, defaultExecutor(cfThis), fn1, fn2);
+        return thenMApplyAllSuccessTupleAsync(cfThis, defaultExecutor(cfThis), fn1, fn2);
     }
 
     /**
@@ -2325,7 +2325,7 @@ public final class CompletableFutureUtils {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
-    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyAllSuccessAsync(
+    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyAllSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
         requireNonNull(cfThis, "cfThis is null");
@@ -2342,10 +2342,10 @@ public final class CompletableFutureUtils {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
-    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyAllSuccessAsync(
+    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyAllSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyAllSuccessAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3);
+        return thenMApplyAllSuccessTupleAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3);
     }
 
     /**
@@ -2355,7 +2355,7 @@ public final class CompletableFutureUtils {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
-    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyAllSuccessAsync(
+    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyAllSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3) {
@@ -2373,11 +2373,11 @@ public final class CompletableFutureUtils {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
-    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAllSuccessAsync(
+    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyAllSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyAllSuccessAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4);
+        return thenMApplyAllSuccessTupleAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4);
     }
 
     /**
@@ -2387,7 +2387,7 @@ public final class CompletableFutureUtils {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
-    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAllSuccessAsync(
+    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyAllSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
@@ -2405,11 +2405,11 @@ public final class CompletableFutureUtils {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
-    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAllSuccessAsync(
+    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyAllSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyAllSuccessAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4, fn5);
+        return thenMApplyAllSuccessTupleAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
@@ -2419,7 +2419,7 @@ public final class CompletableFutureUtils {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
-    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAllSuccessAsync(
+    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyAllSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
@@ -2437,10 +2437,10 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
+    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyMostSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyMostSuccessAsync(cfThis, defaultExecutor(cfThis), timeout, unit, fn1, fn2);
+        return thenMApplyMostSuccessTupleAsync(cfThis, defaultExecutor(cfThis), timeout, unit, fn1, fn2);
     }
 
     /**
@@ -2450,7 +2450,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
+    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyMostSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
         requireNonNull(cfThis, "cfThis is null");
@@ -2468,10 +2468,10 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
+    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyMostSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyMostSuccessAsync(cfThis, defaultExecutor(cfThis), timeout, unit, fn1, fn2, fn3);
+        return thenMApplyMostSuccessTupleAsync(cfThis, defaultExecutor(cfThis), timeout, unit, fn1, fn2, fn3);
     }
 
     /**
@@ -2481,7 +2481,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
+    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyMostSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3) {
@@ -2500,11 +2500,11 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyMostSuccessAsync(
+    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyMostSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyMostSuccessAsync(cfThis, defaultExecutor(cfThis), timeout, unit, fn1, fn2, fn3, fn4);
+        return thenMApplyMostSuccessTupleAsync(cfThis, defaultExecutor(cfThis), timeout, unit, fn1, fn2, fn3, fn4);
     }
 
     /**
@@ -2514,7 +2514,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyMostSuccessAsync(
+    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyMostSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
@@ -2533,11 +2533,11 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyMostSuccessAsync(
+    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyMostSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyMostSuccessAsync(cfThis, defaultExecutor(cfThis), timeout, unit, fn1, fn2, fn3, fn4, fn5);
+        return thenMApplyMostSuccessTupleAsync(cfThis, defaultExecutor(cfThis), timeout, unit, fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
@@ -2547,7 +2547,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyMostSuccessAsync(
+    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyMostSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
@@ -2563,16 +2563,16 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
-    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyAsync(
+    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyAsync(cfThis, defaultExecutor(cfThis), fn1, fn2);
+        return thenMApplyTupleAsync(cfThis, defaultExecutor(cfThis), fn1, fn2);
     }
 
     /**
      * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
-    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenTupleMApplyAsync(
+    public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
         requireNonNull(cfThis, "cfThis is null");
@@ -2585,16 +2585,16 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
-    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyAsync(
+    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3);
+        return thenMApplyTupleAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3);
     }
 
     /**
      * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
-    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenTupleMApplyAsync(
+    public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
         requireNonNull(cfThis, "cfThis is null");
@@ -2607,17 +2607,17 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
-    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAsync(
+    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4);
+        return thenMApplyTupleAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4);
     }
 
     /**
      * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
-    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAsync(
+    public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4) {
@@ -2631,17 +2631,17 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
-    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAsync(
+    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4, fn5);
+        return thenMApplyTupleAsync(cfThis, defaultExecutor(cfThis), fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
      * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
-    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAsync(
+    public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {

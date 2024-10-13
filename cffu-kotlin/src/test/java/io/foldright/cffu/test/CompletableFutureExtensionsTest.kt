@@ -423,102 +423,102 @@ class CompletableFutureExtensionsTest : FunSpec({
             n + x
         }
 
-        // thenTupleMApplyFailFastAsync
+        // thenMApplyTupleFailFastAsync
 
-        completed.thenTupleMApplyFailFastAsync(function_n, function_s)
+        completed.thenMApplyTupleFailFastAsync(function_n, function_s)
             .await() shouldBe Tuple2.of(n + n, s + n)
-        completed.thenTupleMApplyFailFastAsync(testExecutor, function_n, function_s)
+        completed.thenMApplyTupleFailFastAsync(testExecutor, function_n, function_s)
             .await() shouldBe Tuple2.of(n + n, s + n)
 
-        completed.thenTupleMApplyFailFastAsync(function_n, function_s, function_d)
+        completed.thenMApplyTupleFailFastAsync(function_n, function_s, function_d)
             .await() shouldBe Tuple3.of(n + n, s + n, d + n)
-        completed.thenTupleMApplyFailFastAsync(testExecutor, function_n, function_s, function_d)
+        completed.thenMApplyTupleFailFastAsync(testExecutor, function_n, function_s, function_d)
             .await() shouldBe Tuple3.of(n + n, s + n, d + n)
 
-        completed.thenTupleMApplyFailFastAsync(function_n, function_s, function_d, function_an)
+        completed.thenMApplyTupleFailFastAsync(function_n, function_s, function_d, function_an)
             .await() shouldBe Tuple4.of(n + n, s + n, d + n, anotherN + n)
-        completed.thenTupleMApplyFailFastAsync(testExecutor, function_n, function_s, function_d, function_an)
+        completed.thenMApplyTupleFailFastAsync(testExecutor, function_n, function_s, function_d, function_an)
             .await() shouldBe Tuple4.of(n + n, s + n, d + n, anotherN + n)
 
-        completed.thenTupleMApplyFailFastAsync(function_n, function_s, function_d, function_an, function_nn)
+        completed.thenMApplyTupleFailFastAsync(function_n, function_s, function_d, function_an, function_nn)
             .await() shouldBe Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n)
-        completed.thenTupleMApplyFailFastAsync(
+        completed.thenMApplyTupleFailFastAsync(
             testExecutor, function_n, function_s, function_d, function_an, function_nn
         ).await() shouldBe Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n)
 
-        // thenTupleMApplyAllSuccessAsync
+        // thenMApplyAllSuccessTupleAsync
 
-        completed.thenTupleMApplyAllSuccessAsync(function_n, function_s)
+        completed.thenMApplyAllSuccessTupleAsync(function_n, function_s)
             .await() shouldBe Tuple2.of(n + n, s + n)
-        completed.thenTupleMApplyAllSuccessAsync(testExecutor, function_n, function_s)
+        completed.thenMApplyAllSuccessTupleAsync(testExecutor, function_n, function_s)
             .await() shouldBe Tuple2.of(n + n, s + n)
 
-        completed.thenTupleMApplyAllSuccessAsync(function_n, function_s, function_d)
+        completed.thenMApplyAllSuccessTupleAsync(function_n, function_s, function_d)
             .await() shouldBe Tuple3.of(n + n, s + n, d + n)
-        completed.thenTupleMApplyAllSuccessAsync(testExecutor, function_n, function_s, function_d)
+        completed.thenMApplyAllSuccessTupleAsync(testExecutor, function_n, function_s, function_d)
             .await() shouldBe Tuple3.of(n + n, s + n, d + n)
 
-        completed.thenTupleMApplyAllSuccessAsync(function_n, function_s, function_d, function_an)
+        completed.thenMApplyAllSuccessTupleAsync(function_n, function_s, function_d, function_an)
             .await() shouldBe Tuple4.of(n + n, s + n, d + n, anotherN + n)
-        completed.thenTupleMApplyAllSuccessAsync(testExecutor, function_n, function_s, function_d, function_an)
+        completed.thenMApplyAllSuccessTupleAsync(testExecutor, function_n, function_s, function_d, function_an)
             .await() shouldBe Tuple4.of(n + n, s + n, d + n, anotherN + n)
 
-        completed.thenTupleMApplyAllSuccessAsync(function_n, function_s, function_d, function_an, function_nn)
+        completed.thenMApplyAllSuccessTupleAsync(function_n, function_s, function_d, function_an, function_nn)
             .await() shouldBe Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n)
-        completed.thenTupleMApplyAllSuccessAsync(
+        completed.thenMApplyAllSuccessTupleAsync(
             testExecutor, function_n, function_s, function_d, function_an, function_nn
         ).await() shouldBe Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n)
 
-        // thenTupleMApplyMostSuccessAsync
+        // thenMApplyMostSuccessTupleAsync
 
-        completed.thenTupleMApplyMostSuccessAsync(LONG_WAIT_MS, TimeUnit.MILLISECONDS, function_n, function_s)
+        completed.thenMApplyMostSuccessTupleAsync(LONG_WAIT_MS, TimeUnit.MILLISECONDS, function_n, function_s)
             .await() shouldBe Tuple2.of(n + n, s + n)
-        completed.thenTupleMApplyMostSuccessAsync(
+        completed.thenMApplyMostSuccessTupleAsync(
             testExecutor, LONG_WAIT_MS, TimeUnit.MILLISECONDS, function_n, function_s
         ).await() shouldBe Tuple2.of(n + n, s + n)
 
-        completed.thenTupleMApplyMostSuccessAsync(
+        completed.thenMApplyMostSuccessTupleAsync(
             LONG_WAIT_MS, TimeUnit.MILLISECONDS, function_n, function_s, function_d
         ).await() shouldBe Tuple3.of(n + n, s + n, d + n)
-        completed.thenTupleMApplyMostSuccessAsync(
+        completed.thenMApplyMostSuccessTupleAsync(
             testExecutor, LONG_WAIT_MS, TimeUnit.MILLISECONDS, function_n, function_s, function_d
         ).await() shouldBe Tuple3.of(n + n, s + n, d + n)
 
-        completed.thenTupleMApplyMostSuccessAsync(
+        completed.thenMApplyMostSuccessTupleAsync(
             LONG_WAIT_MS, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an
         ).await() shouldBe Tuple4.of(n + n, s + n, d + n, anotherN + n)
-        completed.thenTupleMApplyMostSuccessAsync(
+        completed.thenMApplyMostSuccessTupleAsync(
             testExecutor, LONG_WAIT_MS, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an
         ).await() shouldBe Tuple4.of(n + n, s + n, d + n, anotherN + n)
 
-        completed.thenTupleMApplyMostSuccessAsync(
+        completed.thenMApplyMostSuccessTupleAsync(
             LONG_WAIT_MS, TimeUnit.MILLISECONDS, function_n, function_s, function_d, function_an, function_nn
         ).await() shouldBe Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n)
-        completed.thenTupleMApplyMostSuccessAsync(
+        completed.thenMApplyMostSuccessTupleAsync(
             testExecutor, LONG_WAIT_MS, TimeUnit.MILLISECONDS,
             function_n, function_s, function_d, function_an, function_nn
         ).await() shouldBe Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n)
 
-        // thenTupleMApplyAsync
+        // thenMApplyTupleAsync
 
-        completed.thenTupleMApplyAsync(function_n, function_s)
+        completed.thenMApplyTupleAsync(function_n, function_s)
             .await() shouldBe Tuple2.of(n + n, s + n)
-        completed.thenTupleMApplyAsync(testExecutor, function_n, function_s)
+        completed.thenMApplyTupleAsync(testExecutor, function_n, function_s)
             .await() shouldBe Tuple2.of(n + n, s + n)
 
-        completed.thenTupleMApplyAsync(function_n, function_s, function_d)
+        completed.thenMApplyTupleAsync(function_n, function_s, function_d)
             .await() shouldBe Tuple3.of(n + n, s + n, d + n)
-        completed.thenTupleMApplyAsync(testExecutor, function_n, function_s, function_d)
+        completed.thenMApplyTupleAsync(testExecutor, function_n, function_s, function_d)
             .await() shouldBe Tuple3.of(n + n, s + n, d + n)
 
-        completed.thenTupleMApplyAsync(function_n, function_s, function_d, function_an)
+        completed.thenMApplyTupleAsync(function_n, function_s, function_d, function_an)
             .await() shouldBe Tuple4.of(n + n, s + n, d + n, anotherN + n)
-        completed.thenTupleMApplyAsync(testExecutor, function_n, function_s, function_d, function_an)
+        completed.thenMApplyTupleAsync(testExecutor, function_n, function_s, function_d, function_an)
             .await() shouldBe Tuple4.of(n + n, s + n, d + n, anotherN + n)
 
-        completed.thenTupleMApplyAsync(function_n, function_s, function_d, function_an, function_nn)
+        completed.thenMApplyTupleAsync(function_n, function_s, function_d, function_an, function_nn)
             .await() shouldBe Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n)
-        completed.thenTupleMApplyAsync(
+        completed.thenMApplyTupleAsync(
             testExecutor, function_n, function_s, function_d, function_an, function_nn
         ).await() shouldBe Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n)
     }

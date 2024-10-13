@@ -637,73 +637,73 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Tuple variance of {@link #thenMApplyFailFastAsync(Function[])}.
      */
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyFailFastAsync(
+    public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleFailFastAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyFailFastAsync(fac.defaultExecutor(), fn1, fn2);
+        return thenMApplyTupleFailFastAsync(fac.defaultExecutor(), fn1, fn2);
     }
 
     /**
      * Tuple variance of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
      */
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyFailFastAsync(
+    public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleFailFastAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyFailFastAsync(cf, executor, fn1, fn2));
+        return resetCf(CompletableFutureUtils.thenMApplyTupleFailFastAsync(cf, executor, fn1, fn2));
     }
 
     /**
      * Tuple variance of {@link #thenMApplyFailFastAsync(Function[])}.
      */
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyFailFastAsync(
+    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleFailFastAsync(
             Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyFailFastAsync(fac.defaultExecutor(), fn1, fn2, fn3);
+        return thenMApplyTupleFailFastAsync(fac.defaultExecutor(), fn1, fn2, fn3);
     }
 
     /**
      * Tuple variance of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
      */
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyFailFastAsync(
+    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleFailFastAsync(
             Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyFailFastAsync(cf, executor, fn1, fn2, fn3));
+        return resetCf(CompletableFutureUtils.thenMApplyTupleFailFastAsync(cf, executor, fn1, fn2, fn3));
     }
 
     /**
      * Tuple variance of {@link #thenMApplyFailFastAsync(Function[])}.
      */
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFailFastAsync(
+    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleFailFastAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyFailFastAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4);
+        return thenMApplyTupleFailFastAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4);
     }
 
     /**
      * Tuple variance of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
      */
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFailFastAsync(
+    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleFailFastAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyFailFastAsync(cf, executor, fn1, fn2, fn3, fn4));
+        return resetCf(CompletableFutureUtils.thenMApplyTupleFailFastAsync(cf, executor, fn1, fn2, fn3, fn4));
     }
 
     /**
      * Tuple variance of {@link #thenMApplyFailFastAsync(Function[])}.
      */
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFailFastAsync(
+    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleFailFastAsync(
             Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyFailFastAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4, fn5);
+        return thenMApplyTupleFailFastAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
      * Tuple variance of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
      */
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFailFastAsync(
+    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleFailFastAsync(
             Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyFailFastAsync(cf, executor, fn1, fn2, fn3, fn4, fn5));
+        return resetCf(CompletableFutureUtils.thenMApplyTupleFailFastAsync(cf, executor, fn1, fn2, fn3, fn4, fn5));
     }
 
     /**
@@ -712,9 +712,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyAllSuccessAsync(
+    public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyAllSuccessTupleAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyAllSuccessAsync(fac.defaultExecutor(), fn1, fn2);
+        return thenMApplyAllSuccessTupleAsync(fac.defaultExecutor(), fn1, fn2);
     }
 
     /**
@@ -723,9 +723,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyAllSuccessAsync(
+    public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyAllSuccessTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(cf, executor, fn1, fn2));
+        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cf, executor, fn1, fn2));
     }
 
     /**
@@ -734,10 +734,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyAllSuccessAsync(
+    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyAllSuccessTupleAsync(
             Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyAllSuccessAsync(fac.defaultExecutor(), fn1, fn2, fn3);
+        return thenMApplyAllSuccessTupleAsync(fac.defaultExecutor(), fn1, fn2, fn3);
     }
 
     /**
@@ -746,10 +746,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyAllSuccessAsync(
+    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyAllSuccessTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(cf, executor, fn1, fn2, fn3));
+        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cf, executor, fn1, fn2, fn3));
     }
 
     /**
@@ -758,10 +758,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAllSuccessAsync(
+    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyAllSuccessTupleAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyAllSuccessAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4);
+        return thenMApplyAllSuccessTupleAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4);
     }
 
     /**
@@ -770,10 +770,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAllSuccessAsync(
+    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyAllSuccessTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(cf, executor, fn1, fn2, fn3, fn4));
+        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cf, executor, fn1, fn2, fn3, fn4));
     }
 
     /**
@@ -782,11 +782,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAllSuccessAsync(
+    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyAllSuccessTupleAsync(
             Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyAllSuccessAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4, fn5);
+        return thenMApplyAllSuccessTupleAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
@@ -795,11 +795,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAllSuccessAsync(
+    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyAllSuccessTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyAllSuccessAsync(cf, executor, fn1, fn2, fn3, fn4, fn5));
+        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cf, executor, fn1, fn2, fn3, fn4, fn5));
     }
 
     /**
@@ -809,9 +809,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
+    public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyMostSuccessTupleAsync(
             long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyMostSuccessAsync(fac.defaultExecutor(), timeout, unit, fn1, fn2);
+        return thenMApplyMostSuccessTupleAsync(fac.defaultExecutor(), timeout, unit, fn1, fn2);
     }
 
     /**
@@ -821,10 +821,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyMostSuccessAsync(
+    public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(cf, executor, timeout, unit, fn1, fn2));
+        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(cf, executor, timeout, unit, fn1, fn2));
     }
 
     /**
@@ -834,10 +834,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
+    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyMostSuccessTupleAsync(
             long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyMostSuccessAsync(fac.defaultExecutor(), timeout, unit, fn1, fn2, fn3);
+        return thenMApplyMostSuccessTupleAsync(fac.defaultExecutor(), timeout, unit, fn1, fn2, fn3);
     }
 
     /**
@@ -847,10 +847,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyMostSuccessAsync(
+    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(cf, executor, timeout, unit, fn1, fn2, fn3));
+        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(cf, executor, timeout, unit, fn1, fn2, fn3));
     }
 
     /**
@@ -860,11 +860,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyMostSuccessAsync(
+    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyMostSuccessTupleAsync(
             long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyMostSuccessAsync(fac.defaultExecutor(), timeout, unit, fn1, fn2, fn3, fn4);
+        return thenMApplyMostSuccessTupleAsync(fac.defaultExecutor(), timeout, unit, fn1, fn2, fn3, fn4);
     }
 
     /**
@@ -874,11 +874,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyMostSuccessAsync(
+    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(cf, executor, timeout, unit, fn1, fn2, fn3, fn4));
+        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(cf, executor, timeout, unit, fn1, fn2, fn3, fn4));
     }
 
     /**
@@ -888,11 +888,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyMostSuccessAsync(
+    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyMostSuccessTupleAsync(
             long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyMostSuccessAsync(fac.defaultExecutor(), timeout, unit, fn1, fn2, fn3, fn4, fn5);
+        return thenMApplyMostSuccessTupleAsync(fac.defaultExecutor(), timeout, unit, fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
@@ -902,84 +902,84 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyMostSuccessAsync(
+    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyMostSuccessAsync(
+        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(
                 cf, executor, timeout, unit, fn1, fn2, fn3, fn4, fn5));
     }
 
     /**
      * Tuple variance of {@link #thenMApplyAsync(Function[])}.
      */
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyAsync(
+    public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyAsync(fac.defaultExecutor(), fn1, fn2);
+        return thenMApplyTupleAsync(fac.defaultExecutor(), fn1, fn2);
     }
 
     /**
      * Tuple variance of {@link #thenMApplyAsync(Executor, Function[])}.
      */
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyAsync(
+    public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyAsync(cf, executor, fn1, fn2));
+        return resetCf(CompletableFutureUtils.thenMApplyTupleAsync(cf, executor, fn1, fn2));
     }
 
     /**
      * Tuple variance of {@link #thenMApplyAsync(Function[])}.
      */
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyAsync(
+    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyAsync(fac.defaultExecutor(), fn1, fn2, fn3);
+        return thenMApplyTupleAsync(fac.defaultExecutor(), fn1, fn2, fn3);
     }
 
     /**
      * Tuple variance of {@link #thenMApplyAsync(Executor, Function[])}.
      */
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyAsync(
+    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyAsync(cf, executor, fn1, fn2, fn3));
+        return resetCf(CompletableFutureUtils.thenMApplyTupleAsync(cf, executor, fn1, fn2, fn3));
     }
 
     /**
      * Tuple variance of {@link #thenMApplyAsync(Function[])}.
      */
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAsync(
+    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4);
+        return thenMApplyTupleAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4);
     }
 
     /**
      * Tuple variance of {@link #thenMApplyAsync(Executor, Function[])}.
      */
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyAsync(
+    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyAsync(cf, executor, fn1, fn2, fn3, fn4));
+        return resetCf(CompletableFutureUtils.thenMApplyTupleAsync(cf, executor, fn1, fn2, fn3, fn4));
     }
 
     /**
      * Tuple variance of {@link #thenMApplyAsync(Function[])}.
      */
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAsync(
+    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
             Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4, fn5);
+        return thenMApplyTupleAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
      * Tuple variance of {@link #thenMApplyAsync(Executor, Function[])}.
      */
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyAsync(
+    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
             Function<? super T, ? extends U5> fn5) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyAsync(cf, executor, fn1, fn2, fn3, fn4, fn5));
+        return resetCf(CompletableFutureUtils.thenMApplyTupleAsync(cf, executor, fn1, fn2, fn3, fn4, fn5));
     }
 
     // endregion
