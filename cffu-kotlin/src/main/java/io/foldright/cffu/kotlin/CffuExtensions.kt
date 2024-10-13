@@ -66,7 +66,6 @@ fun <T> Array<out CompletionStage<T>>.toCffu(cffuFactory: CffuFactory): Array<Cf
  * with the values obtained by calling the given Suppliers in the **same order** of the given Suppliers arguments.
  *
  * @param <T> the suppliers' return type
- * @return the new Cffu
  * @see allResultsFailFastOfCffu
  */
 fun <T> Collection<Supplier<out T>>.mSupplyFailFastAsyncCffu(
@@ -79,7 +78,6 @@ fun <T> Collection<Supplier<out T>>.mSupplyFailFastAsyncCffu(
  * with the values obtained by calling the given Suppliers in the **same order** of the given Suppliers arguments.
  *
  * @param <T> the suppliers' return type
- * @return the new Cffu
  * @see allResultsFailFastOfCffu
  */
 fun <T> Array<out Supplier<out T>>.mSupplyFailFastAsyncCffu(
@@ -95,9 +93,8 @@ fun <T> Array<out Supplier<out T>>.mSupplyFailFastAsyncCffu(
  * If any of the provided suppliers fails, its corresponding position will contain `valueIfFailed`
  * (which is indistinguishable from the supplier having a successful value of `valueIfFailed`).
  *
- * @param valueIfFailed the value to return if not failed
+ * @param valueIfFailed the value used as result if the input supplier throws exception
  * @param <T> the suppliers' return type
- * @return the new Cffu
  * @see allSuccessResultsOfCffu
  */
 fun <T> Collection<Supplier<out T>>.mSupplyAllSuccessAsyncCffu(
@@ -113,9 +110,8 @@ fun <T> Collection<Supplier<out T>>.mSupplyAllSuccessAsyncCffu(
  * If any of the provided suppliers fails, its corresponding position will contain `valueIfFailed`
  * (which is indistinguishable from the supplier having a successful value of `valueIfFailed`).
  *
- * @param valueIfFailed the value to return if not failed
+ * @param valueIfFailed the value used as result if the input supplier throws exception
  * @param <T> the suppliers' return type
- * @return the new Cffu
  * @see allSuccessResultsOfCffu
  */
 fun <T> Array<out Supplier<out T>>.mSupplyAllSuccessAsyncCffu(
@@ -129,15 +125,14 @@ fun <T> Array<out Supplier<out T>>.mSupplyAllSuccessAsyncCffu(
  * in the given time(`timeout`, aka as many results as possible in the given time)
  * in the **same order** of the given Suppliers arguments.
  *
- * If any of the provided suppliers does not success(fails or incomplete) in given time,
+ * If any of the provided suppliers is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`
  * (which is indistinguishable from the supplier having a successful value of `valueIfNotSuccess`).
  *
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value used as result if the input supplier not completed normally
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param <T> the suppliers' return type
- * @return the new Cffu
  * @see mostSuccessResultsOfCffu
  */
 fun <T> Collection<Supplier<out T>>.mSupplyMostSuccessAsyncCffu(
@@ -152,15 +147,14 @@ fun <T> Collection<Supplier<out T>>.mSupplyMostSuccessAsyncCffu(
  * in the given time(`timeout`, aka as many results as possible in the given time)
  * in the **same order** of the given Suppliers arguments.
  *
- * If any of the provided suppliers does not success(fails or incomplete) in given time,
+ * If any of the provided suppliers is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`
  * (which is indistinguishable from the supplier having a successful value of `valueIfNotSuccess`).
  *
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value used as result if the input supplier not completed normally
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param <T> the suppliers' return type
- * @return the new Cffu
  * @see mostSuccessResultsOfCffu
  */
 fun <T> Array<out Supplier<out T>>.mSupplyMostSuccessAsyncCffu(
@@ -175,7 +169,6 @@ fun <T> Array<out Supplier<out T>>.mSupplyMostSuccessAsyncCffu(
  * in the **same order** of the given Suppliers arguments.
  *
  * @param <T> the suppliers' return type
- * @return the new Cffu
  * @see allResultsOfCffu
  */
 fun <T> Collection<Supplier<out T>>.mSupplyAsyncCffu(
@@ -189,7 +182,6 @@ fun <T> Collection<Supplier<out T>>.mSupplyAsyncCffu(
  * in the **same order** of the given Suppliers arguments.
  *
  * @param <T> the suppliers' return type
- * @return the new Cffu
  * @see allResultsOfCffu
  */
 fun <T> Array<out Supplier<out T>>.mSupplyAsyncCffu(
@@ -204,10 +196,9 @@ fun <T> Array<out Supplier<out T>>.mSupplyAsyncCffu(
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given stages as its cause.
  * If no suppliers are provided, returns a new Cffu that is already completed exceptionally
- * with a CompletionException holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
+ * with a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException].
  *
  * @param <T> the suppliers' return type
- * @return the new Cffu
  * @see anySuccessOfCffu
  */
 fun <T> Collection<Supplier<out T>>.mSupplyAnySuccessAsyncCffu(
@@ -222,10 +213,9 @@ fun <T> Collection<Supplier<out T>>.mSupplyAnySuccessAsyncCffu(
  * the returned Cffu also does so, with a CompletionException holding
  * an exception from any of the given stages as its cause.
  * If no suppliers are provided, returns a new Cffu that is already completed exceptionally
- * with a CompletionException holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
+ * with a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException].
  *
  * @param <T> the suppliers' return type
- * @return the new Cffu
  * @see anySuccessOfCffu
  */
 fun <T> Array<out Supplier<out T>>.mSupplyAnySuccessAsyncCffu(
@@ -241,7 +231,6 @@ fun <T> Array<out Supplier<out T>>.mSupplyAnySuccessAsyncCffu(
  * If no suppliers are provided, returns an incomplete Cffu.
  *
  * @param <T> the suppliers' return type
- * @return the new Cffu
  * @see anyOfCffu
  */
 fun <T> Collection<Supplier<out T>>.mSupplyAnyAsyncCffu(
@@ -257,7 +246,6 @@ fun <T> Collection<Supplier<out T>>.mSupplyAnyAsyncCffu(
  * If no suppliers are provided, returns an incomplete Cffu.
  *
  * @param <T> the suppliers' return type
- * @return the new Cffu
  * @see anyOfCffu
  */
 fun <T> Array<out Supplier<out T>>.mSupplyAnyAsyncCffu(
@@ -269,7 +257,6 @@ fun <T> Array<out Supplier<out T>>.mSupplyAnyAsyncCffu(
  * by tasks running in the Cffu's default asynchronous execution facility
  * after runs the given actions.
  *
- * @return the new Cffu
  * @see allFailFastOfCffu
  */
 fun Collection<Runnable>.mRunFailFastAsyncCffu(
@@ -281,7 +268,6 @@ fun Collection<Runnable>.mRunFailFastAsyncCffu(
  * by tasks running in the Cffu's default asynchronous execution facility
  * after runs the given actions.
  *
- * @return the new Cffu
  * @see allFailFastOfCffu
  */
 fun Array<out Runnable>.mRunFailFastAsyncCffu(
@@ -293,7 +279,6 @@ fun Array<out Runnable>.mRunFailFastAsyncCffu(
  * by tasks running in the Cffu's default asynchronous execution facility
  * after runs the given actions.
  *
- * @return the new Cffu
  * @see allOfCffu
  */
 fun Collection<Runnable>.mRunAsyncCffu(
@@ -305,7 +290,6 @@ fun Collection<Runnable>.mRunAsyncCffu(
  * by tasks running in the Cffu's default asynchronous execution facility
  * after runs the given actions.
  *
- * @return the new Cffu
  * @see allOfCffu
  */
 fun Array<out Runnable>.mRunAsyncCffu(
@@ -316,7 +300,6 @@ fun Array<out Runnable>.mRunAsyncCffu(
  * Returns a new Cffu that is asynchronously successful
  * when any tasks running in the Cffu's default asynchronous execution facility success.
  *
- * @return the new Cffu
  * @see anySuccessOfCffu
  */
 fun Collection<Runnable>.mRunAnySuccessAsyncCffu(
@@ -327,7 +310,6 @@ fun Collection<Runnable>.mRunAnySuccessAsyncCffu(
  * Returns a new Cffu that is asynchronously successful
  * when any tasks running in the Cffu's default asynchronous execution facility success.
  *
- * @return the new Cffu
  * @see anySuccessOfCffu
  */
 fun Array<out Runnable>.mRunAnySuccessAsyncCffu(
@@ -338,7 +320,6 @@ fun Array<out Runnable>.mRunAnySuccessAsyncCffu(
  * Returns a new Cffu that is asynchronously completed
  * when any tasks running in the Cffu's default asynchronous execution facility.
  *
- * @return the new Cffu
  * @see anyOfCffu
  */
 fun Collection<Runnable>.mRunAnyAsyncCffu(
@@ -349,7 +330,6 @@ fun Collection<Runnable>.mRunAnyAsyncCffu(
  * Returns a new Cffu that is asynchronously completed
  * when any tasks running in the Cffu's default asynchronous execution facility.
  *
- * @return the new Cffu
  * @see anyOfCffu
  */
 fun Array<out Runnable>.mRunAnyAsyncCffu(
@@ -464,7 +444,7 @@ fun <T> Array<out CompletionStage<out T>>.allResultsFailFastOfCffu(cffuFactory: 
  *
  * This method is the same as [CffuFactory.allSuccessResultsOf], providing this method is convenient for method chaining.
  *
- * @param valueIfFailed the value to return if not completed successfully
+ * @param valueIfFailed the value used as result if the input stage completed exceptionally
  * @throws NullPointerException if the cfs param or any of its elements are `null`
  * @see com.google.common.util.concurrent.Futures.successfulAsList
  */
@@ -485,7 +465,7 @@ fun <T> Collection<Cffu<out T>>.allSuccessResultsOfCffu(
  *
  * This method is the same as [CffuFactory.allSuccessResultsOf], providing this method is convenient for method chaining.
  *
- * @param valueIfFailed the value to return if not completed successfully
+ * @param valueIfFailed the value used as result if the input stage completed exceptionally
  * @throws NullPointerException if the cfs param or any of its elements are `null`
  * @see com.google.common.util.concurrent.Futures.successfulAsList
  */
@@ -503,7 +483,7 @@ fun <T> Array<out Cffu<out T>>.allSuccessResultsOfCffu(
  *
  * This method is the same as [CffuFactory.allSuccessResultsOf], providing this method is convenient for method chaining.
  *
- * @param valueIfFailed the value to return if not completed successfully
+ * @param valueIfFailed the value used as result if the input stage completed exceptionally
  * @throws NullPointerException if the cfs param or any of its elements are `null`
  * @see com.google.common.util.concurrent.Futures.successfulAsList
  */
@@ -522,7 +502,7 @@ fun <T> Collection<CompletionStage<out T>>.allSuccessResultsOfCffu(
  *
  * This method is the same as [CffuFactory.allSuccessResultsOf], providing this method is convenient for method chaining.
  *
- * @param valueIfFailed the value to return if not completed successfully
+ * @param valueIfFailed the value used as result if the input stage completed exceptionally
  * @throws NullPointerException if the cfs param or any of its elements are `null`
  * @see com.google.common.util.concurrent.Futures.successfulAsList
  */
@@ -535,12 +515,12 @@ fun <T> Array<out CompletionStage<out T>>.allSuccessResultsOfCffu(
  * Returns a new Cffu with the most results in the **same order** of
  * the given Cffus arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If any of the provided stages does not success(fails or incomplete) in given time,
+ * If any of the provided stages is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value used as result if the input stage not completed normally
  * @see CffuFactory.mostSuccessResultsOf
  * @see CffuFactory.mostSuccessTupleOf
  * @see Cffu.getSuccessNow
@@ -553,12 +533,12 @@ fun <T> Collection<Cffu<out T>>.mostSuccessResultsOfCffu(
  * Returns a new Cffu with the most results in the **same order** of
  * the given Cffus arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If any of the provided stages does not success(fails or incomplete) in given time,
+ * If any of the provided stages is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value used as result if the input stage not completed normally
  * @see CffuFactory.mostSuccessResultsOf
  * @see CffuFactory.mostSuccessTupleOf
  * @see Cffu.getSuccessNow
@@ -571,12 +551,12 @@ fun <T> Array<out Cffu<out T>>.mostSuccessResultsOfCffu(
  * Returns a new Cffu with the most results in the **same order** of
  * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If any of the provided stages does not success(fails or incomplete) in given time,
+ * If any of the provided stages is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value used as result if the input stage not completed normally
  * @see CffuFactory.mostSuccessResultsOf
  * @see CffuFactory.mostSuccessTupleOf
  * @see Cffu.getSuccessNow
@@ -590,12 +570,12 @@ fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCffu(
  * Returns a new Cffu with the most results in the **same order** of
  * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If any of the provided stages does not success(fails or incomplete) in given time,
+ * If any of the provided stages is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value used as result if the input stage not completed normally
  * @see CffuFactory.mostSuccessResultsOf
  * @see CffuFactory.mostSuccessTupleOf
  * @see Cffu.getSuccessNow
@@ -830,9 +810,9 @@ fun Array<out CompletionStage<*>>.allOfCffu(cffuFactory: CffuFactory): Cffu<Void
  * Returns a new Cffu that is successful when any of the given Cffus success,
  * with the same result. Otherwise, all the given Cffus complete exceptionally,
  * the returned Cffu also does so, with a CompletionException holding
- * an exception from any of the given Cffus as its cause. If no Cffus are provided,
- * returns a new Cffu that is already completed exceptionally with a CompletionException
- * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
+ * an exception from any of the given Cffus as its cause.
+ * If no Cffus are provided, returns a new Cffu that is already completed exceptionally
+ * with a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException].
  *
  * If this collection is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this collection is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
@@ -849,9 +829,9 @@ fun <T> Collection<Cffu<out T>>.anySuccessOfCffu(cffuFactory: CffuFactory = ABSE
  * Returns a new Cffu that is successful when any of the given Cffus success,
  * with the same result. Otherwise, all the given Cffus complete exceptionally,
  * the returned Cffu also does so, with a CompletionException holding
- * an exception from any of the given Cffus as its cause. If no Cffus are provided,
- * returns a new Cffu that is already completed exceptionally with a CompletionException
- * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
+ * an exception from any of the given Cffus as its cause.
+ * If no Cffus are provided, returns a new Cffu that is already completed exceptionally
+ * with a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException].
  *
  * If this array is not empty, `cffuFactory` argument is optional, use the `cffuFactory` of the first cffu element.
  * If this array is empty and no`cffuFactory` provided, throw [IllegalArgumentException].
@@ -868,9 +848,9 @@ fun <T> Array<out Cffu<out T>>.anySuccessOfCffu(cffuFactory: CffuFactory = ABSEN
  * Returns a new Cffu that is successful when any of the given stages success,
  * with the same result. Otherwise, all the given stages complete exceptionally,
  * the returned Cffu also does so, with a CompletionException holding
- * an exception from any of the given stages as its cause. If no stages are provided,
- * returns a new Cffu that is already completed exceptionally with a CompletionException
- * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
+ * an exception from any of the given stages as its cause.
+ * If no Cffus are provided, returns a new Cffu that is already completed exceptionally
+ * with a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException].
  *
  * This method is the same as [CffuFactory.anySuccessOf], providing this method is convenient for method chaining.
  *
@@ -885,9 +865,9 @@ fun <T> Collection<CompletionStage<out T>>.anySuccessOfCffu(cffuFactory: CffuFac
  * Returns a new Cffu that is successful when any of the given stages success,
  * with the same result. Otherwise, all the given stages complete exceptionally,
  * the returned Cffu also does so, with a CompletionException holding
- * an exception from any of the given stages as its cause. If no stages are provided,
- * returns a new Cffu that is already completed exceptionally with a CompletionException
- * holding a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException] as its cause.
+ * an exception from any of the given stages as its cause.
+ * If no Cffus are provided, returns a new Cffu that is already completed exceptionally
+ * with a [NoCfsProvidedException][io.foldright.cffu.NoCfsProvidedException].
  *
  * This method is the same as [CffuFactory.anySuccessOf], providing this method is convenient for method chaining.
  *

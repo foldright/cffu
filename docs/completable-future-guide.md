@@ -40,8 +40,8 @@
   - 运行中（`Running`）<sup><b><i>〚1〛</i></b></sup>
   - 取消（`Cancelled`）<sup><b><i>〚2〛</i></b></sup>
   - 完成（`Completed` / `Done`）
-    - 成功（`Success` / `Successful`）/ 正常完成（`Completed Normally`）/ 成功完成（`Completed Successfully`）
-    - 失败（`Failed` / `Fail`）/ 异常完成（`Completed Exceptionally`）
+    - 正常完成（`Completed Normally`）/ 成功（`Success` / `Successful` / `Succeed`）/ 成功完成（`Completed Successfully`）
+    - 异常完成（`Completed Exceptionally`）/ 失败（`Failure` / `Failed` / `Fail`）
 - 状态转变（`Transition`）
   - 事件（`Event`）、触发（`Trigger`）
 - 业务流程（`Biz Flow`）、`CF`链（`Chain`）

@@ -117,7 +117,6 @@ public final class CffuFactory {
      *
      * @param supplier a function returning the value to be used to complete the returned Cffu
      * @param <T>      the function's return type
-     * @return the new Cffu
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAsync`")
     public <T> Cffu<T> supplyAsync(Supplier<T> supplier) {
@@ -131,7 +130,6 @@ public final class CffuFactory {
      * @param supplier a function returning the value to be used to complete the returned Cffu
      * @param executor the executor to use for asynchronous execution
      * @param <T>      the function's return type
-     * @return the new Cffu
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAsync`")
     public <T> Cffu<T> supplyAsync(Supplier<T> supplier, Executor executor) {
@@ -143,7 +141,6 @@ public final class CffuFactory {
      * in the {@link #defaultExecutor()} after it runs the given action.
      *
      * @param action the action to run before completing the returned Cffu
-     * @return the new Cffu
      */
     public Cffu<Void> runAsync(Runnable action) {
         return runAsync(action, defaultExecutor);
@@ -155,7 +152,6 @@ public final class CffuFactory {
      *
      * @param action   the action to run before completing the returned Cffu
      * @param executor the executor to use for asynchronous execution
-     * @return the new Cffu
      */
     public Cffu<Void> runAsync(Runnable action, Executor executor) {
         return create(CompletableFuture.runAsync(action, executor));
@@ -177,7 +173,6 @@ public final class CffuFactory {
      *
      * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>       the suppliers' return type
-     * @return the new Cffu
      * @see #allResultsFailFastOf(CompletionStage[])
      */
     @SafeVarargs
@@ -193,7 +188,6 @@ public final class CffuFactory {
      * @param executor  the executor to use for asynchronous execution
      * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>       the suppliers' return type
-     * @return the new Cffu
      * @see #allResultsFailFastOf(CompletionStage[])
      */
     @SafeVarargs
@@ -210,10 +204,9 @@ public final class CffuFactory {
      * If any of the provided suppliers fails, its corresponding position will contain {@code valueIfFailed}
      * (which is indistinguishable from the supplier having a successful value of {@code valueIfFailed}).
      *
-     * @param valueIfFailed the value to return if not failed
+     * @param valueIfFailed the value used as result if the input supplier throws exception
      * @param suppliers     the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>           the suppliers' return type
-     * @return the new Cffu
      * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @SafeVarargs
@@ -230,11 +223,10 @@ public final class CffuFactory {
      * If any of the provided suppliers fails, its corresponding position will contain {@code valueIfFailed}
      * (which is indistinguishable from the supplier having a successful value of {@code valueIfFailed}).
      *
-     * @param valueIfFailed the value to return if not failed
+     * @param valueIfFailed the value used as result if the input supplier throws exception
      * @param executor      the executor to use for asynchronous execution
      * @param suppliers     the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>           the suppliers' return type
-     * @return the new Cffu
      * @see #allSuccessResultsOf(Object, CompletionStage[])
      */
     @SafeVarargs
@@ -250,16 +242,15 @@ public final class CffuFactory {
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If any of the provided suppliers does not success(fails or incomplete) in given time,
+     * If any of the provided suppliers is not completed normally(fails or incomplete) in given time,
      * its corresponding position will contain {@code valueIfNotSuccess}
      * (which is indistinguishable from the supplier having a successful value of {@code valueIfNotSuccess}).
      *
-     * @param valueIfNotSuccess the value to return if not completed successfully
+     * @param valueIfNotSuccess the value used as result if the input supplier not completed normally
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @param suppliers         the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>               the suppliers' return type
-     * @return the new Cffu
      * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
      */
     @SafeVarargs
@@ -274,17 +265,16 @@ public final class CffuFactory {
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If any of the provided suppliers does not success(fails or incomplete) in given time,
+     * If any of the provided suppliers is not completed normally(fails or incomplete) in given time,
      * its corresponding position will contain {@code valueIfNotSuccess}
      * (which is indistinguishable from the supplier having a successful value of {@code valueIfNotSuccess}).
      *
-     * @param valueIfNotSuccess the value to return if not completed successfully
+     * @param valueIfNotSuccess the value used as result if the input supplier not completed normally
      * @param executor          the executor to use for asynchronous execution
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @param suppliers         the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>               the suppliers' return type
-     * @return the new Cffu
      * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
      */
     @SafeVarargs
@@ -302,7 +292,6 @@ public final class CffuFactory {
      *
      * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>       the suppliers' return type
-     * @return the new Cffu
      * @see #allResultsOf(CompletionStage[])
      */
     @SafeVarargs
@@ -318,7 +307,6 @@ public final class CffuFactory {
      * @param executor  the executor to use for asynchronous execution
      * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>       the suppliers' return type
-     * @return the new Cffu
      * @see #allResultsOf(CompletionStage[])
      */
     @SafeVarargs
@@ -335,11 +323,10 @@ public final class CffuFactory {
      * the returned Cffu also does so, with a CompletionException holding
      * an exception from any of the given stages as its cause.
      * If no suppliers are provided, returns a new Cffu that is already completed exceptionally
-     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
+     * with a {@link NoCfsProvidedException}.
      *
      * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>       the suppliers' return type
-     * @return the new Cffu
      * @see #anySuccessOf(CompletionStage[])
      */
     @SafeVarargs
@@ -354,12 +341,11 @@ public final class CffuFactory {
      * the returned Cffu also does so, with a CompletionException holding
      * an exception from any of the given stages as its cause.
      * If no suppliers are provided, returns a new Cffu that is already completed exceptionally
-     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
+     * with a {@link NoCfsProvidedException}.
      *
      * @param executor  the executor to use for asynchronous execution
      * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>       the suppliers' return type
-     * @return the new Cffu
      * @see #anySuccessOf(CompletionStage[])
      */
     @SafeVarargs
@@ -377,7 +363,6 @@ public final class CffuFactory {
      *
      * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>       the suppliers' return type
-     * @return the new Cffu
      * @see #anyOf(CompletionStage[])
      */
     @SafeVarargs
@@ -395,7 +380,6 @@ public final class CffuFactory {
      * @param executor  the executor to use for asynchronous execution
      * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>       the suppliers' return type
-     * @return the new Cffu
      * @see #anyOf(CompletionStage[])
      */
     @SafeVarargs
@@ -409,7 +393,6 @@ public final class CffuFactory {
      * after runs the given actions.
      *
      * @param actions the actions to run before completing the returned Cffu
-     * @return the new Cffu
      * @see #allFailFastOf(CompletionStage[])
      */
     public Cffu<Void> mRunFailFastAsync(Runnable... actions) {
@@ -422,7 +405,6 @@ public final class CffuFactory {
      *
      * @param executor the executor to use for asynchronous execution
      * @param actions  the actions to run before completing the returned Cffu
-     * @return the new Cffu
      * @see #allFailFastOf(CompletionStage[])
      */
     public Cffu<Void> mRunFailFastAsync(Executor executor, Runnable... actions) {
@@ -435,7 +417,6 @@ public final class CffuFactory {
      * after runs the given actions.
      *
      * @param actions the actions to run before completing the returned Cffu
-     * @return the new Cffu
      * @see #allOf(CompletionStage[])
      */
     public Cffu<Void> mRunAsync(Runnable... actions) {
@@ -448,7 +429,6 @@ public final class CffuFactory {
      *
      * @param executor the executor to use for asynchronous execution
      * @param actions  the actions to run before completing the returned Cffu
-     * @return the new Cffu
      * @see #allOf(CompletionStage[])
      */
     public Cffu<Void> mRunAsync(Executor executor, Runnable... actions) {
@@ -460,7 +440,6 @@ public final class CffuFactory {
      * when any tasks running in the Cffu's default asynchronous execution facility success.
      *
      * @param actions the actions to run before completing the returned Cffu
-     * @return the new Cffu
      * @see #anySuccessOf(CompletionStage[])
      */
     public Cffu<Void> mRunAnySuccessAsync(Runnable... actions) {
@@ -473,7 +452,6 @@ public final class CffuFactory {
      *
      * @param executor the executor to use for asynchronous execution
      * @param actions  the actions to run before completing the returned Cffu
-     * @return the new Cffu
      * @see #anySuccessOf(CompletionStage[])
      */
     public Cffu<Void> mRunAnySuccessAsync(Executor executor, Runnable... actions) {
@@ -485,7 +463,6 @@ public final class CffuFactory {
      * when any tasks running in the Cffu's default asynchronous execution facility.
      *
      * @param actions the actions to run before completing the returned Cffu
-     * @return the new Cffu
      * @see #anyOf(CompletionStage[])
      */
     public Cffu<Void> mRunAnyAsync(Runnable... actions) {
@@ -498,7 +475,6 @@ public final class CffuFactory {
      *
      * @param executor the executor to use for asynchronous execution
      * @param actions  the actions to run before completing the returned Cffu
-     * @return the new Cffu
      * @see #anyOf(CompletionStage[])
      */
     public Cffu<Void> mRunAnyAsync(Executor executor, Runnable... actions) {
@@ -507,7 +483,7 @@ public final class CffuFactory {
 
     // endregion
     ////////////////////////////////////////////////////////////
-    // region## Tuple-Multi-Actions(tupleM*) Methods(create by actions)
+    // region## Multi-Actions-Tuple(MTuple*) Methods(create by actions)
     ////////////////////////////////////////////////////////////
 
     /**
@@ -677,7 +653,7 @@ public final class CffuFactory {
     /**
      * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyMostSuccessTupleAsync(
@@ -689,7 +665,7 @@ public final class CffuFactory {
      * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyMostSuccessTupleAsync(
@@ -701,7 +677,7 @@ public final class CffuFactory {
     /**
      * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyMostSuccessTupleAsync(
@@ -714,7 +690,7 @@ public final class CffuFactory {
      * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyMostSuccessTupleAsync(
@@ -727,7 +703,7 @@ public final class CffuFactory {
     /**
      * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyMostSuccessTupleAsync(
@@ -740,7 +716,7 @@ public final class CffuFactory {
      * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyMostSuccessTupleAsync(
@@ -753,7 +729,7 @@ public final class CffuFactory {
     /**
      * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyMostSuccessTupleAsync(
@@ -767,7 +743,7 @@ public final class CffuFactory {
      * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyMostSuccessTupleAsync(
@@ -856,18 +832,18 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu that is successful with the results in the <strong>same order</strong>
-     * of the given stages arguments when all the given stages success;
-     * If any of the given stages complete exceptionally, then the returned Cffu also does so
-     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * Returns a new Cffu that is completed normally with a list containing
+     * the successful results of all given stages when all the given stages complete normally;
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * WITHOUT waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      * If no stages are provided, returns a Cffu completed with the value empty list.
      * <p>
-     * This method is the same as {@link #allResultsOf(CompletionStage[])} except for the fail-fast behavior.
+     * The list of results is in the <strong>same order</strong> as the input list.
+     * <p>
+     * This method is the same as {@link #allResultsOf allResultsOf} method except for the fail-fast behavior.
      *
-     * @param cfs the stages
-     * @return a new Cffu that is successful when all the given stages success
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
-     * @see Futures#allAsList(ListenableFuture[]) Guava method allAsList()
+     * @see Futures#allAsList(ListenableFuture[]) the equivalent Guava method allAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -876,17 +852,21 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is successful with the results in the <strong>same order</strong>
-     * of the given stages arguments when all the given stages completed;
+     * Returns a new Cffu that is completed normally with a list containing the successful results of
+     * all given stages when all the given stages complete; The list of results is in the <strong>same order</strong>
+     * as the input list, and if any of given stages complete exceptionally, their corresponding position will contain
+     * {@code valueIfFailed} (which is indistinguishable from the stage having a successful value of {@code valueIfFailed}).
      * If no stages are provided, returns a Cffu completed with the value empty list.
      * <p>
-     * If any of the provided stages fails, its corresponding position will contain {@code valueIfFailed}
-     * (which is indistinguishable from the stage having a successful value of {@code valueIfFailed}).
+     * The list of results is in the <strong>same order</strong> as the input list.
+     * <p>
+     * This method differs from {@link #allResultsFailFastOf allResultsFailFastOf} method in that it's tolerant
+     * of failed stages for any of the items, representing them as {@code valueIfFailed} in the result list.
      *
-     * @param valueIfFailed the value to return if not completed successfully
-     * @param cfs           the stages
-     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
-     * @see Futures#successfulAsList(ListenableFuture[]) Guava method successfulAsList()
+     * @param valueIfFailed the value used as result if the input stage completed exceptionally
+     * @throws NullPointerException if the cfs param or any of its elements is {@code null}
+     * @see Cffu#getSuccessNow(Object)
+     * @see Futures#successfulAsList(ListenableFuture[]) the equivalent Guava method successfulAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -896,17 +876,21 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the most results in the <strong>same order</strong> of
-     * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
-     * <p>
-     * If any of the provided stages does not success(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}
+     * Returns a new Cffu that is completed normally with a list containing the successful results of
+     * all given stages when all the given stages complete or the waiting time is over; The list of results is in the
+     * <strong>same order</strong> as the input list, and if any of given stages complete exceptionally or are incomplete,
+     * their corresponding positions will contain {@code valueIfNotSuccess}
      * (which is indistinguishable from the stage having a successful value of {@code valueIfNotSuccess}).
+     * If no stages are provided, returns a Cffu completed with the value empty list.
+     * <p>
+     * The list of results is in the <strong>same order</strong> as the input list.
+     * <p>
+     * This method differs from {@link #allResultsFailFastOf allResultsFailFastOf} method in that it's tolerant of
+     * failed or incomplete stages for any of the items, representing them as {@code valueIfNotSuccess} in the result list.
      *
-     * @param valueIfNotSuccess the value to return if not completed successfully
+     * @param valueIfNotSuccess the value used as result if the input stage not completed normally
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param cfs               the stages
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see Cffu#getSuccessNow(Object)
      */
@@ -919,17 +903,21 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu with the results in the <strong>same order</strong> of the given stages arguments,
-     * the new Cffu is completed when all the given stages complete;
-     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
-     * with a CompletionException holding this exception as its cause.
+     * Returns a new Cffu that is completed normally with a list containing
+     * the successful results of all given stages when all the given stages complete;
+     * If any of the given stages complete exceptionally, then the returned Cffu
+     * also does so, with a CompletionException holding this exception as its cause.
      * If no stages are provided, returns a Cffu completed with the value empty list.
      * <p>
-     * This method is the same as {@link #allOf(CompletionStage[])},
+     * The list of results is in the <strong>same order</strong> as the input list.
+     * <p>
+     * Comparing the waiting-all-<strong>complete</strong> behavior of this method, the fail-fast behavior
+     * of {@link #allResultsFailFastOf allResultsFailFastOf} method is more responsive to user
+     * and generally more desired in the application.
+     * <p>
+     * This method is the same as {@link #allOf allOf} method,
      * except that the returned Cffu contains the results of the given stages.
      *
-     * @param cfs the stages
-     * @return a new Cffu that is completed when all the given stages complete
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @Contract(pure = true)
@@ -939,32 +927,23 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is successful when all the given stages success;
-     * If any of the given stages complete exceptionally, then the returned Cffu also does so
-     * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
-     * Otherwise, the results of the given stages are not reflected in the returned Cffu({@code Cffu<Void>}),
-     * but may be obtained by inspecting them individually.
+     * Returns a new Cffu that is completed normally when all the given stages complete normally;
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * WITHOUT waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      * If no stages are provided, returns a Cffu completed with the value {@code null}.
      * <p>
-     * This method is the same as {@link #allOf(CompletionStage[])} except for the fail-fast behavior.
-     * <p>
-     * If you need the results of given stages, prefer below methods:
+     * The successful results, if any, of the given stages are not reflected in the returned Cffu
+     * ({@code Cffu<Void>}), but may be obtained by inspecting them individually; Or using below methods
+     * reflected results in the returned Cffu which are more convenient, safer and best-practice of concurrency:
      * <ul>
-     * <li>{@link #allResultsFailFastOf(CompletionStage[])}
-     * <li>{@link #allTupleFailFastOf(CompletionStage, CompletionStage)} /
-     *     {@link #allTupleFailFastOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
-     *     (provided overloaded methods with 2~5 input)
+     * <li>{@link #allResultsFailFastOf  allResultsFailFastOf}, {@link #allTupleFailFastOf allTupleFailFastOf}
+     * <li>{@link #allSuccessResultsOf allSuccessResultsOf}, {@link #allSuccessTupleOf allSuccessTupleOf}
+     * <li>{@link #mostSuccessResultsOf mostSuccessResultsOf}, {@link #mostSuccessTupleOf mostSuccessTupleOf}
+     * <li>{@link #allResultsOf allResultsOf}, {@link #allTupleOf allTupleOf}
      * </ul>
      * <p>
-     * If you need the successful results of given stages in the given time, prefer below methods:
-     * <ul>
-     * <li>{@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
-     * <li>{@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage)} / {@link #mostSuccessTupleOf(long,
-     *      TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
-     * </ul>
+     * This method is the same as {@link #allOf allOf} method except for the fail-fast behavior.
      *
-     * @param cfs the stages
-     * @return a new Cffu that is successful when all the given stages success
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @Contract(pure = true)
@@ -974,31 +953,23 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is completed when all the given stages complete;
-     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
-     * with a CompletionException holding this exception as its cause.
-     * Otherwise, the results, if any, of the given stages are not reflected in the returned
-     * Cffu({@code Cffu<Void>}), but may be obtained by inspecting them individually.
+     * If any of the given stages complete exceptionally, then the returned Cffu
+     * also does so, with a CompletionException holding this exception as its cause.
      * If no stages are provided, returns a Cffu completed with the value {@code null}.
+     * <p>
+     * The successful results, if any, of the given stages are not reflected in the returned Cffu
+     * ({@code Cffu<Void>}), but may be obtained by inspecting them individually; Or using below methods
+     * reflected results in the returned Cffu which are more convenient, safer and best-practice of concurrency:
+     * <ul>
+     * <li>{@link #allResultsOf allResultsOf}, {@link #allTupleOf allTupleOf}
+     * <li>{@link #allResultsFailFastOf  allResultsFailFastOf}, {@link #allTupleFailFastOf allTupleFailFastOf}
+     * <li>{@link #allSuccessResultsOf allSuccessResultsOf}, {@link #allSuccessTupleOf allSuccessTupleOf}
+     * <li>{@link #mostSuccessResultsOf mostSuccessResultsOf}, {@link #mostSuccessTupleOf mostSuccessTupleOf}
+     * </ul>
      * <p>
      * Among the applications of this method is to await completion of a set of independent stages
      * before continuing a program, as in: {@code cffuFactory.allOf(c1, c2, c3).join();}.
-     * <p>
-     * If you need the results of given stages, prefer below methods:
-     * <ul>
-     * <li>{@link #allResultsOf(CompletionStage[])}
-     * <li>{@link #allTupleOf(CompletionStage, CompletionStage)} /
-     *     {@link #allTupleOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
-     * </ul>
-     * <p>
-     * If you need the successful results of given stages in the given time, prefer below methods:
-     * <ul>
-     * <li>{@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
-     * <li>{@link #mostSuccessTupleOf(long, TimeUnit, CompletionStage, CompletionStage)} / {@link #mostSuccessTupleOf (long,
-     *      TimeUnit, CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
-     * </ul>
      *
-     * @param cfs the stages
-     * @return a new Cffu that is completed when all the given stages complete
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; forget to call its `join()` method?")
@@ -1015,18 +986,15 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu that is successful when any of the given stages success,
-     * with the same result. Otherwise, all the given stages complete exceptionally,
-     * the returned Cffu also does so, with a CompletionException holding
-     * an exception from any of the given stages as its cause. If no stages are provided,
-     * returns a new Cffu that is already completed exceptionally
-     * with a CompletionException holding a {@link NoCfsProvidedException} as its cause.
+     * Returns a new Cffu that completed normally when any of the given stages complete normally,
+     * with the same result; Otherwise, when all the given stages complete exceptionally, the returned Cffu
+     * also does so, with a CompletionException holding an exception from any of the given stages as its cause.
+     * If no stages are provided, returns a new Cffu that is already completed exceptionally
+     * with a {@link NoCfsProvidedException}.
      * <p>
-     * This method is the same as {@link #anyOf(CompletionStage[])}
-     * except for the any-<strong>success</strong> behavior instead of any-<strong>complete</strong>.
+     * This method differs from {@link #anyOf anyOf} method in that this method is any-<strong>success</strong>
+     * instead of the any-<strong>complete</strong> behavior of method {@link #anyOf anyOf}.
      *
-     * @param cfs the stages
-     * @return a new Cffu that is successful when any of the given stages success, with the same result
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @SafeVarargs
@@ -1035,18 +1003,13 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is completed when any of the given stages complete, with the same result.<br>
-     * Otherwise, if it completed exceptionally, the returned Cffu also does so,
-     * with a CompletionException holding this exception as its cause.<br>
+     * Returns a new Cffu that is completed with the same successful result or exception
+     * of any of the given stages when one stage completes.
      * If no stages are provided, returns an incomplete Cffu.
      * <p>
-     * This method is the same as {@link CompletableFuture#anyOf(CompletableFuture[])},
-     * except that the parameter type is more generic {@link CompletionStage} instead of {@link CompletableFuture},
-     * and the return type is more specific {@code T} instead of {@code Object}.
+     * Comparing the any-<strong>complete</strong> behavior of this method, the any-<strong>success</strong> behavior of
+     * method {@link #anySuccessOf anySuccessOf} is more responsive to user and generally more desired in the application.
      *
-     * @param cfs the stages
-     * @return a new Cffu that is completed with the result or exception
-     * from any of the given stages when one completes
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @Contract(pure = true)
@@ -1152,7 +1115,7 @@ public final class CffuFactory {
      * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
@@ -1165,7 +1128,7 @@ public final class CffuFactory {
      * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
@@ -1179,7 +1142,7 @@ public final class CffuFactory {
      * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
@@ -1194,7 +1157,7 @@ public final class CffuFactory {
      * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
