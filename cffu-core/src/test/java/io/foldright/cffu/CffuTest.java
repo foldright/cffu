@@ -64,8 +64,8 @@ class CffuTest {
         final long tick = System.currentTimeMillis();
         @SuppressWarnings("unchecked")
         Cffu<List<Integer>>[] cfs = new Cffu[]{
-                completed.thenMApplyFastFailAsync(function_n, function_n),
-                completed.thenMApplyFastFailAsync(testExecutor, function_n, function_n),
+                completed.thenMApplyFailFastAsync(function_n, function_n),
+                completed.thenMApplyFailFastAsync(testExecutor, function_n, function_n),
                 completed.thenMApplyAllSuccessAsync(anotherN, function_n, function_n),
                 completed.thenMApplyAllSuccessAsync(anotherN, testExecutor, function_n, function_n),
                 completed.thenMApplyMostSuccessAsync(anotherN, LONG_WAIT_MS, MILLISECONDS, function_n, function_n),
@@ -108,8 +108,8 @@ class CffuTest {
         Cffu<List<Integer>>[] cfs = new Cffu[]{
                 completed.thenMAcceptAsync(consumer, consumer),
                 completed.thenMAcceptAsync(testExecutor, consumer, consumer),
-                completed.thenMAcceptFastFailAsync(consumer, consumer),
-                completed.thenMAcceptFastFailAsync(testExecutor, consumer, consumer),
+                completed.thenMAcceptFailFastAsync(consumer, consumer),
+                completed.thenMAcceptFailFastAsync(testExecutor, consumer, consumer),
                 completed.thenMAcceptAnySuccessAsync(consumer, consumer),
                 completed.thenMAcceptAnySuccessAsync(testExecutor, consumer, consumer),
                 completed.thenMAcceptAnyAsync(consumer, consumer),
@@ -132,8 +132,8 @@ class CffuTest {
         Cffu<Void>[] cfs = new Cffu[]{
                 completed.thenMRunAsync(runnable, runnable),
                 completed.thenMRunAsync(testExecutor, runnable, runnable),
-                completed.thenMRunFastFailAsync(runnable, runnable),
-                completed.thenMRunFastFailAsync(testExecutor, runnable, runnable),
+                completed.thenMRunFailFastAsync(runnable, runnable),
+                completed.thenMRunFailFastAsync(testExecutor, runnable, runnable),
                 completed.thenMRunAnySuccessAsync(runnable, runnable),
                 completed.thenMRunAnySuccessAsync(testExecutor, runnable, runnable),
                 completed.thenMRunAnyAsync(runnable, runnable),
@@ -177,14 +177,14 @@ class CffuTest {
             return nnn + n;
         };
 
-        assertEquals(Tuple2.of(n + n, s + n), completed.thenTupleMApplyFastFailAsync(function_n, function_s).get());
-        assertEquals(Tuple2.of(n + n, s + n), completed.thenTupleMApplyFastFailAsync(testExecutor, function_n, function_s).get());
-        assertEquals(Tuple3.of(n + n, s + n, d + n), completed.thenTupleMApplyFastFailAsync(function_n, function_s, function_d).get());
-        assertEquals(Tuple3.of(n + n, s + n, d + n), completed.thenTupleMApplyFastFailAsync(testExecutor, function_n, function_s, function_d).get());
-        assertEquals(Tuple4.of(n + n, s + n, d + n, anotherN + n), completed.thenTupleMApplyFastFailAsync(function_n, function_s, function_d, function_an).get());
-        assertEquals(Tuple4.of(n + n, s + n, d + n, anotherN + n), completed.thenTupleMApplyFastFailAsync(testExecutor, function_n, function_s, function_d, function_an).get());
-        assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, nnn + n), completed.thenTupleMApplyFastFailAsync(function_n, function_s, function_d, function_an, function_nnn).get());
-        assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, nnn + n), completed.thenTupleMApplyFastFailAsync(testExecutor, function_n, function_s, function_d, function_an, function_nnn).get());
+        assertEquals(Tuple2.of(n + n, s + n), completed.thenTupleMApplyFailFastAsync(function_n, function_s).get());
+        assertEquals(Tuple2.of(n + n, s + n), completed.thenTupleMApplyFailFastAsync(testExecutor, function_n, function_s).get());
+        assertEquals(Tuple3.of(n + n, s + n, d + n), completed.thenTupleMApplyFailFastAsync(function_n, function_s, function_d).get());
+        assertEquals(Tuple3.of(n + n, s + n, d + n), completed.thenTupleMApplyFailFastAsync(testExecutor, function_n, function_s, function_d).get());
+        assertEquals(Tuple4.of(n + n, s + n, d + n, anotherN + n), completed.thenTupleMApplyFailFastAsync(function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple4.of(n + n, s + n, d + n, anotherN + n), completed.thenTupleMApplyFailFastAsync(testExecutor, function_n, function_s, function_d, function_an).get());
+        assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, nnn + n), completed.thenTupleMApplyFailFastAsync(function_n, function_s, function_d, function_an, function_nnn).get());
+        assertEquals(Tuple5.of(n + n, s + n, d + n, anotherN + n, nnn + n), completed.thenTupleMApplyFailFastAsync(testExecutor, function_n, function_s, function_d, function_an, function_nnn).get());
 
         assertEquals(Tuple2.of(n + n, s + n), completed.thenTupleMApplyAllSuccessAsync(function_n, function_s).get());
         assertEquals(Tuple2.of(n + n, s + n), completed.thenTupleMApplyAllSuccessAsync(testExecutor, function_n, function_s).get());
@@ -220,7 +220,7 @@ class CffuTest {
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
-    void both_fastFail() throws Exception {
+    void bothFailFast() throws Exception {
         Cffu<Integer> cf = testCffuFac.supplyAsync(() -> {
             snoreZzz(LONG_WAIT_MS);
             return n;
@@ -230,35 +230,35 @@ class CffuTest {
         final Runnable runnable = () -> {
         };
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.runAfterBothFastFail(failed, runnable).get(1, MILLISECONDS)
+                cf.runAfterBothFailFast(failed, runnable).get(1, MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.runAfterBothFastFailAsync(failed, runnable).get(1, MILLISECONDS)
+                cf.runAfterBothFailFastAsync(failed, runnable).get(1, MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.runAfterBothFastFailAsync(failed, runnable, testExecutor).get(1, MILLISECONDS)
+                cf.runAfterBothFailFastAsync(failed, runnable, testExecutor).get(1, MILLISECONDS)
         ).getCause());
 
         BiConsumer<Integer, Integer> bc = (i1, i2) -> {
         };
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.thenAcceptBothFastFail(failed, bc).get(1, MILLISECONDS)
+                cf.thenAcceptBothFailFast(failed, bc).get(1, MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.thenAcceptBothFastFailAsync(failed, bc).get(1, MILLISECONDS)
+                cf.thenAcceptBothFailFastAsync(failed, bc).get(1, MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.thenAcceptBothFastFailAsync(failed, bc, testExecutor).get(1, MILLISECONDS)
+                cf.thenAcceptBothFailFastAsync(failed, bc, testExecutor).get(1, MILLISECONDS)
         ).getCause());
 
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.thenCombineFastFail(failed, Integer::sum).get(1, MILLISECONDS)
+                cf.thenCombineFailFast(failed, Integer::sum).get(1, MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.thenCombineFastFailAsync(failed, Integer::sum).get(1, MILLISECONDS)
+                cf.thenCombineFailFastAsync(failed, Integer::sum).get(1, MILLISECONDS)
         ).getCause());
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                cf.thenCombineFastFailAsync(failed, Integer::sum, testExecutor).get(1, MILLISECONDS)
+                cf.thenCombineFailFastAsync(failed, Integer::sum, testExecutor).get(1, MILLISECONDS)
         ).getCause());
     }
 

@@ -229,8 +229,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      */
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyFastFailAsync(Function<? super T, ? extends U>... fns) {
-        return thenMApplyFastFailAsync(fac.defaultExecutor(), fns);
+    public final <U> Cffu<List<U>> thenMApplyFailFastAsync(Function<? super T, ? extends U>... fns) {
+        return thenMApplyFailFastAsync(fac.defaultExecutor(), fns);
     }
 
     /**
@@ -245,8 +245,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      */
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyFastFailAsync(Executor executor, Function<? super T, ? extends U>... fns) {
-        return resetCf(CompletableFutureUtils.thenMApplyFastFailAsync(cf, executor, fns));
+    public final <U> Cffu<List<U>> thenMApplyFailFastAsync(Executor executor, Function<? super T, ? extends U>... fns) {
+        return resetCf(CompletableFutureUtils.thenMApplyFailFastAsync(cf, executor, fns));
     }
 
     /**
@@ -442,8 +442,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      */
     @SafeVarargs
-    public final Cffu<Void> thenMAcceptFastFailAsync(Consumer<? super T>... actions) {
-        return thenMAcceptFastFailAsync(fac.defaultExecutor(), actions);
+    public final Cffu<Void> thenMAcceptFailFastAsync(Consumer<? super T>... actions) {
+        return thenMAcceptFailFastAsync(fac.defaultExecutor(), actions);
     }
 
     /**
@@ -455,8 +455,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the new Cffu
      */
     @SafeVarargs
-    public final Cffu<Void> thenMAcceptFastFailAsync(Executor executor, Consumer<? super T>... actions) {
-        return resetCf(CompletableFutureUtils.thenMAcceptFastFailAsync(cf, executor, actions));
+    public final Cffu<Void> thenMAcceptFailFastAsync(Executor executor, Consumer<? super T>... actions) {
+        return resetCf(CompletableFutureUtils.thenMAcceptFailFastAsync(cf, executor, actions));
     }
 
     /**
@@ -544,8 +544,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param actions the actions to perform before completing the returned Cffu
      * @return the new Cffu
      */
-    public Cffu<Void> thenMRunFastFailAsync(Runnable... actions) {
-        return thenMRunFastFailAsync(fac.defaultExecutor(), actions);
+    public Cffu<Void> thenMRunFailFastAsync(Runnable... actions) {
+        return thenMRunFailFastAsync(fac.defaultExecutor(), actions);
     }
 
     /**
@@ -556,8 +556,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param actions  the actions to perform before completing the returned Cffu
      * @return the new Cffu
      */
-    public Cffu<Void> thenMRunFastFailAsync(Executor executor, Runnable... actions) {
-        return resetCf(CompletableFutureUtils.thenMRunFastFailAsync(cf, executor, actions));
+    public Cffu<Void> thenMRunFailFastAsync(Executor executor, Runnable... actions) {
+        return resetCf(CompletableFutureUtils.thenMRunFailFastAsync(cf, executor, actions));
     }
 
     /**
@@ -635,75 +635,75 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Tuple variance of {@link #thenMApplyFastFailAsync(Function[])}.
+     * Tuple variance of {@link #thenMApplyFailFastAsync(Function[])}.
      */
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyFastFailAsync(
+    public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyFailFastAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenTupleMApplyFastFailAsync(fac.defaultExecutor(), fn1, fn2);
+        return thenTupleMApplyFailFastAsync(fac.defaultExecutor(), fn1, fn2);
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFastFailAsync(Executor, Function[])}.
+     * Tuple variance of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
      */
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyFastFailAsync(
+    public <U1, U2> Cffu<Tuple2<U1, U2>> thenTupleMApplyFailFastAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyFastFailAsync(cf, executor, fn1, fn2));
+        return resetCf(CompletableFutureUtils.thenTupleMApplyFailFastAsync(cf, executor, fn1, fn2));
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFastFailAsync(Function[])}.
+     * Tuple variance of {@link #thenMApplyFailFastAsync(Function[])}.
      */
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyFastFailAsync(
+    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyFailFastAsync(
             Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenTupleMApplyFastFailAsync(fac.defaultExecutor(), fn1, fn2, fn3);
+        return thenTupleMApplyFailFastAsync(fac.defaultExecutor(), fn1, fn2, fn3);
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFastFailAsync(Executor, Function[])}.
+     * Tuple variance of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
      */
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyFastFailAsync(
+    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenTupleMApplyFailFastAsync(
             Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyFastFailAsync(cf, executor, fn1, fn2, fn3));
+        return resetCf(CompletableFutureUtils.thenTupleMApplyFailFastAsync(cf, executor, fn1, fn2, fn3));
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFastFailAsync(Function[])}.
+     * Tuple variance of {@link #thenMApplyFailFastAsync(Function[])}.
      */
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFastFailAsync(
+    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFailFastAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenTupleMApplyFastFailAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4);
+        return thenTupleMApplyFailFastAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4);
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFastFailAsync(Executor, Function[])}.
+     * Tuple variance of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
      */
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFastFailAsync(
+    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenTupleMApplyFailFastAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyFastFailAsync(cf, executor, fn1, fn2, fn3, fn4));
+        return resetCf(CompletableFutureUtils.thenTupleMApplyFailFastAsync(cf, executor, fn1, fn2, fn3, fn4));
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFastFailAsync(Function[])}.
+     * Tuple variance of {@link #thenMApplyFailFastAsync(Function[])}.
      */
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFastFailAsync(
+    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFailFastAsync(
             Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenTupleMApplyFastFailAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4, fn5);
+        return thenTupleMApplyFailFastAsync(fac.defaultExecutor(), fn1, fn2, fn3, fn4, fn5);
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFastFailAsync(Executor, Function[])}.
+     * Tuple variance of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
      */
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFastFailAsync(
+    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenTupleMApplyFailFastAsync(
             Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return resetCf(CompletableFutureUtils.thenTupleMApplyFastFailAsync(cf, executor, fn1, fn2, fn3, fn4, fn5));
+        return resetCf(CompletableFutureUtils.thenTupleMApplyFailFastAsync(cf, executor, fn1, fn2, fn3, fn4, fn5));
     }
 
     /**
@@ -1004,10 +1004,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <V>   the function's return type
      * @return the new Cffu
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothFastFail`")
-    public <U, V> Cffu<V> thenCombineFastFail(
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothFailFast`")
+    public <U, V> Cffu<V> thenCombineFailFast(
             CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
-        return resetCf(CompletableFutureUtils.thenCombineFastFail(cf, other, fn));
+        return resetCf(CompletableFutureUtils.thenCombineFailFast(cf, other, fn));
     }
 
     /**
@@ -1023,10 +1023,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <V>   the function's return type
      * @return the new Cffu
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothFastFailAsync`")
-    public <U, V> Cffu<V> thenCombineFastFailAsync(
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothFailFastAsync`")
+    public <U, V> Cffu<V> thenCombineFailFastAsync(
             CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
-        return thenCombineFastFailAsync(other, fn, fac.defaultExecutor());
+        return thenCombineFailFastAsync(other, fn, fac.defaultExecutor());
     }
 
     /**
@@ -1043,10 +1043,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <V>      the function's return type
      * @return the new Cffu
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothFastFailAsync`")
-    public <U, V> Cffu<V> thenCombineFastFailAsync(
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothFailFastAsync`")
+    public <U, V> Cffu<V> thenCombineFailFastAsync(
             CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
-        return resetCf(CompletableFutureUtils.thenCombineFastFailAsync(cf, other, fn, executor));
+        return resetCf(CompletableFutureUtils.thenCombineFailFastAsync(cf, other, fn, executor));
     }
 
     /**
@@ -1061,9 +1061,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <U>    the type of the other CompletionStage's result
      * @return the new Cffu
      */
-    public <U> Cffu<Void> thenAcceptBothFastFail(
+    public <U> Cffu<Void> thenAcceptBothFailFast(
             CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
-        return resetCf(CompletableFutureUtils.thenAcceptBothFastFail(cf, other, action));
+        return resetCf(CompletableFutureUtils.thenAcceptBothFailFast(cf, other, action));
     }
 
     /**
@@ -1078,9 +1078,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <U>    the type of the other CompletionStage's result
      * @return the new Cffu
      */
-    public <U> Cffu<Void> thenAcceptBothFastFailAsync(
+    public <U> Cffu<Void> thenAcceptBothFailFastAsync(
             CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
-        return thenAcceptBothFastFailAsync(other, action, fac.defaultExecutor());
+        return thenAcceptBothFailFastAsync(other, action, fac.defaultExecutor());
     }
 
     /**
@@ -1096,9 +1096,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <U>      the type of the other CompletionStage's result
      * @return the new Cffu
      */
-    public <U> Cffu<Void> thenAcceptBothFastFailAsync(
+    public <U> Cffu<Void> thenAcceptBothFailFastAsync(
             CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action, Executor executor) {
-        return resetCf(CompletableFutureUtils.thenAcceptBothFastFailAsync(cf, other, action, executor));
+        return resetCf(CompletableFutureUtils.thenAcceptBothFailFastAsync(cf, other, action, executor));
     }
 
     /**
@@ -1111,8 +1111,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param action the action to perform before completing the returned Cffu
      * @return the new Cffu
      */
-    public Cffu<Void> runAfterBothFastFail(CompletionStage<?> other, Runnable action) {
-        return resetCf(CompletableFutureUtils.runAfterBothFastFail(cf, other, action));
+    public Cffu<Void> runAfterBothFailFast(CompletionStage<?> other, Runnable action) {
+        return resetCf(CompletableFutureUtils.runAfterBothFailFast(cf, other, action));
     }
 
     /**
@@ -1126,8 +1126,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param action the action to perform before completing the returned Cffu
      * @return the new Cffu
      */
-    public Cffu<Void> runAfterBothFastFailAsync(CompletionStage<?> other, Runnable action) {
-        return runAfterBothFastFailAsync(other, action, fac.defaultExecutor());
+    public Cffu<Void> runAfterBothFailFastAsync(CompletionStage<?> other, Runnable action) {
+        return runAfterBothFailFastAsync(other, action, fac.defaultExecutor());
     }
 
     /**
@@ -1142,8 +1142,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param executor the executor to use for asynchronous execution
      * @return the new Cffu
      */
-    public Cffu<Void> runAfterBothFastFailAsync(CompletionStage<?> other, Runnable action, Executor executor) {
-        return resetCf(CompletableFutureUtils.runAfterBothFastFailAsync(cf, other, action, executor));
+    public Cffu<Void> runAfterBothFailFastAsync(CompletionStage<?> other, Runnable action, Executor executor) {
+        return resetCf(CompletableFutureUtils.runAfterBothFailFastAsync(cf, other, action, executor));
     }
 
     /**

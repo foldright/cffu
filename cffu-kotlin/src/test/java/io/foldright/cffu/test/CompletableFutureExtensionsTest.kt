@@ -43,8 +43,8 @@ class CompletableFutureExtensionsTest : FunSpec({
         // mSupply
 
         listOf(
-            listOf(supplier, supplier).mSupplyFastFailAsyncCompletableFuture(),
-            listOf(supplier, supplier).mSupplyFastFailAsyncCompletableFuture(testExecutor),
+            listOf(supplier, supplier).mSupplyFailFastAsyncCompletableFuture(),
+            listOf(supplier, supplier).mSupplyFailFastAsyncCompletableFuture(testExecutor),
             listOf(supplier, supplier).mSupplyAllSuccessAsyncCompletableFuture(anotherN),
             listOf(supplier, supplier).mSupplyAllSuccessAsyncCompletableFuture(anotherN, testExecutor),
             listOf(supplier, supplier).mSupplyMostSuccessAsyncCompletableFuture(
@@ -58,8 +58,8 @@ class CompletableFutureExtensionsTest : FunSpec({
         ).map { it.await() }.shouldForAll { it.shouldContainExactly(n, n) }
 
         arrayOf(
-            arrayOf(supplier, supplier).mSupplyFastFailAsyncCompletableFuture(),
-            arrayOf(supplier, supplier).mSupplyFastFailAsyncCompletableFuture(testExecutor),
+            arrayOf(supplier, supplier).mSupplyFailFastAsyncCompletableFuture(),
+            arrayOf(supplier, supplier).mSupplyFailFastAsyncCompletableFuture(testExecutor),
             arrayOf(supplier, supplier).mSupplyAllSuccessAsyncCompletableFuture(anotherN),
             arrayOf(supplier, supplier).mSupplyAllSuccessAsyncCompletableFuture(anotherN, testExecutor),
             arrayOf(supplier, supplier).mSupplyMostSuccessAsyncCompletableFuture(
@@ -91,8 +91,8 @@ class CompletableFutureExtensionsTest : FunSpec({
         val runnable = Runnable { snoreZzz() }
 
         listOf(
-            listOf(runnable, runnable).mRunFastFailAsyncCompletableFuture(),
-            listOf(runnable, runnable).mRunFastFailAsyncCompletableFuture(testExecutor),
+            listOf(runnable, runnable).mRunFailFastAsyncCompletableFuture(),
+            listOf(runnable, runnable).mRunFailFastAsyncCompletableFuture(testExecutor),
             listOf(runnable, runnable).mRunAsyncCompletableFuture(),
             listOf(runnable, runnable).mRunAsyncCompletableFuture(testExecutor),
             listOf(runnable, runnable).mRunAnySuccessAsyncCompletableFuture(),
@@ -102,8 +102,8 @@ class CompletableFutureExtensionsTest : FunSpec({
         ).map { it.await() }.shouldContainOnlyNulls()
 
         arrayOf(
-            arrayOf(runnable, runnable).mRunFastFailAsyncCompletableFuture(),
-            arrayOf(runnable, runnable).mRunFastFailAsyncCompletableFuture(testExecutor),
+            arrayOf(runnable, runnable).mRunFailFastAsyncCompletableFuture(),
+            arrayOf(runnable, runnable).mRunFailFastAsyncCompletableFuture(testExecutor),
             arrayOf(runnable, runnable).mRunAsyncCompletableFuture(),
             arrayOf(runnable, runnable).mRunAsyncCompletableFuture(testExecutor),
             arrayOf(runnable, runnable).mRunAnySuccessAsyncCompletableFuture(),
@@ -162,21 +162,21 @@ class CompletableFutureExtensionsTest : FunSpec({
             completedFuture(n),
             completedFuture(n + 1),
             completedFuture(n + 2),
-        ).allResultsFastFailOfCompletableFuture().await() shouldBe listOf(n, n + 1, n + 2)
-        listOf<CompletableFuture<Int>>().allResultsFastFailOfCompletableFuture().await() shouldBe emptyList()
+        ).allResultsFailFastOfCompletableFuture().await() shouldBe listOf(n, n + 1, n + 2)
+        listOf<CompletableFuture<Int>>().allResultsFailFastOfCompletableFuture().await() shouldBe emptyList()
 
         setOf(
             completedFuture(n),
             completedFuture(n + 1),
             completedFuture(n + 2),
-        ).allResultsFastFailOfCompletableFuture().await() shouldBe listOf(n, n + 1, n + 2)
+        ).allResultsFailFastOfCompletableFuture().await() shouldBe listOf(n, n + 1, n + 2)
 
         arrayOf(
             completedFuture(n),
             completedFuture(n + 1),
             completedFuture(n + 2),
-        ).allResultsFastFailOfCompletableFuture().await() shouldBe listOf(n, n + 1, n + 2)
-        arrayOf<CompletableFuture<Int>>().allResultsFastFailOfCompletableFuture().await() shouldBe emptyList()
+        ).allResultsFailFastOfCompletableFuture().await() shouldBe listOf(n, n + 1, n + 2)
+        arrayOf<CompletableFuture<Int>>().allResultsFailFastOfCompletableFuture().await() shouldBe emptyList()
 
         ////////////////////////////////////////
 
@@ -206,21 +206,21 @@ class CompletableFutureExtensionsTest : FunSpec({
             completedFuture(n),
             completedFuture(s),
             completedFuture(d),
-        ).allFastFailOfCompletableFuture().await().shouldBeNull()
-        listOf<CompletableFuture<Int>>().allFastFailOfCompletableFuture().await().shouldBeNull()
+        ).allFailFastOfCompletableFuture().await().shouldBeNull()
+        listOf<CompletableFuture<Int>>().allFailFastOfCompletableFuture().await().shouldBeNull()
 
         setOf(
             completedFuture(n),
             completedFuture(s),
             completedFuture(d),
-        ).allFastFailOfCompletableFuture().await().shouldBeNull()
+        ).allFailFastOfCompletableFuture().await().shouldBeNull()
 
         arrayOf(
             completedFuture(n),
             completedFuture(s),
             completedFuture(d),
-        ).allFastFailOfCompletableFuture().await().shouldBeNull()
-        arrayOf<CompletableFuture<*>>().allFastFailOfCompletableFuture().await().shouldBeNull()
+        ).allFailFastOfCompletableFuture().await().shouldBeNull()
+        arrayOf<CompletableFuture<*>>().allFailFastOfCompletableFuture().await().shouldBeNull()
     }
 
     test("mostSuccessResultsOfCompletableFuture") {
@@ -344,8 +344,8 @@ class CompletableFutureExtensionsTest : FunSpec({
         arrayOf(
             completed.thenMRunAsync(runnable, runnable),
             completed.thenMRunAsync(testExecutor, runnable, runnable),
-            completed.thenMRunFastFailAsync(runnable, runnable),
-            completed.thenMRunFastFailAsync(testExecutor, runnable, runnable),
+            completed.thenMRunFailFastAsync(runnable, runnable),
+            completed.thenMRunFailFastAsync(testExecutor, runnable, runnable),
             completed.thenMRunAnySuccessAsync(runnable, runnable),
             completed.thenMRunAnySuccessAsync(testExecutor, runnable, runnable),
             completed.thenMRunAnyAsync(runnable, runnable),
@@ -359,8 +359,8 @@ class CompletableFutureExtensionsTest : FunSpec({
         arrayOf(
             completed.thenMAcceptAsync(consumer, consumer),
             completed.thenMAcceptAsync(testExecutor, consumer, consumer),
-            completed.thenMAcceptFastFailAsync(consumer, consumer),
-            completed.thenMAcceptFastFailAsync(testExecutor, consumer, consumer),
+            completed.thenMAcceptFailFastAsync(consumer, consumer),
+            completed.thenMAcceptFailFastAsync(testExecutor, consumer, consumer),
             completed.thenMAcceptAnySuccessAsync(consumer, consumer),
             completed.thenMAcceptAnySuccessAsync(testExecutor, consumer, consumer),
             completed.thenMAcceptAnyAsync(consumer, consumer),
@@ -373,8 +373,8 @@ class CompletableFutureExtensionsTest : FunSpec({
             x + n
         }
         arrayOf(
-            completed.thenMApplyFastFailAsync(supplier, supplier),
-            completed.thenMApplyFastFailAsync(testExecutor, supplier, supplier),
+            completed.thenMApplyFailFastAsync(supplier, supplier),
+            completed.thenMApplyFailFastAsync(testExecutor, supplier, supplier),
             completed.thenMApplyAllSuccessAsync(anotherN, supplier, supplier),
             completed.thenMApplyAllSuccessAsync(anotherN, testExecutor, supplier, supplier),
             completed.thenMApplyMostSuccessAsync(anotherN, LONG_WAIT_MS, TimeUnit.MILLISECONDS, supplier, supplier),
@@ -423,26 +423,26 @@ class CompletableFutureExtensionsTest : FunSpec({
             n + x
         }
 
-        // thenTupleMApplyFastFailAsync
+        // thenTupleMApplyFailFastAsync
 
-        completed.thenTupleMApplyFastFailAsync(function_n, function_s)
+        completed.thenTupleMApplyFailFastAsync(function_n, function_s)
             .await() shouldBe Tuple2.of(n + n, s + n)
-        completed.thenTupleMApplyFastFailAsync(testExecutor, function_n, function_s)
+        completed.thenTupleMApplyFailFastAsync(testExecutor, function_n, function_s)
             .await() shouldBe Tuple2.of(n + n, s + n)
 
-        completed.thenTupleMApplyFastFailAsync(function_n, function_s, function_d)
+        completed.thenTupleMApplyFailFastAsync(function_n, function_s, function_d)
             .await() shouldBe Tuple3.of(n + n, s + n, d + n)
-        completed.thenTupleMApplyFastFailAsync(testExecutor, function_n, function_s, function_d)
+        completed.thenTupleMApplyFailFastAsync(testExecutor, function_n, function_s, function_d)
             .await() shouldBe Tuple3.of(n + n, s + n, d + n)
 
-        completed.thenTupleMApplyFastFailAsync(function_n, function_s, function_d, function_an)
+        completed.thenTupleMApplyFailFastAsync(function_n, function_s, function_d, function_an)
             .await() shouldBe Tuple4.of(n + n, s + n, d + n, anotherN + n)
-        completed.thenTupleMApplyFastFailAsync(testExecutor, function_n, function_s, function_d, function_an)
+        completed.thenTupleMApplyFailFastAsync(testExecutor, function_n, function_s, function_d, function_an)
             .await() shouldBe Tuple4.of(n + n, s + n, d + n, anotherN + n)
 
-        completed.thenTupleMApplyFastFailAsync(function_n, function_s, function_d, function_an, function_nn)
+        completed.thenTupleMApplyFailFastAsync(function_n, function_s, function_d, function_an, function_nn)
             .await() shouldBe Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n)
-        completed.thenTupleMApplyFastFailAsync(
+        completed.thenTupleMApplyFailFastAsync(
             testExecutor, function_n, function_s, function_d, function_an, function_nn
         ).await() shouldBe Tuple5.of(n + n, s + n, d + n, anotherN + n, n + n)
 
@@ -527,7 +527,7 @@ class CompletableFutureExtensionsTest : FunSpec({
     //# both methods
     ////////////////////////////////////////////////////////////////////////////////
 
-    test("both fastFail") {
+    test("bothFailFast") {
         val cf = CompletableFuture.supplyAsync {
             snoreZzz(2_000)
             n
@@ -536,34 +536,34 @@ class CompletableFutureExtensionsTest : FunSpec({
 
         val runnable = Runnable {}
         shouldThrowExactly<ExecutionException> {
-            cf.runAfterBothFastFail(failed, runnable)[1, TimeUnit.MILLISECONDS]
+            cf.runAfterBothFailFast(failed, runnable)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
         shouldThrowExactly<ExecutionException> {
-            cf.runAfterBothFastFailAsync(failed, runnable)[1, TimeUnit.MILLISECONDS]
+            cf.runAfterBothFailFastAsync(failed, runnable)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
         shouldThrowExactly<ExecutionException> {
-            cf.runAfterBothFastFailAsync(failed, runnable, testExecutor)[1, TimeUnit.MILLISECONDS]
+            cf.runAfterBothFailFastAsync(failed, runnable, testExecutor)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
 
         val bc = BiConsumer { _: Int, _: Int -> }
         shouldThrowExactly<ExecutionException> {
-            cf.thenAcceptBothFastFail(failed, bc)[1, TimeUnit.MILLISECONDS]
+            cf.thenAcceptBothFailFast(failed, bc)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
         shouldThrowExactly<ExecutionException> {
-            cf.thenAcceptBothFastFailAsync(failed, bc)[1, TimeUnit.MILLISECONDS]
+            cf.thenAcceptBothFailFastAsync(failed, bc)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
         shouldThrowExactly<ExecutionException> {
-            cf.thenAcceptBothFastFailAsync(failed, bc, testExecutor)[1, TimeUnit.MILLISECONDS]
+            cf.thenAcceptBothFailFastAsync(failed, bc, testExecutor)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
 
         shouldThrowExactly<ExecutionException> {
-            cf.thenCombineFastFail(failed, Integer::sum)[1, TimeUnit.MILLISECONDS]
+            cf.thenCombineFailFast(failed, Integer::sum)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
         shouldThrowExactly<ExecutionException> {
-            cf.thenCombineFastFailAsync(failed, Integer::sum)[1, TimeUnit.MILLISECONDS]
+            cf.thenCombineFailFastAsync(failed, Integer::sum)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
         shouldThrowExactly<ExecutionException> {
-            cf.thenCombineFastFailAsync(failed, Integer::sum, testExecutor)[1, TimeUnit.MILLISECONDS]
+            cf.thenCombineFailFastAsync(failed, Integer::sum, testExecutor)[1, TimeUnit.MILLISECONDS]
         }.cause shouldBeSameInstanceAs rte
     }
 

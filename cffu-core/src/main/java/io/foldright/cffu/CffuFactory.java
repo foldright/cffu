@@ -178,11 +178,11 @@ public final class CffuFactory {
      * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>       the suppliers' return type
      * @return the new Cffu
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * @see #allResultsFailFastOf(CompletionStage[])
      */
     @SafeVarargs
-    public final <T> Cffu<List<T>> mSupplyFastFailAsync(Supplier<? extends T>... suppliers) {
-        return mSupplyFastFailAsync(defaultExecutor, suppliers);
+    public final <T> Cffu<List<T>> mSupplyFailFastAsync(Supplier<? extends T>... suppliers) {
+        return mSupplyFailFastAsync(defaultExecutor, suppliers);
     }
 
     /**
@@ -194,11 +194,11 @@ public final class CffuFactory {
      * @param suppliers the suppliers returning the value to be used to complete the returned Cffu
      * @param <T>       the suppliers' return type
      * @return the new Cffu
-     * @see #allResultsFastFailOf(CompletionStage[])
+     * @see #allResultsFailFastOf(CompletionStage[])
      */
     @SafeVarargs
-    public final <T> Cffu<List<T>> mSupplyFastFailAsync(Executor executor, Supplier<? extends T>... suppliers) {
-        return create(CompletableFutureUtils.mSupplyFastFailAsync(executor, suppliers));
+    public final <T> Cffu<List<T>> mSupplyFailFastAsync(Executor executor, Supplier<? extends T>... suppliers) {
+        return create(CompletableFutureUtils.mSupplyFailFastAsync(executor, suppliers));
     }
 
     /**
@@ -410,10 +410,10 @@ public final class CffuFactory {
      *
      * @param actions the actions to run before completing the returned Cffu
      * @return the new Cffu
-     * @see #allFastFailOf(CompletionStage[])
+     * @see #allFailFastOf(CompletionStage[])
      */
-    public Cffu<Void> mRunFastFailAsync(Runnable... actions) {
-        return mRunFastFailAsync(defaultExecutor, actions);
+    public Cffu<Void> mRunFailFastAsync(Runnable... actions) {
+        return mRunFailFastAsync(defaultExecutor, actions);
     }
 
     /**
@@ -423,10 +423,10 @@ public final class CffuFactory {
      * @param executor the executor to use for asynchronous execution
      * @param actions  the actions to run before completing the returned Cffu
      * @return the new Cffu
-     * @see #allFastFailOf(CompletionStage[])
+     * @see #allFailFastOf(CompletionStage[])
      */
-    public Cffu<Void> mRunFastFailAsync(Executor executor, Runnable... actions) {
-        return create(CompletableFutureUtils.mRunFastFailAsync(executor, actions));
+    public Cffu<Void> mRunFailFastAsync(Executor executor, Runnable... actions) {
+        return create(CompletableFutureUtils.mRunFailFastAsync(executor, actions));
     }
 
     /**
@@ -511,72 +511,72 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
-    public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyFastFailAsync(
+    public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return tupleMSupplyFastFailAsync(defaultExecutor, supplier1, supplier2);
+        return tupleMSupplyFailFastAsync(defaultExecutor, supplier1, supplier2);
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
-    public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyFastFailAsync(
+    public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(executor, supplier1, supplier2));
+        return create(CompletableFutureUtils.tupleMSupplyFailFastAsync(executor, supplier1, supplier2));
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
-    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
+    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return tupleMSupplyFastFailAsync(defaultExecutor, supplier1, supplier2, supplier3);
+        return tupleMSupplyFailFastAsync(defaultExecutor, supplier1, supplier2, supplier3);
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
-    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyFastFailAsync(
+    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(executor, supplier1, supplier2, supplier3));
+        return create(CompletableFutureUtils.tupleMSupplyFailFastAsync(executor, supplier1, supplier2, supplier3));
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
-    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyFastFailAsync(
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return tupleMSupplyFastFailAsync(defaultExecutor, supplier1, supplier2, supplier3, supplier4);
+        return tupleMSupplyFailFastAsync(defaultExecutor, supplier1, supplier2, supplier3, supplier4);
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
-    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyFastFailAsync(
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(executor, supplier1, supplier2, supplier3, supplier4));
+        return create(CompletableFutureUtils.tupleMSupplyFailFastAsync(executor, supplier1, supplier2, supplier3, supplier4));
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
-    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
+    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return tupleMSupplyFastFailAsync(defaultExecutor, supplier1, supplier2, supplier3, supplier4, supplier5);
+        return tupleMSupplyFailFastAsync(defaultExecutor, supplier1, supplier2, supplier3, supplier4, supplier5);
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
-    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFastFailAsync(
+    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return create(CompletableFutureUtils.tupleMSupplyFastFailAsync(
+        return create(CompletableFutureUtils.tupleMSupplyFailFastAsync(
                 executor, supplier1, supplier2, supplier3, supplier4, supplier5));
     }
 
@@ -787,7 +787,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -803,7 +803,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1,
@@ -821,7 +821,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -839,7 +839,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFastFailAsync(Executor, Supplier[])}.
+     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> tupleMSupplyAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -862,7 +862,7 @@ public final class CffuFactory {
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      * If no stages are provided, returns a Cffu completed with the value empty list.
      * <p>
-     * This method is the same as {@link #allResultsOf(CompletionStage[])} except for the fast-fail behavior.
+     * This method is the same as {@link #allResultsOf(CompletionStage[])} except for the fail-fast behavior.
      *
      * @param cfs the stages
      * @return a new Cffu that is successful when all the given stages success
@@ -870,8 +870,8 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     @SafeVarargs
-    public final <T> Cffu<List<T>> allResultsFastFailOf(CompletionStage<? extends T>... cfs) {
-        return create(CompletableFutureUtils.allResultsFastFailOf(cfs));
+    public final <T> Cffu<List<T>> allResultsFailFastOf(CompletionStage<? extends T>... cfs) {
+        return create(CompletableFutureUtils.allResultsFailFastOf(cfs));
     }
 
     /**
@@ -946,13 +946,13 @@ public final class CffuFactory {
      * but may be obtained by inspecting them individually.
      * If no stages are provided, returns a Cffu completed with the value {@code null}.
      * <p>
-     * This method is the same as {@link #allOf(CompletionStage[])} except for the fast-fail behavior.
+     * This method is the same as {@link #allOf(CompletionStage[])} except for the fail-fast behavior.
      * <p>
      * If you need the results of given stages, prefer below methods:
      * <ul>
-     * <li>{@link #allResultsFastFailOf(CompletionStage[])}
-     * <li>{@link #allTupleFastFailOf(CompletionStage, CompletionStage)} /
-     *     {@link #allTupleFastFailOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
+     * <li>{@link #allResultsFailFastOf(CompletionStage[])}
+     * <li>{@link #allTupleFailFastOf(CompletionStage, CompletionStage)} /
+     *     {@link #allTupleFailFastOf(CompletionStage, CompletionStage, CompletionStage, CompletionStage, CompletionStage)}
      *     (provided overloaded methods with 2~5 input)
      * </ul>
      * <p>
@@ -968,8 +968,8 @@ public final class CffuFactory {
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
     @Contract(pure = true)
-    public Cffu<Void> allFastFailOf(CompletionStage<?>... cfs) {
-        return create(CompletableFutureUtils.allFastFailOf(cfs));
+    public Cffu<Void> allFailFastOf(CompletionStage<?>... cfs) {
+        return create(CompletableFutureUtils.allFailFastOf(cfs));
     }
 
     /**
@@ -1061,41 +1061,41 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
+     * Tuple variance of {@link #allResultsFailFastOf(CompletionStage[])}.
      */
     @Contract(pure = true)
-    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleFastFailOf(
+    public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleFailFastOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return create(CompletableFutureUtils.allTupleFastFailOf(cf1, cf2));
+        return create(CompletableFutureUtils.allTupleFailFastOf(cf1, cf2));
     }
 
     /**
-     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
+     * Tuple variance of {@link #allResultsFailFastOf(CompletionStage[])}.
      */
     @Contract(pure = true)
-    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleFastFailOf(
+    public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleFailFastOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return create(CompletableFutureUtils.allTupleFastFailOf(cf1, cf2, cf3));
+        return create(CompletableFutureUtils.allTupleFailFastOf(cf1, cf2, cf3));
     }
 
     /**
-     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
+     * Tuple variance of {@link #allResultsFailFastOf(CompletionStage[])}.
      */
     @Contract(pure = true)
-    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleFastFailOf(
+    public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleFailFastOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return create(CompletableFutureUtils.allTupleFastFailOf(cf1, cf2, cf3, cf4));
+        return create(CompletableFutureUtils.allTupleFailFastOf(cf1, cf2, cf3, cf4));
     }
 
     /**
-     * Tuple variance of {@link #allResultsFastFailOf(CompletionStage[])}.
+     * Tuple variance of {@link #allResultsFailFastOf(CompletionStage[])}.
      */
     @Contract(pure = true)
-    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleFastFailOf(
+    public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleFailFastOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return create(CompletableFutureUtils.allTupleFastFailOf(cf1, cf2, cf3, cf4, cf5));
+        return create(CompletableFutureUtils.allTupleFailFastOf(cf1, cf2, cf3, cf4, cf5));
     }
 
     /**
