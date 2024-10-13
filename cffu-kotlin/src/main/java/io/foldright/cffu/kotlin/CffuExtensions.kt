@@ -129,11 +129,11 @@ fun <T> Array<out Supplier<out T>>.mSupplyAllSuccessAsyncCffu(
  * in the given time(`timeout`, aka as many results as possible in the given time)
  * in the **same order** of the given Suppliers arguments.
  *
- * If any of the provided suppliers does not success(fails or incomplete) in given time,
+ * If any of the provided suppliers is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`
  * (which is indistinguishable from the supplier having a successful value of `valueIfNotSuccess`).
  *
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value to return if not completed normally
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param <T> the suppliers' return type
@@ -152,11 +152,11 @@ fun <T> Collection<Supplier<out T>>.mSupplyMostSuccessAsyncCffu(
  * in the given time(`timeout`, aka as many results as possible in the given time)
  * in the **same order** of the given Suppliers arguments.
  *
- * If any of the provided suppliers does not success(fails or incomplete) in given time,
+ * If any of the provided suppliers is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`
  * (which is indistinguishable from the supplier having a successful value of `valueIfNotSuccess`).
  *
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value to return if not completed normally
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param <T> the suppliers' return type
@@ -464,7 +464,7 @@ fun <T> Array<out CompletionStage<out T>>.allResultsFailFastOfCffu(cffuFactory: 
  *
  * This method is the same as [CffuFactory.allSuccessResultsOf], providing this method is convenient for method chaining.
  *
- * @param valueIfFailed the value to return if not completed successfully
+ * @param valueIfFailed the value to return if not completed normally
  * @throws NullPointerException if the cfs param or any of its elements are `null`
  * @see com.google.common.util.concurrent.Futures.successfulAsList
  */
@@ -485,7 +485,7 @@ fun <T> Collection<Cffu<out T>>.allSuccessResultsOfCffu(
  *
  * This method is the same as [CffuFactory.allSuccessResultsOf], providing this method is convenient for method chaining.
  *
- * @param valueIfFailed the value to return if not completed successfully
+ * @param valueIfFailed the value to return if not completed normally
  * @throws NullPointerException if the cfs param or any of its elements are `null`
  * @see com.google.common.util.concurrent.Futures.successfulAsList
  */
@@ -503,7 +503,7 @@ fun <T> Array<out Cffu<out T>>.allSuccessResultsOfCffu(
  *
  * This method is the same as [CffuFactory.allSuccessResultsOf], providing this method is convenient for method chaining.
  *
- * @param valueIfFailed the value to return if not completed successfully
+ * @param valueIfFailed the value to return if not completed normally
  * @throws NullPointerException if the cfs param or any of its elements are `null`
  * @see com.google.common.util.concurrent.Futures.successfulAsList
  */
@@ -522,7 +522,7 @@ fun <T> Collection<CompletionStage<out T>>.allSuccessResultsOfCffu(
  *
  * This method is the same as [CffuFactory.allSuccessResultsOf], providing this method is convenient for method chaining.
  *
- * @param valueIfFailed the value to return if not completed successfully
+ * @param valueIfFailed the value to return if not completed normally
  * @throws NullPointerException if the cfs param or any of its elements are `null`
  * @see com.google.common.util.concurrent.Futures.successfulAsList
  */
@@ -535,12 +535,12 @@ fun <T> Array<out CompletionStage<out T>>.allSuccessResultsOfCffu(
  * Returns a new Cffu with the most results in the **same order** of
  * the given Cffus arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If any of the provided stages does not success(fails or incomplete) in given time,
+ * If any of the provided stages is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value to return if not completed normally
  * @see CffuFactory.mostSuccessResultsOf
  * @see CffuFactory.mostSuccessTupleOf
  * @see Cffu.getSuccessNow
@@ -553,12 +553,12 @@ fun <T> Collection<Cffu<out T>>.mostSuccessResultsOfCffu(
  * Returns a new Cffu with the most results in the **same order** of
  * the given Cffus arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If any of the provided stages does not success(fails or incomplete) in given time,
+ * If any of the provided stages is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value to return if not completed normally
  * @see CffuFactory.mostSuccessResultsOf
  * @see CffuFactory.mostSuccessTupleOf
  * @see Cffu.getSuccessNow
@@ -571,12 +571,12 @@ fun <T> Array<out Cffu<out T>>.mostSuccessResultsOfCffu(
  * Returns a new Cffu with the most results in the **same order** of
  * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If any of the provided stages does not success(fails or incomplete) in given time,
+ * If any of the provided stages is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value to return if not completed normally
  * @see CffuFactory.mostSuccessResultsOf
  * @see CffuFactory.mostSuccessTupleOf
  * @see Cffu.getSuccessNow
@@ -590,12 +590,12 @@ fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCffu(
  * Returns a new Cffu with the most results in the **same order** of
  * the given stages arguments in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If any of the provided stages does not success(fails or incomplete) in given time,
+ * If any of the provided stages is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value to return if not completed normally
  * @see CffuFactory.mostSuccessResultsOf
  * @see CffuFactory.mostSuccessTupleOf
  * @see Cffu.getSuccessNow

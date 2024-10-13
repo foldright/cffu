@@ -108,11 +108,11 @@ fun <T> Array<out Supplier<out T>>.mSupplyAllSuccessAsyncCompletableFuture(
  * in the given time(`timeout`, aka as many results as possible in the given time)
  * in the **same order** of the given Suppliers arguments.
  *
- * If any of the provided suppliers does not success(fails or incomplete) in given time,
+ * If any of the provided suppliers is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`
  * (which is indistinguishable from the supplier having a successful value of `valueIfNotSuccess`).
  *
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value to return if not completed normally
  * @param executor the executor to use for asynchronous execution
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
@@ -132,11 +132,11 @@ fun <T> Collection<Supplier<out T>>.mSupplyMostSuccessAsyncCompletableFuture(
  * in the given time(`timeout`, aka as many results as possible in the given time)
  * in the **same order** of the given Suppliers arguments.
  *
- * If any of the provided suppliers does not success(fails or incomplete) in given time,
+ * If any of the provided suppliers is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`
  * (which is indistinguishable from the supplier having a successful value of `valueIfNotSuccess`).
  *
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value to return if not completed normally
  * @param executor the executor to use for asynchronous execution
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
@@ -391,7 +391,7 @@ fun <T> Array<out CompletionStage<out T>>.allResultsFailFastOfCompletableFuture(
  * If any of the provided stages fails, its corresponding position will contain `valueIfFailed`
  * (which is indistinguishable from the stage having a successful value of `valueIfFailed`).
  *
- * @param valueIfFailed the value to return if not completed successfully
+ * @param valueIfFailed the value to return if not completed normally
  * @throws NullPointerException if the cfs param or any of its elements are `null`
  * @see getSuccessNow
  * @see Futures.successfulAsList
@@ -407,7 +407,7 @@ fun <T> Collection<CompletionStage<out T>>.allSuccessResultsOfCompletableFuture(
  * If any of the provided stages fails, its corresponding position will contain `valueIfFailed`
  * (which is indistinguishable from the stage having a successful value of `valueIfFailed`).
  *
- * @param valueIfFailed the value to return if not completed successfully
+ * @param valueIfFailed the value to return if not completed normally
  * @throws NullPointerException if the cfs param or any of its elements are `null`
  * @see getSuccessNow
  * @see Futures.successfulAsList
@@ -419,12 +419,12 @@ fun <T> Array<out CompletionStage<out T>>.allSuccessResultsOfCompletableFuture(v
  * Returns a new CompletableFuture with the most results in the **same order** of the given stages arguments
  * in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If any of the provided stages does not success(fails or incomplete) in given time,
+ * If any of the provided stages is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value to return if not completed normally
  * @see getSuccessNow
  */
 fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
@@ -436,12 +436,12 @@ fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture
  * Returns a new CompletableFuture with the most results in the **same order** of the given stages arguments
  * in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If any of the provided stages does not success(fails or incomplete) in given time,
+ * If any of the provided stages is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value to return if not completed normally
  * @see getSuccessNow
  */
 fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
@@ -453,13 +453,13 @@ fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
  * Returns a new CompletableFuture with the most results in the **same order** of the given stages arguments
  * in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If any of the provided stages does not success(fails or incomplete) in given time,
+ * If any of the provided stages is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param executorWhenTimeout the async executor when triggered by timeout
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value to return if not completed normally
  * @see getSuccessNow
  */
 fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
@@ -471,13 +471,13 @@ fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture
  * Returns a new CompletableFuture with the most results in the **same order** of the given stages arguments
  * in the given time(`timeout`, aka as many results as possible in the given time).
  *
- * If any of the provided stages does not success(fails or incomplete) in given time,
+ * If any of the provided stages is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`.
  *
  * @param executorWhenTimeout the async executor when triggered by timeout
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value to return if not completed normally
  * @see getSuccessNow
  */
 fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
@@ -708,7 +708,7 @@ fun <T, U> CompletableFuture<out T>.thenMApplyFailFastAsync(
  * If any of the provided functions fails, its corresponding position will contain `valueIfFailed`
  * (which is indistinguishable from the function having a successful value of `valueIfFailed`).
  *
- * @param valueIfFailed the value to return if not completed successfully
+ * @param valueIfFailed the value to return if not completed normally
  * @param fns the functions to use to compute the values of the returned CompletableFuture
  * @param <U> the functions' return type
  * @return the new CompletableFuture
@@ -726,7 +726,7 @@ fun <T, U> CompletableFuture<out T>.thenMApplyAllSuccessAsync(
  * If any of the provided functions fails, its corresponding position will contain `valueIfFailed`
  * (which is indistinguishable from the function having a successful value of `valueIfFailed`).
  *
- * @param valueIfFailed the value to return if not completed successfully
+ * @param valueIfFailed the value to return if not completed normally
  * @param fns the functions to use to compute the values of the returned CompletableFuture
  * @param <U> the functions' return type
  * @return the new CompletableFuture
@@ -743,11 +743,11 @@ fun <T, U> CompletableFuture<out T>.thenMApplyAllSuccessAsync(
  * in the given time(`timeout`, aka as many results as possible in the given time)
  * in the **same order** of the given Functions arguments.
  *
- * If any of the provided functions does not success(fails or incomplete) in given time,
+ * If any of the provided functions is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`
  * (which is indistinguishable from the function having a successful value of `valueIfNotSuccess`).
  *
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value to return if not completed normally
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param fns the functions to use to compute the values of the returned CompletableFuture
@@ -766,11 +766,11 @@ fun <T, U> CompletableFuture<out T>.thenMApplyMostSuccessAsync(
  * in the given time(`timeout`, aka as many results as possible in the given time)
  * in the **same order** of the given Functions arguments.
  *
- * If any of the provided functions does not success(fails or incomplete) in given time,
+ * If any of the provided functions is not completed normally(fails or incomplete) in given time,
  * its corresponding position will contain `valueIfNotSuccess`
  * (which is indistinguishable from the function having a successful value of `valueIfNotSuccess`).
  *
- * @param valueIfNotSuccess the value to return if not completed successfully
+ * @param valueIfNotSuccess the value to return if not completed normally
  * @param executor the executor to use for asynchronous execution
  * @param timeout how long to wait in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
@@ -1221,7 +1221,7 @@ fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenMApplyAllSuccessTupleAs
 /**
  * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
  *
- * If any of the provided suppliers does not success, its corresponding position will contain `null`
+ * If any of the provided suppliers is not completed normally, its corresponding position will contain `null`
  * (which is indistinguishable from the supplier having a successful value of `null`).
  */
 fun <T, U1, U2> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
@@ -1232,7 +1232,7 @@ fun <T, U1, U2> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
 /**
  * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
  *
- * If any of the provided suppliers does not success, its corresponding position will contain `null`
+ * If any of the provided suppliers is not completed normally, its corresponding position will contain `null`
  * (which is indistinguishable from the supplier having a successful value of `null`).
  */
 fun <T, U1, U2> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
@@ -1243,7 +1243,7 @@ fun <T, U1, U2> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
 /**
  * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
  *
- * If any of the provided suppliers does not success, its corresponding position will contain `null`
+ * If any of the provided suppliers is not completed normally, its corresponding position will contain `null`
  * (which is indistinguishable from the supplier having a successful value of `null`).
  */
 fun <T, U1, U2, U3> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
@@ -1254,7 +1254,7 @@ fun <T, U1, U2, U3> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
 /**
  * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
  *
- * If any of the provided suppliers does not success, its corresponding position will contain `null`
+ * If any of the provided suppliers is not completed normally, its corresponding position will contain `null`
  * (which is indistinguishable from the supplier having a successful value of `null`).
  */
 fun <T, U1, U2, U3> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
@@ -1266,7 +1266,7 @@ fun <T, U1, U2, U3> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
 /**
  * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
  *
- * If any of the provided suppliers does not success, its corresponding position will contain `null`
+ * If any of the provided suppliers is not completed normally, its corresponding position will contain `null`
  * (which is indistinguishable from the supplier having a successful value of `null`).
  */
 fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
@@ -1278,7 +1278,7 @@ fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync
 /**
  * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
  *
- * If any of the provided suppliers does not success, its corresponding position will contain `null`
+ * If any of the provided suppliers is not completed normally, its corresponding position will contain `null`
  * (which is indistinguishable from the supplier having a successful value of `null`).
  */
 fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
@@ -1291,7 +1291,7 @@ fun <T, U1, U2, U3, U4> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync
  * Tuple variance of [thenMApplyMostSuccessAsync]
  * with `null` valueIfNotSuccess.
  *
- * If any of the provided suppliers does not success, its corresponding position will contain `null`
+ * If any of the provided suppliers is not completed normally, its corresponding position will contain `null`
  * (which is indistinguishable from the supplier having a successful value of `null`).
  */
 fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
@@ -1303,7 +1303,7 @@ fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenMApplyMostSuccessTupleA
 /**
  * Tuple variance of [thenMApplyMostSuccessAsync] with `null` valueIfNotSuccess.
  *
- * If any of the provided suppliers does not success, its corresponding position will contain `null`
+ * If any of the provided suppliers is not completed normally, its corresponding position will contain `null`
  * (which is indistinguishable from the supplier having a successful value of `null`).
  */
 fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenMApplyMostSuccessTupleAsync(
@@ -2092,13 +2092,13 @@ fun <T> CompletableFuture<out T>.join(timeout: Long, unit: TimeUnit): T =
     CompletableFutureUtils.join(this, timeout, unit) as T
 
 /**
- * Returns the result value if completed successfully, else returns the given valueIfNotSuccess.
+ * Returns the result value if completed normally, else returns the given valueIfNotSuccess.
  *
  * This method will not throw exceptions
  * (CancellationException/CompletionException/ExecutionException/IllegalStateException/...).
  *
- * @param valueIfNotSuccess the value to return if not completed successfully
- * @return the result value, if completed successfully, else the given valueIfNotSuccess
+ * @param valueIfNotSuccess the value to return if not completed normally
+ * @return the result value, if completed normally, else the given valueIfNotSuccess
  */
 @Suppress("UNCHECKED_CAST")
 fun <T> CompletableFuture<out T>.getSuccessNow(valueIfNotSuccess: T): T =
@@ -2107,7 +2107,7 @@ fun <T> CompletableFuture<out T>.getSuccessNow(valueIfNotSuccess: T): T =
 /**
  * Returns the computed result, without waiting.
  *
- * This method is for cases where the caller knows that the task has already completed successfully,
+ * This method is for cases where the caller knows that the task has already completed normally,
  * for example when filtering Future objects for the successful tasks
  * and using a mapping operation to obtain results.
  *
