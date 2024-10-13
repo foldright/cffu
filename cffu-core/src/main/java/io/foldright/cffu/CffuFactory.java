@@ -32,7 +32,7 @@ import static java.util.Objects.requireNonNull;
  * About factory methods conventions of {@link CffuFactory}:
  * <ul>
  * <li>factory methods return {@link Cffu} instead of {@link CompletableFuture}.
- * <li>only provide varargs methods for multiply Cffu/CF input arguments;
+ * <li>only provide varargs methods for multiple Cffu/CF input arguments;
  *     if you have {@code List} input, use static util methods {@link #cffuListToArray(List)}
  *     or {@link CompletableFutureUtils#completableFutureListToArray(List)} to convert it to array first.
  * </ul>

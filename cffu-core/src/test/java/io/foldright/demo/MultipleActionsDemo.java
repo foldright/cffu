@@ -9,27 +9,27 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 
 
 /**
- * This shows the usage of Multiply Actions methods(<b>M</b> Methods).
+ * This shows the usage of Multiple Actions methods(<b>M</b> Methods).
  * <p>
  * Run by maven: {@code
- * mvn -pl cffu-core test-compile exec:exec -Dexec.mainClass=io.foldright.demo.MultiplyActionsDemo
+ * mvn -pl cffu-core test-compile exec:exec -Dexec.mainClass=io.foldright.demo.MultipleActionsDemo
  * }
  */
-public class MultiplyActionsDemo {
+public class MultipleActionsDemo {
     public static void main(String[] args) {
         mRunAsyncDemo();
         thenMApplyAsyncDemo();
     }
 
     static void mRunAsyncDemo() {
-        // MUST wrap tasks to CompletableFuture first, AWKWARD! 😖
+        // wrap tasks to CompletableFuture first, AWKWARD! 😖
         CompletableFuture.allOf(
                 CompletableFuture.runAsync(() -> System.out.println("task1")),
                 CompletableFuture.runAsync(() -> System.out.println("task2")),
                 CompletableFuture.runAsync(() -> System.out.println("task3"))
         );
 
-        // just run multiply actions, fresh and cool 😋
+        // just run multiple actions, fresh and cool 😋
         CompletableFutureUtils.mRunAsync(
                 () -> System.out.println("task1"),
                 () -> System.out.println("task2"),
@@ -40,7 +40,7 @@ public class MultiplyActionsDemo {
     }
 
     static void thenMApplyAsyncDemo() {
-        // MUST wrap tasks to CompletableFuture first, AWKWARD! 😖
+        // wrap tasks to CompletableFuture first, AWKWARD! 😖
         completedFuture(42).thenCompose(v ->
                 CompletableFutureUtils.allResultsFailFastOf(
                         CompletableFuture.supplyAsync(() -> v + 1),
@@ -50,7 +50,7 @@ public class MultiplyActionsDemo {
         ).thenAccept(System.out::println);
         // output: [43, 44, 45]
 
-        // just run multiply actions, fresh and cool 😋
+        // just run multiple actions, fresh and cool 😋
         CompletableFutureUtils.thenMApplyFailFastAsync(
                 completedFuture(42),
                 v -> v + 1,

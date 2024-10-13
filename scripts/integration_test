@@ -58,7 +58,7 @@ cu::head_line_echo "build and test with Java $default_build_jdk_version: $JAVA_H
 mvu::mvn_cmd clean install
 
 ########################################
-# test by multiply version jdks
+# test by multiple version jdks
 ########################################
 
 # shellcheck disable=SC2034

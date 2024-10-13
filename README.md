@@ -420,16 +420,16 @@ public class ConcurrencyStrategyDemo {
 示例代码如下：
 
 ```java
-public class MultiplyActionsDemo {
+public class MultipleActionsDemo {
   static void mRunAsyncDemo() {
-    // MUST wrap tasks to CompletableFuture first, AWKWARD! 😖
+    // wrap tasks to CompletableFuture first, AWKWARD! 😖
     CompletableFuture.allOf(
         CompletableFuture.runAsync(() -> System.out.println("task1")),
         CompletableFuture.runAsync(() -> System.out.println("task2")),
         CompletableFuture.runAsync(() -> System.out.println("task3"))
     );
 
-    // just run multiply actions, fresh and cool 😋
+    // just run multiple actions, fresh and cool 😋
     CompletableFutureUtils.mRunAsync(
         () -> System.out.println("task1"),
         () -> System.out.println("task2"),
@@ -444,9 +444,9 @@ public class MultiplyActionsDemo {
 示例代码如下：
 
 ```java
-public class MultiplyActionsDemo {
+public class MultipleActionsDemo {
   static void thenMApplyAsyncDemo() {
-    // MUST wrap tasks to CompletableFuture first, AWKWARD! 😖
+    // wrap tasks to CompletableFuture first, AWKWARD! 😖
     completedFuture(42).thenCompose(v ->
         CompletableFutureUtils.allResultsFailFastOf(
             CompletableFuture.supplyAsync(() -> v + 1),
@@ -456,7 +456,7 @@ public class MultiplyActionsDemo {
     ).thenAccept(System.out::println);
     // output: [43, 44, 45]
 
-    // just run multiply actions, fresh and cool 😋
+    // just run multiple actions, fresh and cool 😋
     CompletableFutureUtils.thenMApplyFailFastAsync(
         completedFuture(42),
         v -> v + 1,
@@ -468,7 +468,7 @@ public class MultiplyActionsDemo {
 }
 ```
 
-> \# 完整可运行的Demo代码参见[`MultiplyActionsDemo.java`](cffu-core/src/test/java/io/foldright/demo/MultiplyActionsDemo.java)。
+> \# 完整可运行的Demo代码参见[`MultipleActionsDemo.java`](cffu-core/src/test/java/io/foldright/demo/MultipleActionsDemo.java)。
 
 ### 2.5 支持超时的`join`的方法
 

@@ -168,7 +168,7 @@
 						<version>1.7.0</version>
 						<extensions>true</extensions>
 						<!--
-							In multiply module builds using the deploy-at-end feature, the deployment of all components
+							In multiple module builds using the deploy-at-end feature, the deployment of all components
 							is performed in the last module based on the reactor order. If this property is set to true
 							in the last module, all staging deployment for all modules will be skipped.
 							so, we'll config nexus deploy after every module's `deploy` phase
