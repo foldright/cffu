@@ -1705,10 +1705,24 @@ class CompletableFutureUtilsTest {
 
     @Test
     void test_write() throws Exception {
+        ////////////////////////////////////////
+        // completeAsync
+        ////////////////////////////////////////
+
         // tests in ForkJoinPool(commonPool)
-        assertEquals(n, completeAsync(incompleteCf(), () -> n).get());
+        {
+            final CompletableFuture<Integer> f = incompleteCf();
+            final CompletableFuture<Integer> o = completeAsync(f, () -> n);
+            assertEquals(n, o.get());
+            assertSame(f, o);
+        }
         // tests in ThreadPoolExecutor
-        assertEquals(n, completeAsync(incompleteCf(), () -> n, testExecutor).get());
+        {
+            final CompletableFuture<Integer> f = incompleteCf();
+            final CompletableFuture<Integer> o = completeAsync(f, () -> n);
+            assertEquals(n, o.get());
+            assertSame(f, o);
+        }
 
         if (isJava9Plus()) {
             CompletableFuture<Integer> f = (CompletableFuture<Integer>) completedStage(n);
@@ -1717,27 +1731,45 @@ class CompletableFutureUtilsTest {
             );
         } else {
             CompletableFuture<Integer> f = (CompletableFuture<Integer>) completedStage(n);
-            assertEquals(n, completeAsync(f, () -> anotherN).get());
+            final CompletableFuture<Integer> o = completeAsync(f, () -> anotherN);
+            assertEquals(n, o.get());
+            assertSame(f, o);
         }
 
-        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                completeAsync(incompleteCf(), () -> {
-                    throw rte;
-                }).get()
-        ).getCause());
+        {
+            final CompletableFuture<Integer> f = incompleteCf();
+            final CompletableFuture<Integer> o = completeAsync(f, () -> {
+                throw rte;
+            });
+            assertSame(rte, assertThrowsExactly(ExecutionException.class, o::get).getCause());
+            assertSame(f, o);
+        }
 
-        assertEquals(n, completeAsync(completedFuture(n), () -> anotherN).get());
+        {
+            final CompletableFuture<Integer> f = completedFuture(n);
+            final CompletableFuture<Integer> o = completeAsync(f, () -> anotherN);
+            assertEquals(n, o.get());
+            assertSame(f, o);
+        }
 
+        ////////////////////////////////////////
+        // completeExceptionallyAsync
         ////////////////////////////////////////
 
         // tests in ForkJoinPool(commonPool)
-        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                completeExceptionallyAsync(incompleteCf(), () -> rte).get()
-        ).getCause());
+        {
+            final CompletableFuture<Object> f = incompleteCf();
+            final CompletableFuture<Object> o = completeExceptionallyAsync(f, () -> rte);
+            assertSame(rte, assertThrowsExactly(ExecutionException.class, o::get).getCause());
+            assertSame(f, o);
+        }
         // tests in ThreadPoolExecutor
-        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                completeExceptionallyAsync(incompleteCf(), () -> rte, testExecutor).get()
-        ).getCause());
+        {
+            final CompletableFuture<Object> f = incompleteCf();
+            final CompletableFuture<Object> o = completeExceptionallyAsync(f, () -> rte, testExecutor);
+            assertSame(rte, assertThrowsExactly(ExecutionException.class, o::get).getCause());
+            assertSame(f, o);
+        }
 
         if (isJava9Plus()) {
             CompletableFuture<Integer> f = (CompletableFuture<Integer>) completedStage(n);
@@ -1746,16 +1778,26 @@ class CompletableFutureUtilsTest {
             );
         } else {
             CompletableFuture<Integer> f = (CompletableFuture<Integer>) completedStage(n);
-            assertEquals(n, completeExceptionallyAsync(f, () -> rte).get());
+            final CompletableFuture<Integer> o = completeExceptionallyAsync(f, () -> rte);
+            assertEquals(n, o.get());
+            assertSame(f, o);
         }
 
-        assertSame(anotherRte, assertThrowsExactly(ExecutionException.class, () ->
-                completeExceptionallyAsync(incompleteCf(), () -> {
-                    throw anotherRte;
-                }).get()
-        ).getCause());
+        {
+            final CompletableFuture<Object> f = incompleteCf();
+            final CompletableFuture<Object> o = completeExceptionallyAsync(f, () -> {
+                throw anotherRte;
+            });
+            assertSame(anotherRte, assertThrowsExactly(ExecutionException.class, o::get).getCause());
+            assertSame(f, o);
+        }
 
-        assertEquals(n, completeExceptionallyAsync(completedFuture(n), () -> rte).get());
+        {
+            final CompletableFuture<Integer> f = completedFuture(n);
+            final CompletableFuture<Integer> o = completeExceptionallyAsync(f, () -> rte);
+            assertEquals(n, o.get());
+            assertSame(f, o);
+        }
     }
 
     // endregion
@@ -1824,6 +1866,7 @@ class CompletableFutureUtilsTest {
         assertSame(rte, unwrapCfException(ce));
 
         CompletionException nakedCe = new CompletionException() {
+            @java.io.Serial
             private static final long serialVersionUID = 0;
         };
         assertSame(nakedCe, unwrapCfException(nakedCe));

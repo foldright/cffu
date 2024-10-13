@@ -1,10 +1,11 @@
 @file:JvmName("MinStageTestUtils")
+
 package io.foldright.test_utils
 
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
 import io.kotest.assertions.throwables.shouldNotThrow
-import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldBeNull
@@ -12,7 +13,9 @@ import io.kotest.matchers.shouldBe
 import java.util.concurrent.*
 
 fun <T> CompletableFuture<T>.shouldBeMinimalStage() {
-    shouldMinCf(true)
+    // Java 8 not support minimal stage CF
+    if (isJava9Plus()) shouldMinCf(true)
+    else shouldNotMinCf(true)
 }
 
 private val blackHoleExecutor = Executor { /* do nothing */ }
@@ -22,61 +25,61 @@ private fun <T> CompletableFuture<T>.shouldMinCf(recursive: Boolean = false) {
 
     // unsupported because this is a minimal stage
 
-    if (isJava9Plus()) shouldThrow<UnsupportedOperationException> {
+    if (isJava9Plus()) shouldThrowExactly<UnsupportedOperationException> {
         orTimeout(1, TimeUnit.MILLISECONDS)
     }.message.shouldBeNull()
-    if (isJava9Plus()) shouldThrow<UnsupportedOperationException> {
+    if (isJava9Plus()) shouldThrowExactly<UnsupportedOperationException> {
         completeOnTimeout(null, 1, TimeUnit.MILLISECONDS)
     }.message.shouldBeNull()
 
     //# Read(explicitly) methods of CompletableFuture
 
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         get()
     }.message.shouldBeNull()
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         get(1, TimeUnit.MILLISECONDS)
     }.message.shouldBeNull()
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         join()
     }.message.shouldBeNull()
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         getNow(null)
     }.message.shouldBeNull()
-    if (isJava19Plus()) shouldThrow<UnsupportedOperationException> {
+    if (isJava19Plus()) shouldThrowExactly<UnsupportedOperationException> {
         resultNow()
     }.message.shouldBeNull()
-    if (isJava19Plus()) shouldThrow<UnsupportedOperationException> {
+    if (isJava19Plus()) shouldThrowExactly<UnsupportedOperationException> {
         exceptionNow()
     }.message.shouldBeNull()
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         isDone
     }.message.shouldBeNull()
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         isCompletedExceptionally
     }.message.shouldBeNull()
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         isCancelled
     }.message.shouldBeNull()
-    if (isJava19Plus()) shouldThrow<UnsupportedOperationException> {
+    if (isJava19Plus()) shouldThrowExactly<UnsupportedOperationException> {
         state()
     }.message.shouldBeNull()
 
     //# Write methods of CompletableFuture
 
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         complete(null)
     }.message.shouldBeNull()
-    if (isJava9Plus()) shouldThrow<UnsupportedOperationException> {
+    if (isJava9Plus()) shouldThrowExactly<UnsupportedOperationException> {
         completeAsync(null)
     }.message.shouldBeNull()
-    if (isJava9Plus()) shouldThrow<UnsupportedOperationException> {
+    if (isJava9Plus()) shouldThrowExactly<UnsupportedOperationException> {
         completeAsync(null, null)
     }.message.shouldBeNull()
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         completeExceptionally(null)
     }.message.shouldBeNull()
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         cancel(false)
     }.message.shouldBeNull()
 
@@ -95,16 +98,16 @@ private fun <T> CompletableFuture<T>.shouldMinCf(recursive: Boolean = false) {
     defaultExecutor()
 
     //# Inspection methods of Cffu
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         numberOfDependents
     }.message.shouldBeNull()
 
     //# Other dangerous methods of CompletableFuture
 
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         obtrudeValue(null)
     }.message.shouldBeNull()
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         obtrudeException(null)
     }.message.shouldBeNull()
 
@@ -130,27 +133,27 @@ private fun <T> CompletableFuture<T>.shouldNotMinCf(recursive: Boolean = false) 
 
     //# Read(explicitly) methods of CompletableFuture
 
-    if (isCompletedExceptionally) shouldThrow<ExecutionException> { get() }
+    if (isCompletedExceptionally) shouldThrowExactly<ExecutionException> { get() }
     else get()
 
-    if (isCompletedExceptionally) shouldThrow<ExecutionException> { get(1, TimeUnit.MILLISECONDS) }
+    if (isCompletedExceptionally) shouldThrowExactly<ExecutionException> { get(1, TimeUnit.MILLISECONDS) }
     else get(1, TimeUnit.MILLISECONDS)
 
-    if (isCompletedExceptionally) shouldThrow<CompletionException> {
+    if (isCompletedExceptionally) shouldThrowExactly<CompletionException> {
         join()
     } else join()
 
-    if (isCompletedExceptionally) shouldThrow<CompletionException> {
+    if (isCompletedExceptionally) shouldThrowExactly<CompletionException> {
         getNow(null)
     } else getNow((null))
 
     if (isJava19Plus())
-        if (isCompletedExceptionally) shouldThrow<IllegalStateException> { resultNow() }
+        if (isCompletedExceptionally) shouldThrowExactly<IllegalStateException> { resultNow() }
         else resultNow()
 
     if (isJava19Plus())
         if (isCompletedExceptionally) exceptionNow()
-        else shouldThrow<IllegalStateException> { exceptionNow() }
+        else shouldThrowExactly<IllegalStateException> { exceptionNow() }
 
     this.isDone
     // this.isCompletedExceptionally // used above
@@ -202,81 +205,81 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
 
     //# Read(explicitly) methods of CompletableFuture
 
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         orTimeout(1, TimeUnit.MILLISECONDS)
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         completeOnTimeout(null, 1, TimeUnit.MILLISECONDS)
     }.message shouldBe "unsupported because this is a minimal stage"
 
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         get()
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         get(1, TimeUnit.MILLISECONDS)
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         join()
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         get()
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         getNow(null)
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         getSuccessNow(null)
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         resultNow()
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         exceptionNow()
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         isDone
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         isCompletedExceptionally
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         isCancelled
     }.message shouldBe "unsupported because this is a minimal stage"
-    if (isJava19Plus()) shouldThrow<UnsupportedOperationException> {
+    if (isJava19Plus()) shouldThrowExactly<UnsupportedOperationException> {
         state()
     }.message shouldBe "unsupported because this is a minimal stage"
 
     //# Write methods of CompletableFuture
 
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         complete(null)
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeAsync(null)
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeAsync(null, null)
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeExceptionally(null)
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeExceptionally(null)
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeExceptionallyAsync(null)
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeExceptionallyAsync(null, null)
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         cancel(false)
     }.message shouldBe "unsupported because this is a minimal stage"
 
@@ -292,16 +295,16 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
     defaultExecutor()
 
     //# Inspection methods of Cffu
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         numberOfDependents
     }.message shouldBe "unsupported because this is a minimal stage"
 
     //# Other dangerous methods of CompletableFuture
 
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         obtrudeValue(null)
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         obtrudeException(null)
     }.message shouldBe "unsupported because this is a minimal stage"
@@ -311,10 +314,10 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
     // Cffu specified methods
     ////////////////////////////////////////////////////////////
 
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         join(1, TimeUnit.MILLISECONDS)
     }.message shouldBe "unsupported because this is a minimal stage"
-    shouldThrow<UnsupportedOperationException> {
+    shouldThrowExactly<UnsupportedOperationException> {
         cffuState()
     }.message shouldBe "unsupported because this is a minimal stage"
 
@@ -349,28 +352,28 @@ private fun <T> Cffu<T>.shouldNotMinCffu(recursive: Boolean = false) {
 
     //# Read(explicitly) methods of CompletableFuture
 
-    if (isCompletedExceptionally) shouldThrow<ExecutionException> { get() }
+    if (isCompletedExceptionally) shouldThrowExactly<ExecutionException> { get() }
     else get()
 
-    if (isCompletedExceptionally) shouldThrow<ExecutionException> { get(1, TimeUnit.MILLISECONDS) }
+    if (isCompletedExceptionally) shouldThrowExactly<ExecutionException> { get(1, TimeUnit.MILLISECONDS) }
     else get(1, TimeUnit.MILLISECONDS)
 
-    if (isCompletedExceptionally) shouldThrow<CompletionException> {
+    if (isCompletedExceptionally) shouldThrowExactly<CompletionException> {
         join()
     } else join()
 
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-    if (isCompletedExceptionally) shouldThrow<CompletionException> {
+    if (isCompletedExceptionally) shouldThrowExactly<CompletionException> {
         getNow(null)
     } else getNow((null))
 
     getSuccessNow(null)
 
-    if (isCompletedExceptionally) shouldThrow<IllegalStateException> { resultNow() }
+    if (isCompletedExceptionally) shouldThrowExactly<IllegalStateException> { resultNow() }
     else resultNow()
 
     if (isCompletedExceptionally) exceptionNow()
-    else shouldThrow<IllegalStateException> { exceptionNow() }
+    else shouldThrowExactly<IllegalStateException> { exceptionNow() }
 
     this.isDone
     // this.isCompletedExceptionally // used above

@@ -6,7 +6,6 @@ import io.foldright.cffu.NoCfsProvidedException
 import io.foldright.cffu.kotlin.*
 import io.foldright.cffu.unwrapMadeExecutor
 import io.foldright.test_utils.*
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.inspectors.shouldForAll
@@ -646,9 +645,9 @@ class CffuExtensionsTest : FunSpec({
             CompletableFuture.completedFuture(n),
         ).anySuccessOfCffu(testCffuFac).await() shouldBe n
 
-        shouldThrow<RuntimeException> {
+        shouldThrowExactly<NoCfsProvidedException> {
             arrayOf<CompletableFuture<Int>>().anySuccessOfCffu(testCffuFac).await()
-        }.shouldBeTypeOf<NoCfsProvidedException>()
+        }
 
         ////////////////////////////////////////
 
@@ -712,12 +711,12 @@ class CffuExtensionsTest : FunSpec({
     }
 
     fun assertEmptyCollection(block: () -> Any?) {
-        shouldThrow<IllegalArgumentException> { block() }
+        shouldThrowExactly<IllegalArgumentException> { block() }
             .message shouldBe "no cffuFactory argument provided when this collection is empty"
     }
 
     fun assertEmptyArray(block: () -> Any?) {
-        shouldThrow<IllegalArgumentException> { block() }
+        shouldThrowExactly<IllegalArgumentException> { block() }
             .message shouldBe "no cffuFactory argument provided when this array is empty"
     }
 
