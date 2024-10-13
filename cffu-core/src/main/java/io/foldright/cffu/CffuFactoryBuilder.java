@@ -87,11 +87,12 @@ public final class CffuFactoryBuilder {
         return new CffuFactory(makeExecutor(defaultExecutor), fac.forbidObtrudeMethods());
     }
 
-    private static Executor makeExecutor(Executor executor) {
+    private static Executor makeExecutor(Executor defaultExecutor) {
         // check CffuMadeExecutor interface to avoid re-wrapping.
-        if (executor instanceof CffuMadeExecutor) return executor;
+        if (defaultExecutor instanceof CffuMadeExecutor) return defaultExecutor;
 
-        Executor wrapByProviders = wrapExecutorByProviders(CompletableFutureUtils.screenExecutor(executor));
+        requireNonNull(defaultExecutor, "defaultExecutor is null");
+        Executor wrapByProviders = wrapExecutorByProviders(CompletableFutureUtils.screenExecutor(defaultExecutor));
         return wrapMadeInterface(wrapByProviders);
     }
 

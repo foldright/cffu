@@ -3198,7 +3198,7 @@ public final class CompletableFutureUtils {
     public static <C extends CompletableFuture<?>> C cffuOrTimeout(
             C cfThis, Executor executorWhenTimeout, long timeout, TimeUnit unit) {
         requireNonNull(cfThis, "cfThis is null");
-        requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
+        executorWhenTimeout = screenExecutor(requireNonNull(executorWhenTimeout, "executorWhenTimeout is null"));
         requireNonNull(unit, "unit is null");
 
         return hopExecutorIfAtCfDelayerThread(orTimeout(cfThis, timeout, unit), executorWhenTimeout);
@@ -3294,7 +3294,7 @@ public final class CompletableFutureUtils {
     public static <T, C extends CompletableFuture<? super T>>
     C cffuCompleteOnTimeout(C cfThis, @Nullable T value, Executor executorWhenTimeout, long timeout, TimeUnit unit) {
         requireNonNull(cfThis, "cfThis is null");
-        requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
+        executorWhenTimeout = screenExecutor(requireNonNull(executorWhenTimeout, "executorWhenTimeout is null"));
         requireNonNull(unit, "unit is null");
 
         return hopExecutorIfAtCfDelayerThread(completeOnTimeout(cfThis, value, timeout, unit), executorWhenTimeout);
