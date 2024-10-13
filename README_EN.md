@@ -79,7 +79,7 @@ The provided features include：
 - Direct execution of multiple actions without wrapping them into CompletableFuture, e.g., `tupleMSupplyFailFastAsync`, `mSupplyMostSuccessAsync`, `thenTupleMApplyFailFastAsync`, `thenMRunFailFastAsync`.
 
 ⚙️ More efficient and flexible concurrent execution strategies, such as:
-- **AllFailFast strategy**: Fast Fails and return when any input CF fails, rather than waiting for all CFs to complete (allOf).
+- **AllFailFast strategy**: Fail fast and return when any input CF fails, rather than waiting for all CFs to complete (allOf).
 - **AnySuccess strategy**: Returns the first successful CF result, rather than the first completed (which might be a failure) (anyOf).
 - **MostSuccess strategy**: Returns the successful results of multiple CFs within a specified time, ignoring failed or incomplete CFs (returns a default value).
 

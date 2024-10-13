@@ -862,7 +862,7 @@ public final class CffuFactory {
      * *without* waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
      * If no stages are provided, returns a Cffu completed with the value empty list.
      * <p>
-     * This method is the same as {@link #allResultsOf(CompletionStage[])} except for the fast-fail behavior.
+     * This method is the same as {@link #allResultsOf(CompletionStage[])} except for the fail-fast behavior.
      *
      * @param cfs the stages
      * @return a new Cffu that is successful when all the given stages success
@@ -946,7 +946,7 @@ public final class CffuFactory {
      * but may be obtained by inspecting them individually.
      * If no stages are provided, returns a Cffu completed with the value {@code null}.
      * <p>
-     * This method is the same as {@link #allOf(CompletionStage[])} except for the fast-fail behavior.
+     * This method is the same as {@link #allOf(CompletionStage[])} except for the fail-fast behavior.
      * <p>
      * If you need the results of given stages, prefer below methods:
      * <ul>

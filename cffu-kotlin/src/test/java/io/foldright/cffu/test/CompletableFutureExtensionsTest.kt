@@ -527,7 +527,7 @@ class CompletableFutureExtensionsTest : FunSpec({
     //# both methods
     ////////////////////////////////////////////////////////////////////////////////
 
-    test("both failFast") {
+    test("bothFailFast") {
         val cf = CompletableFuture.supplyAsync {
             snoreZzz(2_000)
             n

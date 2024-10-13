@@ -1171,7 +1171,7 @@ class CompletableFutureUtilsTest {
 
     // endregion
     ////////////////////////////////////////////////////////////
-    // region## thenBoth* Methods(binary input) with fast-fail support
+    // region## thenBoth* Methods(binary input) with fail-fast support
     ////////////////////////////////////////////////////////////
 
     @Test
@@ -1197,7 +1197,7 @@ class CompletableFutureUtilsTest {
     }
 
     @Test
-    void both_failFast() throws Exception {
+    void bothFailFast() throws Exception {
         CompletableFuture<Integer> cf_n = completeLaterCf(n);
         final CompletableFuture<Integer> failed = failedFuture(rte);
         final CompletableFuture<Integer> cf_ee = failedFuture(anotherRte);

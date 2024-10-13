@@ -1376,7 +1376,7 @@ fun <T, U1, U2, U3, U4, U5> CompletableFuture<out T>.thenTupleMApplyAsync(
 
 // endregion
 ////////////////////////////////////////////////////////////
-// region## thenBoth* Methods(binary input) with fast-fail support
+// region## thenBoth* Methods(binary input) with fail-fast support
 //
 //    - thenCombineFailFast*   (BiFunction: (T, U) -> V)    -> CompletableFuture<U>
 //    - thenAcceptBothFailFast*(BiConsumer: (T, U) -> Void) -> CompletableFuture<Void>
@@ -1406,7 +1406,7 @@ fun <T, U, V> CompletableFuture<out T>.thenCombineFailFast(
  * also does so *without* waiting other incomplete given CompletionStage,
  * with a CompletionException holding this exception as its cause.
  *
- * This method is the same as [CompletableFuture.thenCombineAsync] except for the fast-fail behavior.
+ * This method is the same as [CompletableFuture.thenCombineAsync] except for the fail-fast behavior.
  *
  * @param fn the function to use to compute the value of the returned CompletableFuture
  * @return the new CompletableFuture
@@ -1424,7 +1424,7 @@ fun <T, U, V> CompletableFuture<out T>.thenCombineFailFastAsync(
  * also does so *without* waiting other incomplete given CompletionStage,
  * with a CompletionException holding this exception as its cause.
  *
- * This method is the same as [CompletableFuture.thenCombineAsync] except for the fast-fail behavior.
+ * This method is the same as [CompletableFuture.thenCombineAsync] except for the fail-fast behavior.
  *
  * @param fn the function to use to compute the value of the returned CompletableFuture
  * @return the new CompletableFuture
@@ -1441,7 +1441,7 @@ fun <T, U, V> CompletableFuture<out T>.thenCombineFailFastAsync(
  * also does so *without* waiting other incomplete given CompletionStage,
  * with a CompletionException holding this exception as its cause.
  *
- * This method is the same as [CompletableFuture.thenAcceptBoth] except for the fast-fail behavior.
+ * This method is the same as [CompletableFuture.thenAcceptBoth] except for the fail-fast behavior.
  *
  * @param action the action to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
@@ -1459,7 +1459,7 @@ fun <T, U> CompletableFuture<out T>.thenAcceptBothFailFast(
  * also does so *without* waiting other incomplete given CompletionStage,
  * with a CompletionException holding this exception as its cause.
  *
- * This method is the same as [CompletableFuture.thenAcceptBothAsync] except for the fast-fail behavior.
+ * This method is the same as [CompletableFuture.thenAcceptBothAsync] except for the fail-fast behavior.
  *
  * @param action the action to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
@@ -1477,7 +1477,7 @@ fun <T, U> CompletableFuture<out T>.thenAcceptBothFailFastAsync(
  * also does so *without* waiting other incomplete given CompletionStage,
  * with a CompletionException holding this exception as its cause.
  *
- * This method is the same as [CompletableFuture.thenAcceptBothAsync] except for the fast-fail behavior.
+ * This method is the same as [CompletableFuture.thenAcceptBothAsync] except for the fail-fast behavior.
  *
  * @param action the action to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
@@ -1493,7 +1493,7 @@ fun <T, U> CompletableFuture<out T>.thenAcceptBothFailFastAsync(
  * also does so **without** waiting other incomplete given CompletionStage,
  * with a CompletionException holding this exception as its cause.
  *
- * This method is the same as [CompletableFuture.runAfterBoth] except for the fast-fail behavior.
+ * This method is the same as [CompletableFuture.runAfterBoth] except for the fail-fast behavior.
  *
  * @param action the action to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
@@ -1509,7 +1509,7 @@ fun CompletableFuture<*>.runAfterBothFailFast(other: CompletionStage<*>, action:
  * also does so **without** waiting other incomplete given CompletionStage,
  * with a CompletionException holding this exception as its cause.
  *
- * This method is the same as [CompletableFuture.runAfterBothAsync] except for the fast-fail behavior.
+ * This method is the same as [CompletableFuture.runAfterBothAsync] except for the fail-fast behavior.
  *
  * @param action the action to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture
@@ -1527,7 +1527,7 @@ fun CompletableFuture<*>.runAfterBothFailFastAsync(
  * also does so **without** waiting other incomplete given CompletionStage,
  * with a CompletionException holding this exception as its cause.
  *
- * This method is the same as [CompletableFuture.runAfterBothAsync] except for the fast-fail behavior.
+ * This method is the same as [CompletableFuture.runAfterBothAsync] except for the fail-fast behavior.
  *
  * @param action the action to perform before completing the returned CompletableFuture
  * @return the new CompletableFuture

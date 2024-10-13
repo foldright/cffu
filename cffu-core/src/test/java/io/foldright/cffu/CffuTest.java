@@ -220,7 +220,7 @@ class CffuTest {
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
-    void both_failFast() throws Exception {
+    void bothFailFast() throws Exception {
         Cffu<Integer> cf = testCffuFac.supplyAsync(() -> {
             snoreZzz(LONG_WAIT_MS);
             return n;
