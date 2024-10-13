@@ -259,7 +259,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}
      * (which is indistinguishable from the function having a successful value of {@code valueIfFailed}).
      *
-     * @param valueIfFailed the value to return if not completed successfully
+     * @param valueIfFailed the value to return if not completed normally
      * @param fns           the functions to use to compute the values of the returned Cffu
      * @param <U>           the functions' return type
      * @return the new Cffu
@@ -279,7 +279,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}
      * (which is indistinguishable from the function having a successful value of {@code valueIfFailed}).
      *
-     * @param valueIfFailed the value to return if not completed successfully
+     * @param valueIfFailed the value to return if not completed normally
      * @param fns           the functions to use to compute the values of the returned Cffu
      * @param <U>           the functions' return type
      * @return the new Cffu
@@ -298,11 +298,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
-     * If any of the provided functions does not success(fails or incomplete) in given time,
+     * If any of the provided functions is not completed normally(fails or incomplete) in given time,
      * its corresponding position will contain {@code valueIfNotSuccess}
      * (which is indistinguishable from the function having a successful value of {@code valueIfNotSuccess}).
      *
-     * @param valueIfNotSuccess the value to return if not completed successfully
+     * @param valueIfNotSuccess the value to return if not completed normally
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @param fns               the functions to use to compute the values of the returned Cffu
@@ -322,11 +322,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Functions arguments.
      * <p>
-     * If any of the provided functions does not success(fails or incomplete) in given time,
+     * If any of the provided functions is not completed normally(fails or incomplete) in given time,
      * its corresponding position will contain {@code valueIfNotSuccess}
      * (which is indistinguishable from the function having a successful value of {@code valueIfNotSuccess}).
      *
-     * @param valueIfNotSuccess the value to return if not completed successfully
+     * @param valueIfNotSuccess the value to return if not completed normally
      * @param executor          the executor to use for asynchronous execution
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -806,7 +806,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyMostSuccessTupleAsync(
@@ -818,7 +818,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, Executor, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyMostSuccessTupleAsync(
@@ -831,7 +831,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyMostSuccessTupleAsync(
@@ -844,7 +844,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, Executor, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyMostSuccessTupleAsync(
@@ -857,7 +857,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyMostSuccessTupleAsync(
@@ -871,7 +871,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, Executor, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyMostSuccessTupleAsync(
@@ -885,7 +885,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyMostSuccessTupleAsync(
@@ -899,7 +899,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, Executor, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyMostSuccessTupleAsync(
@@ -2398,13 +2398,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns the result value if completed successfully, else returns the given valueIfNotSuccess.
+     * Returns the result value if completed normally, else returns the given valueIfNotSuccess.
      * <p>
      * This method will not throw exceptions
      * (CancellationException/CompletionException/ExecutionException/IllegalStateException/...).
      *
-     * @param valueIfNotSuccess the value to return if not completed successfully
-     * @return the result value, if completed successfully, else the given valueIfNotSuccess
+     * @param valueIfNotSuccess the value to return if not completed normally
+     * @return the result value, if completed normally, else the given valueIfNotSuccess
      */
     @Contract(pure = true)
     @Nullable
@@ -2416,7 +2416,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns the computed result, without waiting.
      * <p>
-     * This method is for cases where the caller knows that the task has already completed successfully,
+     * This method is for cases where the caller knows that the task has already completed normally,
      * for example when filtering a stream of Future objects for the successful tasks
      * and using a mapping operation to obtain a stream of results.
      *

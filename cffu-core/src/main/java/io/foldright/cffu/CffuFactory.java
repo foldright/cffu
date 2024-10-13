@@ -250,11 +250,11 @@ public final class CffuFactory {
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If any of the provided suppliers does not success(fails or incomplete) in given time,
+     * If any of the provided suppliers is not completed normally(fails or incomplete) in given time,
      * its corresponding position will contain {@code valueIfNotSuccess}
      * (which is indistinguishable from the supplier having a successful value of {@code valueIfNotSuccess}).
      *
-     * @param valueIfNotSuccess the value to return if not completed successfully
+     * @param valueIfNotSuccess the value to return if not completed normally
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @param suppliers         the suppliers returning the value to be used to complete the returned Cffu
@@ -274,11 +274,11 @@ public final class CffuFactory {
      * in the given time({@code timeout}, aka as many results as possible in the given time)
      * in the <strong>same order</strong> of the given Suppliers arguments.
      * <p>
-     * If any of the provided suppliers does not success(fails or incomplete) in given time,
+     * If any of the provided suppliers is not completed normally(fails or incomplete) in given time,
      * its corresponding position will contain {@code valueIfNotSuccess}
      * (which is indistinguishable from the supplier having a successful value of {@code valueIfNotSuccess}).
      *
-     * @param valueIfNotSuccess the value to return if not completed successfully
+     * @param valueIfNotSuccess the value to return if not completed normally
      * @param executor          the executor to use for asynchronous execution
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -677,7 +677,7 @@ public final class CffuFactory {
     /**
      * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyMostSuccessTupleAsync(
@@ -689,7 +689,7 @@ public final class CffuFactory {
      * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyMostSuccessTupleAsync(
@@ -701,7 +701,7 @@ public final class CffuFactory {
     /**
      * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyMostSuccessTupleAsync(
@@ -714,7 +714,7 @@ public final class CffuFactory {
      * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyMostSuccessTupleAsync(
@@ -727,7 +727,7 @@ public final class CffuFactory {
     /**
      * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyMostSuccessTupleAsync(
@@ -740,7 +740,7 @@ public final class CffuFactory {
      * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyMostSuccessTupleAsync(
@@ -753,7 +753,7 @@ public final class CffuFactory {
     /**
      * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyMostSuccessTupleAsync(
@@ -767,7 +767,7 @@ public final class CffuFactory {
      * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided suppliers does not success, its corresponding position will contain {@code null}
+     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyMostSuccessTupleAsync(
@@ -883,7 +883,7 @@ public final class CffuFactory {
      * If any of the provided stages fails, its corresponding position will contain {@code valueIfFailed}
      * (which is indistinguishable from the stage having a successful value of {@code valueIfFailed}).
      *
-     * @param valueIfFailed the value to return if not completed successfully
+     * @param valueIfFailed the value to return if not completed normally
      * @param cfs           the stages
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see Futures#successfulAsList(ListenableFuture[]) Guava method successfulAsList()
@@ -899,11 +899,11 @@ public final class CffuFactory {
      * Returns a new Cffu with the most results in the <strong>same order</strong> of
      * the given stages arguments in the given time({@code timeout}, aka as many results as possible in the given time).
      * <p>
-     * If any of the provided stages does not success(fails or incomplete) in given time,
+     * If any of the provided stages is not completed normally(fails or incomplete) in given time,
      * its corresponding position will contain {@code valueIfNotSuccess}
      * (which is indistinguishable from the stage having a successful value of {@code valueIfNotSuccess}).
      *
-     * @param valueIfNotSuccess the value to return if not completed successfully
+     * @param valueIfNotSuccess the value to return if not completed normally
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @param cfs               the stages
@@ -1152,7 +1152,7 @@ public final class CffuFactory {
      * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
@@ -1165,7 +1165,7 @@ public final class CffuFactory {
      * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
@@ -1179,7 +1179,7 @@ public final class CffuFactory {
      * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
@@ -1194,7 +1194,7 @@ public final class CffuFactory {
      * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
-     * If any of the provided stages does not success, its corresponding position will contain {@code null}
+     * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
     @Contract(pure = true)
