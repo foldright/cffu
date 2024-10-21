@@ -21,16 +21,9 @@ class ListenableFutureUsageStudyCaseTest : FunSpec({
     val sleepMs = 100L
 
     test("warming up") {
-        (1..10).map {
-            Futures.submit(Callable {
-                it
-            }, testExecutor)
-        }.let { Futures.allAsList(it) }.get()
-        (1..10).map {
-            Futures.submit(Callable {
-                it
-            }, testExecutor)
-        }.let { Futures.successfulAsList(it) }.get()
+        val futures = Array(10) { Futures.submit(Callable { it }, testExecutor) }
+        Futures.allAsList(*futures).get()
+        Futures.successfulAsList(*futures).get()
     }
 
     test("`allAsList` methods of ListenableFuture is fail-fast") {
