@@ -58,14 +58,10 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the CompletableFuture's
-     * default asynchronous execution facility with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
-     * @param <T>       the suppliers' return type
-     * @see #allResultsFailFastOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * Shortcut to method {@link #allResultsFailFastOf allResultsFailFastOf}, wraps input suppliers to
+     * CompletableFuture by {@link CompletableFuture#supplyAsync(Supplier)}.
+     * <p>
+     * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyFailFastAsync(Supplier<? extends T>... suppliers) {
@@ -73,15 +69,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed by tasks running in the given Executor
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor  the executor to use for asynchronous execution
-     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
-     * @param <T>       the suppliers' return type
-     * @see #allResultsFailFastOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     * Shortcut to method {@link #allResultsFailFastOf allResultsFailFastOf}, wraps input suppliers to
+     * CompletableFuture by {@link CompletableFuture#supplyAsync(Supplier, Executor)}.
+     * <p>
+     * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyFailFastAsync(
@@ -93,19 +84,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the successful values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Shortcut to method {@link #allSuccessResultsOf}, wraps input suppliers to
+     * CompletableFuture by {@link CompletableFuture#supplyAsync(Supplier)}.
      * <p>
-     * If any of the provided suppliers fails, its corresponding position will contain {@code valueIfFailed}
-     * (which is indistinguishable from the supplier having a successful value of {@code valueIfFailed}).
-     *
-     * @param valueIfFailed the value used as result if the input supplier throws exception
-     * @param suppliers     the suppliers returning the value to be used to complete the returned CompletableFuture
-     * @param <T>           the suppliers' return type
-     * @see #allSuccessResultsOf(Object, CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyAllSuccessAsync(
@@ -114,19 +96,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the successfully values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Shortcut to method {@link #allSuccessResultsOf allSuccessResultsOf}, wraps input suppliers to
+     * CompletableFuture by {@link CompletableFuture#supplyAsync(Supplier, Executor)}.
      * <p>
-     * If any of the provided suppliers fails, its corresponding position will contain {@code valueIfFailed}
-     * (which is indistinguishable from the supplier having a successful value of {@code valueIfFailed}).
-     *
-     * @param valueIfFailed the value used as result if the input supplier throws exception
-     * @param executor      the executor to use for asynchronous execution
-     * @param suppliers     the suppliers returning the value to be used to complete the returned CompletableFuture
-     * @param <T>           the suppliers' return type
-     * @see #allSuccessResultsOf(Object, CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyAllSuccessAsync(
@@ -138,23 +111,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Shortcut to method {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[]) mostSuccessResultsOf},
+     * wraps input suppliers to CompletableFuture by {@link CompletableFuture#supplyAsync(Supplier)}.
      * <p>
-     * If any of the provided suppliers is not completed normally(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}
-     * (which is indistinguishable from the supplier having a successful value of {@code valueIfNotSuccess}).
-     *
-     * @param valueIfNotSuccess the value used as result if the input supplier not completed normally
-     * @param timeout           how long to wait in units of {@code unit}
-     * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param suppliers         the suppliers returning the value to be used to complete the returned CompletableFuture
-     * @param <T>               the suppliers' return type
-     * @see #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * See the {@link #mostSuccessResultsOf(Object, Executor, long, TimeUnit, CompletionStage[]) mostSuccessResultsOf}
+     * documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyMostSuccessAsync(
@@ -163,23 +124,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the most values obtained by calling the given Suppliers
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Suppliers arguments.
+     * Shortcut to method {@link #mostSuccessResultsOf(Object, Executor, long, TimeUnit, CompletionStage[]) mostSuccessResultsOf},
+     * wraps input suppliers to CompletableFuture by {@link CompletableFuture#supplyAsync(Supplier, Executor)}.
      * <p>
-     * If any of the provided suppliers is not completed normally(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}
-     * (which is indistinguishable from the supplier having a successful value of {@code valueIfNotSuccess}).
-     *
-     * @param valueIfNotSuccess the value used as result if the input supplier not completed normally
-     * @param executor          the executor to use for asynchronous execution
-     * @param timeout           how long to wait in units of {@code unit}
-     * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param suppliers         the suppliers returning the value to be used to complete the returned CompletableFuture
-     * @param <T>               the suppliers' return type
-     * @see #mostSuccessResultsOf(Object, Executor, long, TimeUnit, CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     * See the {@link #mostSuccessResultsOf(Object, Executor, long, TimeUnit, CompletionStage[]) mostSuccessResultsOf}
+     * documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyMostSuccessAsync(
@@ -193,15 +142,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
-     * @param <T>       the suppliers' return type
-     * @see #allResultsOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * Shortcut to method {@link #allResultsOf allResultsOf}, wraps input suppliers to
+     * CompletableFuture by {@link CompletableFuture#supplyAsync(Supplier)}.
+     * <p>
+     * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyAsync(Supplier<? extends T>... suppliers) {
@@ -209,15 +153,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor with the values obtained by calling the given Suppliers
-     * in the <strong>same order</strong> of the given Suppliers arguments.
-     *
-     * @param executor  the executor to use for asynchronous execution
-     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
-     * @param <T>       the suppliers' return type
-     * @see #allResultsOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     * Shortcut to method {@link #allResultsOf allResultsOf}, wraps input suppliers to
+     * CompletableFuture by {@link CompletableFuture#supplyAsync(Supplier, Executor)}.
+     * <p>
+     * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyAsync(Executor executor, Supplier<? extends T>... suppliers) {
@@ -228,19 +167,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously successful
-     * when any of tasks running in the CompletableFuture's default asynchronous execution facility
-     * by calling the given Suppliers success, with the same result.
-     * Otherwise, all the given tasks complete exceptionally,
-     * the returned CompletableFuture also does so, with a CompletionException holding
-     * an exception from any of the given stages as its cause.
-     * If no suppliers are provided, returns a new CompletableFuture that is already completed exceptionally
-     * with a {@link NoCfsProvidedException}.
-     *
-     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
-     * @param <T>       the suppliers' return type
-     * @see #anySuccessOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input suppliers to
+     * CompletableFuture by {@link CompletableFuture#supplyAsync(Supplier)}.
+     * <p>
+     * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<T> mSupplyAnySuccessAsync(Supplier<? extends T>... suppliers) {
@@ -248,19 +178,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously successful
-     * when any of tasks running in the given executor by calling the given Suppliers success, with the same result.
-     * Otherwise, all the given tasks complete exceptionally,
-     * the returned CompletableFuture also does so, with a CompletionException holding
-     * an exception from any of the given stages as its cause.
-     * If no suppliers are provided, returns a new CompletableFuture that is already completed exceptionally
-     * with a {@link NoCfsProvidedException}.
-     *
-     * @param executor  the executor to use for asynchronous execution
-     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
-     * @param <T>       the suppliers' return type
-     * @see #anySuccessOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input suppliers to
+     * CompletableFuture by {@link CompletableFuture#supplyAsync(Supplier, Executor)}.
+     * <p>
+     * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<T> mSupplyAnySuccessAsync(
@@ -272,17 +193,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is completed
-     * when any of tasks running in the CompletableFuture's default asynchronous execution facility
-     * by calling the given Suppliers complete, with the same result.
-     * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
-     * If no suppliers are provided, returns an incomplete CompletableFuture.
-     *
-     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
-     * @param <T>       the suppliers' return type
-     * @see #anyOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier)
+     * Shortcut to method {@link #anyOf anyOf}, wraps input suppliers to
+     * CompletableFuture by {@link CompletableFuture#supplyAsync(Supplier)}.
+     * <p>
+     * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<T> mSupplyAnyAsync(Supplier<? extends T>... suppliers) {
@@ -290,17 +204,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is completed
-     * when any of tasks running in the given Executor by calling the given Suppliers complete, with the same result.
-     * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so,
-     * with a CompletionException holding this exception as its cause.
-     * If no suppliers are provided, returns an incomplete CompletableFuture.
-     *
-     * @param executor  the executor to use for asynchronous execution
-     * @param suppliers the suppliers returning the value to be used to complete the returned CompletableFuture
-     * @param <T>       the suppliers' return type
-     * @see #anyOf(CompletionStage[])
-     * @see CompletableFuture#supplyAsync(Supplier, Executor)
+     * Shortcut to method {@link #anyOf anyOf}, wraps input suppliers to
+     * CompletableFuture by {@link CompletableFuture#supplyAsync(Supplier, Executor)}.
+     * <p>
+     * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<T> mSupplyAnyAsync(Executor executor, Supplier<? extends T>... suppliers) {
@@ -315,26 +222,20 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * after runs the given actions.
-     *
-     * @param actions the actions to run before completing the returned CompletableFuture
-     * @see #allFailFastOf(CompletionStage[])
-     * @see CompletableFuture#runAsync(Runnable)
+     * Shortcut to method {@link #allFailFastOf allFailFastOf}, wraps input actions to
+     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable)}.
+     * <p>
+     * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> mRunFailFastAsync(Runnable... actions) {
         return mRunFailFastAsync(ASYNC_POOL, actions);
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor after runs the given actions.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to run before completing the returned CompletableFuture
-     * @see #allFailFastOf(CompletionStage[])
-     * @see CompletableFuture#runAsync(Runnable, Executor)
+     * Shortcut to method {@link #allFailFastOf allFailFastOf}, wraps input actions to
+     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable, Executor)}.
+     * <p>
+     * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> mRunFailFastAsync(Executor executor, Runnable... actions) {
         executor = screenExecutor(executor);
@@ -344,26 +245,20 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the CompletableFuture's default asynchronous execution facility
-     * after runs the given actions.
-     *
-     * @param actions the actions to run before completing the returned CompletableFuture
-     * @see #allOf(CompletionStage[])
-     * @see CompletableFuture#runAsync(Runnable)
+     * Shortcut to method {@link #allOf allOf}, wraps input actions to
+     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable)}.
+     * <p>
+     * See the {@link #allOf allOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> mRunAsync(Runnable... actions) {
         return mRunAsync(ASYNC_POOL, actions);
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * by tasks running in the given Executor after runs the given actions.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to run before completing the returned CompletableFuture
-     * @see #allOf(CompletionStage[])
-     * @see CompletableFuture#runAsync(Runnable, Executor)
+     * Shortcut to method {@link #allOf allOf}, wraps input actions to
+     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable, Executor)}.
+     * <p>
+     * See the {@link #allOf allOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> mRunAsync(Executor executor, Runnable... actions) {
         executor = screenExecutor(executor);
@@ -373,25 +268,20 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously successful
-     * when any tasks running in the CompletableFuture's default asynchronous execution facility success.
-     *
-     * @param actions the actions to run to complete the returned CompletableFuture
-     * @see #anySuccessOf(CompletionStage[])
-     * @see CompletableFuture#runAsync(Runnable)
+     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input actions to
+     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable)}.
+     * <p>
+     * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> mRunAnySuccessAsync(Runnable... actions) {
         return mRunAnySuccessAsync(ASYNC_POOL, actions);
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously successful
-     * when any tasks running in the given executor success.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to run to complete the returned CompletableFuture
-     * @see #anySuccessOf(CompletionStage[])
-     * @see CompletableFuture#runAsync(Runnable, Executor)
+     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input actions to
+     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable, Executor)}.
+     * <p>
+     * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> mRunAnySuccessAsync(Executor executor, Runnable... actions) {
         executor = screenExecutor(executor);
@@ -401,25 +291,20 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * when any tasks running in the CompletableFuture's default asynchronous execution facility.
-     *
-     * @param actions the actions to run to complete the returned CompletableFuture
-     * @see #anyOf(CompletionStage[])
-     * @see CompletableFuture#runAsync(Runnable)
+     * Shortcut to method {@link #anyOf anyOf}, wraps input actions to
+     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable)}.
+     * <p>
+     * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> mRunAnyAsync(Runnable... actions) {
         return mRunAnyAsync(ASYNC_POOL, actions);
     }
 
     /**
-     * Returns a new CompletableFuture that is asynchronously completed
-     * when any tasks running in the given executor complete.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to run to complete the returned CompletableFuture
-     * @see #anyOf(CompletionStage[])
-     * @see CompletableFuture#runAsync(Runnable, Executor)
+     * Shortcut to method {@link #anyOf anyOf}, wraps input actions to
+     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable, Executor)}.
+     * <p>
+     * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> mRunAnyAsync(Executor executor, Runnable... actions) {
         executor = screenExecutor(executor);
@@ -939,9 +824,9 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is completed normally with a list containing the successful results of
-     * all given stages when all the given stages complete or the waiting time is over; The list of results is in the
-     * <strong>same order</strong> as the input list, and if any of given stages complete exceptionally or are incomplete,
-     * their corresponding positions will contain {@code valueIfNotSuccess}
+     * the given stages before the given timeout (aka as many results as possible in the given time);
+     * The list of results is in the <strong>same order</strong> as the input list, and if any of given stages
+     * complete exceptionally or are incomplete, their corresponding positions will contain {@code valueIfNotSuccess}
      * (which is indistinguishable from the stage having a successful value of {@code valueIfNotSuccess}).
      * If no stages are provided, returns a CompletableFuture completed with the value empty list.
      * <p>
@@ -965,9 +850,9 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is completed normally with a list containing the successful results of
-     * all given stages when all the given stages complete or the waiting time is over; The list of results is in the
-     * <strong>same order</strong> as the input list, and if any of given stages complete exceptionally or are incomplete,
-     * their corresponding positions will contain {@code valueIfNotSuccess}
+     * the given stages before the given timeout (aka as many results as possible in the given time);
+     * The list of results is in the <strong>same order</strong> as the input list, and if any of given stages
+     * complete exceptionally or are incomplete, their corresponding positions will contain {@code valueIfNotSuccess}
      * (which is indistinguishable from the stage having a successful value of {@code valueIfNotSuccess}).
      * If no stages are provided, returns a CompletableFuture completed with the value empty list.
      * <p>
@@ -1664,15 +1549,10 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param fns the functions to use to compute the values of the returned CompletableFuture
-     * @param <U> the functions' return type
-     * @see #allResultsFailFastOf(CompletionStage[])
+     * Shortcut to method {@link #allResultsFailFastOf allResultsFailFastOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of functions.
+     * <p>
+     * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyFailFastAsync(
@@ -1681,15 +1561,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param fns      the functions to use to compute the values of the returned CompletableFuture
-     * @param <U>      the functions' return type
-     * @see #allResultsFailFastOf(CompletionStage[])
+     * Shortcut to method {@link #allResultsFailFastOf allResultsFailFastOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
+     * <p>
+     * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyFailFastAsync(
@@ -1702,19 +1577,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the default executor of parameter cfThis
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Shortcut to method {@link #allSuccessResultsOf allSuccessResultsOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of functions.
      * <p>
-     * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}
-     * (which is indistinguishable from the function having a successful value of {@code valueIfFailed}).
-     *
-     * @param valueIfFailed the value used as result if the input function throws exception
-     * @param fns           the functions to use to compute the values of the returned CompletableFuture
-     * @param <U>           the functions' return type
-     * @see #allSuccessResultsOf(Object, CompletionStage[])
+     * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAllSuccessAsync(
@@ -1723,18 +1589,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed in the given Executor with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Shortcut to method {@link #allSuccessResultsOf allSuccessResultsOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
      * <p>
-     * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}
-     * (which is indistinguishable from the function having a successful value of {@code valueIfFailed}).
-     *
-     * @param valueIfFailed the value used as result if the input function throws exception
-     * @param fns           the functions to use to compute the values of the returned CompletableFuture
-     * @param <U>           the functions' return type
-     * @see #allSuccessResultsOf(Object, CompletionStage[])
+     * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAllSuccessAsync(
@@ -1748,23 +1606,12 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Shortcut to method {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
+     * mostSuccessResultsOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
      * <p>
-     * If any of the provided functions is not completed normally(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}
-     * (which is indistinguishable from the function having a successful value of {@code valueIfNotSuccess}).
-     *
-     * @param valueIfNotSuccess the value used as result if the input function not completed normally
-     * @param timeout           how long to wait in units of {@code unit}
-     * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param fns               the functions to use to compute the values of the returned CompletableFuture
-     * @param <U>               the functions' return type
-     * @see #mostSuccessResultsOf(Object, Executor, long, TimeUnit, CompletionStage[])
+     * See the {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
+     * mostSuccessResultsOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyMostSuccessAsync(
@@ -1774,23 +1621,12 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Shortcut to method {@link #mostSuccessResultsOf(Object, Executor, long, TimeUnit, CompletionStage[])
+     * mostSuccessResultsOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
      * <p>
-     * If any of the provided functions is not completed normally(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}
-     * (which is indistinguishable from the function having a successful value of {@code valueIfNotSuccess}).
-     *
-     * @param valueIfNotSuccess the value used as result if the input function not completed normally
-     * @param executor          the executor to use for asynchronous execution
-     * @param timeout           how long to wait in units of {@code unit}
-     * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param fns               the functions to use to compute the values of the returned CompletableFuture
-     * @param <U>               the functions' return type
-     * @see #mostSuccessResultsOf(Object, Executor, long, TimeUnit, CompletionStage[])
+     * See the {@link #mostSuccessResultsOf(Object, Executor, long, TimeUnit, CompletionStage[])
+     * mostSuccessResultsOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyMostSuccessAsync(
@@ -1806,15 +1642,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param fns the functions to use to compute the values of the returned CompletableFuture
-     * @param <U> the functions' return type
-     * @see #allResultsOf(CompletionStage[])
+     * Shortcut to method {@link #allResultsOf allResultsOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of functions.
+     * <p>
+     * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAsync(
@@ -1823,15 +1654,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param fns      the functions to use to compute the values of the returned CompletableFuture
-     * @param <U>      the functions' return type
-     * @see #allResultsOf(CompletionStage[])
+     * Shortcut to method {@link #allResultsOf allResultsOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
+     * <p>
+     * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAsync(
@@ -1844,14 +1670,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with any successful value obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
-     *
-     * @param fns the functions to use to compute the values of the returned CompletableFuture
-     * @param <U> the functions' return type
-     * @see #anySuccessOf(CompletionStage[])
+     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of functions.
+     * <p>
+     * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnySuccessAsync(
@@ -1860,14 +1682,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with any successful value obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param fns      the functions to use to compute the values of the returned CompletableFuture
-     * @param <U>      the functions' return type
-     * @see #anySuccessOf(CompletionStage[])
+     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
+     * <p>
+     * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnySuccessAsync(
@@ -1880,14 +1698,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with any completed result obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
-     *
-     * @param fns the functions to use to compute the values of the returned CompletableFuture
-     * @param <U> the functions' return type
-     * @see #anyOf(CompletionStage[])
+     * Shortcut to method {@link #anyOf anyOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of functions.
+     * <p>
+     * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnyAsync(
@@ -1896,14 +1710,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with any completed result obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param fns      the functions to use to compute the values of the returned CompletableFuture
-     * @param <U>      the functions' return type
-     * @see #anyOf(CompletionStage[])
+     * Shortcut to method {@link #anyOf anyOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
+     * <p>
+     * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnyAsync(
@@ -1921,12 +1731,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the given stage's result as the argument to the given actions.
-     *
-     * @param actions the actions to perform before completing the returned CompletableFuture
-     * @see #allFailFastOf(CompletionStage[])
+     * Shortcut to method {@link #allFailFastOf allFailFastOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of actions.
+     * <p>
+     * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptFailFastAsync(
@@ -1935,12 +1743,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned CompletableFuture
-     * @see #allFailFastOf(CompletionStage[])
+     * Shortcut to method {@link #allFailFastOf allFailFastOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of actions.
+     * <p>
+     * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptFailFastAsync(
@@ -1953,12 +1759,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the given stage's result as the argument to the given actions.
-     *
-     * @param actions the actions to perform before completing the returned CompletableFuture
-     * @see #allOf(CompletionStage[])
+     * Shortcut to method {@link #allOf allOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of actions.
+     * <p>
+     * See the {@link #allOf allOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAsync(
@@ -1967,12 +1771,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned CompletableFuture
-     * @see #allOf(CompletionStage[])
+     * Shortcut to method {@link #allOf allOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of actions.
+     * <p>
+     * See the {@link #allOf allOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAsync(
@@ -1985,12 +1787,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the given stage's result as the argument to the given actions.
-     *
-     * @param actions the actions to perform before completing the returned CompletableFuture
-     * @see #anySuccessOf(CompletionStage[])
+     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of actions.
+     * <p>
+     * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnySuccessAsync(
@@ -1999,12 +1799,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned CompletableFuture
-     * @see #anySuccessOf(CompletionStage[])
+     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of actions.
+     * <p>
+     * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnySuccessAsync(
@@ -2017,12 +1815,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the default executor of parameter cfThis,
-     * with the given stage's result as the argument to the given actions.
-     *
-     * @param actions the actions to perform before completing the returned CompletableFuture
-     * @see #anyOf(CompletionStage[])
+     * Shortcut to method {@link #anyOf anyOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of actions.
+     * <p>
+     * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnyAsync(
@@ -2031,12 +1827,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned CompletableFuture
-     * @see #anyOf(CompletionStage[])
+     * Shortcut to method {@link #anyOf anyOf}, wraps input functions to CompletableFuture by
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of actions.
+     * <p>
+     * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnyAsync(
@@ -2053,25 +1847,20 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * executes the given actions using the default executor of parameter cfThis.
-     *
-     * @param actions the actions to perform before completing the returned CompletableFuture
-     * @see CompletableFuture#thenRunAsync(Runnable)
-     * @see #allFailFastOf(CompletionStage[])
+     * Shortcut to method {@link #allFailFastOf allFailFastOf}, wraps input actions to
+     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable)}.
+     * <p>
+     * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> thenMRunFailFastAsync(CompletableFuture<?> cfThis, Runnable... actions) {
         return thenMRunFailFastAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * executes the given actions using the given Executor.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned CompletableFuture
-     * @see CompletableFuture#thenRunAsync(Runnable, Executor)
-     * @see #allFailFastOf(CompletionStage[])
+     * Shortcut to method {@link #allFailFastOf allFailFastOf}, wraps input actions to
+     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable, Executor)}.
+     * <p>
+     * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> thenMRunFailFastAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
@@ -2083,25 +1872,20 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * executes the given actions using the default executor of parameter cfThis.
-     *
-     * @param actions the actions to perform before completing the returned CompletableFuture
-     * @see CompletableFuture#thenRunAsync(Runnable)
-     * @see #allOf(CompletionStage[])
+     * Shortcut to method {@link #allOf allOf}, wraps input actions to
+     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable)}.
+     * <p>
+     * See the {@link #allOf allOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> thenMRunAsync(CompletableFuture<?> cfThis, Runnable... actions) {
         return thenMRunAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * executes the given actions using the given Executor.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned CompletableFuture
-     * @see CompletableFuture#thenRunAsync(Runnable, Executor)
-     * @see #allOf(CompletionStage[])
+     * Shortcut to method {@link #allOf allOf}, wraps input actions to
+     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable, Executor)}.
+     * <p>
+     * See the {@link #allOf allOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> thenMRunAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
@@ -2113,25 +1897,20 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * executes the given actions using the default executor of parameter cfThis.
-     *
-     * @param actions the actions to perform before completing the returned CompletableFuture
-     * @see CompletableFuture#thenRunAsync(Runnable)
-     * @see #anySuccessOf(CompletionStage[])
+     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input actions to
+     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable)}.
+     * <p>
+     * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> thenMRunAnySuccessAsync(CompletableFuture<?> cfThis, Runnable... actions) {
         return thenMRunAnySuccessAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * executes the given actions using the given Executor.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned CompletableFuture
-     * @see CompletableFuture#thenRunAsync(Runnable, Executor)
-     * @see #anySuccessOf(CompletionStage[])
+     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input actions to
+     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable, Executor)}.
+     * <p>
+     * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> thenMRunAnySuccessAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
@@ -2143,25 +1922,20 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * executes the given actions using the default executor of parameter cfThis.
-     *
-     * @param actions the actions to perform before completing the returned CompletableFuture
-     * @see CompletableFuture#thenRunAsync(Runnable)
-     * @see #anyOf(CompletionStage[])
+     * Shortcut to method {@link #anyOf anyOf}, wraps input actions to
+     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable)}.
+     * <p>
+     * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> thenMRunAnyAsync(CompletableFuture<?> cfThis, Runnable... actions) {
         return thenMRunAnyAsync(cfThis, defaultExecutor(cfThis), actions);
     }
 
     /**
-     * Returns a new CompletableFuture that, when the given stage completes normally,
-     * executes the given actions using the given Executor.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned CompletableFuture
-     * @see CompletableFuture#thenRunAsync(Runnable, Executor)
-     * @see #anyOf(CompletionStage[])
+     * Shortcut to method {@link #anyOf anyOf}, wraps input actions to
+     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable, Executor)}.
+     * <p>
+     * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> thenMRunAnyAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
