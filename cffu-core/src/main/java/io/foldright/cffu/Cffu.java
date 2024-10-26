@@ -209,15 +209,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param fns the functions to use to compute the values of the returned Cffu
-     * @param <U> the functions' return type
-     * @see CffuFactory#allResultsFailFastOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf},
+     * wraps input functions to Cffu by {@link CffuFactory#supplyAsync(Supplier)};
+     * The given stage's result is used as the argument of functions.
+     * <p>
+     * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyFailFastAsync(Function<? super T, ? extends U>... fns) {
@@ -225,15 +221,16 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param fns      the functions to use to compute the values of the returned Cffu
-     * @param <U>      the functions' return type
-     * @see CffuFactory#allResultsFailFastOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf},
+     * wraps input functions to Cffu by {@link CffuFactory#supplyAsync(Supplier, Executor)};
+     * The given stage's result is used as the argument of functions.
+     * <p>
+     * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
+     * <p>
+     * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
+     * need be declared to avoid the compilation error, more info see <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/786f4140-8421-43bc-a65f-3eb41b0ad240" alt="demo code" />
      */
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyFailFastAsync(Executor executor, Function<? super T, ? extends U>... fns) {
@@ -241,19 +238,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed in the Cffu's default asynchronous execution facility
-     * with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Shortcut to method {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf},
+     * wraps input functions to Cffu by {@link CffuFactory#supplyAsync(Supplier)};
+     * The given stage's result is used as the argument of functions.
      * <p>
-     * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}
-     * (which is indistinguishable from the function having a successful value of {@code valueIfFailed}).
-     *
-     * @param valueIfFailed the value used as result if the input function throws exception
-     * @param fns           the functions to use to compute the values of the returned Cffu
-     * @param <U>           the functions' return type
-     * @see CffuFactory#allSuccessResultsOf(Object, CompletionStage[])
+     * See the {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyAllSuccessAsync(
@@ -262,18 +251,16 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed in the given Executor with the successful values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Shortcut to method {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf},
+     * wraps input functions to Cffu by {@link CffuFactory#supplyAsync(Supplier, Executor)};
+     * The given stage's result is used as the argument of functions.
      * <p>
-     * If any of the provided functions fails, its corresponding position will contain {@code valueIfFailed}
-     * (which is indistinguishable from the function having a successful value of {@code valueIfFailed}).
-     *
-     * @param valueIfFailed the value used as result if the input function throws exception
-     * @param fns           the functions to use to compute the values of the returned Cffu
-     * @param <U>           the functions' return type
-     * @see CffuFactory#allSuccessResultsOf(Object, CompletionStage[])
+     * See the {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
+     * <p>
+     * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
+     * need be declared to avoid the compilation error, more info see <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/786f4140-8421-43bc-a65f-3eb41b0ad240" alt="demo code" />
      */
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyAllSuccessAsync(
@@ -282,23 +269,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using {@link #defaultExecutor()},
-     * with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Shortcut to method {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf},
+     * wraps input functions to Cffu by {@link CffuFactory#supplyAsync(Supplier)};
+     * The given stage's result is used as the argument of functions.
      * <p>
-     * If any of the provided functions is not completed normally(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}
-     * (which is indistinguishable from the function having a successful value of {@code valueIfNotSuccess}).
-     *
-     * @param valueIfNotSuccess the value used as result if the input function not completed normally
-     * @param timeout           how long to wait in units of {@code unit}
-     * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param fns               the functions to use to compute the values of the returned Cffu
-     * @param <U>               the functions' return type
-     * @see CffuFactory#mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
+     * See the {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyMostSuccessAsync(
@@ -307,23 +282,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using the given Executor, with the most values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the given time({@code timeout}, aka as many results as possible in the given time)
-     * in the <strong>same order</strong> of the given Functions arguments.
+     * Shortcut to method {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf},
+     * wraps input functions to Cffu by {@link CffuFactory#supplyAsync(Supplier, Executor)};
+     * The given stage's result is used as the argument of functions.
      * <p>
-     * If any of the provided functions is not completed normally(fails or incomplete) in given time,
-     * its corresponding position will contain {@code valueIfNotSuccess}
-     * (which is indistinguishable from the function having a successful value of {@code valueIfNotSuccess}).
-     *
-     * @param valueIfNotSuccess the value used as result if the input function not completed normally
-     * @param executor          the executor to use for asynchronous execution
-     * @param timeout           how long to wait in units of {@code unit}
-     * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param fns               the functions to use to compute the values of the returned Cffu
-     * @param <U>               the functions' return type
-     * @see CffuFactory#mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
+     * See the {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyMostSuccessAsync(
@@ -333,15 +296,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using {@link #defaultExecutor()},
-     * with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param fns the functions to use to compute the values of the returned Cffu
-     * @param <U> the functions' return type
-     * @see CffuFactory#allResultsOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#allResultsOf allResultsOf}, wraps input functions to Cffu by
+     * {@link CffuFactory#supplyAsync(Supplier)}; The given stage's result is used as the argument of functions.
+     * <p>
+     * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyAsync(Function<? super T, ? extends U>... fns) {
@@ -349,15 +307,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using the given Executor, with the values obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions)
-     * in the <strong>same order</strong> of the given Functions arguments.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param fns      the functions to use to compute the values of the returned Cffu
-     * @param <U>      the functions' return type
-     * @see CffuFactory#allResultsOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#allResultsOf allResultsOf}, wraps input functions to Cffu by
+     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
+     * <p>
+     * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
+     * <p>
+     * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
+     * need be declared to avoid the compilation error, more info see <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/786f4140-8421-43bc-a65f-3eb41b0ad240" alt="demo code" />
      */
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyAsync(Executor executor, Function<? super T, ? extends U>... fns) {
@@ -365,14 +323,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using the Cffu's default asynchronous execution facility,
-     * with any successful value obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
-     *
-     * @param fns the functions to use to compute the values of the returned Cffu
-     * @param <U> the functions' return type
-     * @see CffuFactory#anySuccessOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf}, wraps input functions to Cffu by
+     * {@link CffuFactory#supplyAsync(Supplier)}; The given stage's result is used as the argument of functions.
+     * <p>
+     * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public final <U> Cffu<U> thenMApplyAnySuccessAsync(Function<? super T, ? extends U>... fns) {
@@ -380,14 +334,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using the given Executor, with any successful value obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param fns      the functions to use to compute the values of the returned Cffu
-     * @param <U>      the functions' return type
-     * @see CffuFactory#anySuccessOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf}, wraps input functions to Cffu by
+     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
+     * <p>
+     * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
+     * <p>
+     * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
+     * need be declared to avoid the compilation error, more info see <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/786f4140-8421-43bc-a65f-3eb41b0ad240" alt="demo code" />
      */
     @SafeVarargs
     public final <U> Cffu<U> thenMApplyAnySuccessAsync(Executor executor, Function<? super T, ? extends U>... fns) {
@@ -395,14 +350,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using the Cffu's default asynchronous execution facility,
-     * with any completed result obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
-     *
-     * @param fns the functions to use to compute the values of the returned Cffu
-     * @param <U> the functions' return type
-     * @see CffuFactory#anyOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#anyOf anyOf}, wraps input functions to Cffu by
+     * {@link CffuFactory#supplyAsync(Supplier)}; The given stage's result is used as the argument of functions.
+     * <p>
+     * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
      */
     @SafeVarargs
     public final <U> Cffu<U> thenMApplyAnyAsync(Function<? super T, ? extends U>... fns) {
@@ -410,14 +361,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using the given Executor, with any completed result obtained by calling the given Functions
-     * (with the given stage's result as the argument to the given functions).
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param fns      the functions to use to compute the values of the returned Cffu
-     * @param <U>      the functions' return type
-     * @see CffuFactory#anyOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#anyOf anyOf}, wraps input functions to Cffu by
+     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
+     * <p>
+     * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
+     * <p>
+     * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
+     * need be declared to avoid the compilation error, more info see <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/786f4140-8421-43bc-a65f-3eb41b0ad240" alt="demo code" />
      */
     @SafeVarargs
     public final <U> Cffu<U> thenMApplyAnyAsync(Executor executor, Function<? super T, ? extends U>... fns) {
@@ -425,12 +377,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using {@link #defaultExecutor()},
-     * with the given stage's result as the argument to the given actions.
-     *
-     * @param actions the actions to perform before completing the returned Cffu
-     * @see CffuFactory#allFailFastOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#allFailFastOf allFailFastOf}, wraps input functions to Cffu by
+     * {@link CffuFactory#supplyAsync(Supplier)}; The given stage's result is used as the argument of actions.
+     * <p>
+     * See the {@link CffuFactory#allFailFastOf allFailFastOf} documentation for the rules of result computation.
+     * <p>
+     * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
+     * to avoid the compilation error, more info see <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptFailFastAsync(Consumer<? super T>... actions) {
@@ -438,12 +393,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned Cffu
-     * @see CffuFactory#allFailFastOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#allFailFastOf allFailFastOf}, wraps input functions to Cffu by
+     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of actions.
+     * <p>
+     * See the {@link CffuFactory#allFailFastOf allFailFastOf} documentation for the rules of result computation.
+     * <p>
+     * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
+     * to avoid the compilation error, more info see <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptFailFastAsync(Executor executor, Consumer<? super T>... actions) {
@@ -451,12 +409,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using {@link #defaultExecutor()},
-     * with the given stage's result as the argument to the given actions.
-     *
-     * @param actions the actions to perform before completing the returned Cffu
-     * @see CffuFactory#allOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#allOf allOf}, wraps input functions to Cffu by
+     * {@link CffuFactory#supplyAsync(Supplier)}; The given stage's result is used as the argument of actions.
+     * <p>
+     * See the {@link CffuFactory#allOf allOf} documentation for the rules of result computation.
+     * <p>
+     * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
+     * to avoid the compilation error, more info see <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAsync(Consumer<? super T>... actions) {
@@ -464,12 +425,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned Cffu
-     * @see CffuFactory#allOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#allOf allOf}, wraps input functions to Cffu by
+     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of actions.
+     * <p>
+     * See the {@link CffuFactory#allOf allOf} documentation for the rules of result computation.
+     * <p>
+     * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
+     * to avoid the compilation error, more info see <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAsync(Executor executor, Consumer<? super T>... actions) {
@@ -477,12 +441,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using {@link #defaultExecutor()},
-     * with the given stage's result as the argument to the given actions.
-     *
-     * @param actions the actions to perform before completing the returned Cffu
-     * @see CffuFactory#anySuccessOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf}, wraps input functions to Cffu by
+     * {@link CffuFactory#supplyAsync(Supplier)}; The given stage's result is used as the argument of actions.
+     * <p>
+     * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
+     * <p>
+     * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
+     * to avoid the compilation error, more info see <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAnySuccessAsync(Consumer<? super T>... actions) {
@@ -490,12 +457,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned Cffu
-     * @see CffuFactory#anySuccessOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf}, wraps input functions to Cffu by
+     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of actions.
+     * <p>
+     * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
+     * <p>
+     * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
+     * to avoid the compilation error, more info see <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAnySuccessAsync(Executor executor, Consumer<? super T>... actions) {
@@ -503,12 +473,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using {@link #defaultExecutor()},
-     * with the given stage's result as the argument to the given actions.
-     *
-     * @param actions the actions to perform before completing the returned Cffu
-     * @see CffuFactory#anyOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#anyOf anyOf}, wraps input functions to Cffu by
+     * {@link CffuFactory#supplyAsync(Supplier)}; The given stage's result is used as the argument of actions.
+     * <p>
+     * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
+     * <p>
+     * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
+     * to avoid the compilation error, more info see <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAnyAsync(Consumer<? super T>... actions) {
@@ -516,12 +489,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * is executed using the given Executor, with the given stage's result as the argument to the given actions.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned Cffu
-     * @see CffuFactory#anyOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#anyOf anyOf}, wraps input functions to Cffu by
+     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of actions.
+     * <p>
+     * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
+     * <p>
+     * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
+     * to avoid the compilation error, more info see <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAnyAsync(Executor executor, Consumer<? super T>... actions) {
@@ -529,92 +505,80 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * executes using {@link #defaultExecutor()},
-     *
-     * @param actions the actions to perform before completing the returned Cffu
-     * @see CffuFactory#allFailFastOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#allFailFastOf allFailFastOf},
+     * wraps input actions to Cffu by {@link CffuFactory#runAsync(Runnable)}.
+     * <p>
+     * See the {@link CffuFactory#allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
     public Cffu<Void> thenMRunFailFastAsync(Runnable... actions) {
         return thenMRunFailFastAsync(fac.defaultExecutor(), actions);
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * executes the given actions using the given Executor.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned Cffu
-     * @see CffuFactory#allFailFastOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#allFailFastOf allFailFastOf},
+     * wraps input actions to Cffu by {@link CffuFactory#runAsync(Runnable, Executor)}.
+     * <p>
+     * See the {@link CffuFactory#allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
     public Cffu<Void> thenMRunFailFastAsync(Executor executor, Runnable... actions) {
         return resetCf(CompletableFutureUtils.thenMRunFailFastAsync(cf, executor, actions));
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * executes the given actions using {@link #defaultExecutor()}.
-     *
-     * @param actions the actions to perform before completing the returned Cffu
-     * @see CffuFactory#allOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#allOf allOf},
+     * wraps input actions to Cffu by {@link CffuFactory#runAsync(Runnable)}.
+     * <p>
+     * See the {@link CffuFactory#allOf allOf} documentation for the rules of result computation.
      */
     public Cffu<Void> thenMRunAsync(Runnable... actions) {
         return thenMRunAsync(fac.defaultExecutor(), actions);
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * executes the given actions using the given Executor.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned Cffu
-     * @see CffuFactory#allOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#allOf allOf},
+     * wraps input actions to Cffu by {@link CffuFactory#runAsync(Runnable, Executor)}.
+     * <p>
+     * See the {@link CffuFactory#allOf allOf} documentation for the rules of result computation.
      */
     public Cffu<Void> thenMRunAsync(Executor executor, Runnable... actions) {
         return resetCf(CompletableFutureUtils.thenMRunAsync(cf, executor, actions));
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * executes using {@link #defaultExecutor()},
-     *
-     * @param actions the actions to perform before completing the returned Cffu
-     * @see CffuFactory#anySuccessOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf},
+     * wraps input actions to Cffu by {@link CffuFactory#runAsync(Runnable)}.
+     * <p>
+     * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
     public Cffu<Void> thenMRunAnySuccessAsync(Runnable... actions) {
         return thenMRunAnySuccessAsync(fac.defaultExecutor(), actions);
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * executes the given actions using the given Executor.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned Cffu
-     * @see CffuFactory#anySuccessOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf},
+     * wraps input actions to Cffu by {@link CffuFactory#runAsync(Runnable, Executor)}.
+     * <p>
+     * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
     public Cffu<Void> thenMRunAnySuccessAsync(Executor executor, Runnable... actions) {
         return resetCf(CompletableFutureUtils.thenMRunAnySuccessAsync(cf, executor, actions));
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * executes using {@link #defaultExecutor()},
-     *
-     * @param actions the actions to perform before completing the returned Cffu
-     * @see CffuFactory#anyOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#anyOf anyOf},
+     * wraps input actions to Cffu by {@link CffuFactory#runAsync(Runnable)}.
+     * <p>
+     * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
      */
     public Cffu<Void> thenMRunAnyAsync(Runnable... actions) {
         return thenMRunAnyAsync(fac.defaultExecutor(), actions);
     }
 
     /**
-     * Returns a new Cffu that, when the given stage completes normally,
-     * executes the given actions using the given Executor.
-     *
-     * @param executor the executor to use for asynchronous execution
-     * @param actions  the actions to perform before completing the returned Cffu
-     * @see CffuFactory#anyOf(CompletionStage[])
+     * Shortcut to method {@link CffuFactory#anyOf anyOf},
+     * wraps input actions to Cffu by {@link CffuFactory#runAsync(Runnable, Executor)}.
+     * <p>
+     * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
      */
     public Cffu<Void> thenMRunAnyAsync(Executor executor, Runnable... actions) {
         return resetCf(CompletableFutureUtils.thenMRunAnyAsync(cf, executor, actions));
@@ -2127,7 +2091,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * When this cffu is complete, the given action is invoked with the result(or {@code null} if none)
      * and the exception (or {@code null} if none) of this cffu as arguments.
      * <p>
-     * <strong>CAUTION: </strong> The return cffu of method {@link #whenComplete(BiConsumer)}
+     * <strong>CAUTION:</strong> The return cffu of method {@link #whenComplete(BiConsumer)}
      * will contain <strong>DIFFERENT</strong> result to this cffu when this cffu completed normally
      * but the supplied action throws an exception. This behavior of method {@code whenComplete} is subtle,
      * and common misused if you just want to <strong>peek</strong> this cffu without affecting the result(e.g.
@@ -2155,7 +2119,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * When this cffu is complete, the given action is invoked with the result(or {@code null} if none)
      * and the exception (or {@code null} if none) of this cffu as arguments.
      * <p>
-     * <strong>CAUTION: </strong> The return cffu of method {@link #whenCompleteAsync(BiConsumer)}
+     * <strong>CAUTION:</strong> The return cffu of method {@link #whenCompleteAsync(BiConsumer)}
      * will contain <strong>DIFFERENT</strong> result to this cffu when this cffu completed normally
      * but the supplied action throws an exception. This behavior of method {@code whenComplete} is subtle,
      * and common misused if you just want to <strong>peek</strong> this cffu without affecting the result(e.g.
@@ -2182,7 +2146,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * When this cffu is complete, the given action is invoked with the result(or {@code null} if none)
      * and the exception (or {@code null} if none) of this cffu as arguments.
      * <p>
-     * <strong>CAUTION: </strong> The return cffu of method {@link #whenCompleteAsync(BiConsumer, Executor)}
+     * <strong>CAUTION:</strong> The return cffu of method {@link #whenCompleteAsync(BiConsumer, Executor)}
      * will contain <strong>DIFFERENT</strong> result to this cffu when this cffu completed normally
      * but the supplied action throws an exception. This behavior of method {@code whenComplete} is subtle,
      * and common misused if you just want to <strong>peek</strong> this cffu without affecting the result(e.g.
@@ -2288,8 +2252,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Waits if necessary for at most the given time for the computation to complete,
      * and then retrieves its result value when complete, or throws an (unchecked) exception if completed exceptionally.
      * <p>
-     * <strong>NOTE:<br></strong>
-     * Calling this method
+     * <strong>NOTE:</strong> Calling this method
      * <p>
      * {@code result = cffu.join(timeout, unit);}
      * <p>
@@ -2300,8 +2263,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *     .join();
      * }</pre>
      *
-     * <strong>CAUTION:<br></strong>
-     * if the wait timed out, this method throws an (unchecked) {@link CompletionException}
+     * <strong>CAUTION:</strong> if the wait timed out, this method throws an (unchecked) {@link CompletionException}
      * with the {@link TimeoutException} as its cause;
      * NOT throws a (checked) {@link TimeoutException} like {@link #get(long, TimeUnit)}.
      *
@@ -2441,8 +2403,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Returns the computation state, this method contains <strong>NO</strong> java version compatibility logic,
      * if you need this function in old {@code java 18-}, use {@link #cffuState()} instead.
      * <p>
-     * <strong>NOTE:<br></strong>
-     * {@link CompletableFuture#state} is new method since Java 19,
+     * <strong>NOTE:</strong> {@link CompletableFuture#state} is new method since Java 19,
      * this method should have compatibility logic for old Java version;
      * But the return type {@link Future.State} is also added since Java 19,
      * so it's IMPOSSIBLE to backport by compatibility logic of wrapper class({@code Cffu}).
@@ -2584,8 +2545,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *     .minimalCompletionStage();       // restrict to methods of CompletionStage
      * }</pre>
      * <p>
-     * <strong>CAUTION:<br></strong>
-     * if run on old Java 8(not support *minimal* CompletionStage), just return a Cffu with
+     * <strong>CAUTION:</strong> if run on old Java 8(not support *minimal* CompletionStage), just return a Cffu with
      * a *normal* underlying CompletableFuture which is NOT with a *minimal* CompletionStage.
      */
     @Contract(pure = true)
@@ -2798,8 +2758,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new incomplete Cffu with CompletableFuture of the type to be returned by a CompletionStage method.
      * <p>
-     * <strong>NOTE:<br></strong>
-     * This method existed mainly for API compatibility to {@code CompletableFuture},
+     * <strong>NOTE:</strong> This method existed mainly for API compatibility to {@code CompletableFuture},
      * prefer {@link CffuFactory#newIncompleteCffu()}.
      *
      * @see CffuFactory#newIncompleteCffu()
