@@ -105,8 +105,16 @@ for jdk_version in "${JDK_VERSIONS[@]}"; do
 
   # just test without build
   cu::head_line_echo "test with Java $jdk_version: $JAVA_HOME"
-  mvu::mvn_cmd ${!mvn_opts_for_java_version_var_name:+"${!mvn_opts_for_java_version_var_name}"} \
+  cmd_line=(
+    mvu::mvn_cmd ${!mvn_opts_for_java_version_var_name:+"${!mvn_opts_for_java_version_var_name}"}
     ${pl[@]:+"${pl[@]}"} "${SUREFIRE_TEST_GOAL[@]}"
+  )
+
+  "${cmd_line[@]}"
+
+  # test usage `ThreadPerTaskExecutor` as screen executor of `CompletableFuture`
+  #   by setting `-D option java.util.concurrent.ForkJoinPool.common.parallelism=1`
+  [ "$jdk_version" = 8 ] && "${cmd_line[@]}" -Djava.util.concurrent.ForkJoinPool.common.parallelism=1
 done
 
 # test the kotlin extension methods works

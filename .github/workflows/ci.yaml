@@ -7,7 +7,7 @@ jobs:
   test:
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#choosing-github-hosted-runners
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 15
+    timeout-minutes: 20
     name: Strong CI on OS ${{ matrix.os }}
     strategy:
       matrix:
@@ -19,11 +19,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-
-      - run: brew install gnu-sed
-        # https://docs.github.com/en/actions/learn-github-actions/variables#detecting-the-operating-system
-        # https://docs.github.com/en/actions/learn-github-actions/expressions
-        if: runner.os == 'macOS'
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -37,6 +32,10 @@ jobs:
           distribution: zulu
           cache: maven
 
+      - run: brew install gnu-sed
+        # https://docs.github.com/en/actions/learn-github-actions/variables#detecting-the-operating-system
+        # https://docs.github.com/en/actions/learn-github-actions/expressions
+        if: runner.os == 'macOS'
       - name: Run integration test
         run: scripts/integration_test
       - name: Run integration of demos
@@ -44,7 +43,6 @@ jobs:
 
       - name: Remove self maven install files
         run: rm -rf $HOME/.m2/repository/io/foldright/cffu*
-
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4
         env:
@@ -57,6 +55,7 @@ jobs:
           npm list -g --depth=0
           scripts/update_md_toc.sh
       # https://remarkablemark.org/blog/2017/10/12/check-git-dirty/
+
       - name: Check git dirty
         run: |
           git status --short

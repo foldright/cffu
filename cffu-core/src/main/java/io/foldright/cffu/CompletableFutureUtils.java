@@ -3883,12 +3883,18 @@ public final class CompletableFutureUtils {
         }
     }
 
+    /**
+     * code is copied from {@link CompletableFuture#USE_COMMON_POOL}.
+     */
+    @SuppressWarnings("JavadocReference")
     private static final boolean USE_COMMON_POOL = ForkJoinPool.getCommonPoolParallelism() > 1;
 
     /**
      * Default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses
      * of CompletableFuture) -- {@link ForkJoinPool#commonPool()} unless it cannot support parallelism.
+     * initialization code is copied from {@link CompletableFuture#ASYNC_POOL} with adoption.
      */
+    @SuppressWarnings("JavadocReference")
     private static final Executor ASYNC_POOL;
 
     private static final Class<?> MIN_STAGE_CLASS;
