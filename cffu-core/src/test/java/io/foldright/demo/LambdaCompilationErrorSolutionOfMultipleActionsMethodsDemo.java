@@ -9,6 +9,8 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 
 @SuppressWarnings("Convert2MethodRef")
 public class LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo {
+    private static final CompletableFuture<Integer> cf = completedFuture(42);
+
     public static void main(String[] args) {
         ////////////////////////////////////////////////////////////////////////////////
         // `mSupplyAsync` is OK for lambda arguments
@@ -24,33 +26,31 @@ public class LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo {
         CompletableFutureUtils.mRunAsync(() -> returnVoid(), () -> returnVoid());
         CompletableFutureUtils.mRunAsync(r -> returnVoid(), () -> returnVoid(), () -> returnVoid());
 
-        final CompletableFuture<Integer> cf = completedFuture(42);
-
         ////////////////////////////////////////////////////////////////////////////////
         // `thenMApplyAsync`
         ////////////////////////////////////////////////////////////////////////////////
 
         // `thenMApplyAsync` without Executor parameter is OK for lambda arguments
-        CompletableFutureUtils.thenMApplyAsync(cf, x -> 42, integer -> 43);
+        CompletableFutureUtils.thenMApplyAsync(cf, x -> 42, x -> 43);
 
         // ❗️ Executor lambda argument without "Lambda Parameters Type" causes below compilation error:
         //      reference to thenMApplyAsync is ambiguous. 🚨
         //        both method <T,U>thenMApplyAsync(CompletableFuture, Function...)
         //        and  method <T,U>thenMApplyAsync(CompletableFuture, Executor, Function...)
         //        match
-        // CompletableFutureUtils.thenMApplyAsync(cf, r -> returnVoid(), x -> 42, integer -> 43);
+        // CompletableFutureUtils.thenMApplyAsync(cf, r -> returnVoid(), x -> 42, x -> 43);
         //                                           ^^^
         //
         // ✅ Declaring "Lambda Parameters Type" fixes the compilation error.
         //
         // Declare the lambda parameter type(Runnable) in order to treat lambda as Executor:
-        CompletableFutureUtils.thenMApplyAsync(cf, (Runnable r) -> returnVoid(), x -> 42, integer -> 43);
+        CompletableFutureUtils.thenMApplyAsync(cf, (Runnable r) -> returnVoid(), x -> 42, x -> 43);
         //                                          ^^^^^^^^
-        CompletableFutureUtils.thenMApplyAsync(cf, Runnable::run, x -> 42, integer -> 43);
+        CompletableFutureUtils.thenMApplyAsync(cf, Runnable::run, x -> 42, x -> 43);
         //                                         ^^^^^^^^
 
         ////////////////////////////////////////////////////////////////////////////////
-        // `thenMAcceptAsync` is OK for lambda arguments
+        // `thenMAcceptAsync`
         ////////////////////////////////////////////////////////////////////////////////
 
         // ❗️ second lambda argument without "Lambda Parameters Type" causes below compilation error:

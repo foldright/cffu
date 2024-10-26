@@ -230,7 +230,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
      * need be declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/786f4140-8421-43bc-a65f-3eb41b0ad240" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyFailFastAsync(Executor executor, Function<? super T, ? extends U>... fns) {
@@ -260,7 +260,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
      * need be declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/786f4140-8421-43bc-a65f-3eb41b0ad240" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyAllSuccessAsync(
@@ -315,7 +315,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
      * need be declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/786f4140-8421-43bc-a65f-3eb41b0ad240" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyAsync(Executor executor, Function<? super T, ? extends U>... fns) {
@@ -342,7 +342,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
      * need be declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/786f4140-8421-43bc-a65f-3eb41b0ad240" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
     @SafeVarargs
     public final <U> Cffu<U> thenMApplyAnySuccessAsync(Executor executor, Function<? super T, ? extends U>... fns) {
@@ -369,7 +369,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
      * need be declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/786f4140-8421-43bc-a65f-3eb41b0ad240" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
     @SafeVarargs
     public final <U> Cffu<U> thenMApplyAnyAsync(Executor executor, Function<? super T, ? extends U>... fns) {
@@ -385,7 +385,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptFailFastAsync(Consumer<? super T>... actions) {
@@ -401,7 +401,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptFailFastAsync(Executor executor, Consumer<? super T>... actions) {
@@ -417,7 +417,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAsync(Consumer<? super T>... actions) {
@@ -433,7 +433,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAsync(Executor executor, Consumer<? super T>... actions) {
@@ -449,7 +449,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAnySuccessAsync(Consumer<? super T>... actions) {
@@ -465,7 +465,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAnySuccessAsync(Executor executor, Consumer<? super T>... actions) {
@@ -481,7 +481,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAnyAsync(Consumer<? super T>... actions) {
@@ -497,7 +497,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAnyAsync(Executor executor, Consumer<? super T>... actions) {

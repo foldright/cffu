@@ -1160,8 +1160,9 @@ public final class CompletableFutureUtils {
      * of any of the given stages when one stage completes.
      * If no stages are provided, returns an incomplete CompletableFuture.
      * <p>
-     * Comparing the any-<strong>complete</strong> behavior of this method, the any-<strong>success</strong> behavior of
-     * method {@link #anySuccessOf anySuccessOf} is more responsive to user and generally more desired in the application.
+     * Comparing the any-<strong>complete</strong> behavior(the complete one may be failed) of this method,
+     * the any-<strong>success</strong> behavior of method {@link #anySuccessOf anySuccessOf}
+     * is generally more desired in the application.
      * <p>
      * This method is the same as {@link CompletableFuture#anyOf CompletableFuture#anyOf} method,
      * except that the parameter type is more generic {@link CompletionStage} instead of {@link CompletableFuture}
@@ -1528,7 +1529,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
         requireNonNull(unit, "unit is null");
-        // NOTE: do NOT convert to screenExecutor; same as CompletableFuture.delayedExecutor
+        // NOTE: do NOT translate executor by screenExecutor method; same as CompletableFuture.delayedExecutor
         requireNonNull(executor, "executor is null");
         return IS_JAVA9_PLUS ? CompletableFuture.delayedExecutor(delay, unit, executor)
                 : new DelayedExecutor(delay, unit, executor);
@@ -1569,7 +1570,7 @@ public final class CompletableFutureUtils {
      * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
      * need be declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/786f4140-8421-43bc-a65f-3eb41b0ad240" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyFailFastAsync(
@@ -1602,7 +1603,7 @@ public final class CompletableFutureUtils {
      * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
      * need be declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/786f4140-8421-43bc-a65f-3eb41b0ad240" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAllSuccessAsync(
@@ -1672,7 +1673,7 @@ public final class CompletableFutureUtils {
      * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
      * need be declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/786f4140-8421-43bc-a65f-3eb41b0ad240" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAsync(
@@ -1705,7 +1706,7 @@ public final class CompletableFutureUtils {
      * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
      * need be declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/786f4140-8421-43bc-a65f-3eb41b0ad240" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnySuccessAsync(
@@ -1738,7 +1739,7 @@ public final class CompletableFutureUtils {
      * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
      * need be declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/786f4140-8421-43bc-a65f-3eb41b0ad240" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnyAsync(
@@ -1764,7 +1765,7 @@ public final class CompletableFutureUtils {
      * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptFailFastAsync(
@@ -1781,7 +1782,7 @@ public final class CompletableFutureUtils {
      * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptFailFastAsync(
@@ -1802,7 +1803,7 @@ public final class CompletableFutureUtils {
      * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAsync(
@@ -1819,7 +1820,7 @@ public final class CompletableFutureUtils {
      * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAsync(
@@ -1840,7 +1841,7 @@ public final class CompletableFutureUtils {
      * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnySuccessAsync(
@@ -1857,7 +1858,7 @@ public final class CompletableFutureUtils {
      * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnySuccessAsync(
@@ -1878,7 +1879,7 @@ public final class CompletableFutureUtils {
      * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnyAsync(
@@ -1895,7 +1896,7 @@ public final class CompletableFutureUtils {
      * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
-     * the demo code</a><br><img src="https://github.com/user-attachments/assets/1398966a-bea9-4a32-933d-b7d33d0d6b6e" alt="demo code" />
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnyAsync(
@@ -2518,8 +2519,7 @@ public final class CompletableFutureUtils {
         return bothFailFast0(cfThis, other).thenApplyAsync(t -> fn.apply(t._1, t._2), executor);
     }
 
-    private static <T> void requireThisAndOtherNonNull(
-            CompletionStage<? extends T> cfThis, CompletionStage<? extends T> other) {
+    private static void requireThisAndOtherNonNull(CompletionStage<?> cfThis, CompletionStage<?> other) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(other, "other is null");
     }
@@ -3645,7 +3645,7 @@ public final class CompletableFutureUtils {
     C completeAsync(C cfThis, Supplier<? extends T> supplier, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(supplier, "supplier is null");
-        // NOTE: do NOT convert to screenExecutor; same as CompletableFuture.completeAsync
+        // NOTE: do NOT translate executor by screenExecutor method; same as CompletableFuture.completeAsync
         requireNonNull(executor, "executor is null");
         if (IS_JAVA9_PLUS) {
             cfThis.completeAsync(supplier, executor);
@@ -3686,7 +3686,7 @@ public final class CompletableFutureUtils {
     C completeExceptionallyAsync(C cfThis, Supplier<? extends Throwable> supplier, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(supplier, "supplier is null");
-        // NOTE: do NOT convert to screenExecutor; same as CompletableFuture.completeAsync
+        // NOTE: do NOT translate executor by screenExecutor method; same as CompletableFuture.completeAsync
         requireNonNull(executor, "executor is null");
         if (isMinStageCf(cfThis)) throw new UnsupportedOperationException();
 

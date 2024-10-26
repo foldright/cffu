@@ -89,7 +89,7 @@ public final class CffuFactory {
     /**
      * Return an incomplete Cffu, equivalent to {@link CompletableFuture#CompletableFuture()} constructor.
      * <p>
-     * In general, you should not use this method in biz code, prefer other factory methods of Cffu.
+     * In general, you should not use this method in biz code, prefer other factory methods.
      *
      * @see CompletableFuture#CompletableFuture()
      */
@@ -111,9 +111,8 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by a task running in the {@link #defaultExecutor()} with
-     * the value obtained by calling the given Supplier.
+     * Returns a new Cffu that is asynchronously completed by a task running
+     * in the {@link #defaultExecutor()} with the value obtained by calling the given Supplier.
      *
      * @param supplier a function returning the value to be used to complete the returned Cffu
      * @param <T>      the function's return type
@@ -147,8 +146,8 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is asynchronously completed
-     * by a task running in the given executor after it runs the given action.
+     * Returns a new Cffu that is asynchronously completed by a task running
+     * in the given executor after it runs the given action.
      *
      * @param action   the action to run before completing the returned Cffu
      * @param executor the executor to use for asynchronous execution
