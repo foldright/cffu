@@ -77,7 +77,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyFailFastAsync(
             Executor executor, Supplier<? extends T>... suppliers) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
         return allResultsOf0(true, wrapSuppliers0(executor, suppliers));
@@ -104,7 +104,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyAllSuccessAsync(
             @Nullable T valueIfFailed, Executor executor, Supplier<? extends T>... suppliers) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
         return allSuccessResultsOf0(valueIfFailed, wrapSuppliers0(executor, suppliers));
@@ -134,7 +134,7 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<List<T>> mSupplyMostSuccessAsync(
             @Nullable T valueIfNotSuccess, Executor executor, long timeout, TimeUnit unit,
             Supplier<? extends T>... suppliers) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
@@ -160,7 +160,7 @@ public final class CompletableFutureUtils {
      */
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyAsync(Executor executor, Supplier<? extends T>... suppliers) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
         return allResultsOf0(false, wrapSuppliers0(executor, suppliers));
@@ -186,7 +186,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<T> mSupplyAnySuccessAsync(
             Executor executor, Supplier<? extends T>... suppliers) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
         return anySuccessOf0(wrapSuppliers0(executor, suppliers));
@@ -211,7 +211,7 @@ public final class CompletableFutureUtils {
      */
     @SafeVarargs
     public static <T> CompletableFuture<T> mSupplyAnyAsync(Executor executor, Supplier<? extends T>... suppliers) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
         return f_cast(CompletableFuture.anyOf(wrapSuppliers0(executor, suppliers)));
@@ -238,7 +238,7 @@ public final class CompletableFutureUtils {
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> mRunFailFastAsync(Executor executor, Runnable... actions) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
         return allFailFastOf0(wrapRunnables0(executor, actions));
@@ -261,7 +261,7 @@ public final class CompletableFutureUtils {
      * See the {@link #allOf allOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> mRunAsync(Executor executor, Runnable... actions) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
         return CompletableFuture.allOf(wrapRunnables0(executor, actions));
@@ -284,7 +284,7 @@ public final class CompletableFutureUtils {
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> mRunAnySuccessAsync(Executor executor, Runnable... actions) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
         return anySuccessOf0(wrapRunnables0(executor, actions));
@@ -307,7 +307,7 @@ public final class CompletableFutureUtils {
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
     public static CompletableFuture<Void> mRunAnyAsync(Executor executor, Runnable... actions) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
         return f_cast(CompletableFuture.anyOf(wrapRunnables0(executor, actions)));
@@ -335,7 +335,7 @@ public final class CompletableFutureUtils {
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
 
         return f_allTupleOf0(true, wrapSuppliers0(executor, suppliers));
@@ -355,7 +355,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyTupleFailFastAsync(
             Executor executor,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3);
 
         return f_allTupleOf0(true, wrapSuppliers0(executor, suppliers));
@@ -376,7 +376,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4);
 
         return f_allTupleOf0(true, wrapSuppliers0(executor, suppliers));
@@ -397,7 +397,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4, supplier5);
 
         return f_allTupleOf0(true, wrapSuppliers0(executor, suppliers));
@@ -450,7 +450,7 @@ public final class CompletableFutureUtils {
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyAllSuccessTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
 
         return f_allSuccessTupleOf0(wrapSuppliers0(executor, suppliers));
@@ -476,7 +476,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyAllSuccessTupleAsync(
             Executor executor,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3);
 
         return f_allSuccessTupleOf0(wrapSuppliers0(executor, suppliers));
@@ -503,7 +503,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyAllSuccessTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4);
 
         return f_allSuccessTupleOf0(wrapSuppliers0(executor, suppliers));
@@ -530,7 +530,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyAllSuccessTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4, supplier5);
 
         return f_allSuccessTupleOf0(wrapSuppliers0(executor, suppliers));
@@ -568,7 +568,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
 
@@ -597,7 +597,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3);
 
@@ -626,7 +626,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4);
 
@@ -657,7 +657,7 @@ public final class CompletableFutureUtils {
             Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
             Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4, supplier5);
 
@@ -698,7 +698,7 @@ public final class CompletableFutureUtils {
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2);
 
         return f_allTupleOf0(false, wrapSuppliers0(executor, suppliers));
@@ -718,7 +718,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyTupleAsync(
             Executor executor,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3);
 
         return f_allTupleOf0(false, wrapSuppliers0(executor, suppliers));
@@ -739,7 +739,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4);
 
         return f_allTupleOf0(false, wrapSuppliers0(executor, suppliers));
@@ -760,7 +760,7 @@ public final class CompletableFutureUtils {
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Supplier<?>[] suppliers = requireArrayAndEleNonNull("supplier", supplier1, supplier2, supplier3, supplier4, supplier5);
 
         return f_allTupleOf0(false, wrapSuppliers0(executor, suppliers));
@@ -1101,7 +1101,7 @@ public final class CompletableFutureUtils {
     /**
      * Converts CompletionStage to a non-minimal-stage CompletableFuture copy. This method is type safe.
      * <p>
-     * <strong>Implementation Note:</strong> The returned instances of calling {@code copy} methods
+     * Implementation Note: The returned instances of calling {@code copy} methods
      * ({@link #copy}/{@link CompletableFuture#copy}) on {@code minimal-stage} instances
      * is still {@code minimal-stage}(e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()})
      */
@@ -1575,10 +1575,10 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<List<U>> thenMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", fns);
 
-        return cfThis.thenCompose(v -> allResultsOf0(true, wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> allResultsOf0(true, wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -1609,10 +1609,10 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, @Nullable U valueIfFailed,
             Executor executor, Function<? super T, ? extends U>... fns) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", fns);
 
-        return cfThis.thenCompose(v -> allSuccessResultsOf0(valueIfFailed, wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> allSuccessResultsOf0(valueIfFailed, wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -1643,12 +1643,12 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, @Nullable U valueIfNotSuccess,
             Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
         requireArrayAndEleNonNull("fn", fns);
 
         return cfThis.thenCompose(v -> mostSuccessResultsOf0(
-                valueIfNotSuccess, se, timeout, unit, wrapFunctions0(se, v, fns)));
+                valueIfNotSuccess, executor, timeout, unit, wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -1678,10 +1678,10 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<List<U>> thenMApplyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", fns);
 
-        return cfThis.thenCompose(v -> allResultsOf0(false, wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> allResultsOf0(false, wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -1711,10 +1711,10 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<U> thenMApplyAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", fns);
 
-        return cfThis.thenCompose(v -> anySuccessOf0(wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> anySuccessOf0(wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -1744,10 +1744,10 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<U> thenMApplyAnyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("fn", fns);
 
-        return cfThis.thenCompose(v -> f_cast(CompletableFuture.anyOf(wrapFunctions0(se, v, fns))));
+        return cfThis.thenCompose(v -> f_cast(CompletableFuture.anyOf(wrapFunctions0(executor, v, fns))));
     }
 
     private static <T, U> CompletableFuture<U>[] wrapFunctions0(
@@ -1787,10 +1787,10 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<Void> thenMAcceptFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(v -> allFailFastOf0(wrapConsumers0(se, v, actions)));
+        return cfThis.thenCompose(v -> allFailFastOf0(wrapConsumers0(executor, v, actions)));
     }
 
     /**
@@ -1825,10 +1825,10 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<Void> thenMAcceptAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(v -> CompletableFuture.allOf(wrapConsumers0(se, v, actions)));
+        return cfThis.thenCompose(v -> CompletableFuture.allOf(wrapConsumers0(executor, v, actions)));
     }
 
     /**
@@ -1863,10 +1863,10 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<Void> thenMAcceptAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(v -> anySuccessOf0(wrapConsumers0(se, v, actions)));
+        return cfThis.thenCompose(v -> anySuccessOf0(wrapConsumers0(executor, v, actions)));
     }
 
     /**
@@ -1901,10 +1901,10 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<Void> thenMAcceptAnyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(v -> f_cast(CompletableFuture.anyOf(wrapConsumers0(se, v, actions))));
+        return cfThis.thenCompose(v -> f_cast(CompletableFuture.anyOf(wrapConsumers0(executor, v, actions))));
     }
 
     private static <T> CompletableFuture<Void>[] wrapConsumers0(Executor executor, T v, Consumer<? super T>[] actions) {
@@ -1930,10 +1930,10 @@ public final class CompletableFutureUtils {
     public static CompletableFuture<Void> thenMRunFailFastAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(unused -> allFailFastOf0(wrapRunnables0(se, actions)));
+        return cfThis.thenCompose(unused -> allFailFastOf0(wrapRunnables0(executor, actions)));
     }
 
     /**
@@ -1955,10 +1955,10 @@ public final class CompletableFutureUtils {
     public static CompletableFuture<Void> thenMRunAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(unused -> CompletableFuture.allOf(wrapRunnables0(se, actions)));
+        return cfThis.thenCompose(unused -> CompletableFuture.allOf(wrapRunnables0(executor, actions)));
     }
 
     /**
@@ -1980,10 +1980,10 @@ public final class CompletableFutureUtils {
     public static CompletableFuture<Void> thenMRunAnySuccessAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(unused -> anySuccessOf0(wrapRunnables0(se, actions)));
+        return cfThis.thenCompose(unused -> anySuccessOf0(wrapRunnables0(executor, actions)));
     }
 
     /**
@@ -2005,10 +2005,10 @@ public final class CompletableFutureUtils {
     public static CompletableFuture<Void> thenMRunAnyAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return cfThis.thenCompose(unused -> f_cast(CompletableFuture.anyOf(wrapRunnables0(se, actions))));
+        return cfThis.thenCompose(unused -> f_cast(CompletableFuture.anyOf(wrapRunnables0(executor, actions))));
     }
 
     // endregion
@@ -2032,10 +2032,10 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Executor executor,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2);
 
-        return cfThis.thenCompose(v -> f_allTupleOf0(true, wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> f_allTupleOf0(true, wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -2054,10 +2054,10 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3);
 
-        return cfThis.thenCompose(v -> f_allTupleOf0(true, wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> f_allTupleOf0(true, wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -2078,10 +2078,10 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4);
 
-        return cfThis.thenCompose(v -> f_allTupleOf0(true, wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> f_allTupleOf0(true, wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -2102,10 +2102,10 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4, fn5);
 
-        return cfThis.thenCompose(v -> f_allTupleOf0(true, wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> f_allTupleOf0(true, wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -2132,10 +2132,10 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Executor executor,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2);
 
-        return cfThis.thenCompose(v -> f_allSuccessTupleOf0(wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> f_allSuccessTupleOf0(wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -2163,10 +2163,10 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3);
 
-        return cfThis.thenCompose(v -> f_allSuccessTupleOf0(wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> f_allSuccessTupleOf0(wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -2195,10 +2195,10 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4);
 
-        return cfThis.thenCompose(v -> f_allSuccessTupleOf0(wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> f_allSuccessTupleOf0(wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -2227,10 +2227,10 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4, fn5);
 
-        return cfThis.thenCompose(v -> f_allSuccessTupleOf0(wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> f_allSuccessTupleOf0(wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -2257,11 +2257,11 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Executor executor, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2);
 
-        return cfThis.thenCompose(v -> f_mostSuccessTupleOf0(se, timeout, unit, wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> f_mostSuccessTupleOf0(executor, timeout, unit, wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -2289,11 +2289,11 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3);
 
-        return cfThis.thenCompose(v -> f_mostSuccessTupleOf0(se, timeout, unit, wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> f_mostSuccessTupleOf0(executor, timeout, unit, wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -2322,11 +2322,11 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4);
 
-        return cfThis.thenCompose(v -> f_mostSuccessTupleOf0(se, timeout, unit, wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> f_mostSuccessTupleOf0(executor, timeout, unit, wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -2356,11 +2356,11 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
             Function<? super T, ? extends U5> fn5) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4, fn5);
 
-        return cfThis.thenCompose(v -> f_mostSuccessTupleOf0(se, timeout, unit, wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> f_mostSuccessTupleOf0(executor, timeout, unit, wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -2379,10 +2379,10 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Executor executor,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2);
 
-        return cfThis.thenCompose(v -> f_allTupleOf0(false, wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> f_allTupleOf0(false, wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -2401,10 +2401,10 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3);
 
-        return cfThis.thenCompose(v -> f_allTupleOf0(false, wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> f_allTupleOf0(false, wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -2425,10 +2425,10 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4);
 
-        return cfThis.thenCompose(v -> f_allTupleOf0(false, wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> f_allTupleOf0(false, wrapFunctions0(executor, v, fns)));
     }
 
     /**
@@ -2449,10 +2449,10 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
         requireNonNull(cfThis, "cfThis is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         Function<? super T, ?>[] fns = requireArrayAndEleNonNull("fn", fn1, fn2, fn3, fn4, fn5);
 
-        return cfThis.thenCompose(v -> f_allTupleOf0(false, wrapFunctions0(se, v, fns)));
+        return cfThis.thenCompose(v -> f_allTupleOf0(false, wrapFunctions0(executor, v, fns)));
     }
 
     // endregion
@@ -2513,7 +2513,7 @@ public final class CompletableFutureUtils {
             BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(fn, "fn is null");
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
 
         return bothFailFast0(cfThis, other).thenApplyAsync(t -> fn.apply(t._1, t._2), executor);
     }
@@ -2594,7 +2594,7 @@ public final class CompletableFutureUtils {
             BiConsumer<? super T, ? super U> action, Executor executor) {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
 
         return bothFailFast0(cfThis, other).thenAcceptAsync(t -> action.accept(t._1, t._2), executor);
     }
@@ -2642,7 +2642,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action, Executor executor) {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
 
         return bothFailFast0(cfThis, other).thenRunAsync(action, executor);
     }
@@ -2697,7 +2697,7 @@ public final class CompletableFutureUtils {
             Function<? super T, ? extends U> fn, Executor executor) {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(fn, "fn is null");
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
 
         return eitherSuccess0(cfThis, other).thenApplyAsync(fn, executor);
     }
@@ -2761,7 +2761,7 @@ public final class CompletableFutureUtils {
             Consumer<? super T> action, Executor executor) {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
 
         return eitherSuccess0(cfThis, other).thenAcceptAsync(action, executor);
     }
@@ -2809,7 +2809,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action, Executor executor) {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
 
         return eitherSuccess0(cfThis, other).thenRunAsync(action, executor);
     }
@@ -2880,10 +2880,10 @@ public final class CompletableFutureUtils {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
 
         return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
-                ? cfThis : cfThis.<T>handleAsync((v1, ex1) -> fallback.apply((X) ex1), se)
+                ? cfThis : cfThis.<T>handleAsync((v1, ex1) -> fallback.apply((X) ex1), executor)
         ).thenCompose(x -> x);
     }
 
@@ -2924,13 +2924,13 @@ public final class CompletableFutureUtils {
     C exceptionallyAsync(C cfThis, Function<Throwable, ? extends T> fn, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(fn, "fn is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         if (IS_JAVA12_PLUS) {
             return (C) cfThis.exceptionallyAsync(fn, executor);
         }
         // below code is copied from CompletionStage#exceptionallyAsync
         return (C) cfThis.handle((v, ex) -> (ex == null) ? cfThis :
-                cfThis.<T>handleAsync((v1, ex1) -> fn.apply(ex1), se)
+                cfThis.<T>handleAsync((v1, ex1) -> fn.apply(ex1), executor)
         ).thenCompose(x -> x);
     }
 
@@ -2981,7 +2981,7 @@ public final class CompletableFutureUtils {
     public static <C extends CompletableFuture<?>> C cffuOrTimeout(
             C cfThis, Executor executorWhenTimeout, long timeout, TimeUnit unit) {
         requireNonNull(cfThis, "cfThis is null");
-        executorWhenTimeout = screenExecutor(requireNonNull(executorWhenTimeout, "executorWhenTimeout is null"));
+        requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
         requireNonNull(unit, "unit is null");
 
         return hopExecutorIfAtCfDelayerThread(orTimeout(cfThis, timeout, unit), executorWhenTimeout);
@@ -3079,7 +3079,7 @@ public final class CompletableFutureUtils {
     public static <T, C extends CompletableFuture<? super T>>
     C cffuCompleteOnTimeout(C cfThis, @Nullable T value, Executor executorWhenTimeout, long timeout, TimeUnit unit) {
         requireNonNull(cfThis, "cfThis is null");
-        executorWhenTimeout = screenExecutor(requireNonNull(executorWhenTimeout, "executorWhenTimeout is null"));
+        requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
         requireNonNull(unit, "unit is null");
 
         return hopExecutorIfAtCfDelayerThread(completeOnTimeout(cfThis, value, timeout, unit), executorWhenTimeout);
@@ -3133,7 +3133,7 @@ public final class CompletableFutureUtils {
         // prevent reporting the handled exception argument of this `action` at subsequent `exceptionally`
         cf.handle((v, ex) -> {
             if (!atCfDelayerThread()) completeCf(ret, v, ex);
-            else executor.execute(() -> completeCf(ret, v, ex));
+            else screenExecutor(executor).execute(() -> completeCf(ret, v, ex));
             return null;
         }).exceptionally(ex -> reportUncaughtException("handle of executor hop", ex));
 
@@ -3220,10 +3220,10 @@ public final class CompletableFutureUtils {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
 
         return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
-                ? cfThis : cfThis.handleAsync((v1, ex1) -> fallback.apply((X) ex1), se).thenCompose(x -> x)
+                ? cfThis : cfThis.handleAsync((v1, ex1) -> fallback.apply((X) ex1), executor).thenCompose(x -> x)
         ).thenCompose(x -> x);
     }
 
@@ -3287,13 +3287,13 @@ public final class CompletableFutureUtils {
     C exceptionallyComposeAsync(C cfThis, Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(fn, "fn is null");
-        Executor se = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
         if (IS_JAVA12_PLUS) {
             return (C) cfThis.exceptionallyComposeAsync((Function) fn, executor);
         }
         // below code is copied from CompletionStage.exceptionallyComposeAsync
         return (C) cfThis.handle((v, ex) -> (ex == null) ? cfThis :
-                cfThis.handleAsync((v1, ex1) -> fn.apply(ex1), se).thenCompose(x -> x)
+                cfThis.handleAsync((v1, ex1) -> fn.apply(ex1), executor).thenCompose(x -> x)
         ).thenCompose(x -> x);
     }
 
@@ -3388,7 +3388,7 @@ public final class CompletableFutureUtils {
     C peekAsync(C cfThis, BiConsumer<? super T, ? super Throwable> action, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(action, "action is null");
-        executor = screenExecutor(executor);
+        requireNonNull(executor, "executor is null");
 
         // use `cf.handleAsync` method(instead of `cf.whenCompleteAsync`) and return null in order to
         // prevent reporting the handled exception argument of this `action` at subsequent `exceptionally`
@@ -3860,6 +3860,9 @@ public final class CompletableFutureUtils {
     /**
      * Null-checks user executor argument, and translates uses of commonPool to ASYNC_POOL
      * in case parallelism disabled. code is copied from {@link CompletableFuture#screenExecutor(Executor)}.
+     * <p>
+     * Implementation Note: The API methods of {@link CompletableFuture} have called this screenExecutor method,
+     * so only underlying methods that direct use executor need call this method, e.g. {@link #hopExecutorIfAtCfDelayerThread}.
      */
     @SuppressWarnings({"resource", "JavadocReference"})
     static Executor screenExecutor(Executor e) {

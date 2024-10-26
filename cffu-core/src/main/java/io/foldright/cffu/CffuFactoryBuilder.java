@@ -92,7 +92,10 @@ public final class CffuFactoryBuilder {
         if (defaultExecutor instanceof CffuMadeExecutor) return defaultExecutor;
 
         requireNonNull(defaultExecutor, "defaultExecutor is null");
-        Executor wrapByProviders = wrapExecutorByProviders(CompletableFutureUtils.screenExecutor(defaultExecutor));
+        // because wraps the input executor below, MUST call `screenExecutor` translation beforehand;
+        // otherwise the sequent operations can NOT recognize the input executor.
+        defaultExecutor = CompletableFutureUtils.screenExecutor(defaultExecutor);
+        Executor wrapByProviders = wrapExecutorByProviders(defaultExecutor);
         return wrapMadeInterface(wrapByProviders);
     }
 
