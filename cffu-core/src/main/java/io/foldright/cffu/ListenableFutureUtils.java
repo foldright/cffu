@@ -117,7 +117,7 @@ public final class ListenableFutureUtils {
     @Contract(pure = true)
     public static <T> ListenableFuture<T> toListenableFuture(CompletableFuture<T> cf) {
         requireNonNull(cf, "cf is null");
-        if (CompletableFutureUtils.isMinStageCf(cf)) throw new UnsupportedOperationException();
+        if (LLCF.isMinStageCf(cf)) throw new UnsupportedOperationException();
 
         return new ListenableFuture<T>() {
             @Override

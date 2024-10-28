@@ -1824,10 +1824,10 @@ class CompletableFutureUtilsTest {
     void test_defaultExecutor() {
         assertIsCfDefaultExecutor(defaultExecutor(completedFuture(null)));
 
-        assertIsCfDefaultExecutor(screenExecutor(commonPool()));
+        assertIsCfDefaultExecutor(LLCF.screenExecutor(commonPool()));
 
         ExecutorService e = Executors.newCachedThreadPool();
-        assertSame(e, screenExecutor(e));
+        assertSame(e, LLCF.screenExecutor(e));
 
         // Cffu
         assertSame(testExecutor, unwrapMadeExecutor(defaultExecutor(testCffuFac.completedFuture(null))));

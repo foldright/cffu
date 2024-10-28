@@ -94,7 +94,7 @@ public final class CffuFactoryBuilder {
         requireNonNull(defaultExecutor, "defaultExecutor is null");
         // because wraps the input executor below, MUST call `screenExecutor` translation beforehand;
         // otherwise the sequent operations can NOT recognize the input executor.
-        defaultExecutor = CompletableFutureUtils.screenExecutor(defaultExecutor);
+        defaultExecutor = LLCF.screenExecutor(defaultExecutor);
         Executor wrapByProviders = wrapExecutorByProviders(defaultExecutor);
         return wrapMadeInterface(wrapByProviders);
     }
