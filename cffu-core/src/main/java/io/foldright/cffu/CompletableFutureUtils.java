@@ -16,7 +16,7 @@ import java.util.concurrent.*;
 import java.util.function.*;
 
 import static io.foldright.cffu.Delayer.atCfDelayerThread;
-import static io.foldright.cffu.ExceptionReporter.reportUncaughtException;
+import static io.foldright.cffu.ExceptionReporter.*;
 import static io.foldright.cffu.InternalCommonUtils.*;
 import static io.foldright.cffu.LLCF.*;
 import static java.util.Objects.requireNonNull;
@@ -137,7 +137,9 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
-        return mostSuccessResultsOf0(executor, valueIfNotSuccess, timeout, unit, wrapSuppliers0(executor, suppliers));
+        final CompletableFuture<? extends T>[] cfs = wrapSuppliers0(executor, suppliers);
+        reportSwallowedExceptionsOf(cfs, "mSupplyMostSuccessAsync");
+        return mostSuccessResultsOf0(executor, valueIfNotSuccess, timeout, unit, cfs);
     }
 
     /**
@@ -3063,11 +3065,11 @@ public final class CompletableFutureUtils {
 
         // use `cf.handle` method(instead of `cf.whenComplete`) and return null in order to
         // prevent reporting the handled exception argument of this `action` at subsequent `exceptionally`
-        cf.handle((v, ex) -> {
+        reportUncaughtExceptionOf(cf.handle((v, ex) -> {
             if (!atCfDelayerThread()) completeCf(ret, v, ex);
             else screenExecutor(executor).execute(() -> completeCf(ret, v, ex));
             return null;
-        }).exceptionally(ex -> reportUncaughtException("handle of executor hop", ex));
+        }), "handle of executor hop");
 
         return (C) ret;
     }
@@ -3078,7 +3080,7 @@ public final class CompletableFutureUtils {
             else cf.completeExceptionally(ex);
         } catch (Throwable t) {
             if (ex != null) t.addSuppressed(ex);
-            reportUncaughtException("completeCf", t);
+            reportUncaughtException(t, "completeCf");
             throw t; // rethrow exception, report to caller
         }
     }
@@ -3258,10 +3260,10 @@ public final class CompletableFutureUtils {
 
         // use `cf.handle` method(instead of `cf.whenComplete`) and return null in order to
         // prevent reporting the handled exception argument of this `action` at subsequent `exceptionally`
-        cfThis.handle((v, ex) -> {
+        reportUncaughtExceptionOf(cfThis.handle((v, ex) -> {
             action.accept(v, ex);
             return null;
-        }).exceptionally(ex -> reportUncaughtException("the action of peek", ex));
+        }), "the action of peek");
         return cfThis;
     }
 
@@ -3324,10 +3326,10 @@ public final class CompletableFutureUtils {
 
         // use `cf.handleAsync` method(instead of `cf.whenCompleteAsync`) and return null in order to
         // prevent reporting the handled exception argument of this `action` at subsequent `exceptionally`
-        cfThis.handleAsync((v, ex) -> {
+        reportUncaughtExceptionOf(cfThis.handleAsync((v, ex) -> {
             action.accept(v, ex);
             return null;
-        }, executor).exceptionally(ex -> reportUncaughtException("the action of peekAsync", ex));
+        }, executor), "the action of peekAsync");
         return cfThis;
     }
 

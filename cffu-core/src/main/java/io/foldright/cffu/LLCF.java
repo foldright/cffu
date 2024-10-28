@@ -30,6 +30,9 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  * <li>methods with {@code 0} suffix means no parameter validation, e.g.
  *    <ul><li>no null check</li></ul>
  * </ul>
+ *
+ * <blockquote>There is only one true heroism in the world: to see the world as it is, and to love it.
+ * &mdash; <a href="https://www.britannica.com/biography/Romain-Rolland">Romain Rolland</a></blockquote>
  */
 public final class LLCF {
 
