@@ -3,6 +3,7 @@ package io.foldright.cffu.spi;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.foldright.cffu.CffuFactory;
 import io.foldright.cffu.CffuFactoryBuilder;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.Executor;
 
@@ -14,6 +15,7 @@ import java.util.concurrent.Executor;
  * @see CffuFactory#builder(Executor)
  * @see CffuFactoryBuilder#build()
  */
+@ApiStatus.OverrideOnly
 @FunctionalInterface
 public interface ExecutorWrapperProvider {
     /**
