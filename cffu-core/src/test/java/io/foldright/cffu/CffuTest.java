@@ -148,7 +148,7 @@ class CffuTest {
 
     // endregion
     ////////////////////////////////////////////////////////////
-    // region# Then-Tuple-Multi-Actions(thenTupleM*) Methods
+    // region# Then-Multi-Actions-Tuple(thenMTuple*) Methods
     ////////////////////////////////////////////////////////////
 
     @Test

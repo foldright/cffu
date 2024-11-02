@@ -108,7 +108,7 @@ class CompletableFutureUtilsTest {
 
     // endregion
     ////////////////////////////////////////////////////////////
-    // region## Tuple-Multi-Actions(tupleM*) Methods(create by actions)
+    // region## Multi-Actions-Tuple(MTuple*) Methods(create by actions)
     ////////////////////////////////////////////////////////////
 
     @Test
@@ -1083,7 +1083,7 @@ class CompletableFutureUtilsTest {
 
     // endregion
     ////////////////////////////////////////////////////////////
-    // region## Then-Tuple-Multi-Actions(thenTupleM*) Methods
+    // region## Then-Multi-Actions-Tuple(thenMTuple*) Methods
     ////////////////////////////////////////////////////////////
 
     @Test

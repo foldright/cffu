@@ -112,7 +112,7 @@ class CffuFactoryTest {
 
     // endregion
     ////////////////////////////////////////////////////////////
-    // region## Tuple-Multi-Actions(tupleM*) Methods(create by actions)
+    // region## Multi-Actions-Tuple(MTuple*) Methods(create by actions)
     ////////////////////////////////////////////////////////////
 
     @Test

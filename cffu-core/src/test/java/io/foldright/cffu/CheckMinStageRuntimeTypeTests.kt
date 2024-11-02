@@ -1,6 +1,7 @@
 package io.foldright.cffu
 
 import io.foldright.test_utils.*
+import io.kotest.inspectors.forAll
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.completedFuture
@@ -11,13 +12,15 @@ import java.util.function.Supplier
 
 @Suppress("MoveLambdaOutsideParentheses")
 private class CheckMinStageRuntimeTypeTests {
-    val cfThis: CompletableFuture<String> = completedFuture("cf this")
-    val csThis: CompletionStage<String> = CompletableFutureUtils.completedStage("cs this")
+    private val cfThis: CompletableFuture<String> = completedFuture("cf this")
+    private val csThis: CompletionStage<String> = CompletableFutureUtils.completedStage("cs this")
+    private val cffuThis: Cffu<String> = testCffuFac.completedFuture("cffu this")
+    private val minCffuThis: CompletionStage<String> = testCffuFac.completedStage("minCffu this")
 
-    val cfN: CompletableFuture<Int> = completedFuture(n)
-    val cfAn: CompletableFuture<Int> = completedFuture(anotherN)
-    val cfS: CompletableFuture<String> = completedFuture(s)
-    val cfD: CompletableFuture<Double> = completedFuture(d)
+    private val cfN: CompletableFuture<Int> = completedFuture(n)
+    private val cfAn: CompletableFuture<Int> = completedFuture(anotherN)
+    private val cfS: CompletableFuture<String> = completedFuture(s)
+    private val cfD: CompletableFuture<Double> = completedFuture(d)
 
     @Test
     fun test_CompletableFutureUtils_methods() {
@@ -97,7 +100,7 @@ private class CheckMinStageRuntimeTypeTests {
         CompletableFutureUtils.mRunAnyAsync(testExecutor, { s }).shouldNotBeMinimalStage()
         CompletableFutureUtils.mRunAnyAsync(testExecutor, { s }, { s }).shouldNotBeMinimalStage()
 
-        // Tuple-Multi-Actions(tupleM*) Methods(create by actions)
+        // Multi-Actions-Tuple(MTuple*) Methods(create by actions)
 
         CompletableFutureUtils.mSupplyTupleFailFastAsync({ n }, { s }).shouldNotBeMinimalStage()
         CompletableFutureUtils.mSupplyTupleFailFastAsync(testExecutor, { n }, { s }).shouldNotBeMinimalStage()
@@ -258,8 +261,8 @@ private class CheckMinStageRuntimeTypeTests {
             1,
             MILLISECONDS,
             Function { s },
-            { s })
-            .shouldNotBeMinimalStage()
+            { s }
+        ).shouldNotBeMinimalStage()
 
         CompletableFutureUtils.thenMApplyAsync<String, String>(cfThis).shouldNotBeMinimalStage()
         CompletableFutureUtils.thenMApplyAsync(cfThis, Function { s }).shouldNotBeMinimalStage()
@@ -310,20 +313,22 @@ private class CheckMinStageRuntimeTypeTests {
         CompletableFutureUtils.thenMRunAnyAsync(cfThis, testExecutor, { }).shouldNotBeMinimalStage()
         CompletableFutureUtils.thenMRunAnyAsync(cfThis, testExecutor, { }, { }).shouldNotBeMinimalStage()
 
-        // Then-Tuple-Multi-Actions(thenTupleM*) Methods
+        // Then-Multi-Actions-Tuple(thenMTuple*) Methods
 
-        CompletableFutureUtils.thenMApplyFailFastAsync(cfThis, Function { n }, { s }).shouldNotBeMinimalStage()
-        CompletableFutureUtils.thenMApplyFailFastAsync(cfThis, testExecutor, { n }, { s }).shouldNotBeMinimalStage()
-        CompletableFutureUtils.thenMApplyFailFastAsync(cfThis, Function { n }, { s }, { d }).shouldNotBeMinimalStage()
-        CompletableFutureUtils.thenMApplyFailFastAsync(cfThis, testExecutor, { n }, { s }, { d })
+        CompletableFutureUtils.thenMApplyTupleFailFastAsync(cfThis, { n }, { s }).shouldNotBeMinimalStage()
+        CompletableFutureUtils.thenMApplyTupleFailFastAsync(cfThis, testExecutor, { n }, { s })
             .shouldNotBeMinimalStage()
-        CompletableFutureUtils.thenMApplyFailFastAsync(cfThis, Function { n }, { s }, { d }, { n })
+        CompletableFutureUtils.thenMApplyTupleFailFastAsync(cfThis, Function { n }, { s }, { d })
             .shouldNotBeMinimalStage()
-        CompletableFutureUtils.thenMApplyFailFastAsync(cfThis, testExecutor, { n }, { s }, { d }, { n })
+        CompletableFutureUtils.thenMApplyTupleFailFastAsync(cfThis, testExecutor, { n }, { s }, { d })
             .shouldNotBeMinimalStage()
-        CompletableFutureUtils.thenMApplyFailFastAsync(cfThis, Function { n }, { s }, { d }, { n }, { s })
+        CompletableFutureUtils.thenMApplyTupleFailFastAsync(cfThis, Function { n }, { s }, { d }, { n })
             .shouldNotBeMinimalStage()
-        CompletableFutureUtils.thenMApplyFailFastAsync(cfThis, testExecutor, { n }, { s }, { d }, { n }, { s })
+        CompletableFutureUtils.thenMApplyTupleFailFastAsync(cfThis, testExecutor, { n }, { s }, { d }, { n })
+            .shouldNotBeMinimalStage()
+        CompletableFutureUtils.thenMApplyTupleFailFastAsync(cfThis, Function { n }, { s }, { d }, { n }, { s })
+            .shouldNotBeMinimalStage()
+        CompletableFutureUtils.thenMApplyTupleFailFastAsync(cfThis, testExecutor, { n }, { s }, { d }, { n }, { s })
             .shouldNotBeMinimalStage()
 
         CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cfThis, { n }, { s }).shouldNotBeMinimalStage()
@@ -474,12 +479,466 @@ private class CheckMinStageRuntimeTypeTests {
         CompletableFutureUtils.newIncompleteFuture<Int>(csThis).shouldBeMinimalStage()
     }
 
-    fun <T> CompletionStage<T>.shouldBeMinimalStageAsCF() {
+    private fun <T> CompletionStage<T>.shouldBeMinimalStageAsCF() {
         (this as CompletableFuture<T>).shouldBeMinimalStage()
     }
 
     @Test
+    fun test_CffuFactory_methods() {
+        testCffuFac.newIncompleteCffu<Int>().shouldNotBeMinimalStage()
+
+        // supplyAsync*/runAsync* Methods(create by action)
+
+        testCffuFac.supplyAsync { n }.shouldNotBeMinimalStage()
+        testCffuFac.supplyAsync({ n }, testFjExecutor).shouldNotBeMinimalStage()
+        testCffuFac.runAsync { }.shouldNotBeMinimalStage()
+        testCffuFac.runAsync({ }, testFjExecutor).shouldNotBeMinimalStage()
+
+        // Multi-Actions(M*) Methods(create by actions)
+
+        testCffuFac.mSupplyFailFastAsync<String>().shouldNotBeMinimalStage()
+        testCffuFac.mSupplyFailFastAsync(Supplier { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyFailFastAsync(Supplier { s }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyFailFastAsync<String>(testFjExecutor).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyFailFastAsync(testFjExecutor, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyFailFastAsync(testFjExecutor, { s }, { s }).shouldNotBeMinimalStage()
+
+        testCffuFac.mSupplyAllSuccessAsync<String>("").shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAllSuccessAsync("", Supplier { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAllSuccessAsync("", Supplier { s }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAllSuccessAsync<String>("", testFjExecutor).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAllSuccessAsync("", testFjExecutor, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAllSuccessAsync("", testFjExecutor, { s }, { s }).shouldNotBeMinimalStage()
+
+        testCffuFac.mSupplyMostSuccessAsync<String>("", 1, MILLISECONDS).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyMostSuccessAsync("", 1, MILLISECONDS, Supplier { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyMostSuccessAsync("", 1, MILLISECONDS, Supplier { s }, { s })
+            .shouldNotBeMinimalStage()
+        testCffuFac.mSupplyMostSuccessAsync<String>("", testFjExecutor, 1, MILLISECONDS)
+            .shouldNotBeMinimalStage()
+        testCffuFac.mSupplyMostSuccessAsync("", testFjExecutor, 1, MILLISECONDS, Supplier { s })
+            .shouldNotBeMinimalStage()
+        testCffuFac.mSupplyMostSuccessAsync("", testFjExecutor, 1, MILLISECONDS, Supplier { s }, { s })
+            .shouldNotBeMinimalStage()
+
+        testCffuFac.mSupplyAsync<String>().shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAsync(Supplier { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAsync(Supplier { s }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAsync<String>(testFjExecutor).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAsync(testFjExecutor, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAsync(testFjExecutor, { s }, { s }).shouldNotBeMinimalStage()
+
+        testCffuFac.mSupplyAnySuccessAsync<String>().shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAnySuccessAsync(Supplier { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAnySuccessAsync(Supplier { s }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAnySuccessAsync<String>(testFjExecutor).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAnySuccessAsync(testFjExecutor, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAnySuccessAsync(testFjExecutor, { s }, { s }).shouldNotBeMinimalStage()
+
+        testCffuFac.mSupplyAnyAsync<String>().shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAnyAsync(Supplier { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAnyAsync(Supplier { s }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAnyAsync<String>(testFjExecutor).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAnyAsync(testFjExecutor, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAnyAsync(testFjExecutor, { s }, { s }).shouldNotBeMinimalStage()
+
+        testCffuFac.mRunFailFastAsync().shouldNotBeMinimalStage()
+        testCffuFac.mRunFailFastAsync(Runnable { }).shouldNotBeMinimalStage()
+        testCffuFac.mRunFailFastAsync(Runnable { s }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mRunFailFastAsync(testFjExecutor).shouldNotBeMinimalStage()
+        testCffuFac.mRunFailFastAsync(testFjExecutor, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mRunFailFastAsync(testFjExecutor, { s }, { s }).shouldNotBeMinimalStage()
+
+        testCffuFac.mRunAsync().shouldNotBeMinimalStage()
+        testCffuFac.mRunAsync(Runnable { }).shouldNotBeMinimalStage()
+        testCffuFac.mRunAsync(Runnable { s }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mRunAsync(testFjExecutor).shouldNotBeMinimalStage()
+        testCffuFac.mRunAsync(testFjExecutor, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mRunAsync(testFjExecutor, { s }, { s }).shouldNotBeMinimalStage()
+
+        testCffuFac.mRunAnySuccessAsync().shouldNotBeMinimalStage()
+        testCffuFac.mRunAnySuccessAsync(Runnable { }).shouldNotBeMinimalStage()
+        testCffuFac.mRunAnySuccessAsync(Runnable { s }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mRunAnySuccessAsync(testFjExecutor).shouldNotBeMinimalStage()
+        testCffuFac.mRunAnySuccessAsync(testFjExecutor, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mRunAnySuccessAsync(testFjExecutor, { s }, { s }).shouldNotBeMinimalStage()
+
+        testCffuFac.mRunAnyAsync().shouldNotBeMinimalStage()
+        testCffuFac.mRunAnyAsync(Runnable { }).shouldNotBeMinimalStage()
+        testCffuFac.mRunAnyAsync(Runnable { s }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mRunAnyAsync(testFjExecutor).shouldNotBeMinimalStage()
+        testCffuFac.mRunAnyAsync(testFjExecutor, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mRunAnyAsync(testFjExecutor, { s }, { s }).shouldNotBeMinimalStage()
+
+        // Multi-Actions-Tuple(MTuple*) Methods(create by actions)
+
+        testCffuFac.mSupplyTupleFailFastAsync({ n }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyTupleFailFastAsync(testFjExecutor, { n }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyTupleFailFastAsync(Supplier { n }, { s }, { d }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyTupleFailFastAsync(testFjExecutor, { n }, { s }, { d }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyTupleFailFastAsync(Supplier { n }, { s }, { d }, { n }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyTupleFailFastAsync(testFjExecutor, { n }, { s }, { d }, { n }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyTupleFailFastAsync(Supplier { n }, { s }, { d }, { n }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyTupleFailFastAsync(testFjExecutor, { n }, { s }, { d }, { n }, { s })
+            .shouldNotBeMinimalStage()
+
+        testCffuFac.mSupplyAllSuccessTupleAsync({ n }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAllSuccessTupleAsync(testFjExecutor, { n }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAllSuccessTupleAsync(Supplier { n }, { s }, { d }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAllSuccessTupleAsync(testFjExecutor, { n }, { s }, { d }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAllSuccessTupleAsync(Supplier { n }, { s }, { d }, { n }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAllSuccessTupleAsync(testFjExecutor, { n }, { s }, { d }, { n }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAllSuccessTupleAsync(Supplier { n }, { s }, { d }, { n }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAllSuccessTupleAsync(testFjExecutor, { n }, { s }, { d }, { n }, { s })
+            .shouldNotBeMinimalStage()
+
+        testCffuFac.mSupplyMostSuccessTupleAsync(1, MILLISECONDS, { n }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyMostSuccessTupleAsync(testFjExecutor, 1, MILLISECONDS, { n }, { s })
+            .shouldNotBeMinimalStage()
+        testCffuFac.mSupplyMostSuccessTupleAsync(1, MILLISECONDS, { n }, { s }, { d })
+            .shouldNotBeMinimalStage()
+        testCffuFac.mSupplyMostSuccessTupleAsync(testFjExecutor, 1, MILLISECONDS, { n }, { s }, { d })
+            .shouldNotBeMinimalStage()
+        testCffuFac.mSupplyMostSuccessTupleAsync(1, MILLISECONDS, { n }, { s }, { d }, { n })
+            .shouldNotBeMinimalStage()
+        testCffuFac.mSupplyMostSuccessTupleAsync(testFjExecutor, 1, MILLISECONDS, { n }, { s }, { d }, { n })
+            .shouldNotBeMinimalStage()
+        testCffuFac.mSupplyMostSuccessTupleAsync(1, MILLISECONDS, { n }, { s }, { d }, { n }, { s })
+            .shouldNotBeMinimalStage()
+        testCffuFac.mSupplyMostSuccessTupleAsync(
+            testFjExecutor, 1, MILLISECONDS, { n }, { s }, { d }, { n }, { s }).shouldNotBeMinimalStage()
+
+        testCffuFac.mSupplyTupleAsync({ n }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyTupleAsync(testFjExecutor, { n }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyTupleAsync(Supplier { n }, { s }, { d }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyTupleAsync(testFjExecutor, { n }, { s }, { d }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyTupleAsync(Supplier { n }, { s }, { d }, { n }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyTupleAsync(testFjExecutor, { n }, { s }, { d }, { n }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyTupleAsync(Supplier { n }, { s }, { d }, { n }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyTupleAsync(testFjExecutor, { n }, { s }, { d }, { n }, { s })
+            .shouldNotBeMinimalStage()
+
+        // allOf* Methods(including mostSuccessResultsOf)
+
+        testCffuFac.allResultsFailFastOf<String>().shouldNotBeMinimalStage()
+        testCffuFac.allResultsFailFastOf(cfN).shouldNotBeMinimalStage()
+        testCffuFac.allResultsFailFastOf(cfN, cfAn).shouldNotBeMinimalStage()
+
+        testCffuFac.allSuccessResultsOf("").shouldNotBeMinimalStage()
+        testCffuFac.allSuccessResultsOf("", cfN).shouldNotBeMinimalStage()
+        testCffuFac.allSuccessResultsOf("", cfN, cfAn).shouldNotBeMinimalStage()
+
+        testCffuFac.mostSuccessResultsOf("", 1, MILLISECONDS).shouldNotBeMinimalStage()
+        testCffuFac.mostSuccessResultsOf("", 1, MILLISECONDS, cfN).shouldNotBeMinimalStage()
+        testCffuFac.mostSuccessResultsOf("", 1, MILLISECONDS, cfN, cfAn).shouldNotBeMinimalStage()
+
+        testCffuFac.allResultsOf<String>().shouldNotBeMinimalStage()
+        testCffuFac.allResultsOf(cfN).shouldNotBeMinimalStage()
+        testCffuFac.allResultsOf(cfN, cfAn).shouldNotBeMinimalStage()
+
+        testCffuFac.allFailFastOf().shouldNotBeMinimalStage()
+        testCffuFac.allFailFastOf(cfN).shouldNotBeMinimalStage()
+        testCffuFac.allFailFastOf(cfN, cfAn).shouldNotBeMinimalStage()
+
+        testCffuFac.allOf().shouldNotBeMinimalStage()
+        testCffuFac.allOf(cfN).shouldNotBeMinimalStage()
+        testCffuFac.allOf(cfN, cfAn).shouldNotBeMinimalStage()
+
+        testCffuFac.anySuccessOf<String>().shouldNotBeMinimalStage()
+        testCffuFac.anySuccessOf(cfN).shouldNotBeMinimalStage()
+        testCffuFac.anySuccessOf(cfN, cfAn).shouldNotBeMinimalStage()
+
+        testCffuFac.anyOf<String>().shouldNotBeMinimalStage()
+        testCffuFac.anyOf(cfN).shouldNotBeMinimalStage()
+        testCffuFac.anyOf(cfN, cfAn).shouldNotBeMinimalStage()
+
+        // allTupleOf*/mostSuccessTupleOf Methods
+
+        testCffuFac.allTupleFailFastOf(cfN, cfS).shouldNotBeMinimalStage()
+        testCffuFac.allTupleFailFastOf(cfN, cfS, cfD).shouldNotBeMinimalStage()
+        testCffuFac.allTupleFailFastOf(cfN, cfS, cfD, cfN).shouldNotBeMinimalStage()
+        testCffuFac.allTupleFailFastOf(cfN, cfS, cfD, cfN, cfS).shouldNotBeMinimalStage()
+
+        testCffuFac.allSuccessTupleOf(cfN, cfS).shouldNotBeMinimalStage()
+        testCffuFac.allSuccessTupleOf(cfN, cfS, cfD).shouldNotBeMinimalStage()
+        testCffuFac.allSuccessTupleOf(cfN, cfS, cfD, cfN).shouldNotBeMinimalStage()
+        testCffuFac.allSuccessTupleOf(cfN, cfS, cfD, cfN, cfS).shouldNotBeMinimalStage()
+
+        testCffuFac.mostSuccessTupleOf(1, MILLISECONDS, cfN, cfS).shouldNotBeMinimalStage()
+        testCffuFac.mostSuccessTupleOf(1, MILLISECONDS, cfN, cfS, cfD).shouldNotBeMinimalStage()
+        testCffuFac.mostSuccessTupleOf(1, MILLISECONDS, cfN, cfS, cfD, cfN).shouldNotBeMinimalStage()
+        testCffuFac.mostSuccessTupleOf(1, MILLISECONDS, cfN, cfS, cfD, cfN, cfS).shouldNotBeMinimalStage()
+
+        testCffuFac.allTupleOf(cfN, cfS).shouldNotBeMinimalStage()
+        testCffuFac.allTupleOf(cfN, cfS, cfD).shouldNotBeMinimalStage()
+        testCffuFac.allTupleOf(cfN, cfS, cfD, cfN).shouldNotBeMinimalStage()
+        testCffuFac.allTupleOf(cfN, cfS, cfD, cfN, cfS).shouldNotBeMinimalStage()
+
+        // Immediate Value Argument Factory Methods
+
+        testCffuFac.completedFuture<String>("").shouldNotBeMinimalStage()
+        testCffuFac.failedFuture<String>(rte).shouldNotBeMinimalStage()
+
+        testCffuFac.completedStage("").shouldBeMinimalStageAsCffu()
+        testCffuFac.failedStage<String>(rte).shouldBeMinimalStageAsCffu()
+
+        // CompletionStage Argument Factory Methods
+
+        testCffuFac.toCffu(csThis).shouldNotBeMinimalStage()
+        testCffuFac.toCffu(cfThis).shouldNotBeMinimalStage()
+        testCffuFac.toCffuArray(csThis, cfThis).forAll { it.shouldNotBeMinimalStage() }
+    }
+
+    private fun <T> CompletionStage<T>.shouldBeMinimalStageAsCffu() {
+        (this as Cffu<T>).shouldBeMinimalStage()
+    }
+
+    @Test
     fun test_Cffu_methods() {
-        // TODO
+        // Simple then* Methods of CompletionStage
+        cffuThis.thenApply({ s }).shouldNotBeMinimalStage()
+        cffuThis.thenApplyAsync({ s }).shouldNotBeMinimalStage()
+        cffuThis.thenApplyAsync({ s }, testFjExecutor).shouldNotBeMinimalStage()
+
+        cffuThis.thenAccept({ s }).shouldNotBeMinimalStage()
+        cffuThis.thenAcceptAsync({ s }).shouldNotBeMinimalStage()
+        cffuThis.thenAcceptAsync({ s }, testFjExecutor).shouldNotBeMinimalStage()
+
+        cffuThis.thenRun({ }).shouldNotBeMinimalStage()
+        cffuThis.thenRunAsync({ }).shouldNotBeMinimalStage()
+        cffuThis.thenRunAsync({ }, testFjExecutor).shouldNotBeMinimalStage()
+
+        // Then-Multi-Actions(thenM*) Methods
+
+        cffuThis.thenMApplyFailFastAsync<String>().shouldNotBeMinimalStage()
+        cffuThis.thenMApplyFailFastAsync(Function { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyFailFastAsync(Function { s }, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyFailFastAsync<String>(testFjExecutor).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyFailFastAsync(testFjExecutor, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyFailFastAsync(testFjExecutor, { s }, { s }).shouldNotBeMinimalStage()
+
+        cffuThis.thenMApplyAllSuccessAsync("").shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAllSuccessAsync("", Function { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAllSuccessAsync("", Function { s }, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAllSuccessAsync("", testFjExecutor).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAllSuccessAsync("", testFjExecutor, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAllSuccessAsync("", testFjExecutor, { s }, { s }).shouldNotBeMinimalStage()
+
+        cffuThis.thenMApplyMostSuccessAsync<String>("", 1, MILLISECONDS).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyMostSuccessAsync("", 1, MILLISECONDS, Function { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyMostSuccessAsync("", 1, MILLISECONDS, Function { s }, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyMostSuccessAsync("", testFjExecutor, 1, MILLISECONDS).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyMostSuccessAsync("", testFjExecutor, 1, MILLISECONDS, Function { s })
+            .shouldNotBeMinimalStage()
+        cffuThis.thenMApplyMostSuccessAsync("", testFjExecutor, 1, MILLISECONDS, Function { s }, { s })
+            .shouldNotBeMinimalStage()
+
+        cffuThis.thenMApplyAsync<String>().shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAsync(Function { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAsync(Function { s }, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAsync<String>(testFjExecutor).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAsync(testFjExecutor, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAsync(testFjExecutor, { s }, { s }).shouldNotBeMinimalStage()
+
+        cffuThis.thenMApplyAnySuccessAsync<String>().shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAnySuccessAsync(Function { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAnySuccessAsync(Function { s }, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAnySuccessAsync<String>(testFjExecutor).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAnySuccessAsync(testFjExecutor, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAnySuccessAsync(testFjExecutor, { s }, { s }).shouldNotBeMinimalStage()
+
+        cffuThis.thenMApplyAnyAsync<String>().shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAnyAsync(Function { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAnyAsync(Function { s }, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAnyAsync<String>(testFjExecutor).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAnyAsync(testFjExecutor, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAnyAsync(testFjExecutor, { s }, { s }).shouldNotBeMinimalStage()
+
+        cffuThis.thenMRunFailFastAsync().shouldNotBeMinimalStage()
+        cffuThis.thenMRunFailFastAsync(Runnable { }).shouldNotBeMinimalStage()
+        cffuThis.thenMRunFailFastAsync(Runnable { }, { }).shouldNotBeMinimalStage()
+        cffuThis.thenMRunFailFastAsync(testFjExecutor).shouldNotBeMinimalStage()
+        cffuThis.thenMRunFailFastAsync(testFjExecutor, { }).shouldNotBeMinimalStage()
+        cffuThis.thenMRunFailFastAsync(testFjExecutor, { }, { }).shouldNotBeMinimalStage()
+
+        cffuThis.thenMRunAsync().shouldNotBeMinimalStage()
+        cffuThis.thenMRunAsync(Runnable { }).shouldNotBeMinimalStage()
+        cffuThis.thenMRunAsync(Runnable { }, { }).shouldNotBeMinimalStage()
+        cffuThis.thenMRunAsync(testFjExecutor).shouldNotBeMinimalStage()
+        cffuThis.thenMRunAsync(testFjExecutor, { }).shouldNotBeMinimalStage()
+        cffuThis.thenMRunAsync(testFjExecutor, { }, { }).shouldNotBeMinimalStage()
+
+        cffuThis.thenMRunAnySuccessAsync().shouldNotBeMinimalStage()
+        cffuThis.thenMRunAnySuccessAsync(Runnable { }).shouldNotBeMinimalStage()
+        cffuThis.thenMRunAnySuccessAsync(Runnable { }, { }).shouldNotBeMinimalStage()
+        cffuThis.thenMRunAnySuccessAsync(testFjExecutor).shouldNotBeMinimalStage()
+        cffuThis.thenMRunAnySuccessAsync(testFjExecutor, { }).shouldNotBeMinimalStage()
+        cffuThis.thenMRunAnySuccessAsync(testFjExecutor, { }, { }).shouldNotBeMinimalStage()
+
+        cffuThis.thenMRunAnyAsync().shouldNotBeMinimalStage()
+        cffuThis.thenMRunAnyAsync(Runnable { }).shouldNotBeMinimalStage()
+        cffuThis.thenMRunAnyAsync(Runnable { }, { }).shouldNotBeMinimalStage()
+        cffuThis.thenMRunAnyAsync(testFjExecutor).shouldNotBeMinimalStage()
+        cffuThis.thenMRunAnyAsync(testFjExecutor, { }).shouldNotBeMinimalStage()
+        cffuThis.thenMRunAnyAsync(testFjExecutor, { }, { }).shouldNotBeMinimalStage()
+
+        // Then-Multi-Actions-Tuple(thenMTuple*) Methods
+
+        cffuThis.thenMApplyTupleFailFastAsync({ n }, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyTupleFailFastAsync(testFjExecutor, { n }, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyTupleFailFastAsync(Function { n }, { s }, { d }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyTupleFailFastAsync(testFjExecutor, { n }, { s }, { d }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyTupleFailFastAsync(Function { n }, { s }, { d }, { n }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyTupleFailFastAsync(testFjExecutor, { n }, { s }, { d }, { n }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyTupleFailFastAsync(Function { n }, { s }, { d }, { n }, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyTupleFailFastAsync(testFjExecutor, { n }, { s }, { d }, { n }, { s })
+            .shouldNotBeMinimalStage()
+
+        cffuThis.thenMApplyAllSuccessTupleAsync({ n }, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAllSuccessTupleAsync(testFjExecutor, { n }, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAllSuccessTupleAsync(Function { n }, { s }, { d }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAllSuccessTupleAsync(testFjExecutor, { n }, { s }, { d }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAllSuccessTupleAsync(Function { n }, { s }, { d }, { n }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAllSuccessTupleAsync(testFjExecutor, { n }, { s }, { d }, { n }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAllSuccessTupleAsync(Function { n }, { s }, { d }, { n }, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAllSuccessTupleAsync(testFjExecutor, { n }, { s }, { d }, { n }, { s })
+            .shouldNotBeMinimalStage()
+
+        cffuThis.thenMApplyMostSuccessTupleAsync(1, MILLISECONDS, { n }, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyMostSuccessTupleAsync(testFjExecutor, 1, MILLISECONDS, { n }, { s })
+            .shouldNotBeMinimalStage()
+        cffuThis.thenMApplyMostSuccessTupleAsync(1, MILLISECONDS, { n }, { s }, { d }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyMostSuccessTupleAsync(testFjExecutor, 1, MILLISECONDS, { n }, { s }, { d })
+            .shouldNotBeMinimalStage()
+        cffuThis.thenMApplyMostSuccessTupleAsync(1, MILLISECONDS, { n }, { s }, { d }, { n }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyMostSuccessTupleAsync(testFjExecutor, 1, MILLISECONDS, { n }, { s }, { d }, { n })
+            .shouldNotBeMinimalStage()
+        cffuThis.thenMApplyMostSuccessTupleAsync(1, MILLISECONDS, { n }, { s }, { d }, { n }, { s })
+            .shouldNotBeMinimalStage()
+        cffuThis.thenMApplyMostSuccessTupleAsync(testFjExecutor, 1, MILLISECONDS, { n }, { s }, { d }, { n }, { s })
+            .shouldNotBeMinimalStage()
+
+        cffuThis.thenMApplyTupleAsync({ n }, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyTupleAsync(testFjExecutor, { n }, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyTupleAsync(Function { n }, { s }, { d }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyTupleAsync(testFjExecutor, { n }, { s }, { d }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyTupleAsync(Function { n }, { s }, { d }, { n }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyTupleAsync(testFjExecutor, { n }, { s }, { d }, { n }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyTupleAsync(Function { n }, { s }, { d }, { n }, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyTupleAsync(testFjExecutor, { n }, { s }, { d }, { n }, { s }).shouldNotBeMinimalStage()
+
+        // thenBoth* Methods(binary input)
+
+        cffuThis.thenCombineFailFast(cfD, { t, u -> t + u }).shouldNotBeMinimalStage()
+        cffuThis.thenCombineFailFastAsync(cfD, { t, u -> t + u }).shouldNotBeMinimalStage()
+        cffuThis.thenCombineFailFastAsync(cfD, { t, u -> t + u }, testFjExecutor).shouldNotBeMinimalStage()
+
+        cffuThis.thenAcceptBothFailFast(cfD, { _, _ -> }).shouldNotBeMinimalStage()
+        cffuThis.thenAcceptBothFailFastAsync(cfD, { _, _ -> }).shouldNotBeMinimalStage()
+        cffuThis.thenAcceptBothFailFastAsync(cfD, { _, _ -> }, testFjExecutor).shouldNotBeMinimalStage()
+
+        cffuThis.runAfterBothFailFast(cfD, {}).shouldNotBeMinimalStage()
+        cffuThis.runAfterBothFailFastAsync(cfD, {}).shouldNotBeMinimalStage()
+        cffuThis.runAfterBothFailFastAsync(cfD, {}, testFjExecutor).shouldNotBeMinimalStage()
+
+        cffuThis.thenCombine(cfD, { t, u -> t + u }).shouldNotBeMinimalStage()
+        cffuThis.thenCombineAsync(cfD, { t, u -> t + u }).shouldNotBeMinimalStage()
+        cffuThis.thenCombineAsync(cfD, { t, u -> t + u }, testFjExecutor).shouldNotBeMinimalStage()
+
+        cffuThis.thenAcceptBoth(cfD, { _, _ -> }).shouldNotBeMinimalStage()
+        cffuThis.thenAcceptBothAsync(cfD, { _, _ -> }).shouldNotBeMinimalStage()
+        cffuThis.thenAcceptBothAsync(cfD, { _, _ -> }, testFjExecutor).shouldNotBeMinimalStage()
+
+        cffuThis.runAfterBoth(cfD, {}).shouldNotBeMinimalStage()
+        cffuThis.runAfterBothAsync(cfD, {}).shouldNotBeMinimalStage()
+        cffuThis.runAfterBothAsync(cfD, {}, testFjExecutor).shouldNotBeMinimalStage()
+
+        // thenEither* Methods(binary input) with either(any)-success support
+
+        cffuThis.applyToEitherSuccess(cfS, { s + it }).shouldNotBeMinimalStage()
+        cffuThis.applyToEitherSuccessAsync(cfS, { s + it }).shouldNotBeMinimalStage()
+        cffuThis.applyToEitherSuccessAsync(cfS, { s + it }, testFjExecutor).shouldNotBeMinimalStage()
+
+        cffuThis.acceptEitherSuccess(cfS, { s + it }).shouldNotBeMinimalStage()
+        cffuThis.acceptEitherSuccessAsync(cfS, { s + it }).shouldNotBeMinimalStage()
+        cffuThis.acceptEitherSuccessAsync(cfS, { s + it }, testFjExecutor).shouldNotBeMinimalStage()
+
+        cffuThis.runAfterEitherSuccess(cfS, {}).shouldNotBeMinimalStage()
+        cffuThis.runAfterEitherSuccessAsync(cfS, {}).shouldNotBeMinimalStage()
+        cffuThis.runAfterEitherSuccessAsync(cfS, {}, testFjExecutor).shouldNotBeMinimalStage()
+
+        cffuThis.applyToEither(cfS, { s + it }).shouldNotBeMinimalStage()
+        cffuThis.applyToEitherAsync(cfS, { s + it }).shouldNotBeMinimalStage()
+        cffuThis.applyToEitherAsync(cfS, { s + it }, testFjExecutor).shouldNotBeMinimalStage()
+
+        cffuThis.acceptEither(cfS, { s + it }).shouldNotBeMinimalStage()
+        cffuThis.acceptEitherAsync(cfS, { s + it }).shouldNotBeMinimalStage()
+        cffuThis.acceptEitherAsync(cfS, { s + it }, testFjExecutor).shouldNotBeMinimalStage()
+
+        cffuThis.runAfterEither(cfS, {}).shouldNotBeMinimalStage()
+        cffuThis.runAfterEitherAsync(cfS, {}).shouldNotBeMinimalStage()
+        cffuThis.runAfterEitherAsync(cfS, {}, testFjExecutor).shouldNotBeMinimalStage()
+
+        // Error Handling Methods of CompletionStage
+
+        cffuThis.catching(RuntimeException::class.java, { s }).shouldNotBeMinimalStage()
+        cffuThis.catchingAsync(RuntimeException::class.java, { s }).shouldNotBeMinimalStage()
+        cffuThis.catchingAsync(RuntimeException::class.java, { s }, testFjExecutor).shouldNotBeMinimalStage()
+        (minCffuThis as Cffu<String>).catching(RuntimeException::class.java, { s }).shouldBeMinimalStage()
+        minCffuThis.catchingAsync(RuntimeException::class.java, { s }).shouldBeMinimalStage()
+        minCffuThis.catchingAsync(RuntimeException::class.java, { s }, testFjExecutor).shouldBeMinimalStage()
+
+        cffuThis.exceptionallyAsync({ s }).shouldNotBeMinimalStage()
+        cffuThis.exceptionallyAsync({ s }, testFjExecutor).shouldNotBeMinimalStage()
+        minCffuThis.exceptionallyAsync({ s }).shouldBeMinimalStage()
+        minCffuThis.exceptionallyAsync({ s }, testFjExecutor).shouldBeMinimalStage()
+
+        // Timeout Control Methods of CompletableFuture
+
+        cffuThis.orTimeout(1, MILLISECONDS).shouldNotBeMinimalStage()
+        cffuThis.orTimeout(testFjExecutor, 1, MILLISECONDS).shouldNotBeMinimalStage()
+        cffuThis.unsafeOrTimeout(1, MILLISECONDS).shouldNotBeMinimalStage()
+
+        cffuThis.completeOnTimeout("", 1, MILLISECONDS).shouldNotBeMinimalStage()
+        cffuThis.completeOnTimeout("", testFjExecutor, 1, MILLISECONDS).shouldNotBeMinimalStage()
+        cffuThis.unsafeCompleteOnTimeout("", 1, MILLISECONDS).shouldNotBeMinimalStage()
+
+        // Advanced Methods of CompletionStage(compose* and handle-like methods)
+
+        cffuThis.catchingCompose(RuntimeException::class.java, { csThis }).shouldNotBeMinimalStage()
+        cffuThis.catchingComposeAsync(RuntimeException::class.java, { csThis }).shouldNotBeMinimalStage()
+        cffuThis.catchingComposeAsync(RuntimeException::class.java, { csThis }, testFjExecutor)
+            .shouldNotBeMinimalStage()
+        minCffuThis.catchingCompose(RuntimeException::class.java, { csThis }).shouldBeMinimalStage()
+        minCffuThis.catchingComposeAsync(RuntimeException::class.java, { csThis }).shouldBeMinimalStage()
+        minCffuThis.catchingComposeAsync(RuntimeException::class.java, { csThis }, testFjExecutor)
+            .shouldBeMinimalStage()
+
+        cffuThis.exceptionallyCompose({ csThis }).shouldNotBeMinimalStage()
+        cffuThis.exceptionallyComposeAsync({ csThis }).shouldNotBeMinimalStage()
+        cffuThis.exceptionallyComposeAsync({ csThis }, testFjExecutor).shouldNotBeMinimalStage()
+        minCffuThis.exceptionallyCompose({ csThis }).shouldBeMinimalStage()
+        minCffuThis.exceptionallyComposeAsync({ csThis }).shouldBeMinimalStage()
+        minCffuThis.exceptionallyComposeAsync({ csThis }, testFjExecutor).shouldBeMinimalStage()
+
+
+        // skip peek methods testing.
+        // tested cases in "test_peek": return
+
+        // skip completeAsync/completeExceptionallyAsync methods testing.
+        // tested cases in "test_write": return
+
+        cffuThis.minimalCompletionStage().shouldBeMinimalStageAsCffu()
+
+        cffuThis.toCompletableFuture().shouldNotBeMinimalStage()
+        minCffuThis.toCompletableFuture().shouldNotBeMinimalStage()
+
+        cffuThis.copy().shouldNotBeMinimalStage()
+        minCffuThis.copy().shouldBeMinimalStage()
+
+        cffuThis.newIncompleteFuture<Int>().shouldNotBeMinimalStage()
+        // NOTE: do NOT keep the mini like CompletableFuture, it's OK.
+        //       Casting CompletionStage instances to Cffu is not normal/public API usage!!
+        minCffuThis.newIncompleteFuture<Int>().shouldNotBeMinimalStage()
     }
 }

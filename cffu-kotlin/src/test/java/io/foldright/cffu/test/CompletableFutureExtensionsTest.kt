@@ -395,7 +395,7 @@ class CompletableFutureExtensionsTest : FunSpec({
 
     // endregion
     ////////////////////////////////////////////////////////////
-    // Then-Tuple-Multi-Actions(thenTupleM*) Methods
+    // Then-Multi-Actions-Tuple(thenMTuple*) Methods
     ////////////////////////////////////////////////////////////
 
     test("thenTupleM*") {
