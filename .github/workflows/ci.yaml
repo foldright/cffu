@@ -43,10 +43,12 @@ jobs:
 
       - name: Remove self maven install files
         run: rm -rf $HOME/.m2/repository/io/foldright/cffu*
+      - name: Install codecov-cli
+        # https://github.com/codecov/codecov-cli
+        run: pip install codecov-cli
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        # https://docs.codecov.com/docs/codecov-tokens#uploading-without-a-token
+        uses: codecov/codecov-action@v5
 
       - name: Update TOC of markdown files contained TOC
         # https://github.com/thlorenz/doctoc
