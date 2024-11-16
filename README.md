@@ -5,10 +5,8 @@
 <a href="https://github.com/foldright/cffu/actions/workflows/ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/ci.yaml?branch=main&logo=github&logoColor=white&label=strong ci" alt="Github Workflow Build Status"></a>
 <a href="https://app.codecov.io/gh/foldright/cffu/tree/main"><img src="https://img.shields.io/codecov/c/github/foldright/cffu/main?logo=codecov&logoColor=white" alt="Codecov"></a>
 <a href="https://openjdk.java.net/"><img src="https://img.shields.io/badge/Java-8+-339933?logo=openjdk&logoColor=white" alt="Java support"></a>
-<a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-1.6+-7F52FF.svg?logo=kotlin&logoColor=white" alt="Kotlin"></a>
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/foldright/cffu?color=4D7A97&logo=apache" alt="License"></a>
 <a href="https://foldright.io/api-docs/cffu/"><img src="https://img.shields.io/github/release/foldright/cffu?label=javadoc&color=339933&logo=read-the-docs&logoColor=white" alt="Javadocs"></a>
-<a href="https://foldright.io/api-docs/cffu-kotlin/"><img src="https://img.shields.io/github/release/foldright/cffu?label=dokka&color=339933&logo=kotlin&logoColor=white" alt="dokka"></a>
 <a href="https://central.sonatype.com/artifact/io.foldright/cffu/0.9.0/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
 <a href="https://github.com/foldright/cffu/releases"><img src="https://img.shields.io/github/release/foldright/cffu.svg" alt="GitHub Releases"></a>
 <a href="https://github.com/foldright/cffu/stargazers"><img src="https://img.shields.io/github/stars/foldright/cffu?style=flat" alt="GitHub Stars"></a>
@@ -36,7 +34,7 @@
 - [🔧 功能](#-%E5%8A%9F%E8%83%BD)
   - [关于`CompletableFuture`](#%E5%85%B3%E4%BA%8Ecompletablefuture)
 - [👥 User Guide](#-user-guide)
-  - [1. `cffu`的三种使用方式](#1-cffu%E7%9A%84%E4%B8%89%E7%A7%8D%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F)
+  - [1. `cffu`的使用方式](#1-cffu%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F)
   - [2. `cffu`功能介绍](#2-cffu%E5%8A%9F%E8%83%BD%E4%BB%8B%E7%BB%8D)
     - [2.1 返回多个`CF`的整体运行结果](#21-%E8%BF%94%E5%9B%9E%E5%A4%9A%E4%B8%AAcf%E7%9A%84%E6%95%B4%E4%BD%93%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C)
     - [2.2 支持设置缺省的业务线程池并封装携带](#22-%E6%94%AF%E6%8C%81%E8%AE%BE%E7%BD%AE%E7%BC%BA%E7%9C%81%E7%9A%84%E4%B8%9A%E5%8A%A1%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%B9%B6%E5%B0%81%E8%A3%85%E6%90%BA%E5%B8%A6)
@@ -59,46 +57,49 @@
 
 # 🔧 功能
 
-提供的功能有：
+☘️ **补全业务使用中缺失的功能**
 
-- ☘️ **补全业务使用中缺失的功能**
-  - 🏪 更方便的功能，如
-    - 支持返回多个`CF`的运行结果，而不是不返回`CF`的运行结果（`allOf`）  
-      如方法`allResultsFailFastOf` / `allResultsOf` / `mSupplyFailFastAsync` / `thenMApplyFailFastAsync`
-    - 支持返回多个不同类型的`CF`结果，而不是同一类型  
-      如方法`allTupleFailFastOf` / `allTupleOf` / `mSupplyTupleFailFastAsync` / `thenMApplyTupleFailFastAsync`
-    - 支持直接运行多个`Action`，而不是要先包装成`CompletableFuture`  
-      如方法`mSupplyTupleFailFastAsync` / `mSupplyMostSuccessAsync` / `thenMApplyTupleFailFastAsync` / `thenMRunFailFastAsync`
-    - 支持处理指定异常类型的`catching`方法，而不是处理所有异常`Throwable`（`exceptionally`）
-  - 🚦 更高效灵活的并发执行策略，如
-    - `AllFailFast`策略：当输入的多个`CF`有失败时快速失败返回，而不再于事无补地等待所有`CF`运行完成（`allOf`）
-    - `AnySuccess`策略：返回首个成功的`CF`结果，而不是首个完成（但可能失败）的`CF`（`anyOf`）
-    - `AllSuccess`策略：返回多个`CF`中成功的结果，对于失败的`CF`返回指定的缺省值
-    - `MostSuccess`策略：指定时间内返回多个`CF`中成功的结果，对于失败或超时的`CF`返回指定的缺省值
-    - `All(Complete)` / `Any(Complete)`策略：这2个是`CompletableFuture`已有支持的策略
-  - 🦺 更安全的使用方式，如
-    - 支持设置缺省的业务线程池并封装携带，`CffuFactory#builder(executor)`方法
-    - 支持超时的`join`的方法，`join(timeout, unit)`方法
-    - 超时执行安全的`cffuOrTimeout` / `cffuCompleteOnTimeout`方法
-    - 一定不会修改`CF`结果的`peek`处理方法  
-      （`whenComplete`方法可能会修改`CF`的结果，返回的`CF`与输入`CF`并不一定一致）
-    - 支持禁止强制篡改，`CffuFactoryBuilder#forbidObtrudeMethods`方法
-    - 在类方法附加完善的代码质量注解，在编码时`IDE`能尽早提示出问题  
-      如`@NonNull`、`@Nullable`、`@CheckReturnValue`、`@Contract`等
-  - 🧩 缺失的基础基本功能，除了上面面向安全而新实现方法（如`join(timeout, unit)` / `cffuOrTimeout` / `peek`），还有
-    - 异步异常完成，`completeExceptionallyAsync`方法
-    - 非阻塞地获取成功结果，如果`CF`失败或还在运行中则返回指定的缺省值，`getSuccessNow`方法
-    - 解包装`CF`异常成业务异常，`unwrapCfException`方法
-- 💪 **已有功能的增强**，如
-  - `anyOf`方法：返回具体类型`T`（类型安全），而不是返回`Object`（`CompletableFuture#anyOf`）
-  - `allof` / `anyOf`方法：输入更宽泛的`CompletionStage`参数类型，而不是`CompletableFuture`类（`CompletableFuture#allOf/anyOf`）
-- ⏳ **`Backport`支持`Java 8`**，`Java 9+`高版本的所有`CF`新功能方法在`Java 8`低版本直接可用，如
-  - 超时控制：`orTimeout` / `completeOnTimeout`
-  - 延迟执行：`delayedExecutor`
-  - 工厂方法：`failedFuture` / `completedStage` / `failedStage`
-  - 处理操作：`completeAsync` / `exceptionallyAsync` / `exceptionallyCompose` / `copy`
-  - 非阻塞读：`resultNow` / `exceptionNow` / `state`
-- 🍩 **一等公民支持`Kotlin`**
+- 🏪 更方便的功能，如
+  - 支持返回多个`CF`的运行结果，而不是不返回`CF`的运行结果（`CompletableFuture#allOf`）  
+    如方法`allResultsFailFastOf` / `allResultsOf` / `mSupplyFailFastAsync` / `thenMApplyFailFastAsync`
+  - 支持返回多个不同类型的`CF`结果，而不是同一类型  
+    如方法`allTupleFailFastOf` / `allTupleOf` / `mSupplyTupleFailFastAsync` / `thenMApplyTupleFailFastAsync`
+  - 支持直接运行多个`Action`，而不是要先包装成`CompletableFuture`  
+    如方法`mSupplyTupleFailFastAsync` / `mSupplyMostSuccessAsync` / `thenMApplyTupleFailFastAsync` / `thenMRunFailFastAsync`
+  - 支持处理指定异常类型的`catching`方法，而不是处理所有异常`Throwable`（`CompletableFuture#exceptionally`）
+- 🚦 更高效灵活的并发执行策略，如
+  - `AllFailFast`策略：当输入的多个`CF`有失败时快速失败返回，而不再于事无补地等待所有`CF`运行完成（`CompletableFuture#allOf`）
+  - `AnySuccess`策略：返回首个成功的`CF`结果，而不是首个完成但可能失败的`CF`（`CompletableFuture#anyOf`）
+  - `AllSuccess`策略：返回多个`CF`中成功的结果，对于失败的`CF`返回指定的缺省值
+  - `MostSuccess`策略：指定时间内返回多个`CF`中成功的结果，对于失败或超时的`CF`返回指定的缺省值
+  - `All(Complete)` / `Any(Complete)`策略：这2个是`CompletableFuture`已有支持的策略
+- 🦺 更安全的使用方式，如
+  - 支持设置缺省的业务线程池并封装携带，`CffuFactory#builder(executor)`方法
+  - 支持超时的`join`的方法，`join(timeout, unit)`方法
+  - 超时执行安全的`orTimeout` / `completeOnTimeout`新实现  
+    `CF#orTimeout` / `CF#completeOnTimeout`方法在超时使用内部的单线程`ScheduledThreadPoolExecutor`来触发业务逻辑执行，会导致`CF`的超时与延迟执行基础功能失效❗️
+  - 一定不会修改`CF`结果的`peek`处理方法  
+    `whenComplete`方法可能会修改`CF`的结果，返回的`CF`与输入`CF`并不一定一致
+  - 支持禁止强制篡改，`CffuFactoryBuilder#forbidObtrudeMethods`方法
+  - 在类方法附加完善的代码质量注解，在编码时`IDE`能尽早提示出问题  
+    如`@NonNull`、`@Nullable`、`@CheckReturnValue`、`@Contract`等
+- 🧩 缺失的基本功能，除了上面面向安全而新实现的方法，还有
+  - 异步异常完成，`completeExceptionallyAsync`方法
+  - 非阻塞地获取成功结果，如果`CF`失败或还在运行中则返回指定的缺省值，`getSuccessNow`方法
+  - 解包装`CF`异常成业务异常，`unwrapCfException`方法
+
+💪 **已有功能的增强**，如
+
+- `anyOf`方法：返回具体类型`T`（类型安全），而不是返回`Object`（`CompletableFuture#anyOf`）
+- `allof` / `anyOf`方法：输入更宽泛的`CompletionStage`参数类型，而不是`CompletableFuture`类（`CompletableFuture#allOf/anyOf`）
+
+⏳ **`Backport`支持`Java 8`**，`Java 9+`高版本的所有`CF`新功能方法在`Java 8`低版本直接可用，如
+
+- 超时控制：`orTimeout` / `completeOnTimeout`
+- 延迟执行：`delayedExecutor`
+- 工厂方法：`failedFuture` / `completedStage` / `failedStage`
+- 处理操作：`completeAsync` / `exceptionallyAsync` / `exceptionallyCompose` / `copy`
+- 非阻塞读：`resultNow` / `exceptionNow` / `state`
 
 更多`cffu`的使用方式与功能说明详见 [User Guide](#-user-guide)。
 
@@ -135,29 +136,51 @@
 
 # 👥 User Guide
 
-## 1. `cffu`的三种使用方式
+## 1. `cffu`的使用方式
 
-`cffu`支持三种使用方式：
+- 🦝 **使用`Cffu`类**
+- 🔧 **使用`CompletableFutureUtils`工具类**
 
-- 🦝 1) **使用`Cffu`类**
-  - 项目使用`Java`语言时，推荐这种使用方式
-  - 直接使用`CompletableFuture`类的代码可以比较简单的迁移到`Cffu`类，包含2步修改：
-    - 在类型声明地方，由`CompletableFuture`改成`Cffu`
-    - 在`CompletableFuture`静态方法调用的地方，类名`CompletableFuture`改成`cffuFactory`实例
-    - 更多参见[如何从直接使用`CompletableFuture`类迁移到`Cffu`类](#3-%E5%A6%82%E4%BD%95%E4%BB%8E%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8completablefuture%E7%B1%BB%E8%BF%81%E7%A7%BB%E5%88%B0cffu%E7%B1%BB)
-  - 依赖`io.foldright:cffu`库
-- 🛠️️ 2) **使用`CompletableFutureUtils`工具类**
-  - 如果你不想在项目中引入新类（`Cffu`类）、觉得这样增加了复杂性的话，
-    - 完全可以把`cffu`库作为一个工具类来用
-    - 优化`CompletableFuture`使用的工具方法在业务项目中很常见，`CompletableFutureUtils`提供了一系列实用可靠高效安全的工具方法
-  - 这种使用方式有些`cffu`功能没有提供（也没有想到实现方案） 😔  
-    如支持设置缺省的业务线程池、禁止强制篡改
-  - 依赖`io.foldright:cffu`库
-- 🍩 3) **使用`Kotlin`扩展方法**
-  - 项目使用`Kotlin`语言时，推荐这种使用方式
-  - 要依赖`io.foldright:cffu-kotlin`库
+推荐`Cffu`类的使用方式： 🌟
 
-更多参见`cffu`三种使用方式的[示例代码](docs/usage-mode-demo.md)。 🎪
+- 相比`CompletableFutureUtils`的静态方法，新功能方法以类实例方法的方式自然方便调用（就像使用`CompletableFuture`一样）
+- `Java`语言不支持在已有类上扩展方法，所以需要一个新的包装类
+
+如果你不想在项目中引入新类（`Cffu`类）、觉得这样增加了复杂性的话，完全可以把`cffu`库作为一个工具类来用：
+
+- 优化`CompletableFuture`使用的工具方法在业务项目中很常见，`CompletableFutureUtils`提供了一系列实用可靠高效安全的工具方法
+- 这种使用方式有些`cffu`功能没有提供（也没有想到好的实现方案）  
+  如支持设置缺省的业务线程池、禁止强制篡改
+
+直接使用`CompletableFuture`类的代码可以比较简单的迁移到`Cffu`类，包含2步修改：
+
+- 在类型声明地方，由`CompletableFuture`改成`Cffu`
+- 在`CompletableFuture`静态方法调用的地方，类名`CompletableFuture`改成`cffuFactory`实例
+- 更多参见[如何从直接使用`CompletableFuture`类迁移到`Cffu`类](#3-%E5%A6%82%E4%BD%95%E4%BB%8E%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8completablefuture%E7%B1%BB%E8%BF%81%E7%A7%BB%E5%88%B0cffu%E7%B1%BB)
+
+库依赖（包含[`Java CompletableFuture`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)的增强`CompletableFutureUtils`）:
+
+- For `Maven` projects:
+
+  ```xml
+  <dependency>
+    <groupId>io.foldright</groupId>
+    <artifactId>cffu</artifactId>
+    <version>1.0.0-Alpha29</version>
+  </dependency>
+  ```
+- For `Gradle` projects:
+
+  ```groovy
+  // Gradle Kotlin DSL
+  implementation("io.foldright:cffu:1.0.0-Alpha29")
+  ```
+  ```groovy
+  // Gradle Groovy DSL
+  implementation 'io.foldright:cffu:1.0.0-Alpha29'
+  ```
+
+> `cffu`也支持`Kotlin`扩展方法的使用方式，参见[`cffu-kotlin/README.md`](cffu-kotlin/README.md)；使用方式的对比示例参见[`docs/usage-mode-demo.md`](docs/usage-mode-demo.md)。
 
 ## 2. `cffu`功能介绍
 
@@ -515,17 +538,14 @@ public class MultipleActionsDemo {
 
 可以参见：
 
-- `API`文档
-  - [`Java API`文档](https://foldright.io/api-docs/cffu/)
-  - [`Kotlin API`文档](https://foldright.io/api-docs/cffu-kotlin/)
+- [`Java API`文档](https://foldright.io/api-docs/cffu/)
 - 实现源码
-  - `cffu`：[`Cffu.java`](cffu-core/src/main/java/io/foldright/cffu/Cffu.java)、[`CffuFactory.java`](cffu-core/src/main/java/io/foldright/cffu/CffuFactory.java)
-  - `CompletableFuture utils`：[`CompletableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu/CompletableFutureUtils.java)、[`ListenableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu/ListenableFutureUtils.java)
-  - `Kotlin extensions`：[`CffuExtensions.kt`](cffu-kotlin/src/main/java/io/foldright/cffu/kotlin/CffuExtensions.kt)、[`CompletableFutureExtensions.kt`](cffu-kotlin/src/main/java/io/foldright/cffu/kotlin/CompletableFutureExtensions.kt)、[`ListenableFutureExtensions.kt`](cffu-kotlin/src/main/java/io/foldright/cffu/kotlin/ListenableFutureExtensions.kt)
+  - [`Cffu.java`](cffu-core/src/main/java/io/foldright/cffu/Cffu.java)、[`CffuFactory.java`](cffu-core/src/main/java/io/foldright/cffu/CffuFactory.java)
+  - [`CompletableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu/CompletableFutureUtils.java)
 
 ## 3. 如何从直接使用`CompletableFuture`类迁移到`Cffu`类
 
-为了使用`cffu`增强功能，可以迁移已有直接使用`CompletableFuture`类的代码到`Cffu`类。包含2步修改：
+为了方便地使用`cffu`的增强功能与方法，可以迁移直接使用`CompletableFuture`类的已有代码到`Cffu`类：
 
 - 在类型声明地方，`CompletableFuture`类改成`Cffu`类
 - 在`CompletableFuture`静态方法调用的地方，类名`CompletableFuture`改成`cffuFactory`实例
@@ -538,7 +558,6 @@ public class MultipleActionsDemo {
 # 🔌 API Docs
 
 - 当前版本的`Java API`文档： https://foldright.io/api-docs/cffu/
-- 当前版本的`Kotlin API`文档： https://foldright.io/api-docs/cffu-kotlin/
 
 代码示例：
 
@@ -553,38 +572,18 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>1.0.0-Alpha28</version>
+      <version>1.0.0-Alpha29</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu:1.0.0-Alpha28")
+    implementation("io.foldright:cffu:1.0.0-Alpha29")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu:1.0.0-Alpha28'
-    ```
-- `cffu Kotlin`支持库:
-  - For `Maven` projects:
-
-    ```xml
-    <dependency>
-      <groupId>io.foldright</groupId>
-      <artifactId>cffu-kotlin</artifactId>
-      <version>1.0.0-Alpha28</version>
-    </dependency>
-    ```
-  - For `Gradle` projects:
-
-    ```groovy
-    // Gradle Kotlin DSL
-    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha28")
-    ```
-    ```groovy
-    // Gradle Groovy DSL
-    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha28'
+    implementation 'io.foldright:cffu:1.0.0-Alpha29'
     ```
 - `cffu bom`:
   - For `Maven` projects:
@@ -593,7 +592,7 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-bom</artifactId>
-      <version>1.0.0-Alpha28</version>
+      <version>1.0.0-Alpha29</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -602,11 +601,11 @@ public class MultipleActionsDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha28"))
+    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha29"))
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha28')
+    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha29')
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local)的[`cffu executor wrapper SPI`实现](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -615,7 +614,7 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>1.0.0-Alpha28</version>
+      <version>1.0.0-Alpha29</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -623,11 +622,11 @@ public class MultipleActionsDemo {
 
     ```groovy
     // Gradle Kotlin DSL
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha28")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha29")
     ```
     ```groovy
     // Gradle Groovy DSL
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha28'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha29'
     ```
 
 # 📚 更多资料

@@ -1,4 +1,4 @@
-package io.foldright.lf;
+package io.foldright.cffu.lf;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;

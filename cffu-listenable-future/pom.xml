@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>cffu-listenable-future</artifactId>
-	<name>ListenableFuture Integration to CompletableFuture</name>
+	<name>Guava ListenableFuture Integration with CF</name>
 	<description>${project.name}</description>
 	<url>https://github.com/foldright/cffu</url>
 	<inceptionYear>2023</inceptionYear>

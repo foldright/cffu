@@ -1,4 +1,4 @@
-package io.foldright.lf.study
+package io.foldright.cffu.lf.study
 
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
