@@ -1,0 +1,117 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>io.foldright</groupId>
+		<artifactId>cffu-parent</artifactId>
+		<version>1.x-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>cffu-listenable-future</artifactId>
+	<name>ListenableFuture Integration to CompletableFuture</name>
+	<description>${project.name}</description>
+	<url>https://github.com/foldright/cffu</url>
+	<inceptionYear>2023</inceptionYear>
+
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:git:git@github.com:foldright/cffu.git</connection>
+		<developerConnection>scm:git:git@github.com:foldright/cffu.git</developerConnection>
+		<url>https://github.com/foldright/cffu</url>
+	</scm>
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/foldright/cffu/issues</url>
+	</issueManagement>
+	<ciManagement>
+		<system>GitHub Actions</system>
+		<url>https://github.com/foldright/cffu/actions</url>
+	</ciManagement>
+	<organization>
+		<name>FoldRight</name>
+		<url>https://foldright.io</url>
+	</organization>
+	<developers>
+		<developer>
+			<name>Jerry Lee</name>
+			<id>oldratlee</id>
+			<email>oldratlee(AT)gmail(DOT)com</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+8</timezone>
+			<url>https://github.com/oldratlee</url>
+			<organization>FoldRight</organization>
+			<organizationUrl>https://foldright.io</organizationUrl>
+		</developer>
+		<developer>
+			<name>Eric Lin</name>
+			<id>linzee1</id>
+			<email>linqinghua4(AT)gmail(DOT)com</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+8</timezone>
+			<url>https://github.com/linzee1</url>
+			<organization>FoldRight</organization>
+			<organizationUrl>https://foldright.io</organizationUrl>
+		</developer>
+	</developers>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		<dependency>
+			<groupId>io.foldright</groupId>
+			<artifactId>cffu</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-stdlib-jdk8</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>enable-test-jar-if-not-maven-skip-test</id>
+			<activation>
+				<property>
+					<name>maven.test.skip</name>
+					<value>!true</value>
+				</property>
+			</activation>
+			<dependencies>
+				<!-- testing libs -->
+				<dependency>
+					<groupId>io.foldright</groupId>
+					<artifactId>cffu</artifactId>
+					<version>${project.version}</version>
+					<!--
+						Guide to using attached tests
+						reuse the tests that you have created for one project in another
+							https://maven.apache.org/guides/mini/guide-attached-tests.html
+						How to create a jar containing test classes
+							https://maven.apache.org/plugins/maven-jar-plugin/examples/create-test-jar.html
+					-->
+					<classifier>tests</classifier>
+					<type>test-jar</type>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+</project>

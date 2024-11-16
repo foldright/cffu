@@ -19,7 +19,7 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  * In general, you should NEVER use this class in application codes,
  * unless you understand the underlying logic of CompletableFuture and need hack it.
  */
-final class LLCF {
+public final class LLCF {
 
     ////////////////////////////////////////////////////////////////////////////////
     // region# CF conversion and test methods
@@ -42,7 +42,7 @@ final class LLCF {
      * Force casts CompletableFuture with the value type, IGNORE the compile-time type check.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <T> CompletableFuture<T> f_cast(CompletableFuture<?> cf) {
+    static <T> CompletableFuture<T> f_cast(CompletableFuture<?> cf) {
         return (CompletableFuture) cf;
     }
 
@@ -51,7 +51,7 @@ final class LLCF {
      * reuse cf instance as many as possible. This method is NOT type safe!
      * More info see method {@link #f_toCf0(CompletionStage)}.
      */
-    public static <T> CompletableFuture<T>[] f_toCfArray0(CompletionStage<? extends T>[] stages) {
+    static <T> CompletableFuture<T>[] f_toCfArray0(CompletionStage<? extends T>[] stages) {
         return mapArray(stages, CompletableFuture[]::new, LLCF::f_toCf0);
     }
 
@@ -59,7 +59,7 @@ final class LLCF {
      * Converts {@link CompletionStage} array to {@link CompletableFuture} array.
      * More info see method {@link #toNonMinCfCopy0(CompletionStage)}.
      */
-    public static <T> CompletableFuture<T>[] f_toCfCopyArray0(CompletionStage<? extends T>[] stages) {
+    static <T> CompletableFuture<T>[] f_toCfCopyArray0(CompletionStage<? extends T>[] stages) {
         return mapArray(stages, CompletableFuture[]::new, LLCF::f_toCfCopy0);
     }
 
@@ -67,7 +67,7 @@ final class LLCF {
      * Converts {@link CompletionStage} array to {@link CompletableFuture} array.
      * More info see method {@link #toNonMinCf0(CompletionStage)}.
      */
-    public static <T> CompletableFuture<T>[] toNonMinCfArray0(CompletionStage<? extends T>[] stages) {
+    static <T> CompletableFuture<T>[] toNonMinCfArray0(CompletionStage<? extends T>[] stages) {
         return mapArray(stages, CompletableFuture[]::new, LLCF::toNonMinCf0);
     }
 
@@ -79,7 +79,7 @@ final class LLCF {
      * (e.g. {@link CompletableFuture#complete}); Otherwise, the caller usage of cf may throw UnsupportedOperationException.
      */
     @SuppressWarnings("unchecked")
-    public static <T> CompletableFuture<T> f_toCf0(CompletionStage<? extends T> s) {
+    static <T> CompletableFuture<T> f_toCf0(CompletionStage<? extends T> s) {
         if (s instanceof CompletableFuture) return (CompletableFuture<T>) s;
         else if (s instanceof Cffu) return ((Cffu<T>) s).cffuUnwrap();
         else return (CompletableFuture<T>) s.toCompletableFuture();
@@ -96,7 +96,7 @@ final class LLCF {
      * ({@link CompletableFuture#copy}) on {@code minimal-stage} instances
      * is still {@code minimal-stage}(e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()})
      */
-    public static <T> CompletableFuture<T> f_toCfCopy0(CompletionStage<? extends T> s) {
+    static <T> CompletableFuture<T> f_toCfCopy0(CompletionStage<? extends T> s) {
         final CompletableFuture<T> f = f_toCf0(s);
         return IS_JAVA9_PLUS ? f.copy() : f.thenApply(x -> x);
     }
@@ -107,7 +107,7 @@ final class LLCF {
      * <strong>CAUTION:</strong> because reused the CF instance, if the caller need defensive copy
      * instead of writing it directly, use method {@link #toNonMinCfCopy0(CompletionStage)}).
      */
-    public static <T> CompletableFuture<T> toNonMinCf0(CompletionStage<? extends T> s) {
+    static <T> CompletableFuture<T> toNonMinCf0(CompletionStage<? extends T> s) {
         final CompletableFuture<T> f = f_toCf0(s);
         return isMinStageCf(f) ? f.toCompletableFuture() : f;
     }
@@ -119,7 +119,7 @@ final class LLCF {
      * ({@link CompletableFuture#copy}) on {@code minimal-stage} instances
      * is still {@code minimal-stage}(e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()})
      */
-    public static <T> CompletableFuture<T> toNonMinCfCopy0(CompletionStage<? extends T> s) {
+    static <T> CompletableFuture<T> toNonMinCfCopy0(CompletionStage<? extends T> s) {
         final CompletableFuture<T> f = f_toCf0(s);
         return isMinStageCf(f) ? f.toCompletableFuture() : IS_JAVA9_PLUS ? f.copy() : f.thenApply(x -> x);
     }
@@ -141,7 +141,7 @@ final class LLCF {
      * that direct use executor need call this method, e.g. {@link CompletableFutureUtils#hopExecutorIfAtCfDelayerThread}.
      */
     @SuppressWarnings({"resource", "JavadocReference"})
-    public static Executor screenExecutor(Executor e) {
+    static Executor screenExecutor(Executor e) {
         if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool())
             return ASYNC_POOL;
         return requireNonNull(e, "executor is null");

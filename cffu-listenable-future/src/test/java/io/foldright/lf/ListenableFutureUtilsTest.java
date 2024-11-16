@@ -1,9 +1,11 @@
-package io.foldright.cffu;
+package io.foldright.lf;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.SettableFuture;
+import io.foldright.cffu.Cffu;
+import io.foldright.cffu.CompletableFutureUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
@@ -11,7 +13,7 @@ import org.junit.jupiter.api.condition.JRE;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static io.foldright.cffu.ListenableFutureUtils.*;
+import static io.foldright.lf.ListenableFutureUtils.*;
 import static io.foldright.test_utils.TestUtils.*;
 import static io.foldright.test_utils.TestingConstants.*;
 import static io.foldright.test_utils.TestingExecutorUtils.testCffuFac;

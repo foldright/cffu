@@ -3,7 +3,6 @@
 module io.foldright.cffu {
     requires java.logging;
     requires static org.slf4j;
-    requires static com.google.common;
 
     exports io.foldright.cffu;
     exports io.foldright.cffu.tuple;

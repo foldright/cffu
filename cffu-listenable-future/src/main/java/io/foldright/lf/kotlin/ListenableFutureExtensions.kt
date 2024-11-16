@@ -1,10 +1,10 @@
-package io.foldright.cffu.kotlin
+package io.foldright.lf.kotlin
 
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
-import io.foldright.cffu.ListenableFutureUtils
+import io.foldright.lf.ListenableFutureUtils
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
 

@@ -58,6 +58,7 @@
 		<module>cffu-bom</module>
 		<!-- cffu SPI extension implementation modules -->
 		<module>cffu-ttl-executor-wrapper</module>
+		<module>cffu-listenable-future</module>
 	</modules>
 
 	<properties>
@@ -110,6 +111,7 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- use guava in javadoc for cffu -->
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
