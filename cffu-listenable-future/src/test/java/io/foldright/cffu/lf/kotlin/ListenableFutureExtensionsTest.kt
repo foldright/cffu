@@ -1,10 +1,10 @@
-package io.foldright.lf.kotlin
+package io.foldright.cffu.lf.kotlin
 
 import com.google.common.util.concurrent.Futures
 import io.foldright.cffu.CompletableFutureUtils.failedFuture
-import io.foldright.lf.kotlin.toCffu
-import io.foldright.lf.kotlin.toCompletableFuture
-import io.foldright.lf.kotlin.toListenableFuture
+import io.foldright.cffu.lf.kotlin.toCffu
+import io.foldright.cffu.lf.kotlin.toCompletableFuture
+import io.foldright.cffu.lf.kotlin.toListenableFuture
 import io.foldright.test_utils.n
 import io.foldright.test_utils.rte
 import io.foldright.test_utils.testCffuFac

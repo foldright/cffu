@@ -74,11 +74,6 @@
 			</dependency>
 			<dependency>
 				<groupId>io.foldright</groupId>
-				<artifactId>cffu-kotlin</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.foldright</groupId>
 				<artifactId>cffu-ttl-executor-wrapper</artifactId>
 				<version>${project.version}</version>
 			</dependency>

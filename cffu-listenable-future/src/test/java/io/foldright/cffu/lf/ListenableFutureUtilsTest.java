@@ -1,4 +1,4 @@
-package io.foldright.lf;
+package io.foldright.cffu.lf;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.condition.JRE;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static io.foldright.lf.ListenableFutureUtils.*;
+import static io.foldright.cffu.lf.ListenableFutureUtils.*;
 import static io.foldright.test_utils.TestUtils.*;
 import static io.foldright.test_utils.TestingConstants.*;
 import static io.foldright.test_utils.TestingExecutorUtils.testCffuFac;
