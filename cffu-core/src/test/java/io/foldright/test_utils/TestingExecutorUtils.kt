@@ -3,6 +3,7 @@
 package io.foldright.test_utils
 
 import io.foldright.cffu.CffuFactory
+import io.kotest.assertions.fail
 import io.kotest.core.config.AbstractProjectConfig
 import io.kotest.core.listeners.BeforeProjectListener
 import io.kotest.matchers.booleans.shouldBeFalse
@@ -88,6 +89,30 @@ private fun isRunningInExecutor(executor: Executor): Boolean =
 
 private fun Thread.belongsTo(executor: Executor): Boolean =
     (executor as ThreadPoolAcquaintance).own(this)
+
+fun assertRunningByFjCommonPool(callingThread: Thread) {
+    val runningThread = currentThread()
+
+    val runInCallingThread = runningThread == callingThread
+    val runInCpThread = runningThread.name.startsWith("ForkJoinPool.commonPool-worker-")
+
+    val actualMsg = "actual" +
+            (if (!runInCallingThread) " not" else "") +
+            "running in calling thread" +
+            (if (!runInCpThread) " not" else "") +
+            " running in common pool thread"
+
+    val isCpParallel = System.getProperty("java.util.concurrent.ForkJoinPool.common.parallelism") != "1"
+    val (expected, expectedMsg) = if (isCpParallel)
+        runInCpThread to "expect running in common pool thread"
+    else (!runInCallingThread && !runInCpThread) to "expect not running in calling thread" +
+            "and not in common pool thread(because common pool is not parallel)"
+
+    if (!expected) fail(
+        "assertRunningByFjCommonPool failed.\n$expectedMsg $actualMsg.\ncontext info:\n" +
+                "  running thread: $runningThread\n  calling thread: $callingThread"
+    )
+}
 
 // endregion
 ////////////////////////////////////////////////////////////////////////////////
