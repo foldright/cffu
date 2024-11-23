@@ -78,13 +78,13 @@
 		<jsr305.version>3.0.2</jsr305.version>
 		<jetbrains.annotations.version>26.0.1</jetbrains.annotations.version>
 
-		<kotlin.version>2.0.21</kotlin.version>
+		<kotlin.version>2.1.0</kotlin.version>
 		<kotlin.compiler.jvmTarget>${maven.compiler.source}</kotlin.compiler.jvmTarget>
 		<!-- https://kotlinlang.org/docs/maven.html#specifying-compiler-options -->
-		<kotlin.compiler.apiVersion>1.7</kotlin.compiler.apiVersion>
+		<kotlin.compiler.apiVersion>1.8</kotlin.compiler.apiVersion>
 
 		<slf4j.version>2.0.16</slf4j.version>
-		<log4j2.version>2.24.1</log4j2.version>
+		<log4j2.version>2.24.2</log4j2.version>
 		<log4j2.slf4j.impl.aid>log4j-slf4j2-impl</log4j2.slf4j.impl.aid>
 		<guava.version>33.3.1-jre</guava.version>
 
