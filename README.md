@@ -40,10 +40,11 @@
     - [2.2 支持设置缺省的业务线程池并封装携带](#22-%E6%94%AF%E6%8C%81%E8%AE%BE%E7%BD%AE%E7%BC%BA%E7%9C%81%E7%9A%84%E4%B8%9A%E5%8A%A1%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%B9%B6%E5%B0%81%E8%A3%85%E6%90%BA%E5%B8%A6)
     - [2.3 高效灵活的并发执行策略（`AllFailFast` / `AnySuccess` / `AllSuccess` / `MostSuccess`）](#23-%E9%AB%98%E6%95%88%E7%81%B5%E6%B4%BB%E7%9A%84%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E7%AD%96%E7%95%A5allfailfast--anysuccess--allsuccess--mostsuccess)
     - [2.4 支持直接运行多个`Action`，而不是要先包装成`CompletableFuture`](#24-%E6%94%AF%E6%8C%81%E7%9B%B4%E6%8E%A5%E8%BF%90%E8%A1%8C%E5%A4%9A%E4%B8%AAaction%E8%80%8C%E4%B8%8D%E6%98%AF%E8%A6%81%E5%85%88%E5%8C%85%E8%A3%85%E6%88%90completablefuture)
-    - [2.5 支持超时的`join`的方法](#25-%E6%94%AF%E6%8C%81%E8%B6%85%E6%97%B6%E7%9A%84join%E7%9A%84%E6%96%B9%E6%B3%95)
-    - [2.6 `Backport`支持`Java 8`](#26-backport%E6%94%AF%E6%8C%81java-8)
-    - [2.7 返回具体类型的`anyOf`方法](#27-%E8%BF%94%E5%9B%9E%E5%85%B7%E4%BD%93%E7%B1%BB%E5%9E%8B%E7%9A%84anyof%E6%96%B9%E6%B3%95)
-    - [2.8 输入宽泛类型的`allof/anyOf`方法](#28-%E8%BE%93%E5%85%A5%E5%AE%BD%E6%B3%9B%E7%B1%BB%E5%9E%8B%E7%9A%84allofanyof%E6%96%B9%E6%B3%95)
+    - [2.5 `Backport`支持`Java 8`](#25-backport%E6%94%AF%E6%8C%81java-8)
+    - [2.6 超时执行安全的`orTimeout` / `completeOnTimeout`新实现](#26-%E8%B6%85%E6%97%B6%E6%89%A7%E8%A1%8C%E5%AE%89%E5%85%A8%E7%9A%84ortimeout--completeontimeout%E6%96%B0%E5%AE%9E%E7%8E%B0)
+    - [2.7 支持超时的`join`的方法](#27-%E6%94%AF%E6%8C%81%E8%B6%85%E6%97%B6%E7%9A%84join%E7%9A%84%E6%96%B9%E6%B3%95)
+    - [2.8 返回具体类型的`anyOf`方法](#28-%E8%BF%94%E5%9B%9E%E5%85%B7%E4%BD%93%E7%B1%BB%E5%9E%8B%E7%9A%84anyof%E6%96%B9%E6%B3%95)
+    - [2.9 输入宽泛类型的`allof/anyOf`方法](#29-%E8%BE%93%E5%85%A5%E5%AE%BD%E6%B3%9B%E7%B1%BB%E5%9E%8B%E7%9A%84allofanyof%E6%96%B9%E6%B3%95)
     - [更多功能说明](#%E6%9B%B4%E5%A4%9A%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E)
   - [3. 如何从直接使用`CompletableFuture`类迁移到`Cffu`类](#3-%E5%A6%82%E4%BD%95%E4%BB%8E%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8completablefuture%E7%B1%BB%E8%BF%81%E7%A7%BB%E5%88%B0cffu%E7%B1%BB)
 - [🔌 API Docs](#-api-docs)
@@ -75,11 +76,11 @@
   - `All(Complete)` / `Any(Complete)`策略：这2个是`CompletableFuture`已有支持的策略
 - 🦺 更安全的使用方式，如
   - 支持设置缺省的业务线程池并封装携带，`CffuFactory#builder(executor)`方法
-  - 支持超时的`join`的方法，`join(timeout, unit)`方法
   - 超时执行安全的`orTimeout` / `completeOnTimeout`新实现  
-    `CF#orTimeout` / `CF#completeOnTimeout`方法在超时使用内部的单线程`ScheduledThreadPoolExecutor`来触发业务逻辑执行，会导致`CF`的超时与延迟执行基础功能失效❗️
+    `CF#orTimeout` / `CF#completeOnTimeout`方法会导致`CF`的超时与延迟执行基础功能失效❗️
   - 一定不会修改`CF`结果的`peek`处理方法  
     `whenComplete`方法可能会修改`CF`的结果，返回的`CF`与输入`CF`并不一定一致
+  - 支持超时的`join`的方法，`join(timeout, unit)`方法
   - 支持禁止强制篡改，`CffuFactoryBuilder#forbidObtrudeMethods`方法
   - 在类方法附加完善的代码质量注解，在编码时`IDE`能尽早提示出问题  
     如`@NonNull`、`@Nullable`、`@CheckReturnValue`、`@Contract`等
@@ -188,9 +189,9 @@
 
 `CompletableFuture`的`allOf`方法不返回多个`CF`的运行结果（方法返回类型是`CF<Void>`）。
 
-不能方便地获取多个`CF`的运行结果：
+由于不能方便地获取多个`CF`的运行结果，需要：
 
-- 需要在`allOf`方法之后再通过入参`CF`的读操作（如`join` / `get`）来获取结果
+- 在`allOf`方法之后再通过入参`CF`的读操作（如`join` / `get`）来获取结果
   - 操作繁琐
   - 像`join` / `get`读方法是阻塞的，增加了业务逻辑的死锁风险❗️  
     更多说明可以看看[CompletableFuture原理与实践 - 4.2.2 线程池循环引用会导致死锁](https://juejin.cn/post/7098727514725416967#heading-24)
@@ -199,9 +200,7 @@
   - 并发深坑勿入，并发逻辑复杂易出Bug 🐞  
     如果涉及超时则会更复杂，`JDK CompletableFuture`自身在`Java 21`中也有这方面的[Bug修复](https://github.com/foldright/cffu/releases/tag/v1.0.0-Alpha20) ⏰
 
-`cffu`的`allResultsFailFastOf` / `allResultsOf` / `mostSuccessResultsOf`等方法提供了返回多个`CF`运行结果的功能。
-
-使用这些方法获取多个`CF`的整体运行结果：
+`cffu`的`allResultsFailFastOf` / `allResultsOf` / `mostSuccessResultsOf`等方法提供了返回多个`CF`运行结果的功能。使用这些方法获取多个`CF`的整体运行结果：
 
 - 方便直接
 - 因为返回的是有整体结果的`CF`，可以继续串接非阻塞的操作，所以自然减少了阻塞读方法（如`join` / `get`）的使用，尽量降低业务逻辑的死锁风险
@@ -493,7 +492,41 @@ public class MultipleActionsDemo {
 
 > \# 完整可运行的Demo代码参见[`MultipleActionsDemo.java`](cffu-core/src/test/java/io/foldright/demo/MultipleActionsDemo.java)。
 
-### 2.5 支持超时的`join`的方法
+### 2.5 `Backport`支持`Java 8`
+
+`Java 9+`高版本的所有`CF`新功能方法在`Java 8`低版本直接可用。
+
+其中重要的`backport`功能有：
+
+- 超时控制：`orTimeout` / `completeOnTimeout`
+- 延迟执行：`delayedExecutor`
+- 工厂方法：`failedFuture` / `completedStage` / `failedStage`
+- 处理操作：`completeAsync` / `exceptionallyAsync` / `exceptionallyCompose` / `copy`
+- 非阻塞读：`resultNow` / `exceptionNow` / `state`
+
+这些`backport`方法是`CompletableFuture`的已有功能，不附代码示例。
+
+### 2.6 超时执行安全的`orTimeout` / `completeOnTimeout`新实现
+
+`CF#orTimeout` / `CF#completeOnTimeout`方法在超时使用内部的单线程`ScheduledThreadPoolExecutor`来触发业务逻辑执行，会导致`CF`的超时与延迟执行基础功能失效❗️
+
+因为超时与延迟执行是基础功能，一旦失效会导致：
+
+- 业务功能的正确性问题
+- 系统稳定性问题，如导致线程中等待操作不能返回、耗尽线程池
+
+`cffu`提供了超时执行安全的新实现方法 [`cffuOrTimeout()`](https://foldright.io/api-docs/cffu/1.0.0-Alpha29/io/foldright/cffu/CompletableFutureUtils.html#cffuOrTimeout(C,long,java.util.concurrent.TimeUnit))
+/ [`cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.0-Alpha29/io/foldright/cffu/CompletableFutureUtils.html#cffuCompleteOnTimeout(C,T,long,java.util.concurrent.TimeUnit))。
+
+
+更多说明参见：
+
+- 演示问题的[`DelayDysfunctionDemo.java`](https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java)
+- `cffu backport`方法的`JavaDoc`
+  - [`orTimeout()`](https://foldright.io/api-docs/cffu/1.0.0-Alpha29/io/foldright/cffu/CompletableFutureUtils.html#orTimeout(C,long,java.util.concurrent.TimeUnit))
+  - [`completeOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.0-Alpha29/io/foldright/cffu/CompletableFutureUtils.html#completeOnTimeout(C,T,long,java.util.concurrent.TimeUnit))
+
+### 2.7 支持超时的`join`的方法
 
 `cf.join()`会「不超时永远等待」，在业务中很危险❗️当意外出现长时间等待时，会导致：
 
@@ -504,33 +537,19 @@ public class MultipleActionsDemo {
 
 这个新方法使用简单类似，不附代码示例。
 
-### 2.6 `Backport`支持`Java 8`
-
-`Java 9+`高版本的所有`CF`新功能方法在`Java 8`低版本直接可用。
-
-其中重要的Backport功能有：
-
-- 超时控制：`orTimeout` / `completeOnTimeout`
-- 延迟执行：`delayedExecutor`
-- 工厂方法：`failedFuture` / `completedStage` / `failedStage`
-- 处理操作：`completeAsync` / `exceptionallyAsync` / `exceptionallyCompose` / `copy`
-- 非阻塞读：`resultNow` / `exceptionNow` / `state`
-
-这些`backport`的方法是`CompletableFuture`的已有功能，不附代码示例。
-
-### 2.7 返回具体类型的`anyOf`方法
+### 2.8 返回具体类型的`anyOf`方法
 
 `CompletableFuture.anyOf`方法返回类型是`Object`，丢失具体类型，不类型安全，使用时需要转型也不方便。
 
-`cffu`提供的`anySuccessOf` / `anyOf`方法，返回具体类型`T`，而不是返回`Object`。
+`cffu`提供的`anySuccessOf()` / `anyOf()`方法，返回具体类型`T`，而不是返回`Object`。
 
 这个方法使用简单类似，不附代码示例。
 
-### 2.8 输入宽泛类型的`allof/anyOf`方法
+### 2.9 输入宽泛类型的`allof/anyOf`方法
 
 `CompletableFuture#allof/anyOf`方法输入参数类型是`CompletableFuture`，而输入更宽泛的`CompletionStage`类型；对于`CompletionStage`类型的输入，则需要调用`CompletionStage#toCompletableFuture`方法做转换。
 
-`cffu`提供的`allof` / `anyOf`方法输入更宽泛的`CompletionStage`参数类型，使用更方便。
+`cffu`提供的`allof()` / `anyOf()`方法输入更宽泛的`CompletionStage`参数类型，使用更方便。
 
 方法使用简单类似，不附代码示例。
 
