@@ -65,16 +65,18 @@ mvu::mvn_cmd clean install
 readonly MVN_OPTS_FOR_JAVA8=(
   -Dkotlin.version=1.6.0 -Dguava.version=29.0-jre
   -P!default-logging-dependencies -P!default-arch-unit-test
+  -Dcffu.uncaught.exception.report=short
 )
 # shellcheck disable=SC2034
 readonly MVN_OPTS_FOR_JAVA11=(
   -Dkotlin.version=1.7.0
   -DswitchToLog4j2LoggingDependencies -Pswitch-slf4j-to-v1
+  -Dcffu.uncaught.exception.report=short
 )
 # shellcheck disable=SC2034
 readonly MVN_OPTS_FOR_JAVA17=(
   -Dkotlin.version=1.8.0
-  -DswitchToLog4j2LoggingDependencies -Dcffu.uncaught.exception.report=full
+  -DswitchToLog4j2LoggingDependencies -Dcffu.uncaught.exception.report=short
 )
 # shellcheck disable=SC2034
 readonly MVN_OPTS_FOR_JAVA23=(
@@ -94,8 +96,8 @@ for jdk_version in "${JDK_VERSIONS[@]}"; do
 
   jvu::switch_to_jdk "$jdk_version"
 
-  # skip kotlin module test for low java version(19-)
-  # need recompile and test later(more info see the comments)
+  # skip kotlin module test for low java version(18-)
+  # need recompile and test later(more info see its comments)
   pl=()
   if ((jdk_version < default_build_jdk_version && jdk_version < 19)); then
     pl=(-pl 'cffu-core,cffu-ttl-executor-wrapper')

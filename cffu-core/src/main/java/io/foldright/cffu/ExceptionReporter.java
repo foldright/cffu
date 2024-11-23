@@ -25,14 +25,14 @@ final class ExceptionReporter {
         final String shortReport = "short";
         final String noneReport = "none";
 
-        final String report = System.getProperty("cffu.uncaught.exception.report", shortReport);
+        final String report = System.getProperty("cffu.uncaught.exception.report", fullReport);
         final String msgHead = "Uncaught exception occurred at ";
         if (noneReport.equalsIgnoreCase(report)) {
             // pass silently when explicitly silenced.
-        } else if (fullReport.equalsIgnoreCase(report)) {
-            logger.error(msgHead + where, ex);
-        } else {
+        } else if (shortReport.equalsIgnoreCase(report)) {
             logger.error(msgHead + where + ", " + ex, null);
+        } else {
+            logger.error(msgHead + where, ex);
         }
 
         return null;
