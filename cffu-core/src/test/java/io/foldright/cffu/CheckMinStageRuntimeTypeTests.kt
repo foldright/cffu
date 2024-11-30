@@ -36,19 +36,19 @@ private class CheckMinStageRuntimeTypeTests {
         CompletableFutureUtils.mSupplyAllSuccessAsync<String>("").shouldNotBeMinimalStage()
         CompletableFutureUtils.mSupplyAllSuccessAsync("", Supplier { s }).shouldNotBeMinimalStage()
         CompletableFutureUtils.mSupplyAllSuccessAsync("", Supplier { s }, { s }).shouldNotBeMinimalStage()
-        CompletableFutureUtils.mSupplyAllSuccessAsync<String>("", testExecutor).shouldNotBeMinimalStage()
-        CompletableFutureUtils.mSupplyAllSuccessAsync("", testExecutor, { s }).shouldNotBeMinimalStage()
-        CompletableFutureUtils.mSupplyAllSuccessAsync("", testExecutor, { s }, { s }).shouldNotBeMinimalStage()
+        CompletableFutureUtils.mSupplyAllSuccessAsync<String>(testExecutor, "").shouldNotBeMinimalStage()
+        CompletableFutureUtils.mSupplyAllSuccessAsync(testExecutor, "", { s }).shouldNotBeMinimalStage()
+        CompletableFutureUtils.mSupplyAllSuccessAsync(testExecutor, "", { s }, { s }).shouldNotBeMinimalStage()
 
         CompletableFutureUtils.mSupplyMostSuccessAsync<String>("", 1, MILLISECONDS).shouldNotBeMinimalStage()
         CompletableFutureUtils.mSupplyMostSuccessAsync("", 1, MILLISECONDS, Supplier { s }).shouldNotBeMinimalStage()
         CompletableFutureUtils.mSupplyMostSuccessAsync("", 1, MILLISECONDS, Supplier { s }, { s })
             .shouldNotBeMinimalStage()
-        CompletableFutureUtils.mSupplyMostSuccessAsync<String>("", testExecutor, 1, MILLISECONDS)
+        CompletableFutureUtils.mSupplyMostSuccessAsync<String>(testExecutor, "", 1, MILLISECONDS)
             .shouldNotBeMinimalStage()
-        CompletableFutureUtils.mSupplyMostSuccessAsync("", testExecutor, 1, MILLISECONDS, Supplier { s })
+        CompletableFutureUtils.mSupplyMostSuccessAsync(testExecutor, "", 1, MILLISECONDS, Supplier { s })
             .shouldNotBeMinimalStage()
-        CompletableFutureUtils.mSupplyMostSuccessAsync("", testExecutor, 1, MILLISECONDS, Supplier { s }, { s })
+        CompletableFutureUtils.mSupplyMostSuccessAsync(testExecutor, "", 1, MILLISECONDS, Supplier { s }, { s })
             .shouldNotBeMinimalStage()
 
         CompletableFutureUtils.mSupplyAsync<String>().shouldNotBeMinimalStage()
@@ -166,9 +166,9 @@ private class CheckMinStageRuntimeTypeTests {
         CompletableFutureUtils.mostSuccessResultsOf("", 1, MILLISECONDS).shouldNotBeMinimalStage()
         CompletableFutureUtils.mostSuccessResultsOf("", 1, MILLISECONDS, cfN).shouldNotBeMinimalStage()
         CompletableFutureUtils.mostSuccessResultsOf("", 1, MILLISECONDS, cfN, cfAn).shouldNotBeMinimalStage()
-        CompletableFutureUtils.mostSuccessResultsOf("", testExecutor, 1, MILLISECONDS).shouldNotBeMinimalStage()
-        CompletableFutureUtils.mostSuccessResultsOf("", testExecutor, 1, MILLISECONDS, cfN).shouldNotBeMinimalStage()
-        CompletableFutureUtils.mostSuccessResultsOf("", testExecutor, 1, MILLISECONDS, cfN, cfAn)
+        CompletableFutureUtils.mostSuccessResultsOf(testExecutor, "", 1, MILLISECONDS).shouldNotBeMinimalStage()
+        CompletableFutureUtils.mostSuccessResultsOf(testExecutor, "", 1, MILLISECONDS, cfN).shouldNotBeMinimalStage()
+        CompletableFutureUtils.mostSuccessResultsOf(testExecutor, "", 1, MILLISECONDS, cfN, cfAn)
             .shouldNotBeMinimalStage()
 
         CompletableFutureUtils.allResultsOf<String>().shouldNotBeMinimalStage()
@@ -239,9 +239,9 @@ private class CheckMinStageRuntimeTypeTests {
         CompletableFutureUtils.thenMApplyAllSuccessAsync(cfThis, "").shouldNotBeMinimalStage()
         CompletableFutureUtils.thenMApplyAllSuccessAsync(cfThis, "", Function { s }).shouldNotBeMinimalStage()
         CompletableFutureUtils.thenMApplyAllSuccessAsync(cfThis, "", Function { s }, { s }).shouldNotBeMinimalStage()
-        CompletableFutureUtils.thenMApplyAllSuccessAsync(cfThis, "", testExecutor).shouldNotBeMinimalStage()
-        CompletableFutureUtils.thenMApplyAllSuccessAsync(cfThis, "", testExecutor, { s }).shouldNotBeMinimalStage()
-        CompletableFutureUtils.thenMApplyAllSuccessAsync(cfThis, "", testExecutor, { s }, { s })
+        CompletableFutureUtils.thenMApplyAllSuccessAsync(cfThis, testExecutor, "").shouldNotBeMinimalStage()
+        CompletableFutureUtils.thenMApplyAllSuccessAsync(cfThis, testExecutor, "", { s }).shouldNotBeMinimalStage()
+        CompletableFutureUtils.thenMApplyAllSuccessAsync(cfThis, testExecutor, "", { s }, { s })
             .shouldNotBeMinimalStage()
 
         CompletableFutureUtils.thenMApplyMostSuccessAsync<String, String>(cfThis, "", 1, MILLISECONDS)
@@ -250,14 +250,14 @@ private class CheckMinStageRuntimeTypeTests {
             .shouldNotBeMinimalStage()
         CompletableFutureUtils.thenMApplyMostSuccessAsync(cfThis, "", 1, MILLISECONDS, Function { s }, { s })
             .shouldNotBeMinimalStage()
-        CompletableFutureUtils.thenMApplyMostSuccessAsync(cfThis, "", testExecutor, 1, MILLISECONDS)
+        CompletableFutureUtils.thenMApplyMostSuccessAsync(cfThis, testExecutor, "", 1, MILLISECONDS)
             .shouldNotBeMinimalStage()
-        CompletableFutureUtils.thenMApplyMostSuccessAsync(cfThis, "", testExecutor, 1, MILLISECONDS, Function { s })
+        CompletableFutureUtils.thenMApplyMostSuccessAsync(cfThis, testExecutor, "", 1, MILLISECONDS, Function { s })
             .shouldNotBeMinimalStage()
         CompletableFutureUtils.thenMApplyMostSuccessAsync(
             cfThis,
-            "",
             testExecutor,
+            "",
             1,
             MILLISECONDS,
             Function { s },
@@ -430,11 +430,11 @@ private class CheckMinStageRuntimeTypeTests {
         // Timeout Control Methods of CompletableFuture
 
         CompletableFutureUtils.cffuOrTimeout(cfThis, 1, MILLISECONDS).shouldNotBeMinimalStage()
-        CompletableFutureUtils.cffuOrTimeout(cfThis, testExecutor, 1, MILLISECONDS).shouldNotBeMinimalStage()
+        CompletableFutureUtils.cffuOrTimeout(cfThis, 1, MILLISECONDS, testExecutor).shouldNotBeMinimalStage()
         CompletableFutureUtils.orTimeout(cfThis, 1, MILLISECONDS).shouldNotBeMinimalStage()
 
         CompletableFutureUtils.cffuCompleteOnTimeout(cfThis, "", 1, MILLISECONDS).shouldNotBeMinimalStage()
-        CompletableFutureUtils.cffuCompleteOnTimeout(cfThis, "", testExecutor, 1, MILLISECONDS)
+        CompletableFutureUtils.cffuCompleteOnTimeout(cfThis, "", 1, MILLISECONDS, testExecutor)
             .shouldNotBeMinimalStage()
         CompletableFutureUtils.completeOnTimeout(cfThis, "", 1, MILLISECONDS).shouldNotBeMinimalStage()
 
@@ -506,19 +506,19 @@ private class CheckMinStageRuntimeTypeTests {
         testCffuFac.mSupplyAllSuccessAsync<String>("").shouldNotBeMinimalStage()
         testCffuFac.mSupplyAllSuccessAsync("", Supplier { s }).shouldNotBeMinimalStage()
         testCffuFac.mSupplyAllSuccessAsync("", Supplier { s }, { s }).shouldNotBeMinimalStage()
-        testCffuFac.mSupplyAllSuccessAsync<String>("", testFjExecutor).shouldNotBeMinimalStage()
-        testCffuFac.mSupplyAllSuccessAsync("", testFjExecutor, { s }).shouldNotBeMinimalStage()
-        testCffuFac.mSupplyAllSuccessAsync("", testFjExecutor, { s }, { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAllSuccessAsync<String>(testFjExecutor, "").shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAllSuccessAsync(testFjExecutor, "", { s }).shouldNotBeMinimalStage()
+        testCffuFac.mSupplyAllSuccessAsync(testFjExecutor, "", { s }, { s }).shouldNotBeMinimalStage()
 
         testCffuFac.mSupplyMostSuccessAsync<String>("", 1, MILLISECONDS).shouldNotBeMinimalStage()
         testCffuFac.mSupplyMostSuccessAsync("", 1, MILLISECONDS, Supplier { s }).shouldNotBeMinimalStage()
         testCffuFac.mSupplyMostSuccessAsync("", 1, MILLISECONDS, Supplier { s }, { s })
             .shouldNotBeMinimalStage()
-        testCffuFac.mSupplyMostSuccessAsync<String>("", testFjExecutor, 1, MILLISECONDS)
+        testCffuFac.mSupplyMostSuccessAsync<String>(testFjExecutor, "", 1, MILLISECONDS)
             .shouldNotBeMinimalStage()
-        testCffuFac.mSupplyMostSuccessAsync("", testFjExecutor, 1, MILLISECONDS, Supplier { s })
+        testCffuFac.mSupplyMostSuccessAsync(testFjExecutor, "", 1, MILLISECONDS, Supplier { s })
             .shouldNotBeMinimalStage()
-        testCffuFac.mSupplyMostSuccessAsync("", testFjExecutor, 1, MILLISECONDS, Supplier { s }, { s })
+        testCffuFac.mSupplyMostSuccessAsync(testFjExecutor, "", 1, MILLISECONDS, Supplier { s }, { s })
             .shouldNotBeMinimalStage()
 
         testCffuFac.mSupplyAsync<String>().shouldNotBeMinimalStage()
@@ -720,17 +720,17 @@ private class CheckMinStageRuntimeTypeTests {
         cffuThis.thenMApplyAllSuccessAsync("").shouldNotBeMinimalStage()
         cffuThis.thenMApplyAllSuccessAsync("", Function { s }).shouldNotBeMinimalStage()
         cffuThis.thenMApplyAllSuccessAsync("", Function { s }, { s }).shouldNotBeMinimalStage()
-        cffuThis.thenMApplyAllSuccessAsync("", testFjExecutor).shouldNotBeMinimalStage()
-        cffuThis.thenMApplyAllSuccessAsync("", testFjExecutor, { s }).shouldNotBeMinimalStage()
-        cffuThis.thenMApplyAllSuccessAsync("", testFjExecutor, { s }, { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAllSuccessAsync(testFjExecutor, "").shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAllSuccessAsync(testFjExecutor, "", { s }).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyAllSuccessAsync(testFjExecutor, "", { s }, { s }).shouldNotBeMinimalStage()
 
         cffuThis.thenMApplyMostSuccessAsync<String>("", 1, MILLISECONDS).shouldNotBeMinimalStage()
         cffuThis.thenMApplyMostSuccessAsync("", 1, MILLISECONDS, Function { s }).shouldNotBeMinimalStage()
         cffuThis.thenMApplyMostSuccessAsync("", 1, MILLISECONDS, Function { s }, { s }).shouldNotBeMinimalStage()
-        cffuThis.thenMApplyMostSuccessAsync("", testFjExecutor, 1, MILLISECONDS).shouldNotBeMinimalStage()
-        cffuThis.thenMApplyMostSuccessAsync("", testFjExecutor, 1, MILLISECONDS, Function { s })
+        cffuThis.thenMApplyMostSuccessAsync(testFjExecutor, "", 1, MILLISECONDS).shouldNotBeMinimalStage()
+        cffuThis.thenMApplyMostSuccessAsync(testFjExecutor, "", 1, MILLISECONDS, Function { s })
             .shouldNotBeMinimalStage()
-        cffuThis.thenMApplyMostSuccessAsync("", testFjExecutor, 1, MILLISECONDS, Function { s }, { s })
+        cffuThis.thenMApplyMostSuccessAsync(testFjExecutor, "", 1, MILLISECONDS, Function { s }, { s })
             .shouldNotBeMinimalStage()
 
         cffuThis.thenMApplyAsync<String>().shouldNotBeMinimalStage()
@@ -896,11 +896,11 @@ private class CheckMinStageRuntimeTypeTests {
         // Timeout Control Methods of CompletableFuture
 
         cffuThis.orTimeout(1, MILLISECONDS).shouldNotBeMinimalStage()
-        cffuThis.orTimeout(testFjExecutor, 1, MILLISECONDS).shouldNotBeMinimalStage()
+        cffuThis.orTimeout(1, MILLISECONDS, testFjExecutor).shouldNotBeMinimalStage()
         cffuThis.unsafeOrTimeout(1, MILLISECONDS).shouldNotBeMinimalStage()
 
         cffuThis.completeOnTimeout("", 1, MILLISECONDS).shouldNotBeMinimalStage()
-        cffuThis.completeOnTimeout("", testFjExecutor, 1, MILLISECONDS).shouldNotBeMinimalStage()
+        cffuThis.completeOnTimeout("", 1, MILLISECONDS, testFjExecutor).shouldNotBeMinimalStage()
         cffuThis.unsafeCompleteOnTimeout("", 1, MILLISECONDS).shouldNotBeMinimalStage()
 
         // Advanced Methods of CompletionStage(compose* and handle-like methods)

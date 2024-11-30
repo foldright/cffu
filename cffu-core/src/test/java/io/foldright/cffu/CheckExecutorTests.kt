@@ -22,9 +22,9 @@ class CheckExecutorTests : FunSpec({
             CompletableFutureUtils.mSupplyFailFastAsync(testExecutor, *am.createSuppliers(count, testExecutor))
 
             CompletableFutureUtils.mSupplyAllSuccessAsync(null, *am.createSuppliers(count))
-            CompletableFutureUtils.mSupplyAllSuccessAsync(
-                null,
+            CompletableFutureUtils.mSupplyAllSuccessAsync<Int>(
                 testExecutor,
+                null,
                 *am.createSuppliers(count, testExecutor)
             )
 
@@ -35,8 +35,8 @@ class CheckExecutorTests : FunSpec({
                 *am.createSuppliers(count)
             )
             CompletableFutureUtils.mSupplyMostSuccessAsync(
-                null,
                 testExecutor,
+                null,
                 LONG_WAIT_MS,
                 MILLISECONDS,
                 *am.createSuppliers(count, testExecutor)
@@ -277,10 +277,10 @@ class CheckExecutorTests : FunSpec({
             )
 
             CompletableFutureUtils.thenMApplyAllSuccessAsync(cfThis, null, *am.createFunctions(count))
-            CompletableFutureUtils.thenMApplyAllSuccessAsync(
+            CompletableFutureUtils.thenMApplyAllSuccessAsync<Int, Int>(
                 cfThis,
-                null,
                 testExecutor,
+                null,
                 *am.createFunctions(count, testExecutor)
             )
 
@@ -293,8 +293,8 @@ class CheckExecutorTests : FunSpec({
             )
             CompletableFutureUtils.thenMApplyMostSuccessAsync(
                 cfThis,
-                null,
                 testExecutor,
+                null,
                 LONG_WAIT_MS,
                 MILLISECONDS,
                 *am.createFunctions(count, testExecutor)

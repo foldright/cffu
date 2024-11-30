@@ -247,7 +247,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyAllSuccessAsync(
             @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
-        return thenMApplyAllSuccessAsync(valueIfFailed, fac.defaultExecutor(), fns);
+        return thenMApplyAllSuccessAsync(fac.defaultExecutor(), valueIfFailed, fns);
     }
 
     /**
@@ -264,8 +264,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyAllSuccessAsync(
-            @Nullable U valueIfFailed, Executor executor, Function<? super T, ? extends U>... fns) {
-        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessAsync(cf, valueIfFailed, executor, fns));
+            Executor executor, @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
+        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessAsync(cf, executor, valueIfFailed, fns));
     }
 
     /**
@@ -278,7 +278,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyMostSuccessAsync(
             @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
-        return thenMApplyMostSuccessAsync(valueIfNotSuccess, fac.defaultExecutor(), timeout, unit, fns);
+        return thenMApplyMostSuccessAsync(fac.defaultExecutor(), valueIfNotSuccess, timeout, unit, fns);
     }
 
     /**
@@ -290,9 +290,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyMostSuccessAsync(
-            @Nullable U valueIfNotSuccess, Executor executor, long timeout, TimeUnit unit,
+            Executor executor, @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
             Function<? super T, ? extends U>... fns) {
-        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessAsync(cf, valueIfNotSuccess, executor, timeout, unit, fns));
+        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessAsync(cf, executor, valueIfNotSuccess, timeout, unit, fns));
     }
 
     /**
@@ -673,7 +673,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Object, Executor, Function[])} with {@code null} valueIfFailed.
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
@@ -696,7 +696,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Object, Executor, Function[])} with {@code null} valueIfFailed.
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
@@ -720,7 +720,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Object, Executor, Function[])} with {@code null} valueIfFailed.
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
@@ -745,7 +745,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Object, Executor, Function[])} with {@code null} valueIfFailed.
+     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
@@ -770,7 +770,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, Executor, long, TimeUnit, Function[])}
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -796,7 +796,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, Executor, long, TimeUnit, Function[])}
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -823,7 +823,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, Executor, long, TimeUnit, Function[])}
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -851,7 +851,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, Executor, long, TimeUnit, Function[])}
+     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -1641,10 +1641,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @see #orTimeout(Executor, long, TimeUnit)
+     * @see #orTimeout(long, TimeUnit, Executor)
      */
     public Cffu<T> orTimeout(long timeout, TimeUnit unit) {
-        return orTimeout(fac.defaultExecutor(), timeout, unit);
+        return orTimeout(timeout, unit, fac.defaultExecutor());
     }
 
     /**
@@ -1659,14 +1659,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
-     * @param executorWhenTimeout the async executor when triggered by timeout
      * @param timeout             how long to wait before completing exceptionally with a TimeoutException,
      *                            in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param executorWhenTimeout the async executor when triggered by timeout
      */
-    public Cffu<T> orTimeout(Executor executorWhenTimeout, long timeout, TimeUnit unit) {
+    public Cffu<T> orTimeout(long timeout, TimeUnit unit, Executor executorWhenTimeout) {
         checkMinimalStage();
-        return resetCf(CompletableFutureUtils.cffuOrTimeout(cf, executorWhenTimeout, timeout, unit));
+        return resetCf(CompletableFutureUtils.cffuOrTimeout(cf, timeout, unit, executorWhenTimeout));
     }
 
     /**
@@ -1722,10 +1722,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @see #completeOnTimeout(Object, Executor, long, TimeUnit)
+     * @see #completeOnTimeout(Object, long, TimeUnit, Executor)
      */
     public Cffu<T> completeOnTimeout(@Nullable T value, long timeout, TimeUnit unit) {
-        return completeOnTimeout(value, fac.defaultExecutor(), timeout, unit);
+        return completeOnTimeout(value, timeout, unit, fac.defaultExecutor());
     }
 
     /**
@@ -1741,13 +1741,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * >DelayDysfunctionDemo</a>.
      *
      * @param value               the value to use upon timeout
-     * @param executorWhenTimeout the async executor when triggered by timeout
      * @param timeout             how long to wait before completing normally with the given value, in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @param executorWhenTimeout the async executor when triggered by timeout
      */
-    public Cffu<T> completeOnTimeout(@Nullable T value, Executor executorWhenTimeout, long timeout, TimeUnit unit) {
+    public Cffu<T> completeOnTimeout(@Nullable T value, long timeout, TimeUnit unit, Executor executorWhenTimeout) {
         checkMinimalStage();
-        return resetCf(CompletableFutureUtils.cffuCompleteOnTimeout(cf, value, executorWhenTimeout, timeout, unit));
+        return resetCf(CompletableFutureUtils.cffuCompleteOnTimeout(cf, value, timeout, unit, executorWhenTimeout));
     }
 
     /**

@@ -99,7 +99,7 @@ fun <T> Array<out Supplier<out T>>.mSupplyFailFastAsyncCffu(
  */
 fun <T> Collection<Supplier<out T>>.mSupplyAllSuccessAsyncCffu(
     cffuFactory: CffuFactory, valueIfFailed: T, executor: Executor = cffuFactory.defaultExecutor()
-): Cffu<List<T>> = cffuFactory.mSupplyAllSuccessAsync(valueIfFailed, executor, *toTypedArray())
+): Cffu<List<T>> = cffuFactory.mSupplyAllSuccessAsync(executor, valueIfFailed, *toTypedArray())
 
 /**
  * Returns a new Cffu that is asynchronously completed
@@ -116,7 +116,7 @@ fun <T> Collection<Supplier<out T>>.mSupplyAllSuccessAsyncCffu(
  */
 fun <T> Array<out Supplier<out T>>.mSupplyAllSuccessAsyncCffu(
     cffuFactory: CffuFactory, valueIfFailed: T, executor: Executor = cffuFactory.defaultExecutor()
-): Cffu<List<T>> = cffuFactory.mSupplyAllSuccessAsync(valueIfFailed, executor, *this)
+): Cffu<List<T>> = cffuFactory.mSupplyAllSuccessAsync(executor, valueIfFailed, *this)
 
 /**
  * Returns a new Cffu that is asynchronously completed
@@ -138,7 +138,7 @@ fun <T> Array<out Supplier<out T>>.mSupplyAllSuccessAsyncCffu(
 fun <T> Collection<Supplier<out T>>.mSupplyMostSuccessAsyncCffu(
     cffuFactory: CffuFactory, valueIfNotSuccess: T,
     timeout: Long, unit: TimeUnit, executor: Executor = cffuFactory.defaultExecutor()
-): Cffu<List<T>> = cffuFactory.mSupplyMostSuccessAsync(valueIfNotSuccess, executor, timeout, unit, *toTypedArray())
+): Cffu<List<T>> = cffuFactory.mSupplyMostSuccessAsync(executor, valueIfNotSuccess, timeout, unit, *toTypedArray())
 
 /**
  * Returns a new Cffu that is asynchronously completed
@@ -160,7 +160,7 @@ fun <T> Collection<Supplier<out T>>.mSupplyMostSuccessAsyncCffu(
 fun <T> Array<out Supplier<out T>>.mSupplyMostSuccessAsyncCffu(
     cffuFactory: CffuFactory, valueIfNotSuccess: T,
     timeout: Long, unit: TimeUnit, executor: Executor = cffuFactory.defaultExecutor()
-): Cffu<List<T>> = cffuFactory.mSupplyMostSuccessAsync(valueIfNotSuccess, executor, timeout, unit, *this)
+): Cffu<List<T>> = cffuFactory.mSupplyMostSuccessAsync(executor, valueIfNotSuccess, timeout, unit, *this)
 
 /**
  * Returns a new Cffu that is asynchronously completed

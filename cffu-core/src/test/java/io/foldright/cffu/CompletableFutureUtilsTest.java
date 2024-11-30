@@ -56,9 +56,9 @@ class CompletableFutureUtilsTest {
                 mSupplyFailFastAsync(supplier, supplier),
                 mSupplyFailFastAsync(testExecutor, supplier, supplier),
                 mSupplyAllSuccessAsync(anotherN, supplier, supplier),
-                mSupplyAllSuccessAsync(anotherN, testExecutor, supplier, supplier),
+                mSupplyAllSuccessAsync(testExecutor, anotherN, supplier, supplier),
                 mSupplyMostSuccessAsync(anotherN, LONG_WAIT_MS, MILLISECONDS, supplier, supplier),
-                mSupplyMostSuccessAsync(anotherN, testExecutor, LONG_WAIT_MS, MILLISECONDS, supplier, supplier),
+                mSupplyMostSuccessAsync(testExecutor, anotherN, LONG_WAIT_MS, MILLISECONDS, supplier, supplier),
                 mSupplyAsync(supplier, supplier),
                 mSupplyAsync(testExecutor, supplier, supplier),
         };
@@ -1054,9 +1054,9 @@ class CompletableFutureUtilsTest {
                 thenMApplyFailFastAsync(completed, supplier, supplier),
                 thenMApplyFailFastAsync(completed, testExecutor, supplier, supplier),
                 thenMApplyAllSuccessAsync(completed, anotherN, supplier, supplier),
-                thenMApplyAllSuccessAsync(completed, anotherN, testExecutor, supplier, supplier),
+                thenMApplyAllSuccessAsync(completed, testExecutor, anotherN, supplier, supplier),
                 thenMApplyMostSuccessAsync(completed, anotherN, LONG_WAIT_MS, MILLISECONDS, supplier, supplier),
-                thenMApplyMostSuccessAsync(completed, anotherN, testExecutor, LONG_WAIT_MS, MILLISECONDS, supplier, supplier),
+                thenMApplyMostSuccessAsync(completed, testExecutor, anotherN, LONG_WAIT_MS, MILLISECONDS, supplier, supplier),
                 thenMApplyAsync(completed, supplier, supplier),
                 thenMApplyAsync(completed, testExecutor, supplier, supplier),
         };
@@ -1434,20 +1434,20 @@ class CompletableFutureUtilsTest {
                 cffuOrTimeout(incompleteCf(), SHORT_WAIT_MS, MILLISECONDS).get()
         ).getCause());
         assertInstanceOf(TimeoutException.class, assertThrowsExactly(ExecutionException.class, () ->
-                cffuOrTimeout(incompleteCf(), testExecutor, SHORT_WAIT_MS, MILLISECONDS).get()
+                cffuOrTimeout(incompleteCf(), SHORT_WAIT_MS, MILLISECONDS, testExecutor).get()
         ).getCause());
 
         assertEquals(n, orTimeout(completedFuture(n), SHORT_WAIT_MS, MILLISECONDS).get());
         assertEquals(n, cffuOrTimeout(completedFuture(n), SHORT_WAIT_MS, MILLISECONDS).get());
-        assertEquals(n, cffuOrTimeout(completedFuture(n), testExecutor, SHORT_WAIT_MS, MILLISECONDS).get());
+        assertEquals(n, cffuOrTimeout(completedFuture(n), SHORT_WAIT_MS, MILLISECONDS, testExecutor).get());
 
         assertEquals(n, completeOnTimeout(incompleteCf(), n, SHORT_WAIT_MS, MILLISECONDS).get());
         assertEquals(n, cffuCompleteOnTimeout(incompleteCf(), n, SHORT_WAIT_MS, MILLISECONDS).get());
-        assertEquals(n, cffuCompleteOnTimeout(incompleteCf(), n, testExecutor, SHORT_WAIT_MS, MILLISECONDS).get());
+        assertEquals(n, cffuCompleteOnTimeout(incompleteCf(), n, SHORT_WAIT_MS, MILLISECONDS, testExecutor).get());
 
         assertEquals(n, completeOnTimeout(completedFuture(n), anotherN, SHORT_WAIT_MS, MILLISECONDS).get());
         assertEquals(n, cffuCompleteOnTimeout(completedFuture(n), anotherN, SHORT_WAIT_MS, MILLISECONDS).get());
-        assertEquals(n, cffuCompleteOnTimeout(completedFuture(n), anotherN, testExecutor, SHORT_WAIT_MS, MILLISECONDS).get());
+        assertEquals(n, cffuCompleteOnTimeout(completedFuture(n), anotherN, SHORT_WAIT_MS, MILLISECONDS, testExecutor).get());
     }
 
     @Test
@@ -1472,7 +1472,7 @@ class CompletableFutureUtilsTest {
                 })
         ).collect(Collectors.toList()).stream().map(CompletableFuture::join).collect(Collectors.toList()));
         assertEquals(results, results.stream().map(i ->
-                cffuOrTimeout(incompleteCf(), testExecutor, SHORT_WAIT_MS, MILLISECONDS).handle((v, ex) -> {
+                cffuOrTimeout(incompleteCf(), SHORT_WAIT_MS, MILLISECONDS, testExecutor).handle((v, ex) -> {
                     assertInstanceOf(TimeoutException.class, ex);
                     assertFalse(Delayer.atCfDelayerThread());
                     assertRunningInExecutor(testExecutor);
@@ -1503,7 +1503,7 @@ class CompletableFutureUtilsTest {
                 })
         ).collect(Collectors.toList()).stream().map(CompletableFuture::join).collect(Collectors.toList()));
         assertEquals(results, results.stream().map(i ->
-                cffuCompleteOnTimeout(incompleteCf(), i, testExecutor, SHORT_WAIT_MS, MILLISECONDS).handle((v, ex) -> {
+                cffuCompleteOnTimeout(incompleteCf(), i, SHORT_WAIT_MS, MILLISECONDS, testExecutor).handle((v, ex) -> {
                     assertNull(ex);
                     assertFalse(Delayer.atCfDelayerThread());
                     assertRunningInExecutor(testExecutor);

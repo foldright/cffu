@@ -78,7 +78,7 @@ fun <T> Array<out Supplier<out T>>.mSupplyFailFastAsyncCompletableFuture(executo
 fun <T> Collection<Supplier<out T>>.mSupplyAllSuccessAsyncCompletableFuture(
     valueIfFailed: T, executor: Executor = ASYNC_POOL
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mSupplyAllSuccessAsync(valueIfFailed, executor, *toTypedArray())
+    CompletableFutureUtils.mSupplyAllSuccessAsync(executor, valueIfFailed, *toTypedArray())
 
 /**
  * Returns a new CompletableFuture that is asynchronously completed
@@ -96,7 +96,7 @@ fun <T> Collection<Supplier<out T>>.mSupplyAllSuccessAsyncCompletableFuture(
 fun <T> Array<out Supplier<out T>>.mSupplyAllSuccessAsyncCompletableFuture(
     valueIfFailed: T, executor: Executor = ASYNC_POOL
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mSupplyAllSuccessAsync(valueIfFailed, executor, *this)
+    CompletableFutureUtils.mSupplyAllSuccessAsync(executor, valueIfFailed, *this)
 
 /**
  * Returns a new CompletableFuture that is asynchronously completed
@@ -119,7 +119,7 @@ fun <T> Array<out Supplier<out T>>.mSupplyAllSuccessAsyncCompletableFuture(
 fun <T> Collection<Supplier<out T>>.mSupplyMostSuccessAsyncCompletableFuture(
     valueIfNotSuccess: T, timeout: Long, unit: TimeUnit, executor: Executor = ASYNC_POOL
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mSupplyMostSuccessAsync(valueIfNotSuccess, executor, timeout, unit, *toTypedArray())
+    CompletableFutureUtils.mSupplyMostSuccessAsync(executor, valueIfNotSuccess, timeout, unit, *toTypedArray())
 
 /**
  * Returns a new CompletableFuture that is asynchronously completed
@@ -142,7 +142,7 @@ fun <T> Collection<Supplier<out T>>.mSupplyMostSuccessAsyncCompletableFuture(
 fun <T> Array<out Supplier<out T>>.mSupplyMostSuccessAsyncCompletableFuture(
     valueIfNotSuccess: T, timeout: Long, unit: TimeUnit, executor: Executor = ASYNC_POOL
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mSupplyMostSuccessAsync(valueIfNotSuccess, executor, timeout, unit, *this)
+    CompletableFutureUtils.mSupplyMostSuccessAsync(executor, valueIfNotSuccess, timeout, unit, *this)
 
 /**
  * Returns a new CompletableFuture that is asynchronously completed
@@ -444,7 +444,7 @@ fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
 fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
     valueIfNotSuccess: T, executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mostSuccessResultsOf(valueIfNotSuccess, executorWhenTimeout, timeout, unit, *toTypedArray())
+    CompletableFutureUtils.mostSuccessResultsOf(executorWhenTimeout, valueIfNotSuccess, timeout, unit, *toTypedArray())
 
 /**
  * Returns a new CompletableFuture with the most results in the **same order** of the given stages arguments
@@ -462,7 +462,7 @@ fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture
 fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCompletableFuture(
     valueIfNotSuccess: T, executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit
 ): CompletableFuture<List<T>> =
-    CompletableFutureUtils.mostSuccessResultsOf(valueIfNotSuccess, executorWhenTimeout, timeout, unit, *this)
+    CompletableFutureUtils.mostSuccessResultsOf(executorWhenTimeout, valueIfNotSuccess, timeout, unit, *this)
 
 /**
  * Returns a new CompletableFuture with the results in the **same order** of all the given CompletableFutures arguments,
@@ -708,7 +708,7 @@ fun <T, U> CompletableFuture<out T>.thenMApplyAllSuccessAsync(
  */
 fun <T, U> CompletableFuture<out T>.thenMApplyAllSuccessAsync(
     valueIfFailed: U, executor: Executor, vararg fns: Function<in T, out U>
-): CompletableFuture<List<U>> = CompletableFutureUtils.thenMApplyAllSuccessAsync(this, valueIfFailed, executor, *fns)
+): CompletableFuture<List<U>> = CompletableFutureUtils.thenMApplyAllSuccessAsync(this, executor, valueIfFailed, *fns)
 
 /**
  * Returns a new CompletableFuture that, when the given stage completes normally,
@@ -754,7 +754,7 @@ fun <T, U> CompletableFuture<out T>.thenMApplyMostSuccessAsync(
 fun <T, U> CompletableFuture<out T>.thenMApplyMostSuccessAsync(
     valueIfNotSuccess: U, executor: Executor, timeout: Long, unit: TimeUnit, vararg fns: Function<in T, out U>
 ): CompletableFuture<List<U>> =
-    CompletableFutureUtils.thenMApplyMostSuccessAsync(this, valueIfNotSuccess, executor, timeout, unit, *fns)
+    CompletableFutureUtils.thenMApplyMostSuccessAsync(this, executor, valueIfNotSuccess, timeout, unit, *fns)
 
 /**
  * Returns a new CompletableFuture that, when the given stage completes normally,
@@ -1730,7 +1730,7 @@ fun <C : CompletableFuture<*>> C.cffuOrTimeout(timeout: Long, unit: TimeUnit): C
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  */
 fun <C : CompletableFuture<*>> C.cffuOrTimeout(executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit): C =
-    CompletableFutureUtils.cffuOrTimeout(this, executorWhenTimeout, timeout, unit)
+    CompletableFutureUtils.cffuOrTimeout(this, timeout, unit, executorWhenTimeout)
 
 /**
  * Exceptionally completes this CompletableFuture with a [TimeoutException]
@@ -1799,7 +1799,7 @@ fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
  */
 fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
     value: T, executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit
-): C = CompletableFutureUtils.cffuCompleteOnTimeout(this, value, executorWhenTimeout, timeout, unit)
+): C = CompletableFutureUtils.cffuCompleteOnTimeout(this, value, timeout, unit, executorWhenTimeout)
 
 /**
  * Completes this CompletableFuture with the given value if not otherwise completed before the given timeout.

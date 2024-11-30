@@ -67,9 +67,9 @@ class CffuTest {
                 completed.thenMApplyFailFastAsync(function_n, function_n),
                 completed.thenMApplyFailFastAsync(testExecutor, function_n, function_n),
                 completed.thenMApplyAllSuccessAsync(anotherN, function_n, function_n),
-                completed.thenMApplyAllSuccessAsync(anotherN, testExecutor, function_n, function_n),
+                completed.thenMApplyAllSuccessAsync(testExecutor, anotherN, function_n, function_n),
                 completed.thenMApplyMostSuccessAsync(anotherN, LONG_WAIT_MS, MILLISECONDS, function_n, function_n),
-                completed.thenMApplyMostSuccessAsync(anotherN, testExecutor, LONG_WAIT_MS, MILLISECONDS, function_n, function_n),
+                completed.thenMApplyMostSuccessAsync(testExecutor, anotherN, LONG_WAIT_MS, MILLISECONDS, function_n, function_n),
                 completed.thenMApplyAsync(function_n, function_n),
                 completed.thenMApplyAsync(testExecutor, function_n, function_n)
         };
@@ -329,27 +329,27 @@ class CffuTest {
                 testCffuFac.newIncompleteCffu().orTimeout(1, MILLISECONDS).get()
         ).getCause());
         assertInstanceOf(TimeoutException.class, assertThrowsExactly(ExecutionException.class, () ->
-                testCffuFac.newIncompleteCffu().orTimeout(testExecutor, 1, MILLISECONDS).get()
+                testCffuFac.newIncompleteCffu().orTimeout(1, MILLISECONDS, testExecutor).get()
         ).getCause());
         assertInstanceOf(TimeoutException.class, assertThrowsExactly(ExecutionException.class, () ->
                 testCffuFac.newIncompleteCffu().unsafeOrTimeout(1, MILLISECONDS).get()
         ).getCause());
 
         assertEquals(n, testCffuFac.completedFuture(n).orTimeout(1, MILLISECONDS).get());
-        assertEquals(n, testCffuFac.completedFuture(n).orTimeout(testExecutor, 1, MILLISECONDS).get());
+        assertEquals(n, testCffuFac.completedFuture(n).orTimeout(1, MILLISECONDS, testExecutor).get());
         assertEquals(n, testCffuFac.completedFuture(n).unsafeOrTimeout(1, MILLISECONDS).get());
 
         assertEquals(n, testCffuFac.newIncompleteCffu().completeOnTimeout(
                 n, 1, MILLISECONDS).get());
         assertEquals(n, testCffuFac.newIncompleteCffu().completeOnTimeout(
-                n, testExecutor, 1, MILLISECONDS).get());
+                n, 1, MILLISECONDS, testExecutor).get());
         assertEquals(n, testCffuFac.newIncompleteCffu().unsafeCompleteOnTimeout(
                 n, 1, MILLISECONDS).get());
 
         assertEquals(n, testCffuFac.completedFuture(n).completeOnTimeout(
                 anotherN, 1, MILLISECONDS).get());
         assertEquals(n, testCffuFac.completedFuture(n).completeOnTimeout(
-                anotherN, testExecutor, 1, MILLISECONDS).get());
+                anotherN, 1, MILLISECONDS, testExecutor).get());
         assertEquals(n, testCffuFac.completedFuture(n).unsafeCompleteOnTimeout(
                 anotherN, 1, MILLISECONDS).get());
     }

@@ -195,7 +195,7 @@ public final class CffuFactory {
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyAllSuccessAsync(
             @Nullable T valueIfFailed, Supplier<? extends T>... suppliers) {
-        return mSupplyAllSuccessAsync(valueIfFailed, defaultExecutor, suppliers);
+        return mSupplyAllSuccessAsync(defaultExecutor, valueIfFailed, suppliers);
     }
 
     /**
@@ -206,8 +206,8 @@ public final class CffuFactory {
      */
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyAllSuccessAsync(
-            @Nullable T valueIfFailed, Executor executor, Supplier<? extends T>... suppliers) {
-        return create(CompletableFutureUtils.mSupplyAllSuccessAsync(valueIfFailed, executor, suppliers));
+            Executor executor, @Nullable T valueIfFailed, Supplier<? extends T>... suppliers) {
+        return create(CompletableFutureUtils.mSupplyAllSuccessAsync(executor, valueIfFailed, suppliers));
     }
 
     /**
@@ -220,7 +220,7 @@ public final class CffuFactory {
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyMostSuccessAsync(
             @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit, Supplier<? extends T>... suppliers) {
-        return mSupplyMostSuccessAsync(valueIfNotSuccess, defaultExecutor, timeout, unit, suppliers);
+        return mSupplyMostSuccessAsync(defaultExecutor, valueIfNotSuccess, timeout, unit, suppliers);
     }
 
     /**
@@ -232,9 +232,9 @@ public final class CffuFactory {
      */
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyMostSuccessAsync(
-            @Nullable T valueIfNotSuccess, Executor executor, long timeout, TimeUnit unit,
+            Executor executor, @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit,
             Supplier<? extends T>... suppliers) {
-        return create(CompletableFutureUtils.mSupplyMostSuccessAsync(valueIfNotSuccess, executor, timeout, unit, suppliers));
+        return create(CompletableFutureUtils.mSupplyMostSuccessAsync(executor, valueIfNotSuccess, timeout, unit, suppliers));
     }
 
     /**
@@ -462,7 +462,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Executor, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -484,7 +484,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Executor, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -508,7 +508,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Executor, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -532,7 +532,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Executor, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variance of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -556,7 +556,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -581,7 +581,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -607,7 +607,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -634,7 +634,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, Executor, long, TimeUnit, Supplier[])}
+     * Tuple variance of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -793,7 +793,7 @@ public final class CffuFactory {
     public final <T> Cffu<List<T>> mostSuccessResultsOf(
             @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit, CompletionStage<? extends T>... cfs) {
         return create(CompletableFutureUtils.mostSuccessResultsOf(
-                valueIfNotSuccess, defaultExecutor, timeout, unit, cfs));
+                defaultExecutor, valueIfNotSuccess, timeout, unit, cfs));
     }
 
     /**

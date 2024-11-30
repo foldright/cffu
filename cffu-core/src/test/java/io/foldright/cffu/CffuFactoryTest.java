@@ -83,9 +83,9 @@ class CffuFactoryTest {
                 testCffuFac.mSupplyFailFastAsync(supplier, supplier),
                 testCffuFac.mSupplyFailFastAsync(testExecutor, supplier, supplier),
                 testCffuFac.mSupplyAllSuccessAsync(anotherN, supplier, supplier),
-                testCffuFac.mSupplyAllSuccessAsync(anotherN, testExecutor, supplier, supplier),
+                testCffuFac.mSupplyAllSuccessAsync(testExecutor, anotherN, supplier, supplier),
                 testCffuFac.mSupplyMostSuccessAsync(anotherN, LONG_WAIT_MS, MILLISECONDS, supplier, supplier),
-                testCffuFac.mSupplyMostSuccessAsync(anotherN, testExecutor, LONG_WAIT_MS, MILLISECONDS, supplier, supplier),
+                testCffuFac.mSupplyMostSuccessAsync(testExecutor, anotherN, LONG_WAIT_MS, MILLISECONDS, supplier, supplier),
                 testCffuFac.mSupplyAsync(supplier, supplier),
                 testCffuFac.mSupplyAsync(testExecutor, supplier, supplier),
         };
