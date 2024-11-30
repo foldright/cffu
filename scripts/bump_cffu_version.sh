@@ -18,6 +18,6 @@ readonly old_version="$1"
 readonly new_version="$2"
 
 # shellcheck disable=SC2046
-sed -i "s/1.0.0-Alpha29/$new_version/g" $(rg 1.0.0-Alpha29 -l)
+sed -i "s/1.x-SNAPSHOT/$new_version/g" $(rg "1.x-SNAPSHOT" -l -g '!scripts/')
 # shellcheck disable=SC2046
-sed -i "s/$old_version/$new_version/g" $(rg "$old_version" -l)
+sed -i "s/$old_version/$new_version/g" $(rg "$old_version" -l -g '!scripts/')
