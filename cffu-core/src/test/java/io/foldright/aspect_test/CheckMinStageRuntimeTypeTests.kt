@@ -1,10 +1,11 @@
 package io.foldright.aspect_test
 
 import io.foldright.cffu.Cffu
+import io.foldright.cffu.CffuFactory
 import io.foldright.cffu.CompletableFutureUtils
 import io.foldright.test_utils.*
+import io.kotest.core.spec.style.AnnotationSpec
 import io.kotest.inspectors.forAll
-import org.junit.jupiter.api.Test
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.completedFuture
 import java.util.concurrent.CompletionStage
@@ -16,7 +17,10 @@ import java.util.function.Supplier
  * Check the runtime type of return value of all method that returned CompletableFuture/Cffu.
  */
 @Suppress("MoveLambdaOutsideParentheses")
-private class CheckMinStageRuntimeTypeTests {
+class CheckMinStageRuntimeTypeTests : AnnotationSpec() {
+    private val testExecutor = createThreadPool("CheckMinStageRuntimeTypeTests", queueCapacity = 1000_000)
+    private val testCffuFac = CffuFactory.builder(testExecutor).build();
+
     private val cfThis: CompletableFuture<String> = completedFuture("cf this")
     private val csThis: CompletionStage<String> = CompletableFutureUtils.completedStage("cs this")
     private val cffuThis: Cffu<String> = testCffuFac.completedFuture("cffu this")
@@ -945,5 +949,12 @@ private class CheckMinStageRuntimeTypeTests {
         // NOTE: do NOT keep the mini like CompletableFuture, it's OK.
         //       Casting CompletionStage instances to Cffu is not normal/public API usage!!
         minCffuThis.newIncompleteFuture<Int>().shouldNotBeMinimalStage()
+    }
+
+    @AfterEach
+    fun afterEach() {
+        println("executor info of CheckMinStageRuntimeTypeTests:")
+        println("testExecutor: $testExecutor")
+        println("testFjExecutor: $testFjExecutor")
     }
 }
