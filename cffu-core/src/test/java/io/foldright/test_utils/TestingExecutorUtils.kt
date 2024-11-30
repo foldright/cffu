@@ -5,6 +5,7 @@ package io.foldright.test_utils
 import io.foldright.cffu.CffuFactory
 import io.kotest.assertions.fail
 import io.kotest.core.config.AbstractProjectConfig
+import io.kotest.core.listeners.AfterProjectListener
 import io.kotest.core.listeners.BeforeProjectListener
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -19,7 +20,7 @@ import kotlin.random.nextULong
 ////////////////////////////////////////////////////////////////////////////////
 
 @JvmField
-val THREAD_COUNT_OF_POOL: Int = (Runtime.getRuntime().availableProcessors() * 3).coerceAtLeast(8).coerceAtMost(20)
+val THREAD_COUNT_OF_POOL: Int = (Runtime.getRuntime().availableProcessors() * 4).coerceAtLeast(8).coerceAtMost(30)
 
 @JvmField
 val testExecutor = createThreadPool("ThreadPoolForCffuTesting")
@@ -31,15 +32,21 @@ val testCffuFac: CffuFactory = CffuFactory.builder(testExecutor).build()
 val testFjExecutor = createThreadPool("ForkJoinPoolForCffuTesting", true)
 
 @JvmOverloads
-fun createThreadPool(threadNamePrefix: String, isForkJoin: Boolean = false): ExecutorService {
+fun createThreadPool(
+    threadNamePrefix: String,
+    isForkJoin: Boolean = false,
+    queueCapacity: Int? = null
+): ExecutorService {
     val counter = AtomicLong()
     val prefix = "${threadNamePrefix}_${Random.nextULong()}_"
+
+    val qc = queueCapacity ?: (THREAD_COUNT_OF_POOL * 500).coerceAtLeast(5000);
 
     val executorService = if (!isForkJoin)
         ThreadPoolExecutor(
             /* corePoolSize = */ THREAD_COUNT_OF_POOL, /* maximumPoolSize = */ THREAD_COUNT_OF_POOL,
-            /* keepAliveTime = */ 2, TimeUnit.MINUTES,
-            /* workQueue = */ ArrayBlockingQueue((THREAD_COUNT_OF_POOL * 500).coerceAtLeast(5000))
+            /* keepAliveTime = */ 1, TimeUnit.MINUTES,
+            /* workQueue = */ ArrayBlockingQueue(qc)
         ) { r ->
             Thread(r).apply {
                 name = "${prefix}${counter.getAndIncrement()}"
@@ -61,7 +68,7 @@ fun createThreadPool(threadNamePrefix: String, isForkJoin: Boolean = false): Exe
         override fun unwrap(): ExecutorService = executorService
 
         override fun toString(): String =
-            "test ${if (isForkJoin) "ForkJoinPool" else "ThreadPoolExecutor"} with thread name prefix `$prefix`"
+            "test ${if (isForkJoin) "ForkJoinPool" else "ThreadPoolExecutor"} with thread name prefix `$prefix`, $executorService"
     }
 }
 
@@ -147,7 +154,7 @@ fun shutdownExecutorService(vararg executors: ExecutorService) {
 /**
  * https://kotest.io/docs/framework/project-config.html
  */
-object CffuKotestProjectConfig : AbstractProjectConfig(), BeforeProjectListener {
+object CffuKotestProjectConfig : AbstractProjectConfig(), BeforeProjectListener, AfterProjectListener {
     override suspend fun beforeProject() {
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
         println("call beforeProject")
@@ -160,5 +167,11 @@ object CffuKotestProjectConfig : AbstractProjectConfig(), BeforeProjectListener 
         println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 
         warmupExecutorService(testExecutor, testFjExecutor)
+    }
+
+    override suspend fun afterProject() {
+        println("executor info afterProject:")
+        println("testExecutor: $testExecutor")
+        println("testFjExecutor: $testFjExecutor")
     }
 }
