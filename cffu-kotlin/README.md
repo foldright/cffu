@@ -19,16 +19,16 @@ This module provides the extension methods to leverage Kotlin language.
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-kotlin</artifactId>
-      <version>1.0.0-Alpha29</version>
+      <version>1.0.0-Alpha30</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     ```groovy
     // Gradle Kotlin DSL
-    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha29")
+    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha30")
     ```
     ```groovy
     // Gradle Groovy DSL
-    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha29'
+    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha30'
     ```
