@@ -1123,8 +1123,8 @@ public final class CffuFactory {
      * Returns a new CompletionStage that is already completed with the given value
      * and supports only those methods in interface {@link CompletionStage}.
      * <p>
-     * <strong>CAUTION:</strong> if run on old Java 8(not support *minimal* CompletionStage), just return a Cffu with
-     * a *normal* underlying CompletableFuture which is NOT with a *minimal* CompletionStage.
+     * <strong>CAUTION:</strong> if run on old Java 8 (which does not support *minimal* CompletionStage),
+     * this method just returns a *normal* Cffu instance which is NOT a *minimal* CompletionStage.
      *
      * @param value the value
      * @param <T>   the type of the value
@@ -1151,8 +1151,8 @@ public final class CffuFactory {
      * Returns a new CompletionStage that is already completed exceptionally
      * with the given exception and supports only those methods in interface {@link CompletionStage}.
      * <p>
-     * <strong>CAUTION:</strong> if run on old Java 8(not support *minimal* CompletionStage), just return a Cffu with
-     * a *normal* underlying CompletableFuture which is NOT with a *minimal* CompletionStage.
+     * <strong>CAUTION:</strong> if run on old Java 8 (which does not support *minimal* CompletionStage),
+     * this method just returns a *normal* Cffu instance which is NOT a *minimal* CompletionStage.
      *
      * @param ex  the exception
      * @param <T> the type of the value
@@ -1172,8 +1172,8 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a Cffu maintaining the same completion properties as this stage and this {@code CffuFactory} config.
-     * If this stage is already a Cffu and have the same {@code CffuFactory}, this method may return this stage itself.
+     * Returns a Cffu maintaining the same completion properties as the given stage and this {@code CffuFactory} config.
+     * If the given stage is already a Cffu and have the this {@code CffuFactory}, this method may return the given stage.
      *
      * @throws NullPointerException if the given stage is null
      * @see #toCffuArray(CompletionStage[])

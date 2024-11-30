@@ -1407,8 +1407,8 @@ public final class CompletableFutureUtils {
      * Returns a new CompletionStage that is already completed with the given value
      * and supports only those methods in interface {@link CompletionStage}.
      * <p>
-     * <strong>CAUTION:</strong> if run on old Java 8(not support *minimal* CompletionStage),
-     * just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
+     * <strong>CAUTION:</strong> if run on old Java 8 (which does not support *minimal* CompletionStage),
+     * this method just returns a *normal* CompletableFuture instance which is NOT a *minimal* CompletionStage.
      *
      * @param value the value
      * @param <T>   the type of the value
@@ -1423,8 +1423,8 @@ public final class CompletableFutureUtils {
      * Returns a new CompletionStage that is already completed exceptionally with
      * the given exception and supports only those methods in interface {@link CompletionStage}.
      * <p>
-     * <strong>CAUTION:</strong> if run on old Java 8(not support *minimal* CompletionStage),
-     * just return a *normal* CompletableFuture which is NOT with a *minimal* CompletionStage.
+     * <strong>CAUTION:</strong> if run on old Java 8 (which does not support *minimal* CompletionStage),
+     * this method just returns a *normal* CompletableFuture instance which is NOT a *minimal* CompletionStage.
      *
      * @param ex  the exception
      * @param <T> the type of the value
@@ -2923,7 +2923,7 @@ public final class CompletableFutureUtils {
      * Exceptionally completes given CompletableFuture with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
      * <p>
-     * <strong>CAUTION:</strong> This method and {@link CompletableFuture#orTimeout} is <strong>UNSAFE</strong>!
+     * <strong>CAUTION:</strong> {@link CompletableFuture#orTimeout} and this backport method are <strong>UNSAFE</strong>!
      * <p>
      * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
      * are performed in the <strong>SINGLE thread builtin executor</strong>
@@ -2932,10 +2932,10 @@ public final class CompletableFutureUtils {
      * (including delay execution and timeout).
      * <p>
      * <strong>Strong recommend</strong> using the safe method {@link #cffuOrTimeout(CompletableFuture,
-     * Executor, long, TimeUnit)} instead of this method and {@link CompletableFuture#orTimeout}.<br>
+     * long, TimeUnit, Executor)} instead of {@link CompletableFuture#orTimeout} and this backport method.<br>
      * Unless all subsequent actions of dependent CompletableFutures is ensured executing async(aka. the dependent
-     * CompletableFutures is created by async methods), using this method and {@link CompletableFuture#orTimeout}
-     * is one less thread switch of task execution when triggered by timeout.
+     * CompletableFutures is created by async methods), using {@link CompletableFuture#orTimeout}
+     * and this backport method are one less thread switch of task execution when triggered by timeout.
      * <p>
      * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout} leaks if the future completes exceptionally,
      * more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
@@ -2946,7 +2946,7 @@ public final class CompletableFutureUtils {
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @return the given CompletableFuture
-     * @see #cffuOrTimeout(CompletableFuture, Executor, long, TimeUnit)
+     * @see #cffuOrTimeout(CompletableFuture, long, TimeUnit, Executor)
      */
     @Contract("_, _, _ -> param1")
     public static <C extends CompletableFuture<?>> C orTimeout(C cfThis, long timeout, TimeUnit unit) {
@@ -2954,7 +2954,8 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         // NOTE: No need check minimal stage, because checked in cfThis.orTimeout() / cfThis.isDone() below
 
-        // because of bug JDK-8303742, delegate to CompletableFuture.orTimeout() when Java 21+(not Java 9+)
+        // because of bug JDK-8303742, delegate to CompletableFuture.orTimeout for Java 21+(the bug is fixed at Java 21)
+        // instead of Java 9+(CompletableFuture#orTimeout is new API since Java 9)
         if (IS_JAVA21_PLUS) {
             cfThis.orTimeout(timeout, unit);
         } else {
@@ -3020,17 +3021,18 @@ public final class CompletableFutureUtils {
     /**
      * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
      * <p>
-     * <strong>CAUTION:</strong> This method and {@link CompletableFuture#completeOnTimeout} is <strong>UNSAFE</strong>!
+     * <strong>CAUTION:</strong> {@link CompletableFuture#completeOnTimeout} and this backport method are <strong>UNSAFE</strong>!
      * <p>
      * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
      * are performed in the <strong>SINGLE thread builtin executor</strong> of CompletableFuture for delay execution
      * (including timeout function). So the long-running subsequent non-async actions lead to
      * the CompletableFuture dysfunction (including delay execution and timeout).
      * <p>
-     * <strong>Strong recommend</strong> using the safe method {@link #cffuCompleteOnTimeout(CompletableFuture, Object, long, TimeUnit, Executor)} instead of this method and {@link CompletableFuture#completeOnTimeout}.<br>
+     * <strong>Strong recommend</strong> using the safe method {@link #cffuCompleteOnTimeout(CompletableFuture, Object,
+     * long, TimeUnit, Executor)} instead of {@link CompletableFuture#completeOnTimeout} and this backport method.<br>
      * Unless all subsequent actions of dependent CompletableFutures is ensured executing async(aka. the dependent
-     * CompletableFutures is created by async methods), using this method and {@link CompletableFuture#completeOnTimeout}
-     * is one less thread switch of task execution when triggered by timeout.
+     * CompletableFutures is created by async methods), using {@link CompletableFuture#completeOnTimeout}
+     * and this backport method are one less thread switch of task execution when triggered by timeout.
      *
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
@@ -3637,8 +3639,8 @@ public final class CompletableFutureUtils {
      * If given CompletableFuture completes exceptionally, then the returned CompletionStage completes exceptionally
      * with a CompletionException with given exception as cause.
      * <p>
-     * <strong>CAUTION:</strong> if run on old Java 8(not support *minimal* CompletionStage),
-     * just return a *normal* CompletableFuture which is NOT a *minimal* CompletionStage.
+     * <strong>CAUTION:</strong> if run on old Java 8 (which does not support *minimal* CompletionStage),
+     * this method just returns a *normal* CompletableFuture instance which is NOT a *minimal* CompletionStage.
      *
      * @see CompletableFuture#minimalCompletionStage()
      */

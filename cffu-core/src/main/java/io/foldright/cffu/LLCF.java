@@ -18,25 +18,24 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  * <p>
  * In general, you should NEVER use this class in application codes,
  * unless you understand the underlying logic of CompletableFuture and need hack it.
+ * <p>
+ * Because the methods are Low Level, use below the method name convention intentionally:
+ * <ul>
+ * <li>methods with {@code f_} prefix means not type-safe, e.g.
+ *    <ul>
+ *    <li>return type CompletableFuture that may be a minimal-stage
+ *    <li>force cast to {@code CompletableFuture<T>} from any {@code CompletableFuture<?>}
+ *    <li>return generic type T but constrained type TupleX
+ *    </ul>
+ * <li>methods with {@code 0} suffix means no parameter validation, e.g.
+ *    <ul><li>no null check</li></ul>
+ * </ul>
  */
 public final class LLCF {
 
     ////////////////////////////////////////////////////////////////////////////////
     // region# CF conversion and test methods
     ////////////////////////////////////////////////////////////////////////////////
-
-    /*
-     * Implementation Note about the name convention of internal methods:
-     *
-     * - methods with `f_` prefix means not type-safe, e.g.
-     *    - return type CompletableFuture that may be a minimal-stage
-     *    - force cast to CompletableFuture<T> from any CompletableFuture<?>
-     *    - return generic type T but constrained type TupleX
-     * - methods with `0` suffix means no parameter validation, e.g.
-     *    - no null check
-     *
-     * because these methods is not safe, caller logic SHOULD pay attention to keep implementation correct.
-     */
 
     /**
      * Force casts CompletableFuture with the value type, IGNORE the compile-time type check.

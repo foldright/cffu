@@ -44,7 +44,7 @@
     - [2.6 超时执行安全的`orTimeout` / `completeOnTimeout`新实现](#26-%E8%B6%85%E6%97%B6%E6%89%A7%E8%A1%8C%E5%AE%89%E5%85%A8%E7%9A%84ortimeout--completeontimeout%E6%96%B0%E5%AE%9E%E7%8E%B0)
     - [2.7 支持超时的`join`的方法](#27-%E6%94%AF%E6%8C%81%E8%B6%85%E6%97%B6%E7%9A%84join%E7%9A%84%E6%96%B9%E6%B3%95)
     - [2.8 返回具体类型的`anyOf`方法](#28-%E8%BF%94%E5%9B%9E%E5%85%B7%E4%BD%93%E7%B1%BB%E5%9E%8B%E7%9A%84anyof%E6%96%B9%E6%B3%95)
-    - [2.9 输入宽泛类型的`allof/anyOf`方法](#29-%E8%BE%93%E5%85%A5%E5%AE%BD%E6%B3%9B%E7%B1%BB%E5%9E%8B%E7%9A%84allofanyof%E6%96%B9%E6%B3%95)
+    - [2.9 输入宽泛类型的`allOf/anyOf`方法](#29-%E8%BE%93%E5%85%A5%E5%AE%BD%E6%B3%9B%E7%B1%BB%E5%9E%8B%E7%9A%84allofanyof%E6%96%B9%E6%B3%95)
     - [更多功能说明](#%E6%9B%B4%E5%A4%9A%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E)
   - [3. 如何从直接使用`CompletableFuture`类迁移到`Cffu`类](#3-%E5%A6%82%E4%BD%95%E4%BB%8E%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8completablefuture%E7%B1%BB%E8%BF%81%E7%A7%BB%E5%88%B0cffu%E7%B1%BB)
 - [🔌 API Docs](#-api-docs)
@@ -61,7 +61,7 @@
 ☘️ **补全业务使用中缺失的功能**
 
 - 🏪 更方便的功能，如
-  - 支持返回多个`CF`的运行结果，而不是不返回`CF`的运行结果（`CompletableFuture#allOf`）  
+  - 支持返回多个输入`CF`的运行结果，而不是不返回输入`CF`结果（`CompletableFuture#allOf`）  
     如方法`allResultsFailFastOf` / `allResultsOf` / `mSupplyFailFastAsync` / `thenMApplyFailFastAsync`
   - 支持返回多个不同类型的`CF`结果，而不是同一类型  
     如方法`allTupleFailFastOf` / `allTupleOf` / `mSupplyTupleFailFastAsync` / `thenMApplyTupleFailFastAsync`
@@ -76,7 +76,7 @@
   - `All(Complete)` / `Any(Complete)`策略：这2个是`CompletableFuture`已有支持的策略
 - 🦺 更安全的使用方式，如
   - 支持设置缺省的业务线程池并封装携带，`CffuFactory#builder(executor)`方法
-  - 超时执行安全的`orTimeout` / `completeOnTimeout`新实现  
+  - 超时执行安全的`orTimeout` / `completeOnTimeout`方法新实现  
     `CF#orTimeout` / `CF#completeOnTimeout`方法会导致`CF`的超时与延迟执行基础功能失效❗️
   - 一定不会修改`CF`结果的`peek`处理方法  
     `whenComplete`方法可能会修改`CF`的结果，返回的`CF`与输入`CF`并不一定一致
@@ -89,11 +89,6 @@
   - 非阻塞地获取成功结果，如果`CF`失败或还在运行中则返回指定的缺省值，`getSuccessNow`方法
   - 解包装`CF`异常成业务异常，`unwrapCfException`方法
 
-💪 **已有功能的增强**，如
-
-- `anyOf`方法：返回具体类型`T`（类型安全），而不是返回`Object`（`CompletableFuture#anyOf`）
-- `allof` / `anyOf`方法：输入更宽泛的`CompletionStage`参数类型，而不是`CompletableFuture`类（`CompletableFuture#allOf/anyOf`）
-
 ⏳ **`Backport`支持`Java 8`**，`Java 9+`高版本的所有`CF`新功能方法在`Java 8`低版本直接可用，如
 
 - 超时控制：`orTimeout` / `completeOnTimeout`
@@ -102,7 +97,12 @@
 - 处理操作：`completeAsync` / `exceptionallyAsync` / `exceptionallyCompose` / `copy`
 - 非阻塞读：`resultNow` / `exceptionNow` / `state`
 
-更多`cffu`的使用方式与功能说明详见 [User Guide](#-user-guide)。
+💪 **已有功能的增强**，如
+
+- `anyOf`方法：返回具体类型`T`（类型安全），而不是返回`Object`（`CompletableFuture#anyOf`）
+- `allOf` / `anyOf`方法：输入更宽泛的`CompletionStage`参数类型，而不是`CompletableFuture`类（`CompletableFuture#allOf/anyOf`）
+
+更多`cffu`功能及其使用方式的说明详见 [👥 User Guide](#-user-guide)。
 
 ## 关于`CompletableFuture`
 
@@ -112,16 +112,16 @@
 
 其中[`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)有其优点：
 
-- **`Java`标准库内置**
-  - 无需额外依赖，几乎总是可用
-  - 相信有极高的实现质量
 - **广为人知广泛使用，有一流的群众基础**
   - `CompletableFuture`在2014年发布的`Java 8`提供，有10年了
   - `CompletableFuture`的父接口[`Future`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Future.html)早在2004年发布的`Java 5`中提供，有20年了
   - 虽然`Future`接口不支持 运行结果的异步获取与并发执行逻辑的编排，但也让广大`Java`开发者熟悉了`Future`这个典型的概念与工具
+- **`Java`标准库内置**
+  - 无需额外依赖，几乎总是可用
+  - 相信有极高的实现质量
 - **功能强大、但不会非常庞大复杂**
   - 足以应对日常的业务需求开发
-  - 其它的大型并发框架（比如[`Akka`](https://akka.io/)、[`RxJava`](https://github.com/ReactiveX/RxJava)）在使用上需要理解的内容要多很多
+  - 其它大型并发框架（比如[`Akka`](https://akka.io/)、[`RxJava`](https://github.com/ReactiveX/RxJava)）在使用上需要理解的内容要多很多
   - 当然基本的并发关注方面及其复杂性，与具体使用哪个工具无关，都是要理解与注意的
 - **高层抽象**
   - 或说 以业务流程的形式表达技术的并发流程
@@ -129,7 +129,7 @@
 
 和其它并发工具、框架一样，`CompletableFuture`用于
 
-- 并发执行业务逻辑，或说编排并发的处理流程/处理任务
+- 并发执行业务逻辑，或说编排并发处理流程或异步任务
 - 多核并行处理，充分利用资源
 - 提升业务响应性
 
@@ -144,7 +144,7 @@
 
 推荐`Cffu`类的使用方式： 🌟
 
-- 相比`CompletableFutureUtils`的静态方法，新功能方法以类实例方法的方式自然方便调用（就像使用`CompletableFuture`一样）
+- 相比`CompletableFutureUtils`的静态方法，新功能作为实例方法，可以自然方便地调用，就像使用`CompletableFuture`一样
 - `Java`语言不支持在已有类上扩展方法，所以需要一个新的包装类
 
 如果你不想在项目中引入新类（`Cffu`类）、觉得这样增加了复杂性的话，完全可以把`cffu`库作为一个工具类来用：
@@ -167,18 +167,18 @@
   <dependency>
     <groupId>io.foldright</groupId>
     <artifactId>cffu</artifactId>
-    <version>1.0.0-Alpha29</version>
+    <version>1.0.0-Alpha30</version>
   </dependency>
   ```
 - For `Gradle` projects:
 
+  Gradle Kotlin DSL
   ```groovy
-  // Gradle Kotlin DSL
-  implementation("io.foldright:cffu:1.0.0-Alpha29")
+  implementation("io.foldright:cffu:1.0.0-Alpha30")
   ```
+  Gradle Groovy DSL
   ```groovy
-  // Gradle Groovy DSL
-  implementation 'io.foldright:cffu:1.0.0-Alpha29'
+  implementation 'io.foldright:cffu:1.0.0-Alpha30'
   ```
 
 > `cffu`也支持`Kotlin`扩展方法的使用方式，参见[`cffu-kotlin/README.md`](cffu-kotlin/README.md)；使用方式的对比示例参见[`docs/usage-mode-demo.md`](docs/usage-mode-demo.md)。
@@ -432,7 +432,7 @@ public class ConcurrencyStrategyDemo {
 
 ### 2.4 支持直接运行多个`Action`，而不是要先包装成`CompletableFuture`
 
-`CompletableFuture`的`allOf/anyOF`方法输入的是`CompletableFuture`，当业务直接有要编排业务逻辑方法时仍然需要先包装成`CompletableFuture`再运行：
+`CompletableFuture`的`allOf/anyOf`方法输入的是`CompletableFuture`，当业务直接有要编排业务逻辑方法时仍然需要先包装成`CompletableFuture`再运行：
 
 - 繁琐
 - 也模糊了业务流程
@@ -515,16 +515,16 @@ public class MultipleActionsDemo {
 - 业务功能的正确性问题
 - 系统稳定性问题，如导致线程中等待操作不能返回、耗尽线程池
 
-`cffu`提供了超时执行安全的新实现方法 [`cffuOrTimeout()`](https://foldright.io/api-docs/cffu/1.0.0-Alpha29/io/foldright/cffu/CompletableFutureUtils.html#cffuOrTimeout(C,long,java.util.concurrent.TimeUnit))
-/ [`cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.0-Alpha29/io/foldright/cffu/CompletableFutureUtils.html#cffuCompleteOnTimeout(C,T,long,java.util.concurrent.TimeUnit))。
+`cffu`提供了超时执行安全的新实现方法 [`cffuOrTimeout()`](https://foldright.io/api-docs/cffu/1.0.0-Alpha30/io/foldright/cffu/CompletableFutureUtils.html#cffuOrTimeout(C,long,java.util.concurrent.TimeUnit))
+/ [`cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.0-Alpha30/io/foldright/cffu/CompletableFutureUtils.html#cffuCompleteOnTimeout(C,T,long,java.util.concurrent.TimeUnit))。
 
 
 更多说明参见：
 
 - 演示问题的[`DelayDysfunctionDemo.java`](https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java)
 - `cffu backport`方法的`JavaDoc`
-  - [`orTimeout()`](https://foldright.io/api-docs/cffu/1.0.0-Alpha29/io/foldright/cffu/CompletableFutureUtils.html#orTimeout(C,long,java.util.concurrent.TimeUnit))
-  - [`completeOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.0-Alpha29/io/foldright/cffu/CompletableFutureUtils.html#completeOnTimeout(C,T,long,java.util.concurrent.TimeUnit))
+  - [`orTimeout()`](https://foldright.io/api-docs/cffu/1.0.0-Alpha30/io/foldright/cffu/CompletableFutureUtils.html#orTimeout(C,long,java.util.concurrent.TimeUnit))
+  - [`completeOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.0-Alpha30/io/foldright/cffu/CompletableFutureUtils.html#completeOnTimeout(C,T,long,java.util.concurrent.TimeUnit))
 
 ### 2.7 支持超时的`join`的方法
 
@@ -545,11 +545,11 @@ public class MultipleActionsDemo {
 
 这个方法使用简单类似，不附代码示例。
 
-### 2.9 输入宽泛类型的`allof/anyOf`方法
+### 2.9 输入宽泛类型的`allOf/anyOf`方法
 
-`CompletableFuture#allof/anyOf`方法输入参数类型是`CompletableFuture`，而输入更宽泛的`CompletionStage`类型；对于`CompletionStage`类型的输入，则需要调用`CompletionStage#toCompletableFuture`方法做转换。
+`CompletableFuture#allOf/anyOf`方法输入参数类型是`CompletableFuture`，而输入更宽泛的`CompletionStage`类型；对于`CompletionStage`类型的输入，则需要调用`CompletionStage#toCompletableFuture`方法做转换。
 
-`cffu`提供的`allof()` / `anyOf()`方法输入更宽泛的`CompletionStage`参数类型，使用更方便。
+`cffu`提供的`allOf()` / `anyOf()`方法输入更宽泛的`CompletionStage`参数类型，使用更方便。
 
 方法使用简单类似，不附代码示例。
 
@@ -591,18 +591,18 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>1.0.0-Alpha29</version>
+      <version>1.0.0-Alpha30</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
+    Gradle Kotlin DSL
     ```groovy
-    // Gradle Kotlin DSL
-    implementation("io.foldright:cffu:1.0.0-Alpha29")
+    implementation("io.foldright:cffu:1.0.0-Alpha30")
     ```
+    Gradle Groovy DSL
     ```groovy
-    // Gradle Groovy DSL
-    implementation 'io.foldright:cffu:1.0.0-Alpha29'
+    implementation 'io.foldright:cffu:1.0.0-Alpha30'
     ```
 - `cffu bom`:
   - For `Maven` projects:
@@ -611,20 +611,20 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-bom</artifactId>
-      <version>1.0.0-Alpha29</version>
+      <version>1.0.0-Alpha30</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
     ```
   - For `Gradle` projects:
 
+    Gradle Kotlin DSL
     ```groovy
-    // Gradle Kotlin DSL
-    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha29"))
+    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha30"))
     ```
+    Gradle Groovy DSL
     ```groovy
-    // Gradle Groovy DSL
-    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha29')
+    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha30')
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local)的[`cffu executor wrapper SPI`实现](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -633,19 +633,19 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>1.0.0-Alpha29</version>
+      <version>1.0.0-Alpha30</version>
       <scope>runtime</scope>
     </dependency>
     ```
   - For `Gradle` projects:
 
+    Gradle Kotlin DSL
     ```groovy
-    // Gradle Kotlin DSL
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha29")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha30")
     ```
+    Gradle Groovy DSL
     ```groovy
-    // Gradle Groovy DSL
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha29'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha30'
     ```
 
 # 📚 更多资料

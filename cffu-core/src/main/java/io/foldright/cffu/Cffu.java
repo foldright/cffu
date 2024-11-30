@@ -35,7 +35,7 @@ import static java.util.Objects.requireNonNull;
 public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     // region# Internal constructor and fields
-    ////////////////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////////////////
 
     private final CffuFactory fac;
 
@@ -43,6 +43,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     private final CompletableFuture<T> cf;
 
+    @Contract(pure = true)
     Cffu(CffuFactory cffuFactory, boolean isMinimalStage, CompletableFuture<T> cf) {
         this.fac = requireNonNull(cffuFactory, "cffuFactory is null");
         this.isMinimalStage = isMinimalStage;
@@ -81,7 +82,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param fn  the function to use to compute the value of the returned Cffu
      * @param <U> the function's return type
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenRun`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAccept`")
     @Override
     public <U> Cffu<U> thenApply(Function<? super T, ? extends U> fn) {
         return resetCf(cf.thenApply(fn));
@@ -97,7 +98,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param fn  the function to use to compute the value of the returned Cffu
      * @param <U> the function's return type
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptAsync`")
     @Override
     public <U> Cffu<U> thenApplyAsync(Function<? super T, ? extends U> fn) {
         return thenApplyAsync(fn, fac.defaultExecutor());
@@ -114,7 +115,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param executor the executor to use for asynchronous execution
      * @param <U>      the function's return type
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptAsync`")
     @Override
     public <U> Cffu<U> thenApplyAsync(Function<? super T, ? extends U> fn, Executor executor) {
         return resetCf(cf.thenApplyAsync(fn, executor));
@@ -1686,9 +1687,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * (aka. the dependent cfs is created by async methods), using this method
      * is one less thread switch of task execution when triggered by timeout.
      * <p>
-     * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout(long, TimeUnit)}
-     * leaks if the future completes exceptionally, more info see
-     * <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
+     * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout} leaks if the future completes exceptionally,
+     * more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
      * <a href="https://github.com/openjdk/jdk/pull/13059">PR review openjdk/jdk/13059</a>
      * and <a href="https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a">JDK bugfix commit</a>.
      * The cffu backport logic(for Java 20-) has merged the fix of this JDK bug.
@@ -2545,8 +2545,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *     .minimalCompletionStage();       // restrict to methods of CompletionStage
      * }</pre>
      * <p>
-     * <strong>CAUTION:</strong> if run on old Java 8(not support *minimal* CompletionStage), just return a Cffu with
-     * a *normal* underlying CompletableFuture which is NOT with a *minimal* CompletionStage.
+     * <strong>CAUTION:</strong> if run on old Java 8 (which does not support *minimal* CompletionStage),
+     * this method just returns a *normal* Cffu instance which is NOT a *minimal* CompletionStage.
      */
     @Contract(pure = true)
     public CompletionStage<T> minimalCompletionStage() {

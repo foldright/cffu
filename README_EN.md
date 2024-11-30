@@ -592,8 +592,7 @@ This migration is possible because:
 
 # 🔌 API Docs
 
-- Current version of `Java API` documentation: https://foldright.io/api-docs/cffu/
-- Current version of `Kotlin API` documentation: https://foldright.io/api-docs/cffu-kotlin/
+Current version of `Java API` documentation: https://foldright.io/api-docs/cffu/
 
 # 🍪Dependencies
 
@@ -606,60 +605,18 @@ This migration is possible because:
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>1.0.0-Alpha15</version>
+      <version>1.0.0-Alpha30</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
+    Gradle Kotlin DSL
     ```groovy
-    // Gradle Kotlin DSL
-    implementation("io.foldright:cffu:1.0.0-Alpha15")
+    implementation("io.foldright:cffu:1.0.0-Alpha30")
     ```
+    Gradle Groovy DSL
     ```groovy
-    // Gradle Groovy DSL
-    implementation 'io.foldright:cffu:1.0.0-Alpha15'
-    ```
-- `cffu Kotlin` support library:
-  - For `Maven` projects:
-
-    ```xml
-    <dependency>
-      <groupId>io.foldright</groupId>
-      <artifactId>cffu-kotlin</artifactId>
-      <version>1.0.0-Alpha15</version>
-    </dependency>
-    ```
-  - For `Gradle` projects:
-
-    ```groovy
-    // Gradle Kotlin DSL
-    implementation("io.foldright:cffu-kotlin:1.0.0-Alpha15")
-    ```
-    ```groovy
-    // Gradle Groovy DSL
-    implementation 'io.foldright:cffu-kotlin:1.0.0-Alpha15'
-    ```
-- `cffu bom`:
-  - For `Maven` projects:
-
-    ```xml
-    <dependency>
-      <groupId>io.foldright</groupId>
-      <artifactId>cffu-bom</artifactId>
-      <version>1.0.0-Alpha15</version>
-      <type>pom</type>
-      <scope>import</scope>
-    </dependency>
-    ```
-  - For `Gradle` projects:
-
-    ```groovy
-    // Gradle Kotlin DSL
-    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha15"))
-    ```
-    ```groovy
-    // Gradle Groovy DSL
-    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha15')
+    implementation 'io.foldright:cffu:1.0.0-Alpha30'
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local) implementation for [`cffu executor wrapper SPI`](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -668,19 +625,19 @@ This migration is possible because:
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>1.0.0-Alpha15</version>
+      <version>1.0.0-Alpha30</version>
       <scope>runtime</scope>
     </dependency>
     ```
   - For `Gradle` projects:
 
+    Gradle Kotlin DSL
     ```groovy
-    // Gradle Kotlin DSL
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha15")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha30")
     ```
+    Gradle Groovy DSL
     ```groovy
-    // Gradle Groovy DSL
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha15'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha30'
     ```
 
 # 📚 See also
