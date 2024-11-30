@@ -1,5 +1,6 @@
-package io.foldright.cffu
+package io.foldright.aspect_test
 
+import io.foldright.cffu.CompletableFutureUtils
 import io.foldright.test_utils.*
 import io.kotest.assertions.fail
 import io.kotest.core.spec.style.FunSpec
@@ -13,6 +14,9 @@ import java.util.concurrent.TimeUnit.SECONDS
 import java.util.function.*
 import java.util.function.Function
 
+/**
+ * Check the executor parameter usage of all method that has Executor parameter.
+ */
 class CheckExecutorTests : FunSpec({
     (1..3).forEach { count ->
         test("Multi-Actions(M*) Methods with $count actions") {

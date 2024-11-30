@@ -1,5 +1,7 @@
-package io.foldright.cffu
+package io.foldright.aspect_test
 
+import io.foldright.cffu.Cffu
+import io.foldright.cffu.CompletableFutureUtils
 import io.foldright.test_utils.*
 import io.kotest.inspectors.forAll
 import org.junit.jupiter.api.Test
@@ -10,6 +12,9 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 import java.util.function.Function
 import java.util.function.Supplier
 
+/**
+ * Check the runtime type of return value of all method that returned CompletableFuture/Cffu.
+ */
 @Suppress("MoveLambdaOutsideParentheses")
 private class CheckMinStageRuntimeTypeTests {
     private val cfThis: CompletableFuture<String> = completedFuture("cf this")
