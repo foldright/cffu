@@ -98,7 +98,7 @@ fun assertRunningByFjCommonPool(callingThread: Thread) {
 
     val actualMsg = "actual" +
             (if (!runInCallingThread) " not" else "") +
-            "running in calling thread" +
+            " running in calling thread" +
             (if (!runInCpThread) " not" else "") +
             " running in common pool thread"
 
