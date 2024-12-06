@@ -16,7 +16,7 @@ import java.util.concurrent.*;
 import java.util.function.*;
 
 import static io.foldright.cffu.Delayer.atCfDelayerThread;
-import static io.foldright.cffu.ExceptionReporter.reportUncaughtException;
+import static io.foldright.cffu.ExceptionLogger.logUncaughtException;
 import static io.foldright.cffu.InternalCommonUtils.*;
 import static io.foldright.cffu.LLCF.*;
 import static java.util.Objects.requireNonNull;
@@ -3067,7 +3067,7 @@ public final class CompletableFutureUtils {
             if (!atCfDelayerThread()) completeCf(ret, v, ex);
             else screenExecutor(executor).execute(() -> completeCf(ret, v, ex));
             return null;
-        }).exceptionally(ex -> reportUncaughtException("handle of executor hop", ex));
+        }).exceptionally(ex -> logUncaughtException("handle of executor hop", ex));
 
         return (C) ret;
     }
@@ -3078,7 +3078,7 @@ public final class CompletableFutureUtils {
             else cf.completeExceptionally(ex);
         } catch (Throwable t) {
             if (ex != null) t.addSuppressed(ex);
-            reportUncaughtException("completeCf", t);
+            logUncaughtException("completeCf", t);
             throw t; // rethrow exception, report to caller
         }
     }
@@ -3261,7 +3261,7 @@ public final class CompletableFutureUtils {
         cfThis.handle((v, ex) -> {
             action.accept(v, ex);
             return null;
-        }).exceptionally(ex -> reportUncaughtException("the action of peek", ex));
+        }).exceptionally(ex -> logUncaughtException("the action of peek", ex));
         return cfThis;
     }
 
@@ -3327,7 +3327,7 @@ public final class CompletableFutureUtils {
         cfThis.handleAsync((v, ex) -> {
             action.accept(v, ex);
             return null;
-        }, executor).exceptionally(ex -> reportUncaughtException("the action of peekAsync", ex));
+        }, executor).exceptionally(ex -> logUncaughtException("the action of peekAsync", ex));
         return cfThis;
     }
 
