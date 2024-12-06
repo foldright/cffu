@@ -1,32 +1,48 @@
 package io.foldright.cffu;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.spi.LocationAwareLogger;
 
 
 /**
- * <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
+ * Internal exception logging utility for the cffu library.
+ * <p>
+ * By default, uncaught exceptions are logged with their complete stack traces. The logging behavior can be configured
+ * through the system property {@code cffu.uncaught.exception.log.format} with the following values:
+ * <ul>
+ * <li>{@code full}: Log the complete exception stack trace (default)</li>
+ * <li>{@code short}: Log only the exception message</li>
+ * <li>{@code none}: Suppress all exception logging</li>
+ * </ul>
+ * <p>
+ * Configure the logging format by either:
+ * <ul>
+ * <li>Setting the JVM argument {@code -Dcffu.uncaught.exception.log.format=<value>} at startup</li>
+ * <li>Calling {@code System.setProperty("cffu.uncaught.exception.log.format", "<value>")} programmatically</li>
+ * </ul>
  *
  * @author HuHao (995483610 at qq dot com)
  * @author Jerry Lee (oldratlee at gmail dot com)
+ * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
  */
-final class ExceptionReporter {
-    private static final String FQCN = ExceptionReporter.class.getName();
+final class ExceptionLogger {
+    private static final String FQCN = ExceptionLogger.class.getName();
     private static final String CFFU_PACKAGE_NAME = FQCN.replaceFirst("\\.[^.]*$", "");
 
     private static final LoggerAdapter logger = getLogger();
 
     @SuppressWarnings("StatementWithEmptyBody")
-    static void reportUncaughtException(String where, Throwable ex) {
-        final String fullReport = "full";
-        final String shortReport = "short";
-        final String noneReport = "none";
+    static void logUncaughtException(String where, Throwable ex) {
+        final String fullFormat = "full";
+        final String shortFormat = "short";
+        final String noneFormat = "none";
 
-        final String report = System.getProperty("cffu.uncaught.exception.report", fullReport);
+        final String format = System.getProperty("cffu.uncaught.exception.log.format", fullFormat);
         final String msgHead = "Uncaught exception occurred at ";
-        if (noneReport.equalsIgnoreCase(report)) {
+        if (noneFormat.equalsIgnoreCase(format)) {
             // pass silently when explicitly silenced.
-        } else if (shortReport.equalsIgnoreCase(report)) {
+        } else if (shortFormat.equalsIgnoreCase(format)) {
             logger.error(msgHead + where + ", " + ex, null);
         } else {
             logger.error(msgHead + where, ex);
@@ -67,6 +83,6 @@ final class ExceptionReporter {
         }
     }
 
-    private ExceptionReporter() {
+    private ExceptionLogger() {
     }
 }

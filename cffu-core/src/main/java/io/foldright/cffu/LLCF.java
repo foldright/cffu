@@ -12,7 +12,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-import static io.foldright.cffu.ExceptionReporter.reportUncaughtException;
+import static io.foldright.cffu.ExceptionLogger.logUncaughtException;
 import static io.foldright.cffu.InternalCommonUtils.mapArray;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
@@ -150,7 +150,7 @@ public final class LLCF {
                 action.accept(v, ex);
             } catch (Throwable e) {
                 if (ex != null) e.addSuppressed(ex);
-                reportUncaughtException(where, e);
+                logUncaughtException(where, e);
             }
         });
         return cfThis;
@@ -170,7 +170,7 @@ public final class LLCF {
                 action.accept(v, ex);
             } catch (Throwable e) {
                 if (ex != null) e.addSuppressed(ex);
-                reportUncaughtException(where, e);
+                logUncaughtException(where, e);
             }
         }, executor);
         return cfThis;
