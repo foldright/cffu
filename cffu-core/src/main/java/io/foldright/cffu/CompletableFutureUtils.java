@@ -4,6 +4,8 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import io.foldright.cffu.ex.CompletableFutureExHandleUtils;
+import io.foldright.cffu.internal.CommonUtils;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
 import io.foldright.cffu.tuple.Tuple4;
@@ -16,8 +18,9 @@ import java.util.concurrent.*;
 import java.util.function.*;
 
 import static io.foldright.cffu.Delayer.atCfDelayerThread;
-import static io.foldright.cffu.InternalCommonUtils.*;
 import static io.foldright.cffu.LLCF.*;
+import static io.foldright.cffu.ex.ExceptionHandleUtils.loggingExHandler;
+import static io.foldright.cffu.internal.CommonUtils.*;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
@@ -78,7 +81,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
-        return allResultsOf0(true, wrapSuppliers0(executor, suppliers));
+        return CompletableFutureExHandleUtils.allResultsOf(loggingExHandler("mSupplyFailFastAsync"), wrapSuppliers0(executor, suppliers));
     }
 
     /**
@@ -105,7 +108,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
-        return allSuccessResultsOf0(valueIfFailed, wrapSuppliers0(executor, suppliers));
+        return CompletableFutureExHandleUtils.allSuccessResultsOf(loggingExHandler("mSupplyAllSuccessAsync"), valueIfFailed, wrapSuppliers0(executor, suppliers));
     }
 
     /**
@@ -136,7 +139,7 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
-        return mostSuccessResultsOf0(executor, valueIfNotSuccess, timeout, unit, wrapSuppliers0(executor, suppliers));
+        return CompletableFutureExHandleUtils.mostSuccessResultsOf(loggingExHandler("mostSuccessResultsOf"), executor, valueIfNotSuccess, timeout, unit, wrapSuppliers0(executor, suppliers));
     }
 
     /**
@@ -161,7 +164,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
-        return allResultsOf0(false, wrapSuppliers0(executor, suppliers));
+        return CompletableFutureExHandleUtils.allResultsOf(loggingExHandler("mSupplyAsync"), wrapSuppliers0(executor, suppliers));
     }
 
     /**
@@ -187,7 +190,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
-        return anySuccessOf0(wrapSuppliers0(executor, suppliers));
+        return CompletableFutureExHandleUtils.anySuccessOf(loggingExHandler("mSupplyAnySuccessAsync"), wrapSuppliers0(executor, suppliers));
     }
 
     /**
@@ -212,7 +215,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("supplier", suppliers);
 
-        return f_cast(CompletableFuture.anyOf(wrapSuppliers0(executor, suppliers)));
+        return CompletableFutureExHandleUtils.anyOf(loggingExHandler("mSupplyAnyAsync"), wrapSuppliers0(executor, suppliers));
     }
 
     private static <T> CompletableFuture<? extends T>[] wrapSuppliers0(Executor executor, Supplier<? extends T>[] suppliers) {
@@ -239,7 +242,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return allFailFastOf0(wrapRunnables0(executor, actions));
+        return CompletableFutureExHandleUtils.allFailFastOf(loggingExHandler("mRunFailFastAsync"), wrapRunnables0(executor, actions));
     }
 
     /**
@@ -262,7 +265,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return CompletableFuture.allOf(wrapRunnables0(executor, actions));
+        return CompletableFutureExHandleUtils.allOf(loggingExHandler("mRunAsync"), wrapRunnables0(executor, actions));
     }
 
     /**
@@ -285,7 +288,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return anySuccessOf0(wrapRunnables0(executor, actions));
+        return CompletableFutureExHandleUtils.anySuccessOf(loggingExHandler("mRunAnySuccessAsync"), wrapRunnables0(executor, actions));
     }
 
     /**
@@ -308,7 +311,7 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
 
-        return f_cast(CompletableFuture.anyOf(wrapRunnables0(executor, actions)));
+        return CompletableFutureExHandleUtils.anyOf(loggingExHandler("mRunAnyAsync"), wrapRunnables0(executor, actions));
     }
 
     private static CompletableFuture<Void>[] wrapRunnables0(Executor executor, Runnable[] actions) {
@@ -927,7 +930,7 @@ public final class CompletableFutureUtils {
         if (len == 0) return completedFuture(arrayList());
         // convert input cf to non-minimal-stage CF instance for SINGLE input in order to
         // ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
-        if (len == 1) return toNonMinCf0(cfs[0]).thenApply(InternalCommonUtils::arrayList);
+        if (len == 1) return toNonMinCf0(cfs[0]).thenApply(CommonUtils::arrayList);
 
         final Object[] result = new Object[len];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(cfs, result);

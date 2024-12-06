@@ -12,8 +12,8 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-import static io.foldright.cffu.ExceptionLogger.logUncaughtException;
-import static io.foldright.cffu.InternalCommonUtils.mapArray;
+import static io.foldright.cffu.internal.CommonUtils.mapArray;
+import static io.foldright.cffu.internal.ExceptionLogger.logUncaughtException;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
@@ -266,10 +266,11 @@ public final class LLCF {
     /**
      * Default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses
      * of CompletableFuture) -- {@link ForkJoinPool#commonPool()} unless it cannot support parallelism.
-     * initialization code is copied from {@link CompletableFuture#ASYNC_POOL} with adoption.
+     *
+     * @see CompletableFuture#ASYNC_POOL
      */
     @SuppressWarnings("JavadocReference")
-    static final Executor ASYNC_POOL;
+    public static final Executor ASYNC_POOL;
 
     private static final Class<?> MIN_STAGE_CLASS;
 
