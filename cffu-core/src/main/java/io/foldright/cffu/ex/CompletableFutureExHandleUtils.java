@@ -13,8 +13,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
-import static io.foldright.cffu.ex.ExceptionHandleUtils.handleAllExceptionsOf;
-import static io.foldright.cffu.ex.ExceptionHandleUtils.handleSwallowedExceptionsOf;
+import static io.foldright.cffu.ex.ExceptionHandleUtils.handleAllExceptions;
+import static io.foldright.cffu.ex.ExceptionHandleUtils.handleSwallowedExceptions;
 import static java.util.Objects.requireNonNull;
 
 
@@ -26,7 +26,7 @@ public class CompletableFutureExHandleUtils {
         requireNonNull(exceptionHandler, "exceptionHandler is null");
         final CompletableFuture<List<T>> ret = CompletableFutureUtils.allResultsFailFastOf(cfs);
 
-        handleSwallowedExceptionsOf(cfs, ret, exceptionHandler);
+        handleSwallowedExceptions(exceptionHandler, ret, cfs);
 
         return ret;
     }
@@ -39,7 +39,7 @@ public class CompletableFutureExHandleUtils {
         requireNonNull(exceptionHandler, "exceptionHandler is null");
         final CompletableFuture<List<T>> ret = CompletableFutureUtils.allSuccessResultsOf(valueIfFailed, cfs);
 
-        handleAllExceptionsOf(exceptionHandler, cfs);
+        handleAllExceptions(exceptionHandler, cfs);
 
         return ret;
     }
@@ -62,7 +62,7 @@ public class CompletableFutureExHandleUtils {
         final CompletableFuture<List<T>> ret = CompletableFutureUtils.mostSuccessResultsOf(
                 executorWhenTimeout, valueIfNotSuccess, timeout, unit, cfs);
 
-        handleAllExceptionsOf(exceptionHandler, cfs);
+        handleAllExceptions(exceptionHandler, cfs);
 
         return ret;
     }
@@ -74,7 +74,7 @@ public class CompletableFutureExHandleUtils {
         requireNonNull(exceptionHandler, "exceptionHandler is null");
         final CompletableFuture<List<T>> ret = CompletableFutureUtils.allResultsOf(cfs);
 
-        handleSwallowedExceptionsOf(cfs, CompletableFutureUtils.allFailFastOf(cfs), exceptionHandler);
+        handleSwallowedExceptions(exceptionHandler, CompletableFutureUtils.allFailFastOf(cfs), cfs);
 
         return ret;
     }
@@ -85,7 +85,7 @@ public class CompletableFutureExHandleUtils {
         requireNonNull(exceptionHandler, "exceptionHandler is null");
         final CompletableFuture<Void> ret = CompletableFutureUtils.allFailFastOf(cfs);
 
-        handleSwallowedExceptionsOf(cfs, ret, exceptionHandler);
+        handleSwallowedExceptions(exceptionHandler, ret, cfs);
 
         return ret;
     }
@@ -97,7 +97,7 @@ public class CompletableFutureExHandleUtils {
         requireNonNull(exceptionHandler, "exceptionHandler is null");
         final CompletableFuture<Void> ret = CompletableFutureUtils.allOf(cfs);
 
-        handleSwallowedExceptionsOf(cfs, CompletableFutureUtils.allFailFastOf(cfs), exceptionHandler);
+        handleSwallowedExceptions(exceptionHandler, CompletableFutureUtils.allFailFastOf(cfs), cfs);
 
         return ret;
     }
@@ -109,7 +109,7 @@ public class CompletableFutureExHandleUtils {
         requireNonNull(exceptionHandler, "exceptionHandler is null");
         final CompletableFuture<T> ret = CompletableFutureUtils.anySuccessOf(cfs);
 
-        handleSwallowedExceptionsOf(cfs, ret, exceptionHandler);
+        handleSwallowedExceptions(exceptionHandler, ret, cfs);
 
         return ret;
     }
@@ -121,7 +121,7 @@ public class CompletableFutureExHandleUtils {
         requireNonNull(exceptionHandler, "exceptionHandler is null");
         final CompletableFuture<T> ret = CompletableFutureUtils.anyOf(cfs);
 
-        handleSwallowedExceptionsOf(cfs, ret, exceptionHandler);
+        handleSwallowedExceptions(exceptionHandler, ret, cfs);
 
         return ret;
     }
