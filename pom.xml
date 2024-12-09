@@ -84,12 +84,12 @@
 		<kotlin.compiler.apiVersion>1.8</kotlin.compiler.apiVersion>
 
 		<slf4j.version>2.0.16</slf4j.version>
-		<log4j2.version>2.24.2</log4j2.version>
+		<log4j2.version>2.24.3</log4j2.version>
 		<log4j2.slf4j.impl.aid>log4j-slf4j2-impl</log4j2.slf4j.impl.aid>
-		<guava.version>33.3.1-jre</guava.version>
+		<guava.version>33.4.0-jre</guava.version>
 
 		<!-- testing dependencies versions -->
-		<junit5.version>5.11.3</junit5.version>
+		<junit5.version>5.11.4</junit5.version>
 		<kotest.version>5.8.1</kotest.version>
 	</properties>
 
@@ -437,7 +437,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.11.1</version>
+					<version>3.11.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
