@@ -9,7 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.WeakHashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.function.BiConsumer;
 
 import static io.foldright.cffu.CompletableFutureUtils.unwrapCfException;
 import static io.foldright.cffu.internal.ExceptionLogger.logUncaughtException;
@@ -22,13 +21,12 @@ public final class ExceptionHandleUtils {
     /**
      * Returns a logging exception handler that logs the exception from CompletionStage by java logger.
      */
-    public static BiConsumer<Integer, Throwable> loggingExHandler(String where) {
-        return (unusedKey, ex) -> logUncaughtException(where, ex);
+    public static ExceptionHandler loggingExHandler(String where) {
+        return exceptionInfo -> logUncaughtException(where, exceptionInfo.ex);
     }
 
-    public static <T> void handleSwallowedExceptionsOf(
-            CompletionStage<? extends T>[] inputs, CompletableFuture<?> output,
-            BiConsumer<Integer, Throwable> exceptionHandler) {
+    public static <T> void handleSwallowedExceptions(
+            ExceptionHandler exceptionHandler, CompletableFuture<?> output, CompletionStage<? extends T>[] inputs) {
         // use unlinked cf to prevent memory leaks when some inputs complete quickly and retain large memory
         // while other inputs or output continue running
         CompletionStage<?>[] unlinkedInputs = unlink(inputs);
@@ -43,26 +41,26 @@ public final class ExceptionHandleUtils {
                 // argument ex of method `exceptionally` is never null
                 cf.exceptionally(ex -> {
                     if (unwrapCfException(ex) == outputBizEx) return null;
-                    else return safeHandle(idx, ex, exceptionHandler);
+                    else return safeHandle(new ExceptionInfo(idx, ex, null), exceptionHandler);
                 });
             }
         });
     }
 
-    public static <C extends CompletionStage<?>> void handleAllExceptionsOf(BiConsumer<Integer, Throwable> exceptionHandler, C[] cfs) {
+    public static <C extends CompletionStage<?>> void handleAllExceptions(ExceptionHandler exceptionHandler, C[] cfs) {
         // argument ex of method `exceptionally` is never null
         for (int i = 0; i < cfs.length; i++) {
             final int idx = i;
-            cfs[idx].exceptionally(ex -> safeHandle(idx, ex, exceptionHandler));
+            cfs[idx].exceptionally(ex -> safeHandle(new ExceptionInfo(idx, ex, null), exceptionHandler));
         }
     }
 
     @Nullable
-    @Contract("_, _, _ -> null")
+    @Contract("_, _ -> null")
     @SuppressWarnings("SameReturnValue")
-    private static <K, T> T safeHandle(K cfKey, Throwable ex, BiConsumer<K, Throwable> exceptionHandler) {
+    private static <T> T safeHandle(ExceptionInfo exceptionInfo, ExceptionHandler exceptionHandler) {
         try {
-            exceptionHandler.accept(cfKey, ex);
+            exceptionHandler.accept(exceptionInfo);
         } catch (Throwable e) {
             logUncaughtException("handleExceptionsOf", e);
         }
