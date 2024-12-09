@@ -22,7 +22,7 @@
 		<demo.module.name/>
 
 		<!-- testing dependencies versions -->
-		<junit5.version>5.11.3</junit5.version>
+		<junit5.version>5.11.4</junit5.version>
 	</properties>
 
 	<modules>
@@ -142,7 +142,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.11.1</version>
+					<version>3.11.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
