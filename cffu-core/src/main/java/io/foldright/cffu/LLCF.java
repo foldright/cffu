@@ -1,5 +1,6 @@
 package io.foldright.cffu;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -127,6 +128,14 @@ public final class LLCF {
         return isMinStageCf(f) ? f.toCompletableFuture() : IS_JAVA9_PLUS ? f.copy() : f.thenApply(x -> x);
     }
 
+    public static boolean isMinStageCf(CompletableFuture<?> cf) {
+        return cf.getClass().equals(MIN_STAGE_CLASS);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Low level operations of CompletableFuture
+    ////////////////////////////////////////////////////////////////////////////////
+
     /**
      * Peeks the result by executing the given action when the given stage completes, returns the given stage.
      * The uncaught exceptions thrown by the action are reported.
@@ -167,8 +176,14 @@ public final class LLCF {
         return cfThis;
     }
 
-    public static boolean isMinStageCf(CompletableFuture<?> cf) {
-        return cf.getClass().equals(MIN_STAGE_CLASS);
+    /**
+     * Completes the given CompletableFuture with the exception(if non-null), otherwise with the value.
+     * In general, you should NEVER use this method in application codes, use {@link CompletableFuture#complete(Object)}
+     * or {@link CompletableFuture#completeExceptionally(Throwable)} instead.
+     */
+    static <T> boolean completeCf0(CompletableFuture<? super T> cf, T value, @Nullable Throwable ex) {
+        if (ex == null) return cf.complete(value);
+        else return cf.completeExceptionally(ex);
     }
 
     // endregion
