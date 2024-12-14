@@ -1512,9 +1512,12 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("fn", fns);
+        // Defensive shallow copy of input array argument by `clone`,
+        //   since it is used asynchronously in `thenCompose` and could be mutated by caller (NOT thread-safe)
+        // this same defensive copying pattern is used in similar methods below.
+        Function<? super T, ? extends U>[] copy = requireArrayAndEleNonNull("fn", fns).clone();
 
-        return cfThis.thenCompose(v -> allResultsOf0(true, wrapFunctions0(executor, v, fns)));
+        return cfThis.thenCompose(v -> allResultsOf0(true, wrapFunctions0(executor, v, copy)));
     }
 
     /**
@@ -1546,9 +1549,9 @@ public final class CompletableFutureUtils {
             @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("fn", fns);
+        Function<? super T, ? extends U>[] copy = requireArrayAndEleNonNull("fn", fns).clone();
 
-        return cfThis.thenCompose(v -> allSuccessResultsOf0(valueIfFailed, wrapFunctions0(executor, v, fns)));
+        return cfThis.thenCompose(v -> allSuccessResultsOf0(valueIfFailed, wrapFunctions0(executor, v, copy)));
     }
 
     /**
@@ -1581,10 +1584,10 @@ public final class CompletableFutureUtils {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
-        requireArrayAndEleNonNull("fn", fns);
+        Function<? super T, ? extends U>[] copy = requireArrayAndEleNonNull("fn", fns).clone();
 
         return cfThis.thenCompose(v -> mostSuccessResultsOf0(
-                executor, valueIfNotSuccess, timeout, unit, wrapFunctions0(executor, v, fns)));
+                executor, valueIfNotSuccess, timeout, unit, wrapFunctions0(executor, v, copy)));
     }
 
     /**
@@ -1615,9 +1618,9 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("fn", fns);
+        Function<? super T, ? extends U>[] copy = requireArrayAndEleNonNull("fn", fns).clone();
 
-        return cfThis.thenCompose(v -> allResultsOf0(false, wrapFunctions0(executor, v, fns)));
+        return cfThis.thenCompose(v -> allResultsOf0(false, wrapFunctions0(executor, v, copy)));
     }
 
     /**
@@ -1648,9 +1651,9 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("fn", fns);
+        Function<? super T, ? extends U>[] copy = requireArrayAndEleNonNull("fn", fns).clone();
 
-        return cfThis.thenCompose(v -> anySuccessOf0(wrapFunctions0(executor, v, fns)));
+        return cfThis.thenCompose(v -> anySuccessOf0(wrapFunctions0(executor, v, copy)));
     }
 
     /**
@@ -1681,9 +1684,9 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("fn", fns);
+        Function<? super T, ? extends U>[] copy = requireArrayAndEleNonNull("fn", fns).clone();
 
-        return cfThis.thenCompose(v -> f_cast(CompletableFuture.anyOf(wrapFunctions0(executor, v, fns))));
+        return cfThis.thenCompose(v -> f_cast(CompletableFuture.anyOf(wrapFunctions0(executor, v, copy))));
     }
 
     private static <T, U> CompletableFuture<U>[] wrapFunctions0(
@@ -1724,9 +1727,9 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("action", actions);
+        Consumer<? super T>[] copy = requireArrayAndEleNonNull("action", actions).clone();
 
-        return cfThis.thenCompose(v -> allFailFastOf0(wrapConsumers0(executor, v, actions)));
+        return cfThis.thenCompose(v -> allFailFastOf0(wrapConsumers0(executor, v, copy)));
     }
 
     /**
@@ -1762,9 +1765,9 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("action", actions);
+        Consumer<? super T>[] copy = requireArrayAndEleNonNull("action", actions).clone();
 
-        return cfThis.thenCompose(v -> CompletableFuture.allOf(wrapConsumers0(executor, v, actions)));
+        return cfThis.thenCompose(v -> CompletableFuture.allOf(wrapConsumers0(executor, v, copy)));
     }
 
     /**
@@ -1800,9 +1803,9 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("action", actions);
+        Consumer<? super T>[] copy = requireArrayAndEleNonNull("action", actions).clone();
 
-        return cfThis.thenCompose(v -> anySuccessOf0(wrapConsumers0(executor, v, actions)));
+        return cfThis.thenCompose(v -> anySuccessOf0(wrapConsumers0(executor, v, copy)));
     }
 
     /**
@@ -1838,9 +1841,9 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("action", actions);
+        Consumer<? super T>[] copy = requireArrayAndEleNonNull("action", actions).clone();
 
-        return cfThis.thenCompose(v -> f_cast(CompletableFuture.anyOf(wrapConsumers0(executor, v, actions))));
+        return cfThis.thenCompose(v -> f_cast(CompletableFuture.anyOf(wrapConsumers0(executor, v, copy))));
     }
 
     private static <T> CompletableFuture<Void>[] wrapConsumers0(Executor executor, T v, Consumer<? super T>[] actions) {
@@ -1867,9 +1870,9 @@ public final class CompletableFutureUtils {
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("action", actions);
+        Runnable[] copy = requireArrayAndEleNonNull("action", actions).clone();
 
-        return cfThis.thenCompose(unused -> allFailFastOf0(wrapRunnables0(executor, actions)));
+        return cfThis.thenCompose(unused -> allFailFastOf0(wrapRunnables0(executor, copy)));
     }
 
     /**
@@ -1892,9 +1895,9 @@ public final class CompletableFutureUtils {
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("action", actions);
+        Runnable[] copy = requireArrayAndEleNonNull("action", actions).clone();
 
-        return cfThis.thenCompose(unused -> CompletableFuture.allOf(wrapRunnables0(executor, actions)));
+        return cfThis.thenCompose(unused -> CompletableFuture.allOf(wrapRunnables0(executor, copy)));
     }
 
     /**
@@ -1917,9 +1920,9 @@ public final class CompletableFutureUtils {
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("action", actions);
+        Runnable[] copy = requireArrayAndEleNonNull("action", actions).clone();
 
-        return cfThis.thenCompose(unused -> anySuccessOf0(wrapRunnables0(executor, actions)));
+        return cfThis.thenCompose(unused -> anySuccessOf0(wrapRunnables0(executor, copy)));
     }
 
     /**
@@ -1942,9 +1945,9 @@ public final class CompletableFutureUtils {
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        requireArrayAndEleNonNull("action", actions);
+        Runnable[] copy = requireArrayAndEleNonNull("action", actions).clone();
 
-        return cfThis.thenCompose(unused -> f_cast(CompletableFuture.anyOf(wrapRunnables0(executor, actions))));
+        return cfThis.thenCompose(unused -> f_cast(CompletableFuture.anyOf(wrapRunnables0(executor, copy))));
     }
 
     // endregion
