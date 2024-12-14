@@ -2466,14 +2466,12 @@ public final class CompletableFutureUtils {
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static <T1, T2> CompletableFuture<Tuple2<T1, T2>> bothFailFast0(
             CompletableFuture<? extends T1> cfThis, CompletionStage<? extends T2> other) {
-        final CompletableFuture incomplete = new CompletableFuture();
-
-        CompletableFuture thisSuccessOrBeIncomplete = exceptionallyCompose(cfThis, ex -> incomplete);
-        CompletionStage otherSuccessOrBeIncomplete = exceptionallyCompose(other, ex -> incomplete);
+        CompletableFuture thisSuccessOrBeIncomplete = exceptionallyCompose(cfThis, ex -> new CompletableFuture());
+        CompletionStage otherSuccessOrBeIncomplete = exceptionallyCompose(other, ex -> new CompletableFuture());
         CompletableFuture cfValue = thisSuccessOrBeIncomplete.thenCombine(otherSuccessOrBeIncomplete, Tuple2::of);
 
-        CompletableFuture thisFailedOrBeIncomplete = cfThis.thenCompose(v -> incomplete);
-        CompletionStage otherFailedOrBeIncomplete = other.thenCompose(v -> incomplete);
+        CompletableFuture thisFailedOrBeIncomplete = cfThis.thenCompose(v -> new CompletableFuture());
+        CompletionStage otherFailedOrBeIncomplete = other.thenCompose(v -> new CompletableFuture());
         CompletableFuture cfEx = thisFailedOrBeIncomplete.applyToEither(otherFailedOrBeIncomplete, v -> null);
 
         return cfValue.applyToEither(cfEx, x -> x);
@@ -2644,14 +2642,12 @@ public final class CompletableFutureUtils {
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static <T> CompletableFuture<T> eitherSuccess0(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other) {
-        final CompletableFuture incomplete = new CompletableFuture();
-
-        CompletableFuture thisSuccessOrBeIncomplete = exceptionallyCompose(cfThis, ex -> incomplete);
-        CompletionStage otherSuccessOrBeIncomplete = exceptionallyCompose(other, ex -> incomplete);
+        CompletableFuture thisSuccessOrBeIncomplete = exceptionallyCompose(cfThis, ex -> new CompletableFuture());
+        CompletionStage otherSuccessOrBeIncomplete = exceptionallyCompose(other, ex -> new CompletableFuture());
         CompletableFuture cfValue = thisSuccessOrBeIncomplete.applyToEither(otherSuccessOrBeIncomplete, x -> x);
 
-        CompletableFuture thisFailedOrBeIncomplete = cfThis.thenCompose(v -> incomplete);
-        CompletionStage otherFailedOrBeIncomplete = other.thenCompose(v -> incomplete);
+        CompletableFuture thisFailedOrBeIncomplete = cfThis.thenCompose(v -> new CompletableFuture());
+        CompletionStage otherFailedOrBeIncomplete = other.thenCompose(v -> new CompletableFuture());
         CompletableFuture cfEx = thisFailedOrBeIncomplete.thenCombine(otherFailedOrBeIncomplete, (v1, v2) -> null);
 
         return cfValue.applyToEither(cfEx, x -> x);
