@@ -1,7 +1,6 @@
 package io.foldright.cffu;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.jetbrains.annotations.Contract;
 import org.slf4j.spi.LocationAwareLogger;
 
 
@@ -17,10 +16,8 @@ final class ExceptionReporter {
 
     private static final LoggerAdapter logger = getLogger();
 
-    @Nullable
-    @Contract("_, _ -> null")
-    @SuppressWarnings({"StatementWithEmptyBody", "SameReturnValue"})
-    static <T> T reportUncaughtException(String where, Throwable ex) {
+    @SuppressWarnings("StatementWithEmptyBody")
+    static void reportUncaughtException(String where, Throwable ex) {
         final String fullReport = "full";
         final String shortReport = "short";
         final String noneReport = "none";
@@ -34,8 +31,6 @@ final class ExceptionReporter {
         } else {
             logger.error(msgHead + where, ex);
         }
-
-        return null;
     }
 
     private static LoggerAdapter getLogger() {
