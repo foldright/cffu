@@ -1,13 +1,17 @@
 package io.foldright.cffu;
 
+import org.jetbrains.annotations.Contract;
+
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+import static io.foldright.cffu.ExceptionReporter.reportUncaughtException;
 import static io.foldright.cffu.InternalCommonUtils.mapArray;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
@@ -121,6 +125,46 @@ public final class LLCF {
     static <T> CompletableFuture<T> toNonMinCfCopy0(CompletionStage<? extends T> s) {
         final CompletableFuture<T> f = f_toCf0(s);
         return isMinStageCf(f) ? f.toCompletableFuture() : IS_JAVA9_PLUS ? f.copy() : f.thenApply(x -> x);
+    }
+
+    /**
+     * Peeks the result by executing the given action when the given stage completes, returns the given stage.
+     * The uncaught exceptions thrown by the action are reported.
+     *
+     * @see CompletableFutureUtils#peek(CompletionStage, BiConsumer)
+     */
+    @Contract("_, _, _ -> param1")
+    static <T, C extends CompletionStage<? extends T>>
+    C peek0(C cfThis, BiConsumer<? super T, ? super Throwable> action, String where) {
+        cfThis.whenComplete((v, ex) -> {
+            try {
+                action.accept(v, ex);
+            } catch (Throwable e) {
+                if (ex != null) e.addSuppressed(ex);
+                reportUncaughtException(where, e);
+            }
+        });
+        return cfThis;
+    }
+
+    /**
+     * Peeks the result by executing the given action using the supplied executor when the given stage completes,
+     * returns the given stage. The uncaught exceptions thrown by the action are reported.
+     *
+     * @see CompletableFutureUtils#peekAsync(CompletionStage, BiConsumer, Executor)
+     */
+    @Contract("_, _, _, _ -> param1")
+    static <T, C extends CompletionStage<? extends T>>
+    C peekAsync0(C cfThis, BiConsumer<? super T, ? super Throwable> action, String where, Executor executor) {
+        cfThis.whenCompleteAsync((v, ex) -> {
+            try {
+                action.accept(v, ex);
+            } catch (Throwable e) {
+                if (ex != null) e.addSuppressed(ex);
+                reportUncaughtException(where, e);
+            }
+        }, executor);
+        return cfThis;
     }
 
     public static boolean isMinStageCf(CompletableFuture<?> cf) {

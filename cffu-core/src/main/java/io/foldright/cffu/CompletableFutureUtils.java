@@ -16,7 +16,6 @@ import java.util.concurrent.*;
 import java.util.function.*;
 
 import static io.foldright.cffu.Delayer.atCfDelayerThread;
-import static io.foldright.cffu.ExceptionReporter.reportUncaughtException;
 import static io.foldright.cffu.InternalCommonUtils.*;
 import static io.foldright.cffu.LLCF.*;
 import static java.util.Objects.requireNonNull;
@@ -3062,15 +3061,10 @@ public final class CompletableFutureUtils {
     private static <C extends CompletableFuture<?>> C hopExecutorIfAtCfDelayerThread(C cf, Executor executor) {
         CompletableFuture<Object> ret = newIncompleteFuture(cf);
 
-        cf.whenComplete((v, ex) -> {
-            try {
-                if (!atCfDelayerThread()) completeCf(ret, v, ex);
-                else screenExecutor(executor).execute(() -> completeCf(ret, v, ex));
-            } catch (Throwable e) {
-                if (ex != null) e.addSuppressed(ex);
-                reportUncaughtException("handle of executor hop", e);
-            }
-        });
+        peek0(cf, (v, ex) -> {
+            if (!atCfDelayerThread()) completeCf(ret, v, ex);
+            else screenExecutor(executor).execute(() -> completeCf(ret, v, ex));
+        }, "handle of executor hop");
 
         return (C) ret;
     }
@@ -3253,15 +3247,7 @@ public final class CompletableFutureUtils {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(action, "action is null");
 
-        cfThis.whenComplete((v, ex) -> {
-            try {
-                action.accept(v, ex);
-            } catch (Throwable e) {
-                if (ex != null) e.addSuppressed(ex);
-                reportUncaughtException("the action of peek", e);
-            }
-        });
-        return cfThis;
+        return peek0(cfThis, action, "the action of peek");
     }
 
     /**
@@ -3321,15 +3307,7 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        cfThis.whenCompleteAsync((v, ex) -> {
-            try {
-                action.accept(v, ex);
-            } catch (Throwable e) {
-                if (ex != null) e.addSuppressed(ex);
-                reportUncaughtException("the action of peekAsync", e);
-            }
-        }, executor);
-        return cfThis;
+        return peekAsync0(cfThis, action, "the action of peekAsync", executor);
     }
 
     // endregion
