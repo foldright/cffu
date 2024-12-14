@@ -3062,16 +3062,11 @@ public final class CompletableFutureUtils {
         CompletableFuture<Object> ret = newIncompleteFuture(cf);
 
         peek0(cf, (v, ex) -> {
-            if (!atCfDelayerThread()) completeCf(ret, v, ex);
-            else screenExecutor(executor).execute(() -> completeCf(ret, v, ex));
+            if (!atCfDelayerThread()) completeCf0(ret, v, ex);
+            else screenExecutor(executor).execute(() -> completeCf0(ret, v, ex));
         }, "handle of executor hop");
 
         return (C) ret;
-    }
-
-    private static void completeCf(CompletableFuture<Object> cf, Object value, @Nullable Throwable ex) {
-        if (ex == null) cf.complete(value);
-        else cf.completeExceptionally(ex);
     }
 
     // endregion
