@@ -1427,7 +1427,7 @@ class CompletableFutureUtilsTest {
         ).getCause());
 
         assertEquals(n, catchingAsync(failed, RuntimeException.class, ex -> n).get());
-        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+        assertSame(rte, assertThrowsExactly(RuntimeException.class, () ->
                 catchingAsync(failed, IndexOutOfBoundsException.class, ex -> n).get()
         ).getCause());
 
@@ -1584,7 +1584,7 @@ class CompletableFutureUtilsTest {
         });
 
         assertEquals(n, catchingCompose(failed, RuntimeException.class, ex -> completedFuture(n)).get());
-        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+        assertSame(rte, assertThrowsExactly(RuntimeException.class, () ->
                 catchingCompose(failed, IndexOutOfBoundsException.class, ex -> completedFuture(n)).get()
         ).getCause());
 
