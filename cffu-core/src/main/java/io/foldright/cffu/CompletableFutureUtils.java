@@ -2768,7 +2768,7 @@ public final class CompletableFutureUtils {
         requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
 
-        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
+        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(unwrapCfException(ex).getClass()))
                 ? cfThis : completedFuture(fallback.apply((X) ex))
         ).thenCompose(x -> x);
     }
@@ -2812,8 +2812,8 @@ public final class CompletableFutureUtils {
         requireNonNull(fallback, "fallback is null");
         requireNonNull(executor, "executor is null");
 
-        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
-                ? cfThis : cfThis.<T>handleAsync((v1, ex1) -> fallback.apply((X) ex1), executor)
+        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(unwrapCfException(ex).getClass()))
+                ? cfThis : cfThis.<T>handleAsync((v1, ex1) -> fallback.apply((X) unwrapCfException(ex1)), executor)
         ).thenCompose(x -> x);
     }
 
@@ -3095,7 +3095,7 @@ public final class CompletableFutureUtils {
         requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
 
-        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
+        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(unwrapCfException(ex).getClass()))
                 ? cfThis : fallback.apply((X) ex)
         ).thenCompose(x -> x);
     }
@@ -3139,8 +3139,8 @@ public final class CompletableFutureUtils {
         requireNonNull(fallback, "fallback is null");
         requireNonNull(executor, "executor is null");
 
-        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
-                ? cfThis : cfThis.handleAsync((v1, ex1) -> fallback.apply((X) ex1), executor).thenCompose(x -> x)
+        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(unwrapCfException(ex).getClass()))
+                ? cfThis : cfThis.handleAsync((v1, ex1) -> fallback.apply((X) unwrapCfException(ex1)), executor).thenCompose(x -> x)
         ).thenCompose(x -> x);
     }
 
