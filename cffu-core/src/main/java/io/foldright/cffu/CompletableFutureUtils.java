@@ -2768,7 +2768,7 @@ public final class CompletableFutureUtils {
         requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
 
-        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
+        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(unwrapCfException(ex).getClass()))
                 ? cfThis : completedFuture(fallback.apply((X) ex))
         ).thenCompose(x -> x);
     }
