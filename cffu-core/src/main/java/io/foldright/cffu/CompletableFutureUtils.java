@@ -2812,7 +2812,7 @@ public final class CompletableFutureUtils {
         requireNonNull(fallback, "fallback is null");
         requireNonNull(executor, "executor is null");
 
-        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(ex.getClass()))
+        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom((unwrapCfException(ex)).getClass()))
                 ? cfThis : cfThis.<T>handleAsync((v1, ex1) -> fallback.apply((X) ex1), executor)
         ).thenCompose(x -> x);
     }
