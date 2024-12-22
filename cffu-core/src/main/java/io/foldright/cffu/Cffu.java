@@ -1511,15 +1511,17 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu that, when given stage completes exceptionally with the given exceptionType,
-     * is executed with given stage's exception as the argument to the supplied function.
-     * Otherwise, the returned stage contains same result as input Cffu.
+     * Returns a new Cffu that, when this Cffu completes exceptionally with the given exceptionType,
+     * is executed with the exception from this Cffu as the argument to the supplied function.
+     * Otherwise, the returned Cffu contains same result as this Cffu.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      against the exception from this Cffu. <strong>"the exception from this Cffu"</strong> means
+     *                      the cause of the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a
+     *                      different kind of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
-     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
-     *                      The function's argument is the input's exception.
+     * @param fallback      the Function to be called if this Cffu fails with the expected exception type.
+     *                      The function's argument is the exception from this Cffu.
      * @see Futures#catching the equivalent Guava method catching()
      */
     public <X extends Throwable> Cffu<T> catching(Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
@@ -1527,16 +1529,17 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when given stage completes exceptionally with the given exceptionType,
-     * is executed with given stage's exception as the argument to the supplied function,
-     * using the given stage's default asynchronous execution facility.
-     * Otherwise, the returned stage contains same result as input Cffu.
+     * Returns a new Cffu that, when this Cffu completes exceptionally with the given exceptionType,
+     * is executed with the exception from this Cffu as the argument to the supplied function, using {@link #defaultExecutor()}.
+     * Otherwise, the returned Cffu contains same result as this Cffu.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      against the exception from this Cffu. <strong>"the exception from this Cffu"</strong> means
+     *                      the cause of the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a
+     *                      different kind of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
-     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
-     *                      The function's argument is the input's exception.
+     * @param fallback      the Function to be called if this Cffu fails with the expected exception type.
+     *                      The function's argument is the exception from this Cffu.
      * @see Futures#catching the equivalent Guava method catching()
      */
     public <X extends Throwable> Cffu<T> catchingAsync(
@@ -1545,15 +1548,17 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when given stage completes exceptionally with the given exceptionType,
-     * is executed with given stage's exception as the argument to the supplied function, using the supplied Executor.
-     * Otherwise, the returned stage contains same result as input Cffu.
+     * Returns a new Cffu that, when this Cffu completes exceptionally with the given exceptionType,
+     * is executed with the exception from this Cffu as the argument to the supplied function, using the supplied Executor.
+     * Otherwise, the returned Cffu contains same result as this Cffu.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      against the exception from this Cffu. <strong>"the exception from this Cffu"</strong> means
+     *                      the cause of the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a
+     *                      different kind of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
-     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
-     *                      The function's argument is the input's exception.
+     * @param fallback      the Function to be called if this Cffu fails with the expected exception type.
+     *                      The function's argument is the exception from this Cffu.
      * @param executor      the executor to use for asynchronous execution
      * @see Futures#catching the equivalent Guava method catching()
      */
@@ -1854,14 +1859,16 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when given stage completes exceptionally with the given exceptionType,
-     * is composed using the results of the supplied function applied to given stage's exception.
+     * Returns a new Cffu that, when this Cffu completes exceptionally with the given exceptionType,
+     * is composed using the results of the supplied function applied to the exception from this Cffu.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      against the exception from this Cffu. <strong>"the exception from this Cffu"</strong> means
+     *                      the cause of the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a
+     *                      different kind of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
-     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
-     *                      The function's argument is the input's exception.
+     * @param fallback      the Function to be called if this Cffu fails with the expected exception type.
+     *                      The function's argument is the exception from this Cffu.
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */
     public <X extends Throwable> Cffu<T> catchingCompose(
@@ -1870,15 +1877,16 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when given stage completes exceptionally with the given exceptionType,
-     * is composed using the results of the supplied function applied to given stage's exception,
-     * using given stage's default asynchronous execution facility.
+     * Returns a new Cffu that, when this Cffu completes exceptionally with the given exceptionType,
+     * is composed using the results of the supplied function applied to the exception from this Cffu using {@link #defaultExecutor()}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      against the exception from this Cffu. <strong>"the exception from this Cffu"</strong> means
+     *                      the cause of the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a
+     *                      different kind of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
-     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
-     *                      The function's argument is the input's exception.
+     * @param fallback      the Function to be called if this Cffu fails with the expected exception type.
+     *                      The function's argument is the exception from this Cffu.
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */
     public <X extends Throwable> Cffu<T> catchingComposeAsync(
@@ -1887,15 +1895,16 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when given stage completes exceptionally with the given exceptionType,
-     * is composed using the results of the supplied function applied to given's exception,
-     * using the supplied Executor.
+     * Returns a new Cffu that, when this Cffu completes exceptionally with the given exceptionType,
+     * is composed using the results of the supplied function applied to the exception from this Cffu, using the supplied Executor.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     *                      against the exception from this Cffu. <strong>"the exception from this Cffu"</strong> means
+     *                      the cause of the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a
+     *                      different kind of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
-     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
-     *                      The function's argument is the input's exception.
+     * @param fallback      the Function to be called if this Cffu fails with the expected exception type.
+     *                      The function's argument is the exception from this Cffu.
      * @param executor      the executor to use for asynchronous execution
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */

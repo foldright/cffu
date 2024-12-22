@@ -2751,14 +2751,16 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when given stage completes exceptionally with the given exceptionType,
-     * is executed with given stage's exception as the argument to the supplied function.
-     * Otherwise, the returned stage contains same result as input CompletionStage.
+     * is executed with the exception from the given stage as the argument to the supplied function.
+     * Otherwise, the returned stage contains same result as the given stage.
      *
-     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
+     *                      the exception from argument cfThis. <strong>"the exception from cfThis"</strong> means the cause of
+     *                      the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
+     *                      of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
-     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
-     *                      The function's argument is the input's exception.
+     * @param fallback      the Function to be called if cfThis fails with the expected exception type.
+     *                      The function's argument is the exception from cfThis.
      * @see Futures#catching the equivalent Guava method catching()
      */
     @SuppressWarnings("unchecked")
@@ -2768,22 +2770,27 @@ public final class CompletableFutureUtils {
         requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
 
-        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(unwrapCfException(ex).getClass()))
-                ? cfThis : completedFuture(fallback.apply((X) ex))
-        ).thenCompose(x -> x);
+        return (C) cfThis.handle((v, ex) -> {
+            if (ex == null) return cfThis;
+            Throwable unwrap = unwrapCfException(ex);
+            if (!exceptionType.isAssignableFrom(unwrap.getClass())) return cfThis;
+            return completedFuture(fallback.apply((X) unwrap));
+        }).thenCompose(x -> x);
     }
 
     /**
      * Returns a new CompletableFuture that, when given stage completes exceptionally with the given exceptionType,
-     * is executed with given stage's exception as the argument to the supplied function,
-     * using the default executor of parameter cfThis.
-     * Otherwise, the returned stage contains same result as input CompletionStage.
+     * is executed with the exception from the given stage as the argument to the supplied function,
+     * using the default executor of parameter the given stage.
+     * Otherwise, the returned stage contains same result as the given stage.
      *
-     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
+     *                      the exception from argument cfThis. <strong>"the exception from cfThis"</strong> means the cause of
+     *                      the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
+     *                      of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
-     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
-     *                      The function's argument is the input's exception.
+     * @param fallback      the Function to be called if cfThis fails with the expected exception type.
+     *                      The function's argument is the exception from cfThis.
      * @see Futures#catching the equivalent Guava method catching()
      */
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
@@ -2793,14 +2800,16 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when given stage completes exceptionally with the given exceptionType,
-     * is executed with given stage's exception as the argument to the supplied function, using the supplied Executor.
-     * Otherwise, the returned stage contains same result as input CompletionStage.
+     * is executed with the exception from the given stage as the argument to the supplied function, using the supplied Executor.
+     * Otherwise, the returned stage contains same result as the given stage.
      *
-     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
+     *                      the exception from argument cfThis. <strong>"the exception from cfThis"</strong> means the cause of
+     *                      the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
+     *                      of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
-     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
-     *                      The function's argument is the input's exception.
+     * @param fallback      the Function to be called if cfThis fails with the expected exception type.
+     *                      The function's argument is the exception from cfThis.
      * @param executor      the executor to use for asynchronous execution
      * @see Futures#catching the equivalent Guava method catching()
      */
@@ -2812,9 +2821,12 @@ public final class CompletableFutureUtils {
         requireNonNull(fallback, "fallback is null");
         requireNonNull(executor, "executor is null");
 
-        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(unwrapCfException(ex).getClass()))
-                ? cfThis : cfThis.<T>handleAsync((v1, ex1) -> fallback.apply((X) unwrapCfException(ex1)), executor)
-        ).thenCompose(x -> x);
+        return (C) cfThis.handle((v, ex) -> {
+            if (ex == null) return cfThis;
+            Throwable unwrap = unwrapCfException(ex);
+            if (!exceptionType.isAssignableFrom(unwrap.getClass())) return cfThis;
+            return cfThis.<T>handleAsync((v1, ex1) -> fallback.apply((X) unwrap), executor);
+        }).thenCompose(x -> x);
     }
 
     /**
@@ -3079,13 +3091,15 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
-     * is composed using the results of the supplied function applied to given stage's exception.
+     * is composed using the results of the supplied function applied to the exception from the given stage.
      *
-     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
+     *                      the exception from argument cfThis. <strong>"the exception from cfThis"</strong> means the cause of
+     *                      the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
+     *                      of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
-     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
-     *                      The function's argument is the input's exception.
+     * @param fallback      the Function to be called if cfThis fails with the expected exception type.
+     *                      The function's argument is the exception from cfThis.
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */
     @SuppressWarnings("unchecked")
@@ -3095,21 +3109,26 @@ public final class CompletableFutureUtils {
         requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
 
-        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(unwrapCfException(ex).getClass()))
-                ? cfThis : fallback.apply((X) ex)
-        ).thenCompose(x -> x);
+        return (C) cfThis.handle((v, ex) -> {
+            if (ex == null) return cfThis;
+            Throwable unwrap = unwrapCfException(ex);
+            if (!exceptionType.isAssignableFrom(unwrap.getClass())) return cfThis;
+            return fallback.apply((X) unwrap);
+        }).thenCompose(x -> x);
     }
 
     /**
      * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
-     * is composed using the results of the supplied function applied to given stage's exception,
-     * using the default executor of parameter cfThis.
+     * is composed using the results of the supplied function applied to the exception from the given stage,
+     * using the default executor of parameter the given stage.
      *
-     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
+     *                      the exception from argument cfThis. <strong>"the exception from cfThis"</strong> means the cause of
+     *                      the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
+     *                      of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
-     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
-     *                      The function's argument is the input's exception.
+     * @param fallback      the Function to be called if cfThis fails with the expected exception type.
+     *                      The function's argument is the exception from cfThis.
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */
     public static <T, X extends Throwable, C extends CompletionStage<? super T>> C catchingComposeAsync(
@@ -3119,14 +3138,16 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
-     * is composed using the results of the supplied function applied to given's exception,
+     * is composed using the results of the supplied function applied to the exception from the given stage,
      * using the supplied Executor.
      *
-     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the input's exception. To avoid hiding bugs and other unrecoverable errors,
+     * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
+     *                      the exception from argument cfThis. <strong>"the exception from cfThis"</strong> means the cause of
+     *                      the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
+     *                      of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
-     * @param fallback      the Function to be called if {@code input} fails with the expected exception type.
-     *                      The function's argument is the input's exception.
+     * @param fallback      the Function to be called if cfThis fails with the expected exception type.
+     *                      The function's argument is the exception from cfThis.
      * @param executor      the executor to use for asynchronous execution
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */
@@ -3139,9 +3160,12 @@ public final class CompletableFutureUtils {
         requireNonNull(fallback, "fallback is null");
         requireNonNull(executor, "executor is null");
 
-        return (C) cfThis.handle((v, ex) -> (ex == null || !exceptionType.isAssignableFrom(unwrapCfException(ex).getClass()))
-                ? cfThis : cfThis.handleAsync((v1, ex1) -> fallback.apply((X) unwrapCfException(ex1)), executor).thenCompose(x -> x)
-        ).thenCompose(x -> x);
+        return (C) cfThis.handle((v, ex) -> {
+            if (ex == null) return cfThis;
+            Throwable unwrap = unwrapCfException(ex);
+            if (!exceptionType.isAssignableFrom(unwrap.getClass())) return cfThis;
+            return cfThis.handleAsync((v1, ex1) -> fallback.apply((X) unwrap), executor).thenCompose(x -> x);
+        }).thenCompose(x -> x);
     }
 
     /**
