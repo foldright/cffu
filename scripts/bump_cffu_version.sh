@@ -17,7 +17,10 @@ source "$SELF_DIR/bash-buddy/lib/maven_utils.sh"
 readonly old_version="$1"
 readonly new_version="$2"
 
-# shellcheck disable=SC2046
-sed -i "s/1.x-SNAPSHOT/$new_version/g" $(rg "1.x-SNAPSHOT" -l -g '!scripts/')
-# shellcheck disable=SC2046
-sed -i "s/$old_version/$new_version/g" $(rg "$old_version" -l -g '!scripts/')
+{ rg "1.x-SNAPSHOT" -Fl -g '!scripts/' || true; } |
+  tr '\n' '\0' |
+  xargs --no-run-if-empty --null --verbose sed -i "s/1\.x-SNAPSHOT/$new_version/g"
+
+{ rg "$old_version" -Fl -g '!scripts/' || true; } |
+  tr '\n' '\0' |
+  xargs --no-run-if-empty --null --verbose sed -i "s/$old_version/$new_version/g"
