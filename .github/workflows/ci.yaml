@@ -51,6 +51,8 @@ jobs:
           npm list -g --depth=0
           scripts/update_md_toc.sh
       # https://remarkablemark.org/blog/2017/10/12/check-git-dirty/
+      - name: Check API docs
+        run: scripts/check_api_docs.sh
 
       - name: Check git dirty
         run: |
