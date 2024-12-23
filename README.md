@@ -67,6 +67,7 @@
     如方法`allTupleFailFastOf` / `allTupleOf` / `mSupplyTupleFailFastAsync` / `thenMApplyTupleFailFastAsync`
   - 支持直接运行多个`Action`，而不是要先包装成`CompletableFuture`  
     如方法`mSupplyTupleFailFastAsync` / `mSupplyMostSuccessAsync` / `thenMApplyTupleFailFastAsync` / `thenMRunFailFastAsync`
+  - 支持设置缺省的业务线程池并封装携带，`CffuFactory#builder(executor)`方法，而不是在异步执行时反复传入业务线程池参数
   - 支持处理指定异常类型的`catching`方法，而不是处理所有异常`Throwable`（`CompletableFuture#exceptionally`）
 - 🚦 更高效灵活的并发执行策略，如
   - `AllFailFast`策略：当输入的多个`CF`有失败时快速失败返回，而不再于事无补地等待所有`CF`运行完成（`CompletableFuture#allOf`）
@@ -75,11 +76,10 @@
   - `MostSuccess`策略：指定时间内返回多个`CF`中成功的结果，对于失败或超时的`CF`返回指定的缺省值
   - `All(Complete)` / `Any(Complete)`策略：这2个是`CompletableFuture`已有支持的策略
 - 🦺 更安全的使用方式，如
-  - 支持设置缺省的业务线程池并封装携带，`CffuFactory#builder(executor)`方法
   - 超时执行安全的`orTimeout` / `completeOnTimeout`方法新实现  
     `CF#orTimeout` / `CF#completeOnTimeout`方法会导致`CF`的超时与延迟执行基础功能失效❗️
   - 一定不会修改`CF`结果的`peek`处理方法  
-    `whenComplete`方法可能会修改`CF`的结果，返回的`CF`与输入`CF`并不一定一致
+    `whenComplete`方法可能会修改`CF`的结果，返回`CF`的结果与输入并不一定一致
   - 支持超时的`join`的方法，`join(timeout, unit)`方法
   - 支持禁止强制篡改，`CffuFactoryBuilder#forbidObtrudeMethods`方法
   - 在类方法附加完善的代码质量注解，在编码时`IDE`能尽早提示出问题  
@@ -114,18 +114,16 @@
 
 - **广为人知广泛使用，有一流的群众基础**
   - `CompletableFuture`在2014年发布的`Java 8`提供，有10年了
-  - `CompletableFuture`的父接口[`Future`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Future.html)早在2004年发布的`Java 5`中提供，有20年了
-  - 虽然`Future`接口不支持 运行结果的异步获取与并发执行逻辑的编排，但也让广大`Java`开发者熟悉了`Future`这个典型的概念与工具
-- **`Java`标准库内置**
-  - 无需额外依赖，几乎总是可用
-  - 相信有极高的实现质量
+  - `CompletableFuture`的父接口[`Future`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Future.html)早在2004年发布的`Java 5`中提供，有20年了。虽然`Future`接口不支持 运行结果的异步获取与并发执行逻辑的编排，但也让广大`Java`开发者熟悉了`Future`这个典型的概念与工具
 - **功能强大、但不会非常庞大复杂**
   - 足以应对日常的业务需求开发
-  - 其它大型并发框架（比如[`Akka`](https://akka.io/)、[`RxJava`](https://github.com/ReactiveX/RxJava)）在使用上需要理解的内容要多很多
-  - 当然基本的并发关注方面及其复杂性，与具体使用哪个工具无关，都是要理解与注意的
+  - 其它大型并发框架（比如[`Akka`](https://akka.io/)、[`RxJava`](https://github.com/ReactiveX/RxJava)）在使用上需要理解的内容要多很多。当然基本的并发关注方面及其复杂性，与具体使用哪个工具无关，都是要理解与注意的
 - **高层抽象**
   - 或说 以业务流程的形式表达技术的并发流程
   - 可以避免或减少使用繁琐易错的基础并发协调工具：[同步器`Synchronizers`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/package-summary.html#synchronizers-heading)（如[`CountDownLatch`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CountDownLatch.html)、[`CyclicBarrier`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CyclicBarrier.html)、[`Phaser`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Phaser.html)）、[锁`Locks`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/locks/package-summary.html)和[原子类`atomic`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/atomic/package-summary.html)
+- **`Java`标准库内置**
+  - 无需额外依赖，几乎总是可用
+  - 相信有极高的实现质量
 
 和其它并发工具、框架一样，`CompletableFuture`用于
 
@@ -159,7 +157,7 @@
 - 在`CompletableFuture`静态方法调用的地方，类名`CompletableFuture`改成`cffuFactory`实例
 - 更多参见[如何从直接使用`CompletableFuture`类迁移到`Cffu`类](#3-%E5%A6%82%E4%BD%95%E4%BB%8E%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8completablefuture%E7%B1%BB%E8%BF%81%E7%A7%BB%E5%88%B0cffu%E7%B1%BB)
 
-库依赖（包含[`Java CompletableFuture`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)的增强`CompletableFutureUtils`）:
+库依赖（包含`CompletableFutureUtils`工具类）:
 
 - For `Maven` projects:
 

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link CompletableFutureApiCompatibilityTest} and {@link CffuApiCompatibilityTest} are used to
- * check the Cffu <strong>API compatibility</strong> to CompletableFuture.
+ * check the Cffu <strong>API compatibility</strong> with CompletableFuture.
  * <p>
  * {@link CffuApiCompatibilityTest} file is auto generated from {@link CompletableFutureApiCompatibilityTest} file
  * by script {@code scripts/gen_CffuApiCompatibilityTest.sh}.

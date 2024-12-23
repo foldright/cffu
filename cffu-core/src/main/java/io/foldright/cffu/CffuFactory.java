@@ -381,7 +381,7 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -389,7 +389,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -397,7 +397,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -405,7 +405,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1,
@@ -414,7 +414,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -423,7 +423,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -432,7 +432,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -441,7 +441,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -451,7 +451,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -462,7 +462,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -473,7 +473,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -484,7 +484,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -496,7 +496,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -508,7 +508,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -520,7 +520,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -532,7 +532,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -545,7 +545,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
+     * Tuple variant of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -556,7 +556,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
+     * Tuple variant of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -569,7 +569,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
+     * Tuple variant of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -581,7 +581,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
+     * Tuple variant of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -595,7 +595,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
+     * Tuple variant of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -607,7 +607,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
+     * Tuple variant of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -621,7 +621,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
+     * Tuple variant of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -634,7 +634,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
+     * Tuple variant of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -649,7 +649,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
+     * Tuple variant of {@link #mSupplyAsync(Supplier[])}.
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -657,7 +657,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -665,7 +665,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
+     * Tuple variant of {@link #mSupplyAsync(Supplier[])}.
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -673,7 +673,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1,
@@ -682,7 +682,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
+     * Tuple variant of {@link #mSupplyAsync(Supplier[])}.
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -691,7 +691,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -700,7 +700,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
+     * Tuple variant of {@link #mSupplyAsync(Supplier[])}.
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -709,7 +709,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -920,7 +920,7 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Tuple variance of {@link #allResultsFailFastOf(CompletionStage[])}.
+     * Tuple variant of {@link #allResultsFailFastOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleFailFastOf(
@@ -929,7 +929,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #allResultsFailFastOf(CompletionStage[])}.
+     * Tuple variant of {@link #allResultsFailFastOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleFailFastOf(
@@ -938,7 +938,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #allResultsFailFastOf(CompletionStage[])}.
+     * Tuple variant of {@link #allResultsFailFastOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleFailFastOf(
@@ -948,7 +948,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #allResultsFailFastOf(CompletionStage[])}.
+     * Tuple variant of {@link #allResultsFailFastOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleFailFastOf(
@@ -958,7 +958,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
@@ -970,7 +970,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
@@ -982,7 +982,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
@@ -995,7 +995,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
@@ -1008,7 +1008,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * Tuple variant of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
@@ -1021,7 +1021,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * Tuple variant of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
@@ -1035,7 +1035,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * Tuple variant of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
@@ -1050,7 +1050,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * Tuple variant of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
@@ -1065,7 +1065,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
+     * Tuple variant of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOf(
@@ -1074,7 +1074,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
+     * Tuple variant of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOf(
@@ -1083,7 +1083,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
+     * Tuple variant of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOf(
@@ -1093,7 +1093,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
+     * Tuple variant of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(

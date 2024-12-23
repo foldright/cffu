@@ -321,7 +321,7 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -329,7 +329,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -340,7 +340,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -348,7 +348,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyTupleFailFastAsync(
             Executor executor,
@@ -360,7 +360,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -369,7 +369,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -381,7 +381,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -390,7 +390,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -430,7 +430,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -441,7 +441,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -455,7 +455,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -466,7 +466,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -481,7 +481,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -493,7 +493,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -508,7 +508,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -520,7 +520,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -546,7 +546,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
+     * Tuple variant of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -557,7 +557,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
+     * Tuple variant of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -574,7 +574,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
+     * Tuple variant of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -586,7 +586,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
+     * Tuple variant of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -603,7 +603,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
+     * Tuple variant of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -615,7 +615,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
+     * Tuple variant of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -632,7 +632,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
+     * Tuple variant of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -645,7 +645,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
+     * Tuple variant of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -684,7 +684,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
+     * Tuple variant of {@link #mSupplyAsync(Supplier[])}.
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -692,7 +692,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -703,7 +703,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
+     * Tuple variant of {@link #mSupplyAsync(Supplier[])}.
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -711,7 +711,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyTupleAsync(
             Executor executor,
@@ -723,7 +723,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
+     * Tuple variant of {@link #mSupplyAsync(Supplier[])}.
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -732,7 +732,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -744,7 +744,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyAsync(Supplier[])}.
+     * Tuple variant of {@link #mSupplyAsync(Supplier[])}.
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -753,7 +753,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+     * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
@@ -859,7 +859,7 @@ public final class CompletableFutureUtils {
      * This method differs from {@link #allResultsFailFastOf allResultsFailFastOf} method in that it's tolerant of failed
      * or incomplete stages for any of the items, representing them as {@code valueIfNotSuccess} in the result list.
      *
-     * @param executorWhenTimeout the async executor when triggered by timeout
+     * @param executorWhenTimeout the executor to use for asynchronous execution when timeout
      * @param valueIfNotSuccess   the value used as result if the input stage not completed normally
      * @param timeout             how long to wait in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -1123,7 +1123,7 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Tuple variance of {@link #allResultsFailFastOf(CompletionStage[])}.
+     * Tuple variant of {@link #allResultsFailFastOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleFailFastOf(
@@ -1132,7 +1132,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #allResultsFailFastOf(CompletionStage[])}.
+     * Tuple variant of {@link #allResultsFailFastOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleFailFastOf(
@@ -1141,7 +1141,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #allResultsFailFastOf(CompletionStage[])}.
+     * Tuple variant of {@link #allResultsFailFastOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleFailFastOf(
@@ -1151,7 +1151,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #allResultsFailFastOf(CompletionStage[])}.
+     * Tuple variant of {@link #allResultsFailFastOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleFailFastOf(
@@ -1161,7 +1161,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
@@ -1173,7 +1173,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
@@ -1185,7 +1185,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
@@ -1198,7 +1198,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
@@ -1211,7 +1211,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * Tuple variant of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
@@ -1224,7 +1224,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mostSuccessResultsOf(Executor, Object, long, TimeUnit, CompletionStage[])}
+     * Tuple variant of {@link #mostSuccessResultsOf(Executor, Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
@@ -1242,7 +1242,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * Tuple variant of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
@@ -1256,7 +1256,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mostSuccessResultsOf(Executor, Object, long, TimeUnit, CompletionStage[])}
+     * Tuple variant of {@link #mostSuccessResultsOf(Executor, Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
@@ -1274,7 +1274,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * Tuple variant of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
@@ -1289,7 +1289,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mostSuccessResultsOf(Executor, Object, long, TimeUnit, CompletionStage[])}
+     * Tuple variant of {@link #mostSuccessResultsOf(Executor, Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
@@ -1308,7 +1308,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+     * Tuple variant of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
@@ -1323,7 +1323,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #mostSuccessResultsOf(Executor, Object, long, TimeUnit, CompletionStage[])}
+     * Tuple variant of {@link #mostSuccessResultsOf(Executor, Object, long, TimeUnit, CompletionStage[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
@@ -1342,7 +1342,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
+     * Tuple variant of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOf(
@@ -1351,7 +1351,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
+     * Tuple variant of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOf(
@@ -1360,7 +1360,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
+     * Tuple variant of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOf(
@@ -1370,7 +1370,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #allResultsOf(CompletionStage[])}.
+     * Tuple variant of {@link #allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
@@ -1956,7 +1956,7 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
+     * Tuple variant of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis,
@@ -1965,7 +1965,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
+     * Tuple variant of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
@@ -1978,7 +1978,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
+     * Tuple variant of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
@@ -1987,7 +1987,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
+     * Tuple variant of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
@@ -2000,7 +2000,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
+     * Tuple variant of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis,
@@ -2010,7 +2010,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
+     * Tuple variant of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
@@ -2024,7 +2024,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
+     * Tuple variant of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
@@ -2034,7 +2034,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
+     * Tuple variant of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
@@ -2048,7 +2048,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Function[])}
+     * Tuple variant of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Function[])}
      * with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
@@ -2061,7 +2061,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Executor, Object, Function[])}
+     * Tuple variant of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Executor, Object, Function[])}
      * with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
@@ -2078,7 +2078,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Function[])}
+     * Tuple variant of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Function[])}
      * with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
@@ -2091,7 +2091,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Executor, Object, Function[])}
+     * Tuple variant of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Executor, Object, Function[])}
      * with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
@@ -2109,7 +2109,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Function[])}
+     * Tuple variant of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Function[])}
      * with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
@@ -2123,7 +2123,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Executor, Object, Function[])}
+     * Tuple variant of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Executor, Object, Function[])}
      * with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
@@ -2141,7 +2141,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Function[])}
+     * Tuple variant of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Object, Function[])}
      * with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
@@ -2155,7 +2155,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Executor, Object, Function[])}
+     * Tuple variant of {@link #thenMApplyAllSuccessAsync(CompletableFuture, Executor, Object, Function[])}
      * with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
@@ -2173,7 +2173,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Object, long, TimeUnit, Function[])}
+     * Tuple variant of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -2186,7 +2186,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Executor, Object, long, TimeUnit, Function[])} with {@code null} valueIfNotSuccess.
+     * Tuple variant of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Executor, Object, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -2203,7 +2204,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Object, long, TimeUnit, Function[])}
+     * Tuple variant of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -2216,7 +2217,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Executor, Object, long, TimeUnit, Function[])} with {@code null} valueIfNotSuccess.
+     * Tuple variant of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Executor, Object, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -2234,7 +2236,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Object, long, TimeUnit, Function[])}
+     * Tuple variant of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -2248,7 +2250,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Executor, Object, long, TimeUnit, Function[])} with {@code null} valueIfNotSuccess.
+     * Tuple variant of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Executor, Object, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -2266,7 +2269,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Object, long, TimeUnit, Function[])}
+     * Tuple variant of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -2280,7 +2283,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Executor, Object, long, TimeUnit, Function[])} with {@code null} valueIfNotSuccess.
+     * Tuple variant of {@link #thenMApplyMostSuccessAsync(CompletableFuture, Executor, Object, long, TimeUnit, Function[])}
+     * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
@@ -2299,7 +2303,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
+     * Tuple variant of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis,
@@ -2308,7 +2312,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
+     * Tuple variant of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
@@ -2321,7 +2325,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
+     * Tuple variant of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
@@ -2330,7 +2334,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
+     * Tuple variant of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
@@ -2343,7 +2347,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
+     * Tuple variant of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
@@ -2353,7 +2357,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
+     * Tuple variant of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
@@ -2367,7 +2371,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
+     * Tuple variant of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
@@ -2377,7 +2381,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
+     * Tuple variant of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
@@ -2751,16 +2755,19 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when given stage completes exceptionally with the given exceptionType,
-     * is executed with the exception from the given stage as the argument to the supplied function.
+     * is executed with the exception from the given stage({@code argument cfThis}) as the argument to the supplied function.
      * Otherwise, the returned stage contains same result as the given stage.
+     * <p>
+     * <strong>"The exception from the given stage({@code argument cfThis})"</strong> means the cause of
+     * the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
+     * of exception, that exception itself; aka the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
-     *                      the exception from argument cfThis. <strong>"the exception from cfThis"</strong> means the cause of
-     *                      the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
-     *                      of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
+     *                      the exception from argument cfThis. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if cfThis fails with the expected exception type.
      *                      The function's argument is the exception from cfThis.
+     * @see #unwrapCfException(Throwable)
      * @see Futures#catching the equivalent Guava method catching()
      */
     @SuppressWarnings("unchecked")
@@ -2780,17 +2787,20 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when given stage completes exceptionally with the given exceptionType,
-     * is executed with the exception from the given stage as the argument to the supplied function,
-     * using the default executor of parameter the given stage.
+     * is executed with the exception from the given stage({@code argument cfThis}) as the argument to the supplied
+     * function, using the default executor of parameter the given stage.
      * Otherwise, the returned stage contains same result as the given stage.
+     * <p>
+     * <strong>"The exception from the given stage({@code argument cfThis})"</strong> means the cause of
+     * the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
+     * of exception, that exception itself; aka the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
-     *                      the exception from argument cfThis. <strong>"the exception from cfThis"</strong> means the cause of
-     *                      the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
-     *                      of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
+     *                      the exception from argument cfThis. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if cfThis fails with the expected exception type.
      *                      The function's argument is the exception from cfThis.
+     * @see #unwrapCfException(Throwable)
      * @see Futures#catching the equivalent Guava method catching()
      */
     public static <T, X extends Throwable, C extends CompletionStage<? super T>>
@@ -2800,16 +2810,16 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when given stage completes exceptionally with the given exceptionType,
-     * is executed with the exception from the given stage as the argument to the supplied function, using the supplied Executor.
-     * Otherwise, the returned stage contains same result as the given stage.
+     * is executed with the exception from the given stage({@code argument cfThis}) as the argument to the supplied
+     * function, using the supplied Executor. Otherwise, the returned stage contains same result as the given stage.
+     * <p>
+     * <strong>"The exception from the given stage({@code argument cfThis})"</strong> means the cause of
+     * the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
+     * of exception, that exception itself; aka the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
-     *                      the exception from argument cfThis. <strong>"the exception from cfThis"</strong> means the cause of
-     *                      the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
-     *                      of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
+     *                      the exception from argument cfThis. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
-     * @param fallback      the Function to be called if cfThis fails with the expected exception type.
-     *                      The function's argument is the exception from cfThis.
      * @param executor      the executor to use for asynchronous execution
      * @see Futures#catching the equivalent Guava method catching()
      */
@@ -2835,7 +2845,7 @@ public final class CompletableFutureUtils {
      * Otherwise, if given stage completes normally, then the returned stage also completes normally with the same value.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
-     * <strong>Strong recommend</strong> using {@link #catchingAsync(CompletionStage, Class, Function)}
+     * <strong>Strongly recommend</strong> using {@link #catchingAsync(CompletionStage, Class, Function)}
      * instead in your biz application.
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
@@ -2853,7 +2863,7 @@ public final class CompletableFutureUtils {
      * if given stage completes normally, then the returned stage also completes normally with the same value.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
-     * <strong>Strong recommend</strong> using {@link #catchingAsync(CompletionStage, Class, Function, Executor)}
+     * <strong>Strongly recommend</strong> using {@link #catchingAsync(CompletionStage, Class, Function, Executor)}
      * instead in your biz application.
      *
      * @param fn       the function to use to compute the value of the returned CompletableFuture
@@ -2888,9 +2898,9 @@ public final class CompletableFutureUtils {
      * <p>
      * Uses the default executor of parameter cfThis as {@code executorWhenTimeout}.
      * <p>
-     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from
-     * the original CF method {@link CompletableFuture#orTimeout} and its backport method {@link #orTimeout},
-     * because the returned new CF instance avoids the subsequent usage of the delay thread.
+     * <strong>CAUTION:</strong> This method returns a new CompletableFuture instead of {@code cfThis} to avoid
+     * the subsequent usage of the delay thread; This behavior is DIFFERENT from the original CF method
+     * {@link CompletableFuture#orTimeout} and its backport method {@link #orTimeout}.
      * More info see the javadoc of {@link #orTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
@@ -2908,9 +2918,9 @@ public final class CompletableFutureUtils {
      * when the given CompletableFuture is not completed before the given timeout; otherwise the returned
      * CompletableFuture completed with the same successful result or exception of the given CompletableFuture.
      * <p>
-     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from
-     * the original CF method {@link CompletableFuture#orTimeout} and its backport method {@link #orTimeout},
-     * because the returned new CF instance avoids the subsequent usage of the delay thread.
+     * <strong>CAUTION:</strong> This method returns a new CompletableFuture instead of {@code cfThis} to avoid
+     * the subsequent usage of the delay thread; This behavior is DIFFERENT from the original CF method
+     * {@link CompletableFuture#orTimeout} and its backport method {@link #orTimeout}.
      * More info see the javadoc of {@link #orTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
@@ -2918,7 +2928,7 @@ public final class CompletableFutureUtils {
      * @param timeout             how long to wait before completing exceptionally with a TimeoutException,
      *                            in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param executorWhenTimeout the async executor when triggered by timeout
+     * @param executorWhenTimeout the executor to use for asynchronous execution when the wait timed out
      */
     public static <C extends CompletableFuture<?>> C cffuOrTimeout(
             C cfThis, long timeout, TimeUnit unit, Executor executorWhenTimeout) {
@@ -2935,23 +2945,22 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>CAUTION:</strong> {@link CompletableFuture#orTimeout} and this backport method are <strong>UNSAFE</strong>!
      * <p>
-     * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
-     * are performed in the <strong>SINGLE thread builtin executor</strong>
-     * of CompletableFuture for delay execution (including timeout function).
-     * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
-     * (including delay execution and timeout).
+     * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
+     * in CompletableFuture's internal <strong>SINGLE-thread delay executor</strong> (including timeout functionality).
+     * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
+     * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
-     * <strong>Strong recommend</strong> using the safe method {@link #cffuOrTimeout(CompletableFuture,
+     * <strong>Strongly recommend</strong> using the safe method {@link #cffuOrTimeout(CompletableFuture,
      * long, TimeUnit, Executor)} instead of {@link CompletableFuture#orTimeout} and this backport method.<br>
-     * Unless all subsequent actions of dependent CompletableFutures is ensured executing async(aka. the dependent
-     * CompletableFutures is created by async methods), using {@link CompletableFuture#orTimeout}
-     * and this backport method are one less thread switch of task execution when triggered by timeout.
+     * The only case where using {@link CompletableFuture#orTimeout} and this backport method makes sense is when
+     * all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously (i.e. the dependent
+     * CompletableFutures are created by async methods). In this case, they save one thread switch when the timeout triggers.
      * <p>
      * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout} leaks if the future completes exceptionally,
      * more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
      * <a href="https://github.com/openjdk/jdk/pull/13059">PR review openjdk/jdk/13059</a>
      * and <a href="https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a">JDK bugfix commit</a>.
-     * The cffu backport logic(for Java 20-) has merged the fix of this JDK bug.
+     * The cffu backport logic(for Java 20-) has merged this JDK bugfix.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -2964,8 +2973,8 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         // NOTE: No need check minimal stage, because checked in cfThis.orTimeout() / cfThis.isDone() below
 
-        // because of bug JDK-8303742, delegate to CompletableFuture.orTimeout for Java 21+(the bug is fixed at Java 21)
-        // instead of Java 9+(CompletableFuture#orTimeout is new API since Java 9)
+        // because of bug JDK-8303742, delegate to CF#orTimeout for Java 21+(the bug were fixed at Java 21)
+        // instead of Java 9+(CF#orTimeout were introduced in Java 9)
         if (IS_JAVA21_PLUS) {
             cfThis.orTimeout(timeout, unit);
         } else {
@@ -2985,9 +2994,9 @@ public final class CompletableFutureUtils {
      * <p>
      * Uses the default executor of parameter cfThis as {@code executorWhenTimeout}.
      * <p>
-     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is different from the
-     * original CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout},
-     * because the returned new CF instance avoids the subsequent usage of the delay thread.
+     * <strong>CAUTION:</strong> This method returns a new CompletableFuture instead of {@code cfThis} to avoid
+     * the subsequent usage of the delay thread. This behavior is DIFFERENT from the original CF method
+     * {@link CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout}.
      * More info see the javadoc of {@link #completeOnTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
@@ -3007,9 +3016,9 @@ public final class CompletableFutureUtils {
      * when the given CompletableFuture is not completed before the given timeout; otherwise the returned
      * CompletableFuture completed with the same successful result or exception of the given CompletableFuture.
      * <p>
-     * <strong>CAUTION:</strong> This method returns a new CompletableFuture and this behavior is DIFFERENT from the
-     * original CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout},
-     * because the returned new CF instance avoids the subsequent usage of the delay thread.
+     * <strong>CAUTION:</strong> This method returns a new CompletableFuture instead of {@code cfThis} to avoid
+     * the subsequent usage of the delay thread. This behavior is DIFFERENT from the original CF method
+     * {@link CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout}.
      * More info see the javadoc of {@link #completeOnTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
@@ -3017,7 +3026,7 @@ public final class CompletableFutureUtils {
      * @param value               the value to use upon timeout
      * @param timeout             how long to wait before completing normally with the given value, in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param executorWhenTimeout the async executor when triggered by timeout
+     * @param executorWhenTimeout the executor to use for asynchronous execution when the wait timed out
      */
     public static <T, C extends CompletableFuture<? super T>>
     C cffuCompleteOnTimeout(C cfThis, @Nullable T value, long timeout, TimeUnit unit, Executor executorWhenTimeout) {
@@ -3033,16 +3042,16 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>CAUTION:</strong> {@link CompletableFuture#completeOnTimeout} and this backport method are <strong>UNSAFE</strong>!
      * <p>
-     * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
-     * are performed in the <strong>SINGLE thread builtin executor</strong> of CompletableFuture for delay execution
-     * (including timeout function). So the long-running subsequent non-async actions lead to
-     * the CompletableFuture dysfunction (including delay execution and timeout).
+     * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
+     * in CompletableFuture's internal <strong>SINGLE-thread delay executor</strong> (including timeout functionality).
+     * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
+     * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
-     * <strong>Strong recommend</strong> using the safe method {@link #cffuCompleteOnTimeout(CompletableFuture, Object,
+     * <strong>Strongly recommend</strong> using the safe method {@link #cffuCompleteOnTimeout(CompletableFuture, Object,
      * long, TimeUnit, Executor)} instead of {@link CompletableFuture#completeOnTimeout} and this backport method.<br>
-     * Unless all subsequent actions of dependent CompletableFutures is ensured executing async(aka. the dependent
-     * CompletableFutures is created by async methods), using {@link CompletableFuture#completeOnTimeout}
-     * and this backport method are one less thread switch of task execution when triggered by timeout.
+     * The only case where using {@link CompletableFuture#completeOnTimeout} and this backport method makes sense is when
+     * all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously (i.e. the dependent
+     * CompletableFutures are created by async methods). In this case, they save one thread switch when the timeout triggers.
      *
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
@@ -3090,16 +3099,19 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
-     * is composed using the results of the supplied function applied to the exception from the given stage.
+     * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType, is composed
+     * using the results of the supplied function applied to the exception from the given stage({@code argument cfThis}).
+     * <p>
+     * <strong>"The exception from the given stage({@code argument cfThis})"</strong> means the cause of
+     * the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
+     * of exception, that exception itself; aka the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
-     *                      the exception from argument cfThis. <strong>"the exception from cfThis"</strong> means the cause of
-     *                      the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
-     *                      of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
+     *                      the exception from argument cfThis. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if cfThis fails with the expected exception type.
      *                      The function's argument is the exception from cfThis.
+     * @see #unwrapCfException(Throwable)
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */
     @SuppressWarnings("unchecked")
@@ -3118,17 +3130,20 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
-     * is composed using the results of the supplied function applied to the exception from the given stage,
+     * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType, is composed
+     * using the results of the supplied function applied to the exception from the given stage({@code argument cfThis}),
      * using the default executor of parameter the given stage.
+     * <p>
+     * <strong>"The exception from the given stage({@code argument cfThis})"</strong> means the cause of
+     * the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
+     * of exception, that exception itself; aka the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
-     *                      the exception from argument cfThis. <strong>"the exception from cfThis"</strong> means the cause of
-     *                      the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
-     *                      of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
+     *                      the exception from argument cfThis. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if cfThis fails with the expected exception type.
      *                      The function's argument is the exception from cfThis.
+     * @see #unwrapCfException(Throwable)
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */
     public static <T, X extends Throwable, C extends CompletionStage<? super T>> C catchingComposeAsync(
@@ -3137,18 +3152,21 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
-     * is composed using the results of the supplied function applied to the exception from the given stage,
+     * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType, is composed
+     * using the results of the supplied function applied to the exception from the given stage({@code argument cfThis}),
      * using the supplied Executor.
+     * <p>
+     * <strong>"The exception from the given stage({@code argument cfThis})"</strong> means the cause of
+     * the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
+     * of exception, that exception itself; aka the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
-     *                      the exception from argument cfThis. <strong>"the exception from cfThis"</strong> means the cause of
-     *                      the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
-     *                      of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
+     *                      the exception from argument cfThis. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if cfThis fails with the expected exception type.
      *                      The function's argument is the exception from cfThis.
      * @param executor      the executor to use for asynchronous execution
+     * @see #unwrapCfException(Throwable)
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */
     @SuppressWarnings("unchecked")
@@ -3173,7 +3191,7 @@ public final class CompletableFutureUtils {
      * is composed using the results of the supplied function applied to given stage's exception.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
-     * <strong>Strong recommend</strong> using {@link #catchingCompose(CompletionStage, Class, Function)}
+     * <strong>Strongly recommend</strong> using {@link #catchingCompose(CompletionStage, Class, Function)}
      * instead in your biz application.
      *
      * @param fn the function to use to compute the returned CompletableFuture
@@ -3198,7 +3216,7 @@ public final class CompletableFutureUtils {
      * using the default executor of parameter cfThis.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
-     * <strong>Strong recommend</strong> using {@link #catchingComposeAsync(CompletionStage, Class, Function)}
+     * <strong>Strongly recommend</strong> using {@link #catchingComposeAsync(CompletionStage, Class, Function)}
      * instead in your biz application.
      *
      * @param fn the function to use to compute the returned CompletableFuture
@@ -3215,7 +3233,7 @@ public final class CompletableFutureUtils {
      * the results of the supplied function applied to given stage's exception, using the supplied Executor.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
-     * <strong>Strong recommend</strong> using {@link #catchingComposeAsync(CompletionStage, Class, Function, Executor)}
+     * <strong>Strongly recommend</strong> using {@link #catchingComposeAsync(CompletionStage, Class, Function, Executor)}
      * instead in your biz application.
      *
      * @param fn       the function to use to compute the returned CompletableFuture
@@ -3349,9 +3367,9 @@ public final class CompletableFutureUtils {
     //
     // NOTE about ExecutionException or CompletionException when the computation threw an exception:
     //   - get methods throw ExecutionException(checked exception)
-    //     these old methods exists in `Future` interface since Java 5
+    //     these methods exists in `Future` interface since Java 5
     //   - getNow/join throw CompletionException(unchecked exception),
-    //     these new methods exists in `CompletableFuture` since Java 8
+    //     these methods exists in `CompletableFuture` since Java 8
     ////////////////////////////////////////////////////////////
 
     /**
@@ -3502,8 +3520,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns the computation state({@link CffuState}), this method  is equivalent to {@link CompletableFuture#state()}
-     * with java version compatibility logic, so you can invoke in old {@code java 18-}.
+     * Returns the computation state ({@link CffuState}). This method provides equivalent functionality to
+     * {@link CompletableFuture#state()} with backwards compatibility for {@code Java 18-}.
      *
      * @return the computation state
      * @see Future#state()

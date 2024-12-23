@@ -591,7 +591,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Tuple variance of {@link #thenMApplyFailFastAsync(Function[])}.
+     * Tuple variant of {@link #thenMApplyFailFastAsync(Function[])}.
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleFailFastAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -599,7 +599,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
+     * Tuple variant of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleFailFastAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -607,7 +607,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFailFastAsync(Function[])}.
+     * Tuple variant of {@link #thenMApplyFailFastAsync(Function[])}.
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleFailFastAsync(
             Function<? super T, ? extends U1> fn1,
@@ -616,7 +616,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
+     * Tuple variant of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleFailFastAsync(
             Executor executor, Function<? super T, ? extends U1> fn1,
@@ -625,7 +625,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFailFastAsync(Function[])}.
+     * Tuple variant of {@link #thenMApplyFailFastAsync(Function[])}.
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleFailFastAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -634,7 +634,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
+     * Tuple variant of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleFailFastAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -643,7 +643,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFailFastAsync(Function[])}.
+     * Tuple variant of {@link #thenMApplyFailFastAsync(Function[])}.
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleFailFastAsync(
             Function<? super T, ? extends U1> fn1,
@@ -653,7 +653,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
+     * Tuple variant of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleFailFastAsync(
             Executor executor, Function<? super T, ? extends U1> fn1,
@@ -663,7 +663,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
@@ -674,7 +674,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
@@ -685,7 +685,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
@@ -697,7 +697,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
@@ -709,7 +709,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
@@ -721,7 +721,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
@@ -733,7 +733,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
@@ -746,7 +746,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
+     * Tuple variant of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
      * <p>
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
@@ -759,7 +759,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
+     * Tuple variant of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -771,7 +771,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
+     * Tuple variant of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -784,7 +784,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
+     * Tuple variant of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -797,7 +797,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
+     * Tuple variant of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -810,7 +810,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
+     * Tuple variant of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -824,7 +824,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
+     * Tuple variant of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -838,7 +838,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
+     * Tuple variant of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -852,7 +852,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
+     * Tuple variant of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
      * with {@code null} valueIfNotSuccess.
      * <p>
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
@@ -867,7 +867,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAsync(Function[])}.
+     * Tuple variant of {@link #thenMApplyAsync(Function[])}.
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -875,7 +875,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAsync(Executor, Function[])}.
+     * Tuple variant of {@link #thenMApplyAsync(Executor, Function[])}.
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -883,7 +883,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAsync(Function[])}.
+     * Tuple variant of {@link #thenMApplyAsync(Function[])}.
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -892,7 +892,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAsync(Executor, Function[])}.
+     * Tuple variant of {@link #thenMApplyAsync(Executor, Function[])}.
      */
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -901,7 +901,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAsync(Function[])}.
+     * Tuple variant of {@link #thenMApplyAsync(Function[])}.
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -910,7 +910,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAsync(Executor, Function[])}.
+     * Tuple variant of {@link #thenMApplyAsync(Executor, Function[])}.
      */
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -919,7 +919,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAsync(Function[])}.
+     * Tuple variant of {@link #thenMApplyAsync(Function[])}.
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleAsync(
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -929,7 +929,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Tuple variance of {@link #thenMApplyAsync(Executor, Function[])}.
+     * Tuple variant of {@link #thenMApplyAsync(Executor, Function[])}.
      */
     public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -1514,14 +1514,17 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Returns a new Cffu that, when this Cffu completes exceptionally with the given exceptionType,
      * is executed with the exception from this Cffu as the argument to the supplied function.
      * Otherwise, the returned Cffu contains same result as this Cffu.
+     * <p>
+     * <strong>"The exception from this Cffu"</strong> means the cause of the {@link ExecutionException}
+     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself;
+     * aka the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the exception from this Cffu. <strong>"the exception from this Cffu"</strong> means
-     *                      the cause of the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a
-     *                      different kind of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
+     *                      against the exception from this Cffu. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if this Cffu fails with the expected exception type.
      *                      The function's argument is the exception from this Cffu.
+     * @see CompletableFutureUtils#unwrapCfException(Throwable)
      * @see Futures#catching the equivalent Guava method catching()
      */
     public <X extends Throwable> Cffu<T> catching(Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
@@ -1532,14 +1535,17 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Returns a new Cffu that, when this Cffu completes exceptionally with the given exceptionType,
      * is executed with the exception from this Cffu as the argument to the supplied function, using {@link #defaultExecutor()}.
      * Otherwise, the returned Cffu contains same result as this Cffu.
+     * <p>
+     * <strong>"The exception from this Cffu"</strong> means the cause of the {@link ExecutionException}
+     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself;
+     * aka the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the exception from this Cffu. <strong>"the exception from this Cffu"</strong> means
-     *                      the cause of the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a
-     *                      different kind of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
+     *                      against the exception from this Cffu. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if this Cffu fails with the expected exception type.
      *                      The function's argument is the exception from this Cffu.
+     * @see CompletableFutureUtils#unwrapCfException(Throwable)
      * @see Futures#catching the equivalent Guava method catching()
      */
     public <X extends Throwable> Cffu<T> catchingAsync(
@@ -1551,15 +1557,18 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Returns a new Cffu that, when this Cffu completes exceptionally with the given exceptionType,
      * is executed with the exception from this Cffu as the argument to the supplied function, using the supplied Executor.
      * Otherwise, the returned Cffu contains same result as this Cffu.
+     * <p>
+     * <strong>"The exception from this Cffu"</strong> means the cause of the {@link ExecutionException}
+     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself;
+     * aka the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the exception from this Cffu. <strong>"the exception from this Cffu"</strong> means
-     *                      the cause of the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a
-     *                      different kind of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
+     *                      against the exception from this Cffu. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if this Cffu fails with the expected exception type.
      *                      The function's argument is the exception from this Cffu.
      * @param executor      the executor to use for asynchronous execution
+     * @see CompletableFutureUtils#unwrapCfException(Throwable)
      * @see Futures#catching the equivalent Guava method catching()
      */
     public <X extends Throwable> Cffu<T> catchingAsync(
@@ -1574,7 +1583,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * then the returned stage also completes normally with the same value.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
-     * <strong>Strong recommend</strong> using {@link #catching(Class, Function)}
+     * <strong>Strongly recommend</strong> using {@link #catching(Class, Function)}
      * instead in your biz application.
      *
      * @param fn the function to use to compute the value of the returned Cffu
@@ -1594,7 +1603,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * then the returned stage also completes normally with the same value.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
-     * <strong>Strong recommend</strong> using {@link #catchingAsync(Class, Function)}
+     * <strong>Strongly recommend</strong> using {@link #catchingAsync(Class, Function)}
      * instead in your biz application.
      *
      * @param fn the function to use to compute the value of the returned Cffu
@@ -1613,7 +1622,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * then the returned stage also completes normally with the same value.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
-     * <strong>Strong recommend</strong> using {@link #catchingAsync(Class, Function, Executor)}
+     * <strong>Strongly recommend</strong> using {@link #catchingAsync(Class, Function, Executor)}
      * instead in your biz application.
      *
      * @param fn       the function to use to compute the value of the returned Cffu
@@ -1638,16 +1647,14 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * Uses {@link #defaultExecutor()} as {@code executorWhenTimeout}.
      * <p>
-     * <strong>CAUTION:</strong> This method returns a new Cffu and this behavior is different from
-     * the original CF method {@link CompletableFuture#orTimeout} and its backport method {@link #unsafeOrTimeout},
-     * because the returned new Cffu instance avoids the subsequent usage of the delay thread.
-     * More info see the javadoc of {@link #unsafeOrTimeout} and the demo <a href=
+     * <strong>CAUTION:</strong> This method returns a new Cffu instead of this Cffu to avoid the subsequent usage of the
+     * delay thread; This behavior is DIFFERENT from the original CF method {@link CompletableFuture#orTimeout} and its
+     * backport method {@link #unsafeOrTimeout}. More info see the javadoc of {@link #unsafeOrTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @see #orTimeout(long, TimeUnit, Executor)
      */
     public Cffu<T> orTimeout(long timeout, TimeUnit unit) {
         return orTimeout(timeout, unit, fac.defaultExecutor());
@@ -1681,22 +1688,21 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * <strong>CAUTION:</strong> This method is <strong>UNSAFE</strong>!
      * <p>
-     * When triggered by timeout, the subsequent non-async actions of the dependent cfs
-     * are performed in the <strong>SINGLE thread builtin executor</strong>
-     * of CompletableFuture for delay execution(including timeout function).
-     * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
-     * (including delay execution and timeout).
+     * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
+     * in CompletableFuture's internal <strong>SINGLE-thread delay executor</strong> (including timeout functionality).
+     * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
+     * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
-     * <strong>Strong recommend</strong> using the safe method {@link #orTimeout(long, TimeUnit)}
-     * instead of this method.<br>Unless all subsequent actions of dependent cfs is ensured executing async
-     * (aka. the dependent cfs is created by async methods), using this method
-     * is one less thread switch of task execution when triggered by timeout.
+     * <strong>Strongly recommend</strong> using the safe method {@link #orTimeout(long, TimeUnit)} instead of this method.
+     * <br>The only case where using this method makes sense is when all subsequent actions of dependent Cffus
+     * are guaranteed to execute asynchronously (i.e. the dependent Cffus are created by async methods).
+     * In this case, they save one thread switch when the timeout triggers.
      * <p>
      * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout} leaks if the future completes exceptionally,
      * more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
      * <a href="https://github.com/openjdk/jdk/pull/13059">PR review openjdk/jdk/13059</a>
      * and <a href="https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a">JDK bugfix commit</a>.
-     * The cffu backport logic(for Java 20-) has merged the fix of this JDK bug.
+     * The cffu backport logic(for Java 20-) has merged this JDK bugfix.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -1717,9 +1723,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * Uses {@link #defaultExecutor()} as {@code executorWhenTimeout}.
      * <p>
-     * <strong>CAUTION:</strong> This method returns a new Cffu and this behavior is different from the original
-     * CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #unsafeCompleteOnTimeout},
-     * because the returned new Cffu instance avoids the subsequent usage of the delay thread.
+     * <strong>CAUTION:</strong> This method returns a new Cffu instead of this Cffu
+     * to avoid the subsequent usage of the delay thread; This behavior is DIFFERENT from the original CF method
+     * {@link CompletableFuture#completeOnTimeout} and its backport method {@link #unsafeCompleteOnTimeout}.
      * More info see the javadoc of {@link #unsafeCompleteOnTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
@@ -1727,7 +1733,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @see #completeOnTimeout(Object, long, TimeUnit, Executor)
      */
     public Cffu<T> completeOnTimeout(@Nullable T value, long timeout, TimeUnit unit) {
         return completeOnTimeout(value, timeout, unit, fac.defaultExecutor());
@@ -1760,16 +1765,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * <strong>CAUTION:</strong> This method is <strong>UNSAFE</strong>!
      * <p>
-     * When triggered by timeout, the subsequent non-async actions of the dependent cfs
-     * are performed in the <strong>SINGLE thread builtin executor</strong>
-     * of CompletableFuture for delay execution (including timeout function).
-     * So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
-     * (including delay execution and timeout).
+     * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
+     * in CompletableFuture's internal <strong>SINGLE-thread delay executor</strong> (including timeout functionality).
+     * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
+     * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
-     * <strong>Strong recommend</strong> using the safe method {@link #completeOnTimeout(Object, long, TimeUnit)}
-     * instead of this method.<br>Unless all subsequent actions of dependent cfs is ensured executing async
-     * (aka. the dependent cfs is created by async methods), using this method
-     * is one less thread switch of task execution when triggered by timeout.
+     * <strong>Strongly recommend</strong> using the safe method {@link #completeOnTimeout(Object, long, TimeUnit)}
+     * instead of this method.<br>The only case where using this method makes sense is when all subsequent actions of
+     * dependent Cffus are guaranteed to execute asynchronously (i.e. the dependent Cffus are created by async methods).
+     * In this case, they save one thread switch when the timeout triggers.
      *
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
@@ -1861,14 +1865,17 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu that, when this Cffu completes exceptionally with the given exceptionType,
      * is composed using the results of the supplied function applied to the exception from this Cffu.
+     * <p>
+     * <strong>"The exception from this Cffu"</strong> means the cause of the {@link ExecutionException}
+     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself;
+     * aka the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the exception from this Cffu. <strong>"the exception from this Cffu"</strong> means
-     *                      the cause of the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a
-     *                      different kind of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
+     *                      against the exception from this Cffu. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if this Cffu fails with the expected exception type.
      *                      The function's argument is the exception from this Cffu.
+     * @see CompletableFutureUtils#unwrapCfException(Throwable)
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */
     public <X extends Throwable> Cffu<T> catchingCompose(
@@ -1877,16 +1884,19 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes exceptionally with the given exceptionType,
-     * is composed using the results of the supplied function applied to the exception from this Cffu using {@link #defaultExecutor()}.
+     * Returns a new Cffu that, when this Cffu completes exceptionally with the given exceptionType, is composed using
+     * the results of the supplied function applied to the exception from this Cffu using {@link #defaultExecutor()}.
+     * <p>
+     * <strong>"The exception from this Cffu"</strong> means the cause of the {@link ExecutionException}
+     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself;
+     * aka the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the exception from this Cffu. <strong>"the exception from this Cffu"</strong> means
-     *                      the cause of the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a
-     *                      different kind of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
+     *                      against the exception from this Cffu. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if this Cffu fails with the expected exception type.
      *                      The function's argument is the exception from this Cffu.
+     * @see CompletableFutureUtils#unwrapCfException(Throwable)
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */
     public <X extends Throwable> Cffu<T> catchingComposeAsync(
@@ -1895,17 +1905,20 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns a new Cffu that, when this Cffu completes exceptionally with the given exceptionType,
-     * is composed using the results of the supplied function applied to the exception from this Cffu, using the supplied Executor.
+     * Returns a new Cffu that, when this Cffu completes exceptionally with the given exceptionType, is composed using
+     * the results of the supplied function applied to the exception from this Cffu, using the supplied Executor.
+     * <p>
+     * <strong>"The exception from this Cffu"</strong> means the cause of the {@link ExecutionException}
+     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself;
+     * aka the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
-     *                      against the exception from this Cffu. <strong>"the exception from this Cffu"</strong> means
-     *                      the cause of the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a
-     *                      different kind of exception, that exception itself. To avoid hiding bugs and other unrecoverable errors,
+     *                      against the exception from this Cffu. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
      * @param fallback      the Function to be called if this Cffu fails with the expected exception type.
      *                      The function's argument is the exception from this Cffu.
      * @param executor      the executor to use for asynchronous execution
+     * @see CompletableFutureUtils#unwrapCfException(Throwable)
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */
     public <X extends Throwable> Cffu<T> catchingComposeAsync(
@@ -1918,7 +1931,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * is composed using the results of the supplied function applied to this stage's exception.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
-     * <strong>Strong recommend</strong> using {@link #catchingCompose(Class, Function)}
+     * <strong>Strongly recommend</strong> using {@link #catchingCompose(Class, Function)}
      * instead in your biz application.
      *
      * @param fn the function to use to compute the returned CompletionStage
@@ -1936,7 +1949,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * using {@link #defaultExecutor()}.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
-     * <strong>Strong recommend</strong> using {@link #catchingComposeAsync(Class, Function)}
+     * <strong>Strongly recommend</strong> using {@link #catchingComposeAsync(Class, Function)}
      * instead in your biz application.
      *
      * @param fn the function to use to compute the returned CompletionStage
@@ -1954,7 +1967,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * using the supplied Executor.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
-     * <strong>Strong recommend</strong> using {@link #catchingComposeAsync(Class, Function, Executor)}
+     * <strong>Strongly recommend</strong> using {@link #catchingComposeAsync(Class, Function, Executor)}
      * instead in your biz application.
      *
      * @param fn       the function to use to compute the returned CompletionStage
@@ -2197,9 +2210,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //
     // NOTE about ExecutionException or CompletionException when the computation threw an exception:
     //   - get methods throw ExecutionException(checked exception)
-    //     these old methods exists in `Future` interface since Java 5
+    //     these methods exists in `Future` interface since Java 5
     //   - getNow/join throw CompletionException(unchecked exception),
-    //     these new methods exists in `CompletableFuture` since Java 8
+    //     these methods exists in `CompletableFuture` since Java 8
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -2409,13 +2422,12 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns the computation state, this method contains <strong>NO</strong> java version compatibility logic,
-     * if you need this function in old {@code java 18-}, use {@link #cffuState()} instead.
+     * Returns the computation state. This method does not provide Java version compatibility logic;
+     * For {@code Java 18-}, use {@link #cffuState()} instead.
      * <p>
-     * <strong>NOTE:</strong> {@link CompletableFuture#state} is new method since Java 19,
-     * this method should have compatibility logic for old Java version;
-     * But the return type {@link Future.State} is also added since Java 19,
-     * so it's IMPOSSIBLE to backport by compatibility logic of wrapper class({@code Cffu}).
+     * <strong>NOTE:</strong> Both {@link CompletableFuture#state} method and its return type
+     * {@link Future.State} were introduced in {@code Java 19}. The dependency on the new return type
+     * makes it IMPOSSIBLE to provide backward compatibility through the {@code Cffu} wrapper.
      *
      * @return the computation state
      * @see #cffuState()
@@ -2428,8 +2440,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     /**
-     * Returns the computation state({@link CffuState}), this method  is equivalent to {@link CompletableFuture#state()}
-     * with java version compatibility logic, so you can invoke in old {@code java 18-}.
+     * Returns the computation state ({@link CffuState}). This method provides equivalent functionality to
+     * {@link CompletableFuture#state()} with backwards compatibility for {@code Java 18-}.
      *
      * @return the computation state
      */
@@ -2692,11 +2704,11 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns the estimated number of CompletableFuture(including Cffu Wrapper)
+     * Returns the estimated number of CompletableFuture(including Cffu wrapper)
      * whose completions are awaiting completion of this Cffu(aka its underlying CompletableFuture).
      * This method is designed for use in monitoring system state, not for synchronization control.
      *
-     * @return the estimated number of dependent CompletableFutures(including Cffu Wrapper)
+     * @return the estimated number of dependent CompletableFutures(including Cffu wrapper)
      * @see CompletableFuture#getNumberOfDependents()
      */
     @Contract(pure = true)
@@ -2713,7 +2725,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     //    - obtrudeValue(value)
     //    - obtrudeException(ex)
     //    - cffuUnwrap()
-    //  - for API compatibility of CompletableFuture
+    //  - for API compatibility with CompletableFuture
     //    - newIncompleteFuture()
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -2767,7 +2779,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new incomplete Cffu with CompletableFuture of the type to be returned by a CompletionStage method.
      * <p>
-     * <strong>NOTE:</strong> This method existed mainly for API compatibility to {@code CompletableFuture},
+     * <strong>NOTE:</strong> This method existed mainly for API compatibility with {@code CompletableFuture},
      * prefer {@link CffuFactory#newIncompleteCffu()}.
      *
      * @see CffuFactory#newIncompleteCffu()
