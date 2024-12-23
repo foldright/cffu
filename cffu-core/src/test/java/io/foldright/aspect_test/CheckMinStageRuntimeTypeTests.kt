@@ -905,11 +905,9 @@ class CheckMinStageRuntimeTypeTests : AnnotationSpec() {
         // Timeout Control Methods of CompletableFuture
 
         cffuThis.orTimeout(1, MILLISECONDS).shouldNotBeMinimalStage()
-        cffuThis.orTimeout(1, MILLISECONDS, testFjExecutor).shouldNotBeMinimalStage()
         cffuThis.unsafeOrTimeout(1, MILLISECONDS).shouldNotBeMinimalStage()
 
         cffuThis.completeOnTimeout("", 1, MILLISECONDS).shouldNotBeMinimalStage()
-        cffuThis.completeOnTimeout("", 1, MILLISECONDS, testFjExecutor).shouldNotBeMinimalStage()
         cffuThis.unsafeCompleteOnTimeout("", 1, MILLISECONDS).shouldNotBeMinimalStage()
 
         // Advanced Methods of CompletionStage(compose* and handle-like methods)

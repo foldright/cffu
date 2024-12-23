@@ -1657,29 +1657,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      */
     public Cffu<T> orTimeout(long timeout, TimeUnit unit) {
-        return orTimeout(timeout, unit, fac.defaultExecutor());
-    }
-
-    /**
-     * Returns a new Cffu that is completed exceptionally with a {@link TimeoutException}
-     * when this Cffu is not completed before the given timeout; otherwise the returned
-     * Cffu completed with the same successful result or exception of this Cffu.
-     * <p>
-     * <strong>CAUTION:</strong> This method returns a new Cffu and this behavior is different from
-     * the original CF method {@link CompletableFuture#orTimeout} and its backport method {@link #unsafeOrTimeout},
-     * because the returned new Cffu instance avoids the subsequent usage of the delay thread.
-     * More info see the javadoc of {@link #unsafeOrTimeout} and the demo <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
-     * >DelayDysfunctionDemo</a>.
-     *
-     * @param timeout             how long to wait before completing exceptionally with a TimeoutException,
-     *                            in units of {@code unit}
-     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param executorWhenTimeout the async executor when triggered by timeout
-     */
-    public Cffu<T> orTimeout(long timeout, TimeUnit unit, Executor executorWhenTimeout) {
         checkMinimalStage();
-        return resetCf(CompletableFutureUtils.cffuOrTimeout(cf, timeout, unit, executorWhenTimeout));
+        return resetCf(CompletableFutureUtils.cffuOrTimeout(cf, timeout, unit, fac.defaultExecutor()));
     }
 
     /**
@@ -1735,29 +1714,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      */
     public Cffu<T> completeOnTimeout(@Nullable T value, long timeout, TimeUnit unit) {
-        return completeOnTimeout(value, timeout, unit, fac.defaultExecutor());
-    }
-
-    /**
-     * Returns a new Cffu that is completed normally with the given value
-     * when this Cffu is not completed before the given timeout; otherwise the returned
-     * Cffu completed with the same successful result or exception of this Cffu.
-     * <p>
-     * <strong>CAUTION:</strong> This method returns a new Cffu and this behavior is different from the original
-     * CF method {@link CompletableFuture#completeOnTimeout} and its backport method {@link #unsafeCompleteOnTimeout},
-     * because the returned new Cffu instance avoids the subsequent usage of the delay thread.
-     * More info see the javadoc of {@link #unsafeCompleteOnTimeout} and the demo <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
-     * >DelayDysfunctionDemo</a>.
-     *
-     * @param value               the value to use upon timeout
-     * @param timeout             how long to wait before completing normally with the given value, in units of {@code unit}
-     * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
-     * @param executorWhenTimeout the async executor when triggered by timeout
-     */
-    public Cffu<T> completeOnTimeout(@Nullable T value, long timeout, TimeUnit unit, Executor executorWhenTimeout) {
         checkMinimalStage();
-        return resetCf(CompletableFutureUtils.cffuCompleteOnTimeout(cf, value, timeout, unit, executorWhenTimeout));
+        return resetCf(CompletableFutureUtils.cffuCompleteOnTimeout(cf, value, timeout, unit, fac.defaultExecutor()));
     }
 
     /**

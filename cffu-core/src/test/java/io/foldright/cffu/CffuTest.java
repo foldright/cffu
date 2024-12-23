@@ -329,27 +329,19 @@ class CffuTest {
                 testCffuFac.newIncompleteCffu().orTimeout(1, MILLISECONDS).get()
         ).getCause());
         assertInstanceOf(TimeoutException.class, assertThrowsExactly(ExecutionException.class, () ->
-                testCffuFac.newIncompleteCffu().orTimeout(1, MILLISECONDS, testExecutor).get()
-        ).getCause());
-        assertInstanceOf(TimeoutException.class, assertThrowsExactly(ExecutionException.class, () ->
                 testCffuFac.newIncompleteCffu().unsafeOrTimeout(1, MILLISECONDS).get()
         ).getCause());
 
         assertEquals(n, testCffuFac.completedFuture(n).orTimeout(1, MILLISECONDS).get());
-        assertEquals(n, testCffuFac.completedFuture(n).orTimeout(1, MILLISECONDS, testExecutor).get());
         assertEquals(n, testCffuFac.completedFuture(n).unsafeOrTimeout(1, MILLISECONDS).get());
 
         assertEquals(n, testCffuFac.newIncompleteCffu().completeOnTimeout(
                 n, 1, MILLISECONDS).get());
-        assertEquals(n, testCffuFac.newIncompleteCffu().completeOnTimeout(
-                n, 1, MILLISECONDS, testExecutor).get());
         assertEquals(n, testCffuFac.newIncompleteCffu().unsafeCompleteOnTimeout(
                 n, 1, MILLISECONDS).get());
 
         assertEquals(n, testCffuFac.completedFuture(n).completeOnTimeout(
                 anotherN, 1, MILLISECONDS).get());
-        assertEquals(n, testCffuFac.completedFuture(n).completeOnTimeout(
-                anotherN, 1, MILLISECONDS, testExecutor).get());
         assertEquals(n, testCffuFac.completedFuture(n).unsafeCompleteOnTimeout(
                 anotherN, 1, MILLISECONDS).get());
     }
