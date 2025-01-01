@@ -9,7 +9,7 @@ import org.slf4j.spi.LocationAwareLogger;
  * <strong>Internal</strong> exception logging utility for the cffu library.
  * <p>
  * By default, uncaught exceptions are logged with their complete stack traces. The logging behavior can be configured
- * through the system property {@code cffu.uncaught.exception.log.format} with the following values:
+ * through the system property {@code cffu.exception.log.format} with the following values:
  * <ul>
  * <li>{@code full}: Log the complete exception stack trace (default)</li>
  * <li>{@code short}: Log only the exception message</li>
@@ -18,8 +18,8 @@ import org.slf4j.spi.LocationAwareLogger;
  * <p>
  * Configure the logging format by either:
  * <ul>
- * <li>Setting the JVM argument {@code -Dcffu.uncaught.exception.log.format=<value>} at startup</li>
- * <li>Calling {@code System.setProperty("cffu.uncaught.exception.log.format", "<value>")} programmatically</li>
+ * <li>Setting the JVM argument {@code -Dcffu.exception.log.format=<value>} at startup</li>
+ * <li>Calling {@code System.setProperty("cffu.exception.log.format", "<value>")} programmatically</li>
  * </ul>
  *
  * @author HuHao (995483610 at qq dot com)
@@ -33,20 +33,23 @@ public final class ExceptionLogger {
     private static final LoggerAdapter logger = getLogger();
 
     @SuppressWarnings("StatementWithEmptyBody")
-    public static void logUncaughtException(String where, Throwable ex) {
+    public static void logException(String msg, Throwable ex) {
         final String fullFormat = "full";
         final String shortFormat = "short";
         final String noneFormat = "none";
 
-        final String format = System.getProperty("cffu.uncaught.exception.log.format", fullFormat);
-        final String msgHead = "Uncaught exception occurred at ";
+        final String format = System.getProperty("cffu.exception.log.format", fullFormat);
         if (noneFormat.equalsIgnoreCase(format)) {
             // pass silently when explicitly silenced.
         } else if (shortFormat.equalsIgnoreCase(format)) {
-            logger.error(msgHead + where + ", " + ex, null);
+            logger.error(msg + ", " + ex, null);
         } else {
-            logger.error(msgHead + where, ex);
+            logger.error(msg, ex);
         }
+    }
+
+    public static void logUncaughtException(String where, Throwable ex) {
+        logException("Uncaught exception occurred at " + where, ex);
     }
 
     /**

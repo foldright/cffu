@@ -65,23 +65,23 @@ mvu::mvn_cmd clean install
 readonly MVN_OPTS_FOR_JAVA8=(
   -Dkotlin.version=1.6.0 -Dguava.version=29.0-jre
   -P!default-logging-dependencies -P!default-arch-unit-test
-  -Dcffu.uncaught.exception.log.format=short
+  -Dcffu.exception.log.format=short
 )
 # shellcheck disable=SC2034
 readonly MVN_OPTS_FOR_JAVA11=(
   -Dkotlin.version=1.7.0
   -DswitchToLog4j2LoggingDependencies -Pswitch-slf4j-to-v1
-  -Dcffu.uncaught.exception.log.format=short
+  -Dcffu.exception.log.format=short
 )
 # shellcheck disable=SC2034
 readonly MVN_OPTS_FOR_JAVA17=(
   -Dkotlin.version=1.8.0
-  -DswitchToLog4j2LoggingDependencies -Dcffu.uncaught.exception.log.format=short
+  -DswitchToLog4j2LoggingDependencies -Dcffu.exception.log.format=short
 )
 # shellcheck disable=SC2034
 readonly MVN_OPTS_FOR_JAVA23=(
   -Dkotlin.version=1.9.0
-  -Dcffu.uncaught.exception.log.format=none
+  -Dcffu.exception.log.format=none
 )
 
 SUREFIRE_TEST_GOAL=(surefire:test)

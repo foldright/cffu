@@ -9,6 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import static io.foldright.cffu.CompletableFutureUtils.unwrapCfException;
+import static io.foldright.cffu.internal.ExceptionLogger.logException;
 import static io.foldright.cffu.internal.ExceptionLogger.logUncaughtException;
 
 
@@ -79,7 +80,10 @@ public final class ExHandleOfMultiplyCfsUtils {
         return CFFU_EX_HANDLER;
     }
 
-    private static final ExceptionHandler CFFU_EX_HANDLER = exInfo -> logUncaughtException(exInfo.where, exInfo.ex);
+    private static final ExceptionHandler CFFU_EX_HANDLER = exInfo -> {
+        String msg = "Swallowed exception of cf" + (exInfo.index + 1) + " at " + exInfo.where;
+        logException(msg, exInfo.ex);
+    };
 
     /**
      * Creates new CompletionStages that only capture exception results from the input CompletionStages,
