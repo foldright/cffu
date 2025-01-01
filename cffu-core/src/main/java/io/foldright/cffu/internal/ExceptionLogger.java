@@ -1,12 +1,12 @@
-package io.foldright.cffu;
+package io.foldright.cffu.internal;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.spi.LocationAwareLogger;
 
 
 /**
- * Internal exception logging utility for the cffu library.
+ * <strong>Internal</strong> exception logging utility for the cffu library.
  * <p>
  * By default, uncaught exceptions are logged with their complete stack traces. The logging behavior can be configured
  * through the system property {@code cffu.uncaught.exception.log.format} with the following values:
@@ -24,16 +24,16 @@ import org.slf4j.spi.LocationAwareLogger;
  *
  * @author HuHao (995483610 at qq dot com)
  * @author Jerry Lee (oldratlee at gmail dot com)
- * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
  */
-final class ExceptionLogger {
+@ApiStatus.Internal
+public final class ExceptionLogger {
     private static final String FQCN = ExceptionLogger.class.getName();
-    private static final String CFFU_PACKAGE_NAME = FQCN.replaceFirst("\\.[^.]*$", "");
+    private static final String CFFU_PACKAGE_NAME = FQCN.replaceFirst("\\.[^.]*\\.[^.]*$", "");
 
     private static final LoggerAdapter logger = getLogger();
 
     @SuppressWarnings("StatementWithEmptyBody")
-    static void logUncaughtException(String where, Throwable ex) {
+    public static void logUncaughtException(String where, Throwable ex) {
         final String fullFormat = "full";
         final String shortFormat = "short";
         final String noneFormat = "none";
@@ -49,6 +49,9 @@ final class ExceptionLogger {
         }
     }
 
+    /**
+     * Returns a logger adapter that uses {@code SLF4J} if available, otherwise uses {@link java.util.logging}.
+     */
     private static LoggerAdapter getLogger() {
         try {
             return new Slf4jLoggerAdapter();

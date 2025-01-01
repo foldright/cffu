@@ -1,4 +1,6 @@
-package io.foldright.cffu;
+package io.foldright.cffu.internal;
+
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,11 +11,12 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * Internal common util methods.
+ * <strong>Internal</strong> common utility methods.
  */
-final class InternalCommonUtils {
+@ApiStatus.Internal
+public final class CommonUtils {
     @SafeVarargs
-    static <T> T[] requireArrayAndEleNonNull(String varName, T... array) {
+    public static <T> T[] requireArrayAndEleNonNull(String varName, T... array) {
         requireNonNull(array, varName + "s is null");
         for (int i = 0; i < array.length; i++)
             requireNonNull(array[i], varName + (i + 1) + " is null");
@@ -28,14 +31,14 @@ final class InternalCommonUtils {
      * }</pre>
      */
     @SuppressWarnings("unchecked")
-    static <T, R> R[] mapArray(T[] source, IntFunction<Object[]> destConstructor, Function<T, R> mapper) {
+    public static <T, R> R[] mapArray(T[] source, IntFunction<Object[]> destConstructor, Function<T, R> mapper) {
         Object[] ret = destConstructor.apply(source.length);
         for (int i = 0; i < source.length; i++)
             ret[i] = mapper.apply(source[i]);
         return (R[]) ret;
     }
 
-    static <T> T[] fillArray(T[] array, IntFunction<T> init) {
+    public static <T> T[] fillArray(T[] array, IntFunction<T> init) {
         for (int i = 0; i < array.length; i++)
             array[i] = init.apply(i);
         return array;
@@ -46,10 +49,10 @@ final class InternalCommonUtils {
      * ({@link Arrays#asList}) list. Safer for application code which may reuse the return list as normal collection.
      */
     @SafeVarargs
-    static <T> ArrayList<T> arrayList(T... elements) {
+    public static <T> ArrayList<T> arrayList(T... elements) {
         return new ArrayList<>(Arrays.asList(elements));
     }
 
-    private InternalCommonUtils() {
+    private CommonUtils() {
     }
 }

@@ -12,8 +12,8 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-import static io.foldright.cffu.ExceptionLogger.logUncaughtException;
-import static io.foldright.cffu.InternalCommonUtils.mapArray;
+import static io.foldright.cffu.internal.CommonUtils.mapArray;
+import static io.foldright.cffu.internal.ExceptionLogger.logUncaughtException;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
@@ -21,7 +21,8 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 /**
  * Low Level CompletableFuture Utils.
  * <p>
- * In general, you should NEVER use this class in application codes,
+ * This class is mostly for library writers; most static methods intended for end users are
+ * in the {@link CompletableFutureUtils} class. In general, you should NEVER use this class,
  * unless you understand the underlying logic of CompletableFuture and need hack it.
  * <p>
  * Because the methods are Low Level, use below the method name convention intentionally:
@@ -30,11 +31,14 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  *    <ul>
  *    <li>return type CompletableFuture that may be a minimal-stage
  *    <li>force cast to {@code CompletableFuture<T>} from any {@code CompletableFuture<?>}
- *    <li>return generic type T but constrained type TupleX
+ *    <li>return generic type T but constrained runtime type TupleX
  *    </ul>
  * <li>methods with {@code 0} suffix means no parameter validation, e.g.
  *    <ul><li>no null check</li></ul>
  * </ul>
+ *
+ * @author Jerry Lee (oldratlee at gmail dot com)
+ * @see CompletableFutureUtils
  */
 public final class LLCF {
 

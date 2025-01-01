@@ -29,11 +29,11 @@ import static java.util.Objects.requireNonNull;
  * <p>
  * Use {@link #builder(Executor)} to config and build {@link CffuFactory}.
  * <p>
- * About factory methods conventions of {@link CffuFactory}:
+ * About factory methods convention of {@link CffuFactory}:
  * <ul>
  * <li>factory methods return {@link Cffu} instead of {@link CompletableFuture}.
  * <li>only provide varargs methods for multiple Cffu/CF input arguments;
- *     if you have {@code List} input, use static util methods {@link #cffuListToArray(List)}
+ *     if you have {@code List} input, use static utility methods {@link #cffuListToArray(List)}
  *     or {@link CompletableFutureUtils#completableFutureListToArray(List)} to convert it to array first.
  * </ul>
  *
@@ -1191,7 +1191,7 @@ public final class CffuFactory {
     }
 
     /**
-     * A convenient util method for converting input {@link CompletionStage}(including {@link CompletableFuture})
+     * Converts input {@link CompletionStage}(including {@link CompletableFuture})
      * array element by {@link #toCffu(CompletionStage)}.
      *
      * @throws NullPointerException if the stages param or any of its elements are {@code null}

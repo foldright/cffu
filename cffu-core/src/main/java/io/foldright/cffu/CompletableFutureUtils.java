@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import io.foldright.cffu.internal.CommonUtils;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
 import io.foldright.cffu.tuple.Tuple4;
@@ -16,8 +17,8 @@ import java.util.concurrent.*;
 import java.util.function.*;
 
 import static io.foldright.cffu.Delayer.atCfDelayerThread;
-import static io.foldright.cffu.InternalCommonUtils.*;
 import static io.foldright.cffu.LLCF.*;
+import static io.foldright.cffu.internal.CommonUtils.*;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
@@ -37,7 +38,7 @@ public final class CompletableFutureUtils {
      * - methods with `f_` prefix means not type-safe, e.g.
      *    - return type CompletableFuture that may be a minimal-stage
      *    - force cast to CompletableFuture<T> from any CompletableFuture<?>
-     *    - return generic type T but constrained type TupleX
+     *    - return generic type T but constrained runtime type TupleX
      * - methods with `0` suffix means no parameter validation, e.g.
      *    - no null check
      *
@@ -927,7 +928,7 @@ public final class CompletableFutureUtils {
         if (len == 0) return completedFuture(arrayList());
         // convert input cf to non-minimal-stage CF instance for SINGLE input in order to
         // ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
-        if (len == 1) return toNonMinCf0(cfs[0]).thenApply(InternalCommonUtils::arrayList);
+        if (len == 1) return toNonMinCf0(cfs[0]).thenApply(CommonUtils::arrayList);
 
         final Object[] result = new Object[len];
         final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(cfs, result);
@@ -3721,8 +3722,8 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * A convenient util method for converting input {@link CompletionStage}(including
-     * {@link Cffu}/{@link CompletableFuture}) array element by {@link CompletionStage#toCompletableFuture()}.
+     * Converts input {@link CompletionStage} (including {@link Cffu}/{@link CompletableFuture})
+     * array element by {@link CompletionStage#toCompletableFuture()}.
      *
      * @throws NullPointerException if any of the given stages are {@code null}
      * @see CompletionStage#toCompletableFuture()
@@ -3743,7 +3744,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * A convenient util method for converting input {@link CompletableFuture} list to CompletableFuture array.
+     * Converts input {@link CompletableFuture} list to CompletableFuture array.
      *
      * @see #toCompletableFutureArray(CompletionStage[])
      */
@@ -3756,8 +3757,9 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * A convenient util method for unwrapping CF exception
-     * ({@link CompletionException}/{@link ExecutionException}) to the biz exception.
+     * Unwraps CompletableFuture exception ({@link CompletionException} or {@link ExecutionException})
+     * to its cause exception. If the input exception is not a CompletableFuture exception or has no cause,
+     * returns the input exception itself.
      */
     @Contract(value = "null -> null; !null -> !null", pure = true)
     public static @Nullable Throwable unwrapCfException(@Nullable Throwable ex) {
