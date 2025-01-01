@@ -5,6 +5,7 @@ module io.foldright.cffu {
     requires static org.slf4j;
 
     exports io.foldright.cffu;
+    exports io.foldright.cffu.eh;
     exports io.foldright.cffu.tuple;
     exports io.foldright.cffu.spi;
 
