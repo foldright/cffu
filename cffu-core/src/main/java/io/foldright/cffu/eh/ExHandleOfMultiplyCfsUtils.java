@@ -2,6 +2,7 @@ package io.foldright.cffu.eh;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.foldright.cffu.Cffu;
+import io.foldright.cffu.LLCF;
 import io.foldright.cffu.internal.CommonUtils;
 import org.jetbrains.annotations.Contract;
 
@@ -52,17 +53,17 @@ public final class ExHandleOfMultiplyCfsUtils {
      */
     public static void handleSwallowedExceptions(
             String where, ExceptionHandler exceptionHandler, CompletionStage<?>[] inputs, CompletableFuture<?> output) {
-        // uses unlinked cfs to prevent memory leaks, in case that
+        // uses unreferenced cfs to prevent memory leaks, in case that
         // some inputs complete quickly and retain large memory while other inputs or output continue running
-        CompletionStage<Void>[] unlinkedInputs = unlink(inputs);
+        CompletionStage<Void>[] unreferencedInputs = unreferenced(inputs);
 
         // Whether to swallow exceptions from inputs depends on the output's result,
         // so must check when the output CompletionStage completes.
         output.whenComplete((v, outputEx) -> { // outputEx may be null
             Throwable outputBizEx = unwrapCfException(outputEx);
-            for (int i = 0; i < unlinkedInputs.length; i++) {
+            for (int i = 0; i < unreferencedInputs.length; i++) {
                 final int idx = i;
-                CompletionStage<Void> cf = unlinkedInputs[i];
+                CompletionStage<Void> cf = unreferencedInputs[i];
                 // argument ex of method `exceptionally` is never null
                 cf.exceptionally(ex -> {
                     // if ex is returned to output cf(aka. not swallowed ex), do NOTHING
@@ -87,14 +88,15 @@ public final class ExHandleOfMultiplyCfsUtils {
 
     /**
      * Creates new CompletionStages that only capture exception results from the input CompletionStages,
-     * avoiding references to the original stages to allow them to be garbage collected.
+     * avoiding references to the original stages to allow them to be garbage collected ASAP.
      */
-    private static CompletionStage<Void>[] unlink(CompletionStage<?>[] css) {
-        return CommonUtils.mapArray(css, CompletionStage[]::new, s -> s.thenRun(NOP));
+    private static CompletionStage<Void>[] unreferenced(CompletionStage<?>[] css) {
+        return CommonUtils.mapArray(css, CompletionStage[]::new, s -> {
+            CompletableFuture<Void> ret = new CompletableFuture<>();
+            LLCF.peek0(s, (v, ex) -> LLCF.completeCf0(ret, null, ex), "unreferenced");
+            return ret;
+        });
     }
-
-    private static final Runnable NOP = () -> {
-    };
 
     @Nullable
     @Contract("_, _ -> null")

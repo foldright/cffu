@@ -19,13 +19,11 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 
 
 /**
- * Low Level CompletableFuture Utils.
+ * Low Level CompletableFuture utility methods for creating and manipulating CompletableFuture. This class is
+ * for library writers; The methods intended for end users are in the {@link CompletableFutureUtils} class.
  * <p>
- * This class is mostly for library writers; most static methods intended for end users are
- * in the {@link CompletableFutureUtils} class. In general, you should NEVER use this class,
- * unless you understand the underlying logic of CompletableFuture and need hack it.
- * <p>
- * Because the methods are Low Level, use below the method name convention intentionally:
+ * In general, you should NEVER use this class, unless you understand the underlying logic of CompletableFuture
+ * and need hack it. Because the methods are Low Level, use below the method name convention intentionally:
  * <ul>
  * <li>methods with {@code f_} prefix means not type-safe, e.g.
  *    <ul>
@@ -41,7 +39,6 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  * @see CompletableFutureUtils
  */
 public final class LLCF {
-
     ////////////////////////////////////////////////////////////////////////////////
     // region# CF conversion and test methods
     ////////////////////////////////////////////////////////////////////////////////
@@ -147,7 +144,7 @@ public final class LLCF {
      * @see CompletableFutureUtils#peek(CompletionStage, BiConsumer)
      */
     @Contract("_, _, _ -> param1")
-    static <T, C extends CompletionStage<? extends T>>
+    public static <T, C extends CompletionStage<? extends T>>
     C peek0(C cfThis, BiConsumer<? super T, ? super Throwable> action, String where) {
         cfThis.whenComplete((v, ex) -> {
             try {
@@ -167,7 +164,7 @@ public final class LLCF {
      * @see CompletableFutureUtils#peekAsync(CompletionStage, BiConsumer, Executor)
      */
     @Contract("_, _, _, _ -> param1")
-    static <T, C extends CompletionStage<? extends T>>
+    public static <T, C extends CompletionStage<? extends T>>
     C peekAsync0(C cfThis, BiConsumer<? super T, ? super Throwable> action, String where, Executor executor) {
         cfThis.whenCompleteAsync((v, ex) -> {
             try {
@@ -185,7 +182,7 @@ public final class LLCF {
      * In general, you should NEVER use this method in application codes, use {@link CompletableFuture#complete(Object)}
      * or {@link CompletableFuture#completeExceptionally(Throwable)} instead.
      */
-    static <T> boolean completeCf0(CompletableFuture<? super T> cf, T value, @Nullable Throwable ex) {
+    public static <T> boolean completeCf0(CompletableFuture<? super T> cf, @Nullable T value, @Nullable Throwable ex) {
         if (ex == null) return cf.complete(value);
         else return cf.completeExceptionally(ex);
     }
