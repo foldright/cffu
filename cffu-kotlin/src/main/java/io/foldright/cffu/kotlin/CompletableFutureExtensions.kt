@@ -2156,7 +2156,7 @@ fun <T> CompletableFuture<T>.copy(): CompletableFuture<T> =
  *
  * The default executor of CompletableFuture(**NOT** including the customized subclasses of CompletableFuture)
  * uses the [ForkJoinPool.commonPool] if it supports more than one parallel thread, or else an Executor using
- * one thread per async task. **CAUTION:** This executor may be not suitable for common biz use(io intensive).
+ * one thread per async task. **CAUTION:** This executor may be not suitable for common business use(io intensive).
  *
  * @see CompletableFuture.defaultExecutor
  */

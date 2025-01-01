@@ -2977,7 +2977,7 @@ public final class CompletableFutureUtils {
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catchingAsync(CompletionStage, Class, Function)}
-     * instead in your biz application.
+     * instead in your business application.
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
      *           if given CompletionStage completed exceptionally
@@ -2995,7 +2995,7 @@ public final class CompletableFutureUtils {
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catchingAsync(CompletionStage, Class, Function, Executor)}
-     * instead in your biz application.
+     * instead in your business application.
      *
      * @param fn       the function to use to compute the value of the returned CompletableFuture
      *                 if given CompletionStage completed exceptionally
@@ -3323,7 +3323,7 @@ public final class CompletableFutureUtils {
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catchingCompose(CompletionStage, Class, Function)}
-     * instead in your biz application.
+     * instead in your business application.
      *
      * @param fn the function to use to compute the returned CompletableFuture
      *           if given CompletionStage completed exceptionally
@@ -3348,7 +3348,7 @@ public final class CompletableFutureUtils {
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catchingComposeAsync(CompletionStage, Class, Function)}
-     * instead in your biz application.
+     * instead in your business application.
      *
      * @param fn the function to use to compute the returned CompletableFuture
      *           if given CompletionStage completed exceptionally
@@ -3365,7 +3365,7 @@ public final class CompletableFutureUtils {
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catchingComposeAsync(CompletionStage, Class, Function, Executor)}
-     * instead in your biz application.
+     * instead in your business application.
      *
      * @param fn       the function to use to compute the returned CompletableFuture
      *                 if given CompletionStage completed exceptionally
@@ -3814,8 +3814,8 @@ public final class CompletableFutureUtils {
      * Returns the default Executor of parameter cfThis used for async methods that do not specify an Executor.
      * <p>
      * The default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses of CompletableFuture)
-     * uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread, or else an Executor using
-     * one thread per async task. <strong>CAUTION:</strong> This executor may be not suitable for common biz use(io intensive).
+     * uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread, or else an Executor using one
+     * thread per async task. <strong>CAUTION:</strong> This executor may be not suitable for common business use(io intensive).
      *
      * @see CompletableFuture#defaultExecutor()
      */

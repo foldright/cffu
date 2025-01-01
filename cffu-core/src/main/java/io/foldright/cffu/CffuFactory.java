@@ -89,7 +89,7 @@ public final class CffuFactory {
     /**
      * Return an incomplete Cffu, equivalent to {@link CompletableFuture#CompletableFuture()} constructor.
      * <p>
-     * In general, you should not use this method in biz code, prefer other factory methods.
+     * In general, you should not use this method in application code, prefer other factory methods.
      *
      * @see CompletableFuture#CompletableFuture()
      */

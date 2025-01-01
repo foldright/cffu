@@ -35,7 +35,7 @@ import static java.util.Objects.requireNonNull;
 public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     // region# Internal constructor and fields
-    /// /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
 
     private final CffuFactory fac;
 
@@ -1584,7 +1584,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catching(Class, Function)}
-     * instead in your biz application.
+     * instead in your business application.
      *
      * @param fn the function to use to compute the value of the returned Cffu
      *           if this Cffu completed exceptionally
@@ -1604,7 +1604,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catchingAsync(Class, Function)}
-     * instead in your biz application.
+     * instead in your business application.
      *
      * @param fn the function to use to compute the value of the returned Cffu
      *           if this Cffu completed exceptionally
@@ -1623,7 +1623,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catchingAsync(Class, Function, Executor)}
-     * instead in your biz application.
+     * instead in your business application.
      *
      * @param fn       the function to use to compute the value of the returned Cffu
      *                 if this Cffu completed exceptionally
@@ -1890,7 +1890,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catchingCompose(Class, Function)}
-     * instead in your biz application.
+     * instead in your business application.
      *
      * @param fn the function to use to compute the returned CompletionStage
      *           if this CompletionStage completed exceptionally
@@ -1908,7 +1908,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catchingComposeAsync(Class, Function)}
-     * instead in your biz application.
+     * instead in your business application.
      *
      * @param fn the function to use to compute the returned CompletionStage
      *           if this Cffu completed exceptionally
@@ -1926,7 +1926,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catchingComposeAsync(Class, Function, Executor)}
-     * instead in your biz application.
+     * instead in your business application.
      *
      * @param fn       the function to use to compute the returned CompletionStage
      *                 if this Cffu completed exceptionally
