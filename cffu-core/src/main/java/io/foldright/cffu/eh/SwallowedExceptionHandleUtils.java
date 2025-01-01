@@ -15,44 +15,62 @@ import static io.foldright.cffu.internal.ExceptionLogger.logUncaughtException;
 
 
 /**
- * Utilities to handle exceptions from <strong>MULTIPLE</strong> {@link java.util.concurrent.CompletionStage CompletionStage}s
- * (including {@link java.util.concurrent.CompletableFuture CompletableFuture}s and {@link Cffu Cffu}s).
+ * Utilities to handle swallowed exceptions from <strong>MULTIPLE</strong> {@link CompletionStage}s
+ * (including {@link CompletableFuture}s and {@link Cffu}s).
  * <p>
- * Exception handling for SINGLE {@code CompletionStage} is already provided by existing functionality, such as
- * {@link CompletionStage#exceptionally}, {@link Cffu#catching} and {@link CompletionStage#handle}.
- * <p>
- * These utilities are designed for simple tasks like reporting and logging exceptions.
- * Do NOT use these utilities for business logic or complex exception handling - for those cases,
- * use the exception handling methods mentioned above for single {@code CompletionStage}s instead.
+ * These utilities are designed for noncritical tasks like reporting and logging exceptions. For business logic
+ * exception handling, use the standard exception handling methods for SINGLE {@code CompletionStage}s instead: {@link
+ * CompletionStage#exceptionally exceptionally}, {@link Cffu#catching catching}, or {@link CompletionStage#handle handle}.
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
- * @see ExceptionHandler
- * @see ExceptionInfo
+ * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
  */
-public final class ExHandleOfMultiplyCfsUtils {
+public final class SwallowedExceptionHandleUtils {
+    /**
+     * Handles all exceptions from multiple input {@code CompletionStage}s as swallowed exceptions,
+     * using {@link #cffuSwallowedExceptionHandler()}.
+     *
+     * @param where the location where the exception occurs
+     */
+    public static void handleAllSwallowedExceptions(String where, CompletionStage<?>... inputs) {
+        handleAllSwallowedExceptions(where, cffuSwallowedExceptionHandler(), inputs);
+    }
 
     /**
-     * Handles all exceptions from multiple input {@code CompletionStage}s.
+     * Handles all exceptions from multiple input {@code CompletionStage}s as swallowed exceptions.
      *
      * @param where            the location where the exception occurs
      * @param exceptionHandler the exception handler
      */
-    public static void handleAllExceptions(String where, ExceptionHandler exceptionHandler, CompletionStage<?>[] inputs) {
-        // argument ex of method `exceptionally` is never null
+    public static void handleAllSwallowedExceptions(
+            String where, ExceptionHandler exceptionHandler, CompletionStage<?>... inputs) {
         for (int i = 0; i < inputs.length; i++) {
             final int idx = i;
+            // argument ex of method `exceptionally` is never null
             inputs[idx].exceptionally(ex -> safeHandle(new ExceptionInfo(where, idx, ex, null), exceptionHandler));
         }
     }
 
     /**
-     * Handles exceptions from multiple input {@code CompletionStage}s that are swallowed by the output {@code CompletionStage}.
+     * Handles swallowed exceptions from multiple input {@code CompletionStage}s that are discarded (not propagated)
+     * by the output {@code CompletionStage}, using {@link #cffuSwallowedExceptionHandler()}.
+     *
+     * @param where the location where the exception occurs
+     */
+    public static void handleSwallowedExceptions(
+            String where, CompletableFuture<?> output, CompletionStage<?>... inputs) {
+        handleSwallowedExceptions(where, cffuSwallowedExceptionHandler(), output, inputs);
+    }
+
+    /**
+     * Handles swallowed exceptions from multiple input {@code CompletionStage}s
+     * that are discarded (not propagated) by the output {@code CompletionStage}.
      *
      * @param where            the location where the exception occurs
      * @param exceptionHandler the exception handler
      */
     public static void handleSwallowedExceptions(
-            String where, ExceptionHandler exceptionHandler, CompletionStage<?>[] inputs, CompletableFuture<?> output) {
+            String where, ExceptionHandler exceptionHandler, CompletableFuture<?> output, CompletionStage<?>... inputs) {
         // uses unreferenced cfs to prevent memory leaks, in case that
         // some inputs complete quickly and retain large memory while other inputs or output continue running
         CompletionStage<Void>[] unreferencedInputs = unreferenced(inputs);
@@ -75,15 +93,15 @@ public final class ExHandleOfMultiplyCfsUtils {
     }
 
     /**
-     * Returns an exception handler that logs exceptions from CompletionStages using the cffu logger.
+     * Returns a swallowed exception handler that logs exceptions from CompletionStages using the cffu logger.
      */
-    public static ExceptionHandler cffuExHandler() {
-        return CFFU_EX_HANDLER;
+    public static ExceptionHandler cffuSwallowedExceptionHandler() {
+        return CFFU_SWALLOWED_EX_HANDLER;
     }
 
-    private static final ExceptionHandler CFFU_EX_HANDLER = exInfo -> {
+    private static final ExceptionHandler CFFU_SWALLOWED_EX_HANDLER = exInfo -> {
         String msg = "Swallowed exception of cf" + (exInfo.index + 1) + " at " + exInfo.where;
-        logException(msg, exInfo.ex);
+        logException(msg, exInfo.exception);
     };
 
     /**
@@ -103,13 +121,13 @@ public final class ExHandleOfMultiplyCfsUtils {
     @SuppressWarnings("SameReturnValue")
     private static <T> T safeHandle(ExceptionInfo exceptionInfo, ExceptionHandler exceptionHandler) {
         try {
-            exceptionHandler.accept(exceptionInfo);
+            exceptionHandler.handle(exceptionInfo);
         } catch (Throwable e) {
             logUncaughtException("exceptionHandler(" + exceptionHandler.getClass() + ")", e);
         }
         return null;
     }
 
-    private ExHandleOfMultiplyCfsUtils() {
+    private SwallowedExceptionHandleUtils() {
     }
 }

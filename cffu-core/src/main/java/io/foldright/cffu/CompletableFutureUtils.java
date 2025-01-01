@@ -18,7 +18,8 @@ import java.util.function.*;
 
 import static io.foldright.cffu.Delayer.atCfDelayerThread;
 import static io.foldright.cffu.LLCF.*;
-import static io.foldright.cffu.eh.ExHandleOfMultiplyCfsUtils.*;
+import static io.foldright.cffu.eh.SwallowedExceptionHandleUtils.handleAllSwallowedExceptions;
+import static io.foldright.cffu.eh.SwallowedExceptionHandleUtils.handleSwallowedExceptions;
 import static io.foldright.cffu.internal.CommonUtils.*;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
@@ -82,7 +83,7 @@ public final class CompletableFutureUtils {
 
         CompletableFuture<? extends T>[] inputs = wrapSuppliers0(executor, suppliers);
         CompletableFuture<List<T>> ret = allResultsOf0(true, inputs);
-        handleSwallowedExceptions("mSupplyFailFastAsync", cffuExHandler(), inputs, ret);
+        handleSwallowedExceptions("mSupplyFailFastAsync", ret, inputs);
         return ret;
     }
 
@@ -111,7 +112,7 @@ public final class CompletableFutureUtils {
         requireArrayAndEleNonNull("supplier", suppliers);
 
         CompletableFuture<? extends T>[] inputs = wrapSuppliers0(executor, suppliers);
-        handleAllExceptions("mSupplyAllSuccessAsync", cffuExHandler(), inputs);
+        handleAllSwallowedExceptions("mSupplyAllSuccessAsync", inputs);
         return allSuccessResultsOf0(valueIfFailed, inputs);
     }
 
@@ -144,7 +145,7 @@ public final class CompletableFutureUtils {
         requireArrayAndEleNonNull("supplier", suppliers);
 
         CompletableFuture<? extends T>[] inputs = wrapSuppliers0(executor, suppliers);
-        handleAllExceptions("mSupplyMostSuccessAsync", cffuExHandler(), inputs);
+        handleAllSwallowedExceptions("mSupplyMostSuccessAsync", inputs);
         return mostSuccessResultsOf0(executor, valueIfNotSuccess, timeout, unit, inputs);
     }
 
@@ -172,7 +173,7 @@ public final class CompletableFutureUtils {
 
         CompletableFuture<? extends T>[] inputs = wrapSuppliers0(executor, suppliers);
         CompletableFuture<List<T>> ret = allResultsOf0(false, inputs);
-        handleSwallowedExceptions("mSupplyAsync", cffuExHandler(), inputs, allFailFastOf0(inputs));
+        handleSwallowedExceptions("mSupplyAsync", ret, inputs);
         return ret;
     }
 
@@ -201,7 +202,7 @@ public final class CompletableFutureUtils {
 
         CompletableFuture<? extends T>[] inputs = wrapSuppliers0(executor, suppliers);
         CompletableFuture<T> ret = anySuccessOf0(inputs);
-        handleSwallowedExceptions("mSupplyAnySuccessAsync", cffuExHandler(), inputs, ret);
+        handleSwallowedExceptions("mSupplyAnySuccessAsync", ret, inputs);
         return ret;
     }
 
@@ -229,7 +230,7 @@ public final class CompletableFutureUtils {
 
         CompletableFuture<? extends T>[] inputs = wrapSuppliers0(executor, suppliers);
         CompletableFuture<T> ret = f_cast(CompletableFuture.anyOf(inputs));
-        handleSwallowedExceptions("mSupplyAnyAsync", cffuExHandler(), inputs, ret);
+        handleSwallowedExceptions("mSupplyAnyAsync", ret, inputs);
         return ret;
     }
 
@@ -259,7 +260,7 @@ public final class CompletableFutureUtils {
 
         CompletableFuture<Void>[] inputs = wrapRunnables0(executor, actions);
         CompletableFuture<Void> ret = allFailFastOf0(inputs);
-        handleSwallowedExceptions("mRunFailFastAsync", cffuExHandler(), inputs, ret);
+        handleSwallowedExceptions("mRunFailFastAsync", ret, inputs);
         return ret;
     }
 
@@ -285,7 +286,7 @@ public final class CompletableFutureUtils {
 
         CompletableFuture<Void>[] inputs = wrapRunnables0(executor, actions);
         CompletableFuture<Void> ret = CompletableFuture.allOf(inputs);
-        handleSwallowedExceptions("mRunAsync", cffuExHandler(), inputs, ret);
+        handleSwallowedExceptions("mRunAsync", ret, inputs);
         return ret;
     }
 
@@ -311,7 +312,7 @@ public final class CompletableFutureUtils {
 
         CompletableFuture<Void>[] inputs = wrapRunnables0(executor, actions);
         CompletableFuture<Void> ret = anySuccessOf0(inputs);
-        handleSwallowedExceptions("mRunAnySuccessAsync", cffuExHandler(), inputs, ret);
+        handleSwallowedExceptions("mRunAnySuccessAsync", ret, inputs);
         return ret;
     }
 
@@ -337,7 +338,7 @@ public final class CompletableFutureUtils {
 
         CompletableFuture<Void>[] inputs = wrapRunnables0(executor, actions);
         CompletableFuture<Void> ret = f_cast(CompletableFuture.anyOf(inputs));
-        handleSwallowedExceptions("mRunAnyAsync", cffuExHandler(), inputs, ret);
+        handleSwallowedExceptions("mRunAnyAsync", ret, inputs);
         return ret;
     }
 
@@ -434,7 +435,7 @@ public final class CompletableFutureUtils {
     private static <T> CompletableFuture<T> f_allTupleWithEhOf0(
             boolean failFast, CompletionStage<?>[] stages, String where) {
         CompletableFuture<T> ret = f_allTupleOf0(failFast, stages);
-        handleSwallowedExceptions(where, cffuExHandler(), stages, ret);
+        handleSwallowedExceptions(where, ret, stages);
         return ret;
     }
 
@@ -572,7 +573,7 @@ public final class CompletableFutureUtils {
     }
 
     private static <T> CompletableFuture<T> f_allSuccessTupleWithEhOf0(CompletionStage<?>[] stages, String where) {
-        handleAllExceptions(where, cffuExHandler(), stages);
+        handleAllSwallowedExceptions(where, stages);
         return f_allSuccessTupleOf0(stages);
     }
 
@@ -710,7 +711,7 @@ public final class CompletableFutureUtils {
 
     private static <T> CompletableFuture<T> f_mostSuccessTupleWithEhOf0(
             Executor executorWhenTimeout, long timeout, TimeUnit unit, CompletionStage<?>[] stages, String where) {
-        handleAllExceptions(where, cffuExHandler(), stages);
+        handleAllSwallowedExceptions(where, stages);
         return f_mostSuccessTupleOf0(executorWhenTimeout, timeout, unit, stages);
     }
 
@@ -1572,7 +1573,7 @@ public final class CompletableFutureUtils {
         return cfThis.thenCompose(v -> {
             CompletableFuture<U>[] inputs = wrapFunctions0(executor, v, copy);
             CompletableFuture<List<U>> ret = allResultsOf0(true, inputs);
-            handleSwallowedExceptions("thenMApplyFailFastAsync", cffuExHandler(), inputs, ret);
+            handleSwallowedExceptions("thenMApplyFailFastAsync", ret, inputs);
             return ret;
         });
     }
@@ -1610,7 +1611,7 @@ public final class CompletableFutureUtils {
 
         return cfThis.thenCompose(v -> {
             CompletableFuture<U>[] inputs = wrapFunctions0(executor, v, copy);
-            handleAllExceptions("thenMApplyAllSuccessAsync", cffuExHandler(), inputs);
+            handleAllSwallowedExceptions("thenMApplyAllSuccessAsync", inputs);
             return allSuccessResultsOf0(valueIfFailed, inputs);
         });
     }
@@ -1649,7 +1650,7 @@ public final class CompletableFutureUtils {
 
         return cfThis.thenCompose(v -> {
             CompletableFuture<U>[] inputs = wrapFunctions0(executor, v, copy);
-            handleAllExceptions("thenMApplyMostSuccessAsync", cffuExHandler(), inputs);
+            handleAllSwallowedExceptions("thenMApplyMostSuccessAsync", inputs);
             return mostSuccessResultsOf0(executor, valueIfNotSuccess, timeout, unit, inputs);
         });
     }
@@ -1687,7 +1688,7 @@ public final class CompletableFutureUtils {
         return cfThis.thenCompose(v -> {
             CompletableFuture<U>[] inputs = wrapFunctions0(executor, v, copy);
             CompletableFuture<List<U>> ret = allResultsOf0(false, inputs);
-            handleSwallowedExceptions("thenMApplyAsync", cffuExHandler(), inputs, ret);
+            handleSwallowedExceptions("thenMApplyAsync", ret, inputs);
             return ret;
         });
     }
@@ -1725,7 +1726,7 @@ public final class CompletableFutureUtils {
         return cfThis.thenCompose(v -> {
             CompletableFuture<U>[] inputs = wrapFunctions0(executor, v, copy);
             CompletableFuture<U> ret = anySuccessOf0(inputs);
-            handleSwallowedExceptions("thenMApplyAnySuccessAsync", cffuExHandler(), inputs, ret);
+            handleSwallowedExceptions("thenMApplyAnySuccessAsync", ret, inputs);
             return ret;
         });
     }
@@ -1763,7 +1764,7 @@ public final class CompletableFutureUtils {
         return cfThis.thenCompose(v -> {
             CompletableFuture<U>[] inputs = wrapFunctions0(executor, v, copy);
             CompletableFuture<U> ret = f_cast(CompletableFuture.anyOf(inputs));
-            handleSwallowedExceptions("thenMApplyAnyAsync", cffuExHandler(), inputs, ret);
+            handleSwallowedExceptions("thenMApplyAnyAsync", ret, inputs);
             return ret;
         });
     }
@@ -1811,7 +1812,7 @@ public final class CompletableFutureUtils {
         return cfThis.thenCompose(v -> {
             CompletableFuture<Void>[] inputs = wrapConsumers0(executor, v, copy);
             CompletableFuture<Void> ret = allFailFastOf0(inputs);
-            handleSwallowedExceptions("thenMAcceptFailFastAsync", cffuExHandler(), inputs, ret);
+            handleSwallowedExceptions("thenMAcceptFailFastAsync", ret, inputs);
             return ret;
         });
     }
@@ -1854,7 +1855,7 @@ public final class CompletableFutureUtils {
         return cfThis.thenCompose(v -> {
             CompletableFuture<Void>[] inputs = wrapConsumers0(executor, v, copy);
             CompletableFuture<Void> ret = CompletableFuture.allOf(inputs);
-            handleSwallowedExceptions("thenMAcceptAsync", cffuExHandler(), inputs, ret);
+            handleSwallowedExceptions("thenMAcceptAsync", ret, inputs);
             return ret;
         });
     }
@@ -1897,7 +1898,7 @@ public final class CompletableFutureUtils {
         return cfThis.thenCompose(v -> {
             CompletableFuture<Void>[] inputs = wrapConsumers0(executor, v, copy);
             CompletableFuture<Void> ret = anySuccessOf0(inputs);
-            handleSwallowedExceptions("thenMAcceptAnySuccessAsync", cffuExHandler(), inputs, ret);
+            handleSwallowedExceptions("thenMAcceptAnySuccessAsync", ret, inputs);
             return ret;
         });
     }
@@ -1940,7 +1941,7 @@ public final class CompletableFutureUtils {
         return cfThis.thenCompose(v -> {
             CompletableFuture<Void>[] inputs = wrapConsumers0(executor, v, copy);
             CompletableFuture<Void> ret = f_cast(CompletableFuture.anyOf(inputs));
-            handleSwallowedExceptions("thenMAcceptAnyAsync", cffuExHandler(), inputs, ret);
+            handleSwallowedExceptions("thenMAcceptAnyAsync", ret, inputs);
             return ret;
         });
     }
@@ -1974,7 +1975,7 @@ public final class CompletableFutureUtils {
         return cfThis.thenCompose(unused -> {
             CompletableFuture<Void>[] inputs = wrapRunnables0(executor, copy);
             CompletableFuture<Void> ret = allFailFastOf0(inputs);
-            handleSwallowedExceptions("thenMRunFailFastAsync", cffuExHandler(), inputs, ret);
+            handleSwallowedExceptions("thenMRunFailFastAsync", ret, inputs);
             return ret;
         });
     }
@@ -2004,7 +2005,7 @@ public final class CompletableFutureUtils {
         return cfThis.thenCompose(unused -> {
             CompletableFuture<Void>[] inputs = wrapRunnables0(executor, copy);
             CompletableFuture<Void> ret = CompletableFuture.allOf(inputs);
-            handleSwallowedExceptions("thenMRunAsync", cffuExHandler(), inputs, ret);
+            handleSwallowedExceptions("thenMRunAsync", ret, inputs);
             return ret;
         });
     }
@@ -2034,7 +2035,7 @@ public final class CompletableFutureUtils {
         return cfThis.thenCompose(unused -> {
             CompletableFuture<Void>[] inputs = wrapRunnables0(executor, copy);
             CompletableFuture<Void> ret = anySuccessOf0(inputs);
-            handleSwallowedExceptions("thenMRunAnySuccessAsync", cffuExHandler(), inputs, ret);
+            handleSwallowedExceptions("thenMRunAnySuccessAsync", ret, inputs);
             return ret;
         });
     }
@@ -2064,7 +2065,7 @@ public final class CompletableFutureUtils {
         return cfThis.thenCompose(unused -> {
             CompletableFuture<Void>[] inputs = wrapRunnables0(executor, copy);
             CompletableFuture<Void> ret = f_cast(CompletableFuture.anyOf(inputs));
-            handleSwallowedExceptions("thenMRunAnyAsync", cffuExHandler(), inputs, ret);
+            handleSwallowedExceptions("thenMRunAnyAsync", ret, inputs);
             return ret;
         });
     }

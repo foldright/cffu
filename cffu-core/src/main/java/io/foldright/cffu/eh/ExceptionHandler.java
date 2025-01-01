@@ -1,12 +1,17 @@
 package io.foldright.cffu.eh;
 
-import java.util.function.Consumer;
-
 
 /**
- * Exception handler that handles the exceptions from multiply {@code CompletionStage}s.
+ * Exception handler, used by the methods of {@link SwallowedExceptionHandleUtils}.
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  */
-public interface ExceptionHandler extends Consumer<ExceptionInfo> {
+@FunctionalInterface
+public interface ExceptionHandler {
+    /**
+     * Handles the exception.
+     *
+     * @param exceptionInfo the exception information
+     */
+    void handle(ExceptionInfo exceptionInfo);
 }

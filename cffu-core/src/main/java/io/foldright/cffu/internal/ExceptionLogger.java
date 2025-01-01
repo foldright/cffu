@@ -24,6 +24,7 @@ import org.slf4j.spi.LocationAwareLogger;
  *
  * @author HuHao (995483610 at qq dot com)
  * @author Jerry Lee (oldratlee at gmail dot com)
+ * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
  */
 @ApiStatus.Internal
 public final class ExceptionLogger {

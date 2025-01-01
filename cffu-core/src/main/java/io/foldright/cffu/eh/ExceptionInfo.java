@@ -4,7 +4,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 
 /**
- * Exception info of exceptions from multiply {@code CompletionStage}s, used as argument of {@link ExceptionHandler}.
+ * Exception info of exceptions, used as argument of {@link ExceptionHandler}.
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  */
@@ -15,14 +15,14 @@ public final class ExceptionInfo {
     public final String where;
 
     /**
-     * The index of the {@code CompletionStage} that throws the exception.
+     * The <strong>0-based</strong> index of the {@code CompletionStage} that throws the exception.
      */
     public final int index;
 
     /**
      * The exception.
      */
-    public final Throwable ex;
+    public final Throwable exception;
 
     /**
      * An optional attachment object that may contain additional context; can be {@code null}.
@@ -33,10 +33,10 @@ public final class ExceptionInfo {
     /**
      * Constructs an {@code ExceptionInfo} with the specified location, index, exception, and attachment.
      */
-    public ExceptionInfo(String where, int index, Throwable ex, @Nullable Object attachment) {
+    public ExceptionInfo(String where, int index, Throwable exception, @Nullable Object attachment) {
         this.where = where;
         this.index = index;
-        this.ex = ex;
+        this.exception = exception;
         this.attachment = attachment;
     }
 }
