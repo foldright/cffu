@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.function.*;
 
 import static io.foldright.cffu.Delayer.atCfDelayerThread;
@@ -443,27 +444,27 @@ public final class CompletableFutureUtils {
      * Returns {@code CompletableFuture<T>} with generic type {@code T} but constrained to type TupleX.
      */
     private static <T> CompletableFuture<T> f_allTupleOf0(boolean failFast, CompletionStage<?>[] stages) {
-        final Object[] result = new Object[stages.length];
-        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(stages, result);
+        final AtomicReferenceArray<Object> results = new AtomicReferenceArray<>(stages.length);
+        final CompletableFuture<Void>[] resultsSetterCfs = createAllResultsSetterCfs(stages, results);
 
-        final CompletableFuture<Void> resultSetter;
-        if (failFast) resultSetter = allFailFastOf0(resultSetterCfs);
-        else resultSetter = CompletableFuture.allOf(resultSetterCfs);
+        final CompletableFuture<Void> resultsSetter;
+        if (failFast) resultsSetter = allFailFastOf0(resultsSetterCfs);
+        else resultsSetter = CompletableFuture.allOf(resultsSetterCfs);
 
-        return resultSetter.thenApply(unused -> f_tupleOf0(result));
+        return resultsSetter.thenApply(unused -> f_tupleOf0(toArray(results)));
     }
 
     /**
      * Returns generic type {@code T} but constrained to type TupleX.
      */
     @SuppressWarnings("unchecked")
-    private static <T> T f_tupleOf0(Object[] elements) {
-        final int len = elements.length;
+    private static <T> T f_tupleOf0(Object[] xs) {
+        final int len = xs.length;
         final Object ret;
-        if (len == 2) ret = Tuple2.of(elements[0], elements[1]);
-        else if (len == 3) ret = Tuple3.of(elements[0], elements[1], elements[2]);
-        else if (len == 4) ret = Tuple4.of(elements[0], elements[1], elements[2], elements[3]);
-        else ret = Tuple5.of(elements[0], elements[1], elements[2], elements[3], elements[4]);
+        if (len == 2) ret = Tuple2.of(xs[0], xs[1]);
+        else if (len == 3) ret = Tuple3.of(xs[0], xs[1], xs[2]);
+        else if (len == 4) ret = Tuple4.of(xs[0], xs[1], xs[2], xs[3]);
+        else ret = Tuple5.of(xs[0], xs[1], xs[2], xs[3], xs[4]);
         return (T) ret;
     }
 
@@ -982,14 +983,14 @@ public final class CompletableFutureUtils {
         // ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
         if (len == 1) return toNonMinCf0(cfs[0]).thenApply(CommonUtils::arrayList);
 
-        final Object[] result = new Object[len];
-        final CompletableFuture<Void>[] resultSetterCfs = createResultSetterCfs(cfs, result);
+        final AtomicReferenceArray<T> results = new AtomicReferenceArray<>(len);
+        final CompletableFuture<Void>[] resultsSetterCfs = createAllResultsSetterCfs(cfs, results);
 
-        final CompletableFuture<Void> resultSetter;
-        if (failFast) resultSetter = allFailFastOf0(resultSetterCfs);
-        else resultSetter = CompletableFuture.allOf(resultSetterCfs);
+        final CompletableFuture<Void> resultsSetter;
+        if (failFast) resultsSetter = allFailFastOf0(resultsSetterCfs);
+        else resultsSetter = CompletableFuture.allOf(resultsSetterCfs);
 
-        return f_cast(resultSetter.thenApply(unused -> arrayList(result)));
+        return f_cast(resultsSetter.thenApply(unused -> arrayList(results)));
     }
 
     /**
@@ -1079,14 +1080,36 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a cf array whose elements do the result collection.
+     * Returns a cf array whose elements do the result collection for <strong>AllResultsOf*</strong> methods.
+     * <p>
+     * Implementation Note: Uses AtomicReferenceArray and CAS operations to prevent memory leaks in `AllResultOf*` methods.
+     * Without this protection, if any inputs complete exceptionally while others are still running,
+     * the results array would unnecessarily retain memory for results that will never be used.
      */
-    private static <T> CompletableFuture<Void>[] createResultSetterCfs(
-            CompletionStage<? extends T>[] stages, T[] result) {
-        @SuppressWarnings("unchecked")
-        final CompletableFuture<Void>[] resultSetterCfs = new CompletableFuture[result.length];
-        return fillArray(resultSetterCfs, i -> f_toCf0(stages[i]).thenAccept(v -> result[i] = v));
+    @SuppressWarnings("unchecked")
+    private static <T> CompletableFuture<Void>[] createAllResultsSetterCfs(
+            CompletionStage<? extends T>[] stages, AtomicReferenceArray<T> results) {
+        final CompletableFuture<Void>[] resultSetterCfs = new CompletableFuture[stages.length];
+        return fillArray(resultSetterCfs, i -> f_toCf0(stages[i]).<CompletableFuture<Void>>handle((v, ex) -> {
+            if (ex == null) {
+                // atomically store value if slot has not been marked as unneeded with SENTINEL_UNNEEDED
+                results.compareAndSet(i, null, v);
+                return completedFuture(null);
+            } else {
+                if (results.get(i) != SENTINEL_UNNEEDED)
+                    // if any stage has failed, all results are unneeded; mark all slots with SENTINEL_UNNEEDED
+                    fillAtomicReferenceArray(results, (T) SENTINEL_UNNEEDED);
+                return failedFuture(ex);
+            }
+        }).thenCompose(x -> x));
     }
+
+    /**
+     * A sentinel object used to mark slots in {@link AtomicReferenceArray} where values no longer need to be written.
+     *
+     * @see #createAllResultsSetterCfs
+     */
+    private static final Object SENTINEL_UNNEEDED = new Object();
 
     private static <T> void fill0(CompletionStage<? extends T>[] stages,
                                   CompletableFuture<? extends T>[] successOrBeIncomplete,
