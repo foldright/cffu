@@ -116,7 +116,7 @@
   - `CompletableFuture`在2014年发布的`Java 8`提供，有10年了
   - `CompletableFuture`的父接口[`Future`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Future.html)早在2004年发布的`Java 5`中提供，有20年了。虽然`Future`接口不支持 运行结果的异步获取与并发执行逻辑的编排，但也让广大`Java`开发者熟悉了`Future`这个典型的概念与工具
 - **功能强大、但不会非常庞大复杂**
-  - 足以应对日常的业务需求开发
+  - 足以应对日常业务的异步并发需求
   - 其它大型并发框架（比如[`Akka`](https://akka.io/)、[`RxJava`](https://github.com/ReactiveX/RxJava)）在使用上需要理解的内容要多很多。当然基本的并发关注方面及其复杂性，与具体使用哪个工具无关，都是要理解与注意的
 - **高层抽象**
   - 或说 以业务流程的形式表达技术的并发流程

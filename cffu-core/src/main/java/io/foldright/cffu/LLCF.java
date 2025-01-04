@@ -53,7 +53,7 @@ public final class LLCF {
     }
 
     /**
-     * Force converts CompletionStage to CompletableFuture, reuse cf instance as many as possible.
+     * Force converts CompletionStage to CompletableFuture, reuse cf instances as many as possible.
      * <p>
      * <strong>CAUTION:</strong> This method is NOT type safe! Because reused the CF instance, The returned cf
      * may be a minimal-stage, MUST NOT be written or read(explicitly) (e.g. {@link CompletableFuture#complete});
@@ -68,7 +68,7 @@ public final class LLCF {
 
     /**
      * Force converts {@link CompletionStage} array to {@link CompletableFuture} array,
-     * reuse cf instance as many as possible. This method is NOT type safe!
+     * reuse cf instances as many as possible. This method is NOT type safe!
      * More info see method {@link #f_toCf0(CompletionStage)}.
      */
     public static <T> CompletableFuture<T>[] f_toCfArray0(CompletionStage<? extends T>[] stages) {
@@ -100,7 +100,7 @@ public final class LLCF {
     }
 
     /**
-     * Converts CompletionStage to non-minimal-stage CompletableFuture, reuse cf instance as many as possible.
+     * Converts CompletionStage to non-minimal-stage CompletableFuture, reuse cf instances as many as possible.
      * <p>
      * <strong>CAUTION:</strong> because reused the CF instance, if the caller need defensive copy
      * instead of writing it directly, use method {@link #toNonMinCfCopy0(CompletionStage)}).
