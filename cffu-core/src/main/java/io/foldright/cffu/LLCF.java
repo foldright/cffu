@@ -19,8 +19,8 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 
 
 /**
- * Low Level CompletableFuture utility methods for creating and manipulating CompletableFuture. This class is
- * for library writers; The methods intended for end users are in the {@link CompletableFutureUtils} class.
+ * Low Level CompletableFuture utility methods for manipulating CompletableFuture. This class is for library writers,
+ * the methods intended for end users are in the {@link CompletableFutureUtils} class.
  * <p>
  * In general, you should NEVER use this class, unless you understand the underlying logic of CompletableFuture
  * and need hack it. Because the methods are Low Level, use below the method name convention intentionally:
@@ -40,15 +40,29 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  */
 public final class LLCF {
     ////////////////////////////////////////////////////////////////////////////////
-    // region# CF conversion and test methods
+    // region# Low Level conversion and test methods for CompletableFuture
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Force casts CompletableFuture with the value type, IGNORE the compile-time type check.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    static <T> CompletableFuture<T> f_cast(CompletableFuture<?> cf) {
+    public static <T> CompletableFuture<T> f_cast(CompletableFuture<?> cf) {
         return (CompletableFuture) cf;
+    }
+
+    /**
+     * Force converts CompletionStage to CompletableFuture, reuse cf instance as many as possible.
+     * <p>
+     * <strong>CAUTION:</strong> This method is NOT type safe! Because reused the CF instance, The returned cf
+     * may be a minimal-stage, MUST NOT be written or read(explicitly) (e.g. {@link CompletableFuture#complete});
+     * Otherwise, the caller usage of cf may throw UnsupportedOperationException.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> CompletableFuture<T> f_toCf0(CompletionStage<? extends T> s) {
+        if (s instanceof CompletableFuture) return (CompletableFuture<T>) s;
+        else if (s instanceof Cffu) return ((Cffu<T>) s).cffuUnwrap();
+        else return (CompletableFuture<T>) s.toCompletableFuture();
     }
 
     /**
@@ -56,54 +70,32 @@ public final class LLCF {
      * reuse cf instance as many as possible. This method is NOT type safe!
      * More info see method {@link #f_toCf0(CompletionStage)}.
      */
-    static <T> CompletableFuture<T>[] f_toCfArray0(CompletionStage<? extends T>[] stages) {
+    public static <T> CompletableFuture<T>[] f_toCfArray0(CompletionStage<? extends T>[] stages) {
         return mapArray(stages, CompletableFuture[]::new, LLCF::f_toCf0);
+    }
+
+    /**
+     * Converts CompletionStage to a CompletableFuture copy.
+     * <p>
+     * <strong>CAUTION:</strong> This method is NOT type safe! Because reused the CF instance, The returned cf
+     * may be a minimal-stage, MUST NOT be written or read(explicitly) (e.g. {@link CompletableFuture#complete});
+     * Otherwise, the caller usage of cf may throw UnsupportedOperationException.
+     * <p>
+     * Implementation Note: The returned instances of calling {@code copy} methods
+     * ({@link CompletableFuture#copy}) on minimal-stage instances is still minimal-stage
+     * (e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()})
+     */
+    public static <T> CompletableFuture<T> f_toCfCopy0(CompletionStage<? extends T> s) {
+        final CompletableFuture<T> f = f_toCf0(s);
+        return IS_JAVA9_PLUS ? f.copy() : f.thenApply(x -> x);
     }
 
     /**
      * Converts {@link CompletionStage} array to {@link CompletableFuture} array.
      * More info see method {@link #toNonMinCfCopy0(CompletionStage)}.
      */
-    static <T> CompletableFuture<T>[] f_toCfCopyArray0(CompletionStage<? extends T>[] stages) {
+    public static <T> CompletableFuture<T>[] f_toCfCopyArray0(CompletionStage<? extends T>[] stages) {
         return mapArray(stages, CompletableFuture[]::new, LLCF::f_toCfCopy0);
-    }
-
-    /**
-     * Converts {@link CompletionStage} array to {@link CompletableFuture} array.
-     * More info see method {@link #toNonMinCf0(CompletionStage)}.
-     */
-    static <T> CompletableFuture<T>[] toNonMinCfArray0(CompletionStage<? extends T>[] stages) {
-        return mapArray(stages, CompletableFuture[]::new, LLCF::toNonMinCf0);
-    }
-
-    /**
-     * Force converts CompletionStage to CompletableFuture, reuse cf instance as many as possible.
-     * <p>
-     * <strong>CAUTION:</strong> This method is NOT type safe! Because reused the CF instance,
-     * The returned cf may be a minimal-stage, MUST NOT be written or read(explicitly)
-     * (e.g. {@link CompletableFuture#complete}); Otherwise, the caller usage of cf may throw UnsupportedOperationException.
-     */
-    @SuppressWarnings("unchecked")
-    static <T> CompletableFuture<T> f_toCf0(CompletionStage<? extends T> s) {
-        if (s instanceof CompletableFuture) return (CompletableFuture<T>) s;
-        else if (s instanceof Cffu) return ((Cffu<T>) s).cffuUnwrap();
-        else return (CompletableFuture<T>) s.toCompletableFuture();
-    }
-
-    /**
-     * Converts CompletionStage to a CompletableFuture copy, reuse cf instance as many as possible.
-     * <p>
-     * <strong>CAUTION:</strong> This method is NOT type safe! Because reused the CF instance,
-     * The returned cf may be a minimal-stage, MUST NOT be written or read(explicitly)
-     * (e.g. {@link CompletableFuture#complete}); Otherwise, the caller usage of cf may throw UnsupportedOperationException.
-     * <p>
-     * Implementation Note: The returned instances of calling {@code copy} methods
-     * ({@link CompletableFuture#copy}) on {@code minimal-stage} instances
-     * is still {@code minimal-stage}(e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()})
-     */
-    static <T> CompletableFuture<T> f_toCfCopy0(CompletionStage<? extends T> s) {
-        final CompletableFuture<T> f = f_toCf0(s);
-        return IS_JAVA9_PLUS ? f.copy() : f.thenApply(x -> x);
     }
 
     /**
@@ -112,27 +104,45 @@ public final class LLCF {
      * <strong>CAUTION:</strong> because reused the CF instance, if the caller need defensive copy
      * instead of writing it directly, use method {@link #toNonMinCfCopy0(CompletionStage)}).
      */
-    static <T> CompletableFuture<T> toNonMinCf0(CompletionStage<? extends T> s) {
+    public static <T> CompletableFuture<T> toNonMinCf0(CompletionStage<? extends T> s) {
         final CompletableFuture<T> f = f_toCf0(s);
         return isMinStageCf(f) ? f.toCompletableFuture() : f;
+    }
+
+    /**
+     * Converts {@link CompletionStage} array to {@link CompletableFuture} array.
+     * More info see method {@link #toNonMinCf0(CompletionStage)}.
+     */
+    public static <T> CompletableFuture<T>[] toNonMinCfArray0(CompletionStage<? extends T>[] stages) {
+        return mapArray(stages, CompletableFuture[]::new, LLCF::toNonMinCf0);
     }
 
     /**
      * Converts CompletionStage to a non-minimal-stage CompletableFuture copy. This method is type safe.
      * <p>
      * Implementation Note: The returned instances of calling {@code copy} methods
-     * ({@link CompletableFuture#copy}) on {@code minimal-stage} instances
-     * is still {@code minimal-stage}(e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()})
+     * ({@link CompletableFuture#copy}) on minimal-stage instances is still minimal-stage
+     * (e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()}).
      */
-    static <T> CompletableFuture<T> toNonMinCfCopy0(CompletionStage<? extends T> s) {
+    public static <T> CompletableFuture<T> toNonMinCfCopy0(CompletionStage<? extends T> s) {
         final CompletableFuture<T> f = f_toCf0(s);
         return isMinStageCf(f) ? f.toCompletableFuture() : IS_JAVA9_PLUS ? f.copy() : f.thenApply(x -> x);
     }
 
+    /**
+     * Checks if the given {@code CompletableFuture} instance is a minimal-stage.
+     * <p>
+     * Implementation Note: While minimal-stage is implemented as a private subclass of CompletableFuture,
+     * the CompletableFuture API consistently uses CompletionStage type for minimal-stage instances
+     * and reserves CompletableFuture type for non-minimal-stage instances only.
+     * <p>
+     * This type contract for minimal-stage MUST be followed for end users APIs.
+     */
     public static boolean isMinStageCf(CompletableFuture<?> cf) {
         return cf.getClass().equals(MIN_STAGE_CLASS);
     }
 
+    // endregion
     ////////////////////////////////////////////////////////////////////////////////
     // region# Low level operations of CompletableFuture
     ////////////////////////////////////////////////////////////////////////////////
@@ -179,8 +189,8 @@ public final class LLCF {
 
     /**
      * Completes the given CompletableFuture with the exception(if non-null), otherwise with the value.
-     * In general, you should NEVER use this method in application codes, use {@link CompletableFuture#complete(Object)}
-     * or {@link CompletableFuture#completeExceptionally(Throwable)} instead.
+     * In general, you should NEVER use this method in application codes, use {@link
+     * CompletableFuture#complete(Object)} or {@link CompletableFuture#completeExceptionally(Throwable)} instead.
      */
     public static <T> boolean completeCf0(CompletableFuture<? super T> cf, @Nullable T value, @Nullable Throwable ex) {
         if (ex == null) return cf.complete(value);
@@ -193,16 +203,15 @@ public final class LLCF {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Null-checks user executor argument, and translates uses of commonPool to ASYNC_POOL
-     * in case parallelism disabled. code is copied from {@link CompletableFuture#screenExecutor(Executor)}.
-     * <p>
-     * Implementation Note: The API methods of {@link CompletableFuture} have called this method, so only underlying methods
-     * that direct use executor need call this method, e.g. {@link CompletableFutureUtils#hopExecutorIfAtCfDelayerThread}.
+     * Null-checks user executor argument, and translates uses of commonPool to ASYNC_POOL in case parallelism disabled.
      */
-    @SuppressWarnings({"resource", "JavadocReference"})
-    static Executor screenExecutor(Executor e) {
-        if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool())
-            return ASYNC_POOL;
+    @SuppressWarnings("resource")
+    public static Executor screenExecutor(Executor e) {
+        // Implementation note: CompletableFuture API methods already call this method internally; Only underlying
+        // methods that directly use an executor need to call this method (e.g. CFU#hopExecutorIfAtCfDelayerThread)
+        //
+        // below code is copied from CompletableFuture#screenExecutor with small adoption
+        if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool()) return ASYNC_POOL;
         return requireNonNull(e, "executor is null");
     }
 
@@ -247,30 +256,26 @@ public final class LLCF {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Fallback if {@link ForkJoinPool#commonPool()} cannot support parallelism.
-     * code is copied from {@link CompletableFuture.ThreadPerTaskExecutor}.
-     */
-    @SuppressWarnings("JavadocReference")
-    private static final class ThreadPerTaskExecutor implements Executor {
-        @Override
-        public void execute(Runnable r) {
-            new Thread(requireNonNull(r)).start();
-        }
-    }
-
-    /**
-     * code is copied from {@link CompletableFuture#USE_COMMON_POOL}.
+     * code is copied from {@link CompletableFuture#USE_COMMON_POOL}
      */
     @SuppressWarnings("JavadocReference")
     private static final boolean USE_COMMON_POOL = ForkJoinPool.getCommonPoolParallelism() > 1;
 
+    // IMPORTANT: The initialization order of static fields matters. Do not place static fields
+    // before their dependencies, as this will result in using uninitialized dependency values.
+    //
+    // Dependencies:
+    // - ASYNC_POOL depends on IS_JAVA9_PLUS and USE_COMMON_POOL
+    // - MIN_STAGE_CLASS depends on IS_JAVA9_PLUS
+
     /**
      * Default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses
      * of CompletableFuture) -- {@link ForkJoinPool#commonPool()} unless it cannot support parallelism.
-     * initialization code is copied from {@link CompletableFuture#ASYNC_POOL} with adoption.
+     *
+     * @see CompletableFutureUtils#defaultExecutor(CompletionStage)
      */
-    @SuppressWarnings("JavadocReference")
-    static final Executor ASYNC_POOL;
+    // field initialization code is copied from CompletableFuture#ASYNC_POOL with adoption.
+    public static final Executor ASYNC_POOL;
 
     private static final Class<?> MIN_STAGE_CLASS;
 
@@ -281,6 +286,18 @@ public final class LLCF {
 
         if (!IS_JAVA9_PLUS) MIN_STAGE_CLASS = null;
         else MIN_STAGE_CLASS = CompletableFuture.completedStage(null).getClass();
+    }
+
+    /**
+     * Fallback if {@link ForkJoinPool#commonPool()} cannot support parallelism.
+     * code is copied from {@link CompletableFuture.ThreadPerTaskExecutor}.
+     */
+    @SuppressWarnings("JavadocReference")
+    private static final class ThreadPerTaskExecutor implements Executor {
+        @Override
+        public void execute(Runnable r) {
+            new Thread(requireNonNull(r)).start();
+        }
     }
 
     private LLCF() {

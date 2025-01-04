@@ -1860,11 +1860,15 @@ class CompletableFutureUtilsTest {
     @Test
     void test_defaultExecutor() {
         assertIsCfDefaultExecutor(defaultExecutor(completedFuture(null)));
-
         assertIsCfDefaultExecutor(LLCF.screenExecutor(commonPool()));
 
         ExecutorService e = Executors.newCachedThreadPool();
         assertSame(e, LLCF.screenExecutor(e));
+
+        if (isJava9Plus())
+            assertSame(testFjExecutor, defaultExecutor(new CustomizedExecutorCf<>()));
+        else
+            assertIsCfDefaultExecutor(defaultExecutor(new CustomizedExecutorCf<>()));
 
         // Cffu
         assertSame(testExecutor, unwrapMadeExecutor(defaultExecutor(testCffuFac.completedFuture(null))));
@@ -1872,6 +1876,12 @@ class CompletableFutureUtilsTest {
         final UnsupportedOperationException ex = assertThrowsExactly(UnsupportedOperationException.class,
                 () -> defaultExecutor(new FooCs<>(new CompletableFuture<>())));
         assertTrue(ex.getMessage().startsWith("Unsupported CompletionStage subclass: "));
+    }
+
+    private static class CustomizedExecutorCf<T> extends CompletableFuture<T> {
+        public Executor defaultExecutor() {
+            return testFjExecutor;
+        }
     }
 
     // endregion
