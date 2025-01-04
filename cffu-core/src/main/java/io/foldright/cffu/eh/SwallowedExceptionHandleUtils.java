@@ -4,6 +4,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import io.foldright.cffu.Cffu;
 import io.foldright.cffu.LLCF;
 import io.foldright.cffu.internal.CommonUtils;
+import io.foldright.cffu.internal.ExceptionLogger;
 import org.jetbrains.annotations.Contract;
 
 import java.util.concurrent.CompletableFuture;
@@ -93,7 +94,8 @@ public final class SwallowedExceptionHandleUtils {
     }
 
     /**
-     * Returns a swallowed exception handler that logs exceptions from CompletionStages using the cffu logger.
+     * Returns an exception handler that logs swallowed exceptions from CompletionStages
+     * at warning level using the cffu logger.
      */
     public static ExceptionHandler cffuSwallowedExceptionHandler() {
         return CFFU_SWALLOWED_EX_HANDLER;
@@ -101,7 +103,7 @@ public final class SwallowedExceptionHandleUtils {
 
     private static final ExceptionHandler CFFU_SWALLOWED_EX_HANDLER = exInfo -> {
         String msg = "Swallowed exception of cf" + (exInfo.index + 1) + " at " + exInfo.where;
-        logException(msg, exInfo.exception);
+        logException(ExceptionLogger.Level.WARN, msg, exInfo.exception);
     };
 
     /**
@@ -123,7 +125,7 @@ public final class SwallowedExceptionHandleUtils {
         try {
             exceptionHandler.handle(exceptionInfo);
         } catch (Throwable e) {
-            logUncaughtException("exceptionHandler(" + exceptionHandler.getClass() + ")", e);
+            logUncaughtException(ExceptionLogger.Level.ERROR, "exceptionHandler(" + exceptionHandler.getClass() + ")", e);
         }
         return null;
     }

@@ -34,7 +34,7 @@ public final class ExceptionLogger {
     private static final LoggerAdapter logger = getLogger();
 
     @SuppressWarnings("StatementWithEmptyBody")
-    public static void logException(String msg, Throwable ex) {
+    public static void logException(Level level, String msg, Throwable ex) {
         final String fullFormat = "full";
         final String shortFormat = "short";
         final String noneFormat = "none";
@@ -43,15 +43,17 @@ public final class ExceptionLogger {
         if (noneFormat.equalsIgnoreCase(format)) {
             // pass silently when explicitly silenced.
         } else if (shortFormat.equalsIgnoreCase(format)) {
-            logger.error(msg + ", " + ex, null);
+            logger.log(level, msg + ", " + ex, null);
         } else {
-            logger.error(msg, ex);
+            logger.log(level, msg, ex);
         }
     }
 
-    public static void logUncaughtException(String where, Throwable ex) {
-        logException("Uncaught exception occurred at " + where, ex);
+    public static void logUncaughtException(Level level, String where, Throwable ex) {
+        logException(level, "Uncaught exception occurred at " + where, ex);
     }
+
+    public enum Level {ERROR, WARN}
 
     /**
      * Returns a logger adapter that uses {@code SLF4J} if available, otherwise uses {@link java.util.logging}.
@@ -65,18 +67,20 @@ public final class ExceptionLogger {
     }
 
     private interface LoggerAdapter {
-        void error(String msg, @Nullable Throwable ex);
+        void log(Level level, String msg, @Nullable Throwable ex);
     }
 
     private static final class Slf4jLoggerAdapter implements LoggerAdapter {
         private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CFFU_PACKAGE_NAME);
 
         @Override
-        public void error(String msg, @Nullable Throwable ex) {
+        public void log(Level level, String msg, @Nullable Throwable ex) {
             if (logger instanceof LocationAwareLogger) {
-                ((LocationAwareLogger) logger).log(null, FQCN, LocationAwareLogger.ERROR_INT, msg, null, ex);
+                int lvl = level == Level.ERROR ? LocationAwareLogger.ERROR_INT : LocationAwareLogger.WARN_INT;
+                ((LocationAwareLogger) logger).log(null, FQCN, lvl, msg, null, ex);
             } else {
-                logger.error(msg, ex);
+                if (level == Level.ERROR) logger.error(msg, ex);
+                else logger.warn(msg, ex);
             }
         }
     }
@@ -85,8 +89,8 @@ public final class ExceptionLogger {
         private final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CFFU_PACKAGE_NAME);
 
         @Override
-        public void error(String msg, @Nullable Throwable ex) {
-            logger.log(java.util.logging.Level.SEVERE, msg, ex);
+        public void log(Level level, String msg, @Nullable Throwable ex) {
+            logger.log(level == Level.ERROR ? java.util.logging.Level.SEVERE : java.util.logging.Level.WARNING, msg, ex);
         }
     }
 

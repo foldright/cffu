@@ -1,6 +1,7 @@
 package io.foldright.cffu;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
+import io.foldright.cffu.internal.ExceptionLogger;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -161,7 +162,7 @@ public final class LLCF {
                 action.accept(v, ex);
             } catch (Throwable e) {
                 if (ex != null) e.addSuppressed(ex);
-                logUncaughtException(where, e);
+                logUncaughtException(ExceptionLogger.Level.ERROR, where, e);
             }
         });
         return cfThis;
@@ -181,7 +182,7 @@ public final class LLCF {
                 action.accept(v, ex);
             } catch (Throwable e) {
                 if (ex != null) e.addSuppressed(ex);
-                logUncaughtException(where, e);
+                logUncaughtException(ExceptionLogger.Level.ERROR, where, e);
             }
         }, executor);
         return cfThis;
