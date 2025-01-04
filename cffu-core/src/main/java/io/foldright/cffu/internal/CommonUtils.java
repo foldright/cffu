@@ -38,7 +38,7 @@ public final class CommonUtils {
     }
 
     public static <T> T[] fillArray(T[] array, IntFunction<T> init) {
-        for (int i = 0; i < array.length; i++) array[i] = init.apply(i);
+        Arrays.setAll(array, init);
         return array;
     }
 
