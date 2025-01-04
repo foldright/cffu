@@ -472,14 +472,14 @@ class CffuTest {
     ////////////////////////////////////////////////////////////////////////////////
 
     @Test
-    void test_resetCffuFactory() {
+    void test_withCffuFactory() {
         Cffu<Integer> cf = testCffuFac.completedFuture(n);
         assertSame(testCffuFac, cf.cffuFactory());
 
-        assertSame(forbidObtrudeMethodsCffuFactory, cf.resetCffuFactory(forbidObtrudeMethodsCffuFactory).cffuFactory());
+        assertSame(forbidObtrudeMethodsCffuFactory, cf.withCffuFactory(forbidObtrudeMethodsCffuFactory).cffuFactory());
 
         Executor executor = Runnable::run;
-        final Cffu<Integer> f2 = cf.resetDefaultExecutor(executor);
+        final Cffu<Integer> f2 = cf.withDefaultExecutor(executor);
         assertSame(executor, unwrapMadeExecutor(f2));
         assertEquals(testCffuFac.forbidObtrudeMethods(), f2.cffuFactory().forbidObtrudeMethods());
     }

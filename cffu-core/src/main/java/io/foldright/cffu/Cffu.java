@@ -2520,8 +2520,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * demo code about re-config methods of Cffu:
      *
      * <pre>{@code cffu2 = cffu
-     *     .resetDefaultExecutor(executor2) // reset to use executor2
-     *     .minimalCompletionStage();       // restrict to methods of CompletionStage
+     *     .withDefaultExecutor(executor2) // reset to use executor2
+     *     .minimalCompletionStage();      // restrict to methods of CompletionStage
      * }</pre>
      * <p>
      * <strong>CAUTION:</strong> if run on old Java 8 (which does not support *minimal* CompletionStage),
@@ -2538,15 +2538,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * demo code about re-config methods of Cffu:
      *
      * <pre>{@code cffu2 = cffu
-     *     .resetDefaultExecutor(executor2) // reset to use executor2
-     *     .minimalCompletionStage();       // restrict to methods of CompletionStage
+     *     .withDefaultExecutor(executor2) // reset to use executor2
+     *     .minimalCompletionStage();      // restrict to methods of CompletionStage
      * }</pre>
      *
      * @see #minimalCompletionStage()
      */
     @Contract(pure = true)
-    public Cffu<T> resetDefaultExecutor(Executor defaultExecutor) {
-        return resetCffuFactory(fac.resetDefaultExecutor(defaultExecutor));
+    public Cffu<T> withDefaultExecutor(Executor defaultExecutor) {
+        return withCffuFactory(fac.withDefaultExecutor(defaultExecutor));
     }
 
     /**
@@ -2555,15 +2555,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * demo code about re-config methods of Cffu:
      *
      * <pre>{@code cffu2 = cffu
-     *     .resetCffuFactory(cffuFactory2) // reset to use config from cffuFactory2
-     *     .minimalCompletionStage();      // restrict to methods of CompletionStage
+     *     .withCffuFactory(cffuFactory2) // reset to use config from cffuFactory2
+     *     .minimalCompletionStage();     // restrict to methods of CompletionStage
      * }</pre>
      *
      * @param cffuFactory cffuFactory contained configuration
      * @see #minimalCompletionStage()
      */
     @Contract(pure = true)
-    public Cffu<T> resetCffuFactory(CffuFactory cffuFactory) {
+    public Cffu<T> withCffuFactory(CffuFactory cffuFactory) {
         return new Cffu<>(cffuFactory, isMinimalStage, cf);
     }
 
@@ -2604,7 +2604,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns the default Executor used for async methods that do not specify an Executor.
      * Config from the {@link CffuFactory#defaultExecutor()},
-     * and can re-configured by {@link #resetCffuFactory(CffuFactory)}.
+     * and can re-configured by {@link #withCffuFactory(CffuFactory)}.
      *
      * @return the default executor
      * @see CffuFactory#defaultExecutor()
@@ -2618,7 +2618,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns the {@link CffuFactory} of this Cffu.
-     * This can be re-configured by {@link #resetCffuFactory(CffuFactory)}.
+     * This can be re-configured by {@link #withCffuFactory(CffuFactory)}.
      *
      * @return the CffuFactory
      * @see #defaultExecutor()
@@ -2630,7 +2630,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     /**
      * Returns {@code forbidObtrudeMethods} or not.
-     * This can be re-configured by {@link #resetCffuFactory(CffuFactory)}.
+     * This can be re-configured by {@link #withCffuFactory(CffuFactory)}.
      *
      * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
      */

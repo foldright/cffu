@@ -323,7 +323,7 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
 
     //# Cffu Re-Config methods
     if (recursive)
-        resetCffuFactory(CffuFactory.builder(blackHoleExecutor).build()).shouldMinCffu()
+        withCffuFactory(CffuFactory.builder(blackHoleExecutor).build()).shouldMinCffu()
 
     //# Getter methods of properties
     cffuFactory()
@@ -422,7 +422,7 @@ private fun <T> Cffu<T>.shouldNotMinCffu(recursive: Boolean = false) {
 
     //# Cffu Re-Config methods
     if (recursive)
-        resetCffuFactory(CffuFactory.builder(blackHoleExecutor).build()).shouldNotMinCffu()
+        withCffuFactory(CffuFactory.builder(blackHoleExecutor).build()).shouldNotMinCffu()
 
     //# Getter methods of properties
     cffuFactory()

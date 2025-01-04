@@ -38,7 +38,7 @@ class CffuExtensionsTest : FunSpec({
         cffu.cffuFactory() shouldBeSameInstanceAs testCffuFac
 
         val fac2 = CffuFactory.builder(testFjExecutor).build()
-        cffu.resetCffuFactory(fac2).let {
+        cffu.withCffuFactory(fac2).let {
             it.unwrapMadeExecutor() shouldBeSameInstanceAs testFjExecutor
             it.cffuFactory() shouldBeSameInstanceAs fac2
         }

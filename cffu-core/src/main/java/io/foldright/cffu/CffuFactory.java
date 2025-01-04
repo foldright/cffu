@@ -72,8 +72,8 @@ public final class CffuFactory {
      * Returns a new CffuFactory from this CffuFactory that reset the defaultExecutor.
      */
     @Contract(pure = true)
-    public CffuFactory resetDefaultExecutor(Executor defaultExecutor) {
-        return CffuFactoryBuilder.resetDefaultExecutor(this, defaultExecutor);
+    public CffuFactory withDefaultExecutor(Executor defaultExecutor) {
+        return CffuFactoryBuilder.withDefaultExecutor(this, defaultExecutor);
     }
 
     @Contract(pure = true)
@@ -1178,7 +1178,7 @@ public final class CffuFactory {
      * @throws NullPointerException if the given stage is null
      * @see #toCffuArray(CompletionStage[])
      * @see CompletionStage#toCompletableFuture()
-     * @see Cffu#resetCffuFactory(CffuFactory)
+     * @see Cffu#withCffuFactory(CffuFactory)
      */
     @Contract(pure = true)
     public <T> Cffu<T> toCffu(CompletionStage<T> stage) {

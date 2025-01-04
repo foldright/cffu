@@ -882,11 +882,11 @@ class CffuFactoryTest {
         assertSame(dummyExecutor, unwrapMadeExecutor(fac));
         assertTrue(fac.forbidObtrudeMethods());
 
-        final CffuFactory fac2 = testCffuFac.resetDefaultExecutor(dummyExecutor);
+        final CffuFactory fac2 = testCffuFac.withDefaultExecutor(dummyExecutor);
         assertSame(dummyExecutor, unwrapMadeExecutor(fac2));
         assertEquals(testCffuFac.forbidObtrudeMethods(), fac2.forbidObtrudeMethods());
 
-        final CffuFactory fac3 = testCffuFac.resetDefaultExecutor(fac2.defaultExecutor());
+        final CffuFactory fac3 = testCffuFac.withDefaultExecutor(fac2.defaultExecutor());
         assertSame(fac2.defaultExecutor(), fac3.defaultExecutor());
         assertEquals(fac2.forbidObtrudeMethods(), fac3.forbidObtrudeMethods());
     }

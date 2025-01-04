@@ -83,7 +83,7 @@ public final class CffuFactoryBuilder {
     ////////////////////////////////////////////////////////////////////////////////
 
     @Contract(pure = true)
-    static CffuFactory resetDefaultExecutor(CffuFactory fac, Executor defaultExecutor) {
+    static CffuFactory withDefaultExecutor(CffuFactory fac, Executor defaultExecutor) {
         return new CffuFactory(makeExecutor(defaultExecutor), fac.forbidObtrudeMethods());
     }
 
