@@ -74,7 +74,7 @@
 		<!-- dummy default value, overridden by profile -->
 		<main.run.debug.java.opt>-ea</main.run.debug.java.opt>
 
-		<spotbugs.annotations.version>4.8.6</spotbugs.annotations.version>
+		<spotbugs.annotations.version>4.9.0</spotbugs.annotations.version>
 		<jsr305.version>3.0.2</jsr305.version>
 		<jetbrains.annotations.version>26.0.1</jetbrains.annotations.version>
 
