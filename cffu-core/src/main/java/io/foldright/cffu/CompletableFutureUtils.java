@@ -1096,7 +1096,8 @@ public final class CompletableFutureUtils {
                 results.compareAndSet(i, null, v);
                 return completedFuture(null);
             } else {
-                if (results.get(i) != SENTINEL_UNNEEDED)
+                // benign data race
+                if (results.get(0) != SENTINEL_UNNEEDED)
                     // if any stage has failed, all results are unneeded; mark all slots with SENTINEL_UNNEEDED
                     fillAtomicReferenceArray(results, (T) SENTINEL_UNNEEDED);
                 return failedFuture(ex);
