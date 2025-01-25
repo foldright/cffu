@@ -322,7 +322,7 @@
 								<requireProperty>
 									<property>project.version</property>
 									<regex>${maven.enforcer.pom.version.regex}</regex>
-									<regexMessage>Project version(${project.version}) format is invalid!</regexMessage>
+									<regexMessage>Project version(${project.version}) format is invalid! regex: ${maven.enforcer.pom.version.regex}</regexMessage>
 								</requireProperty>
 							</rules>
 						</configuration>

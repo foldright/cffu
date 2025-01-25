@@ -55,6 +55,8 @@
 	</developers>
 
 	<properties>
+		<release.pom.version.regex>^\d\.\d+\.\d+-Alpha$</release.pom.version.regex>
+
 		<maven.javadoc.skip>true</maven.javadoc.skip>
 		<dokka.version>2.0.0</dokka.version>
 	</properties>
@@ -63,7 +65,7 @@
 		<dependency>
 			<groupId>io.foldright</groupId>
 			<artifactId>cffu</artifactId>
-			<version>${project.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
@@ -92,7 +94,7 @@
 				<dependency>
 					<groupId>io.foldright</groupId>
 					<artifactId>cffu</artifactId>
-					<version>${project.version}</version>
+					<version>${project.parent.version}</version>
 					<!--
 						Guide to using attached tests
 						reuse the tests that you have created for one project in another
@@ -141,7 +143,7 @@
 							</documentedVisibilities>
 							<externalDocumentationLinks>
 								<link>
-									<url>https://foldright.io/api-docs/cffu/${project.version}/</url>
+									<url>https://foldright.io/api-docs/cffu/${project.parent.version}/</url>
 									<packageListUrl>file://${javadoc.package.list.dir}/cffu/package-list</packageListUrl>
 								</link>
 								<link>

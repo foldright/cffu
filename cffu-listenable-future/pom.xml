@@ -66,6 +66,10 @@
 		</developer>
 	</developers>
 
+	<properties>
+		<release.pom.version.regex>^\d\.\d+\.\d+-Alpha$</release.pom.version.regex>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -74,7 +78,7 @@
 		<dependency>
 			<groupId>io.foldright</groupId>
 			<artifactId>cffu</artifactId>
-			<version>${project.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
@@ -97,7 +101,7 @@
 				<dependency>
 					<groupId>io.foldright</groupId>
 					<artifactId>cffu</artifactId>
-					<version>${project.version}</version>
+					<version>${project.parent.version}</version>
 					<!--
 						Guide to using attached tests
 						reuse the tests that you have created for one project in another
