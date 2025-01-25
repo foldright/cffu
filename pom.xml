@@ -241,13 +241,6 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<distributionManagement>
-		<snapshotRepository>
-			<id>ossrh</id>
-			<url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -1029,28 +1022,14 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.sonatype.plugins</groupId>
-						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<version>1.7.0</version>
+						<!-- https://central.sonatype.org/publish/publish-portal-maven/#publishing -->
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+						<version>0.7.0</version>
 						<extensions>true</extensions>
-						<!--
-							In multiple module builds using the deploy-at-end feature, the deployment of all components
-							is performed in the last module based on the reactor order. If this property is set to true
-							in the last module, all staging deployment for all modules will be skipped.
-							so, we'll config nexus deploy after every module's `deploy` phase
-							see: https://github.com/sonatype/nexus-maven-plugins/tree/master/staging/maven-plugin#configuring-the-plugin
-						-->
 						<configuration>
-							<serverId>ossrh</serverId>
-							<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-							<autoReleaseAfterClose>true</autoReleaseAfterClose>
-							<!--
-								If you are deploying to Maven Central, it is the Nexus Staging Plugin that is doing the deployment
-								instead of the `deploy` plugin, so the configuration of the `deploy` plugin has no effect.
-								To make the Nexus deploy plugin skip, set skipNexusStagingDeployMojo in its configuration to true.
-								see: https://stackoverflow.com/questions/59552549/preventing-maven-modules-from-being-deployed
-							-->
-							<skipNexusStagingDeployMojo>${maven.deploy.skip}</skipNexusStagingDeployMojo>
+							<publishingServerId>central</publishingServerId>
+							<autoPublish>true</autoPublish>
 						</configuration>
 					</plugin>
 				</plugins>
