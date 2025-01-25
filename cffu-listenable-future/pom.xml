@@ -9,6 +9,9 @@
 	</parent>
 
 	<artifactId>cffu-listenable-future</artifactId>
+	<!-- UPDATE to Alpha version WHEN RELEASE
+	<version>1.x.y-Alpha</version>
+	-->
 	<name>Guava ListenableFuture Integration with CF</name>
 	<description>${project.name}</description>
 	<url>https://github.com/foldright/cffu</url>

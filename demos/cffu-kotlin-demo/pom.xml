@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>io.foldright</groupId>
 			<artifactId>cffu-kotlin</artifactId>
-			<!-- UPDATE to Alpha when release -->
+			<!-- UPDATE to Alpha version WHEN RELEASE -->
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
