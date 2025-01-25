@@ -84,6 +84,17 @@ class CompletableFutureUtilsTest {
     }
 
     @Test
+    void test_mSupply__failure() throws Exception {
+        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
+                // allResultsOf: the ex of first given cf argument win.
+                //   ❗dependent on the implementation behavior of `CF.allOf`️
+                mSupplyFailFastAsync(() -> 42, () -> {
+                    throw rte;
+                }).get()
+        ).getCause());
+    }
+
+    @Test
     void test_mRun() throws Exception {
         final Runnable runnable = TestUtils::snoreZzz;
 

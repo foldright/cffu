@@ -11,8 +11,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import static io.foldright.cffu.CompletableFutureUtils.unwrapCfException;
+import static io.foldright.cffu.internal.CommonUtils.requireArrayAndEleNonNull;
 import static io.foldright.cffu.internal.ExceptionLogger.logException;
 import static io.foldright.cffu.internal.ExceptionLogger.logUncaughtException;
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -29,7 +31,7 @@ import static io.foldright.cffu.internal.ExceptionLogger.logUncaughtException;
 public final class SwallowedExceptionHandleUtils {
     /**
      * Handles all exceptions from multiple input {@code CompletionStage}s as swallowed exceptions,
-     * using {@link #cffuSwallowedExceptionHandler()}.
+     * using {@link #cffuSwallowedExceptionHandler()} and calling back it with null attachment.
      *
      * @param where the location where the exception occurs
      */
@@ -38,23 +40,41 @@ public final class SwallowedExceptionHandleUtils {
     }
 
     /**
-     * Handles all exceptions from multiple input {@code CompletionStage}s as swallowed exceptions.
+     * Handles all exceptions from multiple input {@code CompletionStage}s as swallowed exceptions,
+     * calling back the exceptionHandler with null attachment.
      *
      * @param where            the location where the exception occurs
      * @param exceptionHandler the exception handler
      */
     public static void handleAllSwallowedExceptions(
             String where, ExceptionHandler exceptionHandler, CompletionStage<?>... inputs) {
+        handleAllSwallowedExceptions(where, null, exceptionHandler, inputs);
+    }
+
+    /**
+     * Handles all exceptions from multiple input {@code CompletionStage}s as swallowed exceptions.
+     *
+     * @param where            the location where the exception occurs
+     * @param attachments      the attachment objects
+     * @param exceptionHandler the exception handler
+     */
+    public static void handleAllSwallowedExceptions(
+            String where, @Nullable Object[] attachments, ExceptionHandler exceptionHandler, CompletionStage<?>... inputs) {
+        requireNonNull(where, "where is null");
+        requireNonNull(exceptionHandler, "exceptionHandler is null");
+        requireArrayAndEleNonNull("input", inputs);
+
         for (int i = 0; i < inputs.length; i++) {
             final int idx = i;
             // argument ex of method `exceptionally` is never null
-            inputs[idx].exceptionally(ex -> safeHandle(new ExceptionInfo(where, idx, ex, null), exceptionHandler));
+            inputs[idx].exceptionally(ex -> safeHandle(new ExceptionInfo(
+                    where, idx, ex, safeGet(attachments, idx)), exceptionHandler));
         }
     }
 
     /**
      * Handles swallowed exceptions from multiple input {@code CompletionStage}s that are discarded (not propagated)
-     * by the output {@code CompletionStage}, using {@link #cffuSwallowedExceptionHandler()}.
+     * by the output {@code CompletionStage}, using {@link #cffuSwallowedExceptionHandler()} and calling back it with null attachment.
      *
      * @param where the location where the exception occurs
      */
@@ -64,14 +84,33 @@ public final class SwallowedExceptionHandleUtils {
     }
 
     /**
-     * Handles swallowed exceptions from multiple input {@code CompletionStage}s
-     * that are discarded (not propagated) by the output {@code CompletionStage}.
+     * Handles swallowed exceptions from multiple input {@code CompletionStage}s that are discarded (not propagated)
+     * by the output {@code CompletionStage}, calling back the exceptionHandler with null attachment.
      *
      * @param where            the location where the exception occurs
      * @param exceptionHandler the exception handler
      */
     public static void handleSwallowedExceptions(
             String where, ExceptionHandler exceptionHandler, CompletableFuture<?> output, CompletionStage<?>... inputs) {
+        handleSwallowedExceptions(where, null, exceptionHandler, output, inputs);
+    }
+
+    /**
+     * Handles swallowed exceptions from multiple input {@code CompletionStage}s
+     * that are discarded (not propagated) by the output {@code CompletionStage}.
+     *
+     * @param where            the location where the exception occurs
+     * @param attachments      the attachment objects
+     * @param exceptionHandler the exception handler
+     */
+    public static void handleSwallowedExceptions(
+            String where, @Nullable Object[] attachments, ExceptionHandler exceptionHandler,
+            CompletableFuture<?> output, CompletionStage<?>... inputs) {
+        requireNonNull(where, "where is null");
+        requireNonNull(exceptionHandler, "exceptionHandler is null");
+        requireNonNull(output, "output is null");
+        requireArrayAndEleNonNull("input", inputs);
+
         // uses unreferenced cfs to prevent memory leaks, in case that
         // some inputs complete quickly and retain large memory while other inputs or output continue running
         CompletionStage<Void>[] unreferencedInputs = unreferenced(inputs);
@@ -87,7 +126,7 @@ public final class SwallowedExceptionHandleUtils {
                 cf.exceptionally(ex -> {
                     // if ex is returned to output cf(aka. not swallowed ex), do NOTHING
                     if (unwrapCfException(ex) == outputBizEx) return null;
-                    return safeHandle(new ExceptionInfo(where, idx, ex, null), exceptionHandler);
+                    return safeHandle(new ExceptionInfo(where, idx, ex, safeGet(attachments, idx)), exceptionHandler);
                 });
             }
         });
@@ -118,10 +157,15 @@ public final class SwallowedExceptionHandleUtils {
         });
     }
 
-    @Nullable
+    private static @Nullable Object safeGet(@Nullable Object[] attachments, int index) {
+        if (attachments == null) return null;
+        else if (index < attachments.length) return attachments[index];
+        else return null;
+    }
+
     @Contract("_, _ -> null")
     @SuppressWarnings("SameReturnValue")
-    private static <T> T safeHandle(ExceptionInfo exceptionInfo, ExceptionHandler exceptionHandler) {
+    private static <T> @Nullable T safeHandle(ExceptionInfo exceptionInfo, ExceptionHandler exceptionHandler) {
         try {
             exceptionHandler.handle(exceptionInfo);
         } catch (Throwable e) {

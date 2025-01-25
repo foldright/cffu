@@ -2,6 +2,9 @@ package io.foldright.cffu.eh;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+
 
 /**
  * Exception info of exceptions, used as argument of {@link ExceptionHandler}.
@@ -11,11 +14,13 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public final class ExceptionInfo {
     /**
      * The location where the exception occurs.
+     * <p>
+     * The location is provided through the {@code where} parameter of the handle methods in {@link SwallowedExceptionHandleUtils}.
      */
     public final String where;
 
     /**
-     * The <strong>0-based</strong> index of the {@code CompletionStage} that throws the exception.
+     * The <strong>0-based</strong> index of the input {@code CompletionStage} that throws the exception.
      */
     public final int index;
 
@@ -26,6 +31,11 @@ public final class ExceptionInfo {
 
     /**
      * An optional attachment object that may contain additional context; can be {@code null}.
+     * <p>
+     * The attachment object is provided through the attachments parameter of the handle methods in {@link SwallowedExceptionHandleUtils}.
+     *
+     * @see SwallowedExceptionHandleUtils#handleAllSwallowedExceptions(String, Object[], ExceptionHandler, CompletionStage[])
+     * @see SwallowedExceptionHandleUtils#handleSwallowedExceptions(String, Object[], ExceptionHandler, CompletableFuture, CompletionStage[])
      */
     @Nullable
     public final Object attachment;
