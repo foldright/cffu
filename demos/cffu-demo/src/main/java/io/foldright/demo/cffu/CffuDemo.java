@@ -10,15 +10,15 @@ import java.util.concurrent.TimeUnit;
 
 public class CffuDemo {
     private static final ExecutorService myBizThreadPool = Executors.newCachedThreadPool();
-    // Create a CffuFactory with configuration of the customized thread pool
+    // create a CffuFactory with configuration of the customized thread pool
     private static final CffuFactory cffuFactory = CffuFactory.builder(myBizThreadPool).build();
 
     public static void main(String[] args) throws Exception {
         final Cffu<Integer> cf42 = cffuFactory
-                .supplyAsync(() -> 21)  // Run in myBizThreadPool
+                .supplyAsync(() -> 21)  // run in myBizThreadPool
                 .thenApply(n -> n * 2);
 
-        // Below tasks all run in myBizThreadPool
+        // below tasks all run in myBizThreadPool
         final Cffu<Integer> longTaskA = cf42.thenApplyAsync(n -> {
             sleep(1001);
             return n / 2;

@@ -936,7 +936,7 @@ public final class CompletableFutureUtils {
             CompletionStage<? extends T>[] cfs) {
         if (cfs.length == 0) return completedFuture(arrayList());
         if (cfs.length == 1) {
-            // Defensive copy input cf to non-minimal-stage instance in order to
+            // defensive copy input cf to non-minimal-stage instance in order to
             // 1. avoid writing it by `cffuCompleteOnTimeout` and is able to read its result(`getSuccessNow`)
             // 2. ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
             final CompletableFuture<T> f = toNonMinCfCopy0(cfs[0]);
@@ -1081,9 +1081,9 @@ public final class CompletableFutureUtils {
     /**
      * Returns a cf array whose elements do the result collection for <strong>AllResultsOf*</strong> methods.
      * <p>
-     * Implementation Note: Uses AtomicReferenceArray and CAS operations to prevent memory leaks in `AllResultOf*` methods.
-     * Without this protection, if any inputs complete exceptionally while others are still running,
-     * the results array would unnecessarily retain memory for results that will never be used.
+     * Implementation Note: Uses AtomicReferenceArray and CAS operations to prevent memory leaks in `AllResultOf*`
+     * methods. Without this protection, if any inputs complete exceptionally while others are still running,
+     * the results array would unnecessarily retain memory for cf results that will never be used.
      */
     @SuppressWarnings("unchecked")
     private static <T> CompletableFuture<Void>[] createAllResultsSetterCfs(
@@ -1095,8 +1095,8 @@ public final class CompletableFutureUtils {
                 results.compareAndSet(i, null, v);
                 return completedFuture(null);
             } else {
-                // This `if check` is a simple optimization for benign race condition.
-                // The code logic would still be correct if directly setting SENTINEL_UNNEEDED without checking
+                // this `if checking` is a simple optimization for benign race condition.
+                // the code logic would still be correct if directly setting SENTINEL_UNNEEDED without checking
                 if (results.get(0) != SENTINEL_UNNEEDED)
                     // if any stage has failed, all results are unneeded; mark all slots with SENTINEL_UNNEEDED
                     fillAtomicReferenceArray(results, (T) SENTINEL_UNNEEDED);
@@ -1150,7 +1150,7 @@ public final class CompletableFutureUtils {
     private static <T> CompletableFuture<T> anySuccessOf0(CompletionStage<? extends T>[] cfs) {
         final int len = cfs.length;
         if (len == 0) return failedFuture(new NoCfsProvidedException());
-        // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
+        // defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
         // 1. avoid writing the input cf unexpectedly by caller code
         // 2. the returned cf is not minimal-stage instance(UnsupportedOperationException)
         if (len == 1) return toNonMinCfCopy0(cfs[0]);
@@ -1186,7 +1186,7 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<T> anyOf(CompletionStage<? extends T>... cfs) {
         requireCfsAndEleNonNull(cfs);
         if (cfs.length == 0) return new CompletableFuture<>();
-        // Defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
+        // defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
         // 1. avoid writing the input cf unexpectedly by caller code
         // 2. the returned cf is not minimal-stage instance(UnsupportedOperationException)
         if (cfs.length == 1) return toNonMinCfCopy0(cfs[0]);
@@ -1588,7 +1588,7 @@ public final class CompletableFutureUtils {
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        // Defensive shallow copy of input array argument by `clone`,
+        // defensive shallow copy of input array argument by `clone`,
         //   since it is used asynchronously in `thenCompose` and could be mutated by caller (NOT thread-safe)
         // this same defensive copying pattern is used in similar methods below.
         Function<? super T, ? extends U>[] copy = requireArrayAndEleNonNull("fn", fns).clone();

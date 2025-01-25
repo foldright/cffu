@@ -11,15 +11,15 @@ import java.util.concurrent.TimeUnit
 
 private val myBizThreadPool: ExecutorService = Executors.newCachedThreadPool()
 
-// Create a CffuFactory with configuration of the customized thread pool
+// create a CffuFactory with configuration of the customized thread pool
 private val cffuFactory: CffuFactory = CffuFactory.builder(myBizThreadPool).build()
 
 fun main() {
     val cf42 = cffuFactory
-        .supplyAsync { 21 }   // Run in myBizThreadPool
+        .supplyAsync { 21 }   // run in myBizThreadPool
         .thenApply { it * 2 }
 
-    // Below tasks all run in myBizThreadPool
+    // below tasks all run in myBizThreadPool
     val longTaskA = cf42.thenApplyAsync { n: Int ->
         sleep(1001)
         n / 2

@@ -169,7 +169,7 @@ class ListenableFutureUtilsTest {
             final ListenableFuture<Integer> lf = SettableFuture.create();
             final CompletableFuture<Integer> cf = toCompletableFuture(lf, testExecutor, true);
 
-            // Cf completeExceptionally with non-CancellationException
+            // completeExceptionally with non-CancellationException
             assertTrue(cf.completeExceptionally(new IllegalArgumentException()));
             snoreZzz();
             waitForAllCfsToComplete(cf);

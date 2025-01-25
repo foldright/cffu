@@ -9,6 +9,9 @@
 	</parent>
 
 	<artifactId>cffu-kotlin</artifactId>
+	<!-- UPDATE to Alpha version WHEN RELEASE
+	<version>1.x.y-Alpha</version>
+	-->
 	<name>${project.artifactId}</name>
 	<description>Cffu Kotlin Support</description>
 	<url>https://github.com/foldright/cffu</url>

@@ -14,7 +14,7 @@ public class CompletableFutureUtilsDemo {
 
     public static void main(String[] args) throws Exception {
         final CompletableFuture<Integer> cf42 = CompletableFuture
-                .supplyAsync(() -> 21, myBizThreadPool)  // Run in myBizThreadPool
+                .supplyAsync(() -> 21, myBizThreadPool)  // run in myBizThreadPool
                 .thenApply(n -> n * 2);
 
         final CompletableFuture<Integer> longTaskA = cf42.thenApplyAsync(n -> {

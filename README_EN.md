@@ -9,7 +9,7 @@
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/foldright/cffu?color=4D7A97&logo=apache" alt="License"></a>
 <a href="https://foldright.io/api-docs/cffu/"><img src="https://img.shields.io/github/release/foldright/cffu?label=javadoc&color=339933&logo=read-the-docs&logoColor=white" alt="Javadocs"></a>
 <a href="https://foldright.io/api-docs/cffu-kotlin/"><img src="https://img.shields.io/github/release/foldright/cffu?label=dokka&color=339933&logo=kotlin&logoColor=white" alt="dokka"></a>
-<a href="https://central.sonatype.com/artifact/io.foldright/cffu/0.9.0/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
+<a href="https://central.sonatype.com/artifact/io.foldright/cffu/1.0.0/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
 <a href="https://github.com/foldright/cffu/releases"><img src="https://img.shields.io/github/release/foldright/cffu.svg" alt="GitHub Releases"></a>
 <a href="https://github.com/foldright/cffu/stargazers"><img src="https://img.shields.io/github/stars/foldright/cffu?style=flat" alt="GitHub Stars"></a>
 <a href="https://github.com/foldright/cffu/fork"><img src="https://img.shields.io/github/forks/foldright/cffu?style=flat" alt="GitHub Forks"></a>
@@ -170,15 +170,15 @@ Before diving into the feature points, check out the examples of the different w
 ```java
 public class CffuDemo {
   private static final ExecutorService myBizThreadPool = Executors.newCachedThreadPool();
-  // Create a CffuFactory with configuration of the customized thread pool
+  // create a CffuFactory with configuration of the customized thread pool
   private static final CffuFactory cffuFactory = CffuFactory.builder(myBizThreadPool).build();
 
   public static void main(String[] args) throws Exception {
     final Cffu<Integer> cf42 = cffuFactory
-        .supplyAsync(() -> 21)  // Run in myBizThreadPool
+        .supplyAsync(() -> 21)  // run in myBizThreadPool
         .thenApply(n -> n * 2);
 
-    // Below tasks all run in myBizThreadPool
+    // below tasks all run in myBizThreadPool
     final Cffu<Integer> longTaskA = cf42.thenApplyAsync(n -> {
       sleep(1001);
       return n / 2;
@@ -216,7 +216,7 @@ public class CompletableFutureUtilsDemo {
 
   public static void main(String[] args) throws Exception {
     final CompletableFuture<Integer> cf42 = CompletableFuture
-        .supplyAsync(() -> 21, myBizThreadPool)  // Run in myBizThreadPool
+        .supplyAsync(() -> 21, myBizThreadPool)  // run in myBizThreadPool
         .thenApply(n -> n * 2);
 
     final CompletableFuture<Integer> longTaskA = cf42.thenApplyAsync(n -> {
@@ -254,15 +254,15 @@ public class CompletableFutureUtilsDemo {
 ```kt
 private val myBizThreadPool: ExecutorService = Executors.newCachedThreadPool()
 
-// Create a CffuFactory with configuration of the customized thread pool
+// create a CffuFactory with configuration of the customized thread pool
 private val cffuFactory: CffuFactory = CffuFactory.builder(myBizThreadPool).build()
 
 fun main() {
   val cf42 = cffuFactory
-    .supplyAsync { 21 }   // Run in myBizThreadPool
+    .supplyAsync { 21 }   // run in myBizThreadPool
     .thenApply { it * 2 }
 
-  // Below tasks all run in myBizThreadPool
+  // below tasks all run in myBizThreadPool
   val longTaskA = cf42.thenApplyAsync { n: Int ->
     sleep(1001)
     n / 2
@@ -325,7 +325,7 @@ public class AllResultsOfDemo {
     Cffu<Integer> cffu2 = cffuFactory.completedFuture(42);
 
     Cffu<Void> all = cffuFactory.allOf(cffu1, cffu2);
-    // Result type is Void!
+    // result type is Void!
     //
     // the result can be got by input argument `cf1.get()`, but it's cumbersome.
     // so we can see a lot of util methods to enhance `allOf` with result in our project.
@@ -340,7 +340,7 @@ public class AllResultsOfDemo {
     CompletableFuture<Integer> cf2 = CompletableFuture.completedFuture(42);
 
     CompletableFuture<Void> all2 = CompletableFuture.allOf(cf1, cf2);
-    // Result type is Void!
+    // result type is Void!
 
     CompletableFuture<List<Integer>> allResults2 = allResultsOf(cf1, cf2);
     System.out.println(allResults2.get());
@@ -596,7 +596,7 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu/
 
 # 🍪Dependencies
 
-> check out [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/0.9.0/versions) for new or available versions。
+> check out [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/1.0.0/versions) for new or available versions。
 
 - `cffu`library（including[`Java CompletableFuture`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html) enhanced `CompletableFutureUtils`）:
   - For `Maven` projects:
@@ -605,18 +605,18 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu/
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>1.0.0-Alpha33</version>
+      <version>1.0.0</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     Gradle Kotlin DSL
     ```groovy
-    implementation("io.foldright:cffu:1.0.0-Alpha33")
+    implementation("io.foldright:cffu:1.0.0")
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation 'io.foldright:cffu:1.0.0-Alpha33'
+    implementation 'io.foldright:cffu:1.0.0'
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local) implementation for [`cffu executor wrapper SPI`](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -625,7 +625,7 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu/
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>1.0.0-Alpha33</version>
+      <version>1.0.0</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -633,11 +633,11 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu/
 
     Gradle Kotlin DSL
     ```groovy
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha33")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0")
     ```
     Gradle Groovy DSL
     ```groovy
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha33'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0'
     ```
 
 # 📚 See also

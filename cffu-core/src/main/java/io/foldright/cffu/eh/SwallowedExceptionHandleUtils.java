@@ -115,15 +115,14 @@ public final class SwallowedExceptionHandleUtils {
         // some inputs complete quickly and retain large memory while other inputs or output continue running
         CompletionStage<Void>[] unreferencedInputs = unreferenced(inputs);
 
-        // Whether to swallow exceptions from inputs depends on the output's result,
+        // whether to swallow exceptions from inputs depends on the output's result,
         // so must check when the output CompletionStage completes.
         output.whenComplete((v, outputEx) -> { // outputEx may be null
             Throwable outputBizEx = unwrapCfException(outputEx);
             for (int i = 0; i < unreferencedInputs.length; i++) {
                 final int idx = i;
-                CompletionStage<Void> cf = unreferencedInputs[i];
                 // argument ex of method `exceptionally` is never null
-                cf.exceptionally(ex -> {
+                unreferencedInputs[i].exceptionally(ex -> {
                     // if ex is returned to output cf(aka. not swallowed ex), do NOTHING
                     if (unwrapCfException(ex) == outputBizEx) return null;
                     return safeHandle(new ExceptionInfo(where, idx, ex, safeGet(attachments, idx)), exceptionHandler);
@@ -165,11 +164,11 @@ public final class SwallowedExceptionHandleUtils {
 
     @Contract("_, _ -> null")
     @SuppressWarnings("SameReturnValue")
-    private static <T> @Nullable T safeHandle(ExceptionInfo exceptionInfo, ExceptionHandler exceptionHandler) {
+    private static <T> @Nullable T safeHandle(ExceptionInfo info, ExceptionHandler handler) {
         try {
-            exceptionHandler.handle(exceptionInfo);
+            handler.handle(info);
         } catch (Throwable e) {
-            logUncaughtException(ExceptionLogger.Level.ERROR, "exceptionHandler(" + exceptionHandler.getClass() + ")", e);
+            logUncaughtException(ExceptionLogger.Level.ERROR, "exceptionHandler(" + handler.getClass() + ")", e);
         }
         return null;
     }

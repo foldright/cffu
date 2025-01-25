@@ -1,5 +1,10 @@
 # 🦝 `Cffu` executor wrapper provider SPI implementation for TTL
 
+<p align="center">
+<a href="https://central.sonatype.com/artifact/io.foldright/cffu-ttl-executor-wrapper/1.0.0/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu-ttl-executor-wrapper?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
+<a href="https://foldright.io/api-docs/cffu/"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu-ttl-executor-wrapper?label=javadoc&logo=read-the-docs&logoColor=white" alt="Javadocs"></a>
+</p>
+
 `Cffu` executor wrapper provider(`ExecutorWrapperProvider`) SPI implementation for
 [📌TransmittableThreadLocal(TTL)](https://github.com/alibaba/transmittable-thread-local).
 
@@ -18,18 +23,18 @@ This dependency should only be used at `Runtime`.
     <groupId>io.foldright</groupId>
     <artifactId>cffu-ttl-executor-wrapper</artifactId>
     <scope>runtime</scope>
-    <version>1.0.0-Alpha33</version>
+    <version>1.0.0</version>
   </dependency>
   ```
 - For `Gradle` projects:
 
   Gradle Kotlin DSL
   ```groovy
-  runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha33")
+  runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0")
   ```
   Gradle Groovy DSL
   ```groovy
-  runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha33'
+  runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0'
   ```
 
 `cffu-ttl-executor-wrapper` has published to maven central, find the latest version at

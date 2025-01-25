@@ -23,7 +23,7 @@ public class AllResultsOfDemo {
         Cffu<Integer> cffu2 = cffuFactory.completedFuture(42);
 
         Cffu<Void> all = cffuFactory.allOf(cffu1, cffu2);
-        // Result type is Void!
+        // result type is Void!
         //
         // the result can be got by input argument `cf1.get()`, but it's cumbersome.
         // so we can see a lot of util methods to enhance `allOf` with result in our project.
@@ -38,7 +38,7 @@ public class AllResultsOfDemo {
         CompletableFuture<Integer> cf2 = CompletableFuture.completedFuture(42);
 
         CompletableFuture<Void> all2 = CompletableFuture.allOf(cf1, cf2);
-        // Result type is Void!
+        // result type is Void!
 
         CompletableFuture<List<Integer>> allResults2 = allResultsOf(cf1, cf2);
         System.out.println(allResults2.get());

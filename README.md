@@ -7,7 +7,7 @@
 <a href="https://openjdk.java.net/"><img src="https://img.shields.io/badge/Java-8+-339933?logo=openjdk&logoColor=white" alt="Java support"></a>
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/foldright/cffu?color=4D7A97&logo=apache" alt="License"></a>
 <a href="https://foldright.io/api-docs/cffu/"><img src="https://img.shields.io/github/release/foldright/cffu?label=javadoc&color=339933&logo=read-the-docs&logoColor=white" alt="Javadocs"></a>
-<a href="https://central.sonatype.com/artifact/io.foldright/cffu/0.9.0/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
+<a href="https://central.sonatype.com/artifact/io.foldright/cffu/1.0.0/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
 <a href="https://github.com/foldright/cffu/releases"><img src="https://img.shields.io/github/release/foldright/cffu.svg" alt="GitHub Releases"></a>
 <a href="https://github.com/foldright/cffu/stargazers"><img src="https://img.shields.io/github/stars/foldright/cffu?style=flat" alt="GitHub Stars"></a>
 <a href="https://github.com/foldright/cffu/fork"><img src="https://img.shields.io/github/forks/foldright/cffu?style=flat" alt="GitHub Forks"></a>
@@ -165,18 +165,18 @@
   <dependency>
     <groupId>io.foldright</groupId>
     <artifactId>cffu</artifactId>
-    <version>1.0.0-Alpha33</version>
+    <version>1.0.0</version>
   </dependency>
   ```
 - For `Gradle` projects:
 
   Gradle Kotlin DSL
   ```groovy
-  implementation("io.foldright:cffu:1.0.0-Alpha33")
+  implementation("io.foldright:cffu:1.0.0")
   ```
   Gradle Groovy DSL
   ```groovy
-  implementation 'io.foldright:cffu:1.0.0-Alpha33'
+  implementation 'io.foldright:cffu:1.0.0'
   ```
 
 > `cffu`也支持`Kotlin`扩展方法的使用方式，参见[`cffu-kotlin/README.md`](cffu-kotlin/README.md)；使用方式的对比示例参见[`docs/usage-mode-demo.md`](docs/usage-mode-demo.md)。
@@ -220,7 +220,7 @@ public class AllResultsOfDemo {
     Cffu<Integer> cffu2 = cffuFactory.completedFuture(42);
 
     Cffu<Void> all = cffuFactory.allOf(cffu1, cffu2);
-    // Result type is Void!
+    // result type is Void!
     //
     // the result can be got by input argument `cf1.get()`, but it's cumbersome.
     // so we can see a lot of util methods to enhance `allOf` with result in our project.
@@ -235,7 +235,7 @@ public class AllResultsOfDemo {
     CompletableFuture<Integer> cf2 = CompletableFuture.completedFuture(42);
 
     CompletableFuture<Void> all2 = CompletableFuture.allOf(cf1, cf2);
-    // Result type is Void!
+    // result type is Void!
 
     CompletableFuture<List<Integer>> allResults2 = allResultsOf(cf1, cf2);
     System.out.println(allResults2.get());
@@ -513,16 +513,16 @@ public class MultipleActionsDemo {
 - 业务功能的正确性问题
 - 系统稳定性问题，如导致线程中等待操作不能返回、耗尽线程池
 
-`cffu`提供了超时执行安全的新实现方法 [`cffuOrTimeout()`](https://foldright.io/api-docs/cffu/1.0.0-Alpha33/io/foldright/cffu/CompletableFutureUtils.html#cffuOrTimeout(C,long,java.util.concurrent.TimeUnit))
-/ [`cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.0-Alpha33/io/foldright/cffu/CompletableFutureUtils.html#cffuCompleteOnTimeout(C,T,long,java.util.concurrent.TimeUnit))。
+`cffu`提供了超时执行安全的新实现方法 [`cffuOrTimeout()`](https://foldright.io/api-docs/cffu/1.0.0/io/foldright/cffu/CompletableFutureUtils.html#cffuOrTimeout(C,long,java.util.concurrent.TimeUnit))
+/ [`cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.0/io/foldright/cffu/CompletableFutureUtils.html#cffuCompleteOnTimeout(C,T,long,java.util.concurrent.TimeUnit))。
 
 
 更多说明参见：
 
 - 演示问题的[`DelayDysfunctionDemo.java`](https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java)
 - `cffu backport`方法的`JavaDoc`
-  - [`orTimeout()`](https://foldright.io/api-docs/cffu/1.0.0-Alpha33/io/foldright/cffu/CompletableFutureUtils.html#orTimeout(C,long,java.util.concurrent.TimeUnit))
-  - [`completeOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.0-Alpha33/io/foldright/cffu/CompletableFutureUtils.html#completeOnTimeout(C,T,long,java.util.concurrent.TimeUnit))
+  - [`orTimeout()`](https://foldright.io/api-docs/cffu/1.0.0/io/foldright/cffu/CompletableFutureUtils.html#orTimeout(C,long,java.util.concurrent.TimeUnit))
+  - [`completeOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.0/io/foldright/cffu/CompletableFutureUtils.html#completeOnTimeout(C,T,long,java.util.concurrent.TimeUnit))
 
 ### 2.7 支持超时的`join`的方法
 
@@ -580,7 +580,7 @@ public class MultipleActionsDemo {
 
 # 🍪依赖
 
-> 可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/0.9.0/versions) 查看最新版本与可用版本列表。
+> 可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/1.0.0/versions) 查看最新版本与可用版本列表。
 
 - `cffu`库（包含[`Java CompletableFuture`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)的增强`CompletableFutureUtils`）:
   - For `Maven` projects:
@@ -589,40 +589,18 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>1.0.0-Alpha33</version>
+      <version>1.0.0</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     Gradle Kotlin DSL
     ```groovy
-    implementation("io.foldright:cffu:1.0.0-Alpha33")
+    implementation("io.foldright:cffu:1.0.0")
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation 'io.foldright:cffu:1.0.0-Alpha33'
-    ```
-- `cffu bom`:
-  - For `Maven` projects:
-
-    ```xml
-    <dependency>
-      <groupId>io.foldright</groupId>
-      <artifactId>cffu-bom</artifactId>
-      <version>1.0.0-Alpha33</version>
-      <type>pom</type>
-      <scope>import</scope>
-    </dependency>
-    ```
-  - For `Gradle` projects:
-
-    Gradle Kotlin DSL
-    ```groovy
-    implementation(platform("io.foldright:cffu-bom:1.0.0-Alpha33"))
-    ```
-    Gradle Groovy DSL
-    ```groovy
-    implementation platform('io.foldright:cffu-bom:1.0.0-Alpha33')
+    implementation 'io.foldright:cffu:1.0.0'
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local)的[`cffu executor wrapper SPI`实现](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -631,7 +609,7 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>1.0.0-Alpha33</version>
+      <version>1.0.0</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -639,11 +617,33 @@ public class MultipleActionsDemo {
 
     Gradle Kotlin DSL
     ```groovy
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha33")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.0")
     ```
     Gradle Groovy DSL
     ```groovy
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0-Alpha33'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.0'
+    ```
+- `cffu bom`:
+  - For `Maven` projects:
+
+    ```xml
+    <dependency>
+      <groupId>io.foldright</groupId>
+      <artifactId>cffu-bom</artifactId>
+      <version>1.0.0</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+    ```
+  - For `Gradle` projects:
+
+    Gradle Kotlin DSL
+    ```groovy
+    implementation(platform("io.foldright:cffu-bom:1.0.0"))
+    ```
+    Gradle Groovy DSL
+    ```groovy
+    implementation platform('io.foldright:cffu-bom:1.0.0')
     ```
 
 # 📚 更多资料

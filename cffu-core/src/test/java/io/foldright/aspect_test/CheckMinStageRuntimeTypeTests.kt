@@ -704,7 +704,7 @@ class CheckMinStageRuntimeTypeTests : AnnotationSpec() {
 
     @Test
     fun test_Cffu_methods() {
-        // Simple then* Methods of CompletionStage
+        // simple then* Methods of CompletionStage
         cffuThis.thenApply({ s }).shouldNotBeMinimalStage()
         cffuThis.thenApplyAsync({ s }).shouldNotBeMinimalStage()
         cffuThis.thenApplyAsync({ s }, testFjExecutor).shouldNotBeMinimalStage()
@@ -945,7 +945,7 @@ class CheckMinStageRuntimeTypeTests : AnnotationSpec() {
 
         cffuThis.newIncompleteFuture<Int>().shouldNotBeMinimalStage()
         // NOTE: do NOT keep the mini like CompletableFuture, it's OK.
-        //       Casting CompletionStage instances to Cffu is not normal/public API usage!!
+        //       casting CompletionStage instances to Cffu is not normal/public API usage!!
         minCffuThis.newIncompleteFuture<Int>().shouldNotBeMinimalStage()
     }
 

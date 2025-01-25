@@ -63,10 +63,10 @@ public class LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo {
         //
         // ✅ Declaring "Lambda Parameters Type" fixes the compilation error.
         //
-        // Declare the lambda parameter type(Integer, result type of CF) in order to treat lambda as Consumer:
+        // declare the lambda parameter type(Integer, result type of CF) in order to treat lambda as Consumer:
         CompletableFutureUtils.thenMAcceptAsync(cf, (Integer x) -> returnVoid(), x -> returnVoid());
         //                                           ^^^^^^^
-        // Declare the lambda parameter type(Runnable) in order to treat lambda as Executor:
+        // declare the lambda parameter type(Runnable) in order to treat lambda as Executor:
         CompletableFutureUtils.thenMAcceptAsync(cf, (Runnable r) -> returnVoid(), x -> returnVoid(), x -> returnVoid());
         //                                           ^^^^^^^^
         CompletableFutureUtils.thenMAcceptAsync(cf, Runnable::run, x -> returnVoid(), x -> returnVoid());
