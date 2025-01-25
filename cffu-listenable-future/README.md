@@ -15,16 +15,16 @@
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-listenable-future</artifactId>
-      <version>1.0.0-Alpha33</version>
+      <version>1.0.0-Alpha</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     Gradle Kotlin DSL
     ```groovy
-    implementation("io.foldright:cffu-listenable-future:1.0.0-Alpha33")
+    implementation("io.foldright:cffu-listenable-future:1.0.0-Alpha")
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation 'io.foldright:cffu-listenable-future:1.0.0-Alpha33'
+    implementation 'io.foldright:cffu-listenable-future:1.0.0-Alpha'
     ```

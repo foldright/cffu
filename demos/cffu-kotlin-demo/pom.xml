@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.foldright.cffu-demos</groupId>
 		<artifactId>demos-parent</artifactId>
-		<version>1.x-SNAPSHOT</version>
+		<version>1.0.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -20,7 +20,7 @@
 			<groupId>io.foldright</groupId>
 			<artifactId>cffu-kotlin</artifactId>
 			<!-- UPDATE to Alpha when release -->
-			<version>${project.version}</version>
+			<version>${project.version}-Alpha</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
