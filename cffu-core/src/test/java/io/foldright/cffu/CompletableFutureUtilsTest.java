@@ -41,7 +41,8 @@ class CompletableFutureUtilsTest {
 
     ////////////////////////////////////////////////////////////
     // region## Multi-Actions(M*) Methods(create by actions)
-    ////////////////////////////////////////////////////////////
+
+    /// /////////////////////////////////////////////////////////
 
     @Test
     void test_mSupply() throws Exception {
@@ -85,13 +86,33 @@ class CompletableFutureUtilsTest {
 
     @Test
     void test_mSupply__failure() throws Exception {
-        assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
-                // allResultsOf: the ex of first given cf argument win.
-                //   ❗dependent on the implementation behavior of `CF.allOf`️
-                mSupplyFailFastAsync(() -> 42, () -> {
-                    throw rte;
-                }).get()
-        ).getCause());
+        RuntimeException rte1 = new RuntimeException("rte1");
+        RuntimeException rte2 = new RuntimeException("rte2");
+
+        assertSame(rte1, assertThrowsExactly(ExecutionException.class, () -> mSupplyFailFastAsync(
+                testExecutor,
+                () -> 42,
+                supplyLater(rte1, SHORT_WAIT_MS),
+                supplyLater(rte2, LONG_WAIT_MS)
+        ).get()).getCause());
+        assertSame(rte2, assertThrowsExactly(ExecutionException.class, () -> mSupplyFailFastAsync(
+                testExecutor,
+                () -> 42,
+                supplyLater(rte1, LONG_WAIT_MS),
+                supplyLater(rte2, SHORT_WAIT_MS)).get()).getCause());
+        assertEquals(42, mSupplyAnySuccessAsync(
+                testExecutor,
+                () -> 42,
+                supplyLater(rte1, SHORT_WAIT_MS),
+                supplyLater(rte2, LONG_WAIT_MS)
+        ).get());
+
+        assertEquals(Tuple3.of(42, null, null), mSupplyMostSuccessTupleAsync(
+                testExecutor, LONG_WAIT_MS, MILLISECONDS,
+                () -> 42,
+                supplyLater(rte1, SHORT_WAIT_MS),
+                supplyLater(rte2, LONG_WAIT_MS)
+        ).get());
     }
 
     @Test
@@ -120,7 +141,8 @@ class CompletableFutureUtilsTest {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## Multi-Actions-Tuple(MTuple*) Methods(create by actions)
-    ////////////////////////////////////////////////////////////
+
+    /// /////////////////////////////////////////////////////////
 
     @Test
     void test_mSupplyMostSuccessTupleAsync() throws Exception {
@@ -233,7 +255,8 @@ class CompletableFutureUtilsTest {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## allOf* Methods(including mostSuccessResultsOf)
-    ////////////////////////////////////////////////////////////
+
+    /// /////////////////////////////////////////////////////////
 
     @Test
     void test_allOf_methods__success__trivial_case() throws Exception {
@@ -591,7 +614,8 @@ class CompletableFutureUtilsTest {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## anyOf* Methods
-    ////////////////////////////////////////////////////////////
+
+    /// /////////////////////////////////////////////////////////
 
     @Test
     void test_anyOf_anySuccessOf__trivial_case() throws Exception {
@@ -817,7 +841,8 @@ class CompletableFutureUtilsTest {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## allTupleOf*/mostSuccessTupleOf Methods
-    ////////////////////////////////////////////////////////////
+
+    /// /////////////////////////////////////////////////////////
 
     @Test
     void test_allTupleOf() throws Exception {
@@ -966,7 +991,8 @@ class CompletableFutureUtilsTest {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## Immediate Value Argument Factory Methods(backport methods)
-    ////////////////////////////////////////////////////////////
+
+    /// /////////////////////////////////////////////////////////
 
     @Test
     void test_failedFuture() throws Exception {
@@ -978,7 +1004,8 @@ class CompletableFutureUtilsTest {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## Delay Execution(backport methods)
-    ////////////////////////////////////////////////////////////
+
+    /// /////////////////////////////////////////////////////////
 
     @Test
     void test_delayedExecutor() throws Exception {
@@ -997,7 +1024,8 @@ class CompletableFutureUtilsTest {
 
     ////////////////////////////////////////////////////////////
     // region## Then-Multi-Actions(thenM*) Methods
-    ////////////////////////////////////////////////////////////
+
+    /// /////////////////////////////////////////////////////////
 
     @Test
     void test_thenMRun() throws Exception {
@@ -1095,7 +1123,8 @@ class CompletableFutureUtilsTest {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## Then-Multi-Actions-Tuple(thenMTuple*) Methods
-    ////////////////////////////////////////////////////////////
+
+    /// /////////////////////////////////////////////////////////
 
     @Test
     void test_thenTuple_methods() throws Exception {
@@ -1183,7 +1212,8 @@ class CompletableFutureUtilsTest {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## thenBoth* Methods(binary input) with fail-fast support
-    ////////////////////////////////////////////////////////////
+
+    /// /////////////////////////////////////////////////////////
 
     @Test
     void test_both() throws Exception {
@@ -1305,7 +1335,8 @@ class CompletableFutureUtilsTest {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## thenEither* Methods(binary input) with either(any)-success support
-    ////////////////////////////////////////////////////////////
+
+    /// /////////////////////////////////////////////////////////
 
     @Test
     void test_either() throws Exception {
@@ -1391,7 +1422,8 @@ class CompletableFutureUtilsTest {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## Error Handling Methods of CompletionStage
-    ////////////////////////////////////////////////////////////
+
+    /// /////////////////////////////////////////////////////////
 
     @Test
     void test_exceptionallyAsync() throws Exception {
@@ -1453,7 +1485,8 @@ class CompletableFutureUtilsTest {
     ////////////////////////////////////////////////////////////////////////////////
     //# Backport CF methods
     //  compatibility for low Java version
-    ////////////////////////////////////////////////////////////////////////////////
+
+    /// /////////////////////////////////////////////////////////////////////////////
 
     @Test
     void test_timeout() throws Exception {
@@ -1545,7 +1578,8 @@ class CompletableFutureUtilsTest {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## Advanced Methods of CompletionStage(compose* and handle-like methods)
-    ////////////////////////////////////////////////////////////
+
+    /// /////////////////////////////////////////////////////////
 
     @Test
     void test_exceptionallyCompose() throws Exception {
@@ -1630,7 +1664,8 @@ class CompletableFutureUtilsTest {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## Read(explicitly)/Write Methods of CompletableFuture(including Future)
-    ////////////////////////////////////////////////////////////
+
+    /// /////////////////////////////////////////////////////////
 
     @Test
     @SuppressWarnings("ThrowableNotThrown")
@@ -1851,7 +1886,8 @@ class CompletableFutureUtilsTest {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## Re-Config Methods of CompletableFuture
-    ////////////////////////////////////////////////////////////
+
+    /// /////////////////////////////////////////////////////////
 
     @Test
     void test_re_config() throws Exception {
@@ -1935,7 +1971,7 @@ class CompletableFutureUtilsTest {
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
     // region# Test helper fields
-    ////////////////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////////////////
 
     private static final String testName = "CompletableFutureUtilsTest";
 }
