@@ -1,7 +1,6 @@
 package io.foldright.cffu;
 
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.foldright.cffu.tuple.Tuple2;
@@ -737,7 +736,7 @@ public final class CffuFactory {
      * This method is the same as {@link #allResultsOf allResultsOf} method except for the fail-fast behavior.
      *
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
-     * @see Futures#allAsList(ListenableFuture[]) the equivalent Guava method allAsList()
+     * @see Futures#allAsList the equivalent Guava method allAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -760,7 +759,7 @@ public final class CffuFactory {
      * @param valueIfFailed the value used as result if the input stage completed exceptionally
      * @throws NullPointerException if the cfs param or any of its elements is {@code null}
      * @see Cffu#getSuccessNow(Object)
-     * @see Futures#successfulAsList(ListenableFuture[]) the equivalent Guava method successfulAsList()
+     * @see Futures#successfulAsList the equivalent Guava method successfulAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -839,7 +838,7 @@ public final class CffuFactory {
      * This method is the same as {@link #allOf allOf} method except for the fail-fast behavior.
      *
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
-     * @see Futures#whenAllSucceed(ListenableFuture[]) the equivalent Guava method whenAllSucceed()
+     * @see Futures#whenAllSucceed the equivalent Guava method whenAllSucceed()
      */
     @Contract(pure = true)
     public Cffu<Void> allFailFastOf(CompletionStage<?>... cfs) {
@@ -866,7 +865,7 @@ public final class CffuFactory {
      * before continuing a program, as in: {@code cffuFactory.allOf(c1, c2, c3).join();}.
      *
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
-     * @see Futures#whenAllComplete(ListenableFuture[]) the equivalent Guava method whenAllComplete()
+     * @see Futures#whenAllComplete the equivalent Guava method whenAllComplete()
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; forget to call its `join()` method?")
     @Contract(pure = true)
@@ -899,9 +898,8 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is completed with the same successful result or exception
-     * of any of the given stages when one stage completes.
-     * If no stages are provided, returns an incomplete Cffu.
+     * Returns a new Cffu that is completed with the same successful result or exception of any of
+     * the given stages when one stage completes. If no stages are provided, returns an incomplete Cffu.
      * <p>
      * Comparing the any-<strong>complete</strong> behavior of this method, the any-<strong>success</strong> behavior of
      * method {@link #anySuccessOf anySuccessOf} is more responsive to user and generally more desired in the application.

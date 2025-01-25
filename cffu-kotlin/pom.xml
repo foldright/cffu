@@ -70,6 +70,12 @@
 			<artifactId>kotlin-stdlib-jdk8</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<!-- Guava library is only used for javadoc generation in this lib -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 
 	<profiles>

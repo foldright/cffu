@@ -111,13 +111,6 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- use guava in javadoc for cffu -->
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<optional>true</optional>
-		</dependency>
-
 		<!-- testing libs -->
 		<dependency>
 			<groupId>io.kotest</groupId>

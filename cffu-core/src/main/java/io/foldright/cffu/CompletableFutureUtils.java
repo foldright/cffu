@@ -1,7 +1,6 @@
 package io.foldright.cffu;
 
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.foldright.cffu.internal.CommonUtils;
@@ -837,7 +836,7 @@ public final class CompletableFutureUtils {
      * This method is the same as {@link #allResultsOf allResultsOf} method except for the fail-fast behavior.
      *
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
-     * @see Futures#allAsList(ListenableFuture[]) the equivalent Guava method allAsList()
+     * @see Futures#allAsList the equivalent Guava method allAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -860,7 +859,7 @@ public final class CompletableFutureUtils {
      * @param valueIfFailed the value used as result if the input stage completed exceptionally
      * @throws NullPointerException if the cfs param or any of its elements is {@code null}
      * @see #getSuccessNow(CompletableFuture, Object)
-     * @see Futures#successfulAsList(ListenableFuture[]) the equivalent Guava method successfulAsList()
+     * @see Futures#successfulAsList the equivalent Guava method successfulAsList()
      */
     @Contract(pure = true)
     @SafeVarargs
@@ -1012,7 +1011,7 @@ public final class CompletableFutureUtils {
      * This method is the same as {@link #allOf allOf} method except for the fail-fast behavior.
      *
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
-     * @see Futures#whenAllSucceed(ListenableFuture[]) the equivalent Guava method whenAllSucceed()
+     * @see Futures#whenAllSucceed the equivalent Guava method whenAllSucceed()
      */
     @Contract(pure = true)
     public static CompletableFuture<Void> allFailFastOf(CompletionStage<?>... cfs) {
@@ -1061,7 +1060,7 @@ public final class CompletableFutureUtils {
      * except that the parameter type is more generic {@link CompletionStage} instead of {@link CompletableFuture}.
      *
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
-     * @see Futures#whenAllComplete(ListenableFuture[]) the equivalent Guava method whenAllComplete()
+     * @see Futures#whenAllComplete the equivalent Guava method whenAllComplete()
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; forget to call its `join()` method?")
     @Contract(pure = true)
@@ -1169,9 +1168,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is completed with the same successful result or exception
-     * of any of the given stages when one stage completes.
-     * If no stages are provided, returns an incomplete CompletableFuture.
+     * Returns a new CompletableFuture that is completed with the same successful result or exception of any of
+     * the given stages when one stage completes. If no stages are provided, returns an incomplete CompletableFuture.
      * <p>
      * Comparing the any-<strong>complete</strong> behavior(the complete one may be failed) of this method,
      * the any-<strong>success</strong> behavior of method {@link #anySuccessOf anySuccessOf}

@@ -87,6 +87,13 @@
 	</properties>
 
 	<dependencies>
+		<!-- Guava library is only used for javadoc generation in this lib -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<optional>true</optional>
+		</dependency>
+
 		<!-- testing libs -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
