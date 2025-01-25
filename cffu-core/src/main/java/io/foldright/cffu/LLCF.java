@@ -67,9 +67,8 @@ public final class LLCF {
     }
 
     /**
-     * Force converts {@link CompletionStage} array to {@link CompletableFuture} array,
-     * reuse cf instances as many as possible. This method is NOT type safe!
-     * More info see method {@link #f_toCf0(CompletionStage)}.
+     * Force converts CompletionStage array to CompletableFuture array, reuse cf instances as many as possible.
+     * This method is NOT type safe! More info see method {@link #f_toCf0(CompletionStage)}.
      */
     public static <T> CompletableFuture<T>[] f_toCfArray0(CompletionStage<? extends T>[] stages) {
         return mapArray(stages, CompletableFuture[]::new, LLCF::f_toCf0);
@@ -92,8 +91,8 @@ public final class LLCF {
     }
 
     /**
-     * Converts {@link CompletionStage} array to {@link CompletableFuture} array.
-     * More info see method {@link #toNonMinCfCopy0(CompletionStage)}.
+     * Converts CompletionStage array to a CompletableFuture copy array. This method is NOT type safe!
+     * More info see method {@link #f_toCfCopy0(CompletionStage)}.
      */
     public static <T> CompletableFuture<T>[] f_toCfCopyArray0(CompletionStage<? extends T>[] stages) {
         return mapArray(stages, CompletableFuture[]::new, LLCF::f_toCfCopy0);
@@ -111,8 +110,8 @@ public final class LLCF {
     }
 
     /**
-     * Converts {@link CompletionStage} array to {@link CompletableFuture} array.
-     * More info see method {@link #toNonMinCf0(CompletionStage)}.
+     * Converts CompletionStage array to non-minimal-stage CompletableFuture array,
+     * reuse cf instances as many as possible. More info see method {@link #toNonMinCf0(CompletionStage)}.
      */
     public static <T> CompletableFuture<T>[] toNonMinCfArray0(CompletionStage<? extends T>[] stages) {
         return mapArray(stages, CompletableFuture[]::new, LLCF::toNonMinCf0);
@@ -128,6 +127,14 @@ public final class LLCF {
     public static <T> CompletableFuture<T> toNonMinCfCopy0(CompletionStage<? extends T> s) {
         final CompletableFuture<T> f = f_toCf0(s);
         return isMinStageCf(f) ? f.toCompletableFuture() : IS_JAVA9_PLUS ? f.copy() : f.thenApply(x -> x);
+    }
+
+    /**
+     * Converts CompletionStage array to a non-minimal-stage CompletableFuture copy array. This method is type safe.
+     * More info see method {@link #toNonMinCfCopy0(CompletionStage)}.
+     */
+    public static <T> CompletableFuture<T>[] toNonMinCfCopyArray0(CompletionStage<? extends T>[] stages) {
+        return mapArray(stages, CompletableFuture[]::new, LLCF::toNonMinCfCopy0);
     }
 
     /**
