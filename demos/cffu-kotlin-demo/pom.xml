@@ -19,8 +19,7 @@
 		<dependency>
 			<groupId>io.foldright</groupId>
 			<artifactId>cffu-kotlin</artifactId>
-			<!-- UPDATE to Alpha version WHEN RELEASE -->
-			<version>${project.version}</version>
+			<!-- UPDATE to Alpha version WHEN RELEASE, e.g. <version>1.x.y-Alpha</version> -->
 		</dependency>
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>

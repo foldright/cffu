@@ -1,6 +1,7 @@
 # Guava ListenableFuture Integration with CompletableFuture
 
 <p align="center">
+<a href="https://openjdk.java.net/"><img src="https://img.shields.io/badge/Java-8+-339933?logo=openjdk&logoColor=white" alt="Java support"></a>
 <a href="https://central.sonatype.com/artifact/io.foldright/cffu-listenable-future/1.0.0-Alpha/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu-listenable-future?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
 <a href="https://foldright.io/api-docs/cffu/"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu-listenable-future?label=javadoc&logo=read-the-docs&logoColor=white" alt="Javadocs"></a>
 </p>

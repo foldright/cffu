@@ -9,9 +9,7 @@
 	</parent>
 
 	<artifactId>cffu-kotlin</artifactId>
-	<!-- UPDATE to Alpha version WHEN RELEASE
-	<version>1.x.y-Alpha</version>
-	-->
+	<!-- UPDATE to Alpha version WHEN RELEASE, e.g. <version>1.x.y-Alpha</version> -->
 	<name>${project.artifactId}</name>
 	<description>Cffu Kotlin Support</description>
 	<url>https://github.com/foldright/cffu</url>
@@ -58,7 +56,7 @@
 	</developers>
 
 	<properties>
-		<release.pom.version.regex>^\d\.\d+\.\d+-Alpha$</release.pom.version.regex>
+		<release.pom.version.regex>${alpha.release.pom.version.regex}</release.pom.version.regex>
 
 		<maven.javadoc.skip>true</maven.javadoc.skip>
 		<dokka.version>2.0.0</dokka.version>

@@ -68,11 +68,15 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
 		<maven.deploy.skip>false</maven.deploy.skip>
-		<maven.enforcer.pom.version.regex>^\d(\.\d+)?\.(\d+|x)-SNAPSHOT$</maven.enforcer.pom.version.regex>
-		<release.pom.version.regex>^\d\.\d+\.\d+(-(Alpha|Beta|RC)\d+)?$</release.pom.version.regex>
 		<dokka.skip>false</dokka.skip>
 		<!-- dummy default value, overridden by profile -->
 		<main.run.debug.java.opt>-ea</main.run.debug.java.opt>
+		<!-- pom version regex pattern -->
+		<snapshot.pom.version.regex>^(\d\.\d+\.\d+|\d\.x)-SNAPSHOT$</snapshot.pom.version.regex>
+		<alpha.release.pom.version.regex>^\d\.\d+\.\d+-Alpha\d*$</alpha.release.pom.version.regex>
+		<ga.release.pom.version.regex>^\d\.\d+\.\d+(-(Alpha|Beta|RC)\d+)?$</ga.release.pom.version.regex>
+		<release.pom.version.regex>${ga.release.pom.version.regex}</release.pom.version.regex>
+		<maven.enforcer.pom.version.regex>${snapshot.pom.version.regex}</maven.enforcer.pom.version.regex>
 
 		<spotbugs.annotations.version>4.8.6</spotbugs.annotations.version>
 		<jsr305.version>3.0.2</jsr305.version>
@@ -322,7 +326,7 @@
 								<requireProperty>
 									<property>project.version</property>
 									<regex>${maven.enforcer.pom.version.regex}</regex>
-									<regexMessage>Project version(${project.version}) format is invalid! regex: ${maven.enforcer.pom.version.regex}</regexMessage>
+									<regexMessage>Project version(${project.version}) format is invalid! validation regex pattern: ${maven.enforcer.pom.version.regex}</regexMessage>
 								</requireProperty>
 							</rules>
 						</configuration>
