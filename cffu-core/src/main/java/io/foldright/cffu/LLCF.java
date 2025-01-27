@@ -47,6 +47,7 @@ public final class LLCF {
     /**
      * Force casts CompletableFuture with the value type, IGNORE the compile-time type check.
      */
+    @Contract(pure = true)
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> CompletableFuture<T> f_cast(CompletableFuture<?> cf) {
         return (CompletableFuture) cf;
@@ -59,6 +60,7 @@ public final class LLCF {
      * may be a minimal-stage, MUST NOT be written or read(explicitly) (e.g. {@link CompletableFuture#complete});
      * Otherwise, the caller usage of cf may throw UnsupportedOperationException.
      */
+    @Contract(pure = true)
     @SuppressWarnings("unchecked")
     public static <T> CompletableFuture<T> f_toCf0(CompletionStage<? extends T> s) {
         if (s instanceof CompletableFuture) return (CompletableFuture<T>) s;
@@ -70,6 +72,7 @@ public final class LLCF {
      * Force converts CompletionStage array to CompletableFuture array, reuse cf instances as many as possible.
      * This method is NOT type safe! More info see method {@link #f_toCf0(CompletionStage)}.
      */
+    @Contract(pure = true)
     public static <T> CompletableFuture<T>[] f_toCfArray0(CompletionStage<? extends T>[] stages) {
         return mapArray(stages, CompletableFuture[]::new, LLCF::f_toCf0);
     }
@@ -85,6 +88,7 @@ public final class LLCF {
      * ({@link CompletableFuture#copy}) on minimal-stage instances is still minimal-stage
      * (e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()})
      */
+    @Contract(pure = true)
     public static <T> CompletableFuture<T> f_toCfCopy0(CompletionStage<? extends T> s) {
         final CompletableFuture<T> f = f_toCf0(s);
         return IS_JAVA9_PLUS ? f.copy() : f.thenApply(x -> x);
@@ -94,6 +98,7 @@ public final class LLCF {
      * Converts CompletionStage array to a CompletableFuture copy array. This method is NOT type safe!
      * More info see method {@link #f_toCfCopy0(CompletionStage)}.
      */
+    @Contract(pure = true)
     public static <T> CompletableFuture<T>[] f_toCfCopyArray0(CompletionStage<? extends T>[] stages) {
         return mapArray(stages, CompletableFuture[]::new, LLCF::f_toCfCopy0);
     }
@@ -104,6 +109,7 @@ public final class LLCF {
      * <strong>CAUTION:</strong> because reused the CF instance, if the caller need defensive copy
      * instead of writing it directly, use method {@link #toNonMinCfCopy0(CompletionStage)}).
      */
+    @Contract(pure = true)
     public static <T> CompletableFuture<T> toNonMinCf0(CompletionStage<? extends T> s) {
         final CompletableFuture<T> f = f_toCf0(s);
         return isMinStageCf(f) ? f.toCompletableFuture() : f;
@@ -113,6 +119,7 @@ public final class LLCF {
      * Converts CompletionStage array to non-minimal-stage CompletableFuture array,
      * reuse cf instances as many as possible. More info see method {@link #toNonMinCf0(CompletionStage)}.
      */
+    @Contract(pure = true)
     public static <T> CompletableFuture<T>[] toNonMinCfArray0(CompletionStage<? extends T>[] stages) {
         return mapArray(stages, CompletableFuture[]::new, LLCF::toNonMinCf0);
     }
@@ -124,6 +131,7 @@ public final class LLCF {
      * ({@link CompletableFuture#copy}) on minimal-stage instances is still minimal-stage
      * (e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()}).
      */
+    @Contract(pure = true)
     public static <T> CompletableFuture<T> toNonMinCfCopy0(CompletionStage<? extends T> s) {
         final CompletableFuture<T> f = f_toCf0(s);
         return isMinStageCf(f) ? f.toCompletableFuture() : IS_JAVA9_PLUS ? f.copy() : f.thenApply(x -> x);
@@ -133,6 +141,7 @@ public final class LLCF {
      * Converts CompletionStage array to a non-minimal-stage CompletableFuture copy array. This method is type safe.
      * More info see method {@link #toNonMinCfCopy0(CompletionStage)}.
      */
+    @Contract(pure = true)
     public static <T> CompletableFuture<T>[] toNonMinCfCopyArray0(CompletionStage<? extends T>[] stages) {
         return mapArray(stages, CompletableFuture[]::new, LLCF::toNonMinCfCopy0);
     }
@@ -146,6 +155,7 @@ public final class LLCF {
      * <p>
      * This type contract for minimal-stage MUST be followed for end users APIs.
      */
+    @Contract(pure = true)
     public static boolean isMinStageCf(CompletableFuture<?> cf) {
         return cf.getClass().equals(MIN_STAGE_CLASS);
     }
@@ -213,6 +223,7 @@ public final class LLCF {
     /**
      * Null-checks user executor argument, and translates uses of commonPool to ASYNC_POOL in case parallelism disabled.
      */
+    @Contract(pure = true)
     @SuppressWarnings("resource")
     public static Executor screenExecutor(Executor e) {
         // Implementation note: CompletableFuture API methods already call this method internally; Only underlying
@@ -282,7 +293,7 @@ public final class LLCF {
      *
      * @see CompletableFutureUtils#defaultExecutor(CompletionStage)
      */
-    // field initialization code is copied from CompletableFuture#ASYNC_POOL with adoption.
+    // field initialization code is copied from CompletableFuture#ASYNC_POOL with small adoption.
     public static final Executor ASYNC_POOL;
 
     private static final Class<?> MIN_STAGE_CLASS;
