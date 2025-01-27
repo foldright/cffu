@@ -87,15 +87,15 @@ public final class CffuFactoryBuilder {
         return new CffuFactory(makeExecutor(defaultExecutor), fac.forbidObtrudeMethods());
     }
 
-    private static Executor makeExecutor(Executor defaultExecutor) {
+    private static Executor makeExecutor(final Executor defaultExecutor) {
         // check CffuMadeExecutor interface to avoid re-wrapping.
         if (defaultExecutor instanceof CffuMadeExecutor) return defaultExecutor;
-
         requireNonNull(defaultExecutor, "defaultExecutor is null");
+
         // because wraps the input executor below, MUST call `screenExecutor` translation beforehand;
         // otherwise the sequent operations can NOT recognize the input executor.
-        defaultExecutor = LLCF.screenExecutor(defaultExecutor);
-        Executor wrapByProviders = wrapExecutorByProviders(defaultExecutor);
+        final Executor screenExecutor = LLCF.screenExecutor(defaultExecutor);
+        final Executor wrapByProviders = wrapExecutorByProviders(screenExecutor);
         return wrapMadeInterface(wrapByProviders);
     }
 
