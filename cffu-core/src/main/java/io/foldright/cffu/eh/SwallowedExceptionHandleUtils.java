@@ -150,8 +150,8 @@ public final class SwallowedExceptionHandleUtils {
      * Creates new CompletionStages that only capture exception results from the input CompletionStages,
      * avoiding references to the original stages to allow them to be garbage collected ASAP.
      */
-    private static CompletionStage<Void>[] unreferenced(CompletionStage<?>[] css) {
-        return CommonUtils.mapArray(css, CompletionStage[]::new, s -> {
+    private static CompletionStage<Void>[] unreferenced(CompletionStage<?>[] stages) {
+        return CommonUtils.mapArray(stages, CompletionStage[]::new, s -> {
             CompletableFuture<Void> ret = new CompletableFuture<>();
             peek0(s, (v, ex) -> completeCf0(ret, null, ex), "unreferenced");
             return ret;

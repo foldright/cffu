@@ -62,10 +62,10 @@ public final class LLCF {
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
-    public static <T> CompletableFuture<T> f_toCf0(CompletionStage<? extends T> s) {
-        if (s instanceof CompletableFuture) return (CompletableFuture<T>) s;
-        else if (s instanceof Cffu) return ((Cffu<T>) s).cffuUnwrap();
-        else return (CompletableFuture<T>) s.toCompletableFuture();
+    public static <T> CompletableFuture<T> f_toCf0(CompletionStage<? extends T> stage) {
+        if (stage instanceof CompletableFuture) return (CompletableFuture<T>) stage;
+        else if (stage instanceof Cffu) return ((Cffu<T>) stage).cffuUnwrap();
+        else return (CompletableFuture<T>) stage.toCompletableFuture();
     }
 
     /**
@@ -89,8 +89,8 @@ public final class LLCF {
      * (e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()})
      */
     @Contract(pure = true)
-    public static <T> CompletableFuture<T> f_toCfCopy0(CompletionStage<? extends T> s) {
-        final CompletableFuture<T> f = f_toCf0(s);
+    public static <T> CompletableFuture<T> f_toCfCopy0(CompletionStage<? extends T> stage) {
+        final CompletableFuture<T> f = f_toCf0(stage);
         return IS_JAVA9_PLUS ? f.copy() : f.thenApply(x -> x);
     }
 
@@ -110,8 +110,8 @@ public final class LLCF {
      * instead of writing it directly, use method {@link #toNonMinCfCopy0(CompletionStage)}).
      */
     @Contract(pure = true)
-    public static <T> CompletableFuture<T> toNonMinCf0(CompletionStage<? extends T> s) {
-        final CompletableFuture<T> f = f_toCf0(s);
+    public static <T> CompletableFuture<T> toNonMinCf0(CompletionStage<? extends T> stage) {
+        final CompletableFuture<T> f = f_toCf0(stage);
         return isMinStageCf(f) ? f.toCompletableFuture() : f;
     }
 
@@ -132,8 +132,8 @@ public final class LLCF {
      * (e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()}).
      */
     @Contract(pure = true)
-    public static <T> CompletableFuture<T> toNonMinCfCopy0(CompletionStage<? extends T> s) {
-        final CompletableFuture<T> f = f_toCf0(s);
+    public static <T> CompletableFuture<T> toNonMinCfCopy0(CompletionStage<? extends T> stage) {
+        final CompletableFuture<T> f = f_toCf0(stage);
         return isMinStageCf(f) ? f.toCompletableFuture() : IS_JAVA9_PLUS ? f.copy() : f.thenApply(x -> x);
     }
 

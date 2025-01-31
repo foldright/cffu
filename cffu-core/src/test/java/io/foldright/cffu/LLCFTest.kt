@@ -88,14 +88,14 @@ class LLCFTest : FunSpec({
     }
 
     test("toNonMinCfCopyArray0") {
-        val css = arrayOf(
+        val stages = arrayOf(
             completedStage(n),
             testCffuFac.completedStage(n),
             completedFuture(n),
             testCffuFac.completedFuture(n),
         )
-        LLCF.toNonMinCfCopyArray0(css).forEachIndexed { idx, f ->
-            f.shouldNotBeSameInstanceAs(css[idx])
+        LLCF.toNonMinCfCopyArray0(stages).forEachIndexed { idx, f ->
+            f.shouldNotBeSameInstanceAs(stages[idx])
             f.shouldBeCompleted()
             f.join() shouldBe n
 
