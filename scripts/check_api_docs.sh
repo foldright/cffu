@@ -18,7 +18,7 @@ invalid=false
 
 for d in "${DOC_DIRS[@]}"; do
   if [ -f "$d/allclasses-index.html" ]; then
-    grep -F '<summary>invalid reference</summary>' -n -C2 -r "$d" && invalid=true
+    rg -F '<summary>invalid reference</summary>' -n -C2 "$d" && invalid=true
   fi
 done
 
