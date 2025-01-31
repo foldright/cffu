@@ -1,7 +1,6 @@
 package io.foldright.cffu;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
-import io.foldright.cffu.internal.ExceptionLogger;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -14,6 +13,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import static io.foldright.cffu.internal.CommonUtils.mapArray;
+import static io.foldright.cffu.internal.ExceptionLogger.Level.ERROR;
 import static io.foldright.cffu.internal.ExceptionLogger.logUncaughtException;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
@@ -170,18 +170,12 @@ public final class LLCF {
      * The uncaught exceptions thrown by the action are reported.
      *
      * @see CompletableFutureUtils#peek(CompletionStage, BiConsumer)
+     * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
      */
     @Contract("_, _, _ -> param1")
     public static <T, C extends CompletionStage<? extends T>>
     C peek0(C cfThis, BiConsumer<? super T, ? super Throwable> action, String where) {
-        cfThis.whenComplete((v, ex) -> {
-            try {
-                action.accept(v, ex);
-            } catch (Throwable e) {
-                if (ex != null) e.addSuppressed(ex);
-                logUncaughtException(ExceptionLogger.Level.ERROR, where, e);
-            }
-        });
+        cfThis.whenComplete(safePeekAction(action, where));
         return cfThis;
     }
 
@@ -190,19 +184,24 @@ public final class LLCF {
      * returns the given stage. The uncaught exceptions thrown by the action are reported.
      *
      * @see CompletableFutureUtils#peekAsync(CompletionStage, BiConsumer, Executor)
+     * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
      */
     @Contract("_, _, _, _ -> param1")
     public static <T, C extends CompletionStage<? extends T>>
     C peekAsync0(C cfThis, BiConsumer<? super T, ? super Throwable> action, String where, Executor executor) {
-        cfThis.whenCompleteAsync((v, ex) -> {
+        cfThis.whenCompleteAsync(safePeekAction(action, where), executor);
+        return cfThis;
+    }
+
+    private static <T> BiConsumer<T, Throwable> safePeekAction(BiConsumer<? super T, ? super Throwable> action, String where) {
+        return (v, ex) -> {
             try {
                 action.accept(v, ex);
             } catch (Throwable e) {
-                if (ex != null) e.addSuppressed(ex);
-                logUncaughtException(ExceptionLogger.Level.ERROR, where, e);
+                if (ex != null && ex != e) e.addSuppressed(ex);
+                logUncaughtException(ERROR, where, e);
             }
-        }, executor);
-        return cfThis;
+        };
     }
 
     /**
