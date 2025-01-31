@@ -717,9 +717,11 @@ public final class CompletableFutureUtils {
 
     private static <T> CompletableFuture<T> f_mostSuccessTupleOf0(
             Executor executorWhenTimeout, long timeout, TimeUnit unit, CompletionStage<?>[] stages) {
-        // MUST be *Non-Minimal* CF instances in order to read results(`getSuccessNow`),
-        // otherwise UnsupportedOperationException
-        final CompletableFuture<Object>[] cfArray = toNonMinCfArray0(stages);
+        // 1. MUST be non-minimal-stage CF instances in order to read results(`getSuccessNow`), otherwise UnsupportedOpException.
+        // 2. SHOULD copy input cfs(by calling `exceptionally` method) to avoid memory leaks,
+        //    otherwise all input cfs would be retained until output cf completes.
+        CompletableFuture<?>[] cfArray = mapArray(stages, CompletableFuture[]::new,
+                s -> toNonMinCf0(s).exceptionally(v -> null));
         return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, timeout, unit, executorWhenTimeout)
                 .handle((unused, ex) -> f_tupleOf0(f_mGetSuccessNow0(null, cfArray)));
     }
@@ -944,9 +946,11 @@ public final class CompletableFutureUtils {
                     .handle((unused, ex) -> arrayList(getSuccessNow(f, valueIfNotSuccess)));
         }
 
-        // MUST be non-minimal-stage CF instances in order to read results(`getSuccessNow`),
-        // otherwise UnsupportedOperationException
-        final CompletableFuture<T>[] cfArray = toNonMinCfArray0(cfs);
+        // 1. MUST be non-minimal-stage CF instances in order to read results(`getSuccessNow`), otherwise UnsupportedOpException.
+        // 2. SHOULD copy input cfs(by calling `exceptionally` method) to avoid memory leaks,
+        //    otherwise all input cfs would be retained until output cf completes.
+        CompletableFuture<T>[] cfArray = mapArray(cfs, CompletableFuture[]::new,
+                s -> LLCF.<T>toNonMinCf0(s).exceptionally(v -> valueIfNotSuccess));
         return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, timeout, unit, executorWhenTimeout)
                 .handle((unused, ex) -> arrayList(f_mGetSuccessNow0(valueIfNotSuccess, cfArray)));
     }
