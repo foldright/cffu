@@ -274,10 +274,7 @@ public final class LLCF {
     // region# CF execution/executor
     ////////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * code is copied from {@link CompletableFuture#USE_COMMON_POOL}
-     */
-    @SuppressWarnings("JavadocReference")
+    // code is copied from CompletableFuture#USE_COMMON_POOL
     private static final boolean USE_COMMON_POOL = ForkJoinPool.getCommonPoolParallelism() > 1;
 
     // IMPORTANT: The initialization order of static fields matters. Do not place static fields

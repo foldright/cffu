@@ -35,18 +35,21 @@
   - [关于`CompletableFuture`](#%E5%85%B3%E4%BA%8Ecompletablefuture)
 - [👥 User Guide](#-user-guide)
   - [1. `cffu`的使用方式](#1-cffu%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F)
+    - [1.1 推荐`Cffu`类的使用方式 🌟](#11-%E6%8E%A8%E8%8D%90cffu%E7%B1%BB%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F-)
+    - [1.2 迁移使用`CompletableFuture`类的代码到使用`Cffu`类](#12-%E8%BF%81%E7%A7%BB%E4%BD%BF%E7%94%A8completablefuture%E7%B1%BB%E7%9A%84%E4%BB%A3%E7%A0%81%E5%88%B0%E4%BD%BF%E7%94%A8cffu%E7%B1%BB)
+    - [1.3 库依赖（包含`CompletableFutureUtils`工具类）](#13-%E5%BA%93%E4%BE%9D%E8%B5%96%E5%8C%85%E5%90%ABcompletablefutureutils%E5%B7%A5%E5%85%B7%E7%B1%BB)
   - [2. `cffu`功能介绍](#2-cffu%E5%8A%9F%E8%83%BD%E4%BB%8B%E7%BB%8D)
-    - [2.1 返回多个`CF`的整体运行结果](#21-%E8%BF%94%E5%9B%9E%E5%A4%9A%E4%B8%AAcf%E7%9A%84%E6%95%B4%E4%BD%93%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C)
+    - [2.1 支持返回多个`CF`的整体运行结果](#21-%E6%94%AF%E6%8C%81%E8%BF%94%E5%9B%9E%E5%A4%9A%E4%B8%AAcf%E7%9A%84%E6%95%B4%E4%BD%93%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C)
     - [2.2 支持设置缺省的业务线程池并封装携带](#22-%E6%94%AF%E6%8C%81%E8%AE%BE%E7%BD%AE%E7%BC%BA%E7%9C%81%E7%9A%84%E4%B8%9A%E5%8A%A1%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%B9%B6%E5%B0%81%E8%A3%85%E6%90%BA%E5%B8%A6)
     - [2.3 高效灵活的并发执行策略（`AllFailFast` / `AnySuccess` / `AllSuccess` / `MostSuccess`）](#23-%E9%AB%98%E6%95%88%E7%81%B5%E6%B4%BB%E7%9A%84%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E7%AD%96%E7%95%A5allfailfast--anysuccess--allsuccess--mostsuccess)
     - [2.4 支持直接运行多个`Action`，而不是要先包装成`CompletableFuture`](#24-%E6%94%AF%E6%8C%81%E7%9B%B4%E6%8E%A5%E8%BF%90%E8%A1%8C%E5%A4%9A%E4%B8%AAaction%E8%80%8C%E4%B8%8D%E6%98%AF%E8%A6%81%E5%85%88%E5%8C%85%E8%A3%85%E6%88%90completablefuture)
-    - [2.5 `Backport`支持`Java 8`](#25-backport%E6%94%AF%E6%8C%81java-8)
-    - [2.6 超时执行安全的`orTimeout` / `completeOnTimeout`新实现](#26-%E8%B6%85%E6%97%B6%E6%89%A7%E8%A1%8C%E5%AE%89%E5%85%A8%E7%9A%84ortimeout--completeontimeout%E6%96%B0%E5%AE%9E%E7%8E%B0)
-    - [2.7 支持超时的`join`的方法](#27-%E6%94%AF%E6%8C%81%E8%B6%85%E6%97%B6%E7%9A%84join%E7%9A%84%E6%96%B9%E6%B3%95)
-    - [2.8 返回具体类型的`anyOf`方法](#28-%E8%BF%94%E5%9B%9E%E5%85%B7%E4%BD%93%E7%B1%BB%E5%9E%8B%E7%9A%84anyof%E6%96%B9%E6%B3%95)
-    - [2.9 输入宽泛类型的`allOf/anyOf`方法](#29-%E8%BE%93%E5%85%A5%E5%AE%BD%E6%B3%9B%E7%B1%BB%E5%9E%8B%E7%9A%84allofanyof%E6%96%B9%E6%B3%95)
+    - [2.5 支持处理指定异常类型，而不是处理所有异常`Throwable`](#25-%E6%94%AF%E6%8C%81%E5%A4%84%E7%90%86%E6%8C%87%E5%AE%9A%E5%BC%82%E5%B8%B8%E7%B1%BB%E5%9E%8B%E8%80%8C%E4%B8%8D%E6%98%AF%E5%A4%84%E7%90%86%E6%89%80%E6%9C%89%E5%BC%82%E5%B8%B8throwable)
+    - [2.6 `Backport`支持`Java 8`](#26-backport%E6%94%AF%E6%8C%81java-8)
+    - [2.7 超时执行安全的`orTimeout` / `completeOnTimeout`新实现](#27-%E8%B6%85%E6%97%B6%E6%89%A7%E8%A1%8C%E5%AE%89%E5%85%A8%E7%9A%84ortimeout--completeontimeout%E6%96%B0%E5%AE%9E%E7%8E%B0)
+    - [2.8 支持超时的`join`的方法](#28-%E6%94%AF%E6%8C%81%E8%B6%85%E6%97%B6%E7%9A%84join%E7%9A%84%E6%96%B9%E6%B3%95)
+    - [2.9 返回具体类型的`anyOf`方法](#29-%E8%BF%94%E5%9B%9E%E5%85%B7%E4%BD%93%E7%B1%BB%E5%9E%8B%E7%9A%84anyof%E6%96%B9%E6%B3%95)
+    - [2.10 输入宽泛类型的`allOf/anyOf`方法](#210-%E8%BE%93%E5%85%A5%E5%AE%BD%E6%B3%9B%E7%B1%BB%E5%9E%8B%E7%9A%84allofanyof%E6%96%B9%E6%B3%95)
     - [更多功能说明](#%E6%9B%B4%E5%A4%9A%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E)
-  - [3. 如何从直接使用`CompletableFuture`类迁移到`Cffu`类](#3-%E5%A6%82%E4%BD%95%E4%BB%8E%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8completablefuture%E7%B1%BB%E8%BF%81%E7%A7%BB%E5%88%B0cffu%E7%B1%BB)
 - [🔌 API Docs](#-api-docs)
 - [🍪依赖](#%E4%BE%9D%E8%B5%96)
 - [📚 更多资料](#-%E6%9B%B4%E5%A4%9A%E8%B5%84%E6%96%99)
@@ -140,7 +143,7 @@
 - 🦝 **使用`Cffu`类**
 - 🔧 **使用`CompletableFutureUtils`工具类**
 
-推荐`Cffu`类的使用方式： 🌟
+### 1.1 推荐`Cffu`类的使用方式 🌟
 
 - 相比`CompletableFutureUtils`的静态方法，新功能作为实例方法，可以自然方便地调用，就像使用`CompletableFuture`一样
 - `Java`语言不支持在已有类上扩展方法，所以需要一个新的包装类
@@ -151,13 +154,28 @@
 - 这种使用方式有些`cffu`功能没有提供（也没有想到好的实现方案）  
   如支持设置缺省的业务线程池、禁止强制篡改
 
-直接使用`CompletableFuture`类的代码可以比较简单的迁移到`Cffu`类，包含2步修改：
 
-- 在类型声明地方，由`CompletableFuture`改成`Cffu`
+### 1.2 迁移使用`CompletableFuture`类的代码到使用`Cffu`类
+
+为了方便自然地使用`cffu`库的增强功能与方法，可以迁移使用`CompletableFuture`类的已有代码到`Cffu`类。
+
+1\) 如果可以修改使用`CF`的代码
+
+迁移到`Cffu`类，包含2步简单的修改：
+
+- 在类型声明地方，`CompletableFuture`类改成`Cffu`类
 - 在`CompletableFuture`静态方法调用的地方，类名`CompletableFuture`改成`cffuFactory`实例
-- 更多参见[如何从直接使用`CompletableFuture`类迁移到`Cffu`类](#3-%E5%A6%82%E4%BD%95%E4%BB%8E%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8completablefuture%E7%B1%BB%E8%BF%81%E7%A7%BB%E5%88%B0cffu%E7%B1%BB)
 
-库依赖（包含`CompletableFutureUtils`工具类）:
+> 之所以可以这样迁移，是因为：
+>
+> - `CompletableFuture`类的所有实例方法都在`Cffu`类，且有相同的方法签名与功能
+> - `CompletableFuture`类的所有静态方法都在`CffuFactory`类，且有相同的方法签名与功能
+
+2\) 如果不能修改使用`CF`的代码（如引用其它的库返回的`CF`类型）
+
+使用[`CffuFactory.toCffu(CompletionStage)`方法](https://foldright.io/api-docs/cffu/1.0.0/io/foldright/cffu/CffuFactory.html#toCffu(java.util.concurrent.CompletionStage))，将`CompletableFuture`或`CompletionStage`转换成`Cffu`类型。
+
+### 1.3 库依赖（包含`CompletableFutureUtils`工具类）
 
 - For `Maven` projects:
 
@@ -183,7 +201,7 @@
 
 ## 2. `cffu`功能介绍
 
-### 2.1 返回多个`CF`的整体运行结果
+### 2.1 支持返回多个`CF`的整体运行结果
 
 `CompletableFuture`的`allOf`方法不返回多个`CF`的运行结果（方法返回类型是`CF<Void>`）。
 
@@ -490,7 +508,15 @@ public class MultipleActionsDemo {
 
 > \# 完整可运行的Demo代码参见[`MultipleActionsDemo.java`](cffu-core/src/test/java/io/foldright/demo/MultipleActionsDemo.java)。
 
-### 2.5 `Backport`支持`Java 8`
+### 2.5 支持处理指定异常类型，而不是处理所有异常`Throwable`
+
+在业务处理的`try-catch`语句中，`catch`所有异常（`Throwable`）往往是不好的实践。类似的，`CompletableFuture#exceptionally`方法，也是处理了所有异常（`Throwable`）。
+
+应该只处理当前业务自己清楚明确能恢复的具体异常，由外层处理其它异常；从而避免掩盖Bug或是错误地处理了不能恢复的异常。
+
+`cffu`提供了相应的[`catching*`等方法](https://foldright.io/api-docs/cffu/1.0.0/io/foldright/cffu/CompletableFutureUtils.html#catching(C,java.lang.Class,java.util.function.Function))，支持处理指定异常类型；使用方式与`CF#exceptionally`，不附代码示例。
+
+### 2.6 `Backport`支持`Java 8`
 
 `Java 9+`高版本的所有`CF`新功能方法在`Java 8`低版本直接可用。
 
@@ -504,7 +530,7 @@ public class MultipleActionsDemo {
 
 这些`backport`方法是`CompletableFuture`的已有功能，不附代码示例。
 
-### 2.6 超时执行安全的`orTimeout` / `completeOnTimeout`新实现
+### 2.7 超时执行安全的`orTimeout` / `completeOnTimeout`新实现
 
 `CF#orTimeout` / `CF#completeOnTimeout`方法在超时使用内部的单线程`ScheduledThreadPoolExecutor`来触发业务逻辑执行，会导致`CF`的超时与延迟执行基础功能失效❗️
 
@@ -524,7 +550,7 @@ public class MultipleActionsDemo {
   - [`orTimeout()`](https://foldright.io/api-docs/cffu/1.0.0/io/foldright/cffu/CompletableFutureUtils.html#orTimeout(C,long,java.util.concurrent.TimeUnit))
   - [`completeOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.0/io/foldright/cffu/CompletableFutureUtils.html#completeOnTimeout(C,T,long,java.util.concurrent.TimeUnit))
 
-### 2.7 支持超时的`join`的方法
+### 2.8 支持超时的`join`的方法
 
 `cf.join()`会「不超时永远等待」，在业务中很危险❗️当意外出现长时间等待时，会导致：
 
@@ -535,7 +561,7 @@ public class MultipleActionsDemo {
 
 这个新方法使用简单类似，不附代码示例。
 
-### 2.8 返回具体类型的`anyOf`方法
+### 2.9 返回具体类型的`anyOf`方法
 
 `CompletableFuture.anyOf`方法返回类型是`Object`，丢失具体类型，不类型安全，使用时需要转型也不方便。
 
@@ -543,7 +569,7 @@ public class MultipleActionsDemo {
 
 这个方法使用简单类似，不附代码示例。
 
-### 2.9 输入宽泛类型的`allOf/anyOf`方法
+### 2.10 输入宽泛类型的`allOf/anyOf`方法
 
 `CompletableFuture#allOf/anyOf`方法输入参数类型是`CompletableFuture`，而输入更宽泛的`CompletionStage`类型；对于`CompletionStage`类型的输入，则需要调用`CompletionStage#toCompletableFuture`方法做转换。
 
@@ -559,18 +585,6 @@ public class MultipleActionsDemo {
 - 实现源码
   - [`Cffu.java`](cffu-core/src/main/java/io/foldright/cffu/Cffu.java)、[`CffuFactory.java`](cffu-core/src/main/java/io/foldright/cffu/CffuFactory.java)
   - [`CompletableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu/CompletableFutureUtils.java)
-
-## 3. 如何从直接使用`CompletableFuture`类迁移到`Cffu`类
-
-为了方便地使用`cffu`的增强功能与方法，可以迁移直接使用`CompletableFuture`类的已有代码到`Cffu`类：
-
-- 在类型声明地方，`CompletableFuture`类改成`Cffu`类
-- 在`CompletableFuture`静态方法调用的地方，类名`CompletableFuture`改成`cffuFactory`实例
-
-之所以可以这样迁移，是因为：
-
-- `CompletableFuture`类的所有实例方法都在`Cffu`类，且有相同的方法签名与功能
-- `CompletableFuture`类的所有静态方法都在`CffuFactory`类，且有相同的方法签名与功能
 
 # 🔌 API Docs
 
