@@ -1490,6 +1490,10 @@ class CompletableFutureUtilsTest {
 
     @Test
     void test_timeout() throws Exception {
+        ////////////////////////////////////////////////////////////////////
+        // orTimeout*
+        ////////////////////////////////////////////////////////////////////
+
         assertInstanceOf(TimeoutException.class, assertThrowsExactly(ExecutionException.class, () ->
                 orTimeout(incompleteCf(), SHORT_WAIT_MS, MILLISECONDS).get()
         ).getCause());
@@ -1504,6 +1508,26 @@ class CompletableFutureUtilsTest {
         assertEquals(n, cffuOrTimeout(completedFuture(n), SHORT_WAIT_MS, MILLISECONDS).get());
         assertEquals(n, cffuOrTimeout(completedFuture(n), SHORT_WAIT_MS, MILLISECONDS, testExecutor).get());
 
+        {
+            CompletableFuture<Integer> incomplete = incompleteCf();
+            @SuppressWarnings("unchecked")
+            CompletableFuture<Integer>[] cfs = new CompletableFuture[]{
+                    orTimeout(incomplete, MEDIAN_WAIT_MS, MILLISECONDS),
+                    cffuOrTimeout(incomplete, MEDIAN_WAIT_MS, MILLISECONDS),
+                    cffuOrTimeout(incomplete, MEDIAN_WAIT_MS, MILLISECONDS, testExecutor)
+            };
+            // complete input cf after orTimeout operation and before timeout tigger
+            incomplete.complete(n);
+
+            for (CompletableFuture<Integer> cf : cfs) {
+                assertEquals(n, cf.get());
+            }
+        }
+
+        ////////////////////////////////////////////////////////////////////
+        // completeOnTimeout*
+        ////////////////////////////////////////////////////////////////////
+
         assertEquals(n, completeOnTimeout(incompleteCf(), n, SHORT_WAIT_MS, MILLISECONDS).get());
         assertEquals(n, cffuCompleteOnTimeout(incompleteCf(), n, SHORT_WAIT_MS, MILLISECONDS).get());
         assertEquals(n, cffuCompleteOnTimeout(incompleteCf(), n, SHORT_WAIT_MS, MILLISECONDS, testExecutor).get());
@@ -1511,6 +1535,22 @@ class CompletableFutureUtilsTest {
         assertEquals(n, completeOnTimeout(completedFuture(n), anotherN, SHORT_WAIT_MS, MILLISECONDS).get());
         assertEquals(n, cffuCompleteOnTimeout(completedFuture(n), anotherN, SHORT_WAIT_MS, MILLISECONDS).get());
         assertEquals(n, cffuCompleteOnTimeout(completedFuture(n), anotherN, SHORT_WAIT_MS, MILLISECONDS, testExecutor).get());
+
+        {
+            CompletableFuture<Integer> incomplete = incompleteCf();
+            @SuppressWarnings("unchecked")
+            CompletableFuture<Integer>[] cfs = new CompletableFuture[]{
+                    completeOnTimeout(incomplete, anotherN, MEDIAN_WAIT_MS, MILLISECONDS),
+                    cffuCompleteOnTimeout(incomplete, anotherN, MEDIAN_WAIT_MS, MILLISECONDS),
+                    cffuCompleteOnTimeout(incomplete, anotherN, MEDIAN_WAIT_MS, MILLISECONDS, testExecutor)
+            };
+            // complete input cf after completeOnTimeout operation and before timeout tigger
+            incomplete.complete(n);
+
+            for (CompletableFuture<Integer> cf : cfs) {
+                assertEquals(n, cf.get());
+            }
+        }
     }
 
     @Test
