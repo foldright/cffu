@@ -16,6 +16,7 @@ jobs:
       max-parallel: 64
 
     steps:
+      - run: sudo apt-get install ripgrep
       - uses: actions/checkout@v4
         with:
           submodules: recursive
@@ -50,10 +51,12 @@ jobs:
           npm install -g doctoc
           npm list -g --depth=0
           scripts/update_md_toc.sh
-      # https://remarkablemark.org/blog/2017/10/12/check-git-dirty/
       - name: Check API docs
         run: scripts/check_api_docs.sh
+      - name: Check forbidden classes
+        run: scripts/check-forbidden-classes.sh
 
+      # https://remarkablemark.org/blog/2017/10/12/check-git-dirty/
       - name: Check git dirty
         run: |
           git status --short

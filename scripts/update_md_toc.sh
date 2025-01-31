@@ -17,7 +17,7 @@ readonly doctoc_start='<!-- START doctoc generated TOC '
 update_toc() {
   local f md_files_contained_toc=()
   for f; do
-    ! grep -Fq "$doctoc_start" "$f" && continue
+    ! rg -Fq "$doctoc_start" "$f" && continue
     md_files_contained_toc=(${md_files_contained_toc[@]:+"${md_files_contained_toc[@]}"} "$f")
   done
   cu::log_then_run doctoc --notitle "${md_files_contained_toc[@]}"
