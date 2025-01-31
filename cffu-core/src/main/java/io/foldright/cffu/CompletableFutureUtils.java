@@ -3930,11 +3930,10 @@ public final class CompletableFutureUtils {
      */
     @Contract(value = "null -> null; !null -> !null", pure = true)
     public static @Nullable Throwable unwrapCfException(@Nullable Throwable ex) {
-        if (!(ex instanceof CompletionException) && !(ex instanceof ExecutionException)) {
-            return ex;
-        }
-        if (ex.getCause() == null) return ex;
-        return ex.getCause();
+        if (ex == null) return null;
+        while (ex.getCause() != null && (ex instanceof CompletionException || ex instanceof ExecutionException))
+            ex = ex.getCause();
+        return ex;
     }
 
     private CompletableFutureUtils() {
