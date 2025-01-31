@@ -123,12 +123,12 @@
   - 其它大型并发框架（比如[`Akka`](https://akka.io/)、[`RxJava`](https://github.com/ReactiveX/RxJava)）在使用上需要理解的内容要多很多。当然基本的并发关注方面及其复杂性，与具体使用哪个工具无关，都是要理解与注意的
 - **高层抽象**
   - 或说 以业务流程的形式表达技术的并发流程
-  - 可以避免或减少使用繁琐易错的基础并发协调工具：[同步器`Synchronizers`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/package-summary.html#synchronizers-heading)（如[`CountDownLatch`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CountDownLatch.html)、[`CyclicBarrier`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CyclicBarrier.html)、[`Phaser`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Phaser.html)）、[锁`Locks`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/locks/package-summary.html)和[原子类`atomic`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/atomic/package-summary.html)
+  - 可以避免或减少使用繁琐易错的并发协调基础工具：[同步器`Synchronizers`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/package-summary.html#synchronizers-heading)（如[`CountDownLatch`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CountDownLatch.html)、[`CyclicBarrier`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CyclicBarrier.html)、[`Phaser`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Phaser.html)）、[锁`Locks`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/locks/package-summary.html)和[原子类`atomic`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/atomic/package-summary.html)
 - **`Java`标准库内置**
   - 无需额外依赖，几乎总是可用
   - 相信有极高的实现质量
 
-和其它并发工具、框架一样，`CompletableFuture`用于
+与其它并发工具、框架一样，`CompletableFuture`用于
 
 - 并发执行业务逻辑，或说编排并发处理流程或异步任务
 - 多核并行处理，充分利用资源
@@ -514,7 +514,7 @@ public class MultipleActionsDemo {
 
 应该只处理当前业务自己清楚明确能恢复的具体异常，由外层处理其它异常；从而避免掩盖Bug或是错误地处理了不能恢复的异常。
 
-`cffu`提供了相应的[`catching*`等方法](https://foldright.io/api-docs/cffu/1.0.1/io/foldright/cffu/CompletableFutureUtils.html#catching(C,java.lang.Class,java.util.function.Function))，支持处理指定异常类型；使用方式与`CF#exceptionally`，不附代码示例。
+`cffu`提供了相应的[`catching*`方法](https://foldright.io/api-docs/cffu/1.0.1/io/foldright/cffu/CompletableFutureUtils.html#catching(C,java.lang.Class,java.util.function.Function))，支持处理指定异常类型；相比`CF#exceptionally`方法新加了一个异常类型参数，使用方式类似，不附代码示例。
 
 ### 2.6 `Backport`支持`Java 8`
 

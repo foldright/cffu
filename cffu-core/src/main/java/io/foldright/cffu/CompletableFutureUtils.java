@@ -2975,6 +2975,8 @@ public final class CompletableFutureUtils {
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
      *                      the exception from argument cfThis. To avoid hiding bugs and other unrecoverable errors,
      *                      callers should prefer more specific types, avoiding {@code Throwable.class} in particular.
+     * @param fallback      the Function to be called if cfThis fails with the expected exception type.
+     *                      The function's argument is the exception from cfThis.
      * @param executor      the executor to use for asynchronous execution
      * @see Futures#catching the equivalent Guava method catching()
      */
@@ -3136,7 +3138,7 @@ public final class CompletableFutureUtils {
             // below code is copied from CompletableFuture#orTimeout with small adoption
             if (!cfThis.isDone()) {
                 ScheduledFuture<?> f = Delayer.delayToTimeoutCf(cfThis, timeout, unit);
-                cfThis.whenComplete(new FutureCanceller(f));
+                peek0(cfThis, new FutureCanceller(f), "CFU#orTimeout");
             }
         }
         return cfThis;
@@ -3226,7 +3228,7 @@ public final class CompletableFutureUtils {
             // below code is copied from CompletableFuture#completeOnTimeout with small adoption
             if (!cfThis.isDone()) {
                 ScheduledFuture<?> f = Delayer.delayToCompleteCf(cfThis, value, timeout, unit);
-                cfThis.whenComplete(new FutureCanceller(f));
+                peek0(cfThis, new FutureCanceller(f), "CFU#completeOnTimeout");
             }
         }
         return cfThis;
@@ -3239,7 +3241,7 @@ public final class CompletableFutureUtils {
         peek0(cf, (v, ex) -> {
             if (!atCfDelayerThread()) completeCf0(ret, v, ex);
             else screenExecutor(executor).execute(() -> completeCf0(ret, v, ex));
-        }, "handle of executor hop");
+        }, "CFU#hopExecutorIfAtCfDelayerThread");
 
         return (C) ret;
     }
@@ -3438,7 +3440,7 @@ public final class CompletableFutureUtils {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(action, "action is null");
 
-        return peek0(cfThis, action, "the action of peek");
+        return peek0(cfThis, action, "CFU#peek");
     }
 
     /**
@@ -3498,7 +3500,7 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return peekAsync0(cfThis, action, "the action of peekAsync", executor);
+        return peekAsync0(cfThis, action, "CFU#peekAsync", executor);
     }
 
     // endregion
