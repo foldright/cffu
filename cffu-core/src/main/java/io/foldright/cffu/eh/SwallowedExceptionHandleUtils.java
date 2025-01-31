@@ -2,16 +2,17 @@ package io.foldright.cffu.eh;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.foldright.cffu.Cffu;
-import io.foldright.cffu.LLCF;
 import io.foldright.cffu.internal.CommonUtils;
-import io.foldright.cffu.internal.ExceptionLogger;
-import org.jetbrains.annotations.Contract;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import static io.foldright.cffu.CompletableFutureUtils.unwrapCfException;
+import static io.foldright.cffu.LLCF.completeCf0;
+import static io.foldright.cffu.LLCF.peek0;
 import static io.foldright.cffu.internal.CommonUtils.requireArrayAndEleNonNull;
+import static io.foldright.cffu.internal.ExceptionLogger.Level.ERROR;
+import static io.foldright.cffu.internal.ExceptionLogger.Level.WARN;
 import static io.foldright.cffu.internal.ExceptionLogger.logException;
 import static io.foldright.cffu.internal.ExceptionLogger.logUncaughtException;
 import static java.util.Objects.requireNonNull;
@@ -66,9 +67,10 @@ public final class SwallowedExceptionHandleUtils {
 
         for (int i = 0; i < inputs.length; i++) {
             final int idx = i;
-            // argument ex of method `exceptionally` is never null
-            inputs[idx].exceptionally(ex -> safeHandle(new ExceptionInfo(
-                    where, idx, ex, safeGet(attachments, idx)), exceptionHandler));
+            peek0(inputs[i], (v, ex) -> {
+                if (ex == null) return;
+                safeHandle(new ExceptionInfo(where, idx, ex, safeGet(attachments, idx)), exceptionHandler);
+            }, "handleAllSwallowedExceptions");
         }
     }
 
@@ -117,18 +119,18 @@ public final class SwallowedExceptionHandleUtils {
 
         // whether to swallow exceptions from inputs depends on the output's result,
         // so must check when the output CompletionStage completes.
-        output.whenComplete((v, outputEx) -> { // outputEx may be null
+        peek0(output, (v, outputEx) -> { // outputEx may be null
             Throwable outputBizEx = unwrapCfException(outputEx);
             for (int i = 0; i < unreferencedInputs.length; i++) {
                 final int idx = i;
-                // argument ex of method `exceptionally` is never null
-                unreferencedInputs[i].exceptionally(ex -> {
+                peek0(unreferencedInputs[i], (v1, ex) -> {
+                    if (ex == null) return;
                     // if ex is returned to output cf(aka. not swallowed ex), do NOTHING
-                    if (unwrapCfException(ex) == outputBizEx) return null;
-                    return safeHandle(new ExceptionInfo(where, idx, ex, safeGet(attachments, idx)), exceptionHandler);
-                });
+                    if (unwrapCfException(ex) == outputBizEx) return;
+                    safeHandle(new ExceptionInfo(where, idx, ex, safeGet(attachments, idx)), exceptionHandler);
+                }, "handleSwallowedExceptions(handle the input cf)");
             }
-        });
+        }, "handleSwallowedExceptions(handle the output cf)");
     }
 
     /**
@@ -141,7 +143,7 @@ public final class SwallowedExceptionHandleUtils {
 
     private static final ExceptionHandler CFFU_SWALLOWED_EX_HANDLER = exInfo -> {
         String msg = "Swallowed exception of cf" + (exInfo.index + 1) + " at " + exInfo.where;
-        logException(ExceptionLogger.Level.WARN, msg, exInfo.exception);
+        logException(WARN, msg, exInfo.exception);
     };
 
     /**
@@ -151,7 +153,7 @@ public final class SwallowedExceptionHandleUtils {
     private static CompletionStage<Void>[] unreferenced(CompletionStage<?>[] css) {
         return CommonUtils.mapArray(css, CompletionStage[]::new, s -> {
             CompletableFuture<Void> ret = new CompletableFuture<>();
-            LLCF.peek0(s, (v, ex) -> LLCF.completeCf0(ret, null, ex), "unreferenced");
+            peek0(s, (v, ex) -> completeCf0(ret, null, ex), "unreferenced");
             return ret;
         });
     }
@@ -162,15 +164,12 @@ public final class SwallowedExceptionHandleUtils {
         else return null;
     }
 
-    @Contract("_, _ -> null")
-    @SuppressWarnings("SameReturnValue")
-    private static <T> @Nullable T safeHandle(ExceptionInfo info, ExceptionHandler handler) {
+    private static void safeHandle(ExceptionInfo info, ExceptionHandler handler) {
         try {
             handler.handle(info);
         } catch (Throwable e) {
-            logUncaughtException(ExceptionLogger.Level.ERROR, "exceptionHandler(" + handler.getClass() + ")", e);
+            logUncaughtException(ERROR, "exceptionHandler(" + handler.getClass() + ")", e);
         }
-        return null;
     }
 
     private SwallowedExceptionHandleUtils() {

@@ -62,7 +62,7 @@
   - 对于「完成」状态，进一步可以分成 成功（`Success`）、失败（`Failed`）2种状态。
 - 所以也可以说，任务状态有且只有 运行中、取消、成功、失败 这4种状态。
   - 右图是任务的状态及其转变图。
-  - 在概念上`CF`的状态转变只能是单次单向的，这很简单可靠、也容易理解并和使用直觉一致。
+  - 在概念上`CF`的状态转变只能是单次单向的，这很简单可靠、也容易理解，并与使用直觉一致。
   - > 注：虽然下文提到的`obtrudeValue()`/`obtrudeException`方法可以突破`CF`概念上的约定，但这2个后门方法在正常设计实现中不应该会用到，尤其在业务使用应该完全忽略；带来的问题也由使用者自己了解清楚并注意。
 - 〚2〛 关于「取消」状态：
   - 对于`CompletableFuture`，取消的实现方式是设置[`CancellationException`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CancellationException.html)异常。

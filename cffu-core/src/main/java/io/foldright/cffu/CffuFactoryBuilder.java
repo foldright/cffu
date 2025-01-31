@@ -88,13 +88,14 @@ public final class CffuFactoryBuilder {
     }
 
     private static Executor makeExecutor(final Executor defaultExecutor) {
+        requireNonNull(defaultExecutor, "defaultExecutor is null");
         // check CffuMadeExecutor interface to avoid re-wrapping.
         if (defaultExecutor instanceof CffuMadeExecutor) return defaultExecutor;
-        requireNonNull(defaultExecutor, "defaultExecutor is null");
 
         // because wraps the input executor below, MUST call `screenExecutor` translation beforehand;
         // otherwise the sequent operations can NOT recognize the input executor.
         final Executor screenExecutor = LLCF.screenExecutor(defaultExecutor);
+
         final Executor wrapByProviders = wrapExecutorByProviders(screenExecutor);
         return wrapMadeInterface(wrapByProviders);
     }
