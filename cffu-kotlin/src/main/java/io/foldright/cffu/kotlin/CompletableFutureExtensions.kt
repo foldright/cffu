@@ -2023,9 +2023,9 @@ fun <T> CompletableFuture<out T>.join(timeout: Long, unit: TimeUnit): T =
 
 /**
  * Returns the result value if completed normally, else returns the given valueIfNotSuccess.
- *
- * This method will not throw exceptions
- * (CancellationException/CompletionException/ExecutionException/IllegalStateException/...).
+ * <p>
+ * This method is guaranteed not to throw {@link CompletionException}, {@link ExecutionException},
+ * {@link CancellationException} and {@link IllegalStateException}.
  *
  * @param valueIfNotSuccess the value to return if not completed normally
  * @return the result value, if completed normally, else the given valueIfNotSuccess

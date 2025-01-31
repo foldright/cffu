@@ -2284,8 +2284,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns the result value if completed normally, else returns the given valueIfNotSuccess.
      * <p>
-     * This method will not throw exceptions
-     * (CancellationException/CompletionException/ExecutionException/IllegalStateException/...).
+     * This method is guaranteed not to throw {@link CompletionException}, {@link ExecutionException},
+     * {@link CancellationException} and {@link IllegalStateException}.
      *
      * @param valueIfNotSuccess the value to return if not completed normally
      * @return the result value, if completed normally, else the given valueIfNotSuccess

@@ -3569,18 +3569,24 @@ public final class CompletableFutureUtils {
     /**
      * Returns the result value if the given stage is completed normally, else returns the given valueIfNotSuccess.
      * <p>
-     * This method will not throw exceptions
-     * (CancellationException/CompletionException/ExecutionException/IllegalStateException/...).
+     * This method is guaranteed not to throw {@link CompletionException}, {@link ExecutionException},
+     * {@link CancellationException} and {@link IllegalStateException}.
      *
      * @param valueIfNotSuccess the value to return if not completed normally
      * @return the result value, if completed normally, else the given valueIfNotSuccess
+     * @throws NullPointerException if the given CompletableFuture is {@code null}
      */
     @Contract(pure = true)
     @Nullable
     public static <T> T getSuccessNow(CompletableFuture<? extends T> cfThis, @Nullable T valueIfNotSuccess) {
         requireNonNull(cfThis, "cfThis is null");
         // NOTE: No need check minimal stage, because checked in cfThis.isDone() below
-        return cfThis.isDone() && !cfThis.isCompletedExceptionally() ? cfThis.join() : valueIfNotSuccess;
+        try {
+            return cfThis.isDone() && !cfThis.isCompletedExceptionally() ? cfThis.join() : valueIfNotSuccess;
+        } catch (CancellationException | CompletionException e) {
+            // these exceptions can only occur if the cfThis was re-completed exceptionally using obtrudeException
+            return valueIfNotSuccess;
+        }
     }
 
     /**
