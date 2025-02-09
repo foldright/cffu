@@ -512,9 +512,9 @@ public class MultipleActionsDemo {
 
 在业务处理的`try-catch`语句中，`catch`所有异常（`Throwable`）往往是不好的实践。类似的，`CompletableFuture#exceptionally`方法，也是处理了所有异常（`Throwable`）。
 
-应该只处理当前业务自己清楚明确能恢复的具体异常，由外层处理其它异常；从而避免掩盖Bug或是错误地处理了不能恢复的异常。
+应该只处理当前业务自己清楚明确能恢复的具体异常，由外层处理其它的异常；避免掩盖Bug或是错误地处理了自己不能恢复的异常。
 
-`cffu`提供了相应的[`catching*`方法](https://foldright.io/api-docs/cffu/1.0.2/io/foldright/cffu/CompletableFutureUtils.html#catching(C,java.lang.Class,java.util.function.Function))，支持处理指定异常类型；相比`CF#exceptionally`方法新加了一个异常类型参数，使用方式类似，不附代码示例。
+`cffu`提供了相应的[`catching*`方法](https://foldright.io/api-docs/cffu/1.0.2/io/foldright/cffu/CompletableFutureUtils.html#catching(C,java.lang.Class,java.util.function.Function))，支持指定要处理异常类型；相比`CF#exceptionally`方法新加了一个异常类型参数，使用方式类似，不附代码示例。
 
 ### 2.6 `Backport`支持`Java 8`
 
@@ -532,15 +532,15 @@ public class MultipleActionsDemo {
 
 ### 2.7 超时执行安全的`orTimeout` / `completeOnTimeout`新实现
 
-`CF#orTimeout` / `CF#completeOnTimeout`方法在超时使用内部的单线程`ScheduledThreadPoolExecutor`来触发业务逻辑执行，会导致`CF`的超时与延迟执行基础功能失效❗️
+`CF#orTimeout` / `CF#completeOnTimeout`方法当超时时使用`CF`内部的单线程`ScheduledThreadPoolExecutor`来触发业务逻辑执行，会导致`CF`的超时与延迟执行基础功能失效❗️
 
 因为超时与延迟执行是基础功能，一旦失效会导致：
 
 - 业务功能的正确性问题
-- 系统稳定性问题，如导致线程中等待操作不能返回、耗尽线程池
+- 系统稳定性问题，如线程中等待操作不能返回、其它有依赖的`CF`不能完成、线程池耗尽与内存泄露
 
 `cffu`提供了超时执行安全的新实现方法 [`cffuOrTimeout()`](https://foldright.io/api-docs/cffu/1.0.2/io/foldright/cffu/CompletableFutureUtils.html#cffuOrTimeout(C,long,java.util.concurrent.TimeUnit))
-/ [`cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.2/io/foldright/cffu/CompletableFutureUtils.html#cffuCompleteOnTimeout(C,T,long,java.util.concurrent.TimeUnit))。
+/ [`cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.2/io/foldright/cffu/CompletableFutureUtils.html#cffuCompleteOnTimeout(C,T,long,java.util.concurrent.TimeUnit))，保证业务逻辑不会在`CF`的单线程`ScheduledThreadPoolExecutor`中执行。
 
 
 更多说明参见：
