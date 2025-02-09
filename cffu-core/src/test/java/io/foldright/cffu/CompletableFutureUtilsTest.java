@@ -1921,6 +1921,24 @@ class CompletableFutureUtilsTest {
         assertSame(rte, unwrapCfException(rte));
     }
 
+    @Test
+    void test_unwrapCfException_loop() {
+        CompletionException completionException = new CompletionException() {
+            @java.io.Serial
+            private static final long serialVersionUID = 0;
+        };
+        ExecutionException executionException = new ExecutionException(completionException);
+        completionException.initCause(executionException);
+
+        CompletableFuture<Object> loopFailed = failedFuture(completionException);
+
+        ExecutionException ee = assertThrowsExactly(ExecutionException.class, () -> loopFailed.get(SHORT_WAIT_MS, MILLISECONDS));
+        assertThrows(IllegalArgumentException.class, () -> unwrapCfException(ee));
+
+        CompletionException ce = assertThrows(CompletionException.class, loopFailed::join);
+        assertThrows(IllegalArgumentException.class, () -> unwrapCfException(ce));
+    }
+
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
     // region# Test helper fields

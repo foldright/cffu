@@ -3915,14 +3915,41 @@ public final class CompletableFutureUtils {
      * Unwraps CompletableFuture exception ({@link CompletionException} or {@link ExecutionException})
      * to its cause exception. If the input exception is not a CompletableFuture exception or has no cause,
      * returns the input exception itself.
+     * This method also detects and handles the case where there is a loop in the causal chain of exceptions.
+     * If a loop is detected, an IllegalArgumentException is thrown.
+     * <p>
+     * Inspired by Guava {@code com.google.common.base.Throwables#getCausalChain}
+     *
+     * @param ex The exception to be unwrapped. Can be null.
+     * @return The unwrapped cause exception or the original exception if it doesn't need unwrapping, or null if the input is null.
+     * @throws IllegalArgumentException if there is a loop in ({@link CompletionException} or {@link ExecutionException}) cause chain,
+     * with any throwable in the loop as cause
      */
     @Contract(value = "null -> null; !null -> !null", pure = true)
-    public static @Nullable Throwable unwrapCfException(@Nullable Throwable ex) {
-        if (!(ex instanceof CompletionException) && !(ex instanceof ExecutionException)) {
+    public static @Nullable Throwable unwrapCfException(@Nullable final Throwable ex) {
+        if (!(ex instanceof CompletionException) && !(ex instanceof ExecutionException))
             return ex;
+
+        // Keep a slow pointer that slowly walks the causal chain. If the fast pointer(cause) ever catches
+        // the slower pointer, then there's a loop.
+        Throwable slowPointer = ex;
+        boolean advanceSlowPointer = false;
+
+        Throwable fastPointer;
+        Throwable cause;
+        while ((cause = ex.getCause()) != null
+                && (cause instanceof CompletionException || cause instanceof ExecutionException)) {
+            fastPointer = cause;
+
+            if (fastPointer == slowPointer) {
+                throw new IllegalArgumentException("Loop in causal chain detected.", fastPointer);
+            }
+            if (advanceSlowPointer) {
+                slowPointer = slowPointer.getCause();
+            }
+            advanceSlowPointer = !advanceSlowPointer; // only advance every other iteration
         }
-        if (ex.getCause() == null) return ex;
-        return ex.getCause();
+        return cause == null ? ex : cause;
     }
 
     private CompletableFutureUtils() {
