@@ -1976,13 +1976,12 @@ class CompletableFutureUtilsTest {
 
     @Test
     void test_unwrapCfException() {
-        CompletableFuture<Object> failed = failedFuture(rte);
+        RuntimeException rt1 = new RuntimeException();
+        ExecutionException ee1 = new ExecutionException(rt1);
+        assertSame(rt1, unwrapCfException(ee1));
 
-        ExecutionException ee = assertThrowsExactly(ExecutionException.class, () -> failed.get(SHORT_WAIT_MS, MILLISECONDS));
-        assertSame(rte, unwrapCfException(ee));
-
-        CompletionException ce = assertThrowsExactly(CompletionException.class, failed::join);
-        assertSame(rte, unwrapCfException(ce));
+        CompletionException ce1 = new CompletionException(rt1);
+        assertSame(rt1, unwrapCfException(ce1));
 
         CompletionException nakedCe = new CompletionException() {
             @java.io.Serial
@@ -1991,6 +1990,45 @@ class CompletableFutureUtilsTest {
         assertSame(nakedCe, unwrapCfException(nakedCe));
 
         assertSame(rte, unwrapCfException(rte));
+
+        Throwable ex = new RuntimeException(new RuntimeException(new IllegalArgumentException()));
+        assertSame(ex, unwrapCfException(ex));
+    }
+
+    @SuppressWarnings("ThrowableNotThrown")
+    @Test
+    void test_unwrapCfException_loop() {
+        {
+            CompletionException completionException = new CompletionException() {
+                @java.io.Serial
+                private static final long serialVersionUID = 0;
+            };
+            ExecutionException ee1 = new ExecutionException(completionException);
+
+            completionException.initCause(ee1);
+
+            assertLoopEx(completionException);
+        }
+        {
+            CompletionException completionException = new CompletionException() {
+                @java.io.Serial
+                private static final long serialVersionUID = 0;
+            };
+            ExecutionException ee1 = new ExecutionException(completionException);
+            CompletionException ce2 = new CompletionException(ee1);
+            ExecutionException ee3 = new ExecutionException(ce2);
+
+            completionException.initCause(ee3);
+
+            assertLoopEx(completionException);
+        }
+    }
+
+    private void assertLoopEx(Throwable ex) {
+        final IllegalArgumentException th = assertThrowsExactly(IllegalArgumentException.class, () -> unwrapCfException(ex));
+        assertEquals("Loop in causal chain detected", th.getMessage());
+        assertThrowsExactly(IllegalArgumentException.class, () -> unwrapCfException(new ExecutionException(ex)));
+        assertThrowsExactly(IllegalArgumentException.class, () -> unwrapCfException(new CompletionException(ex)));
     }
 
     // endregion
