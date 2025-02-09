@@ -3925,44 +3925,34 @@ public final class CompletableFutureUtils {
 
     /**
      * Unwraps CompletableFuture exception ({@link CompletionException} or {@link ExecutionException})
-     * to its cause exception. If the input exception is not a CompletableFuture exception or has no cause,
-     * returns the input exception itself.
-     * <p>
-     * This method also detects and handles the case where there is a loop in the causal chain of exceptions.
-     * If a loop is detected, an IllegalArgumentException is thrown.
-     * Inspired by Guava {@link com.google.common.base.Throwables#getRootCause}.
+     * to its cause exception. If the input exception is not a {@code CompletableFuture}/{@code ExecutionException}
+     * or has no cause or is null, returns the input exception itself.
      *
-     * @param ex The exception to be unwrapped. Can be null
-     * @return The unwrapped cause exception or the original exception if it doesn't need unwrapping, or null if the input is null
-     * @throws IllegalArgumentException if there is a loop in the input {@link CompletionException}
-     *                                  or {@link ExecutionException} cause chain, with any throwable in the loop as cause
-     * @see com.google.common.base.Throwables#getRootCause(Throwable) Guava method Throwables#getRootCause()
+     * @param ex the exception to be unwrapped, may be null
+     * @throws IllegalArgumentException if there is a loop in the causal chain of input
+     *                                  {@link CompletionException} or {@link ExecutionException}
+     * @see com.google.common.base.Throwables#getRootCause(Throwable) Guava method Throwables#getRootCause(),
+     * the loop detection code using fast and slow pointers is adapted from it
      */
     @Contract(value = "null -> null; !null -> !null", pure = true)
     public static @Nullable Throwable unwrapCfException(@Nullable final Throwable ex) {
-        if (!(ex instanceof CompletionException) && !(ex instanceof ExecutionException))
-            return ex;
+        if (ex == null) return null;
 
-        // Keep a slow pointer that slowly walks the causal chain. If the fast pointer(cause) ever catches
-        // the slower pointer, then there's a loop.
-        Throwable slowPointer = ex;
+        // keep a slow pointer that slowly walks the causal chain.
+        // if the fast pointer ever catches the slower pointer, then there's a loop.
+        Throwable fastPointer = ex, slowPointer = ex;
         boolean advanceSlowPointer = false;
 
-        Throwable fastPointer;
         Throwable cause;
-        while ((cause = ex.getCause()) != null
-                && (cause instanceof CompletionException || cause instanceof ExecutionException)) {
+        while ((cause = fastPointer.getCause()) != null
+                && (fastPointer instanceof CompletionException || fastPointer instanceof ExecutionException)) {
             fastPointer = cause;
+            if (fastPointer == slowPointer) throw new IllegalArgumentException("Loop in causal chain detected", ex);
 
-            if (fastPointer == slowPointer) {
-                throw new IllegalArgumentException("Loop in causal chain detected.", fastPointer);
-            }
-            if (advanceSlowPointer) {
-                slowPointer = slowPointer.getCause();
-            }
+            if (advanceSlowPointer) slowPointer = slowPointer.getCause();
             advanceSlowPointer = !advanceSlowPointer; // only advance every other iteration
         }
-        return cause == null ? ex : cause;
+        return fastPointer;
     }
 
     private CompletableFutureUtils() {
