@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.foldright.cffu.Cffu;
 import io.foldright.cffu.CffuFactory;
 import io.foldright.cffu.CompletableFutureUtils;
@@ -80,12 +81,12 @@ public final class ListenableFutureUtils {
             }
         };
         // propagate cancellation by CancellationException from outer adapter to LF
-        CompletableFutureUtils.peek(ret, (v, ex) -> {
+        LLCF.peek0(ret, (v, ex) -> {
             ex = CompletableFutureUtils.unwrapCfException(ex);
             if (ex instanceof CancellationException) {
                 lf.cancel(interruptLfWhenCancellationException);
             }
-        });
+        }, "LFU#toCompletableFuture");
 
         Futures.addCallback(lf, new FutureCallback<T>() {
             @Override
@@ -94,7 +95,7 @@ public final class ListenableFutureUtils {
             }
 
             @Override
-            public void onFailure(Throwable ex) {
+            public void onFailure(@NonNull Throwable ex) {
                 ret.completeExceptionally(ex);
             }
         }, executor);
@@ -125,8 +126,10 @@ public final class ListenableFutureUtils {
 
         return new ListenableFuture<T>() {
             @Override
-            public void addListener(Runnable listener, Executor executor) {
-                CompletableFutureUtils.peekAsync(cf, (v, ex) -> listener.run(), executor);
+            public void addListener(@NonNull Runnable listener, @NonNull Executor executor) {
+                requireNonNull(listener, "listener is null");
+                requireNonNull(executor, "executor is null");
+                LLCF.peekAsync0(cf, (v, ex) -> listener.run(), "LFU#toListenableFuture#addListener", executor);
             }
 
             @Override
@@ -150,7 +153,7 @@ public final class ListenableFutureUtils {
             }
 
             @Override
-            public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+            public T get(long timeout, @NonNull TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
                 return cf.get(timeout, unit);
             }
 
