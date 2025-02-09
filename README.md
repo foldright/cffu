@@ -173,7 +173,7 @@
 
 2\) 如果不能修改使用`CF`的代码（如引用其它的库返回的`CF`类型）
 
-使用[`CffuFactory.toCffu(CompletionStage)`方法](https://foldright.io/api-docs/cffu/1.0.1/io/foldright/cffu/CffuFactory.html#toCffu(java.util.concurrent.CompletionStage))，将`CompletableFuture`或`CompletionStage`转换成`Cffu`类型。
+使用[`CffuFactory.toCffu(CompletionStage)`方法](https://foldright.io/api-docs/cffu/1.0.2/io/foldright/cffu/CffuFactory.html#toCffu(java.util.concurrent.CompletionStage))，将`CompletableFuture`或`CompletionStage`转换成`Cffu`类型。
 
 ### 1.3 库依赖（包含`CompletableFutureUtils`工具类）
 
@@ -183,18 +183,18 @@
   <dependency>
     <groupId>io.foldright</groupId>
     <artifactId>cffu</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
   </dependency>
   ```
 - For `Gradle` projects:
 
   Gradle Kotlin DSL
   ```groovy
-  implementation("io.foldright:cffu:1.0.1")
+  implementation("io.foldright:cffu:1.0.2")
   ```
   Gradle Groovy DSL
   ```groovy
-  implementation 'io.foldright:cffu:1.0.1'
+  implementation 'io.foldright:cffu:1.0.2'
   ```
 
 > `cffu`也支持`Kotlin`扩展方法的使用方式，参见[`cffu-kotlin/README.md`](cffu-kotlin/README.md)；使用方式的对比示例参见[`docs/usage-mode-demo.md`](docs/usage-mode-demo.md)。
@@ -514,7 +514,7 @@ public class MultipleActionsDemo {
 
 应该只处理当前业务自己清楚明确能恢复的具体异常，由外层处理其它异常；从而避免掩盖Bug或是错误地处理了不能恢复的异常。
 
-`cffu`提供了相应的[`catching*`方法](https://foldright.io/api-docs/cffu/1.0.1/io/foldright/cffu/CompletableFutureUtils.html#catching(C,java.lang.Class,java.util.function.Function))，支持处理指定异常类型；相比`CF#exceptionally`方法新加了一个异常类型参数，使用方式类似，不附代码示例。
+`cffu`提供了相应的[`catching*`方法](https://foldright.io/api-docs/cffu/1.0.2/io/foldright/cffu/CompletableFutureUtils.html#catching(C,java.lang.Class,java.util.function.Function))，支持处理指定异常类型；相比`CF#exceptionally`方法新加了一个异常类型参数，使用方式类似，不附代码示例。
 
 ### 2.6 `Backport`支持`Java 8`
 
@@ -539,16 +539,16 @@ public class MultipleActionsDemo {
 - 业务功能的正确性问题
 - 系统稳定性问题，如导致线程中等待操作不能返回、耗尽线程池
 
-`cffu`提供了超时执行安全的新实现方法 [`cffuOrTimeout()`](https://foldright.io/api-docs/cffu/1.0.1/io/foldright/cffu/CompletableFutureUtils.html#cffuOrTimeout(C,long,java.util.concurrent.TimeUnit))
-/ [`cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.1/io/foldright/cffu/CompletableFutureUtils.html#cffuCompleteOnTimeout(C,T,long,java.util.concurrent.TimeUnit))。
+`cffu`提供了超时执行安全的新实现方法 [`cffuOrTimeout()`](https://foldright.io/api-docs/cffu/1.0.2/io/foldright/cffu/CompletableFutureUtils.html#cffuOrTimeout(C,long,java.util.concurrent.TimeUnit))
+/ [`cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.2/io/foldright/cffu/CompletableFutureUtils.html#cffuCompleteOnTimeout(C,T,long,java.util.concurrent.TimeUnit))。
 
 
 更多说明参见：
 
 - 演示问题的[`DelayDysfunctionDemo.java`](https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java)
 - `cffu backport`方法的`JavaDoc`
-  - [`orTimeout()`](https://foldright.io/api-docs/cffu/1.0.1/io/foldright/cffu/CompletableFutureUtils.html#orTimeout(C,long,java.util.concurrent.TimeUnit))
-  - [`completeOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.1/io/foldright/cffu/CompletableFutureUtils.html#completeOnTimeout(C,T,long,java.util.concurrent.TimeUnit))
+  - [`orTimeout()`](https://foldright.io/api-docs/cffu/1.0.2/io/foldright/cffu/CompletableFutureUtils.html#orTimeout(C,long,java.util.concurrent.TimeUnit))
+  - [`completeOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.2/io/foldright/cffu/CompletableFutureUtils.html#completeOnTimeout(C,T,long,java.util.concurrent.TimeUnit))
 
 ### 2.8 支持超时的`join`的方法
 
@@ -594,7 +594,7 @@ public class MultipleActionsDemo {
 
 # 🍪依赖
 
-> 可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/1.0.1/versions) 查看最新版本与可用版本列表。
+> 可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/1.0.0/versions) 查看最新版本与可用版本列表。
 
 - `cffu`库（包含[`Java CompletableFuture`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)的增强`CompletableFutureUtils`）:
   - For `Maven` projects:
@@ -603,18 +603,18 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     Gradle Kotlin DSL
     ```groovy
-    implementation("io.foldright:cffu:1.0.1")
+    implementation("io.foldright:cffu:1.0.2")
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation 'io.foldright:cffu:1.0.1'
+    implementation 'io.foldright:cffu:1.0.2'
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local)的[`cffu executor wrapper SPI`实现](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -623,7 +623,7 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -631,11 +631,11 @@ public class MultipleActionsDemo {
 
     Gradle Kotlin DSL
     ```groovy
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.1")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.2")
     ```
     Gradle Groovy DSL
     ```groovy
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.1'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.2'
     ```
 - `cffu bom`:
   - For `Maven` projects:
@@ -644,7 +644,7 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-bom</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -653,11 +653,11 @@ public class MultipleActionsDemo {
 
     Gradle Kotlin DSL
     ```groovy
-    implementation(platform("io.foldright:cffu-bom:1.0.1"))
+    implementation(platform("io.foldright:cffu-bom:1.0.2"))
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation platform('io.foldright:cffu-bom:1.0.1')
+    implementation platform('io.foldright:cffu-bom:1.0.2')
     ```
 
 # 📚 更多资料
