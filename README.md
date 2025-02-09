@@ -173,7 +173,7 @@
 
 2\) 如果不能修改使用`CF`的代码（如引用其它的库返回的`CF`类型）
 
-使用[`CffuFactory.toCffu(CompletionStage)`方法](https://foldright.io/api-docs/cffu/1.0.1/io/foldright/cffu/CffuFactory.html#toCffu(java.util.concurrent.CompletionStage))，将`CompletableFuture`或`CompletionStage`转换成`Cffu`类型。
+使用[`CffuFactory.toCffu(CompletionStage)`方法](https://foldright.io/api-docs/cffu/1.0.2/io/foldright/cffu/CffuFactory.html#toCffu(java.util.concurrent.CompletionStage))，将`CompletableFuture`或`CompletionStage`转换成`Cffu`类型。
 
 ### 1.3 库依赖（包含`CompletableFutureUtils`工具类）
 
@@ -183,18 +183,18 @@
   <dependency>
     <groupId>io.foldright</groupId>
     <artifactId>cffu</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
   </dependency>
   ```
 - For `Gradle` projects:
 
   Gradle Kotlin DSL
   ```groovy
-  implementation("io.foldright:cffu:1.0.1")
+  implementation("io.foldright:cffu:1.0.2")
   ```
   Gradle Groovy DSL
   ```groovy
-  implementation 'io.foldright:cffu:1.0.1'
+  implementation 'io.foldright:cffu:1.0.2'
   ```
 
 > `cffu`也支持`Kotlin`扩展方法的使用方式，参见[`cffu-kotlin/README.md`](cffu-kotlin/README.md)；使用方式的对比示例参见[`docs/usage-mode-demo.md`](docs/usage-mode-demo.md)。
@@ -363,18 +363,18 @@ public class DefaultExecutorSettingForCffu {
 
 - `CompletableFuture`的`allOf`方法会等待所有输入`CF`运行完成；即使有`CF`失败了也要等待后续`CF`都运行完成，再返回一个失败的`CF`。
   - 对于业务逻辑来说，这样失败且继续等待策略，减慢了业务响应性；会希望如果有输入`CF`失败了，则快速失败不再做于事无补的等待
-  - `cffu`提供了相应的`allResultsFailFastOf`等方法
+  - `cffu`提供了相应的`allResultsFailFastOf`等方法，支持`AllFailFast`并发执行策略
   - `allOf` / `allResultsFailFastOf`两者都是，只有当所有的输入`CF`都成功时，才返回成功结果
 - `CompletableFuture`的`anyOf`方法返回首个完成的`CF`（不会等待后续没有完成的`CF`，赛马模式）；即使首个完成的`CF`是失败的，也会返回这个失败的`CF`结果。
   - 对于业务逻辑来说，会希望赛马模式返回首个成功的`CF`结果，而不是首个完成但失败的`CF`
-  - `cffu`提供了相应的`anySuccessOf`等方法
+  - `cffu`提供了相应的`anySuccessOf`等方法，支持`AnySuccess`并发执行策略
   - `anySuccessOf`只有当所有的输入`CF`都失败时，才返回失败结果
 - 返回多个`CF`中成功的结果，对于失败的`CF`返回指定的缺省值
-  - 业务有容错逻辑时，当某些`CF`处理出错时可以使用成功的那部分结果，而不是整体处理失败
-  - `cffu`提供了相应的`allSuccessOf`等方法
+  - 业务逻辑包含容错时，当某些`CF`处理出错时可以使用成功的那部分结果，而不是整体失败
+  - `cffu`提供了相应的`allSuccessOf`等方法，支持`AllSuccess`并发执行策略
 - 返回指定时间内多个`CF`中成功的结果，对于失败或超时的`CF`返回指定的缺省值
-  - 业务最终一致性时，能返回就尽量返回有的；对于没有及时返回还在运行中处理的`CF`，结果会写到分布式缓存中避免重复计算，下次业务请求就有了
-  - 这是个常见业务使用模式，`cffu`提供了相应的`mostSuccessResultsOf`等方法
+  - 业务是最终一致性时，尽量返回有的结果；对于没能及时返回还在运行中处理的`CF`，结果会写到分布式缓存中下次业务请求就有了，以避免重复计算
+  - 这是个常见业务使用模式，`cffu`提供了相应的`mostSuccessResultsOf`等方法，支持`MostSuccess`并发执行策略
 
 > 📔 关于多个`CF`的并发执行策略，可以看看`JavaScript`规范[`Promise Concurrency`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#promise_concurrency)；在`JavaScript`中，`Promise`即对应`CompletableFuture`。
 >
@@ -387,7 +387,7 @@ public class DefaultExecutorSettingForCffu {
 >
 > PS：`JavaScript Promise`的方法命名真考究～ 👍
 >
-> `cffu`新加2个方法后，对齐了`JavaScript Promise`规范的并发方法～ 👏
+> `cffu`支持新方法后，对齐了`JavaScript Promise`规范的并发执行方法～ 👏
 
 示例代码如下：
 
@@ -514,7 +514,7 @@ public class MultipleActionsDemo {
 
 应该只处理当前业务自己清楚明确能恢复的具体异常，由外层处理其它异常；从而避免掩盖Bug或是错误地处理了不能恢复的异常。
 
-`cffu`提供了相应的[`catching*`方法](https://foldright.io/api-docs/cffu/1.0.1/io/foldright/cffu/CompletableFutureUtils.html#catching(C,java.lang.Class,java.util.function.Function))，支持处理指定异常类型；相比`CF#exceptionally`方法新加了一个异常类型参数，使用方式类似，不附代码示例。
+`cffu`提供了相应的[`catching*`方法](https://foldright.io/api-docs/cffu/1.0.2/io/foldright/cffu/CompletableFutureUtils.html#catching(C,java.lang.Class,java.util.function.Function))，支持处理指定异常类型；相比`CF#exceptionally`方法新加了一个异常类型参数，使用方式类似，不附代码示例。
 
 ### 2.6 `Backport`支持`Java 8`
 
@@ -539,16 +539,16 @@ public class MultipleActionsDemo {
 - 业务功能的正确性问题
 - 系统稳定性问题，如导致线程中等待操作不能返回、耗尽线程池
 
-`cffu`提供了超时执行安全的新实现方法 [`cffuOrTimeout()`](https://foldright.io/api-docs/cffu/1.0.1/io/foldright/cffu/CompletableFutureUtils.html#cffuOrTimeout(C,long,java.util.concurrent.TimeUnit))
-/ [`cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.1/io/foldright/cffu/CompletableFutureUtils.html#cffuCompleteOnTimeout(C,T,long,java.util.concurrent.TimeUnit))。
+`cffu`提供了超时执行安全的新实现方法 [`cffuOrTimeout()`](https://foldright.io/api-docs/cffu/1.0.2/io/foldright/cffu/CompletableFutureUtils.html#cffuOrTimeout(C,long,java.util.concurrent.TimeUnit))
+/ [`cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.2/io/foldright/cffu/CompletableFutureUtils.html#cffuCompleteOnTimeout(C,T,long,java.util.concurrent.TimeUnit))。
 
 
 更多说明参见：
 
 - 演示问题的[`DelayDysfunctionDemo.java`](https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java)
 - `cffu backport`方法的`JavaDoc`
-  - [`orTimeout()`](https://foldright.io/api-docs/cffu/1.0.1/io/foldright/cffu/CompletableFutureUtils.html#orTimeout(C,long,java.util.concurrent.TimeUnit))
-  - [`completeOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.1/io/foldright/cffu/CompletableFutureUtils.html#completeOnTimeout(C,T,long,java.util.concurrent.TimeUnit))
+  - [`orTimeout()`](https://foldright.io/api-docs/cffu/1.0.2/io/foldright/cffu/CompletableFutureUtils.html#orTimeout(C,long,java.util.concurrent.TimeUnit))
+  - [`completeOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.2/io/foldright/cffu/CompletableFutureUtils.html#completeOnTimeout(C,T,long,java.util.concurrent.TimeUnit))
 
 ### 2.8 支持超时的`join`的方法
 
@@ -594,7 +594,7 @@ public class MultipleActionsDemo {
 
 # 🍪依赖
 
-> 可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/1.0.1/versions) 查看最新版本与可用版本列表。
+> 可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/1.0.0/versions) 查看最新版本与可用版本列表。
 
 - `cffu`库（包含[`Java CompletableFuture`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)的增强`CompletableFutureUtils`）:
   - For `Maven` projects:
@@ -603,18 +603,18 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     Gradle Kotlin DSL
     ```groovy
-    implementation("io.foldright:cffu:1.0.1")
+    implementation("io.foldright:cffu:1.0.2")
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation 'io.foldright:cffu:1.0.1'
+    implementation 'io.foldright:cffu:1.0.2'
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local)的[`cffu executor wrapper SPI`实现](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -623,7 +623,7 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -631,11 +631,11 @@ public class MultipleActionsDemo {
 
     Gradle Kotlin DSL
     ```groovy
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.1")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.2")
     ```
     Gradle Groovy DSL
     ```groovy
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.1'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.2'
     ```
 - `cffu bom`:
   - For `Maven` projects:
@@ -644,7 +644,7 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-bom</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -653,11 +653,11 @@ public class MultipleActionsDemo {
 
     Gradle Kotlin DSL
     ```groovy
-    implementation(platform("io.foldright:cffu-bom:1.0.1"))
+    implementation(platform("io.foldright:cffu-bom:1.0.2"))
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation platform('io.foldright:cffu-bom:1.0.1')
+    implementation platform('io.foldright:cffu-bom:1.0.2')
     ```
 
 # 📚 更多资料

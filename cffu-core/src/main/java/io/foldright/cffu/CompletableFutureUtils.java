@@ -2982,6 +2982,7 @@ public final class CompletableFutureUtils {
      * @param fallback      the Function to be called if cfThis fails with the expected exception type.
      *                      The function's argument is the exception from cfThis.
      * @param executor      the executor to use for asynchronous execution
+     * @see #unwrapCfException(Throwable)
      * @see Futures#catching the equivalent Guava method catching()
      */
     @SuppressWarnings("unchecked")

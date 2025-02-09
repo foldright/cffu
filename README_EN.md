@@ -596,7 +596,7 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu/
 
 # 🍪Dependencies
 
-> check out [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/1.0.1/versions) for new or available versions。
+> check out [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/1.0.0/versions) for new or available versions。
 
 - `cffu`library（including[`Java CompletableFuture`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html) enhanced `CompletableFutureUtils`）:
   - For `Maven` projects:
@@ -605,18 +605,18 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu/
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     Gradle Kotlin DSL
     ```groovy
-    implementation("io.foldright:cffu:1.0.1")
+    implementation("io.foldright:cffu:1.0.2")
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation 'io.foldright:cffu:1.0.1'
+    implementation 'io.foldright:cffu:1.0.2'
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local) implementation for [`cffu executor wrapper SPI`](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -625,7 +625,7 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu/
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -633,11 +633,11 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu/
 
     Gradle Kotlin DSL
     ```groovy
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.1")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.2")
     ```
     Gradle Groovy DSL
     ```groovy
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.1'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.2'
     ```
 
 # 📚 See also
