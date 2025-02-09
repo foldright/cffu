@@ -10,13 +10,18 @@ cd "$SELF_DIR"/..
 source "$SELF_DIR/bash-buddy/lib/trap_error_info.sh"
 source "$SELF_DIR/bash-buddy/lib/common_utils.sh"
 
-# shellcheck disable=SC2154
-[ $# -ne 2 ] && cu::die "need only 2 argument for old and new versions!"
+################################################################################
+# util functions
+################################################################################
 
-readonly OLD_VERSION=$1
-readonly OLD_ALPHA_VERSION=$1-Alpha
-readonly NEW_VERSION=$2
-readonly NEW_ALPHA_VERSION=$2-Alpha
+escapeLiteralForRegex() {
+  # shellcheck disable=SC2001
+  echo "$1" | sed -r 's#([/\^$.|?*+([{])#\\\1#g'
+}
+
+isValidVersion() {
+  [[ $1 =~ ^[-.[:alnum:]]+$ ]]
+}
 
 ignoreFailRg() {
   rg "$@" || true
@@ -26,13 +31,30 @@ myXargs() {
   xargs --no-run-if-empty --delimiter='\n' --verbose "$@"
 }
 
+################################################################################
+# biz logic
+################################################################################
 
+# shellcheck disable=SC2154
+[ $# -eq 2 ] || cu::die "need exalt 2 argument for old and new versions!"
+
+readonly OLD_VERSION=$1
+isValidVersion "$OLD_VERSION" || cu::die "invalid old version: $1"
+
+readonly NEW_VERSION=$2
+isValidVersion "$NEW_VERSION" || cu::die "invalid new version: $2"
+
+readonly ALPHA_SUFFIX=-Alpha
+[[ $NEW_VERSION != *"$ALPHA_SUFFIX" ]] || cu::die "invalid new version, must NOT end with $ALPHA_SUFFIX: $2"
+readonly NEW_ALPHA_VERSION=$2$ALPHA_SUFFIX
 
 cu::log_then_run sed -i -r \
-  's/(\s*).*UPDATE to Alpha version WHEN RELEASE.*/\1<version>'"$NEW_ALPHA_VERSION"'<\/version>/' \
+  's#(\s*).*UPDATE to Alpha version WHEN RELEASE.*#\1<version>'"$NEW_ALPHA_VERSION"'</version>#' \
   pom.xml ./*/pom.xml ./*/*/pom.xml
 
-ignoreFailRg "$OLD_ALPHA_VERSION" -Fl -g '!scripts/' | myXargs sd -F "$OLD_ALPHA_VERSION" "$NEW_ALPHA_VERSION"
-ignoreFailRg '1.x-SNAPSHOT' -Fl -g '!scripts/' | myXargs sd -F '1.x-SNAPSHOT' "$NEW_VERSION"
+REPLACE_PATTERN="$(escapeLiteralForRegex "1.x-SNAPSHOT")|$(escapeLiteralForRegex "$OLD_VERSION")"
+readonly REPLACE_PATTERN
 
-ignoreFailRg "$OLD_VERSION" -Fl -g '!scripts/' | myXargs sd -F "$OLD_VERSION" "$NEW_VERSION"
+ignoreFailRg "$REPLACE_PATTERN" -l -g '!scripts/' |
+  cu::log_then_run myXargs sed -i -r "s#$REPLACE_PATTERN#$NEW_VERSION#g"
+
