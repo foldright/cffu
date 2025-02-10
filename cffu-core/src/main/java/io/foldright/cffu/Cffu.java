@@ -2434,7 +2434,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Contract("_ -> this")
     public Cffu<T> completeAsync(Supplier<? extends T> supplier) {
-        return completeAsync(supplier, fac.defaultExecutor());
+        // NOTE: do NOT translate executor by screenExecutor method; same as CompletableFuture.completeAsync
+        return completeAsync(supplier, fac.cffuExecutor.unscreenedExecutor);
     }
 
     /**
@@ -2472,7 +2473,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Contract("_ -> this")
     public Cffu<T> completeExceptionallyAsync(Supplier<? extends Throwable> supplier) {
-        return completeExceptionallyAsync(supplier, fac.defaultExecutor());
+        // NOTE: do NOT translate executor by screenExecutor method; same as CompletableFuture.completeAsync
+        return completeExceptionallyAsync(supplier, fac.cffuExecutor.unscreenedExecutor);
     }
 
     /**
