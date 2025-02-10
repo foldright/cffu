@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 
-import static io.foldright.cffu.CffuTestHelper.unwrapMadeExecutor;
 import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
 import static io.foldright.cffu.CompletableFutureUtils.toCompletableFutureArray;
 import static io.foldright.test_utils.TestUtils.*;
@@ -27,6 +26,7 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.function.Function.identity;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -770,7 +770,7 @@ class CffuFactoryTest {
         CffuFactory fac = CffuFactory.builder(dummyExecutor).forbidObtrudeMethods(true).build();
         Cffu<Integer> cffu = fac.toCffu(cffu_in);
         assertNotSame(cffu_in, cffu);
-        assertSame(dummyExecutor, unwrapMadeExecutor(cffu));
+        assertSame(dummyExecutor, cffu.defaultExecutor());
         assertSame(fac, cffu.cffuFactory());
         assertEquals("obtrude methods is forbidden by cffu", assertThrowsExactly(UnsupportedOperationException.class, () ->
                 cffu.obtrudeValue(anotherN)
@@ -872,18 +872,20 @@ class CffuFactoryTest {
 
     @Test
     void test_getter() {
-        assertEquals("CffuMadeExecutor of executor(" + testExecutor + ")",
-                testCffuFac.defaultExecutor().toString());
+        assertSame(testExecutor, testCffuFac.defaultExecutor());
+        assertThat(testCffuFac.cffuExecutor.toString())
+                .startsWith("CffuExecutorWrapper of executor(")
+                .endsWith(")");
 
-        assertSame(testExecutor, unwrapMadeExecutor(testCffuFac));
+        assertSame(testExecutor, testCffuFac.defaultExecutor());
         assertFalse(testCffuFac.forbidObtrudeMethods());
 
         CffuFactory fac = CffuFactory.builder(dummyExecutor).forbidObtrudeMethods(true).build();
-        assertSame(dummyExecutor, unwrapMadeExecutor(fac));
+        assertSame(dummyExecutor, fac.defaultExecutor());
         assertTrue(fac.forbidObtrudeMethods());
 
         final CffuFactory fac2 = testCffuFac.withDefaultExecutor(dummyExecutor);
-        assertSame(dummyExecutor, unwrapMadeExecutor(fac2));
+        assertSame(dummyExecutor, fac2.defaultExecutor());
         assertEquals(testCffuFac.forbidObtrudeMethods(), fac2.forbidObtrudeMethods());
 
         final CffuFactory fac3 = testCffuFac.withDefaultExecutor(fac2.defaultExecutor());
@@ -911,9 +913,9 @@ class CffuFactoryTest {
 
         CffuFactory fac = CffuFactory.builder(commonPool()).build();
         if (USE_COMMON_POOL) {
-            assertSame(commonPool(), unwrapMadeExecutor(fac));
+            assertSame(commonPool(), (fac).defaultExecutor());
         } else {
-            String executorClassName = unwrapMadeExecutor(fac).getClass().getName();
+            String executorClassName = fac.defaultExecutor().getClass().getName();
             assertTrue(executorClassName.endsWith("$ThreadPerTaskExecutor"));
         }
 

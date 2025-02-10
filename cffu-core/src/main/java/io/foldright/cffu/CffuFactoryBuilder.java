@@ -29,12 +29,12 @@ public final class CffuFactoryBuilder {
     // region# Internal constructor and fields
     ////////////////////////////////////////////////////////////////////////////////
 
-    private final Executor defaultExecutor;
+    private final CffuExecutorWrapper cffuExecutor;
 
     private volatile boolean forbidObtrudeMethods = false;
 
     CffuFactoryBuilder(Executor defaultExecutor) {
-        this.defaultExecutor = makeExecutor(defaultExecutor);
+        this.cffuExecutor = makeCffuExecutorWrapper(defaultExecutor);
     }
 
     // endregion
@@ -62,7 +62,7 @@ public final class CffuFactoryBuilder {
      */
     @Contract(pure = true)
     public CffuFactory build() {
-        return new CffuFactory(defaultExecutor, forbidObtrudeMethods);
+        return new CffuFactory(cffuExecutor, forbidObtrudeMethods);
     }
 
     /**
@@ -84,48 +84,49 @@ public final class CffuFactoryBuilder {
 
     @Contract(pure = true)
     static CffuFactory withDefaultExecutor(CffuFactory fac, Executor defaultExecutor) {
-        return new CffuFactory(makeExecutor(defaultExecutor), fac.forbidObtrudeMethods());
+        if (fac.cffuExecutor.original == defaultExecutor) return fac;
+        else return new CffuFactory(makeCffuExecutorWrapper(defaultExecutor), fac.forbidObtrudeMethods());
     }
 
-    private static Executor makeExecutor(final Executor defaultExecutor) {
+    private static CffuExecutorWrapper makeCffuExecutorWrapper(final Executor defaultExecutor) {
         requireNonNull(defaultExecutor, "defaultExecutor is null");
-        // check CffuMadeExecutor interface to avoid re-wrapping.
-        if (defaultExecutor instanceof CffuMadeExecutor) return defaultExecutor;
-
-        // because wraps the input executor below, MUST call `screenExecutor` translation beforehand;
-        // otherwise the sequent operations can NOT recognize the input executor.
-        final Executor screenExecutor = LLCF.screenExecutor(defaultExecutor);
-
-        final Executor wrapByProviders = wrapExecutorByProviders(screenExecutor);
-        return wrapMadeInterface(wrapByProviders);
+        // check runtime type to avoid re-wrapping.
+        if (defaultExecutor instanceof CffuExecutorWrapper) return (CffuExecutorWrapper) defaultExecutor;
+        else return new CffuExecutorWrapper(defaultExecutor);
     }
 
-    private static CffuMadeExecutor wrapMadeInterface(Executor executor) {
-        return new CffuMadeExecutor() {
-            @Override
-            public void execute(Runnable command) {
-                executor.execute(command);
-            }
-
-            @Override
-            public Executor unwrap() {
-                return executor;
-            }
-
-            @Override
-            public String toString() {
-                return "CffuMadeExecutor of executor(" + executor + ")";
-            }
-        };
-    }
-
-    /**
-     * An interface for avoiding re-wrapping.
-     */
     @VisibleForTesting
-    interface CffuMadeExecutor extends Executor {
-        @VisibleForTesting
-        Executor unwrap();
+    static class CffuExecutorWrapper implements Executor {
+        final Executor original;
+        final Executor screened;
+        final Executor unscreened;
+
+        private CffuExecutorWrapper(Executor defaultExecutor) {
+            original = defaultExecutor;
+            screened = cffuScreenExecutor(defaultExecutor);
+            unscreened = cffuUnscreenExecutor(defaultExecutor);
+        }
+
+        /**
+         * Delegates execution to {@link #screened} to treat this executor same as screened executor.
+         */
+        @Override
+        public void execute(Runnable command) {
+            screened.execute(command);
+        }
+
+        @Override
+        public String toString() {
+            return "CffuExecutorWrapper of executor(" + original + ")";
+        }
+    }
+
+    static Executor cffuScreenExecutor(Executor defaultExecutor) {
+        return wrapExecutorByProviders(LLCF.screenExecutor(defaultExecutor));
+    }
+
+    static Executor cffuUnscreenExecutor(Executor defaultExecutor) {
+        return wrapExecutorByProviders(defaultExecutor);
     }
 
     private static Executor wrapExecutorByProviders(Executor executor) {
