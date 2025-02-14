@@ -4,12 +4,12 @@
 	<parent>
 		<groupId>io.foldright</groupId>
 		<artifactId>cffu-parent</artifactId>
-		<version>1.x-SNAPSHOT</version>
+		<version>1.0.3</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>cffu-kotlin</artifactId>
-	<!-- UPDATE to Alpha version WHEN RELEASE, e.g. <version>1.x.y-Alpha</version> -->
+	<version>1.0.3-Alpha</version>
 	<name>${project.artifactId}</name>
 	<description>Cffu Kotlin Support</description>
 	<url>https://github.com/foldright/cffu</url>
