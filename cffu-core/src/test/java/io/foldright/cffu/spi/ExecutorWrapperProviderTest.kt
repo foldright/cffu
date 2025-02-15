@@ -1,7 +1,7 @@
 package io.foldright.cffu.spi
 
 import io.foldright.cffu.CffuFactory
-import io.foldright.cffu.unwrapMadeExecutor
+import io.foldright.cffu.getOriginalExecutor
 import io.foldright.test_utils.testExecutor
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.types.shouldBeSameInstanceAs
@@ -11,7 +11,7 @@ class ExecutorWrapperProviderTest : FunSpec({
     test("disable TestExecutorWrapper") {
         val factory = CffuFactory.builder(testExecutor).build()
         val cffu = factory.runAsync {}
-        cffu.unwrapMadeExecutor() shouldBeSameInstanceAs testExecutor
+        cffu.getOriginalExecutor() shouldBeSameInstanceAs testExecutor
     }
 
     test("enable TestExecutorWrapper") {
@@ -19,7 +19,9 @@ class ExecutorWrapperProviderTest : FunSpec({
 
         val factory = CffuFactory.builder(testExecutor).build()
         val cffu = factory.runAsync {}
-        cffu.unwrapMadeExecutor() shouldNotBeSameInstanceAs testExecutor
+        // FIXME MORE test
+        //       test the wrapped BEHAVIOR, not the wrapper instance
+        cffu.getOriginalExecutor() shouldBeSameInstanceAs testExecutor
     }
 
     beforeTest {

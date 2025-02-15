@@ -3,6 +3,7 @@ package io.foldright.cffu;
 import com.google.common.util.concurrent.Futures;
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import io.foldright.cffu.CffuFactoryBuilder.CffuDefaultExecutor;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
 import io.foldright.cffu.tuple.Tuple4;
@@ -47,11 +48,11 @@ public final class CffuFactory {
     // region# Builder and Constructor Methods(including internal constructors and fields)
     ////////////////////////////////////////////////////////////////////////////////
 
-    private final Executor defaultExecutor;
+    final CffuDefaultExecutor defaultExecutor;
 
     private final boolean forbidObtrudeMethods;
 
-    CffuFactory(Executor defaultExecutor, boolean forbidObtrudeMethods) {
+    CffuFactory(CffuDefaultExecutor defaultExecutor, boolean forbidObtrudeMethods) {
         this.defaultExecutor = defaultExecutor;
         this.forbidObtrudeMethods = forbidObtrudeMethods;
     }
