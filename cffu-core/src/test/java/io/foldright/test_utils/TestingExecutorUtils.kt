@@ -84,18 +84,14 @@ private interface ThreadPoolAcquaintance {
 ////////////////////////////////////////////////////////////////////////////////
 
 fun assertRunningInExecutor(executor: Executor) {
-    isRunningInExecutor(executor).shouldBeTrue()
+    currentThread().belongsTo(executor).shouldBeTrue()
 }
 
 fun assertNotRunningInExecutor(executor: Executor) {
-    isRunningInExecutor(executor).shouldBeFalse()
+    currentThread().belongsTo(executor).shouldBeFalse()
 }
 
-private fun isRunningInExecutor(executor: Executor): Boolean =
-    currentThread().belongsTo(executor)
-
-private fun Thread.belongsTo(executor: Executor): Boolean =
-    (executor as ThreadPoolAcquaintance).own(this)
+fun Thread.belongsTo(executor: Executor): Boolean = (executor as ThreadPoolAcquaintance).own(this)
 
 fun assertRunningByFjCommonPool(callingThread: Thread) {
     val runningThread = currentThread()

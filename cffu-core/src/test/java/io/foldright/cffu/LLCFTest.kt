@@ -1,6 +1,7 @@
 package io.foldright.cffu
 
 import io.foldright.cffu.CompletableFutureUtils.completedStage
+import io.foldright.cffu.CompletableFutureUtils.failedFuture
 import io.foldright.test_utils.*
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeFalse
@@ -11,9 +12,11 @@ import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
+import java.lang.Thread.currentThread
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.completedFuture
 import java.util.concurrent.CompletionStage
+import java.util.concurrent.CountDownLatch
 
 class LLCFTest : FunSpec({
     val testExecutor = createThreadPool("CheckMinStageRuntimeTypeTests", queueCapacity = 1000_000)
@@ -141,6 +144,61 @@ class LLCFTest : FunSpec({
 
             f.shouldNotBeMinimalStage()
         }
+    }
+
+    test("peek0*") {
+        val rte = RuntimeException("peekAsync exception")
+        val testThread = currentThread()
+
+        val f = failedFuture<String>(rte)
+        var args: Pair<String, Throwable>? = null
+        var inRightThread: Boolean? = null
+
+        LLCF.peek0(f, { v, ex ->
+            args = v to ex
+            inRightThread = currentThread() == testThread
+            throw RuntimeException("Another")
+        }, "peek0 test")
+        args.shouldBe(null to rte)
+        inRightThread!!.shouldBeTrue()
+
+        args = null
+        inRightThread = null
+        LLCF.peek0(f, { v, ex ->
+            args = v to ex
+            inRightThread = currentThread() == testThread
+            throw rte
+        }, "peek0 test")
+        args.shouldBe(null to rte)
+        inRightThread!!.shouldBeTrue()
+
+        args = null
+        inRightThread = null
+        val latch = CountDownLatch(1)
+        LLCF.peekAsync0(f, { v, ex ->
+            args = v to ex
+            inRightThread = currentThread().belongsTo(testExecutor)
+
+            latch.countDown()
+            throw RuntimeException("Another")
+        }, "peek0 test", testExecutor)
+        latch.await()
+        args.shouldBe(null to rte)
+        inRightThread!!.shouldBeTrue()
+
+        args = null
+        inRightThread = null
+        val latch2 = CountDownLatch(1)
+        LLCF.peekAsync0(f, { v, ex ->
+            args = v to ex
+            inRightThread = currentThread().belongsTo(testExecutor)
+
+            latch2.countDown()
+            throw rte
+        }, "peek0 test", testExecutor)
+        latch2.await()
+        args.shouldBe(null to rte)
+        inRightThread!!.shouldBeTrue()
     }
 
     test("completeCf0 - success") {
