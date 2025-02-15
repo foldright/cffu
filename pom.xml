@@ -131,14 +131,19 @@
 			<artifactId>kotest-property-jvm</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!--
-			In order to run JUnit 5 test cases in IntelliJ IDEA, need include below dependencies. more info see:
-			https://junit.org/junit5/docs/current/user-guide/#running-tests-ide-intellij-idea
-			https://github.com/junit-team/junit5-samples/blob/main/junit5-jupiter-starter-maven/pom.xml#L29
-		-->
 		<dependency>
+			<!--
+				In order to run JUnit 5 test cases in IntelliJ IDEA, need include this dependencies. more info see:
+				https://junit.org/junit5/docs/current/user-guide/#running-tests-ide-intellij-idea
+				https://github.com/junit-team/junit5-samples/blob/main/junit5-jupiter-starter-maven/pom.xml#L29
+			-->
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -147,9 +152,9 @@
 		<dependencies>
 			<!-- bom -->
 			<dependency>
-				<groupId>org.jetbrains.kotlin</groupId>
-				<artifactId>kotlin-bom</artifactId>
-				<version>${kotlin.version}</version>
+				<groupId>org.assertj</groupId>
+				<artifactId>assertj-bom</artifactId>
+				<version>3.27.3</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -157,6 +162,13 @@
 				<groupId>org.junit</groupId>
 				<artifactId>junit-bom</artifactId>
 				<version>${junit5.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jetbrains.kotlin</groupId>
+				<artifactId>kotlin-bom</artifactId>
+				<version>${kotlin.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
