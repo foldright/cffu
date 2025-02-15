@@ -2,7 +2,7 @@
 
 package io.foldright.cffu
 
-import io.foldright.cffu.CffuFactoryBuilder.CffuMadeExecutor
+import io.foldright.cffu.CffuFactoryBuilder.CffuExecutorWrapper
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.concurrent.CompletableFuture
@@ -15,7 +15,7 @@ fun Cffu<*>.unwrapMadeExecutor(): Executor = defaultExecutor().unwrapMadeExecuto
 
 fun CffuFactory.unwrapMadeExecutor(): Executor = defaultExecutor().unwrapMadeExecutor()
 
-fun Executor.unwrapMadeExecutor(): Executor = (this as CffuMadeExecutor).unwrap()
+fun Executor.unwrapMadeExecutor(): Executor = (this as CffuExecutorWrapper).original
 
 class FooCs<T>(cf: CompletableFuture<T>) : CompletionStage<T> by cf
 

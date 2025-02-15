@@ -872,8 +872,10 @@ class CffuFactoryTest {
 
     @Test
     void test_getter() {
-        assertEquals("CffuMadeExecutor of executor(" + testExecutor + ")",
-                testCffuFac.defaultExecutor().toString());
+        assertSame(testExecutor, testCffuFac.defaultExecutor());
+        assertThat(testCffuFac.cffuExecutor.toString())
+                .startsWith("CffuExecutorWrapper of executor(")
+                .endsWith(")");
 
         assertSame(testExecutor, unwrapMadeExecutor(testCffuFac));
         assertFalse(testCffuFac.forbidObtrudeMethods());

@@ -3,6 +3,7 @@ package io.foldright.cffu;
 import com.google.common.util.concurrent.Futures;
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import io.foldright.cffu.CffuFactoryBuilder.CffuExecutorWrapper;
 import io.foldright.cffu.tuple.Tuple2;
 import io.foldright.cffu.tuple.Tuple3;
 import io.foldright.cffu.tuple.Tuple4;
@@ -47,12 +48,12 @@ public final class CffuFactory {
     // region# Builder and Constructor Methods(including internal constructors and fields)
     ////////////////////////////////////////////////////////////////////////////////
 
-    private final Executor defaultExecutor;
+    final CffuExecutorWrapper cffuExecutor;
 
     private final boolean forbidObtrudeMethods;
 
-    CffuFactory(Executor defaultExecutor, boolean forbidObtrudeMethods) {
-        this.defaultExecutor = defaultExecutor;
+    CffuFactory(CffuExecutorWrapper cffuExecutor, boolean forbidObtrudeMethods) {
+        this.cffuExecutor = cffuExecutor;
         this.forbidObtrudeMethods = forbidObtrudeMethods;
     }
 
@@ -118,7 +119,7 @@ public final class CffuFactory {
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAsync`")
     public <T> Cffu<T> supplyAsync(Supplier<T> supplier) {
-        return supplyAsync(supplier, defaultExecutor);
+        return supplyAsync(supplier, cffuExecutor);
     }
 
     /**
@@ -141,7 +142,7 @@ public final class CffuFactory {
      * @param action the action to run before completing the returned Cffu
      */
     public Cffu<Void> runAsync(Runnable action) {
-        return runAsync(action, defaultExecutor);
+        return runAsync(action, cffuExecutor);
     }
 
     /**
@@ -171,7 +172,7 @@ public final class CffuFactory {
      */
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyFailFastAsync(Supplier<? extends T>... suppliers) {
-        return mSupplyFailFastAsync(defaultExecutor, suppliers);
+        return mSupplyFailFastAsync(cffuExecutor, suppliers);
     }
 
     /**
@@ -194,7 +195,7 @@ public final class CffuFactory {
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyAllSuccessAsync(
             @Nullable T valueIfFailed, Supplier<? extends T>... suppliers) {
-        return mSupplyAllSuccessAsync(defaultExecutor, valueIfFailed, suppliers);
+        return mSupplyAllSuccessAsync(cffuExecutor, valueIfFailed, suppliers);
     }
 
     /**
@@ -219,7 +220,7 @@ public final class CffuFactory {
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyMostSuccessAsync(
             @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit, Supplier<? extends T>... suppliers) {
-        return mSupplyMostSuccessAsync(defaultExecutor, valueIfNotSuccess, timeout, unit, suppliers);
+        return mSupplyMostSuccessAsync(cffuExecutor, valueIfNotSuccess, timeout, unit, suppliers);
     }
 
     /**
@@ -243,7 +244,7 @@ public final class CffuFactory {
      */
     @SafeVarargs
     public final <T> Cffu<List<T>> mSupplyAsync(Supplier<? extends T>... suppliers) {
-        return mSupplyAsync(defaultExecutor, suppliers);
+        return mSupplyAsync(cffuExecutor, suppliers);
     }
 
     /**
@@ -265,7 +266,7 @@ public final class CffuFactory {
      */
     @SafeVarargs
     public final <T> Cffu<T> mSupplyAnySuccessAsync(Supplier<? extends T>... suppliers) {
-        return mSupplyAnySuccessAsync(defaultExecutor, suppliers);
+        return mSupplyAnySuccessAsync(cffuExecutor, suppliers);
     }
 
     /**
@@ -286,7 +287,7 @@ public final class CffuFactory {
      */
     @SafeVarargs
     public final <T> Cffu<T> mSupplyAnyAsync(Supplier<? extends T>... suppliers) {
-        return mSupplyAnyAsync(defaultExecutor, suppliers);
+        return mSupplyAnyAsync(cffuExecutor, suppliers);
     }
 
     /**
@@ -306,7 +307,7 @@ public final class CffuFactory {
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
     public Cffu<Void> mRunFailFastAsync(Runnable... actions) {
-        return mRunFailFastAsync(defaultExecutor, actions);
+        return mRunFailFastAsync(cffuExecutor, actions);
     }
 
     /**
@@ -325,7 +326,7 @@ public final class CffuFactory {
      * See the {@link #allOf allOf} documentation for the rules of result computation.
      */
     public Cffu<Void> mRunAsync(Runnable... actions) {
-        return mRunAsync(defaultExecutor, actions);
+        return mRunAsync(cffuExecutor, actions);
     }
 
     /**
@@ -343,7 +344,7 @@ public final class CffuFactory {
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
     public Cffu<Void> mRunAnySuccessAsync(Runnable... actions) {
-        return mRunAnySuccessAsync(defaultExecutor, actions);
+        return mRunAnySuccessAsync(cffuExecutor, actions);
     }
 
     /**
@@ -362,7 +363,7 @@ public final class CffuFactory {
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
     public Cffu<Void> mRunAnyAsync(Runnable... actions) {
-        return mRunAnyAsync(defaultExecutor, actions);
+        return mRunAnyAsync(cffuExecutor, actions);
     }
 
     /**
@@ -384,7 +385,7 @@ public final class CffuFactory {
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return mSupplyTupleFailFastAsync(defaultExecutor, supplier1, supplier2);
+        return mSupplyTupleFailFastAsync(cffuExecutor, supplier1, supplier2);
     }
 
     /**
@@ -400,7 +401,7 @@ public final class CffuFactory {
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return mSupplyTupleFailFastAsync(defaultExecutor, supplier1, supplier2, supplier3);
+        return mSupplyTupleFailFastAsync(cffuExecutor, supplier1, supplier2, supplier3);
     }
 
     /**
@@ -418,7 +419,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return mSupplyTupleFailFastAsync(defaultExecutor, supplier1, supplier2, supplier3, supplier4);
+        return mSupplyTupleFailFastAsync(cffuExecutor, supplier1, supplier2, supplier3, supplier4);
     }
 
     /**
@@ -436,7 +437,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return mSupplyTupleFailFastAsync(defaultExecutor, supplier1, supplier2, supplier3, supplier4, supplier5);
+        return mSupplyTupleFailFastAsync(cffuExecutor, supplier1, supplier2, supplier3, supplier4, supplier5);
     }
 
     /**
@@ -457,7 +458,7 @@ public final class CffuFactory {
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyAllSuccessTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return mSupplyAllSuccessTupleAsync(defaultExecutor, supplier1, supplier2);
+        return mSupplyAllSuccessTupleAsync(cffuExecutor, supplier1, supplier2);
     }
 
     /**
@@ -479,7 +480,7 @@ public final class CffuFactory {
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyAllSuccessTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return mSupplyAllSuccessTupleAsync(defaultExecutor, supplier1, supplier2, supplier3);
+        return mSupplyAllSuccessTupleAsync(cffuExecutor, supplier1, supplier2, supplier3);
     }
 
     /**
@@ -503,7 +504,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyAllSuccessTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return mSupplyAllSuccessTupleAsync(defaultExecutor, supplier1, supplier2, supplier3, supplier4);
+        return mSupplyAllSuccessTupleAsync(cffuExecutor, supplier1, supplier2, supplier3, supplier4);
     }
 
     /**
@@ -527,7 +528,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyAllSuccessTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return mSupplyAllSuccessTupleAsync(defaultExecutor, supplier1, supplier2, supplier3, supplier4, supplier5);
+        return mSupplyAllSuccessTupleAsync(cffuExecutor, supplier1, supplier2, supplier3, supplier4, supplier5);
     }
 
     /**
@@ -551,7 +552,7 @@ public final class CffuFactory {
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyMostSuccessTupleAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return mSupplyMostSuccessTupleAsync(defaultExecutor, timeout, unit, supplier1, supplier2);
+        return mSupplyMostSuccessTupleAsync(cffuExecutor, timeout, unit, supplier1, supplier2);
     }
 
     /**
@@ -576,7 +577,7 @@ public final class CffuFactory {
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyMostSuccessTupleAsync(
             long timeout, TimeUnit unit,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return mSupplyMostSuccessTupleAsync(defaultExecutor, timeout, unit, supplier1, supplier2, supplier3);
+        return mSupplyMostSuccessTupleAsync(cffuExecutor, timeout, unit, supplier1, supplier2, supplier3);
     }
 
     /**
@@ -602,7 +603,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyMostSuccessTupleAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return mSupplyMostSuccessTupleAsync(defaultExecutor, timeout, unit, supplier1, supplier2, supplier3, supplier4);
+        return mSupplyMostSuccessTupleAsync(cffuExecutor, timeout, unit, supplier1, supplier2, supplier3, supplier4);
     }
 
     /**
@@ -628,7 +629,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyMostSuccessTupleAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return mSupplyMostSuccessTupleAsync(defaultExecutor, timeout, unit,
+        return mSupplyMostSuccessTupleAsync(cffuExecutor, timeout, unit,
                 supplier1, supplier2, supplier3, supplier4, supplier5);
     }
 
@@ -652,7 +653,7 @@ public final class CffuFactory {
      */
     public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return mSupplyTupleAsync(defaultExecutor, supplier1, supplier2);
+        return mSupplyTupleAsync(cffuExecutor, supplier1, supplier2);
     }
 
     /**
@@ -668,7 +669,7 @@ public final class CffuFactory {
      */
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return mSupplyTupleAsync(defaultExecutor, supplier1, supplier2, supplier3);
+        return mSupplyTupleAsync(cffuExecutor, supplier1, supplier2, supplier3);
     }
 
     /**
@@ -686,7 +687,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return mSupplyTupleAsync(defaultExecutor, supplier1, supplier2, supplier3, supplier4);
+        return mSupplyTupleAsync(cffuExecutor, supplier1, supplier2, supplier3, supplier4);
     }
 
     /**
@@ -704,7 +705,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return mSupplyTupleAsync(defaultExecutor, supplier1, supplier2, supplier3, supplier4, supplier5);
+        return mSupplyTupleAsync(cffuExecutor, supplier1, supplier2, supplier3, supplier4, supplier5);
     }
 
     /**
@@ -792,7 +793,7 @@ public final class CffuFactory {
     public final <T> Cffu<List<T>> mostSuccessResultsOf(
             @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit, CompletionStage<? extends T>... cfs) {
         return create(CompletableFutureUtils.mostSuccessResultsOf(
-                defaultExecutor, valueIfNotSuccess, timeout, unit, cfs));
+                cffuExecutor, valueIfNotSuccess, timeout, unit, cfs));
     }
 
     /**
@@ -1015,7 +1016,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> mostSuccessTupleOf(
             long timeout, TimeUnit unit, CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return create(CompletableFutureUtils.mostSuccessTupleOf(defaultExecutor, timeout, unit, cf1, cf2));
+        return create(CompletableFutureUtils.mostSuccessTupleOf(cffuExecutor, timeout, unit, cf1, cf2));
     }
 
     /**
@@ -1029,7 +1030,7 @@ public final class CffuFactory {
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mostSuccessTupleOf(
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return create(CompletableFutureUtils.mostSuccessTupleOf(defaultExecutor, timeout, unit, cf1, cf2, cf3));
+        return create(CompletableFutureUtils.mostSuccessTupleOf(cffuExecutor, timeout, unit, cf1, cf2, cf3));
     }
 
     /**
@@ -1044,7 +1045,7 @@ public final class CffuFactory {
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return create(CompletableFutureUtils.mostSuccessTupleOf(defaultExecutor, timeout, unit, cf1, cf2, cf3, cf4));
+        return create(CompletableFutureUtils.mostSuccessTupleOf(cffuExecutor, timeout, unit, cf1, cf2, cf3, cf4));
     }
 
     /**
@@ -1059,7 +1060,7 @@ public final class CffuFactory {
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return create(CompletableFutureUtils.mostSuccessTupleOf(defaultExecutor, timeout, unit, cf1, cf2, cf3, cf4, cf5));
+        return create(CompletableFutureUtils.mostSuccessTupleOf(cffuExecutor, timeout, unit, cf1, cf2, cf3, cf4, cf5));
     }
 
     /**
@@ -1225,7 +1226,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public Executor delayedExecutor(long delay, TimeUnit unit) {
-        return CompletableFutureUtils.delayedExecutor(delay, unit, defaultExecutor);
+        return CompletableFutureUtils.delayedExecutor(delay, unit, cffuExecutor);
     }
 
     /**
@@ -1278,7 +1279,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public Executor defaultExecutor() {
-        return defaultExecutor;
+        return cffuExecutor;
     }
 
     /**
