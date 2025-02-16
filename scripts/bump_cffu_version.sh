@@ -16,7 +16,7 @@ source "$SELF_DIR/bash-buddy/lib/common_utils.sh"
 
 escapeLiteralForRegex() {
   # shellcheck disable=SC2001
-  echo "$1" | sed -r 's#([/\^$.|?*+([{])#\\\1#g'
+  sed -r 's#([/\^$.|?*+([{])#\\\1#g' <<<"$1"
 }
 
 isValidVersion() {
@@ -24,7 +24,7 @@ isValidVersion() {
 }
 
 ignoreFailRg() {
-  rg "$@" || true
+  cu::log_then_run rg "$@" || true
 }
 
 myXargs() {
@@ -52,9 +52,9 @@ cu::log_then_run sed -i -r \
   's#(\s*).*UPDATE to Alpha version WHEN RELEASE.*#\1<version>'"$NEW_ALPHA_VERSION"'</version>#' \
   pom.xml ./*/pom.xml ./*/*/pom.xml
 
-REPLACE_PATTERN="$(escapeLiteralForRegex "1.x-SNAPSHOT")|$(escapeLiteralForRegex "$OLD_VERSION")"
-readonly REPLACE_PATTERN
+SEARCH_PATTERN="$(escapeLiteralForRegex "1.x-SNAPSHOT")|$(escapeLiteralForRegex "$OLD_VERSION")"
+readonly SEARCH_PATTERN
 
-ignoreFailRg "$REPLACE_PATTERN" -l -g '!scripts/' |
-  cu::log_then_run myXargs sed -i -r "s#$REPLACE_PATTERN#$NEW_VERSION#g"
+ignoreFailRg "$SEARCH_PATTERN" -l -g '!scripts/' |
+  myXargs sed -i -r "s#$SEARCH_PATTERN#$NEW_VERSION#g"
 
