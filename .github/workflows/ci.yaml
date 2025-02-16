@@ -54,7 +54,7 @@ jobs:
       - name: Check API docs
         run: scripts/check_api_docs.sh
       - name: Check forbidden classes
-        run: scripts/check-forbidden-classes.sh
+        run: scripts/check_forbidden_classes.sh
 
       # https://remarkablemark.org/blog/2017/10/12/check-git-dirty/
       - name: Check git dirty
