@@ -60,6 +60,10 @@ fun <T> Array<out CompletionStage<T>>.toCffu(cffuFactory: CffuFactory): Array<Cf
 //    - Runnable[]    -> Cffu<Void>
 ////////////////////////////////////////////////////////////
 
+// FIXME Do NOT use
+//          executor: Executor = cffuFactory.defaultExecutor()
+//       as default value, need a Poison Object!
+
 /**
  * Returns a new Cffu that is asynchronously completed
  * by tasks running in the Cffu's default asynchronous execution facility

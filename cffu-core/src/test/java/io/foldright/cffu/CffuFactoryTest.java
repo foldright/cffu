@@ -770,8 +770,7 @@ class CffuFactoryTest {
         CffuFactory fac = CffuFactory.builder(dummyExecutor).forbidObtrudeMethods(true).build();
         Cffu<Integer> cffu = fac.toCffu(cffu_in);
         assertNotSame(cffu_in, cffu);
-        // FIXME
-        // assertSame(dummyExecutor, unwrapMadeExecutor(cffu));
+        assertSame(dummyExecutor, cffu.defaultExecutor());
         assertSame(fac, cffu.cffuFactory());
         assertEquals("obtrude methods is forbidden by cffu", assertThrowsExactly(UnsupportedOperationException.class, () ->
                 cffu.obtrudeValue(anotherN)
@@ -873,20 +872,18 @@ class CffuFactoryTest {
 
     @Test
     void test_getter() {
+        assertSame(testExecutor, testCffuFac.defaultExecutor());
         assertThat(testCffuFac.cffuExecutor.toString()).startsWith("CffuExecutorWrapper, original: ");
 
-        // FIXME
-        // assertSame(testExecutor, unwrapMadeExecutor(testCffuFac));
+        assertSame(testExecutor, testCffuFac.defaultExecutor());
         assertFalse(testCffuFac.forbidObtrudeMethods());
 
         CffuFactory fac = CffuFactory.builder(dummyExecutor).forbidObtrudeMethods(true).build();
-        // FIXME
-        // assertSame(dummyExecutor, unwrapMadeExecutor(fac));
+        assertSame(dummyExecutor, fac.defaultExecutor());
         assertTrue(fac.forbidObtrudeMethods());
 
         final CffuFactory fac2 = testCffuFac.withDefaultExecutor(dummyExecutor);
-        // FIXME
-        // assertSame(dummyExecutor, unwrapMadeExecutor(fac2));
+        assertSame(dummyExecutor, fac2.defaultExecutor());
         assertEquals(testCffuFac.forbidObtrudeMethods(), fac2.forbidObtrudeMethods());
 
         final CffuFactory fac3 = testCffuFac.withDefaultExecutor(fac2.defaultExecutor());
@@ -914,12 +911,10 @@ class CffuFactoryTest {
 
         CffuFactory fac = CffuFactory.builder(commonPool()).build();
         if (USE_COMMON_POOL) {
-            // FIXME
-            // assertSame(commonPool(), unwrapMadeExecutor(fac));
+            assertSame(commonPool(), (fac).defaultExecutor());
         } else {
-            // FIXME
-            // String executorClassName = unwrapMadeExecutor(fac).getClass().getName();
-            // assertTrue(executorClassName.endsWith("$ThreadPerTaskExecutor"));
+            String executorClassName = fac.defaultExecutor().getClass().getName();
+            assertTrue(executorClassName.endsWith("$ThreadPerTaskExecutor"));
         }
 
         assertEquals(n, fac.supplyAsync(() -> n).get());
