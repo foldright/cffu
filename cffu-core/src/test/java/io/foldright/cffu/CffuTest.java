@@ -479,8 +479,7 @@ class CffuTest {
 
         Executor executor = Runnable::run;
         final Cffu<Integer> f2 = cf.withDefaultExecutor(executor);
-        // FIXME
-        // assertSame(executor, unwrapMadeExecutor(f2));
+        assertSame(executor, f2.defaultExecutor());
         assertEquals(testCffuFac.forbidObtrudeMethods(), f2.cffuFactory().forbidObtrudeMethods());
     }
 

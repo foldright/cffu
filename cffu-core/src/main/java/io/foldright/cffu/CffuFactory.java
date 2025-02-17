@@ -1279,7 +1279,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public Executor defaultExecutor() {
-        return defaultExecutor;
+        return defaultExecutor.original;
     }
 
     /**

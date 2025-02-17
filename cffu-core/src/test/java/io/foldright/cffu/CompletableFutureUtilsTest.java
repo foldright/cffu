@@ -1942,8 +1942,7 @@ class CompletableFutureUtilsTest {
             assertIsCfDefaultExecutor(defaultExecutor(new CustomizedExecutorCf<>()));
 
         // Cffu
-        // FIXME
-        // assertSame(testExecutor, unwrapMadeExecutor(defaultExecutor(testCffuFac.completedFuture(null))));
+        assertSame(testExecutor, defaultExecutor(testCffuFac.completedFuture(null)));
 
         final UnsupportedOperationException ex = assertThrowsExactly(UnsupportedOperationException.class,
                 () -> defaultExecutor(new FooCs<>(new CompletableFuture<>())));

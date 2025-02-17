@@ -33,15 +33,13 @@ class CffuExtensionsTest : FunSpec({
     suspend fun checkToCffu(cffu: Cffu<Int>, n: Int) {
         cffu.await() shouldBe n
 
-        // FIXME
-        // cffu.unwrapMadeExecutor() shouldBeSameInstanceAs testExecutor
-        // cffu.cffuFactory() shouldBeSameInstanceAs testCffuFac
+        cffu.defaultExecutor() shouldBeSameInstanceAs testExecutor
+        cffu.cffuFactory() shouldBeSameInstanceAs testCffuFac
 
         val fac2 = CffuFactory.builder(testFjExecutor).build()
         cffu.withCffuFactory(fac2).let {
-            // FIXME
-            // it.unwrapMadeExecutor() shouldBeSameInstanceAs testFjExecutor
-            // it.cffuFactory() shouldBeSameInstanceAs fac2
+            it.defaultExecutor() shouldBeSameInstanceAs testFjExecutor
+            it.cffuFactory() shouldBeSameInstanceAs fac2
         }
     }
 

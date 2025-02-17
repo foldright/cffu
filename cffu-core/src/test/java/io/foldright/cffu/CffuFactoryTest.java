@@ -6,10 +6,12 @@ import io.foldright.cffu.tuple.Tuple4;
 import io.foldright.cffu.tuple.Tuple5;
 import io.foldright.test_utils.MinStageTestUtils;
 import io.foldright.test_utils.TestUtils;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +24,7 @@ import static io.foldright.test_utils.TestUtils.*;
 import static io.foldright.test_utils.TestingConstants.*;
 import static io.foldright.test_utils.TestingExecutorUtils.testCffuFac;
 import static io.foldright.test_utils.TestingExecutorUtils.testExecutor;
+import static java.lang.Thread.currentThread;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -770,8 +773,7 @@ class CffuFactoryTest {
         CffuFactory fac = CffuFactory.builder(dummyExecutor).forbidObtrudeMethods(true).build();
         Cffu<Integer> cffu = fac.toCffu(cffu_in);
         assertNotSame(cffu_in, cffu);
-        // FIXME
-        // assertSame(dummyExecutor, unwrapMadeExecutor(cffu));
+        assertSame(dummyExecutor, cffu.defaultExecutor());
         assertSame(fac, cffu.cffuFactory());
         assertEquals("obtrude methods is forbidden by cffu", assertThrowsExactly(UnsupportedOperationException.class, () ->
                 cffu.obtrudeValue(anotherN)
@@ -873,26 +875,23 @@ class CffuFactoryTest {
 
     @Test
     void test_getter() {
+        assertSame(testExecutor, testCffuFac.defaultExecutor());
         assertThat(testCffuFac.defaultExecutor.toString()).startsWith("CffuDefaultExecutor, original: ");
 
-        // FIXME
-        // assertSame(testExecutor, unwrapMadeExecutor(testCffuFac));
+        assertSame(testExecutor, testCffuFac.defaultExecutor());
         assertFalse(testCffuFac.forbidObtrudeMethods());
 
         CffuFactory fac = CffuFactory.builder(dummyExecutor).forbidObtrudeMethods(true).build();
-        // FIXME
-        // assertSame(dummyExecutor, unwrapMadeExecutor(fac));
+        assertSame(dummyExecutor, fac.defaultExecutor());
         assertTrue(fac.forbidObtrudeMethods());
 
         final CffuFactory fac2 = testCffuFac.withDefaultExecutor(dummyExecutor);
-        // FIXME
-        // assertSame(dummyExecutor, unwrapMadeExecutor(fac2));
+        assertSame(dummyExecutor, fac2.defaultExecutor());
         assertEquals(testCffuFac.forbidObtrudeMethods(), fac2.forbidObtrudeMethods());
 
-        // FIXME
-        // final CffuFactory fac3 = testCffuFac.withDefaultExecutor(fac2.defaultExecutor());
-        // assertSame(fac2.defaultExecutor(), fac3.defaultExecutor());
-        // assertEquals(fac2.forbidObtrudeMethods(), fac3.forbidObtrudeMethods());
+        final CffuFactory fac3 = testCffuFac.withDefaultExecutor(fac2.defaultExecutor());
+        assertSame(fac2.defaultExecutor(), fac3.defaultExecutor());
+        assertEquals(fac2.forbidObtrudeMethods(), fac3.forbidObtrudeMethods());
     }
 
     @Test
@@ -910,20 +909,41 @@ class CffuFactoryTest {
     }
 
     @Test
-    void test_executorSetting_MayBe_ThreadPerTaskExecutor() throws Exception {
+    void test_executorSetting_commonPool() throws Exception {
+        CffuFactory fac = CffuFactory.builder(commonPool()).build();
+        assertSame(commonPool(), (fac).defaultExecutor());
+
+        assertEquals(n, fac.supplyAsync(() -> n).get());
+    }
+
+    // FIXME bug to be fixed!
+    @Disabled
+    @Test
+    void test_executorSetting_MayRunIn_ThreadPerTaskExecutor() throws Exception {
         final boolean USE_COMMON_POOL = ForkJoinPool.getCommonPoolParallelism() > 1;
+        final String threadNamePrefixOfCommonPool = "ForkJoinPool.commonPool-worker-";
 
         CffuFactory fac = CffuFactory.builder(commonPool()).build();
         if (USE_COMMON_POOL) {
-            // FIXME
-            // assertSame(commonPool(), unwrapMadeExecutor(fac));
+            fac.runAsync(() -> {
+                assertThat(currentThread().getName()).startsWith(threadNamePrefixOfCommonPool);
+            }).join();
         } else {
-            // FIXME
-            // String executorClassName = unwrapMadeExecutor(fac).getClass().getName();
-            // assertTrue(executorClassName.endsWith("$ThreadPerTaskExecutor"));
-        }
+            final int COUNT = 100;
 
-        assertEquals(n, fac.supplyAsync(() -> n).get());
+            List<Cffu<Void>> cffuList = new ArrayList<>(COUNT);
+            CopyOnWriteArraySet<Thread> runThreads = new CopyOnWriteArraySet<>();
+            for (int i = 0; i < COUNT; i++) {
+                final Cffu<Void> cffu = fac.runAsync(() -> {
+                    assertThat(currentThread().getName()).doesNotStartWith(threadNamePrefixOfCommonPool);
+                    runThreads.add(currentThread());
+                });
+                cffuList.add(cffu);
+            }
+            CompletableFutureUtils.allOf(CffuFactory.cffuListToArray(cffuList)).join();
+
+            assertThat(runThreads).hasSize(COUNT);
+        }
     }
 
     // endregion
