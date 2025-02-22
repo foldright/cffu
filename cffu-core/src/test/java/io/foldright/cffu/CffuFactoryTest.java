@@ -916,8 +916,6 @@ class CffuFactoryTest {
         assertEquals(n, fac.supplyAsync(() -> n).get());
     }
 
-    // FIXME bug to be fixed!
-    @Disabled
     @Test
     void test_executorSetting_MayRunIn_ThreadPerTaskExecutor() throws Exception {
         final boolean USE_COMMON_POOL = ForkJoinPool.getCommonPoolParallelism() > 1;
