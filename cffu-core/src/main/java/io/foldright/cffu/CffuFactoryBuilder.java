@@ -3,7 +3,6 @@ package io.foldright.cffu;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.foldright.cffu.spi.ExecutorWrapperProvider;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.VisibleForTesting;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.List;
@@ -35,7 +34,7 @@ public final class CffuFactoryBuilder {
     private volatile boolean forbidObtrudeMethods = false;
 
     CffuFactoryBuilder(Executor defaultExecutor) {
-        this.defaultExecutor = makeCffuDefaultExecutor(defaultExecutor);
+        this.defaultExecutor = new CffuDefaultExecutor(defaultExecutor);
     }
 
     // endregion
@@ -80,21 +79,13 @@ public final class CffuFactoryBuilder {
 
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# Internal helper methods and fields
+    // region# Internal helpers(classes/methods/fields)
     ////////////////////////////////////////////////////////////////////////////////
 
     @Contract(pure = true)
     static CffuFactory withDefaultExecutor(CffuFactory fac, Executor defaultExecutor) {
         if (fac.defaultExecutor.original == defaultExecutor) return fac;
-        return new CffuFactory(makeCffuDefaultExecutor(defaultExecutor), fac.forbidObtrudeMethods());
-    }
-
-    private static CffuDefaultExecutor makeCffuDefaultExecutor(final Executor defaultExecutor) {
-        assert !(defaultExecutor instanceof CffuDefaultExecutor) : "input defaultExecutor should never be a CffuDefaultExecutor";
-        assert !(defaultExecutor instanceof CffuMadeExecutor) : "input defaultExecutor should never be a CffuMadeExecutor";
-
-        requireNonNull(defaultExecutor, "defaultExecutor is null");
-        return new CffuDefaultExecutor(defaultExecutor);
+        return new CffuFactory(new CffuDefaultExecutor(defaultExecutor), fac.forbidObtrudeMethods());
     }
 
     /**
@@ -107,10 +98,15 @@ public final class CffuFactoryBuilder {
     @SuppressWarnings("JavadocReference")
     static class CffuDefaultExecutor implements Executor {
         final Executor original;
-        @VisibleForTesting
         final Executor screened;
 
+        @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
         private CffuDefaultExecutor(Executor defaultExecutor) {
+            requireNonNull(defaultExecutor, "defaultExecutor is null");
+            if (defaultExecutor instanceof CffuDefaultExecutor)
+                throw new IllegalArgumentException("input defaultExecutor should never be a CffuDefaultExecutor");
+            if (defaultExecutor instanceof CffuMadeExecutor)
+                throw new IllegalArgumentException("input defaultExecutor should never be a CffuMadeExecutor");
             original = defaultExecutor;
             screened = wrapExecutorWithProviders(LLCF.screenExecutor(defaultExecutor), defaultExecutor);
         }
@@ -129,21 +125,24 @@ public final class CffuFactoryBuilder {
         }
     }
 
-    static Executor cffuScreenedExecutor(Executor executor) {
-        assert !(executor instanceof CffuMadeExecutor) : "input executor should never be a CffuMadeExecutor";
-
+    @SuppressWarnings("ConstantValue")
+    static Executor cffuScreened(Executor executor) {
+        if (executor == null) return null;
         if (executor instanceof CffuDefaultExecutor) return executor;
         return wrapExecutorWithProviders(LLCF.screenExecutor(executor), executor);
     }
 
-    static Executor cffuUnscreenedExecutor(Executor executor) {
-        assert !(executor instanceof CffuMadeExecutor) : "input executor should never be a CffuMadeExecutor";
-
+    @SuppressWarnings("ConstantValue")
+    static Executor cffuUnscreened(Executor executor) {
+        if (executor == null) return null;
         if (executor instanceof CffuDefaultExecutor) return executor;
         return wrapExecutorWithProviders(executor, executor);
     }
 
     private static CffuMadeExecutor wrapExecutorWithProviders(Executor executor, Executor original) {
+        if (executor instanceof CffuMadeExecutor)
+            throw new IllegalArgumentException("input executor should never be a CffuMadeExecutor");
+
         for (ExecutorWrapperProvider provider : EXECUTOR_WRAPPER_PROVIDERS) {
             Supplier<String> msg = () -> provider + "(class: " + provider.getClass().getName() + ") return null";
             executor = requireNonNull(provider.wrap(executor), msg);
@@ -159,25 +158,25 @@ public final class CffuFactoryBuilder {
     }
 
     /**
-     * A class for avoiding re-wrapping.
+     * A little class to prevent duplicate wrapping of executors.
      */
-    private static class CffuMadeExecutor implements Executor {
-        final Executor wrappedExecutor;
+    private static final class CffuMadeExecutor implements Executor {
+        final Executor wrappee;
         final Executor original;
 
-        CffuMadeExecutor(Executor wrappedExecutor, Executor original) {
-            this.wrappedExecutor = wrappedExecutor;
+        CffuMadeExecutor(Executor wrappee, Executor original) {
+            this.wrappee = wrappee;
             this.original = original;
         }
 
         @Override
         public void execute(Runnable command) {
-            wrappedExecutor.execute(command);
+            wrappee.execute(command);
         }
 
         @Override
         public String toString() {
-            return "CffuMadeExecutor, wrappedExecutor: " + wrappedExecutor + " original: " + original;
+            return "CffuMadeExecutor, wrappee: " + wrappee + " original: " + original;
         }
     }
 }

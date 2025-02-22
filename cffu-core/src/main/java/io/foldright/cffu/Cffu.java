@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.*;
 
-import static io.foldright.cffu.CffuFactoryBuilder.cffuScreenedExecutor;
-import static io.foldright.cffu.CffuFactoryBuilder.cffuUnscreenedExecutor;
+import static io.foldright.cffu.CffuFactoryBuilder.cffuScreened;
+import static io.foldright.cffu.CffuFactoryBuilder.cffuUnscreened;
 import static java.util.Objects.requireNonNull;
 
 
@@ -120,7 +120,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptAsync`")
     @Override
     public <U> Cffu<U> thenApplyAsync(Function<? super T, ? extends U> fn, Executor executor) {
-        return resetCf(cf.thenApplyAsync(fn, cffuScreenedExecutor(executor)));
+        return resetCf(cf.thenApplyAsync(fn, cffuScreened(executor)));
     }
 
     /**
@@ -161,7 +161,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Cffu<Void> thenAcceptAsync(Consumer<? super T> action, Executor executor) {
-        return resetCf(cf.thenAcceptAsync(action, cffuScreenedExecutor(executor)));
+        return resetCf(cf.thenAcceptAsync(action, cffuScreened(executor)));
     }
 
     /**
@@ -199,7 +199,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Cffu<Void> thenRunAsync(Runnable action, Executor executor) {
-        return resetCf(cf.thenRunAsync(action, cffuScreenedExecutor(executor)));
+        return resetCf(cf.thenRunAsync(action, cffuScreened(executor)));
     }
 
     // endregion
@@ -237,7 +237,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyFailFastAsync(Executor executor, Function<? super T, ? extends U>... fns) {
-        return resetCf(CompletableFutureUtils.thenMApplyFailFastAsync(cf, cffuScreenedExecutor(executor), fns));
+        return resetCf(CompletableFutureUtils.thenMApplyFailFastAsync(cf, cffuScreened(executor), fns));
     }
 
     /**
@@ -268,7 +268,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyAllSuccessAsync(
             Executor executor, @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
-        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessAsync(cf, cffuScreenedExecutor(executor), valueIfFailed, fns));
+        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessAsync(cf, cffuScreened(executor), valueIfFailed, fns));
     }
 
     /**
@@ -295,7 +295,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public final <U> Cffu<List<U>> thenMApplyMostSuccessAsync(
             Executor executor, @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
             Function<? super T, ? extends U>... fns) {
-        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessAsync(cf, cffuScreenedExecutor(executor), valueIfNotSuccess, timeout, unit, fns));
+        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessAsync(
+                cf, cffuScreened(executor), valueIfNotSuccess, timeout, unit, fns));
     }
 
     /**
@@ -322,7 +323,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @SafeVarargs
     public final <U> Cffu<List<U>> thenMApplyAsync(Executor executor, Function<? super T, ? extends U>... fns) {
-        return resetCf(CompletableFutureUtils.thenMApplyAsync(cf, cffuScreenedExecutor(executor), fns));
+        return resetCf(CompletableFutureUtils.thenMApplyAsync(cf, cffuScreened(executor), fns));
     }
 
     /**
@@ -349,7 +350,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @SafeVarargs
     public final <U> Cffu<U> thenMApplyAnySuccessAsync(Executor executor, Function<? super T, ? extends U>... fns) {
-        return resetCf(CompletableFutureUtils.thenMApplyAnySuccessAsync(cf, cffuScreenedExecutor(executor), fns));
+        return resetCf(CompletableFutureUtils.thenMApplyAnySuccessAsync(cf, cffuScreened(executor), fns));
     }
 
     /**
@@ -376,7 +377,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @SafeVarargs
     public final <U> Cffu<U> thenMApplyAnyAsync(Executor executor, Function<? super T, ? extends U>... fns) {
-        return resetCf(CompletableFutureUtils.thenMApplyAnyAsync(cf, cffuScreenedExecutor(executor), fns));
+        return resetCf(CompletableFutureUtils.thenMApplyAnyAsync(cf, cffuScreened(executor), fns));
     }
 
     /**
@@ -408,7 +409,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptFailFastAsync(Executor executor, Consumer<? super T>... actions) {
-        return resetCf(CompletableFutureUtils.thenMAcceptFailFastAsync(cf, cffuScreenedExecutor(executor), actions));
+        return resetCf(CompletableFutureUtils.thenMAcceptFailFastAsync(cf, cffuScreened(executor), actions));
     }
 
     /**
@@ -440,7 +441,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAsync(Executor executor, Consumer<? super T>... actions) {
-        return resetCf(CompletableFutureUtils.thenMAcceptAsync(cf, cffuScreenedExecutor(executor), actions));
+        return resetCf(CompletableFutureUtils.thenMAcceptAsync(cf, cffuScreened(executor), actions));
     }
 
     /**
@@ -472,7 +473,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAnySuccessAsync(Executor executor, Consumer<? super T>... actions) {
-        return resetCf(CompletableFutureUtils.thenMAcceptAnySuccessAsync(cf, cffuScreenedExecutor(executor), actions));
+        return resetCf(CompletableFutureUtils.thenMAcceptAnySuccessAsync(cf, cffuScreened(executor), actions));
     }
 
     /**
@@ -504,7 +505,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAnyAsync(Executor executor, Consumer<? super T>... actions) {
-        return resetCf(CompletableFutureUtils.thenMAcceptAnyAsync(cf, cffuScreenedExecutor(executor), actions));
+        return resetCf(CompletableFutureUtils.thenMAcceptAnyAsync(cf, cffuScreened(executor), actions));
     }
 
     /**
@@ -524,7 +525,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * See the {@link CffuFactory#allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
     public Cffu<Void> thenMRunFailFastAsync(Executor executor, Runnable... actions) {
-        return resetCf(CompletableFutureUtils.thenMRunFailFastAsync(cf, cffuScreenedExecutor(executor), actions));
+        return resetCf(CompletableFutureUtils.thenMRunFailFastAsync(cf, cffuScreened(executor), actions));
     }
 
     /**
@@ -544,7 +545,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * See the {@link CffuFactory#allOf allOf} documentation for the rules of result computation.
      */
     public Cffu<Void> thenMRunAsync(Executor executor, Runnable... actions) {
-        return resetCf(CompletableFutureUtils.thenMRunAsync(cf, cffuScreenedExecutor(executor), actions));
+        return resetCf(CompletableFutureUtils.thenMRunAsync(cf, cffuScreened(executor), actions));
     }
 
     /**
@@ -564,7 +565,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
     public Cffu<Void> thenMRunAnySuccessAsync(Executor executor, Runnable... actions) {
-        return resetCf(CompletableFutureUtils.thenMRunAnySuccessAsync(cf, cffuScreenedExecutor(executor), actions));
+        return resetCf(CompletableFutureUtils.thenMRunAnySuccessAsync(cf, cffuScreened(executor), actions));
     }
 
     /**
@@ -584,7 +585,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
      */
     public Cffu<Void> thenMRunAnyAsync(Executor executor, Runnable... actions) {
-        return resetCf(CompletableFutureUtils.thenMRunAnyAsync(cf, cffuScreenedExecutor(executor), actions));
+        return resetCf(CompletableFutureUtils.thenMRunAnyAsync(cf, cffuScreened(executor), actions));
     }
 
     // endregion
@@ -605,7 +606,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleFailFastAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return resetCf(CompletableFutureUtils.thenMApplyTupleFailFastAsync(cf, cffuScreenedExecutor(executor), fn1, fn2));
+        return resetCf(CompletableFutureUtils.thenMApplyTupleFailFastAsync(cf, cffuScreened(executor), fn1, fn2));
     }
 
     /**
@@ -623,7 +624,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleFailFastAsync(
             Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return resetCf(CompletableFutureUtils.thenMApplyTupleFailFastAsync(cf, cffuScreenedExecutor(executor), fn1, fn2, fn3));
+        return resetCf(CompletableFutureUtils.thenMApplyTupleFailFastAsync(cf, cffuScreened(executor), fn1, fn2, fn3));
     }
 
     /**
@@ -641,7 +642,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleFailFastAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return resetCf(CompletableFutureUtils.thenMApplyTupleFailFastAsync(cf, cffuScreenedExecutor(executor), fn1, fn2, fn3, fn4));
+        return resetCf(CompletableFutureUtils.thenMApplyTupleFailFastAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4));
     }
 
     /**
@@ -661,7 +662,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return resetCf(CompletableFutureUtils.thenMApplyTupleFailFastAsync(cf, cffuScreenedExecutor(executor), fn1, fn2, fn3, fn4, fn5));
+        return resetCf(CompletableFutureUtils.thenMApplyTupleFailFastAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4, fn5));
     }
 
     /**
@@ -683,7 +684,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyAllSuccessTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cf, cffuScreenedExecutor(executor), fn1, fn2));
+        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cf, cffuScreened(executor), fn1, fn2));
     }
 
     /**
@@ -707,7 +708,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyAllSuccessTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cf, cffuScreenedExecutor(executor), fn1, fn2, fn3));
+        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3));
     }
 
     /**
@@ -731,7 +732,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyAllSuccessTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cf, cffuScreenedExecutor(executor), fn1, fn2, fn3, fn4));
+        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4));
     }
 
     /**
@@ -757,7 +758,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cf, cffuScreenedExecutor(executor), fn1, fn2, fn3, fn4, fn5));
+        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4, fn5));
     }
 
     /**
@@ -782,7 +783,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(cf, cffuScreenedExecutor(executor), timeout, unit, fn1, fn2));
+        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(
+                cf, cffuScreened(executor), timeout, unit, fn1, fn2));
     }
 
     /**
@@ -808,7 +810,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(cf, cffuScreenedExecutor(executor), timeout, unit, fn1, fn2, fn3));
+        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(
+                cf, cffuScreened(executor), timeout, unit, fn1, fn2, fn3));
     }
 
     /**
@@ -836,7 +839,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             Executor executor, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(cf, cffuScreenedExecutor(executor), timeout, unit, fn1, fn2, fn3, fn4));
+        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(
+                cf, cffuScreened(executor), timeout, unit, fn1, fn2, fn3, fn4));
     }
 
     /**
@@ -865,7 +869,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
             Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
         return resetCf(CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(
-                cf, cffuScreenedExecutor(executor), timeout, unit, fn1, fn2, fn3, fn4, fn5));
+                cf, cffuScreened(executor), timeout, unit, fn1, fn2, fn3, fn4, fn5));
     }
 
     /**
@@ -881,7 +885,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return resetCf(CompletableFutureUtils.thenMApplyTupleAsync(cf, cffuScreenedExecutor(executor), fn1, fn2));
+        return resetCf(CompletableFutureUtils.thenMApplyTupleAsync(cf, cffuScreened(executor), fn1, fn2));
     }
 
     /**
@@ -899,7 +903,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3) {
-        return resetCf(CompletableFutureUtils.thenMApplyTupleAsync(cf, cffuScreenedExecutor(executor), fn1, fn2, fn3));
+        return resetCf(CompletableFutureUtils.thenMApplyTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3));
     }
 
     /**
@@ -917,7 +921,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleAsync(
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return resetCf(CompletableFutureUtils.thenMApplyTupleAsync(cf, cffuScreenedExecutor(executor), fn1, fn2, fn3, fn4));
+        return resetCf(CompletableFutureUtils.thenMApplyTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4));
     }
 
     /**
@@ -937,7 +941,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
             Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
             Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
             Function<? super T, ? extends U5> fn5) {
-        return resetCf(CompletableFutureUtils.thenMApplyTupleAsync(cf, cffuScreenedExecutor(executor), fn1, fn2, fn3, fn4, fn5));
+        return resetCf(CompletableFutureUtils.thenMApplyTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4, fn5));
     }
 
     // endregion
@@ -1001,7 +1005,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothFailFastAsync`")
     public <U, V> Cffu<V> thenCombineFailFastAsync(
             CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
-        return resetCf(CompletableFutureUtils.thenCombineFailFastAsync(cf, other, fn, cffuScreenedExecutor(executor)));
+        return resetCf(CompletableFutureUtils.thenCombineFailFastAsync(cf, other, fn, cffuScreened(executor)));
     }
 
     /**
@@ -1050,7 +1054,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public <U> Cffu<Void> thenAcceptBothFailFastAsync(
             CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action, Executor executor) {
-        return resetCf(CompletableFutureUtils.thenAcceptBothFailFastAsync(cf, other, action, cffuScreenedExecutor(executor)));
+        return resetCf(CompletableFutureUtils.thenAcceptBothFailFastAsync(cf, other, action, cffuScreened(executor)));
     }
 
     /**
@@ -1092,7 +1096,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param executor the executor to use for asynchronous execution
      */
     public Cffu<Void> runAfterBothFailFastAsync(CompletionStage<?> other, Runnable action, Executor executor) {
-        return resetCf(CompletableFutureUtils.runAfterBothFailFastAsync(cf, other, action, cffuScreenedExecutor(executor)));
+        return resetCf(CompletableFutureUtils.runAfterBothFailFastAsync(cf, other, action, cffuScreened(executor)));
     }
 
     /**
@@ -1147,7 +1151,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public <U, V> Cffu<V> thenCombineAsync(
             CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
-        return resetCf(cf.thenCombineAsync(other, fn, cffuScreenedExecutor(executor)));
+        return resetCf(cf.thenCombineAsync(other, fn, cffuScreened(executor)));
     }
 
     /**
@@ -1196,7 +1200,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public <U> Cffu<Void> thenAcceptBothAsync(
             CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action, Executor executor) {
-        return resetCf(cf.thenAcceptBothAsync(other, action, cffuScreenedExecutor(executor)));
+        return resetCf(cf.thenAcceptBothAsync(other, action, cffuScreened(executor)));
     }
 
     /**
@@ -1239,7 +1243,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Cffu<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action, Executor executor) {
-        return resetCf(cf.runAfterBothAsync(other, action, cffuScreenedExecutor(executor)));
+        return resetCf(cf.runAfterBothAsync(other, action, cffuScreened(executor)));
     }
 
     // endregion
@@ -1290,7 +1294,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherSuccessAsync`")
     public <U> Cffu<U> applyToEitherSuccessAsync(
             CompletionStage<? extends T> other, Function<? super T, U> fn, Executor executor) {
-        return resetCf(CompletableFutureUtils.applyToEitherSuccessAsync(cf, other, fn, cffuScreenedExecutor(executor)));
+        return resetCf(CompletableFutureUtils.applyToEitherSuccessAsync(cf, other, fn, cffuScreened(executor)));
     }
 
     /**
@@ -1326,7 +1330,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public Cffu<Void> acceptEitherSuccessAsync(
             CompletionStage<? extends T> other, Consumer<? super T> action, Executor executor) {
-        return resetCf(CompletableFutureUtils.acceptEitherSuccessAsync(cf, other, action, cffuScreenedExecutor(executor)));
+        return resetCf(CompletableFutureUtils.acceptEitherSuccessAsync(cf, other, action, cffuScreened(executor)));
     }
 
     /**
@@ -1365,7 +1369,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param executor the executor to use for asynchronous execution
      */
     public Cffu<Void> runAfterEitherSuccessAsync(CompletionStage<?> other, Runnable action, Executor executor) {
-        return resetCf(CompletableFutureUtils.runAfterEitherSuccessAsync(cf, other, action, cffuScreenedExecutor(executor)));
+        return resetCf(CompletableFutureUtils.runAfterEitherSuccessAsync(cf, other, action, cffuScreened(executor)));
     }
 
     /**
@@ -1416,7 +1420,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public <U> Cffu<U> applyToEitherAsync(
             CompletionStage<? extends T> other, Function<? super T, U> fn, Executor executor) {
-        return resetCf(cf.applyToEitherAsync(other, fn, cffuScreenedExecutor(executor)));
+        return resetCf(cf.applyToEitherAsync(other, fn, cffuScreened(executor)));
     }
 
     /**
@@ -1461,7 +1465,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @Override
     public Cffu<Void> acceptEitherAsync(
             CompletionStage<? extends T> other, Consumer<? super T> action, Executor executor) {
-        return resetCf(cf.acceptEitherAsync(other, action, cffuScreenedExecutor(executor)));
+        return resetCf(cf.acceptEitherAsync(other, action, cffuScreened(executor)));
     }
 
     /**
@@ -1504,7 +1508,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Cffu<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action, Executor executor) {
-        return resetCf(cf.runAfterEitherAsync(other, action, cffuScreenedExecutor(executor)));
+        return resetCf(cf.runAfterEitherAsync(other, action, cffuScreened(executor)));
     }
 
     // endregion
@@ -1575,7 +1579,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public <X extends Throwable> Cffu<T> catchingAsync(
             Class<X> exceptionType, Function<? super X, ? extends T> fallback, Executor executor) {
-        return resetCf(CompletableFutureUtils.catchingAsync(cf, exceptionType, fallback, cffuScreenedExecutor(executor)));
+        return resetCf(CompletableFutureUtils.catchingAsync(cf, exceptionType, fallback, cffuScreened(executor)));
     }
 
     /**
@@ -1634,7 +1638,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Cffu<T> exceptionallyAsync(Function<Throwable, ? extends T> fn, Executor executor) {
-        return resetCf(CompletableFutureUtils.exceptionallyAsync(cf, fn, cffuScreenedExecutor(executor)));
+        return resetCf(CompletableFutureUtils.exceptionallyAsync(cf, fn, cffuScreened(executor)));
     }
 
     // endregion
@@ -1819,7 +1823,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public <U> Cffu<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>> fn, Executor executor) {
-        return resetCf(cf.thenComposeAsync(fn, cffuScreenedExecutor(executor)));
+        return resetCf(cf.thenComposeAsync(fn, cffuScreened(executor)));
     }
 
     /**
@@ -1883,7 +1887,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public <X extends Throwable> Cffu<T> catchingComposeAsync(
             Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback, Executor executor) {
-        return resetCf(CompletableFutureUtils.catchingComposeAsync(cf, exceptionType, fallback, cffuScreenedExecutor(executor)));
+        return resetCf(CompletableFutureUtils.catchingComposeAsync(cf, exceptionType, fallback, cffuScreened(executor)));
     }
 
     /**
@@ -1937,7 +1941,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Cffu<T> exceptionallyComposeAsync(Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
-        return resetCf(CompletableFutureUtils.exceptionallyComposeAsync(cf, fn, cffuScreenedExecutor(executor)));
+        return resetCf(CompletableFutureUtils.exceptionallyComposeAsync(cf, fn, cffuScreened(executor)));
     }
 
     /**
@@ -1991,7 +1995,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `peekAsync`")
     @Override
     public <U> Cffu<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn, Executor executor) {
-        return resetCf(cf.handleAsync(fn, cffuScreenedExecutor(executor)));
+        return resetCf(cf.handleAsync(fn, cffuScreened(executor)));
     }
 
     /**
@@ -2064,7 +2068,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `peekAsync`")
     @Override
     public Cffu<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action, Executor executor) {
-        return resetCf(cf.whenCompleteAsync(action, cffuScreenedExecutor(executor)));
+        return resetCf(cf.whenCompleteAsync(action, cffuScreened(executor)));
     }
 
     /**
@@ -2145,7 +2149,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Contract("_, _ -> this")
     public Cffu<T> peekAsync(BiConsumer<? super T, ? super Throwable> action, Executor executor) {
-        CompletableFutureUtils.peekAsync(cf, action, cffuScreenedExecutor(executor));
+        CompletableFutureUtils.peekAsync(cf, action, cffuScreened(executor));
         return this;
     }
 
@@ -2451,7 +2455,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public Cffu<T> completeAsync(Supplier<? extends T> supplier, Executor executor) {
         checkMinimalStage();
         // NOTE: do NOT translate (ad hoc input)executor to screened executor; same as CompletableFuture.completeAsync
-        CompletableFutureUtils.completeAsync(cf, supplier, cffuUnscreenedExecutor(executor));
+        CompletableFutureUtils.completeAsync(cf, supplier, cffuUnscreened(executor));
         return this;
     }
 
@@ -2490,7 +2494,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public Cffu<T> completeExceptionallyAsync(Supplier<? extends Throwable> supplier, Executor executor) {
         checkMinimalStage();
         // NOTE: do NOT translate (ad hoc input)executor to screened executor; same as CompletableFuture.completeAsync
-        CompletableFutureUtils.completeExceptionallyAsync(cf, supplier, cffuUnscreenedExecutor(executor));
+        CompletableFutureUtils.completeExceptionallyAsync(cf, supplier, cffuUnscreened(executor));
         return this;
     }
 

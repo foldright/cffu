@@ -19,9 +19,10 @@ fun CffuFactory.getScreenedExecutor(): Executor = defaultExecutor.screened
 
 class FooCs<T>(cf: CompletableFuture<T>) : CompletionStage<T> by cf
 
+fun useCommonPool() = ForkJoinPool.getCommonPoolParallelism() > 1
+
 fun assertIsCfDefaultExecutor(executor: Executor) {
-    val useCommonPool = ForkJoinPool.getCommonPoolParallelism() > 1
-    if (useCommonPool) {
+    if (useCommonPool()) {
         executor shouldBeSameInstanceAs ForkJoinPool.commonPool()
     } else {
         executor.javaClass.name shouldEndWith "\$ThreadPerTaskExecutor"

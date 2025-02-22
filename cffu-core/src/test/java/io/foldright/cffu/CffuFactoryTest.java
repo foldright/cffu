@@ -6,7 +6,6 @@ import io.foldright.cffu.tuple.Tuple4;
 import io.foldright.cffu.tuple.Tuple5;
 import io.foldright.test_utils.MinStageTestUtils;
 import io.foldright.test_utils.TestUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
@@ -889,9 +888,12 @@ class CffuFactoryTest {
         assertSame(dummyExecutor, fac2.defaultExecutor());
         assertEquals(testCffuFac.forbidObtrudeMethods(), fac2.forbidObtrudeMethods());
 
-        final CffuFactory fac3 = testCffuFac.withDefaultExecutor(fac2.defaultExecutor());
-        assertSame(fac2.defaultExecutor(), fac3.defaultExecutor());
-        assertEquals(fac2.forbidObtrudeMethods(), fac3.forbidObtrudeMethods());
+        assertSame(fac2, fac2.withDefaultExecutor(fac2.defaultExecutor()));
+
+        assertEquals("input defaultExecutor should never be a CffuDefaultExecutor", assertThrowsExactly(
+                IllegalArgumentException.class, () -> fac2.withDefaultExecutor(fac2.defaultExecutor)).getMessage());
+        assertEquals("input defaultExecutor should never be a CffuMadeExecutor", assertThrowsExactly(
+                IllegalArgumentException.class, () -> fac2.withDefaultExecutor(fac2.defaultExecutor.screened)).getMessage());
     }
 
     @Test
