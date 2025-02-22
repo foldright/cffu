@@ -287,6 +287,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<compilerArgs>-Xlint:unchecked</compilerArgs>
+				</configuration>
 				<executions>
 					<!-- Replacing default-compile as it is treated specially by Maven -->
 					<execution>

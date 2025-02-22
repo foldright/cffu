@@ -32,9 +32,10 @@ public final class CommonUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T, R> R[] mapArray(T[] source, IntFunction<Object[]> destConstructor, Function<T, R> mapper) {
-        Object[] ret = destConstructor.apply(source.length);
-        for (int i = 0; i < source.length; i++) ret[i] = mapper.apply(source[i]);
-        return (R[]) ret;
+        int len = source.length;
+        R[] ret = (R[]) destConstructor.apply(len);
+        for (int i = 0; i < len; i++) ret[i] = mapper.apply(source[i]);
+        return ret;
     }
 
     public static <T> T[] fillArray(T[] array, IntFunction<T> init) {
@@ -55,8 +56,9 @@ public final class CommonUtils {
      * Returns a new {@link ArrayList} with the same elements as the given {@link AtomicReferenceArray}.
      */
     public static <E> ArrayList<E> arrayList(AtomicReferenceArray<E> array) {
-        ArrayList<E> ret = new ArrayList<>(array.length());
-        for (int i = 0, len = array.length(); i < len; i++) ret.add(array.get(i));
+        int len = array.length();
+        ArrayList<E> ret = new ArrayList<>(len);
+        for (int i = 0; i < len; i++) ret.add(array.get(i));
         return ret;
     }
 
@@ -64,9 +66,10 @@ public final class CommonUtils {
      * Returns a new array with the same elements as the given {@link AtomicReferenceArray}.
      */
     public static <E> E[] toArray(AtomicReferenceArray<E> array) {
+        int len = array.length();
         @SuppressWarnings("unchecked")
-        E[] ret = (E[]) new Object[array.length()];
-        for (int i = 0, len = array.length(); i < len; i++) ret[i] = array.get(i);
+        E[] ret = (E[]) new Object[len];
+        for (int i = 0; i < len; i++) ret[i] = array.get(i);
         return ret;
     }
 
