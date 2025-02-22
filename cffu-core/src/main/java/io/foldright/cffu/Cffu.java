@@ -2572,7 +2572,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Contract(pure = true)
     public Cffu<T> withCffuFactory(CffuFactory cffuFactory) {
-        return new Cffu<>(cffuFactory, isMinimalStage, cf);
+        return new Cffu<>(cffuFactory, isMinimalStage, CompletableFutureUtils.copy(cf));
     }
 
     /**
