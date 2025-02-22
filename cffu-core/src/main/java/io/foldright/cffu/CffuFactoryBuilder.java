@@ -113,11 +113,12 @@ public final class CffuFactoryBuilder {
         }
 
         /**
-         * Delegates execution to {@link #screened} to treat this executor same as screened executor.
+         * This method is never called directly. Instead, use the related {@link #screened}/{@link #unscreened} executor
+         * from method {@link #cffuScreenedExecutor(Executor)}/{@link #cffuUnscreenedExecutor(Executor)} respectively.
          */
         @Override
         public void execute(Runnable command) {
-            screened.execute(command);
+            throw new UnsupportedOperationException();
         }
 
         @Override
