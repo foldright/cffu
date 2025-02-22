@@ -877,6 +877,7 @@ class CffuFactoryTest {
     void test_getter() {
         assertSame(testExecutor, testCffuFac.defaultExecutor());
         assertThat(testCffuFac.cffuExecutor.toString()).startsWith("CffuExecutorWrapper, original: ");
+        assertSame(testCffuFac.cffuExecutor.screened, testCffuFac.cffuExecutor.unscreened);
 
         assertSame(testExecutor, testCffuFac.defaultExecutor());
         assertFalse(testCffuFac.forbidObtrudeMethods());
@@ -889,9 +890,16 @@ class CffuFactoryTest {
         assertSame(dummyExecutor, fac2.defaultExecutor());
         assertEquals(testCffuFac.forbidObtrudeMethods(), fac2.forbidObtrudeMethods());
 
-        final CffuFactory fac3 = testCffuFac.withDefaultExecutor(fac2.defaultExecutor());
-        assertSame(fac2.defaultExecutor(), fac3.defaultExecutor());
-        assertEquals(fac2.forbidObtrudeMethods(), fac3.forbidObtrudeMethods());
+        assertSame(fac2, fac2.withDefaultExecutor(fac2.defaultExecutor()));
+
+        final CffuFactory facCp = CffuFactory.builder(commonPool()).forbidObtrudeMethods(false).build();
+        if (CffuTestHelper.useCommonPool()) assertSame(facCp.cffuExecutor.screened, facCp.cffuExecutor.unscreened);
+        else assertNotSame(facCp.cffuExecutor.screened, facCp.cffuExecutor.unscreened);
+
+        assertEquals("input defaultExecutor should never be a CffuExecutorWrapper", assertThrowsExactly(
+                IllegalArgumentException.class, () -> fac2.withDefaultExecutor(fac2.cffuExecutor)).getMessage());
+        assertEquals("input defaultExecutor should never be a CffuMadeExecutor", assertThrowsExactly(
+                IllegalArgumentException.class, () -> fac2.withDefaultExecutor(fac2.cffuExecutor.screened)).getMessage());
     }
 
     @Test
