@@ -2,29 +2,29 @@
 
 package io.foldright.cffu
 
-import io.foldright.cffu.CffuFactoryBuilder.CffuMadeExecutor
-import org.junit.jupiter.api.Assertions.assertSame
-import org.junit.jupiter.api.Assertions.assertTrue
+import io.kotest.matchers.string.shouldEndWith
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.Executor
 import java.util.concurrent.ForkJoinPool
 
 
-fun Cffu<*>.unwrapMadeExecutor(): Executor = defaultExecutor().unwrapMadeExecutor()
+fun Cffu<*>.getOriginalExecutor(): Executor = cffuFactory().getOriginalExecutor()
+fun Cffu<*>.getScreenedExecutor(): Executor = cffuFactory().getScreenedExecutor()
 
-fun CffuFactory.unwrapMadeExecutor(): Executor = defaultExecutor().unwrapMadeExecutor()
+fun CffuFactory.getOriginalExecutor(): Executor = defaultExecutor.original
+fun CffuFactory.getScreenedExecutor(): Executor = defaultExecutor.screened
 
-fun Executor.unwrapMadeExecutor(): Executor = (this as CffuMadeExecutor).unwrap()
 
 class FooCs<T>(cf: CompletableFuture<T>) : CompletionStage<T> by cf
 
+fun useCommonPool() = ForkJoinPool.getCommonPoolParallelism() > 1
+
 fun assertIsCfDefaultExecutor(executor: Executor) {
-    val useCommonPool = ForkJoinPool.getCommonPoolParallelism() > 1
-    if (useCommonPool) {
-        assertSame(ForkJoinPool.commonPool(), executor)
+    if (useCommonPool()) {
+        executor shouldBeSameInstanceAs ForkJoinPool.commonPool()
     } else {
-        val executorClassName = executor.javaClass.name
-        assertTrue(executorClassName.endsWith("\$ThreadPerTaskExecutor"))
+        executor.javaClass.name shouldEndWith "\$ThreadPerTaskExecutor"
     }
 }

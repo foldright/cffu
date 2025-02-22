@@ -1,12 +1,19 @@
 package io.foldright.cffu.spi
 
 import java.util.concurrent.Executor
+import java.util.concurrent.atomic.AtomicLong
 
 
 class TestExecutorWrapperProvider : ExecutorWrapperProvider {
     override fun wrap(executor: Executor): Executor =
-        if (isTestExecutorWrapperEnabled()) object : Executor by executor {}
-        else executor
+        if (isTestExecutorWrapperEnabled()) Executor { command ->
+            executionCounter.incrementAndGet()
+            executor.execute(command)
+        } else executor
+
+    companion object {
+        val executionCounter = AtomicLong(0)
+    }
 }
 
 private const val PROPERTY_NAME = "cffu.test.executor.wrapper"
