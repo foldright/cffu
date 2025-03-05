@@ -2704,7 +2704,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
      * @see CffuFactory#forbidObtrudeMethods()
      */
-    @SuppressFBWarnings("NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE")
     public void obtrudeValue(@Nullable T value) {
         checkMinimalStage();
         checkForbidObtrudeMethods();
