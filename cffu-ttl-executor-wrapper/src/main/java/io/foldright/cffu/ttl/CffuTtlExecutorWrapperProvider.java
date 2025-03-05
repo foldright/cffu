@@ -22,7 +22,6 @@ public final class CffuTtlExecutorWrapperProvider implements ExecutorWrapperProv
      */
     @NonNull
     @Override
-    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     public Executor wrap(@NonNull Executor executor) {
         requireNonNull(executor, "executor is null");
         if (executor instanceof TtlEnhanced) return executor;
