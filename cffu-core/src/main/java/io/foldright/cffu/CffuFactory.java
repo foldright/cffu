@@ -71,7 +71,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new CffuFactory from this CffuFactory that reset the defaultExecutor.
+     * Returns a CffuFactory from this CffuFactory with the defaultExecutor.
      */
     @Contract(pure = true)
     public CffuFactory withDefaultExecutor(Executor defaultExecutor) {
@@ -1182,8 +1182,8 @@ public final class CffuFactory {
      * If the given stage is already a Cffu and have the this {@code CffuFactory}, this method may return the given stage.
      *
      * @throws NullPointerException if the given stage is null
-     * @see #toCffuArray(CompletionStage[])
      * @see CompletionStage#toCompletableFuture()
+     * @see #toCffuArray(CompletionStage[])
      * @see Cffu#withCffuFactory(CffuFactory)
      */
     @Contract(pure = true)

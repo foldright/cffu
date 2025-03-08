@@ -58,6 +58,13 @@ public class MultipleActionsDemo {
                 v -> v + 3
         ).thenAccept(System.out::println);
         // output: [43, 44, 45]
+        CompletableFutureUtils.thenMApplyTupleFailFastAsync(
+                completedFuture(42),
+                v -> "string" + v,
+                v -> v + 1,
+                v -> v + 2.1
+        ).thenAccept(System.out::println);
+        // output: Tuple3(string42, 43, 44.1)
 
         sleep(1000);
     }

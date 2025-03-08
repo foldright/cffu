@@ -30,6 +30,7 @@ public class AllResultsOfDemo {
 
         Cffu<List<Integer>> allResults = cffuFactory.allResultsOf(cffu1, cffu2);
         System.out.println(allResults.get());
+        // output: [21, 42]
 
         //////////////////////////////////////////////////
         // or CompletableFutureUtils#allResultsOf
@@ -42,6 +43,7 @@ public class AllResultsOfDemo {
 
         CompletableFuture<List<Integer>> allResults2 = allResultsOf(cf1, cf2);
         System.out.println(allResults2.get());
+        // output: [21, 42]
 
         ////////////////////////////////////////
         // cleanup

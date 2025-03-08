@@ -23,48 +23,63 @@ public class ConcurrencyStrategyDemo {
         // CffuFactory#anySuccessOf
         // CffuFactory#mostSuccessResultsOf
         ////////////////////////////////////////////////////////////////////////
+        final Cffu<Integer> success = cffuFactory.supplyAsync(() -> {
+            sleep(300); // sleep SHORT time
+            return 42;
+        });
         final Cffu<Integer> successAfterLongTime = cffuFactory.supplyAsync(() -> {
             sleep(3000); // sleep LONG time
-            return 42;
+            return 4242;
         });
         final Cffu<Integer> failed = cffuFactory.failedFuture(new RuntimeException("Bang!"));
 
-        Cffu<List<Integer>> failFast = cffuFactory.allResultsFailFastOf(successAfterLongTime, failed);
+        Cffu<List<Integer>> failFast = cffuFactory.allResultsFailFastOf(success, successAfterLongTime, failed);
         // fail fast without waiting successAfterLongTime
         System.out.println(failFast.exceptionNow());
+        // output: java.lang.RuntimeException: Bang!
 
-        Cffu<Integer> anySuccess = cffuFactory.anySuccessOf(successAfterLongTime, failed);
+        Cffu<Integer> anySuccess = cffuFactory.anySuccessOf(success, successAfterLongTime, failed);
         System.out.println(anySuccess.get());
+        // output: 42
 
         Cffu<List<Integer>> mostSuccess = cffuFactory.mostSuccessResultsOf(
-                0, 100, TimeUnit.MILLISECONDS, successAfterLongTime, failed);
+                -1, 100, TimeUnit.MILLISECONDS, success, successAfterLongTime, failed);
         System.out.println(mostSuccess.get());
+        // output: [42, -1, -1]
 
         ////////////////////////////////////////////////////////////////////////
         // or CompletableFutureUtils#allResultsFailFastOf
         //    CompletableFutureUtils#anySuccessOf
         //    CompletableFutureUtils#mostSuccessResultsOf
         ////////////////////////////////////////////////////////////////////////
+        final CompletableFuture<Integer> successCf = CompletableFuture.supplyAsync(() -> {
+            sleep(300); // sleep SHORT time
+            return 42;
+        });
         final CompletableFuture<Integer> successAfterLongTimeCf = CompletableFuture.supplyAsync(() -> {
             sleep(3000); // sleep LONG time
-            return 42;
+            return 4242;
         });
         final CompletableFuture<Integer> failedCf = failedFuture(new RuntimeException("Bang!"));
 
-        CompletableFuture<List<Integer>> failFast2 = allResultsFailFastOf(successAfterLongTimeCf, failedCf);
+        CompletableFuture<List<Integer>> failFast2 = allResultsFailFastOf(successCf, successAfterLongTimeCf, failedCf);
         // fail fast without waiting successAfterLongTime
         System.out.println(exceptionNow(failFast2));
+        // output: java.lang.RuntimeException: Bang!
 
-        CompletableFuture<Integer> anySuccess2 = anySuccessOf(successAfterLongTimeCf, failedCf);
+        CompletableFuture<Integer> anySuccess2 = anySuccessOf(successCf, successAfterLongTimeCf, failedCf);
         System.out.println(anySuccess2.get());
+        // output: 42
 
         CompletableFuture<List<Integer>> mostSuccess2 = mostSuccessResultsOf(
-                0, 100, TimeUnit.MILLISECONDS, successAfterLongTime, failed);
+                -1, 100, TimeUnit.MILLISECONDS, successCf, successAfterLongTime, failed);
         System.out.println(mostSuccess2.get());
+        // output: [42, -1, -1]
 
         ////////////////////////////////////////
         // cleanup
         ////////////////////////////////////////
+        System.out.println("shutting down");
         myBizExecutor.shutdown();
     }
 

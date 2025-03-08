@@ -1,5 +1,5 @@
 /**
- * the {@code Tuple} util classes for {@code Cffu} use.
+ * the {@code Tuple} utility classes for {@code Cffu} use.
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @see io.foldright.cffu.tuple.Tuple2

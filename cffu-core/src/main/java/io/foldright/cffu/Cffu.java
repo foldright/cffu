@@ -2655,8 +2655,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <li>{@link CffuFactory#completedStage(Object)}
      * <li>{@link CffuFactory#failedStage(Throwable)}
      * <li>{@link #minimalCompletionStage()}
-     * <li>{@link CffuFactory#toCffu(CompletionStage)}, this method return a {@code minimal stage}
-     *     when input a{@code minimal stage}, otherwise return a normal stage.
+     * <li>{@link CffuFactory#toCffu(CompletionStage)}, this method returns a {@code minimal stage}
+     *     when input a{@code minimal stage}, otherwise returns a normal stage.
      * </ul>
      */
     @Contract(pure = true)
