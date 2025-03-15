@@ -14,8 +14,8 @@ import static io.foldright.cffu.CompletableFutureUtils.*;
 
 @SuppressWarnings({"ThrowablePrintedToSystemOut", "SameParameterValue"})
 public class ConcurrencyStrategyDemo {
-    public static final ExecutorService myBizExecutor = Executors.newCachedThreadPool();
-    public static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
+    private static final ExecutorService myBizExecutor = Executors.newCachedThreadPool();
+    private static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
 
     public static void main(String[] args) throws Exception {
         ////////////////////////////////////////////////////////////////////////

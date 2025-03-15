@@ -1997,6 +1997,9 @@ fun <T, C : CompletionStage<out T>> C.peekAsync(action: BiConsumer<in T, in Thro
  * Waits if necessary for at most the given time for the computation to complete,
  * and then retrieves its result value when complete, or throws an (unchecked) exception if completed exceptionally.
  *
+ * **CAUTION:** If the wait timed out, this method throws an (unchecked) CompletionException
+ * with the TimeoutException as its cause; NOT throws a (checked) TimeoutException like [CompletableFuture.get].
+ *
  * **NOTE:** Calling this method
  *
  * `val result = cf.join(timeout, unit);`
@@ -2008,9 +2011,6 @@ fun <T, C : CompletionStage<out T>> C.peekAsync(action: BiConsumer<in T, in Thro
  *     .orTimeout(timeout, unit)
  *     .join();
  * ```
- *
- * **CAUTION:** If the wait timed out, this method throws an (unchecked) CompletionException
- * with the TimeoutException as its cause; NOT throws a (checked) TimeoutException like [CompletableFuture.get].
  *
  * @param timeout the maximum time to wait
  * @param unit the time unit of the timeout argument

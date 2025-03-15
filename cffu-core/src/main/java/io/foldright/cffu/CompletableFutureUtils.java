@@ -3113,10 +3113,14 @@ public final class CompletableFutureUtils {
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
      * <strong>Strongly recommend</strong> using the safe method {@link #cffuOrTimeout(CompletableFuture,
-     * long, TimeUnit, Executor)} instead of {@link CompletableFuture#orTimeout} and this backport method.<br>
-     * The only case where using {@link CompletableFuture#orTimeout} and this backport method makes sense is when
-     * all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously (i.e. the dependent
-     * CompletableFutures are created by async methods). In this case, they save one thread switch when the timeout triggers.
+     * long, TimeUnit, Executor)} instead of {@link CompletableFuture#orTimeout} and this backport method.
+     * Using {@link CompletableFuture#orTimeout} and this backport method is appropriate only when either:
+     * <ul>
+     * <li>the returned CompletableFuture is read in a blocking manner, or
+     * <li>all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
+     *    (i.e., the dependent CompletableFutures are created using async methods).
+     * </ul> In these cases, using these methods avoids an unnecessary thread switch when timeout occurs; However, these
+     * conditions are difficult to guarantee in practice especially when the returned CompletableFuture is used by other code.
      * <p>
      * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout} leaks if the future completes exceptionally,
      * more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
@@ -3136,7 +3140,7 @@ public final class CompletableFutureUtils {
         // NOTE: No need check minimal stage, because checked in cfThis.orTimeout() / cfThis.isDone() below
 
         // because of bug JDK-8303742, delegate to CF#orTimeout for Java 21+(the bug were fixed at Java 21)
-        // instead of Java 9+(CF#orTimeout were introduced in Java 9)
+        // instead of Java 9+(CF#orTimeout were introduced since Java 9)
         if (IS_JAVA21_PLUS) {
             cfThis.orTimeout(timeout, unit);
         } else {
@@ -3210,10 +3214,14 @@ public final class CompletableFutureUtils {
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
      * <strong>Strongly recommend</strong> using the safe method {@link #cffuCompleteOnTimeout(CompletableFuture, Object,
-     * long, TimeUnit, Executor)} instead of {@link CompletableFuture#completeOnTimeout} and this backport method.<br>
-     * The only case where using {@link CompletableFuture#completeOnTimeout} and this backport method makes sense is when
-     * all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously (i.e. the dependent
-     * CompletableFutures are created by async methods). In this case, they save one thread switch when the timeout triggers.
+     * long, TimeUnit, Executor)} instead of {@link CompletableFuture#completeOnTimeout} and this backport method.
+     * Using {@link CompletableFuture#completeOnTimeout} and this backport method is appropriate only when either:
+     * <ul>
+     * <li>the returned CompletableFuture is read in a blocking manner, or
+     * <li>all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
+     *    (i.e., the dependent CompletableFutures are created using async methods).
+     * </ul> In these cases, using these methods avoids an unnecessary thread switch when timeout occurs; However, these
+     * conditions are difficult to guarantee in practice especially when the returned CompletableFuture is used by other code.
      *
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
@@ -3538,6 +3546,10 @@ public final class CompletableFutureUtils {
      * Waits if necessary for at most the given time for the computation to complete,
      * and then retrieves its result value when complete, or throws an (unchecked) exception if completed exceptionally.
      * <p>
+     * <strong>CAUTION:</strong> if the wait timed out, this method throws an (unchecked) {@link CompletionException}
+     * with the {@link TimeoutException} as its cause;
+     * NOT throws a (checked) {@link TimeoutException} like {@link CompletableFuture#get(long, TimeUnit)}.
+     * <p>
      * <strong>NOTE:</strong> Calling this method
      * <p>
      * {@code result = CompletableFutureUtils.join(cf, timeout, unit);}
@@ -3548,10 +3560,6 @@ public final class CompletableFutureUtils {
      *     .orTimeout(timeout, unit)
      *     .join();
      * }</pre>
-     *
-     * <strong>CAUTION:</strong> if the wait timed out, this method throws an (unchecked) {@link CompletionException}
-     * with the {@link TimeoutException} as its cause;
-     * NOT throws a (checked) {@link TimeoutException} like {@link CompletableFuture#get(long, TimeUnit)}.
      *
      * @param timeout the maximum time to wait
      * @param unit    the time unit of the timeout argument

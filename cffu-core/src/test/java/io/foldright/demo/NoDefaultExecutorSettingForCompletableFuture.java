@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 
 
 public class NoDefaultExecutorSettingForCompletableFuture {
-    public static final ExecutorService myBizExecutor = Executors.newCachedThreadPool();
+    private static final ExecutorService myBizExecutor = Executors.newCachedThreadPool();
 
     public static void main(String[] args) {
         CompletableFuture<Void> cf1 = CompletableFuture.runAsync(
