@@ -65,12 +65,12 @@
 ☘️ **补全业务使用中缺失的功能**
 
 - 🏪 更方便的功能，如
-  - 支持返回多个输入`CF`的运行结果，而不是返回没有包含输入`CF`结果（`CompletableFuture#allOf`）  
+  - 支持返回多个输入`CF`的运行结果，而不是返回没有包含输入`CF`的结果（`CompletableFuture#allOf`）  
     如方法`allResultsFailFastOf` / `allResultsOf` / `mSupplyFailFastAsync` / `thenMApplyFailFastAsync`
-  - 支持返回多个不同类型的输入`CF`结果，而不是同一类型  
+  - 支持返回多个不同类型的输入`CF`的结果，而不是同一类型  
     如方法`allTupleFailFastOf` / `allTupleOf` / `mSupplyTupleFailFastAsync` / `thenMApplyTupleFailFastAsync`
   - 支持直接运行多个`Action`，而不是要先包装成`CompletableFuture`  
-    如方法`mSupplyTupleFailFastAsync` / `mSupplyMostSuccessAsync` / `thenMApplyTupleFailFastAsync` / `thenMRunFailFastAsync`
+    如方法`mSupplyAsync` / `mRunAsync` / `mSupplyFailFastAsync` / `thenMApplyMostSuccessTupleAsync`
   - 支持设置缺省的业务线程池并封装携带，`CffuFactory#builder(executor)`方法，而不是在异步执行时反复传入业务线程池参数
   - 支持处理指定异常类型的`catching`方法，而不是处理所有异常`Throwable`（`CompletableFuture#exceptionally`）
 - 🚦 更高效灵活的并发执行策略，如
@@ -90,7 +90,7 @@
     如`@NonNull`、`@Nullable`、`@CheckReturnValue`、`@Contract`等
 - 🧩 缺失的基本功能，除了上面面向安全而新实现的方法，还有
   - 异步异常完成，`completeExceptionallyAsync`方法
-  - 非阻塞地获取成功结果，如果`CF`失败或还在运行中则返回指定的缺省值，`getSuccessNow`方法
+  - 非阻塞地获取成功结果，对于失败的或还在运行中的`CF`则返回指定的缺省值，`getSuccessNow`方法
   - 解包装`CF`异常成业务异常，`unwrapCfException`方法
 
 ⏳ **`Backport`支持`Java 8`**，`Java 9+`高版本的所有`CF`新功能方法在`Java 8`低版本直接可用，如
@@ -155,7 +155,7 @@
 如果你不想在项目中引入新类（`Cffu`类）、觉得这样增加了复杂性的话，完全可以将`cffu`库作为一个工具类来用：
 
 - 优化`CompletableFuture`使用的工具方法在业务项目中很常见
-- `CompletableFutureUtils`提供了一系列实用可靠高效安全的工具方法
+- `CompletableFutureUtils`提供了一系列实用高效安全可靠的工具方法
 - 这种使用方式有些`cffu`功能没有提供（也没有想到好的实现方案）  
   如支持设置缺省的业务线程池、禁止强制篡改
 
@@ -175,7 +175,7 @@
 > - `CompletableFuture`类的所有实例方法都在`Cffu`类中有实现，且有相同的方法签名与功能
 > - `CompletableFuture`类的所有静态方法都在`CffuFactory`类中有实现，且有相同的方法签名与功能
 
-2\) 如果不能修改使用`CompletableFuture`的代码（如其它库返回的`CF`）
+2\) 如果不能修改使用`CompletableFuture`的代码（如在外部库中返回的`CF`）
 
 使用[`CffuFactory.toCffu(CompletionStage)`方法](https://foldright.io/api-docs/cffu/1.1.0/io/foldright/cffu/CffuFactory.html#toCffu(java.util.concurrent.CompletionStage))，将`CompletableFuture`或`CompletionStage`转换成`Cffu`类型。
 
@@ -232,8 +232,8 @@
 
 ```java
 public class AllResultsOfDemo {
-  public static final Executor myBizExecutor = Executors.newCachedThreadPool();
-  public static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
+  private static final ExecutorService myBizExecutor = Executors.newCachedThreadPool();
+  private static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
 
   public static void main(String[] args) throws Exception {
     //////////////////////////////////////////////////
@@ -276,8 +276,8 @@ public class AllResultsOfDemo {
 
 ```java
 public class AllTupleOfDemo {
-  public static final Executor myBizExecutor = Executors.newCachedThreadPool();
-  public static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
+  private static final ExecutorService myBizExecutor = Executors.newCachedThreadPool();
+  private static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
 
   public static void main(String[] args) throws Exception {
     //////////////////////////////////////////////////
@@ -351,8 +351,8 @@ public class NoDefaultExecutorSettingForCompletableFuture {
 
 ```java
 public class DefaultExecutorSettingForCffu {
-  public static final Executor myBizExecutor = Executors.newCachedThreadPool();
-  public static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
+  private static final ExecutorService myBizExecutor = Executors.newCachedThreadPool();
+  private static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
 
   public static void main(String[] args) {
     Cffu<Void> cf1 = cffuFactory.runAsync(() -> System.out.println("doing a long time work!"));
@@ -372,7 +372,7 @@ public class DefaultExecutorSettingForCffu {
 ### 2.3 高效灵活的并发执行策略（`AllFailFast` / `AnySuccess` / `AllSuccess` / `MostSuccess`）
 
 - `CompletableFuture`的`allOf`方法会等待所有输入`CF`运行完成；即使有`CF`失败了也要等待后续`CF`都运行完成，再返回一个失败的`CF`。
-  - 对于业务逻辑来说，这样失败且继续等待的策略（`AllComplete`），减慢了业务响应性；会希望如果有输入`CF`失败了，则快速失败不再做于事无补的等待
+  - 对于业务逻辑来说，这样失败且继续等待的策略（`AllComplete`），减慢了业务响应性；会希望当有输入`CF`失败了，则快速失败不再做于事无补的等待
   - `cffu`提供了相应的`allResultsFailFastOf`等方法，支持`AllFailFast`并发执行策略
   - `allOf` / `allResultsFailFastOf`两者都是，只有当所有的输入`CF`都成功时，才返回成功结果
 - `CompletableFuture`的`anyOf`方法返回首个完成的`CF`，不会等待后续没有完成的`CF`赛马模式；即使首个完成的`CF`是失败的，也会返回这个失败的`CF`结果。
@@ -403,8 +403,8 @@ public class DefaultExecutorSettingForCffu {
 
 ```java
 public class ConcurrencyStrategyDemo {
-  public static final Executor myBizExecutor = Executors.newCachedThreadPool();
-  public static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
+  private static final ExecutorService myBizExecutor = Executors.newCachedThreadPool();
+  private static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
 
   public static void main(String[] args) throws Exception {
     ////////////////////////////////////////////////////////////////////////
@@ -507,9 +507,20 @@ public class MultipleActionsDemo {
 
 ```java
 public class MultipleActionsDemo {
+  private static final ExecutorService myBizExecutor = Executors.newCachedThreadPool();
+  private static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
+
   static void thenMApplyAsyncDemo() {
     // wrap tasks to CompletableFuture first, AWKWARD! 😖
     completedFuture(42).thenCompose(v ->
+        CompletableFutureUtils.allResultsFailFastOf(
+            CompletableFuture.supplyAsync(() -> v + 1),
+            CompletableFuture.supplyAsync(() -> v + 2),
+            CompletableFuture.supplyAsync(() -> v + 3)
+        )
+    ).thenAccept(System.out::println);
+    // output: [43, 44, 45]
+    cffuFactory.completedFuture(42).thenCompose(v ->
         CompletableFutureUtils.allResultsFailFastOf(
             CompletableFuture.supplyAsync(() -> v + 1),
             CompletableFuture.supplyAsync(() -> v + 2),
@@ -526,8 +537,21 @@ public class MultipleActionsDemo {
         v -> v + 3
     ).thenAccept(System.out::println);
     // output: [43, 44, 45]
-    CompletableFutureUtils.thenMApplyTupleFailFastAsync(
+    cffuFactory.completedFuture(42).thenMApplyFailFastAsync(
+        v -> v + 1,
+        v -> v + 2,
+        v -> v + 3
+    ).thenAccept(System.out::println);
+    // output: [43, 44, 45]
+
+    CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(
         completedFuture(42),
+        v -> "string" + v,
+        v -> v + 1,
+        v -> v + 2.1
+    ).thenAccept(System.out::println);
+    // output: Tuple3(string42, 43, 44.1)
+    cffuFactory.completedFuture(42).thenMApplyAllSuccessTupleAsync(
         v -> "string" + v,
         v -> v + 1,
         v -> v + 2.1
@@ -584,6 +608,7 @@ public class MultipleActionsDemo {
 - 演示问题的[`DelayDysfunctionDemo.java`](https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java)
 - `cffu backport`方法的`JavaDoc`： [`CFU#orTimeout()`](https://foldright.io/api-docs/cffu/1.1.0/io/foldright/cffu/CompletableFutureUtils.html#orTimeout(C,long,java.util.concurrent.TimeUnit))
   / [`CFU#completeOnTimeout()`](https://foldright.io/api-docs/cffu/1.1.0/io/foldright/cffu/CompletableFutureUtils.html#completeOnTimeout(C,T,long,java.util.concurrent.TimeUnit))
+- 文章[`CompletableFuture`超时功能使用不当直接生产事故](https://juejin.cn/post/7411686792342274089)
 
 ### 2.8 支持超时的`join`方法
 
@@ -598,7 +623,7 @@ public class MultipleActionsDemo {
 
 ### 2.9 返回具体类型的`anyOf`方法
 
-`CompletableFuture`的`anyOf()`方法返回类型是`Object`，丢失具体类型，不类型安全；使用返回值时需要转型也不方便。
+`CompletableFuture`的`anyOf()`方法返回类型是`Object`，丢失具体类型，使用返回值时需要转型操作不方便，也不类型安全。
 
 `cffu`提供的`anySuccessOf()` / `anyOf()`方法，返回具体类型`T`，而不是返回`Object`。
 

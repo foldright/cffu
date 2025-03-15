@@ -1,8 +1,11 @@
 package io.foldright.demo;
 
+import io.foldright.cffu.CffuFactory;
 import io.foldright.cffu.CompletableFutureUtils;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static io.foldright.test_utils.TestUtils.sleep;
 import static java.util.concurrent.CompletableFuture.completedFuture;
@@ -16,6 +19,9 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  * }
  */
 public class MultipleActionsDemo {
+    private static final ExecutorService myBizExecutor = Executors.newCachedThreadPool();
+    private static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
+
     public static void main(String[] args) {
         mRunAsyncDemo();
         thenMApplyAsyncDemo();
@@ -49,6 +55,14 @@ public class MultipleActionsDemo {
                 )
         ).thenAccept(System.out::println);
         // output: [43, 44, 45]
+        cffuFactory.completedFuture(42).thenCompose(v ->
+                CompletableFutureUtils.allResultsFailFastOf(
+                        CompletableFuture.supplyAsync(() -> v + 1),
+                        CompletableFuture.supplyAsync(() -> v + 2),
+                        CompletableFuture.supplyAsync(() -> v + 3)
+                )
+        ).thenAccept(System.out::println);
+        // output: [43, 44, 45]
 
         // just run multiple actions, fresh and cool 😋
         CompletableFutureUtils.thenMApplyFailFastAsync(
@@ -58,8 +72,21 @@ public class MultipleActionsDemo {
                 v -> v + 3
         ).thenAccept(System.out::println);
         // output: [43, 44, 45]
-        CompletableFutureUtils.thenMApplyTupleFailFastAsync(
+        cffuFactory.completedFuture(42).thenMApplyFailFastAsync(
+                v -> v + 1,
+                v -> v + 2,
+                v -> v + 3
+        ).thenAccept(System.out::println);
+        // output: [43, 44, 45]
+
+        CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(
                 completedFuture(42),
+                v -> "string" + v,
+                v -> v + 1,
+                v -> v + 2.1
+        ).thenAccept(System.out::println);
+        // output: Tuple3(string42, 43, 44.1)
+        cffuFactory.completedFuture(42).thenMApplyAllSuccessTupleAsync(
                 v -> "string" + v,
                 v -> v + 1,
                 v -> v + 2.1

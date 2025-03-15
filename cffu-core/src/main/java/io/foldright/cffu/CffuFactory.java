@@ -71,7 +71,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a CffuFactory from this CffuFactory with the defaultExecutor.
+     * Returns a new CffuFactory from this CffuFactory with the defaultExecutor.
      */
     @Contract(pure = true)
     public CffuFactory withDefaultExecutor(Executor defaultExecutor) {

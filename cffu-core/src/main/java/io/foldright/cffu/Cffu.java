@@ -1673,15 +1673,19 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * <strong>CAUTION:</strong> This method is <strong>UNSAFE</strong>!
      * <p>
-     * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
+     * When the wait timed out, the subsequent non-async actions of the dependent Cffus/CompletableFutures are performed
      * in CompletableFuture's internal <strong>SINGLE-thread delay executor</strong> (including timeout functionality).
      * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
      * <strong>Strongly recommend</strong> using the safe method {@link #orTimeout(long, TimeUnit)} instead of this method.
-     * <br>The only case where using this method makes sense is when all subsequent actions of dependent Cffus
-     * are guaranteed to execute asynchronously (i.e. the dependent Cffus are created by async methods).
-     * In this case, they save one thread switch when the timeout triggers.
+     * Using this method is appropriate only when either:
+     * <ul>
+     * <li>the returned Cffu is read in a blocking manner, or
+     * <li>all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously
+     *    (i.e., the dependent Cffus/CompletableFutures are created using async methods).
+     * </ul> In these cases, using these methods avoids an unnecessary thread switch when timeout occurs; However,
+     * these conditions are difficult to guarantee in practice especially when the returned Cffu is used by other code.
      * <p>
      * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout} leaks if the future completes exceptionally,
      * more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
@@ -1729,15 +1733,20 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * <strong>CAUTION:</strong> This method is <strong>UNSAFE</strong>!
      * <p>
-     * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
+     * When the wait timed out, the subsequent non-async actions of the dependent Cffus/CompletableFutures are performed
      * in CompletableFuture's internal <strong>SINGLE-thread delay executor</strong> (including timeout functionality).
      * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
      * <strong>Strongly recommend</strong> using the safe method {@link #completeOnTimeout(Object, long, TimeUnit)}
-     * instead of this method.<br>The only case where using this method makes sense is when all subsequent actions of
-     * dependent Cffus are guaranteed to execute asynchronously (i.e. the dependent Cffus are created by async methods).
-     * In this case, they save one thread switch when the timeout triggers.
+     * instead of this method.
+     * Using this method is appropriate only when either:
+     * <ul>
+     * <li>the returned Cffu is read in a blocking manner, or
+     * <li>all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously
+     *    (i.e., the dependent Cffus/CompletableFutures are created using async methods).
+     * </ul> In these cases, using these methods avoids an unnecessary thread switch when timeout occurs; However, these
+     * conditions are difficult to guarantee in practice especially when the returned Cffu is used by other code.
      *
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
@@ -2238,6 +2247,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Waits if necessary for at most the given time for the computation to complete,
      * and then retrieves its result value when complete, or throws an (unchecked) exception if completed exceptionally.
      * <p>
+     * <strong>CAUTION:</strong> if the wait timed out, this method throws an (unchecked) {@link CompletionException}
+     * with the {@link TimeoutException} as its cause;
+     * NOT throws a (checked) {@link TimeoutException} like {@link #get(long, TimeUnit)}.
+     * <p>
      * <strong>NOTE:</strong> Calling this method
      * <p>
      * {@code result = cffu.join(timeout, unit);}
@@ -2248,10 +2261,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *     .orTimeout(timeout, unit)
      *     .join();
      * }</pre>
-     *
-     * <strong>CAUTION:</strong> if the wait timed out, this method throws an (unchecked) {@link CompletionException}
-     * with the {@link TimeoutException} as its cause;
-     * NOT throws a (checked) {@link TimeoutException} like {@link #get(long, TimeUnit)}.
      *
      * @param timeout the maximum time to wait
      * @param unit    the time unit of the timeout argument
@@ -2543,6 +2552,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu with the given defaultExecutor.
      * <p>
+     * Note: The provided defaultExecutor will only affect subsequent newly created Cffu instances,
+     * and will not affect this Cffu instance.
+     * <p>
      * demo code about re-config methods of Cffu:
      *
      * <pre>{@code cffu2 = cffu
@@ -2560,6 +2572,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     /**
      * Returns a new Cffu with the given CffuFactory(contained configuration).
      * <p>
+     * Note: The provided CffuFactory configuration will only affect subsequent newly created Cffu instances,
+     * and will not affect this Cffu instance.
+     * <p>
      * demo code about re-config methods of Cffu:
      *
      * <pre>{@code cffu2 = cffu
@@ -2572,6 +2587,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Contract(pure = true)
     public Cffu<T> withCffuFactory(CffuFactory cffuFactory) {
+        // NOTE: Copy the underlying cf to ensure this method/with* methods create new Cffu instance with NEW cf instance,
+        //       preventing modifications/write methods to the new returned Cffu instance from affecting this Cffu in surprise
         return new Cffu<>(cffuFactory, isMinimalStage, CompletableFutureUtils.copy(cf));
     }
 
