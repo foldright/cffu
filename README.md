@@ -176,7 +176,7 @@
 
 2\) 如果不能修改使用`CompletableFuture`的代码（如其它库返回的`CF`）
 
-使用[`CffuFactory.toCffu(CompletionStage)`方法](https://foldright.io/api-docs/cffu/1.0.3/io/foldright/cffu/CffuFactory.html#toCffu(java.util.concurrent.CompletionStage))，将`CompletableFuture`或`CompletionStage`转换成`Cffu`类型。
+使用[`CffuFactory.toCffu(CompletionStage)`方法](https://foldright.io/api-docs/cffu/1.1.0/io/foldright/cffu/CffuFactory.html#toCffu(java.util.concurrent.CompletionStage))，将`CompletableFuture`或`CompletionStage`转换成`Cffu`类型。
 
 ### 1.3 库依赖（包含`CompletableFutureUtils`工具类）
 
@@ -186,18 +186,18 @@
   <dependency>
     <groupId>io.foldright</groupId>
     <artifactId>cffu</artifactId>
-    <version>1.0.3</version>
+    <version>1.1.0</version>
   </dependency>
   ```
 - For `Gradle` projects:
 
   Gradle Kotlin DSL
   ```groovy
-  implementation("io.foldright:cffu:1.0.3")
+  implementation("io.foldright:cffu:1.1.0")
   ```
   Gradle Groovy DSL
   ```groovy
-  implementation 'io.foldright:cffu:1.0.3'
+  implementation 'io.foldright:cffu:1.1.0'
   ```
 
 > `cffu`也支持`Kotlin`扩展方法的使用方式，参见[`cffu-kotlin/README.md`](cffu-kotlin/README.md)；使用方式的对比示例参见[`docs/usage-mode-demo.md`](docs/usage-mode-demo.md)。
@@ -544,7 +544,7 @@ public class MultipleActionsDemo {
 
 应该只处理当前业务自己清楚明确能恢复的具体异常，由外层处理其它的异常；避免掩盖Bug或是错误地处理了自己不能恢复的异常。
 
-`cffu`提供了相应的[`catching*`方法](https://foldright.io/api-docs/cffu/1.0.3/io/foldright/cffu/CompletableFutureUtils.html#catching(C,java.lang.Class,java.util.function.Function))，支持指定要处理异常类型；相比`CF#exceptionally`方法新加了一个异常类型参数，使用方式类似，不附代码示例。
+`cffu`提供了相应的[`catching*`方法](https://foldright.io/api-docs/cffu/1.1.0/io/foldright/cffu/CompletableFutureUtils.html#catching(C,java.lang.Class,java.util.function.Function))，支持指定要处理异常类型；相比`CF#exceptionally`方法新加了一个异常类型参数，使用方式类似，不附代码示例。
 
 ### 2.6 `Backport`支持`Java 8`
 
@@ -571,18 +571,18 @@ public class MultipleActionsDemo {
 
 `cffu`库提供了超时执行安全的新实现方法：
 
-- [`Cffu#orTimeout()`](https://foldright.io/api-docs/cffu/1.0.3/io/foldright/cffu/Cffu.html#orTimeout(long,java.util.concurrent.TimeUnit))
-  / [`Cffu#completeOnTimeoutTimeout()`](https://foldright.io/api-docs/cffu/1.0.3/io/foldright/cffu/Cffu.html#completeOnTimeout(java.lang.Object,long,java.util.concurrent.TimeUnit))
-- [`CFU#cffuOrTimeout()`](https://foldright.io/api-docs/cffu/1.0.3/io/foldright/cffu/CompletableFutureUtils.html#cffuOrTimeout(C,long,java.util.concurrent.TimeUnit))
-  / [`CFU#cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.3/io/foldright/cffu/CompletableFutureUtils.html#cffuCompleteOnTimeout(C,T,long,java.util.concurrent.TimeUnit))
+- [`Cffu#orTimeout()`](https://foldright.io/api-docs/cffu/1.1.0/io/foldright/cffu/Cffu.html#orTimeout(long,java.util.concurrent.TimeUnit))
+  / [`Cffu#completeOnTimeoutTimeout()`](https://foldright.io/api-docs/cffu/1.1.0/io/foldright/cffu/Cffu.html#completeOnTimeout(java.lang.Object,long,java.util.concurrent.TimeUnit))
+- [`CFU#cffuOrTimeout()`](https://foldright.io/api-docs/cffu/1.1.0/io/foldright/cffu/CompletableFutureUtils.html#cffuOrTimeout(C,long,java.util.concurrent.TimeUnit))
+  / [`CFU#cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu/1.1.0/io/foldright/cffu/CompletableFutureUtils.html#cffuCompleteOnTimeout(C,T,long,java.util.concurrent.TimeUnit))
 
 保证业务逻辑不会在`CF`的单线程`ScheduledThreadPoolExecutor`中执行。
 
 更多说明参见：
 
 - 演示问题的[`DelayDysfunctionDemo.java`](https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java)
-- `cffu backport`方法的`JavaDoc`： [`CFU#orTimeout()`](https://foldright.io/api-docs/cffu/1.0.3/io/foldright/cffu/CompletableFutureUtils.html#orTimeout(C,long,java.util.concurrent.TimeUnit))
-  / [`CFU#completeOnTimeout()`](https://foldright.io/api-docs/cffu/1.0.3/io/foldright/cffu/CompletableFutureUtils.html#completeOnTimeout(C,T,long,java.util.concurrent.TimeUnit))
+- `cffu backport`方法的`JavaDoc`： [`CFU#orTimeout()`](https://foldright.io/api-docs/cffu/1.1.0/io/foldright/cffu/CompletableFutureUtils.html#orTimeout(C,long,java.util.concurrent.TimeUnit))
+  / [`CFU#completeOnTimeout()`](https://foldright.io/api-docs/cffu/1.1.0/io/foldright/cffu/CompletableFutureUtils.html#completeOnTimeout(C,T,long,java.util.concurrent.TimeUnit))
 
 ### 2.8 支持超时的`join`方法
 
@@ -637,18 +637,18 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>1.0.3</version>
+      <version>1.1.0</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     Gradle Kotlin DSL
     ```groovy
-    implementation("io.foldright:cffu:1.0.3")
+    implementation("io.foldright:cffu:1.1.0")
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation 'io.foldright:cffu:1.0.3'
+    implementation 'io.foldright:cffu:1.1.0'
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local)的[`cffu executor wrapper SPI`实现](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -657,7 +657,7 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>1.0.3</version>
+      <version>1.1.0</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -665,11 +665,11 @@ public class MultipleActionsDemo {
 
     Gradle Kotlin DSL
     ```groovy
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.0.3")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.1.0")
     ```
     Gradle Groovy DSL
     ```groovy
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.0.3'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.1.0'
     ```
 - `cffu bom`:
   - For `Maven` projects:
@@ -678,7 +678,7 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-bom</artifactId>
-      <version>1.0.3</version>
+      <version>1.1.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -687,11 +687,11 @@ public class MultipleActionsDemo {
 
     Gradle Kotlin DSL
     ```groovy
-    implementation(platform("io.foldright:cffu-bom:1.0.3"))
+    implementation(platform("io.foldright:cffu-bom:1.1.0"))
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation platform('io.foldright:cffu-bom:1.0.3')
+    implementation platform('io.foldright:cffu-bom:1.1.0')
     ```
 
 # 📚 更多资料
