@@ -2683,7 +2683,7 @@ public final class CompletableFutureUtils {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(fn, "fn is null");
 
-        return bothFailFast0(cfThis, other).thenApply(t -> fn.apply(t._1, t._2));
+        return bothFailFast0(cfThis, other, t -> fn.apply(t._1, t._2), null);
     }
 
     /**
@@ -2719,7 +2719,7 @@ public final class CompletableFutureUtils {
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
-        return bothFailFast0(cfThis, other).thenApplyAsync(t -> fn.apply(t._1, t._2), executor);
+        return bothFailFast0(cfThis, other, t -> fn.apply(t._1, t._2), executor);
     }
 
     private static void requireThisAndOtherNonNull(CompletionStage<?> cfThis, CompletionStage<?> other) {
@@ -2733,8 +2733,9 @@ public final class CompletableFutureUtils {
      * return cf is always CompletableFuture, does NOT keep the runtime type of input `cfThis` argument.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <T1, T2> CompletableFuture<Tuple2<T1, T2>> bothFailFast0(
-            CompletableFuture<? extends T1> cfThis, CompletionStage<? extends T2> other) {
+    private static <T1, T2, U> CompletableFuture<U> bothFailFast0(
+            CompletableFuture<? extends T1> cfThis, CompletionStage<? extends T2> other,
+            Function<Tuple2<T1, T2>, ? extends U> fn, @Nullable Executor asyncExecutor) {
         CompletableFuture thisSuccessOrBeIncomplete = exceptionallyCompose(cfThis, ex -> new CompletableFuture());
         CompletionStage otherSuccessOrBeIncomplete = exceptionallyCompose(other, ex -> new CompletableFuture());
         CompletableFuture cfValue = thisSuccessOrBeIncomplete.thenCombine(otherSuccessOrBeIncomplete, Tuple2::of);
@@ -2743,7 +2744,7 @@ public final class CompletableFutureUtils {
         CompletionStage otherFailedOrBeIncomplete = other.thenCompose(v -> new CompletableFuture());
         CompletableFuture cfEx = thisFailedOrBeIncomplete.applyToEither(otherFailedOrBeIncomplete, v -> null);
 
-        return cfValue.applyToEither(cfEx, x -> x);
+        return asyncExecutor == null ? cfValue.applyToEither(cfEx, fn) : cfValue.applyToEitherAsync(cfEx, fn, asyncExecutor);
     }
 
     /**
@@ -2761,7 +2762,10 @@ public final class CompletableFutureUtils {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
 
-        return bothFailFast0(cfThis, other).thenAccept(t -> action.accept(t._1, t._2));
+        return bothFailFast0(cfThis, other, t -> {
+            action.accept(t._1, t._2);
+            return null;
+        }, null);
     }
 
     /**
@@ -2797,7 +2801,10 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return bothFailFast0(cfThis, other).thenAcceptAsync(t -> action.accept(t._1, t._2), executor);
+        return bothFailFast0(cfThis, other, t -> {
+            action.accept(t._1, t._2);
+            return null;
+        }, executor);
     }
 
     /**
@@ -2813,7 +2820,10 @@ public final class CompletableFutureUtils {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
 
-        return bothFailFast0(cfThis, other).thenRun(action);
+        return bothFailFast0(cfThis, other, t -> {
+            action.run();
+            return null;
+        }, null);
     }
 
     /**
@@ -2845,7 +2855,10 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return bothFailFast0(cfThis, other).thenRunAsync(action, executor);
+        return bothFailFast0(cfThis, other, t -> {
+            action.run();
+            return null;
+        }, executor);
     }
 
     // endregion
@@ -2869,7 +2882,7 @@ public final class CompletableFutureUtils {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(fn, "fn is null");
 
-        return eitherSuccess0(cfThis, other).thenApply(fn);
+        return eitherSuccess0(cfThis, other, fn, null);
     }
 
     /**
@@ -2900,7 +2913,7 @@ public final class CompletableFutureUtils {
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
-        return eitherSuccess0(cfThis, other).thenApplyAsync(fn, executor);
+        return eitherSuccess0(cfThis, other, fn, executor);
     }
 
     /**
@@ -2909,8 +2922,9 @@ public final class CompletableFutureUtils {
      * return cf is always CompletableFuture, does NOT keep the runtime type of input `cfThis` argument.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <T> CompletableFuture<T> eitherSuccess0(
-            CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other) {
+    private static <T, U> CompletableFuture<U> eitherSuccess0(
+            CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other,
+            Function<T, ? extends U> fn, @Nullable Executor asyncExecutor) {
         CompletableFuture thisSuccessOrBeIncomplete = exceptionallyCompose(cfThis, ex -> new CompletableFuture());
         CompletionStage otherSuccessOrBeIncomplete = exceptionallyCompose(other, ex -> new CompletableFuture());
         CompletableFuture cfValue = thisSuccessOrBeIncomplete.applyToEither(otherSuccessOrBeIncomplete, x -> x);
@@ -2919,7 +2933,7 @@ public final class CompletableFutureUtils {
         CompletionStage otherFailedOrBeIncomplete = other.thenCompose(v -> new CompletableFuture());
         CompletableFuture cfEx = thisFailedOrBeIncomplete.thenCombine(otherFailedOrBeIncomplete, (v1, v2) -> null);
 
-        return cfValue.applyToEither(cfEx, x -> x);
+        return asyncExecutor == null ? cfValue.applyToEither(cfEx, fn) : cfValue.applyToEitherAsync(cfEx, fn, asyncExecutor);
     }
 
     /**
@@ -2933,7 +2947,10 @@ public final class CompletableFutureUtils {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
 
-        return eitherSuccess0(cfThis, other).thenAccept(action);
+        return eitherSuccess0(cfThis, other, v -> {
+            action.accept(v);
+            return null;
+        }, null);
     }
 
     /**
@@ -2962,7 +2979,10 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return eitherSuccess0(cfThis, other).thenAcceptAsync(action, executor);
+        return eitherSuccess0(cfThis, other, v -> {
+            action.accept(v);
+            return null;
+        }, executor);
     }
 
     /**
@@ -2978,7 +2998,10 @@ public final class CompletableFutureUtils {
         requireThisAndOtherNonNull(cfThis, other);
         requireNonNull(action, "action is null");
 
-        return eitherSuccess0(cfThis, other).thenRun(action);
+        return eitherSuccess0(cfThis, other, v -> {
+            action.run();
+            return null;
+        }, null);
     }
 
     /**
@@ -3010,7 +3033,10 @@ public final class CompletableFutureUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return eitherSuccess0(cfThis, other).thenRunAsync(action, executor);
+        return eitherSuccess0(cfThis, other, v -> {
+            action.run();
+            return null;
+        }, executor);
     }
 
     // endregion
