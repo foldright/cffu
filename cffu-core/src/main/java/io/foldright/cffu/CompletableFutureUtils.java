@@ -64,6 +64,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyFailFastAsync(Supplier<? extends T>... suppliers) {
         return mSupplyFailFastAsync(ASYNC_POOL, suppliers);
@@ -75,6 +76,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyFailFastAsync(
             Executor executor, Supplier<? extends T>... suppliers) {
@@ -93,6 +95,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyAllSuccessAsync(
             @Nullable T valueIfFailed, Supplier<? extends T>... suppliers) {
@@ -105,6 +108,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyAllSuccessAsync(
             Executor executor, @Nullable T valueIfFailed, Supplier<? extends T>... suppliers) {
@@ -123,6 +127,7 @@ public final class CompletableFutureUtils {
      * See the {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[]) mostSuccessResultsOf}
      * documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyMostSuccessAsync(
             @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit, Supplier<? extends T>... suppliers) {
@@ -136,6 +141,7 @@ public final class CompletableFutureUtils {
      * See the {@link #mostSuccessResultsOf(Executor, Object, long, TimeUnit, CompletionStage[]) mostSuccessResultsOf}
      * documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyMostSuccessAsync(
             Executor executor, @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit,
@@ -155,6 +161,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyAsync(Supplier<? extends T>... suppliers) {
         return mSupplyAsync(ASYNC_POOL, suppliers);
@@ -166,6 +173,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyAsync(Executor executor, Supplier<? extends T>... suppliers) {
         requireNonNull(executor, "executor is null");
@@ -183,6 +191,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<T> mSupplyAnySuccessAsync(Supplier<? extends T>... suppliers) {
         return mSupplyAnySuccessAsync(ASYNC_POOL, suppliers);
@@ -194,6 +203,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<T> mSupplyAnySuccessAsync(
             Executor executor, Supplier<? extends T>... suppliers) {
@@ -212,6 +222,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<T> mSupplyAnyAsync(Supplier<? extends T>... suppliers) {
         return mSupplyAnyAsync(ASYNC_POOL, suppliers);
@@ -223,6 +234,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<T> mSupplyAnyAsync(Executor executor, Supplier<? extends T>... suppliers) {
         requireNonNull(executor, "executor is null");
@@ -244,6 +256,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static CompletableFuture<Void> mRunFailFastAsync(Runnable... actions) {
         return mRunFailFastAsync(ASYNC_POOL, actions);
     }
@@ -254,6 +267,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static CompletableFuture<Void> mRunFailFastAsync(Executor executor, Runnable... actions) {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
@@ -296,6 +310,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static CompletableFuture<Void> mRunAnySuccessAsync(Runnable... actions) {
         return mRunAnySuccessAsync(ASYNC_POOL, actions);
     }
@@ -306,6 +321,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static CompletableFuture<Void> mRunAnySuccessAsync(Executor executor, Runnable... actions) {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
@@ -322,6 +338,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static CompletableFuture<Void> mRunAnyAsync(Runnable... actions) {
         return mRunAnyAsync(ASYNC_POOL, actions);
     }
@@ -332,6 +349,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static CompletableFuture<Void> mRunAnyAsync(Executor executor, Runnable... actions) {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
@@ -354,6 +372,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         return mSupplyTupleFailFastAsync(ASYNC_POOL, supplier1, supplier2);
@@ -362,6 +381,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         requireNonNull(executor, "executor is null");
@@ -373,6 +393,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
         return mSupplyTupleFailFastAsync(ASYNC_POOL, supplier1, supplier2, supplier3);
@@ -381,6 +402,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyTupleFailFastAsync(
             Executor executor,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -393,6 +415,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
@@ -402,6 +425,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
@@ -414,6 +438,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #mSupplyFailFastAsync(Supplier[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleFailFastAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
@@ -423,6 +448,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
@@ -473,6 +499,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyAllSuccessTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         return mSupplyAllSuccessTupleAsync(ASYNC_POOL, supplier1, supplier2);
@@ -484,6 +511,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyAllSuccessTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         requireNonNull(executor, "executor is null");
@@ -498,6 +526,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyAllSuccessTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
         return mSupplyAllSuccessTupleAsync(ASYNC_POOL, supplier1, supplier2, supplier3);
@@ -509,6 +538,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyAllSuccessTupleAsync(
             Executor executor,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -524,6 +554,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyAllSuccessTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
@@ -536,6 +567,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyAllSuccessTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
@@ -551,6 +583,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyAllSuccessTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
@@ -563,6 +596,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyAllSuccessTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
@@ -594,6 +628,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyMostSuccessTupleAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         return mSupplyMostSuccessTupleAsync(ASYNC_POOL, timeout, unit, supplier1, supplier2);
@@ -606,6 +641,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
@@ -623,6 +659,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyMostSuccessTupleAsync(
             long timeout, TimeUnit unit,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -636,6 +673,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -653,6 +691,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyMostSuccessTupleAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
@@ -666,6 +705,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
@@ -683,6 +723,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyMostSuccessTupleAsync(
             long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
@@ -697,6 +738,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
@@ -741,6 +783,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #mSupplyAsync(Supplier[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         return mSupplyTupleAsync(ASYNC_POOL, supplier1, supplier2);
@@ -749,6 +792,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
         requireNonNull(executor, "executor is null");
@@ -760,6 +804,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #mSupplyAsync(Supplier[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
         return mSupplyTupleAsync(ASYNC_POOL, supplier1, supplier2, supplier3);
@@ -768,6 +813,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mSupplyTupleAsync(
             Executor executor,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
@@ -780,6 +826,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #mSupplyAsync(Supplier[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
@@ -789,6 +836,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
@@ -801,6 +849,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #mSupplyAsync(Supplier[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleAsync(
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
@@ -810,6 +859,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
@@ -1570,6 +1620,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
@@ -1587,6 +1638,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
@@ -1611,6 +1663,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
@@ -1628,6 +1681,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
@@ -1651,6 +1705,7 @@ public final class CompletableFutureUtils {
      * See the {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
      * mostSuccessResultsOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, @Nullable U valueIfNotSuccess,
@@ -1666,6 +1721,7 @@ public final class CompletableFutureUtils {
      * See the {@link #mostSuccessResultsOf(Executor, Object, long, TimeUnit, CompletionStage[])
      * mostSuccessResultsOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, @Nullable U valueIfNotSuccess,
@@ -1688,6 +1744,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
@@ -1705,6 +1762,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
@@ -1726,6 +1784,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
@@ -1743,6 +1802,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
@@ -1764,6 +1824,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
@@ -1781,6 +1842,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
@@ -1812,6 +1874,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptFailFastAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
@@ -1829,6 +1892,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
@@ -1898,6 +1962,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
@@ -1915,6 +1980,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
@@ -1941,6 +2007,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnyAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
@@ -1958,6 +2025,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
@@ -1983,6 +2051,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
     public static CompletableFuture<Void> thenMRunFailFastAsync(CompletableFuture<?> cfThis, Runnable... actions) {
         return thenMRunFailFastAsync(cfThis, defaultExecutor(cfThis), actions);
     }
@@ -1993,6 +2062,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
     public static CompletableFuture<Void> thenMRunFailFastAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         requireNonNull(cfThis, "cfThis is null");
@@ -2043,6 +2113,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
     public static CompletableFuture<Void> thenMRunAnySuccessAsync(CompletableFuture<?> cfThis, Runnable... actions) {
         return thenMRunAnySuccessAsync(cfThis, defaultExecutor(cfThis), actions);
     }
@@ -2053,6 +2124,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
     public static CompletableFuture<Void> thenMRunAnySuccessAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         requireNonNull(cfThis, "cfThis is null");
@@ -2073,6 +2145,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
     public static CompletableFuture<Void> thenMRunAnyAsync(CompletableFuture<?> cfThis, Runnable... actions) {
         return thenMRunAnyAsync(cfThis, defaultExecutor(cfThis), actions);
     }
@@ -2083,6 +2156,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
     public static CompletableFuture<Void> thenMRunAnyAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         requireNonNull(cfThis, "cfThis is null");
@@ -2105,6 +2179,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -2114,6 +2189,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -2128,6 +2204,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
@@ -2137,6 +2214,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
@@ -2151,6 +2229,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -2161,6 +2240,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -2176,6 +2256,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #thenMApplyFailFastAsync(CompletableFuture, Function[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
@@ -2186,6 +2267,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #thenMApplyFailFastAsync(CompletableFuture, Executor, Function[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
@@ -2205,6 +2287,7 @@ public final class CompletableFutureUtils {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyAllSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -2218,6 +2301,7 @@ public final class CompletableFutureUtils {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyAllSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -2236,6 +2320,7 @@ public final class CompletableFutureUtils {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyAllSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
@@ -2249,6 +2334,7 @@ public final class CompletableFutureUtils {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyAllSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -2268,6 +2354,7 @@ public final class CompletableFutureUtils {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyAllSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -2282,6 +2369,7 @@ public final class CompletableFutureUtils {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyAllSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -2301,6 +2389,7 @@ public final class CompletableFutureUtils {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyAllSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
@@ -2315,6 +2404,7 @@ public final class CompletableFutureUtils {
      * If any of the provided functions fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the function having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyAllSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
@@ -2334,6 +2424,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyMostSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -2347,6 +2438,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyMostSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -2366,6 +2458,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyMostSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
@@ -2379,6 +2472,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyMostSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -2399,6 +2493,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyMostSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -2413,6 +2508,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyMostSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -2433,6 +2529,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyMostSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
@@ -2447,6 +2544,7 @@ public final class CompletableFutureUtils {
      * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyMostSuccessTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, long timeout, TimeUnit unit,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
@@ -2464,6 +2562,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -2473,6 +2572,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2> CompletableFuture<Tuple2<U1, U2>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
             Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
@@ -2486,6 +2586,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
@@ -2495,6 +2596,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3> CompletableFuture<Tuple3<U1, U2, U3>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
@@ -2508,6 +2610,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
@@ -2518,6 +2621,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3, U4> CompletableFuture<Tuple4<U1, U2, U3, U4>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
@@ -2532,6 +2636,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #thenMApplyAsync(CompletableFuture, Function[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
@@ -2542,6 +2647,7 @@ public final class CompletableFutureUtils {
     /**
      * Tuple variant of {@link #thenMApplyAsync(CompletableFuture, Executor, Function[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U1, U2, U3, U4, U5> CompletableFuture<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U1> fn1,
             Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
