@@ -2,7 +2,6 @@ package io.foldright.cffu.ttl;
 
 import com.alibaba.ttl.threadpool.TtlExecutors;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.foldright.cffu.spi.ExecutorWrapperProvider;
 
 import java.util.concurrent.Executor;
