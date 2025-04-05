@@ -1736,23 +1736,27 @@ fun <C : CompletableFuture<*>> C.cffuOrTimeout(executorWhenTimeout: Executor, ti
  * Exceptionally completes this CompletableFuture with a [TimeoutException]
  * if not otherwise completed before the given timeout.
  *
- * **CAUTION:** This method and [CompletableFuture.orTimeout] is **UNSAFE**!
+ * **CAUTION:** [CompletableFuture.orTimeout] and this backport method are **UNSAFE**!
  *
- * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
- * are performed in the **SINGLE thread builtin executor** of CompletableFuture for delay execution (including
- * timeout function). So the long-running subsequent non-async actions lead to the CompletableFuture dysfunction
- * (including delay execution and timeout).
+ * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
+ * in CompletableFuture's internal **SINGLE-thread delay executor** (including timeout functionality).
+ * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
+ * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
  *
- * **Strong recommend** using the safe method [cffuOrTimeout] instead of this method and [CompletableFuture.orTimeout].
- * <br/>Unless all subsequent actions of dependent CompletableFutures is ensured executing async
- * (aka. the dependent CompletableFutures is created by async methods), using this method and [CompletableFuture.orTimeout]
- * is one less thread switch of task execution when triggered by timeout.
+ * **Strongly recommend** using the safe method [cffuOrTimeout] instead of [CompletableFuture.orTimeout] and
+ * this backport method. Using [CompletableFuture.orTimeout] and this backport method is appropriate only when:
+ *
+ *  * the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods), and/or
+ *  * all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
+ * (i.e., the dependent CompletableFutures are created using async methods).
+ *  In these cases, using these unsafe methods avoids an unnecessary thread switch when timeout occurs; However, these
+ * conditions are difficult to guarantee in practice especially when the returned CompletableFuture is used by others' codes.
  *
  * Note: Before Java 21(Java 20-), [CompletableFuture.orTimeout] leaks if the future completes exceptionally,
  * more info see [issue JDK-8303742](https://bugs.openjdk.org/browse/JDK-8303742),
  * [PR review openjdk/jdk/13059](https://github.com/openjdk/jdk/pull/13059)
  * and [JDK bugfix commit](https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a).
- * The cffu backport logic(for Java 20-) has merged the fix of this JDK bug.
+ * The cffu backport logic(for Java 20-) has merged this JDK bugfix.
  *
  * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
@@ -1804,18 +1808,21 @@ fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
 /**
  * Completes this CompletableFuture with the given value if not otherwise completed before the given timeout.
  *
- * **CAUTION:** This method and [CompletableFuture.completeOnTimeout] is **UNSAFE**!
+ * **CAUTION:** [CompletableFuture.completeOnTimeout] and this backport method are **UNSAFE**!
  *
- * When triggered by timeout, the subsequent non-async actions of the dependent CompletableFutures
- * are performed in the **SINGLE thread builtin executor** of CompletableFuture for delay execution
- * (including timeout function). So the long-running subsequent non-async actions lead to
- * the CompletableFuture dysfunction (including delay execution and timeout).
+ * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
+ * in CompletableFuture's internal **SINGLE-thread delay executor** (including timeout functionality).
+ * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
+ * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
  *
- * **Strong recommend** using the safe method [cffuCompleteOnTimeout]
- * instead of this method and [CompletableFuture.completeOnTimeout].<br/>
- * Unless all subsequent actions of dependent CompletableFutures is ensured executing async(aka. the dependent
- * CompletableFutures is created by async methods), using this method and [CompletableFuture.completeOnTimeout]
- * is one less thread switch of task execution when triggered by timeout.
+ * **Strongly recommend** using the safe method [cffuCompleteOnTimeout] instead of [CompletableFuture.completeOnTimeout] and
+ * this backport method. Using [CompletableFuture.completeOnTimeout] and this backport method is appropriate only when:
+ *
+ *  * the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods), and/or
+ *  * all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
+ * (i.e., the dependent CompletableFutures are created using async methods).
+ *  In these cases, using these unsafe methods avoids an unnecessary thread switch when timeout occurs; However, these
+ * conditions are difficult to guarantee in practice especially when the returned CompletableFuture is used by others' codes.
  *
  * @param value the value to use upon timeout
  * @param timeout how long to wait before completing normally with the given value, in units of `unit`
