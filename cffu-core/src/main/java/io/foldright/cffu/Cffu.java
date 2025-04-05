@@ -1735,13 +1735,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
      * <strong>Strongly recommend</strong> using the safe method {@link #orTimeout(long, TimeUnit)} instead of this method.
-     * Using this method is appropriate only when either:
+     * Using this method is appropriate only when:
      * <ul>
-     * <li>the returned Cffu is read in a blocking manner, or
+     * <li>the returned Cffu is only read explicitly(e.g. by get/join/resultNow methods), and/or
      * <li>all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously
      *    (i.e., the dependent Cffus/CompletableFutures are created using async methods).
-     * </ul> In these cases, using these methods avoids an unnecessary thread switch when timeout occurs; However,
-     * these conditions are difficult to guarantee in practice especially when the returned Cffu is used by other code.
+     * </ul> In these cases, using this unsafe method avoids an unnecessary thread switch when timeout occurs; However,
+     * these conditions are difficult to guarantee in practice especially when the returned Cffu is used by others' codes.
      * <p>
      * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout} leaks if the future completes exceptionally,
      * more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
@@ -1795,14 +1795,13 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
      * <strong>Strongly recommend</strong> using the safe method {@link #completeOnTimeout(Object, long, TimeUnit)}
-     * instead of this method.
-     * Using this method is appropriate only when either:
+     * instead of this method. Using this method is appropriate only when:
      * <ul>
-     * <li>the returned Cffu is read in a blocking manner, or
+     * <li>the returned Cffu is only read explicitly(e.g. by get/join/resultNow methods), and/or
      * <li>all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously
      *    (i.e., the dependent Cffus/CompletableFutures are created using async methods).
-     * </ul> In these cases, using these methods avoids an unnecessary thread switch when timeout occurs; However, these
-     * conditions are difficult to guarantee in practice especially when the returned Cffu is used by other code.
+     * </ul> In these cases, using this unsafe method avoids an unnecessary thread switch when timeout occurs; However,
+     * these conditions are difficult to guarantee in practice especially when the returned Cffu is used by others' codes.
      *
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}

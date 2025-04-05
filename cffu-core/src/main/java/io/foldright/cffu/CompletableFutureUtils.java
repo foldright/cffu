@@ -3220,13 +3220,13 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>Strongly recommend</strong> using the safe method {@link #cffuOrTimeout(CompletableFuture,
      * long, TimeUnit, Executor)} instead of {@link CompletableFuture#orTimeout} and this backport method.
-     * Using {@link CompletableFuture#orTimeout} and this backport method is appropriate only when either:
+     * Using {@link CompletableFuture#orTimeout} and this backport method is appropriate only when:
      * <ul>
-     * <li>the returned CompletableFuture is read in a blocking manner, or
+     * <li>the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods), and/or
      * <li>all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
      *    (i.e., the dependent CompletableFutures are created using async methods).
-     * </ul> In these cases, using these methods avoids an unnecessary thread switch when timeout occurs; However, these
-     * conditions are difficult to guarantee in practice especially when the returned CompletableFuture is used by other code.
+     * </ul> In these cases, using these unsafe methods avoids an unnecessary thread switch when timeout occurs; However, these
+     * conditions are difficult to guarantee in practice especially when the returned CompletableFuture is used by others' codes.
      * <p>
      * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout} leaks if the future completes exceptionally,
      * more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
@@ -3321,13 +3321,13 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>Strongly recommend</strong> using the safe method {@link #cffuCompleteOnTimeout(CompletableFuture, Object,
      * long, TimeUnit, Executor)} instead of {@link CompletableFuture#completeOnTimeout} and this backport method.
-     * Using {@link CompletableFuture#completeOnTimeout} and this backport method is appropriate only when either:
+     * Using {@link CompletableFuture#completeOnTimeout} and this backport method is appropriate only when:
      * <ul>
-     * <li>the returned CompletableFuture is read in a blocking manner, or
+     * <li>the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods), and/or
      * <li>all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
      *    (i.e., the dependent CompletableFutures are created using async methods).
-     * </ul> In these cases, using these methods avoids an unnecessary thread switch when timeout occurs; However, these
-     * conditions are difficult to guarantee in practice especially when the returned CompletableFuture is used by other code.
+     * </ul> In these cases, using these unsafe methods avoids an unnecessary thread switch when timeout occurs; However, these
+     * conditions are difficult to guarantee in practice especially when the returned CompletableFuture is used by others' codes.
      *
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
