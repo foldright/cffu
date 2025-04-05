@@ -29,7 +29,7 @@ import org.slf4j.spi.LocationAwareLogger;
 @ApiStatus.Internal
 public final class ExceptionLogger {
     private static final String FQCN = ExceptionLogger.class.getName();
-    private static final String CFFU_PACKAGE_NAME = FQCN.replaceFirst("\\.[^.]*\\.[^.]*$", "");
+    private static final String CFFU_PACKAGE_NAME = FQCN.replaceFirst("(\\.[^.]*){2}$", "");
 
     private static final LoggerAdapter logger = getLogger();
 
