@@ -1210,14 +1210,12 @@ class CompletableFutureUtilsTest {
         final CompletableFuture<Integer> cf_n = completedFuture(n);
         final CompletableFuture<Integer> cf_nn = completedFuture(n + n);
 
-        final Runnable runnable = () -> {
-        };
+        final Runnable runnable = () -> {};
         assertNull(runAfterBothFailFast(cf_n, cf_nn, runnable).get());
         assertNull(runAfterBothFailFastAsync(cf_n, cf_nn, runnable).get());
         assertNull(runAfterBothFailFastAsync(cf_n, cf_nn, runnable, testExecutor).get());
 
-        BiConsumer<Integer, Integer> bc = (i1, i2) -> {
-        };
+        BiConsumer<Integer, Integer> bc = (i1, i2) -> {};
         assertNull(thenAcceptBothFailFast(cf_n, cf_nn, bc).get());
         assertNull(thenAcceptBothFailFastAsync(cf_n, cf_nn, bc).get());
         assertNull(thenAcceptBothFailFastAsync(cf_n, cf_nn, bc, testExecutor).get());
@@ -1233,8 +1231,7 @@ class CompletableFutureUtilsTest {
         final CompletableFuture<Integer> failed = failedFuture(rte);
         final CompletableFuture<Integer> cf_ee = failedFuture(anotherRte);
 
-        final Runnable runnable = () -> {
-        };
+        final Runnable runnable = () -> {};
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 runAfterBothFailFast(cf_n, failed, runnable).get(SHORT_WAIT_MS, MILLISECONDS)
         ).getCause());
@@ -1263,8 +1260,7 @@ class CompletableFutureUtilsTest {
                 runAfterBothFailFastAsync(failed, cf_ee, runnable, testExecutor).get(SHORT_WAIT_MS, MILLISECONDS)
         ).getCause());
 
-        BiConsumer<Integer, Integer> bc = (i1, i2) -> {
-        };
+        BiConsumer<Integer, Integer> bc = (i1, i2) -> {};
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 thenAcceptBothFailFast(cf_n, failed, bc).get(SHORT_WAIT_MS, MILLISECONDS)
         ).getCause());
@@ -1332,14 +1328,12 @@ class CompletableFutureUtilsTest {
         final CompletableFuture<Integer> cf_n = completedFuture(n);
         CompletableFuture<Integer> incomplete = incompleteCf();
 
-        final Runnable runnable = () -> {
-        };
+        final Runnable runnable = () -> {};
         assertNull(runAfterEitherSuccess(cf_n, incomplete, runnable).get());
         assertNull(runAfterEitherSuccessAsync(cf_n, incomplete, runnable).get());
         assertNull(runAfterEitherSuccessAsync(cf_n, incomplete, runnable, testExecutor).get());
 
-        Consumer<Integer> c = i -> {
-        };
+        Consumer<Integer> c = i -> {};
         assertNull(acceptEitherSuccess(cf_n, incomplete, c).get());
         assertNull(acceptEitherSuccessAsync(cf_n, incomplete, c).get());
         assertNull(acceptEitherSuccessAsync(cf_n, incomplete, c, testExecutor).get());
@@ -1355,8 +1349,7 @@ class CompletableFutureUtilsTest {
         final CompletableFuture<Integer> failed = failedFuture(rte);
         final CompletableFuture<Integer> cf_ee = failedFuture(anotherRte);
 
-        final Runnable runnable = () -> {
-        };
+        final Runnable runnable = () -> {};
         assertNull(runAfterEitherSuccess(cf, failed, runnable).get());
         assertNull(runAfterEitherSuccessAsync(cf, failed, runnable).get());
         assertNull(runAfterEitherSuccessAsync(cf, failed, runnable, testExecutor).get());
@@ -1373,8 +1366,7 @@ class CompletableFutureUtilsTest {
                 runAfterEitherSuccessAsync(failed, cf_ee, runnable, testExecutor).get()
         ).getCause());
 
-        Consumer<Integer> c = i -> {
-        };
+        Consumer<Integer> c = i -> {};
         assertNull(acceptEitherSuccess(cf, failed, c).get());
         assertNull(acceptEitherSuccessAsync(cf, failed, c).get());
         assertNull(acceptEitherSuccessAsync(cf, failed, c, testExecutor).get());
@@ -1662,11 +1654,8 @@ class CompletableFutureUtilsTest {
 
     @Test
     void test_peek() throws Exception {
-        BiConsumer<Object, Throwable> c = (v, ex) -> {
-        };
-        BiConsumer<Object, Throwable> ec = (v, ex) -> {
-            throw anotherRte;
-        };
+        BiConsumer<Object, Throwable> c = (v, ex) -> {};
+        BiConsumer<Object, Throwable> ec = (v, ex) -> {throw anotherRte;};
 
         CompletableFuture<Object> failed = failedFuture(rte);
         assertSame(peek(failed, c), failed);

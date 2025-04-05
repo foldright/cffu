@@ -4069,6 +4069,5 @@ public final class CompletableFutureUtils {
         return fastPointer;
     }
 
-    private CompletableFutureUtils() {
-    }
+    private CompletableFutureUtils() {}
 }

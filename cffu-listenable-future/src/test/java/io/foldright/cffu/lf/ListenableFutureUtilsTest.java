@@ -268,8 +268,7 @@ class ListenableFutureUtilsTest {
                 lf.get(LONG_WAIT_MS, MILLISECONDS);
             } catch (TimeoutException ex) {
                 throw ex;
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
         }
     }
 

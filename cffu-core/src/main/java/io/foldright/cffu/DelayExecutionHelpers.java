@@ -69,7 +69,7 @@ final class Delayer {
      * The lazy loading is need because {@link #atCfDelayerThread()} method of
      * class {@link Delayer} is used on {@code Java 9+}.
      */
-    private static class DelayerHolder {
+    private static final class DelayerHolder {
         static final ScheduledThreadPoolExecutor delayer;
 
         static {
@@ -88,8 +88,7 @@ final class Delayer {
         }
     }
 
-    private Delayer() {
-    }
+    private Delayer() {}
 }
 
 /**
@@ -229,13 +228,10 @@ final class CfCompleterBySupplier<T> extends ForkJoinTask<Void>
     }
 
     @Override
-    public Void getRawResult() {
-        return null;
-    }
+    public Void getRawResult() {return null;}
 
     @Override
-    public void setRawResult(Void v) {
-    }
+    public void setRawResult(Void v) {}
 
     @Override
     public boolean exec() {
@@ -279,13 +275,10 @@ final class CfExCompleterBySupplier extends ForkJoinTask<Void>
     }
 
     @Override
-    public Void getRawResult() {
-        return null;
-    }
+    public Void getRawResult() {return null;}
 
     @Override
-    public void setRawResult(Void v) {
-    }
+    public void setRawResult(Void v) {}
 
     @Override
     public boolean exec() {

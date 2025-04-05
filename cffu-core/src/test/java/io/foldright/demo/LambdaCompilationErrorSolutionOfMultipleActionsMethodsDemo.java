@@ -80,6 +80,5 @@ public class LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo {
         CompletableFutureUtils.thenMRunAsync(cf, r -> returnVoid(), () -> returnVoid(), () -> returnVoid());
     }
 
-    private static void returnVoid() {
-    }
+    private static void returnVoid() {}
 }

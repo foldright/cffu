@@ -27,8 +27,7 @@ public class TypeParameterDeclarationTest {
 
     @Test
     void checkTypeParameterDeclaration_peek_completeAsync() throws Exception {
-        final BiConsumer<? super Integer, Throwable> c = (v, ex) -> {
-        };
+        final BiConsumer<? super Integer, Throwable> c = (v, ex) -> {};
         CompletableFutureUtils.peek(fe, c).get();
         CompletableFutureUtils.peekAsync(fe, c).get();
         CompletableFutureUtils.peekAsync(fe, c, executor).get();

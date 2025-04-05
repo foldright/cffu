@@ -175,6 +175,5 @@ public final class ListenableFutureUtils {
         return toListenableFuture(cf.cffuUnwrap());
     }
 
-    private ListenableFutureUtils() {
-    }
+    private ListenableFutureUtils() {}
 }

@@ -226,8 +226,7 @@ class CffuTest {
         });
         final Cffu<Integer> failed = testCffuFac.failedFuture(rte);
 
-        final Runnable runnable = () -> {
-        };
+        final Runnable runnable = () -> {};
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 cf.runAfterBothFailFast(failed, runnable).get(1, MILLISECONDS)
         ).getCause());
@@ -238,8 +237,7 @@ class CffuTest {
                 cf.runAfterBothFailFastAsync(failed, runnable, testExecutor).get(1, MILLISECONDS)
         ).getCause());
 
-        BiConsumer<Integer, Integer> bc = (i1, i2) -> {
-        };
+        BiConsumer<Integer, Integer> bc = (i1, i2) -> {};
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 cf.thenAcceptBothFailFast(failed, bc).get(1, MILLISECONDS)
         ).getCause());
@@ -271,14 +269,12 @@ class CffuTest {
         final Cffu<Integer> failed = testCffuFac.failedFuture(rte);
         Cffu<Integer> cf = testCffuFac.completedFuture(n);
 
-        final Runnable runnable = () -> {
-        };
+        final Runnable runnable = () -> {};
         assertNull(failed.runAfterEitherSuccess(cf, runnable).get());
         assertNull(failed.runAfterEitherSuccessAsync(cf, runnable).get());
         assertNull(failed.runAfterEitherSuccessAsync(cf, runnable, testExecutor).get());
 
-        Consumer<Integer> c = i -> {
-        };
+        Consumer<Integer> c = i -> {};
         assertNull(failed.acceptEitherSuccess(cf, c).get());
         assertNull(failed.acceptEitherSuccessAsync(cf, c).get());
         assertNull(failed.acceptEitherSuccessAsync(cf, c, testExecutor).get());
@@ -375,11 +371,8 @@ class CffuTest {
 
     @Test
     void test_peek() throws Exception {
-        BiConsumer<Object, Throwable> c = (v, ex) -> {
-        };
-        BiConsumer<Object, Throwable> ec = (v, ex) -> {
-            throw anotherRte;
-        };
+        BiConsumer<Object, Throwable> c = (v, ex) -> {};
+        BiConsumer<Object, Throwable> ec = (v, ex) -> {throw anotherRte;};
 
         Cffu<Object> failed = testCffuFac.failedFuture(rte);
         assertSame(failed.peek(c), failed);

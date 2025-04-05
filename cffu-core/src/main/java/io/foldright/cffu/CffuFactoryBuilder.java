@@ -96,11 +96,10 @@ public final class CffuFactoryBuilder {
      * @see LLCF#ASYNC_POOL
      */
     @SuppressWarnings("JavadocReference")
-    static class CffuDefaultExecutor implements Executor {
+    final static class CffuDefaultExecutor implements Executor {
         final Executor original;
         final Executor screened;
 
-        @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
         private CffuDefaultExecutor(Executor defaultExecutor) {
             requireNonNull(defaultExecutor, "defaultExecutor is null");
             if (defaultExecutor instanceof CffuDefaultExecutor)

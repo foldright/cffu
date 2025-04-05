@@ -315,6 +315,5 @@ public final class LLCF {
         }
     }
 
-    private LLCF() {
-    }
+    private LLCF() {}
 }

@@ -172,6 +172,5 @@ public final class SwallowedExceptionHandleUtils {
         }
     }
 
-    private SwallowedExceptionHandleUtils() {
-    }
+    private SwallowedExceptionHandleUtils() {}
 }

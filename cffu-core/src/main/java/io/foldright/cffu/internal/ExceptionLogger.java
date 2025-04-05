@@ -94,6 +94,5 @@ public final class ExceptionLogger {
         }
     }
 
-    private ExceptionLogger() {
-    }
+    private ExceptionLogger() {}
 }

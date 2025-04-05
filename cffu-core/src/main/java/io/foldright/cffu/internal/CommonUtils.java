@@ -83,6 +83,5 @@ public final class CommonUtils {
         for (int i = 0, len = array.length(); i < len; i++) array.set(i, value);
     }
 
-    private CommonUtils() {
-    }
+    private CommonUtils() {}
 }
