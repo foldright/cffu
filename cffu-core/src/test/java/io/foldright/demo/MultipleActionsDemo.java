@@ -25,14 +25,26 @@ public class MultipleActionsDemo {
     public static void main(String[] args) {
         mRunAsyncDemo();
         thenMApplyAsyncDemo();
+
+        ////////////////////////////////////////
+        // cleanup
+        ////////////////////////////////////////
+        myBizExecutor.shutdown();
     }
 
     static void mRunAsyncDemo() {
-        // wrap tasks to CompletableFuture first, AWKWARD! 😖
+        // wrap actions to CompletableFutures first, AWKWARD! 😖
         CompletableFuture.allOf(
                 CompletableFuture.runAsync(() -> System.out.println("task1")),
                 CompletableFuture.runAsync(() -> System.out.println("task2")),
                 CompletableFuture.runAsync(() -> System.out.println("task3"))
+        );
+        completedFuture("task").thenCompose(v ->
+                CompletableFuture.allOf(
+                        CompletableFuture.runAsync(() -> System.out.println(v + "1")),
+                        CompletableFuture.runAsync(() -> System.out.println(v + "2")),
+                        CompletableFuture.runAsync(() -> System.out.println(v + "3"))
+                )
         );
 
         // just run multiple actions, fresh and cool 😋
@@ -41,12 +53,17 @@ public class MultipleActionsDemo {
                 () -> System.out.println("task2"),
                 () -> System.out.println("task3")
         );
+        cffuFactory.completedFuture("task").thenMAcceptAsync(
+                (String v) -> System.out.println(v + "1"),
+                v -> System.out.println(v + "2"),
+                v -> System.out.println(v + "3")
+        );
 
         sleep(1000);
     }
 
     static void thenMApplyAsyncDemo() {
-        // wrap tasks to CompletableFuture first, AWKWARD! 😖
+        // wrap actions to CompletableFutures first, AWKWARD! 😖
         completedFuture(42).thenCompose(v ->
                 CompletableFutureUtils.allResultsFailFastOf(
                         CompletableFuture.supplyAsync(() -> v + 1),
@@ -56,7 +73,8 @@ public class MultipleActionsDemo {
         ).thenAccept(System.out::println);
         // output: [43, 44, 45]
         cffuFactory.completedFuture(42).thenCompose(v ->
-                CompletableFutureUtils.allResultsFailFastOf(
+                CompletableFutureUtils.allSuccessResultsOf(
+                        -1,
                         CompletableFuture.supplyAsync(() -> v + 1),
                         CompletableFuture.supplyAsync(() -> v + 2),
                         CompletableFuture.supplyAsync(() -> v + 3)
@@ -72,14 +90,15 @@ public class MultipleActionsDemo {
                 v -> v + 3
         ).thenAccept(System.out::println);
         // output: [43, 44, 45]
-        cffuFactory.completedFuture(42).thenMApplyFailFastAsync(
+        cffuFactory.completedFuture(42).thenMApplyAllSuccessAsync(
+                -1,
                 v -> v + 1,
                 v -> v + 2,
                 v -> v + 3
         ).thenAccept(System.out::println);
         // output: [43, 44, 45]
 
-        CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(
+        CompletableFutureUtils.thenMApplyTupleFailFastAsync(
                 completedFuture(42),
                 v -> "string" + v,
                 v -> v + 1,

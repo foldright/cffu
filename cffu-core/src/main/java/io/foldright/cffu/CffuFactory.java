@@ -1228,8 +1228,8 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a Cffu maintaining the same completion properties as the given stage and this {@code CffuFactory} config.
-     * If the given stage is already a Cffu and have the this {@code CffuFactory}, this method may return the given stage.
+     * Returns a Cffu that maintains the same completion properties as the given stage, configured with this {@code CffuFactory}.
+     * If the given stage is already a Cffu and uses this {@code CffuFactory}, this method may return the given stage.
      *
      * @throws NullPointerException if the given stage is null
      * @see CompletionStage#toCompletableFuture()

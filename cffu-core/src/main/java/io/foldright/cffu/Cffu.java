@@ -1710,9 +1710,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Uses {@link #defaultExecutor()} as {@code executorWhenTimeout}.
      * <p>
      * <strong>CAUTION:</strong> This method returns a new Cffu instead of this Cffu to avoid the subsequent usage of the
-     * delay thread; This behavior is DIFFERENT from the original CF method {@link CompletableFuture#orTimeout} and its
-     * backport method {@link #unsafeOrTimeout}. More info see the javadoc of {@link #unsafeOrTimeout} and the demo <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * delay thread; This behavior is DIFFERENT from the original CF method {@link CompletableFuture#orTimeout CompletableFuture#orTimeout}
+     * and its backport method {@link #unsafeOrTimeout unsafeOrTimeout}. More info see the javadoc of {@link #unsafeOrTimeout unsafeOrTimeout}
+     * and the demo <a href="https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
@@ -1734,8 +1734,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
-     * <strong>Strongly recommend</strong> using the safe method {@link #orTimeout(long, TimeUnit)} instead of this method.
-     * Using this method is appropriate only when:
+     * <strong>Strongly recommend</strong> using the safe method {@link #orTimeout(long, TimeUnit) orTimeout}
+     * instead of this method. Using this method is appropriate only when:
      * <ul>
      * <li>the returned Cffu is only read explicitly(e.g. by get/join/resultNow methods), and/or
      * <li>all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously
@@ -1743,8 +1743,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * </ul> In these cases, using this unsafe method avoids an unnecessary thread switch when timeout occurs; However,
      * these conditions are difficult to guarantee in practice especially when the returned Cffu is used by others' codes.
      * <p>
-     * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout} leaks if the future completes exceptionally,
-     * more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
+     * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} leaks if the future
+     * completes exceptionally, more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
      * <a href="https://github.com/openjdk/jdk/pull/13059">PR review openjdk/jdk/13059</a>
      * and <a href="https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a">JDK bugfix commit</a>.
      * The cffu backport logic(for Java 20-) has merged this JDK bugfix.
@@ -1770,9 +1770,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <p>
      * <strong>CAUTION:</strong> This method returns a new Cffu instead of this Cffu
      * to avoid the subsequent usage of the delay thread; This behavior is DIFFERENT from the original CF method
-     * {@link CompletableFuture#completeOnTimeout} and its backport method {@link #unsafeCompleteOnTimeout}.
-     * More info see the javadoc of {@link #unsafeCompleteOnTimeout} and the demo <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * {@link CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout} and its backport method {@link
+     * #unsafeCompleteOnTimeout unsafeCompleteOnTimeout}. More info see the javadoc of {@link #unsafeCompleteOnTimeout} and the demo
+     * <a href="https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
      * @param value   the value to use upon timeout
@@ -1794,8 +1794,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
-     * <strong>Strongly recommend</strong> using the safe method {@link #completeOnTimeout(Object, long, TimeUnit)}
-     * instead of this method. Using this method is appropriate only when:
+     * <strong>Strongly recommend</strong> using the safe method {@link #completeOnTimeout(Object, long, TimeUnit)
+     * completeOnTimeout} instead of this method. Using this method is appropriate only when:
      * <ul>
      * <li>the returned Cffu is only read explicitly(e.g. by get/join/resultNow methods), and/or
      * <li>all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously
