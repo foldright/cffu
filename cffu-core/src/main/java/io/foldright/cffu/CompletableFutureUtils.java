@@ -3168,8 +3168,8 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>CAUTION:</strong> This method returns a new CompletableFuture instead of {@code cfThis} to avoid
      * the subsequent usage of the delay thread; This behavior is DIFFERENT from the original CF method
-     * {@link CompletableFuture#orTimeout} and its backport method {@link #orTimeout}.
-     * More info see the javadoc of {@link #orTimeout} and the demo <a href=
+     * {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and its backport method {@link #orTimeout orTimeout}.
+     * More info see the javadoc of {@link #orTimeout orTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
@@ -3188,8 +3188,8 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>CAUTION:</strong> This method returns a new CompletableFuture instead of {@code cfThis} to avoid
      * the subsequent usage of the delay thread; This behavior is DIFFERENT from the original CF method
-     * {@link CompletableFuture#orTimeout} and its backport method {@link #orTimeout}.
-     * More info see the javadoc of {@link #orTimeout} and the demo <a href=
+     * {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and its backport method {@link #orTimeout orTimeout}.
+     * More info see the javadoc of {@link #orTimeout orTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
@@ -3211,16 +3211,17 @@ public final class CompletableFutureUtils {
      * Exceptionally completes given CompletableFuture with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
      * <p>
-     * <strong>CAUTION:</strong> {@link CompletableFuture#orTimeout} and this backport method are <strong>UNSAFE</strong>!
+     * <strong>CAUTION:</strong> {@link CompletableFuture#orTimeout CompletableFuture#orTimeout}
+     * and this backport method are <strong>UNSAFE</strong>!
      * <p>
      * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
      * in CompletableFuture's internal <strong>SINGLE-thread delay executor</strong> (including timeout functionality).
      * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
-     * <strong>Strongly recommend</strong> using the safe method {@link #cffuOrTimeout(CompletableFuture,
-     * long, TimeUnit, Executor)} instead of {@link CompletableFuture#orTimeout} and this backport method.
-     * Using {@link CompletableFuture#orTimeout} and this backport method is appropriate only when:
+     * <strong>Strongly recommend</strong> using the safe method {@link #cffuOrTimeout(CompletableFuture, long, TimeUnit, Executor)
+     * cffuOrTimeout} instead of {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and this backport method.
+     * Using {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and this backport method is appropriate only when:
      * <ul>
      * <li>the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods), and/or
      * <li>all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
@@ -3228,8 +3229,8 @@ public final class CompletableFutureUtils {
      * </ul> In these cases, using these unsafe methods avoids an unnecessary thread switch when timeout occurs; However, these
      * conditions are difficult to guarantee in practice especially when the returned CompletableFuture is used by others' codes.
      * <p>
-     * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout} leaks if the future completes exceptionally,
-     * more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
+     * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} method leaks if the
+     * future completes exceptionally, more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
      * <a href="https://github.com/openjdk/jdk/pull/13059">PR review openjdk/jdk/13059</a>
      * and <a href="https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a">JDK bugfix commit</a>.
      * The cffu backport logic(for Java 20-) has merged this JDK bugfix.
@@ -3267,9 +3268,9 @@ public final class CompletableFutureUtils {
      * Uses the default executor of parameter cfThis as {@code executorWhenTimeout}.
      * <p>
      * <strong>CAUTION:</strong> This method returns a new CompletableFuture instead of {@code cfThis} to avoid
-     * the subsequent usage of the delay thread. This behavior is DIFFERENT from the original CF method
-     * {@link CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout}.
-     * More info see the javadoc of {@link #completeOnTimeout} and the demo <a href=
+     * the subsequent usage of the delay thread. This behavior is DIFFERENT from the original CF method {@link
+     * CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout
+     * completeOnTimeout}. More info see the javadoc of {@link #completeOnTimeout completeOnTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
@@ -3289,9 +3290,9 @@ public final class CompletableFutureUtils {
      * CompletableFuture completed with the same successful result or exception of the given CompletableFuture.
      * <p>
      * <strong>CAUTION:</strong> This method returns a new CompletableFuture instead of {@code cfThis} to avoid
-     * the subsequent usage of the delay thread. This behavior is DIFFERENT from the original CF method
-     * {@link CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout}.
-     * More info see the javadoc of {@link #completeOnTimeout} and the demo <a href=
+     * the subsequent usage of the delay thread. This behavior is DIFFERENT from the original CF method {@link
+     * CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout
+     * completeOnTimeout}. More info see the javadoc of {@link #completeOnTimeout completeOnTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
@@ -3312,16 +3313,17 @@ public final class CompletableFutureUtils {
     /**
      * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
      * <p>
-     * <strong>CAUTION:</strong> {@link CompletableFuture#completeOnTimeout} and this backport method are <strong>UNSAFE</strong>!
+     * <strong>CAUTION:</strong> {@link CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout}
+     * and this backport method are <strong>UNSAFE</strong>!
      * <p>
      * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
      * in CompletableFuture's internal <strong>SINGLE-thread delay executor</strong> (including timeout functionality).
      * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
-     * <strong>Strongly recommend</strong> using the safe method {@link #cffuCompleteOnTimeout(CompletableFuture, Object,
-     * long, TimeUnit, Executor)} instead of {@link CompletableFuture#completeOnTimeout} and this backport method.
-     * Using {@link CompletableFuture#completeOnTimeout} and this backport method is appropriate only when:
+     * <strong>Strongly recommend</strong> using the safe method {@link #cffuCompleteOnTimeout(CompletableFuture, Object, long, TimeUnit, Executor)
+     * cffuCompleteOnTimeout} instead of {@link CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout} and this backport method.
+     * Using {@link CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout} and this backport method is appropriate only when:
      * <ul>
      * <li>the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods), and/or
      * <li>all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously

@@ -1,10 +1,10 @@
 # <div align="center"><a href="#dummy"><img src="https://github.com/foldright/cffu/assets/1063891/124658cd-025f-471e-8da1-7eea0e482915" alt="🦝 CompletableFuture-Fu(CF-Fu)"></a></div>
 
 <p align="center">
-<a href="https://github.com/foldright/cffu/actions/workflows/fast_ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/fast_ci.yaml?branch=main&logo=github&logoColor=white&label=fast ci" alt="Fast CI - GH Workflow Build Status"></a>
-<a href="https://github.com/foldright/cffu/actions/workflows/ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/ci.yaml?branch=main&logo=github&logoColor=white&label=strong ci" alt="Strong CI - GH Workflow Build Status"></a>
+<a href="https://github.com/foldright/cffu/actions/workflows/fast_ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/fast_ci.yaml?branch=main&logo=github&logoColor=white&label=fast%20ci" alt="Fast Build CI"></a>
+<a href="https://github.com/foldright/cffu/actions/workflows/ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/ci.yaml?branch=main&logo=github&logoColor=white&label=strong%20ci" alt="Strong Build CI"></a>
 <a href="https://app.codecov.io/gh/foldright/cffu/tree/main"><img src="https://img.shields.io/codecov/c/github/foldright/cffu/main?logo=codecov&logoColor=white" alt="Codecov"></a>
-<a href="https://qodana.cloud/projects/A61Yy"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/qodana_code_quality.yml?branch=main&logo=jetbrains&logoColor=white&label=qodana" alt="Qodana - GH Workflow Build Status"></a>
+<a href="https://qodana.cloud/projects/A61Yy"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/qodana_code_quality.yml?branch=main&logo=jetbrains&logoColor=white&label=qodana" alt="Qodana Code Inspections"></a>
 <a href="https://openjdk.java.net/"><img src="https://img.shields.io/badge/Java-8+-339933?logo=openjdk&logoColor=white" alt="Java support"></a>
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/foldright/cffu?color=4D7A97&logo=apache" alt="License"></a>
 <a href="https://foldright.io/api-docs/cffu/"><img src="https://img.shields.io/github/release/foldright/cffu?label=javadoc&color=339933&logo=read-the-docs&logoColor=white" alt="Javadocs"></a>
@@ -472,23 +472,39 @@ public class ConcurrencyStrategyDemo {
 
 ### 2.4 支持直接运行多个`Action`，而不是要先包装成`CompletableFuture`
 
-`CompletableFuture`的`allOf/anyOf`方法输入的是`CompletableFuture`，当业务直接有要编排业务逻辑方法时仍然需要先包装成`CompletableFuture`再运行：
+`CompletableFuture`的`allOf/anyOf`方法输入的是`CompletableFuture`；当业务直接有要编排业务逻辑方法时，仍然需要先包装成`CompletableFuture`再运行：
 
 - 繁琐
-- 也模糊了业务流程
+- 模糊了业务流程
+- 简单包装多个`Action`成`CF`提交给`allOf/anyOf`的做法（业务代码往/往是这样实现的），**会呑异常**
+  - 当输入`Action`的运行抛出多个异常时，这些异常至多只能有一个能通过返回`CF`反馈给业务，其它的异常则被默默地呑掉，影响业务问题的排查
 
-`cffu`提供了直接运行多个`Action`的方法，方便直接明了地表达业务编排流程。
+`cffu`提供了直接运行多个`Action`的方法，解决上述问题：
+
+- 方便直接明了地表达与编排业务流程
+- 不呑异常，方便排查业务问题
+  - 当多个输入`Action`的运行抛出多个异常时，会打印日志报告出没有在返回`CF`中反馈给业务的异常
 
 示例代码如下：
 
 ```java
 public class MultipleActionsDemo {
+  private static final ExecutorService myBizExecutor = Executors.newCachedThreadPool();
+  private static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
+
   static void mRunAsyncDemo() {
-    // wrap tasks to CompletableFuture first, AWKWARD! 😖
+    // wrap actions to CompletableFutures first, AWKWARD! 😖
     CompletableFuture.allOf(
         CompletableFuture.runAsync(() -> System.out.println("task1")),
         CompletableFuture.runAsync(() -> System.out.println("task2")),
         CompletableFuture.runAsync(() -> System.out.println("task3"))
+    );
+    completedFuture("task").thenCompose(v ->
+        CompletableFuture.allOf(
+            CompletableFuture.runAsync(() -> System.out.println(v + "1")),
+            CompletableFuture.runAsync(() -> System.out.println(v + "2")),
+            CompletableFuture.runAsync(() -> System.out.println(v + "3"))
+        )
     );
 
     // just run multiple actions, fresh and cool 😋
@@ -496,6 +512,11 @@ public class MultipleActionsDemo {
         () -> System.out.println("task1"),
         () -> System.out.println("task2"),
         () -> System.out.println("task3")
+    );
+    cffuFactory.completedFuture("task").thenMAcceptAsync(
+        (String v) -> System.out.println(v + "1"),
+        v -> System.out.println(v + "2"),
+        v -> System.out.println(v + "3")
     );
   }
 }
@@ -511,7 +532,7 @@ public class MultipleActionsDemo {
   private static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
 
   static void thenMApplyAsyncDemo() {
-    // wrap tasks to CompletableFuture first, AWKWARD! 😖
+    // wrap actions to CompletableFutures first, AWKWARD! 😖
     completedFuture(42).thenCompose(v ->
         CompletableFutureUtils.allResultsFailFastOf(
             CompletableFuture.supplyAsync(() -> v + 1),
@@ -521,7 +542,8 @@ public class MultipleActionsDemo {
     ).thenAccept(System.out::println);
     // output: [43, 44, 45]
     cffuFactory.completedFuture(42).thenCompose(v ->
-        CompletableFutureUtils.allResultsFailFastOf(
+        CompletableFutureUtils.allSuccessResultsOf(
+            -1,
             CompletableFuture.supplyAsync(() -> v + 1),
             CompletableFuture.supplyAsync(() -> v + 2),
             CompletableFuture.supplyAsync(() -> v + 3)
@@ -537,14 +559,15 @@ public class MultipleActionsDemo {
         v -> v + 3
     ).thenAccept(System.out::println);
     // output: [43, 44, 45]
-    cffuFactory.completedFuture(42).thenMApplyFailFastAsync(
+    cffuFactory.completedFuture(42).thenMApplyAllSuccessAsync(
+        -1,
         v -> v + 1,
         v -> v + 2,
         v -> v + 3
     ).thenAccept(System.out::println);
     // output: [43, 44, 45]
 
-    CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(
+    CompletableFutureUtils.thenMApplyTupleFailFastAsync(
         completedFuture(42),
         v -> "string" + v,
         v -> v + 1,
