@@ -22,7 +22,7 @@ public class AllTupleOfDemo {
         Cffu<String> cffu1 = cffuFactory.completedFuture("foo");
         Cffu<Integer> cffu2 = cffuFactory.completedFuture(42);
 
-        Cffu<Tuple2<String, Integer>> allTuple = cffuFactory.allTupleFailFastOf(cffu1, cffu2);
+        Cffu<Tuple2<String, Integer>> allTuple = cffuFactory.tupleOps().allTupleFailFastOf(cffu1, cffu2);
         System.out.println(allTuple.get());
         // output: Tuple2(foo, 42)
 
