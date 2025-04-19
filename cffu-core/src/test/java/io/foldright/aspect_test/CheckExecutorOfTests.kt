@@ -615,106 +615,106 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
 
         run {
             val (sInCP1, sInCP2) = am.createSuppliers(2, testExecutor)
-            testCffuFac.mSupplyTupleFailFastAsync(sInCP1, sInCP2)
+            testCffuFac.tupleOps().mSupplyTupleFailFastAsync(sInCP1, sInCP2)
         }
         run {
             val (sInCP1, sInCP2, sInCP3) = am.createSuppliers(3, testExecutor)
-            testCffuFac.mSupplyTupleFailFastAsync(sInCP1, sInCP2, sInCP3)
+            testCffuFac.tupleOps().mSupplyTupleFailFastAsync(sInCP1, sInCP2, sInCP3)
         }
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4) = am.createSuppliers(4, testExecutor)
-            testCffuFac.mSupplyTupleFailFastAsync(sInCP1, sInCP2, sInCP3, sInCP4)
+            testCffuFac.tupleOps().mSupplyTupleFailFastAsync(sInCP1, sInCP2, sInCP3, sInCP4)
         }
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4, sInCP5) = am.createSuppliers(5, testExecutor)
-            testCffuFac.mSupplyTupleFailFastAsync(sInCP1, sInCP2, sInCP3, sInCP4, sInCP5)
+            testCffuFac.tupleOps().mSupplyTupleFailFastAsync(sInCP1, sInCP2, sInCP3, sInCP4, sInCP5)
         }
         run {
             val (sInTE1, sInTE2) = am.createSuppliers(2, anotherExecutor)
-            testCffuFac.mSupplyTupleFailFastAsync(anotherExecutor, sInTE1, sInTE2)
+            testCffuFac.tupleOps().mSupplyTupleFailFastAsync(anotherExecutor, sInTE1, sInTE2)
         }
         run {
             val (sInTE1, sInTE2, sInTE3) = am.createSuppliers(3, anotherExecutor)
-            testCffuFac.mSupplyTupleFailFastAsync(anotherExecutor, sInTE1, sInTE2, sInTE3)
+            testCffuFac.tupleOps().mSupplyTupleFailFastAsync(anotherExecutor, sInTE1, sInTE2, sInTE3)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4) = am.createSuppliers(4, anotherExecutor)
-            testCffuFac.mSupplyTupleFailFastAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
+            testCffuFac.tupleOps().mSupplyTupleFailFastAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4, sInTE5) = am.createSuppliers(5, anotherExecutor)
-            testCffuFac.mSupplyTupleFailFastAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
+            testCffuFac.tupleOps().mSupplyTupleFailFastAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
         }
 
         run {
             val (sInCP1, sInCP2) = am.createSuppliers(2, testExecutor)
-            testCffuFac.mSupplyAllSuccessTupleAsync(sInCP1, sInCP2)
+            testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(sInCP1, sInCP2)
         }
         run {
             val (sInCP1, sInCP2, sInCP3) = am.createSuppliers(3, testExecutor)
-            testCffuFac.mSupplyAllSuccessTupleAsync(sInCP1, sInCP2, sInCP3)
+            testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(sInCP1, sInCP2, sInCP3)
         }
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4) = am.createSuppliers(4, testExecutor)
-            testCffuFac.mSupplyAllSuccessTupleAsync(sInCP1, sInCP2, sInCP3, sInCP4)
+            testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(sInCP1, sInCP2, sInCP3, sInCP4)
         }
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4, sInCP5) = am.createSuppliers(5, testExecutor)
-            testCffuFac.mSupplyAllSuccessTupleAsync(sInCP1, sInCP2, sInCP3, sInCP4, sInCP5)
+            testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(sInCP1, sInCP2, sInCP3, sInCP4, sInCP5)
         }
         run {
             val (sInTE1, sInTE2) = am.createSuppliers(2, anotherExecutor)
-            testCffuFac.mSupplyAllSuccessTupleAsync(anotherExecutor, sInTE1, sInTE2)
+            testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(anotherExecutor, sInTE1, sInTE2)
         }
         run {
             val (sInTE1, sInTE2, sInTE3) = am.createSuppliers(3, anotherExecutor)
-            testCffuFac.mSupplyAllSuccessTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3)
+            testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4) = am.createSuppliers(4, anotherExecutor)
-            testCffuFac.mSupplyAllSuccessTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
+            testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4, sInTE5) = am.createSuppliers(5, anotherExecutor)
-            testCffuFac.mSupplyAllSuccessTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
+            testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
         }
 
         run {
             val (sInCP1, sInCP2) = am.createSuppliers(2, testExecutor)
-            testCffuFac.mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, sInCP1, sInCP2)
+            testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, sInCP1, sInCP2)
         }
         run {
             val (sInCP1, sInCP2, sInCP3) = am.createSuppliers(3, testExecutor)
-            testCffuFac.mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, sInCP1, sInCP2, sInCP3)
+            testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, sInCP1, sInCP2, sInCP3)
         }
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4) = am.createSuppliers(4, testExecutor)
-            testCffuFac.mSupplyMostSuccessTupleAsync(
+            testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(
                 LONG_WAIT_MS, MILLISECONDS, sInCP1, sInCP2, sInCP3, sInCP4
             )
         }
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4, sInCP5) = am.createSuppliers(5, testExecutor)
-            testCffuFac.mSupplyMostSuccessTupleAsync(
+            testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(
                 LONG_WAIT_MS, MILLISECONDS, sInCP1, sInCP2, sInCP3, sInCP4, sInCP5
             )
         }
 
         run {
             val (sInTE1, sInTE2) = am.createSuppliers(2, anotherExecutor)
-            testCffuFac.mSupplyMostSuccessTupleAsync(
+            testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(
                 anotherExecutor, LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2
             )
         }
         run {
             val (sInTE1, sInTE2, sInTE3) = am.createSuppliers(3, anotherExecutor)
-            testCffuFac.mSupplyMostSuccessTupleAsync(
+            testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(
                 anotherExecutor, LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, sInTE3
             )
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4) = am.createSuppliers(4, anotherExecutor)
-            testCffuFac.mSupplyMostSuccessTupleAsync(
+            testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(
                 anotherExecutor,
                 LONG_WAIT_MS,
                 MILLISECONDS,
@@ -726,42 +726,42 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4, sInTE5) = am.createSuppliers(5, anotherExecutor)
-            testCffuFac.mSupplyMostSuccessTupleAsync(
+            testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(
                 anotherExecutor, LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5
             )
         }
 
         run {
             val (sInCP1, sInCP2) = am.createSuppliers(2, testExecutor)
-            testCffuFac.mSupplyTupleAsync(sInCP1, sInCP2)
+            testCffuFac.tupleOps().mSupplyTupleAsync(sInCP1, sInCP2)
         }
         run {
             val (sInCP1, sInCP2, sInCP3) = am.createSuppliers(3, testExecutor)
-            testCffuFac.mSupplyTupleAsync(sInCP1, sInCP2, sInCP3)
+            testCffuFac.tupleOps().mSupplyTupleAsync(sInCP1, sInCP2, sInCP3)
         }
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4) = am.createSuppliers(4, testExecutor)
-            testCffuFac.mSupplyTupleAsync(sInCP1, sInCP2, sInCP3, sInCP4)
+            testCffuFac.tupleOps().mSupplyTupleAsync(sInCP1, sInCP2, sInCP3, sInCP4)
         }
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4, sInCP5) = am.createSuppliers(5, testExecutor)
-            testCffuFac.mSupplyTupleAsync(sInCP1, sInCP2, sInCP3, sInCP4, sInCP5)
+            testCffuFac.tupleOps().mSupplyTupleAsync(sInCP1, sInCP2, sInCP3, sInCP4, sInCP5)
         }
         run {
             val (sInTE1, sInTE2) = am.createSuppliers(2, anotherExecutor)
-            testCffuFac.mSupplyTupleAsync(anotherExecutor, sInTE1, sInTE2)
+            testCffuFac.tupleOps().mSupplyTupleAsync(anotherExecutor, sInTE1, sInTE2)
         }
         run {
             val (sInTE1, sInTE2, sInTE3) = am.createSuppliers(3, anotherExecutor)
-            testCffuFac.mSupplyTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3)
+            testCffuFac.tupleOps().mSupplyTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4) = am.createSuppliers(4, anotherExecutor)
-            testCffuFac.mSupplyTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
+            testCffuFac.tupleOps().mSupplyTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4, sInTE5) = am.createSuppliers(5, anotherExecutor)
-            testCffuFac.mSupplyTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
+            testCffuFac.tupleOps().mSupplyTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
         }
 
         am.checkRunningExecutor()
