@@ -78,8 +78,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * This method is analogous to {@link java.util.Optional#map Optional.map} and
      * {@link java.util.stream.Stream#map Stream.map}.
      * <p>
-     * See the {@link CompletionStage} documentation for rules
-     * covering exceptional completion.
+     * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
      * @param fn  the function to use to compute the value of the returned Cffu
      * @param <U> the function's return type
@@ -1245,8 +1244,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * Returns a new Cffu that, when this and the other given stage both complete normally,
      * is executed using the supplied executor, with the two results as arguments to the supplied action.
      * <p>
-     * See the {@link CompletionStage} documentation for rules
-     * covering exceptional completion.
+     * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
      * @param other    the other CompletionStage
      * @param action   the action to perform before completing the returned Cffu
