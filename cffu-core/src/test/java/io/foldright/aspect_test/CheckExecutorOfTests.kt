@@ -1,5 +1,6 @@
 package io.foldright.aspect_test
 
+import io.foldright.cffu.CfTupleUtils.*
 import io.foldright.cffu.CompletableFutureUtils
 import io.foldright.test_utils.*
 import io.kotest.assertions.fail
@@ -79,180 +80,137 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
 
         run {
             val (sInCP1, sInCP2) = am.createSuppliers(2)
-            CompletableFutureUtils.mSupplyTupleFailFastAsync(sInCP1, sInCP2)
+            mSupplyTupleFailFastAsync(sInCP1, sInCP2)
         }
         run {
             val (sInCP1, sInCP2, sInCP3) = am.createSuppliers(3)
-            CompletableFutureUtils.mSupplyTupleFailFastAsync(sInCP1, sInCP2, sInCP3)
+            mSupplyTupleFailFastAsync(sInCP1, sInCP2, sInCP3)
         }
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4) = am.createSuppliers(4)
-            CompletableFutureUtils.mSupplyTupleFailFastAsync(sInCP1, sInCP2, sInCP3, sInCP4)
+            mSupplyTupleFailFastAsync(sInCP1, sInCP2, sInCP3, sInCP4)
         }
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4, sInCP5) = am.createSuppliers(5)
-            CompletableFutureUtils.mSupplyTupleFailFastAsync(sInCP1, sInCP2, sInCP3, sInCP4, sInCP5)
+            mSupplyTupleFailFastAsync(sInCP1, sInCP2, sInCP3, sInCP4, sInCP5)
         }
         run {
             val (sInTE1, sInTE2) = am.createSuppliers(2, testExecutor)
-            CompletableFutureUtils.mSupplyTupleFailFastAsync(testExecutor, sInTE1, sInTE2)
+            mSupplyTupleFailFastAsync(testExecutor, sInTE1, sInTE2)
         }
         run {
             val (sInTE1, sInTE2, sInTE3) = am.createSuppliers(3, testExecutor)
-            CompletableFutureUtils.mSupplyTupleFailFastAsync(testExecutor, sInTE1, sInTE2, sInTE3)
+            mSupplyTupleFailFastAsync(testExecutor, sInTE1, sInTE2, sInTE3)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4) = am.createSuppliers(4, testExecutor)
-            CompletableFutureUtils.mSupplyTupleFailFastAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
+            mSupplyTupleFailFastAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4, sInTE5) = am.createSuppliers(5, testExecutor)
-            CompletableFutureUtils.mSupplyTupleFailFastAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
+            mSupplyTupleFailFastAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
         }
 
         run {
             val (sInCP1, sInCP2) = am.createSuppliers(2)
-            CompletableFutureUtils.mSupplyAllSuccessTupleAsync(sInCP1, sInCP2)
+            mSupplyAllSuccessTupleAsync(sInCP1, sInCP2)
         }
         run {
             val (sInCP1, sInCP2, sInCP3) = am.createSuppliers(3)
-            CompletableFutureUtils.mSupplyAllSuccessTupleAsync(sInCP1, sInCP2, sInCP3)
+            mSupplyAllSuccessTupleAsync(sInCP1, sInCP2, sInCP3)
         }
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4) = am.createSuppliers(4)
-            CompletableFutureUtils.mSupplyAllSuccessTupleAsync(sInCP1, sInCP2, sInCP3, sInCP4)
+            mSupplyAllSuccessTupleAsync(sInCP1, sInCP2, sInCP3, sInCP4)
         }
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4, sInCP5) = am.createSuppliers(5)
-            CompletableFutureUtils.mSupplyAllSuccessTupleAsync(sInCP1, sInCP2, sInCP3, sInCP4, sInCP5)
+            mSupplyAllSuccessTupleAsync(sInCP1, sInCP2, sInCP3, sInCP4, sInCP5)
         }
         run {
             val (sInTE1, sInTE2) = am.createSuppliers(2, testExecutor)
-            CompletableFutureUtils.mSupplyAllSuccessTupleAsync(testExecutor, sInTE1, sInTE2)
+            mSupplyAllSuccessTupleAsync(testExecutor, sInTE1, sInTE2)
         }
         run {
             val (sInTE1, sInTE2, sInTE3) = am.createSuppliers(3, testExecutor)
-            CompletableFutureUtils.mSupplyAllSuccessTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3)
+            mSupplyAllSuccessTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4) = am.createSuppliers(4, testExecutor)
-            CompletableFutureUtils.mSupplyAllSuccessTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
+            mSupplyAllSuccessTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4, sInTE5) = am.createSuppliers(5, testExecutor)
-            CompletableFutureUtils.mSupplyAllSuccessTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
+            mSupplyAllSuccessTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
         }
 
         run {
             val (sInCP1, sInCP2) = am.createSuppliers(2)
-            CompletableFutureUtils.mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, sInCP1, sInCP2)
+            mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, sInCP1, sInCP2)
         }
         run {
             val (sInCP1, sInCP2, sInCP3) = am.createSuppliers(3)
-            CompletableFutureUtils.mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, sInCP1, sInCP2, sInCP3)
+            mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, sInCP1, sInCP2, sInCP3)
         }
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4) = am.createSuppliers(4)
-            CompletableFutureUtils.mSupplyMostSuccessTupleAsync(
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                sInCP1,
-                sInCP2,
-                sInCP3,
-                sInCP4
-            )
+            mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, sInCP1, sInCP2, sInCP3, sInCP4)
         }
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4, sInCP5) = am.createSuppliers(5)
-            CompletableFutureUtils.mSupplyMostSuccessTupleAsync(
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                sInCP1,
-                sInCP2,
-                sInCP3,
-                sInCP4,
-                sInCP5
-            )
+            mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, sInCP1, sInCP2, sInCP3, sInCP4, sInCP5)
         }
 
         run {
             val (sInTE1, sInTE2) = am.createSuppliers(2, testExecutor)
-            CompletableFutureUtils.mSupplyMostSuccessTupleAsync(
-                testExecutor,
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                sInTE1,
-                sInTE2
-            )
+            mSupplyMostSuccessTupleAsync(testExecutor, LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2)
         }
         run {
             val (sInTE1, sInTE2, sInTE3) = am.createSuppliers(3, testExecutor)
-            CompletableFutureUtils.mSupplyMostSuccessTupleAsync(
-                testExecutor,
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                sInTE1,
-                sInTE2,
-                sInTE3
-            )
+            mSupplyMostSuccessTupleAsync(testExecutor, LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, sInTE3)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4) = am.createSuppliers(4, testExecutor)
-            CompletableFutureUtils.mSupplyMostSuccessTupleAsync(
-                testExecutor,
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                sInTE1,
-                sInTE2,
-                sInTE3,
-                sInTE4
-            )
+            mSupplyMostSuccessTupleAsync(testExecutor, LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, sInTE3, sInTE4)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4, sInTE5) = am.createSuppliers(5, testExecutor)
-            CompletableFutureUtils.mSupplyMostSuccessTupleAsync(
-                testExecutor,
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                sInTE1,
-                sInTE2,
-                sInTE3,
-                sInTE4,
-                sInTE5
+            mSupplyMostSuccessTupleAsync(
+                testExecutor, LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5
             )
         }
 
         run {
             val (sInCP1, sInCP2) = am.createSuppliers(2)
-            CompletableFutureUtils.mSupplyTupleAsync(sInCP1, sInCP2)
+            mSupplyTupleAsync(sInCP1, sInCP2)
         }
         run {
             val (sInCP1, sInCP2, sInCP3) = am.createSuppliers(3)
-            CompletableFutureUtils.mSupplyTupleAsync(sInCP1, sInCP2, sInCP3)
+            mSupplyTupleAsync(sInCP1, sInCP2, sInCP3)
         }
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4) = am.createSuppliers(4)
-            CompletableFutureUtils.mSupplyTupleAsync(sInCP1, sInCP2, sInCP3, sInCP4)
+            mSupplyTupleAsync(sInCP1, sInCP2, sInCP3, sInCP4)
         }
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4, sInCP5) = am.createSuppliers(5)
-            CompletableFutureUtils.mSupplyTupleAsync(sInCP1, sInCP2, sInCP3, sInCP4, sInCP5)
+            mSupplyTupleAsync(sInCP1, sInCP2, sInCP3, sInCP4, sInCP5)
         }
         run {
             val (sInTE1, sInTE2) = am.createSuppliers(2, testExecutor)
-            CompletableFutureUtils.mSupplyTupleAsync(testExecutor, sInTE1, sInTE2)
+            mSupplyTupleAsync(testExecutor, sInTE1, sInTE2)
         }
         run {
             val (sInTE1, sInTE2, sInTE3) = am.createSuppliers(3, testExecutor)
-            CompletableFutureUtils.mSupplyTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3)
+            mSupplyTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4) = am.createSuppliers(4, testExecutor)
-            CompletableFutureUtils.mSupplyTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
+            mSupplyTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4, sInTE5) = am.createSuppliers(5, testExecutor)
-            CompletableFutureUtils.mSupplyTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
+            mSupplyTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
         }
 
         am.checkRunningExecutor()
@@ -374,152 +332,97 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
 
         run {
             val (fInCP1, fInCP2) = am.createFunctions(2)
-            CompletableFutureUtils.thenMApplyTupleFailFastAsync(cfThis, fInCP1, fInCP2)
+            thenMApplyTupleFailFastAsync(cfThis, fInCP1, fInCP2)
         }
         run {
             val (fInCP1, fInCP2, fInCP3) = am.createFunctions(3)
-            CompletableFutureUtils.thenMApplyTupleFailFastAsync(cfThis, fInCP1, fInCP2, fInCP3)
+            thenMApplyTupleFailFastAsync(cfThis, fInCP1, fInCP2, fInCP3)
         }
         run {
             val (fInCP1, fInCP2, fInCP3, fInCP4) = am.createFunctions(4)
-            CompletableFutureUtils.thenMApplyTupleFailFastAsync(cfThis, fInCP1, fInCP2, fInCP3, fInCP4)
+            thenMApplyTupleFailFastAsync(cfThis, fInCP1, fInCP2, fInCP3, fInCP4)
         }
         run {
             val (fInCP1, fInCP2, fInCP3, fInCP4, fInCP5) = am.createFunctions(5)
-            CompletableFutureUtils.thenMApplyTupleFailFastAsync(cfThis, fInCP1, fInCP2, fInCP3, fInCP4, fInCP5)
+            thenMApplyTupleFailFastAsync(cfThis, fInCP1, fInCP2, fInCP3, fInCP4, fInCP5)
         }
         run {
             val (fInTE1, fInTE2) = am.createFunctions(2, testExecutor)
-            CompletableFutureUtils.thenMApplyTupleFailFastAsync(cfThis, testExecutor, fInTE1, fInTE2)
+            thenMApplyTupleFailFastAsync(cfThis, testExecutor, fInTE1, fInTE2)
         }
         run {
             val (fInTE1, fInTE2, fInTE3) = am.createFunctions(3, testExecutor)
-            CompletableFutureUtils.thenMApplyTupleFailFastAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3)
+            thenMApplyTupleFailFastAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4) = am.createFunctions(4, testExecutor)
-            CompletableFutureUtils.thenMApplyTupleFailFastAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
+            thenMApplyTupleFailFastAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, testExecutor)
-            CompletableFutureUtils.thenMApplyTupleFailFastAsync(
-                cfThis,
-                testExecutor,
-                fInTE1,
-                fInTE2,
-                fInTE3,
-                fInTE4,
-                fInTE5
-            )
+            thenMApplyTupleFailFastAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5)
         }
 
         run {
             val (fInCP1, fInCP2) = am.createFunctions(2)
-            CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cfThis, fInCP1, fInCP2)
+            thenMApplyAllSuccessTupleAsync(cfThis, fInCP1, fInCP2)
         }
         run {
             val (fInCP1, fInCP2, fInCP3) = am.createFunctions(3)
-            CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cfThis, fInCP1, fInCP2, fInCP3)
+            thenMApplyAllSuccessTupleAsync(cfThis, fInCP1, fInCP2, fInCP3)
         }
         run {
             val (fInCP1, fInCP2, fInCP3, fInCP4) = am.createFunctions(4)
-            CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cfThis, fInCP1, fInCP2, fInCP3, fInCP4)
+            thenMApplyAllSuccessTupleAsync(cfThis, fInCP1, fInCP2, fInCP3, fInCP4)
         }
         run {
             val (fInCP1, fInCP2, fInCP3, fInCP4, fInCP5) = am.createFunctions(5)
-            CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cfThis, fInCP1, fInCP2, fInCP3, fInCP4, fInCP5)
+            thenMApplyAllSuccessTupleAsync(cfThis, fInCP1, fInCP2, fInCP3, fInCP4, fInCP5)
         }
         run {
             val (fInTE1, fInTE2) = am.createFunctions(2, testExecutor)
-            CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cfThis, testExecutor, fInTE1, fInTE2)
+            thenMApplyAllSuccessTupleAsync(cfThis, testExecutor, fInTE1, fInTE2)
         }
         run {
             val (fInTE1, fInTE2, fInTE3) = am.createFunctions(3, testExecutor)
-            CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3)
+            thenMApplyAllSuccessTupleAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4) = am.createFunctions(4, testExecutor)
-            CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
+            thenMApplyAllSuccessTupleAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, testExecutor)
-            CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(
-                cfThis,
-                testExecutor,
-                fInTE1,
-                fInTE2,
-                fInTE3,
-                fInTE4,
-                fInTE5
-            )
+            thenMApplyAllSuccessTupleAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5)
         }
 
         run {
             val (fInCP1, fInCP2) = am.createFunctions(2)
-            CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(cfThis, LONG_WAIT_MS, MILLISECONDS, fInCP1, fInCP2)
+            thenMApplyMostSuccessTupleAsync(cfThis, LONG_WAIT_MS, MILLISECONDS, fInCP1, fInCP2)
         }
         run {
             val (fInCP1, fInCP2, fInCP3) = am.createFunctions(3)
-            CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(
-                cfThis,
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                fInCP1,
-                fInCP2,
-                fInCP3
-            )
+            thenMApplyMostSuccessTupleAsync(cfThis, LONG_WAIT_MS, MILLISECONDS, fInCP1, fInCP2, fInCP3)
         }
         run {
             val (fInCP1, fInCP2, fInCP3, fInCP4) = am.createFunctions(4)
-            CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(
-                cfThis,
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                fInCP1,
-                fInCP2,
-                fInCP3,
-                fInCP4
-            )
+            thenMApplyMostSuccessTupleAsync(cfThis, LONG_WAIT_MS, MILLISECONDS, fInCP1, fInCP2, fInCP3, fInCP4)
         }
         run {
             val (fInCP1, fInCP2, fInCP3, fInCP4, fInCP5) = am.createFunctions(5)
-            CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(
-                cfThis,
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                fInCP1,
-                fInCP2,
-                fInCP3,
-                fInCP4,
-                fInCP5
-            )
+            thenMApplyMostSuccessTupleAsync(cfThis, LONG_WAIT_MS, MILLISECONDS, fInCP1, fInCP2, fInCP3, fInCP4, fInCP5)
         }
         run {
             val (fInTE1, fInTE2) = am.createFunctions(2, testExecutor)
-            CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(
-                cfThis,
-                testExecutor,
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                fInTE1,
-                fInTE2
-            )
+            thenMApplyMostSuccessTupleAsync(cfThis, testExecutor, LONG_WAIT_MS, MILLISECONDS, fInTE1, fInTE2)
         }
         run {
             val (fInTE1, fInTE2, fInTE3) = am.createFunctions(3, testExecutor)
-            CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(
-                cfThis,
-                testExecutor,
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                fInTE1,
-                fInTE2,
-                fInTE3
-            )
+            thenMApplyMostSuccessTupleAsync(cfThis, testExecutor, LONG_WAIT_MS, MILLISECONDS, fInTE1, fInTE2, fInTE3)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4) = am.createFunctions(4, testExecutor)
-            CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(
+            thenMApplyMostSuccessTupleAsync(
                 cfThis,
                 testExecutor,
                 LONG_WAIT_MS,
@@ -532,50 +435,42 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, testExecutor)
-            CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(
-                cfThis,
-                testExecutor,
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                fInTE1,
-                fInTE2,
-                fInTE3,
-                fInTE4,
-                fInTE5
+            thenMApplyMostSuccessTupleAsync(
+                cfThis, testExecutor, LONG_WAIT_MS, MILLISECONDS, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5
             )
         }
 
         run {
             val (fInCP1, fInCP2) = am.createFunctions(2)
-            CompletableFutureUtils.thenMApplyTupleAsync(cfThis, fInCP1, fInCP2)
+            thenMApplyTupleAsync(cfThis, fInCP1, fInCP2)
         }
         run {
             val (fInCP1, fInCP2, fInCP3) = am.createFunctions(3)
-            CompletableFutureUtils.thenMApplyTupleAsync(cfThis, fInCP1, fInCP2, fInCP3)
+            thenMApplyTupleAsync(cfThis, fInCP1, fInCP2, fInCP3)
         }
         run {
             val (fInCP1, fInCP2, fInCP3, fInCP4) = am.createFunctions(4)
-            CompletableFutureUtils.thenMApplyTupleAsync(cfThis, fInCP1, fInCP2, fInCP3, fInCP4)
+            thenMApplyTupleAsync(cfThis, fInCP1, fInCP2, fInCP3, fInCP4)
         }
         run {
             val (fInCP1, fInCP2, fInCP3, fInCP4, fInCP5) = am.createFunctions(5)
-            CompletableFutureUtils.thenMApplyTupleAsync(cfThis, fInCP1, fInCP2, fInCP3, fInCP4, fInCP5)
+            thenMApplyTupleAsync(cfThis, fInCP1, fInCP2, fInCP3, fInCP4, fInCP5)
         }
         run {
             val (fInTE1, fInTE2) = am.createFunctions(2, testExecutor)
-            CompletableFutureUtils.thenMApplyTupleAsync(cfThis, testExecutor, fInTE1, fInTE2)
+            thenMApplyTupleAsync(cfThis, testExecutor, fInTE1, fInTE2)
         }
         run {
             val (fInTE1, fInTE2, fInTE3) = am.createFunctions(3, testExecutor)
-            CompletableFutureUtils.thenMApplyTupleAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3)
+            thenMApplyTupleAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4) = am.createFunctions(4, testExecutor)
-            CompletableFutureUtils.thenMApplyTupleAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
+            thenMApplyTupleAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, testExecutor)
-            CompletableFutureUtils.thenMApplyTupleAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5)
+            thenMApplyTupleAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5)
         }
 
         am.checkRunningExecutor()
@@ -795,46 +690,26 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4) = am.createSuppliers(4, testExecutor)
             testCffuFac.mSupplyMostSuccessTupleAsync(
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                sInCP1,
-                sInCP2,
-                sInCP3,
-                sInCP4
+                LONG_WAIT_MS, MILLISECONDS, sInCP1, sInCP2, sInCP3, sInCP4
             )
         }
         run {
             val (sInCP1, sInCP2, sInCP3, sInCP4, sInCP5) = am.createSuppliers(5, testExecutor)
             testCffuFac.mSupplyMostSuccessTupleAsync(
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                sInCP1,
-                sInCP2,
-                sInCP3,
-                sInCP4,
-                sInCP5
+                LONG_WAIT_MS, MILLISECONDS, sInCP1, sInCP2, sInCP3, sInCP4, sInCP5
             )
         }
 
         run {
             val (sInTE1, sInTE2) = am.createSuppliers(2, anotherExecutor)
             testCffuFac.mSupplyMostSuccessTupleAsync(
-                anotherExecutor,
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                sInTE1,
-                sInTE2
+                anotherExecutor, LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2
             )
         }
         run {
             val (sInTE1, sInTE2, sInTE3) = am.createSuppliers(3, anotherExecutor)
             testCffuFac.mSupplyMostSuccessTupleAsync(
-                anotherExecutor,
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                sInTE1,
-                sInTE2,
-                sInTE3
+                anotherExecutor, LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, sInTE3
             )
         }
         run {
@@ -852,14 +727,7 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4, sInTE5) = am.createSuppliers(5, anotherExecutor)
             testCffuFac.mSupplyMostSuccessTupleAsync(
-                anotherExecutor,
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                sInTE1,
-                sInTE2,
-                sInTE3,
-                sInTE4,
-                sInTE5
+                anotherExecutor, LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5
             )
         }
 
@@ -1031,12 +899,7 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, anotherExecutor)
             cfThis.thenMApplyTupleFailFastAsync(
-                anotherExecutor,
-                fInTE1,
-                fInTE2,
-                fInTE3,
-                fInTE4,
-                fInTE5
+                anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5
             )
         }
 
@@ -1071,12 +934,7 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, anotherExecutor)
             cfThis.thenMApplyAllSuccessTupleAsync(
-                anotherExecutor,
-                fInTE1,
-                fInTE2,
-                fInTE3,
-                fInTE4,
-                fInTE5
+                anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5
             )
         }
 
