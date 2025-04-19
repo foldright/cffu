@@ -574,7 +574,7 @@ public class MultipleActionsDemo {
         v -> v + 2.1
     ).thenAccept(System.out::println);
     // output: Tuple3(string42, 43, 44.1)
-    cffuFactory.completedFuture(42).thenMApplyAllSuccessTupleAsync(
+    cffuFactory.completedFuture(42).tupleOps().thenMApplyAllSuccessTupleAsync(
         v -> "string" + v,
         v -> v + 1,
         v -> v + 2.1
