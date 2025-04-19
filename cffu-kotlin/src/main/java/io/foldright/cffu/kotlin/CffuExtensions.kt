@@ -526,7 +526,7 @@ fun <T> Array<out CompletionStage<out T>>.allSuccessResultsOfCffu(
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value used as result if the input stage not completed normally
  * @see CffuFactory.mostSuccessResultsOf
- * @see CffuFactory.mostSuccessTupleOf
+ * @see CffuFactory.TupleOps.mostSuccessTupleOf
  * @see Cffu.getSuccessNow
  */
 fun <T> Collection<Cffu<out T>>.mostSuccessResultsOfCffu(
@@ -544,7 +544,7 @@ fun <T> Collection<Cffu<out T>>.mostSuccessResultsOfCffu(
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value used as result if the input stage not completed normally
  * @see CffuFactory.mostSuccessResultsOf
- * @see CffuFactory.mostSuccessTupleOf
+ * @see CffuFactory.TupleOps.mostSuccessTupleOf
  * @see Cffu.getSuccessNow
  */
 fun <T> Array<out Cffu<out T>>.mostSuccessResultsOfCffu(
@@ -562,7 +562,7 @@ fun <T> Array<out Cffu<out T>>.mostSuccessResultsOfCffu(
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value used as result if the input stage not completed normally
  * @see CffuFactory.mostSuccessResultsOf
- * @see CffuFactory.mostSuccessTupleOf
+ * @see CffuFactory.TupleOps.mostSuccessTupleOf
  * @see Cffu.getSuccessNow
  */
 @JvmName("mostSuccessResultsOfCffuCs")
@@ -581,7 +581,7 @@ fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCffu(
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  * @param valueIfNotSuccess the value used as result if the input stage not completed normally
  * @see CffuFactory.mostSuccessResultsOf
- * @see CffuFactory.mostSuccessTupleOf
+ * @see CffuFactory.TupleOps.mostSuccessTupleOf
  * @see Cffu.getSuccessNow
  */
 fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCffu(
