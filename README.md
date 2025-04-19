@@ -565,7 +565,7 @@ public class MultipleActionsDemo {
     ).thenAccept(System.out::println);
     // output: [43, 44, 45]
 
-    CompletableFutureUtils.thenMApplyTupleFailFastAsync(
+    CfTupleUtils.thenMApplyTupleFailFastAsync(
         completedFuture(42),
         v -> "string" + v,
         v -> v + 1,
