@@ -28,6 +28,7 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @author HuHao (995483610 at qq dot com)
  * @author Eric Lin (linqinghua4 at gmail dot com)
+ * @see CfParallelUtils
  * @see CfTupleUtils
  */
 public final class CompletableFutureUtils {
@@ -413,7 +414,7 @@ public final class CompletableFutureUtils {
         return allSuccessResultsOf0(valueIfFailed, requireCfsAndEleNonNull(cfs));
     }
 
-    private static <T> CompletableFuture<List<T>> allSuccessResultsOf0(
+    static <T> CompletableFuture<List<T>> allSuccessResultsOf0(
             @Nullable T valueIfFailed, CompletionStage<? extends T>[] cfs) {
         return allResultsOf0(false, f_convertStageArray0(cfs, s -> s.exceptionally(ex -> valueIfFailed)));
     }
@@ -483,7 +484,7 @@ public final class CompletableFutureUtils {
         return mostSuccessResultsOf0(executorWhenTimeout, valueIfNotSuccess, timeout, unit, cfs);
     }
 
-    private static <T> CompletableFuture<List<T>> mostSuccessResultsOf0(
+    static <T> CompletableFuture<List<T>> mostSuccessResultsOf0(
             Executor executorWhenTimeout, @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit,
             CompletionStage<? extends T>[] cfs) {
         if (cfs.length == 0) return completedFuture(arrayList());
@@ -541,7 +542,7 @@ public final class CompletableFutureUtils {
         return allResultsOf0(false, requireCfsAndEleNonNull(cfs));
     }
 
-    private static <T> CompletableFuture<List<T>> allResultsOf0(boolean failFast, CompletionStage<? extends T>[] cfs) {
+    static <T> CompletableFuture<List<T>> allResultsOf0(boolean failFast, CompletionStage<? extends T>[] cfs) {
         final int len = cfs.length;
         if (len == 0) return completedFuture(arrayList());
         // convert input cf to non-minimal-stage CF instance for SINGLE input in order to
@@ -713,7 +714,7 @@ public final class CompletableFutureUtils {
         return anySuccessOf0(requireCfsAndEleNonNull(cfs));
     }
 
-    private static <T> CompletableFuture<T> anySuccessOf0(CompletionStage<? extends T>[] cfs) {
+    static <T> CompletableFuture<T> anySuccessOf0(CompletionStage<? extends T>[] cfs) {
         final int len = cfs.length;
         if (len == 0) return failedFuture(new NoCfsProvidedException());
         // defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
@@ -866,7 +867,8 @@ public final class CompletableFutureUtils {
 
     /**
      * Shortcut to method {@link #allResultsFailFastOf allResultsFailFastOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of functions.
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)} using the default executor of parameter cfThis;
+     * The given CompletableFuture's result is used as the argument of functions.
      * <p>
      * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
@@ -879,7 +881,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Shortcut to method {@link #allResultsFailFastOf allResultsFailFastOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given CompletableFuture's result is used as the argument of functions.
      * <p>
      * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      * <p>
@@ -909,7 +911,8 @@ public final class CompletableFutureUtils {
 
     /**
      * Shortcut to method {@link #allSuccessResultsOf allSuccessResultsOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of functions.
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)} using the default executor of parameter cfThis;
+     * The given CompletableFuture's result is used as the argument of functions.
      * <p>
      * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
@@ -922,7 +925,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Shortcut to method {@link #allSuccessResultsOf allSuccessResultsOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given CompletableFuture's result is used as the argument of functions.
      * <p>
      * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      * <p>
@@ -950,7 +953,8 @@ public final class CompletableFutureUtils {
     /**
      * Shortcut to method {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
      * mostSuccessResultsOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)} using the default executor of parameter cfThis;
+     * The given CompletableFuture's result is used as the argument of functions.
      * <p>
      * See the {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
      * mostSuccessResultsOf} documentation for the rules of result computation.
@@ -966,7 +970,7 @@ public final class CompletableFutureUtils {
     /**
      * Shortcut to method {@link #mostSuccessResultsOf(Executor, Object, long, TimeUnit, CompletionStage[])
      * mostSuccessResultsOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given CompletableFuture's result is used as the argument of functions.
      * <p>
      * See the {@link #mostSuccessResultsOf(Executor, Object, long, TimeUnit, CompletionStage[])
      * mostSuccessResultsOf} documentation for the rules of result computation.
@@ -990,7 +994,8 @@ public final class CompletableFutureUtils {
 
     /**
      * Shortcut to method {@link #allResultsOf allResultsOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of functions.
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)} using the default executor of parameter cfThis;
+     * The given CompletableFuture's result is used as the argument of functions.
      * <p>
      * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
      */
@@ -1003,7 +1008,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Shortcut to method {@link #allResultsOf allResultsOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given CompletableFuture's result is used as the argument of functions.
      * <p>
      * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
      * <p>
@@ -1030,7 +1035,8 @@ public final class CompletableFutureUtils {
 
     /**
      * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of functions.
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)} using the default executor of parameter cfThis;
+     * The given CompletableFuture's result is used as the argument of functions.
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
@@ -1043,7 +1049,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given CompletableFuture's result is used as the argument of functions.
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
@@ -1070,7 +1076,8 @@ public final class CompletableFutureUtils {
 
     /**
      * Shortcut to method {@link #anyOf anyOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of functions.
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)} using the default executor of parameter cfThis;
+     * The given CompletableFuture's result is used as the argument of functions.
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
@@ -1083,7 +1090,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Shortcut to method {@link #anyOf anyOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
+     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given CompletableFuture's result is used as the argument of functions.
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      * <p>
@@ -1114,8 +1121,9 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Shortcut to method {@link #allFailFastOf allFailFastOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of actions.
+     * Shortcut to method {@link #allFailFastOf allFailFastOf}, wraps input actions to CompletableFuture by
+     * {@link CompletableFuture#runAsync(Runnable, Executor)} using the default executor of parameter cfThis;
+     * The given CompletableFuture's result is used as the argument of actions.
      * <p>
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      * <p>
@@ -1132,8 +1140,9 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Shortcut to method {@link #allFailFastOf allFailFastOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of actions.
+     * Shortcut to method {@link #allFailFastOf allFailFastOf}, wraps input actions to CompletableFuture by
+     * {@link CompletableFuture#runAsync(Runnable, Executor)} using the default executor of parameter cfThis;
+     * The given CompletableFuture's result is used as the argument of actions.
      * <p>
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      * <p>
@@ -1159,8 +1168,9 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Shortcut to method {@link #allOf allOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of actions.
+     * Shortcut to method {@link #allOf allOf}, wraps input actions to CompletableFuture by
+     * {@link CompletableFuture#runAsync(Runnable, Executor)} using the default executor of parameter cfThis;
+     * The given CompletableFuture's result is used as the argument of actions.
      * <p>
      * See the {@link #allOf allOf} documentation for the rules of result computation.
      * <p>
@@ -1176,8 +1186,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Shortcut to method {@link #allOf allOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of actions.
+     * Shortcut to method {@link #allOf allOf}, wraps input actions to CompletableFuture by
+     * {@link CompletableFuture#runAsync(Runnable, Executor)}; The given CompletableFuture's result is used as the argument of actions.
      * <p>
      * See the {@link #allOf allOf} documentation for the rules of result computation.
      * <p>
@@ -1202,8 +1212,9 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of actions.
+     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input actions to CompletableFuture by
+     * {@link CompletableFuture#runAsync(Runnable, Executor)} using the default executor of parameter cfThis;
+     * The given CompletableFuture's result is used as the argument of actions.
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
@@ -1220,8 +1231,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of actions.
+     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input actions to CompletableFuture by
+     * {@link CompletableFuture#runAsync(Runnable, Executor)}; The given CompletableFuture's result is used as the argument of actions.
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
@@ -1247,8 +1258,9 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Shortcut to method {@link #anyOf anyOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier)}; The given stage's result is used as the argument of actions.
+     * Shortcut to method {@link #anyOf anyOf}, wraps input actions to CompletableFuture by
+     * {@link CompletableFuture#runAsync(Runnable, Executor)} using the default executor of parameter cfThis;
+     * The given CompletableFuture's result is used as the argument of actions.
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      * <p>
@@ -1265,8 +1277,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Shortcut to method {@link #anyOf anyOf}, wraps input functions to CompletableFuture by
-     * {@link CompletableFuture#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of actions.
+     * Shortcut to method {@link #anyOf anyOf}, wraps input actions to CompletableFuture by
+     * {@link CompletableFuture#runAsync(Runnable, Executor)}; The given CompletableFuture's result is used as the argument of actions.
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      * <p>
@@ -1296,8 +1308,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Shortcut to method {@link #allFailFastOf allFailFastOf}, wraps input actions to
-     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable)}.
+     * Shortcut to method {@link #allFailFastOf allFailFastOf}, wraps input actions to CompletableFuture
+     * by {@link CompletableFuture#runAsync(Runnable, Executor)} using the default executor of parameter cfThis.
      * <p>
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
@@ -1307,8 +1319,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Shortcut to method {@link #allFailFastOf allFailFastOf}, wraps input actions to
-     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable, Executor)}.
+     * Shortcut to method {@link #allFailFastOf allFailFastOf}, wraps input actions to CompletableFuture
+     * by {@link CompletableFuture#runAsync(Runnable, Executor)}.
      * <p>
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
@@ -1328,8 +1340,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Shortcut to method {@link #allOf allOf}, wraps input actions to
-     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable)}.
+     * Shortcut to method {@link #allOf allOf}, wraps input actions to CompletableFuture
+     * by {@link CompletableFuture#runAsync(Runnable, Executor)} using the default executor of parameter cfThis.
      * <p>
      * See the {@link #allOf allOf} documentation for the rules of result computation.
      */
@@ -1338,8 +1350,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Shortcut to method {@link #allOf allOf}, wraps input actions to
-     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable, Executor)}.
+     * Shortcut to method {@link #allOf allOf}, wraps input actions to CompletableFuture
+     * by {@link CompletableFuture#runAsync(Runnable, Executor)}.
      * <p>
      * See the {@link #allOf allOf} documentation for the rules of result computation.
      */
@@ -1358,8 +1370,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input actions to
-     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable)}.
+     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input actions to CompletableFuture
+     * by {@link CompletableFuture#runAsync(Runnable, Executor)} using the default executor of parameter cfThis.
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
@@ -1369,8 +1381,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input actions to
-     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable, Executor)}.
+     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input actions to CompletableFuture
+     * by {@link CompletableFuture#runAsync(Runnable, Executor)}.
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
@@ -1390,8 +1402,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Shortcut to method {@link #anyOf anyOf}, wraps input actions to
-     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable)}.
+     * Shortcut to method {@link #anyOf anyOf}, wraps input actions to CompletableFuture
+     * by {@link CompletableFuture#runAsync(Runnable, Executor)} using the default executor of parameter cfThis.
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
@@ -1401,8 +1413,8 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Shortcut to method {@link #anyOf anyOf}, wraps input actions to
-     * CompletableFuture by {@link CompletableFuture#runAsync(Runnable, Executor)}.
+     * Shortcut to method {@link #anyOf anyOf}, wraps input actions to CompletableFuture
+      * by {@link CompletableFuture#runAsync(Runnable, Executor)}.
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
