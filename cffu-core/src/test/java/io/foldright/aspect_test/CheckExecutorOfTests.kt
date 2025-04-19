@@ -870,81 +870,81 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
 
         run {
             val (fInCP1, fInCP2) = am.createFunctions(2, testExecutor)
-            cfThis.thenMApplyTupleFailFastAsync(fInCP1, fInCP2)
+            cfThis.tupleOps().thenMApplyTupleFailFastAsync(fInCP1, fInCP2)
         }
         run {
             val (fInCP1, fInCP2, fInCP3) = am.createFunctions(3, testExecutor)
-            cfThis.thenMApplyTupleFailFastAsync(fInCP1, fInCP2, fInCP3)
+            cfThis.tupleOps().thenMApplyTupleFailFastAsync(fInCP1, fInCP2, fInCP3)
         }
         run {
             val (fInCP1, fInCP2, fInCP3, fInCP4) = am.createFunctions(4, testExecutor)
-            cfThis.thenMApplyTupleFailFastAsync(fInCP1, fInCP2, fInCP3, fInCP4)
+            cfThis.tupleOps().thenMApplyTupleFailFastAsync(fInCP1, fInCP2, fInCP3, fInCP4)
         }
         run {
             val (fInCP1, fInCP2, fInCP3, fInCP4, fInCP5) = am.createFunctions(5, testExecutor)
-            cfThis.thenMApplyTupleFailFastAsync(fInCP1, fInCP2, fInCP3, fInCP4, fInCP5)
+            cfThis.tupleOps().thenMApplyTupleFailFastAsync(fInCP1, fInCP2, fInCP3, fInCP4, fInCP5)
         }
         run {
             val (fInTE1, fInTE2) = am.createFunctions(2, anotherExecutor)
-            cfThis.thenMApplyTupleFailFastAsync(anotherExecutor, fInTE1, fInTE2)
+            cfThis.tupleOps().thenMApplyTupleFailFastAsync(anotherExecutor, fInTE1, fInTE2)
         }
         run {
             val (fInTE1, fInTE2, fInTE3) = am.createFunctions(3, anotherExecutor)
-            cfThis.thenMApplyTupleFailFastAsync(anotherExecutor, fInTE1, fInTE2, fInTE3)
+            cfThis.tupleOps().thenMApplyTupleFailFastAsync(anotherExecutor, fInTE1, fInTE2, fInTE3)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4) = am.createFunctions(4, anotherExecutor)
-            cfThis.thenMApplyTupleFailFastAsync(anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
+            cfThis.tupleOps().thenMApplyTupleFailFastAsync(anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, anotherExecutor)
-            cfThis.thenMApplyTupleFailFastAsync(
+            cfThis.tupleOps().thenMApplyTupleFailFastAsync(
                 anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5
             )
         }
 
         run {
             val (fInCP1, fInCP2) = am.createFunctions(2, testExecutor)
-            cfThis.thenMApplyAllSuccessTupleAsync(fInCP1, fInCP2)
+            cfThis.tupleOps().thenMApplyAllSuccessTupleAsync(fInCP1, fInCP2)
         }
         run {
             val (fInCP1, fInCP2, fInCP3) = am.createFunctions(3, testExecutor)
-            cfThis.thenMApplyAllSuccessTupleAsync(fInCP1, fInCP2, fInCP3)
+            cfThis.tupleOps().thenMApplyAllSuccessTupleAsync(fInCP1, fInCP2, fInCP3)
         }
         run {
             val (fInCP1, fInCP2, fInCP3, fInCP4) = am.createFunctions(4, testExecutor)
-            cfThis.thenMApplyAllSuccessTupleAsync(fInCP1, fInCP2, fInCP3, fInCP4)
+            cfThis.tupleOps().thenMApplyAllSuccessTupleAsync(fInCP1, fInCP2, fInCP3, fInCP4)
         }
         run {
             val (fInCP1, fInCP2, fInCP3, fInCP4, fInCP5) = am.createFunctions(5, testExecutor)
-            cfThis.thenMApplyAllSuccessTupleAsync(fInCP1, fInCP2, fInCP3, fInCP4, fInCP5)
+            cfThis.tupleOps().thenMApplyAllSuccessTupleAsync(fInCP1, fInCP2, fInCP3, fInCP4, fInCP5)
         }
         run {
             val (fInTE1, fInTE2) = am.createFunctions(2, anotherExecutor)
-            cfThis.thenMApplyAllSuccessTupleAsync(anotherExecutor, fInTE1, fInTE2)
+            cfThis.tupleOps().thenMApplyAllSuccessTupleAsync(anotherExecutor, fInTE1, fInTE2)
         }
         run {
             val (fInTE1, fInTE2, fInTE3) = am.createFunctions(3, anotherExecutor)
-            cfThis.thenMApplyAllSuccessTupleAsync(anotherExecutor, fInTE1, fInTE2, fInTE3)
+            cfThis.tupleOps().thenMApplyAllSuccessTupleAsync(anotherExecutor, fInTE1, fInTE2, fInTE3)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4) = am.createFunctions(4, anotherExecutor)
-            cfThis.thenMApplyAllSuccessTupleAsync(anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
+            cfThis.tupleOps().thenMApplyAllSuccessTupleAsync(anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, anotherExecutor)
-            cfThis.thenMApplyAllSuccessTupleAsync(
+            cfThis.tupleOps().thenMApplyAllSuccessTupleAsync(
                 anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5
             )
         }
 
         run {
             val (fInCP1, fInCP2) = am.createFunctions(2, testExecutor)
-            cfThis.thenMApplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, fInCP1, fInCP2)
+            cfThis.tupleOps().thenMApplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, fInCP1, fInCP2)
         }
         run {
             val (fInCP1, fInCP2, fInCP3) = am.createFunctions(3, testExecutor)
-            cfThis.thenMApplyMostSuccessTupleAsync(
+            cfThis.tupleOps().thenMApplyMostSuccessTupleAsync(
                 LONG_WAIT_MS,
                 MILLISECONDS,
                 fInCP1,
@@ -954,7 +954,7 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         }
         run {
             val (fInCP1, fInCP2, fInCP3, fInCP4) = am.createFunctions(4, testExecutor)
-            cfThis.thenMApplyMostSuccessTupleAsync(
+            cfThis.tupleOps().thenMApplyMostSuccessTupleAsync(
                 LONG_WAIT_MS,
                 MILLISECONDS,
                 fInCP1,
@@ -965,7 +965,7 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         }
         run {
             val (fInCP1, fInCP2, fInCP3, fInCP4, fInCP5) = am.createFunctions(5, testExecutor)
-            cfThis.thenMApplyMostSuccessTupleAsync(
+            cfThis.tupleOps().thenMApplyMostSuccessTupleAsync(
                 LONG_WAIT_MS,
                 MILLISECONDS,
                 fInCP1,
@@ -977,7 +977,7 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         }
         run {
             val (fInTE1, fInTE2) = am.createFunctions(2, anotherExecutor)
-            cfThis.thenMApplyMostSuccessTupleAsync(
+            cfThis.tupleOps().thenMApplyMostSuccessTupleAsync(
                 anotherExecutor,
                 LONG_WAIT_MS,
                 MILLISECONDS,
@@ -987,7 +987,7 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         }
         run {
             val (fInTE1, fInTE2, fInTE3) = am.createFunctions(3, anotherExecutor)
-            cfThis.thenMApplyMostSuccessTupleAsync(
+            cfThis.tupleOps().thenMApplyMostSuccessTupleAsync(
                 anotherExecutor,
                 LONG_WAIT_MS,
                 MILLISECONDS,
@@ -998,7 +998,7 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4) = am.createFunctions(4, anotherExecutor)
-            cfThis.thenMApplyMostSuccessTupleAsync(
+            cfThis.tupleOps().thenMApplyMostSuccessTupleAsync(
                 anotherExecutor,
                 LONG_WAIT_MS,
                 MILLISECONDS,
@@ -1010,7 +1010,7 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, anotherExecutor)
-            cfThis.thenMApplyMostSuccessTupleAsync(
+            cfThis.tupleOps().thenMApplyMostSuccessTupleAsync(
                 anotherExecutor,
                 LONG_WAIT_MS,
                 MILLISECONDS,
@@ -1024,35 +1024,35 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
 
         run {
             val (fInCP1, fInCP2) = am.createFunctions(2, testExecutor)
-            cfThis.thenMApplyTupleAsync(fInCP1, fInCP2)
+            cfThis.tupleOps().thenMApplyTupleAsync(fInCP1, fInCP2)
         }
         run {
             val (fInCP1, fInCP2, fInCP3) = am.createFunctions(3, testExecutor)
-            cfThis.thenMApplyTupleAsync(fInCP1, fInCP2, fInCP3)
+            cfThis.tupleOps().thenMApplyTupleAsync(fInCP1, fInCP2, fInCP3)
         }
         run {
             val (fInCP1, fInCP2, fInCP3, fInCP4) = am.createFunctions(4, testExecutor)
-            cfThis.thenMApplyTupleAsync(fInCP1, fInCP2, fInCP3, fInCP4)
+            cfThis.tupleOps().thenMApplyTupleAsync(fInCP1, fInCP2, fInCP3, fInCP4)
         }
         run {
             val (fInCP1, fInCP2, fInCP3, fInCP4, fInCP5) = am.createFunctions(5, testExecutor)
-            cfThis.thenMApplyTupleAsync(fInCP1, fInCP2, fInCP3, fInCP4, fInCP5)
+            cfThis.tupleOps().thenMApplyTupleAsync(fInCP1, fInCP2, fInCP3, fInCP4, fInCP5)
         }
         run {
             val (fInTE1, fInTE2) = am.createFunctions(2, anotherExecutor)
-            cfThis.thenMApplyTupleAsync(anotherExecutor, fInTE1, fInTE2)
+            cfThis.tupleOps().thenMApplyTupleAsync(anotherExecutor, fInTE1, fInTE2)
         }
         run {
             val (fInTE1, fInTE2, fInTE3) = am.createFunctions(3, anotherExecutor)
-            cfThis.thenMApplyTupleAsync(anotherExecutor, fInTE1, fInTE2, fInTE3)
+            cfThis.tupleOps().thenMApplyTupleAsync(anotherExecutor, fInTE1, fInTE2, fInTE3)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4) = am.createFunctions(4, anotherExecutor)
-            cfThis.thenMApplyTupleAsync(anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
+            cfThis.tupleOps().thenMApplyTupleAsync(anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, anotherExecutor)
-            cfThis.thenMApplyTupleAsync(anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5)
+            cfThis.tupleOps().thenMApplyTupleAsync(anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5)
         }
 
         am.checkRunningExecutor()
