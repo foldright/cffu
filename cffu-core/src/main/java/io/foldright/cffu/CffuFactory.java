@@ -413,7 +413,7 @@ public final class CffuFactory {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
     public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return create(CompletableFutureUtils.mSupplyTupleFailFastAsync(cffuScreened(executor), supplier1, supplier2));
+        return create(CfTupleUtils.mSupplyTupleFailFastAsync(cffuScreened(executor), supplier1, supplier2));
     }
 
     /**
@@ -432,7 +432,7 @@ public final class CffuFactory {
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return create(CompletableFutureUtils.mSupplyTupleFailFastAsync(cffuScreened(executor), supplier1, supplier2, supplier3));
+        return create(CfTupleUtils.mSupplyTupleFailFastAsync(cffuScreened(executor), supplier1, supplier2, supplier3));
     }
 
     /**
@@ -452,7 +452,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return create(CompletableFutureUtils.mSupplyTupleFailFastAsync(
+        return create(CfTupleUtils.mSupplyTupleFailFastAsync(
                 cffuScreened(executor), supplier1, supplier2, supplier3, supplier4));
     }
 
@@ -473,7 +473,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleFailFastAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return create(CompletableFutureUtils.mSupplyTupleFailFastAsync(
+        return create(CfTupleUtils.mSupplyTupleFailFastAsync(
                 cffuScreened(executor), supplier1, supplier2, supplier3, supplier4, supplier5));
     }
 
@@ -498,7 +498,7 @@ public final class CffuFactory {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
     public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyAllSuccessTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return create(CompletableFutureUtils.mSupplyAllSuccessTupleAsync(cffuScreened(executor), supplier1, supplier2));
+        return create(CfTupleUtils.mSupplyAllSuccessTupleAsync(cffuScreened(executor), supplier1, supplier2));
     }
 
     /**
@@ -523,7 +523,7 @@ public final class CffuFactory {
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyAllSuccessTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return create(CompletableFutureUtils.mSupplyAllSuccessTupleAsync(cffuScreened(executor), supplier1, supplier2, supplier3));
+        return create(CfTupleUtils.mSupplyAllSuccessTupleAsync(cffuScreened(executor), supplier1, supplier2, supplier3));
     }
 
     /**
@@ -549,7 +549,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyAllSuccessTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return create(CompletableFutureUtils.mSupplyAllSuccessTupleAsync(
+        return create(CfTupleUtils.mSupplyAllSuccessTupleAsync(
                 cffuScreened(executor), supplier1, supplier2, supplier3, supplier4));
     }
 
@@ -576,7 +576,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyAllSuccessTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return create(CompletableFutureUtils.mSupplyAllSuccessTupleAsync(
+        return create(CfTupleUtils.mSupplyAllSuccessTupleAsync(
                 cffuScreened(executor), supplier1, supplier2, supplier3, supplier4, supplier5));
     }
 
@@ -603,7 +603,7 @@ public final class CffuFactory {
     public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return create(CompletableFutureUtils.mSupplyMostSuccessTupleAsync(
+        return create(CfTupleUtils.mSupplyMostSuccessTupleAsync(
                 cffuScreened(executor), timeout, unit, supplier1, supplier2));
     }
 
@@ -631,7 +631,7 @@ public final class CffuFactory {
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit,
             Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return create(CompletableFutureUtils.mSupplyMostSuccessTupleAsync(
+        return create(CfTupleUtils.mSupplyMostSuccessTupleAsync(
                 cffuScreened(executor), timeout, unit, supplier1, supplier2, supplier3));
     }
 
@@ -659,7 +659,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyMostSuccessTupleAsync(
             Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return create(CompletableFutureUtils.mSupplyMostSuccessTupleAsync(
+        return create(CfTupleUtils.mSupplyMostSuccessTupleAsync(
                 cffuScreened(executor), timeout, unit, supplier1, supplier2, supplier3, supplier4));
     }
 
@@ -689,7 +689,7 @@ public final class CffuFactory {
             Executor executor, long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
             Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return create(CompletableFutureUtils.mSupplyMostSuccessTupleAsync(
+        return create(CfTupleUtils.mSupplyMostSuccessTupleAsync(
                 cffuScreened(executor), timeout, unit, supplier1, supplier2, supplier3, supplier4, supplier5));
     }
 
@@ -708,7 +708,7 @@ public final class CffuFactory {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
     public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
-        return create(CompletableFutureUtils.mSupplyTupleAsync(cffuScreened(executor), supplier1, supplier2));
+        return create(CfTupleUtils.mSupplyTupleAsync(cffuScreened(executor), supplier1, supplier2));
     }
 
     /**
@@ -727,7 +727,7 @@ public final class CffuFactory {
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1,
             Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
-        return create(CompletableFutureUtils.mSupplyTupleAsync(cffuScreened(executor), supplier1, supplier2, supplier3));
+        return create(CfTupleUtils.mSupplyTupleAsync(cffuScreened(executor), supplier1, supplier2, supplier3));
     }
 
     /**
@@ -747,7 +747,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
-        return create(CompletableFutureUtils.mSupplyTupleAsync(
+        return create(CfTupleUtils.mSupplyTupleAsync(
                 cffuScreened(executor), supplier1, supplier2, supplier3, supplier4));
     }
 
@@ -768,7 +768,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleAsync(
             Executor executor, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
             Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
-        return create(CompletableFutureUtils.mSupplyTupleAsync(
+        return create(CfTupleUtils.mSupplyTupleAsync(
                 cffuScreened(executor), supplier1, supplier2, supplier3, supplier4, supplier5));
     }
 
@@ -978,7 +978,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleFailFastOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return create(CompletableFutureUtils.allTupleFailFastOf(cf1, cf2));
+        return create(CfTupleUtils.allTupleFailFastOf(cf1, cf2));
     }
 
     /**
@@ -987,7 +987,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleFailFastOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return create(CompletableFutureUtils.allTupleFailFastOf(cf1, cf2, cf3));
+        return create(CfTupleUtils.allTupleFailFastOf(cf1, cf2, cf3));
     }
 
     /**
@@ -997,7 +997,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleFailFastOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return create(CompletableFutureUtils.allTupleFailFastOf(cf1, cf2, cf3, cf4));
+        return create(CfTupleUtils.allTupleFailFastOf(cf1, cf2, cf3, cf4));
     }
 
     /**
@@ -1007,7 +1007,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleFailFastOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return create(CompletableFutureUtils.allTupleFailFastOf(cf1, cf2, cf3, cf4, cf5));
+        return create(CfTupleUtils.allTupleFailFastOf(cf1, cf2, cf3, cf4, cf5));
     }
 
     /**
@@ -1019,7 +1019,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> allSuccessTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return create(CompletableFutureUtils.allSuccessTupleOf(cf1, cf2));
+        return create(CfTupleUtils.allSuccessTupleOf(cf1, cf2));
     }
 
     /**
@@ -1031,7 +1031,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allSuccessTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return create(CompletableFutureUtils.allSuccessTupleOf(cf1, cf2, cf3));
+        return create(CfTupleUtils.allSuccessTupleOf(cf1, cf2, cf3));
     }
 
     /**
@@ -1044,7 +1044,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allSuccessTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return create(CompletableFutureUtils.allSuccessTupleOf(cf1, cf2, cf3, cf4));
+        return create(CfTupleUtils.allSuccessTupleOf(cf1, cf2, cf3, cf4));
     }
 
     /**
@@ -1057,7 +1057,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allSuccessTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return create(CompletableFutureUtils.allSuccessTupleOf(cf1, cf2, cf3, cf4, cf5));
+        return create(CfTupleUtils.allSuccessTupleOf(cf1, cf2, cf3, cf4, cf5));
     }
 
     /**
@@ -1070,7 +1070,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> mostSuccessTupleOf(
             long timeout, TimeUnit unit, CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return create(CompletableFutureUtils.mostSuccessTupleOf(defaultExecutor, timeout, unit, cf1, cf2));
+        return create(CfTupleUtils.mostSuccessTupleOf(defaultExecutor, timeout, unit, cf1, cf2));
     }
 
     /**
@@ -1084,7 +1084,7 @@ public final class CffuFactory {
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mostSuccessTupleOf(
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return create(CompletableFutureUtils.mostSuccessTupleOf(defaultExecutor, timeout, unit, cf1, cf2, cf3));
+        return create(CfTupleUtils.mostSuccessTupleOf(defaultExecutor, timeout, unit, cf1, cf2, cf3));
     }
 
     /**
@@ -1099,7 +1099,7 @@ public final class CffuFactory {
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return create(CompletableFutureUtils.mostSuccessTupleOf(defaultExecutor, timeout, unit, cf1, cf2, cf3, cf4));
+        return create(CfTupleUtils.mostSuccessTupleOf(defaultExecutor, timeout, unit, cf1, cf2, cf3, cf4));
     }
 
     /**
@@ -1114,7 +1114,7 @@ public final class CffuFactory {
             long timeout, TimeUnit unit,
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return create(CompletableFutureUtils.mostSuccessTupleOf(defaultExecutor, timeout, unit, cf1, cf2, cf3, cf4, cf5));
+        return create(CfTupleUtils.mostSuccessTupleOf(defaultExecutor, timeout, unit, cf1, cf2, cf3, cf4, cf5));
     }
 
     /**
@@ -1123,7 +1123,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
-        return create(CompletableFutureUtils.allTupleOf(cf1, cf2));
+        return create(CfTupleUtils.allTupleOf(cf1, cf2));
     }
 
     /**
@@ -1132,7 +1132,7 @@ public final class CffuFactory {
     @Contract(pure = true)
     public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
-        return create(CompletableFutureUtils.allTupleOf(cf1, cf2, cf3));
+        return create(CfTupleUtils.allTupleOf(cf1, cf2, cf3));
     }
 
     /**
@@ -1142,7 +1142,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
             CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
-        return create(CompletableFutureUtils.allTupleOf(cf1, cf2, cf3, cf4));
+        return create(CfTupleUtils.allTupleOf(cf1, cf2, cf3, cf4));
     }
 
     /**
@@ -1152,7 +1152,7 @@ public final class CffuFactory {
     public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
             CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
-        return create(CompletableFutureUtils.allTupleOf(cf1, cf2, cf3, cf4, cf5));
+        return create(CfTupleUtils.allTupleOf(cf1, cf2, cf3, cf4, cf5));
     }
 
     // endregion
