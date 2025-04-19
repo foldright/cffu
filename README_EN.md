@@ -357,27 +357,29 @@ Example code:
 
 ```java
 public class AllTupleOfDemo {
-  public static final Executor myBizExecutor = Executors.newCachedThreadPool();
-  public static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
+  private static final ExecutorService myBizExecutor = Executors.newCachedThreadPool();
+  private static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
 
   public static void main(String[] args) throws Exception {
     //////////////////////////////////////////////////
     // allTupleFailFastOf / allTupleOf
     //////////////////////////////////////////////////
-    Cffu<String> cffu1 = cffuFactory.completedFuture("21");
+    Cffu<String> cffu1 = cffuFactory.completedFuture("foo");
     Cffu<Integer> cffu2 = cffuFactory.completedFuture(42);
 
-    Cffu<Tuple2<String, Integer>> allTuple = cffuFactory.allTupleFailFastOf(cffu1, cffu2);
+    Cffu<Tuple2<String, Integer>> allTuple = cffuFactory.tupleOps().allTupleFailFastOf(cffu1, cffu2);
     System.out.println(allTuple.get());
+    // output: Tuple2(foo, 42)
 
     //////////////////////////////////////////////////
     // or CompletableFutureUtils.allTupleFailFastOf / allTupleOf
     //////////////////////////////////////////////////
-    CompletableFuture<String> cf1 = CompletableFuture.completedFuture("21");
+    CompletableFuture<String> cf1 = CompletableFuture.completedFuture("foo");
     CompletableFuture<Integer> cf2 = CompletableFuture.completedFuture(42);
 
     CompletableFuture<Tuple2<String, Integer>> allTuple2 = allTupleFailFastOf(cf1, cf2);
     System.out.println(allTuple2.get());
+    // output: Tuple2(foo, 42)
   }
 }
 ```
