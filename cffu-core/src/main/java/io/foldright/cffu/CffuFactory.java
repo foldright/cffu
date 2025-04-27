@@ -16,6 +16,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static io.foldright.cffu.CffuFactoryBuilder.cffuScreened;
@@ -785,8 +787,15 @@ public final class CffuFactory {
 
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# Tuple Ops
+    // region# More Ops
     ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a {@link ParOps} instance to access the methods for parallel data processing using Cffu.
+     */
+    public TupleOps parOps() {
+        return new TupleOps();
+    }
 
     /**
      * Returns a {@link TupleOps} instance to access the tuple-based variants of methods from {@link CffuFactory}
@@ -794,6 +803,552 @@ public final class CffuFactory {
      */
     public TupleOps tupleOps() {
         return new TupleOps();
+    }
+
+    /**
+     * The methods for parallel data processing using Cffu.
+     */
+    public final class ParOps {
+        ////////////////////////////////////////////////////////////////////////////////
+        // region# Factory Methods(create by multiply data and one action)
+        //
+        //    - parApply* (Iterable, Function: T -> U)    -> Cffu<List<U>>
+        //    - parAccept*(Iterable, Consumer: T -> Void) -> Cffu<Void>
+        ////////////////////////////////////////////////////////////////////////////////
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> Cffu<List<U>> parApplyFailFastAsync(
+                Iterable<? extends T> elements, Function<? super T, ? extends U> fn) {
+            return parApplyFailFastAsync(elements, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> Cffu<List<U>> parApplyFailFastAsync(
+                Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
+            return create(CfParallelUtils.parApplyFailFastAsync(elements, fn, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allSuccessResultsOf allSuccessResultsOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> Cffu<List<U>> parApplyAllSuccessAsync(
+                Iterable<? extends T> elements, @Nullable U valueIfFailed, Function<? super T, ? extends U> fn) {
+            return parApplyAllSuccessAsync(elements, valueIfFailed, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allSuccessResultsOf allSuccessResultsOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> Cffu<List<U>> parApplyAllSuccessAsync(
+                Iterable<? extends T> elements, @Nullable U valueIfFailed, Function<? super T, ? extends U> fn, Executor executor) {
+            return create(CfParallelUtils.parApplyAllSuccessAsync(elements, valueIfFailed, fn, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#mostSuccessResultsOf mostSuccessResultsOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> Cffu<List<U>> parApplyMostSuccessAsync(
+                Iterable<? extends T> elements, @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
+                Function<? super T, ? extends U> fn) {
+            return parApplyMostSuccessAsync(elements, valueIfNotSuccess, timeout, unit, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#mostSuccessResultsOf mostSuccessResultsOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> Cffu<List<U>> parApplyMostSuccessAsync(
+                Iterable<? extends T> elements, @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
+                Function<? super T, ? extends U> fn, Executor executor) {
+            return create(CfParallelUtils.parApplyMostSuccessAsync(elements, valueIfNotSuccess, timeout, unit, fn, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allResultsOf allResultsOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allResultsOf allResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> Cffu<List<U>> parApplyAsync(
+                Iterable<? extends T> elements, Function<? super T, ? extends U> fn) {
+            return parApplyAsync(elements, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allResultsOf allResultsOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allResultsOf allResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> Cffu<List<U>> parApplyAsync(
+                Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
+            return create(CfParallelUtils.parApplyAsync(elements, fn, cffuScreened(executor)));
+        }
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#anySuccessOf anySuccessOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> Cffu<U> parApplyAnySuccessAsync(
+                Iterable<? extends T> elements, Function<? super T, ? extends U> fn) {
+            return parApplyAnySuccessAsync(elements, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#anySuccessOf anySuccessOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> Cffu<U> parApplyAnySuccessAsync(
+                Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
+            return create(CfParallelUtils.parApplyAnySuccessAsync(elements, fn, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#anyOf anyOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#anyOf anyOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> Cffu<U> parApplyAnyAsync(
+                Iterable<? extends T> elements, Function<? super T, ? extends U> fn) {
+            return parApplyAnyAsync(elements, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#anyOf anyOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#anyOf anyOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> Cffu<U> parApplyAnyAsync(
+                Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
+            return create(CfParallelUtils.parApplyAnyAsync(elements, fn, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf},
+         * processes multiple input elements in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T> Cffu<Void> parAcceptFailFastAsync(
+                Iterable<? extends T> elements, Consumer<? super T> action) {
+            return parAcceptFailFastAsync(elements, action, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf},
+         * processes multiple input elements in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T> Cffu<Void> parAcceptFailFastAsync(
+                Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
+            return create(CfParallelUtils.parAcceptFailFastAsync(elements, action, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allResultsOf allResultsOf},
+         * processes multiple input elements in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allResultsOf allResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T> Cffu<Void> parAcceptAsync(
+                Iterable<? extends T> elements, Consumer<? super T> action) {
+            return parAcceptAsync(elements, action, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allResultsOf allResultsOf},
+         * processes multiple input elements in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allResultsOf allResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T> Cffu<Void> parAcceptAsync(
+                Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
+            return create(CfParallelUtils.parAcceptAsync(elements, action, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#anySuccessOf anySuccessOf},
+         * processes multiple input elements in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T> Cffu<Void> parAcceptAnySuccessAsync(
+                Iterable<? extends T> elements, Consumer<? super T> action) {
+            return parAcceptAnySuccessAsync(elements, action, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#anySuccessOf anySuccessOf},
+         * processes multiple input elements in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T> Cffu<Void> parAcceptAnySuccessAsync(
+                Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
+            return create(CfParallelUtils.parAcceptAnySuccessAsync(elements, action, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#anyOf anyOf},
+         * processes multiple input elements in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#anyOf anyOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T> Cffu<Void> parAcceptAnyAsync(
+                Iterable<? extends T> elements, Consumer<? super T> action) {
+            return parAcceptAnyAsync(elements, action, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#anyOf anyOf},
+         * processes multiple input elements in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#anyOf anyOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T> Cffu<Void> parAcceptAnyAsync(
+                Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
+            return create(CfParallelUtils.parAcceptAnyAsync(elements, action, cffuScreened(executor)));
+        }
+
+        // endregion
+        ////////////////////////////////////////////////////////////////////////////////
+        // region# Instance Methods for Cffu<Iterable<T>>
+        //
+        //    - thenParApply* (CF<Iterable>, Function: T -> U)    -> Cffu<List<U>>
+        //    - thenParAccept*(CF<Iterable>, Consumer: T -> Void) -> Cffu<Void>
+        ////////////////////////////////////////////////////////////////////////////////
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T, U> Cffu<List<U>> thenParApplyFailFastAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, Function<? super T, ? extends U> fn) {
+            return thenParApplyFailFastAsync(cffuThis, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T, U> Cffu<List<U>> thenParApplyFailFastAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, Function<? super T, ? extends U> fn, Executor executor) {
+            return create(CfParallelUtils.thenParApplyFailFastAsync(cffuThis.cffuUnwrap(), fn, cffuScreened(executor)));
+        }
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allSuccessResultsOf allSuccessResultsOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T, U> Cffu<List<U>> thenParApplyAllSuccessAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis,
+                @Nullable U valueIfFailed, Function<? super T, ? extends U> fn) {
+            return thenParApplyAllSuccessAsync(cffuThis, valueIfFailed, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allSuccessResultsOf allSuccessResultsOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T, U> Cffu<List<U>> thenParApplyAllSuccessAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis,
+                @Nullable U valueIfFailed, Function<? super T, ? extends U> fn, Executor executor) {
+            return create(CfParallelUtils.thenParApplyAllSuccessAsync(cffuThis.cffuUnwrap(), valueIfFailed, fn, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#mostSuccessResultsOf mostSuccessResultsOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T, U> Cffu<List<U>> thenParApplyMostSuccessAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, @Nullable U valueIfNotSuccess,
+                long timeout, TimeUnit unit, Function<? super T, ? extends U> fn) {
+            return thenParApplyMostSuccessAsync(cffuThis, valueIfNotSuccess, timeout, unit, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#mostSuccessResultsOf mostSuccessResultsOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T, U> Cffu<List<U>> thenParApplyMostSuccessAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, @Nullable U valueIfNotSuccess,
+                long timeout, TimeUnit unit, Function<? super T, ? extends U> fn, Executor executor) {
+            return create(CfParallelUtils.thenParApplyMostSuccessAsync(cffuThis.cffuUnwrap(), valueIfNotSuccess, timeout, unit, fn, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allResultsOf allResultsOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allResultsOf allResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T, U> Cffu<List<U>> thenParApplyAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, Function<? super T, ? extends U> fn) {
+            return thenParApplyAsync(cffuThis, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allResultsOf allResultsOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allResultsOf allResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T, U> Cffu<List<U>> thenParApplyAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, Function<? super T, ? extends U> fn, Executor executor) {
+            return create(CfParallelUtils.thenParApplyAsync(cffuThis.cffuUnwrap(), fn, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#anySuccessOf anySuccessOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T, U> Cffu<U> thenParApplyAnySuccessAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, Function<? super T, ? extends U> fn) {
+            return thenParApplyAnySuccessAsync(cffuThis, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#anySuccessOf anySuccessOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T, U> Cffu<U> thenParApplyAnySuccessAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, Function<? super T, ? extends U> fn, Executor executor) {
+            return create(CfParallelUtils.thenParApplyAnySuccessAsync(cffuThis.cffuUnwrap(), fn, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#anyOf anyOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#anyOf anyOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T, U> Cffu<U> thenParApplyAnyAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, Function<? super T, ? extends U> fn) {
+            return thenParApplyAnyAsync(cffuThis, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#anyOf anyOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#anyOf anyOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T, U> Cffu<U> thenParApplyAnyAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, Function<? super T, ? extends U> fn, Executor executor) {
+            return create(CfParallelUtils.thenParApplyAnyAsync(cffuThis.cffuUnwrap(), fn, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T> Cffu<Void> thenParAcceptFailFastAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, Consumer<? super T> action) {
+            return thenParAcceptFailFastAsync(cffuThis, action, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T> Cffu<Void> thenParAcceptFailFastAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, Consumer<? super T> action, Executor executor) {
+            return create(CfParallelUtils.thenParAcceptFailFastAsync(cffuThis.cffuUnwrap(), action, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allResultsOf allResultsOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allResultsOf allResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T> Cffu<Void> thenParAcceptAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, Consumer<? super T> action) {
+            return thenParAcceptAsync(cffuThis, action, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#allResultsOf allResultsOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#allResultsOf allResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T> Cffu<Void> thenParAcceptAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, Consumer<? super T> action, Executor executor) {
+            return create(CfParallelUtils.thenParAcceptAsync(cffuThis.cffuUnwrap(), action, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#anySuccessOf anySuccessOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T> Cffu<Void> thenParAcceptAnySuccessAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, Consumer<? super T> action) {
+            return thenParAcceptAnySuccessAsync(cffuThis, action, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#anySuccessOf anySuccessOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T> Cffu<Void> thenParAcceptAnySuccessAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, Consumer<? super T> action, Executor executor) {
+            return create(CfParallelUtils.thenParAcceptAnySuccessAsync(cffuThis.cffuUnwrap(), action, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#anyOf anyOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CompletableFutureUtils#anyOf anyOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T> Cffu<Void> thenParAcceptAnyAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, Consumer<? super T> action) {
+            return thenParAcceptAnyAsync(cffuThis, action, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CompletableFutureUtils#anyOf anyOf},
+         * processes elements from the result of parameter stage in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable, Executor)}.
+         * <p>
+         * See the {@link CompletableFutureUtils#anyOf anyOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        public <T> Cffu<Void> thenParAcceptAnyAsync(
+                Cffu<? extends Iterable<? extends T>> cffuThis, Consumer<? super T> action, Executor executor) {
+            return create(CfParallelUtils.thenParAcceptAnyAsync(cffuThis.cffuUnwrap(), action, cffuScreened(executor)));
+        }
+
+        private ParOps() {}
     }
 
     /**
