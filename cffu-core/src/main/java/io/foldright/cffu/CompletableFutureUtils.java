@@ -1081,7 +1081,8 @@ public final class CompletableFutureUtils {
 
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[len];
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
-        final CompletableFuture<?>[] failedOrBeIncomplete = new CompletableFuture[len + 1];
+        @SuppressWarnings("unchecked")
+        final CompletableFuture<Void>[] failedOrBeIncomplete = new CompletableFuture[len + 1];
         fill0(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of failedOrBeIncomplete HERE:
@@ -1168,7 +1169,7 @@ public final class CompletableFutureUtils {
 
     private static <T> void fill0(CompletionStage<? extends T>[] stages,
                                   CompletableFuture<? extends T>[] successOrBeIncomplete,
-                                  CompletableFuture<? extends T>[] failedOrBeIncomplete) {
+                                  CompletableFuture<Void>[] failedOrBeIncomplete) {
         for (int i = 0; i < stages.length; i++) {
             final CompletableFuture<T> f = f_toCf0(stages[i]);
             successOrBeIncomplete[i] = exceptionallyCompose(f, ex -> new CompletableFuture<>());
@@ -1211,7 +1212,8 @@ public final class CompletableFutureUtils {
 
         // NOTE: fill ONE MORE element of successOrBeIncompleteCfs LATER
         final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[len + 1];
-        final CompletableFuture<?>[] failedOrBeIncomplete = new CompletableFuture[len];
+        @SuppressWarnings("unchecked")
+        final CompletableFuture<Void>[] failedOrBeIncomplete = new CompletableFuture[len];
         fill0(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of successOrBeIncompleteCfs HERE:
