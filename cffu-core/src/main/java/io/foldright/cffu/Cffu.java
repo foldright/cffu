@@ -34,12 +34,12 @@ import static java.util.Objects.requireNonNull;
  * @see CompletionStage
  * @see CompletableFuture
  */
-public final class Cffu<T> implements Future<T>, CompletionStage<T> {
+public class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     // region# Internal constructor and fields
     ////////////////////////////////////////////////////////////////////////////////
 
-    private final CffuFactory fac;
+    final CffuFactory fac;
 
     private final boolean isMinimalStage;
 
@@ -53,13 +53,17 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     @Contract(pure = true)
-    private <U> Cffu<U> resetCf(CompletableFuture<U> cf) {
+    <U> Cffu<U> resetCf(CompletableFuture<U> cf) {
         return new Cffu<>(fac, isMinimalStage, cf);
     }
 
     @Contract(pure = true)
     private <U> CompletionStage<U> resetToMin(CompletableFuture<U> cf) {
         return new Cffu<>(fac, true, cf);
+    }
+
+    <U, C extends Iterable<U>> CffuItr<U, C> resetItrCf(CompletableFuture<C> cf) {
+        return new CffuItr<>(fac, isMinimalStage, cf);
     }
 
     // endregion
@@ -205,7 +209,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////
     // region# Then-Multi-Actions(thenM*) Methods
     //
-    //    - thenMApply* (Function[]: T -> U)       -> Cffu<List<U>>
+    //    - thenMApply* (Function[]: T -> U)       -> CffuItr<U, List<U>>
     //    - thenMAccept*(Consumer[]: T -> Void)    -> Cffu<Void>
     //    - thenMRun*   (Runnable[]: Void -> Void) -> Cffu<Void>
     ////////////////////////////////////////////////////////////
@@ -219,7 +223,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyFailFastAsync(Function<? super T, ? extends U>... fns) {
+    public final <U> CffuItr<U, List<U>> thenMApplyFailFastAsync(Function<? super T, ? extends U>... fns) {
         return thenMApplyFailFastAsync(fac.defaultExecutor, fns);
     }
 
@@ -237,8 +241,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyFailFastAsync(Executor executor, Function<? super T, ? extends U>... fns) {
-        return resetCf(CompletableFutureUtils.thenMApplyFailFastAsync(cf, cffuScreened(executor), fns));
+    public final <U> CffuItr<U, List<U>> thenMApplyFailFastAsync(Executor executor, Function<? super T, ? extends U>... fns) {
+        return resetItrCf(CompletableFutureUtils.thenMApplyFailFastAsync(cf, cffuScreened(executor), fns));
     }
 
     /**
@@ -250,7 +254,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyAllSuccessAsync(
+    public final <U> CffuItr<U, List<U>> thenMApplyAllSuccessAsync(
             @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
         return thenMApplyAllSuccessAsync(fac.defaultExecutor, valueIfFailed, fns);
     }
@@ -269,9 +273,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyAllSuccessAsync(
+    public final <U> CffuItr<U, List<U>> thenMApplyAllSuccessAsync(
             Executor executor, @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
-        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessAsync(cf, cffuScreened(executor), valueIfFailed, fns));
+        return resetItrCf(CompletableFutureUtils.thenMApplyAllSuccessAsync(cf, cffuScreened(executor), valueIfFailed, fns));
     }
 
     /**
@@ -283,7 +287,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyMostSuccessAsync(
+    public final <U> CffuItr<U, List<U>> thenMApplyMostSuccessAsync(
             @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
         return thenMApplyMostSuccessAsync(fac.defaultExecutor, valueIfNotSuccess, timeout, unit, fns);
     }
@@ -297,10 +301,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyMostSuccessAsync(
+    public final <U> CffuItr<U, List<U>> thenMApplyMostSuccessAsync(
             Executor executor, @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
             Function<? super T, ? extends U>... fns) {
-        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessAsync(
+        return resetItrCf(CompletableFutureUtils.thenMApplyMostSuccessAsync(
                 cf, cffuScreened(executor), valueIfNotSuccess, timeout, unit, fns));
     }
 
@@ -312,7 +316,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyAsync(Function<? super T, ? extends U>... fns) {
+    public final <U> CffuItr<U, List<U>> thenMApplyAsync(Function<? super T, ? extends U>... fns) {
         return thenMApplyAsync(fac.defaultExecutor, fns);
     }
 
@@ -329,8 +333,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyAsync(Executor executor, Function<? super T, ? extends U>... fns) {
-        return resetCf(CompletableFutureUtils.thenMApplyAsync(cf, cffuScreened(executor), fns));
+    public final <U> CffuItr<U, List<U>> thenMApplyAsync(Executor executor, Function<? super T, ? extends U>... fns) {
+        return resetItrCf(CompletableFutureUtils.thenMApplyAsync(cf, cffuScreened(executor), fns));
     }
 
     /**
