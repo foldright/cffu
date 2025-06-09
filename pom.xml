@@ -95,7 +95,7 @@
 		<guava.version>33.4.8-jre</guava.version>
 
 		<!-- testing dependencies versions -->
-		<junit5.version>5.13.0</junit5.version>
+		<junit5.version>5.13.1</junit5.version>
 		<kotest.version>5.8.1</kotest.version>
 	</properties>
 
