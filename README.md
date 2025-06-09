@@ -286,7 +286,7 @@ public class AllTupleOfDemo {
     Cffu<String> cffu1 = cffuFactory.completedFuture("foo");
     Cffu<Integer> cffu2 = cffuFactory.completedFuture(42);
 
-    Cffu<Tuple2<String, Integer>> allTuple = cffuFactory.allTupleFailFastOf(cffu1, cffu2);
+    Cffu<Tuple2<String, Integer>> allTuple = cffuFactory.tupleOps().allTupleFailFastOf(cffu1, cffu2);
     System.out.println(allTuple.get());
     // output: Tuple2(foo, 42)
 
@@ -567,14 +567,14 @@ public class MultipleActionsDemo {
     ).thenAccept(System.out::println);
     // output: [43, 44, 45]
 
-    CompletableFutureUtils.thenMApplyTupleFailFastAsync(
+    CfTupleUtils.thenMApplyTupleFailFastAsync(
         completedFuture(42),
         v -> "string" + v,
         v -> v + 1,
         v -> v + 2.1
     ).thenAccept(System.out::println);
     // output: Tuple3(string42, 43, 44.1)
-    cffuFactory.completedFuture(42).thenMApplyAllSuccessTupleAsync(
+    cffuFactory.completedFuture(42).tupleOps().thenMApplyAllSuccessTupleAsync(
         v -> "string" + v,
         v -> v + 1,
         v -> v + 2.1

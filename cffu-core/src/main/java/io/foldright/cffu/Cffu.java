@@ -34,12 +34,12 @@ import static java.util.Objects.requireNonNull;
  * @see CompletionStage
  * @see CompletableFuture
  */
-public final class Cffu<T> implements Future<T>, CompletionStage<T> {
+public class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     // region# Internal constructor and fields
     ////////////////////////////////////////////////////////////////////////////////
 
-    private final CffuFactory fac;
+    final CffuFactory fac;
 
     private final boolean isMinimalStage;
 
@@ -53,13 +53,17 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     }
 
     @Contract(pure = true)
-    private <U> Cffu<U> resetCf(CompletableFuture<U> cf) {
+    <U> Cffu<U> resetCf(CompletableFuture<U> cf) {
         return new Cffu<>(fac, isMinimalStage, cf);
     }
 
     @Contract(pure = true)
     private <U> CompletionStage<U> resetToMin(CompletableFuture<U> cf) {
         return new Cffu<>(fac, true, cf);
+    }
+
+    <U, C extends Iterable<U>> CffuItr<U, C> resetItrCf(CompletableFuture<C> cf) {
+        return new CffuItr<>(fac, isMinimalStage, cf);
     }
 
     // endregion
@@ -205,7 +209,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////
     // region# Then-Multi-Actions(thenM*) Methods
     //
-    //    - thenMApply* (Function[]: T -> U)       -> Cffu<List<U>>
+    //    - thenMApply* (Function[]: T -> U)       -> CffuItr<U, List<U>>
     //    - thenMAccept*(Consumer[]: T -> Void)    -> Cffu<Void>
     //    - thenMRun*   (Runnable[]: Void -> Void) -> Cffu<Void>
     ////////////////////////////////////////////////////////////
@@ -219,7 +223,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyFailFastAsync(Function<? super T, ? extends U>... fns) {
+    public final <U> CffuItr<U, List<U>> thenMApplyFailFastAsync(Function<? super T, ? extends U>... fns) {
         return thenMApplyFailFastAsync(fac.defaultExecutor, fns);
     }
 
@@ -237,8 +241,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyFailFastAsync(Executor executor, Function<? super T, ? extends U>... fns) {
-        return resetCf(CompletableFutureUtils.thenMApplyFailFastAsync(cf, cffuScreened(executor), fns));
+    public final <U> CffuItr<U, List<U>> thenMApplyFailFastAsync(Executor executor, Function<? super T, ? extends U>... fns) {
+        return resetItrCf(CompletableFutureUtils.thenMApplyFailFastAsync(cf, cffuScreened(executor), fns));
     }
 
     /**
@@ -250,7 +254,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyAllSuccessAsync(
+    public final <U> CffuItr<U, List<U>> thenMApplyAllSuccessAsync(
             @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
         return thenMApplyAllSuccessAsync(fac.defaultExecutor, valueIfFailed, fns);
     }
@@ -269,9 +273,9 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyAllSuccessAsync(
+    public final <U> CffuItr<U, List<U>> thenMApplyAllSuccessAsync(
             Executor executor, @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
-        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessAsync(cf, cffuScreened(executor), valueIfFailed, fns));
+        return resetItrCf(CompletableFutureUtils.thenMApplyAllSuccessAsync(cf, cffuScreened(executor), valueIfFailed, fns));
     }
 
     /**
@@ -283,7 +287,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyMostSuccessAsync(
+    public final <U> CffuItr<U, List<U>> thenMApplyMostSuccessAsync(
             @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
         return thenMApplyMostSuccessAsync(fac.defaultExecutor, valueIfNotSuccess, timeout, unit, fns);
     }
@@ -297,10 +301,10 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyMostSuccessAsync(
+    public final <U> CffuItr<U, List<U>> thenMApplyMostSuccessAsync(
             Executor executor, @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
             Function<? super T, ? extends U>... fns) {
-        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessAsync(
+        return resetItrCf(CompletableFutureUtils.thenMApplyMostSuccessAsync(
                 cf, cffuScreened(executor), valueIfNotSuccess, timeout, unit, fns));
     }
 
@@ -312,7 +316,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyAsync(Function<? super T, ? extends U>... fns) {
+    public final <U> CffuItr<U, List<U>> thenMApplyAsync(Function<? super T, ? extends U>... fns) {
         return thenMApplyAsync(fac.defaultExecutor, fns);
     }
 
@@ -329,8 +333,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
     @SafeVarargs
-    public final <U> Cffu<List<U>> thenMApplyAsync(Executor executor, Function<? super T, ? extends U>... fns) {
-        return resetCf(CompletableFutureUtils.thenMApplyAsync(cf, cffuScreened(executor), fns));
+    public final <U> CffuItr<U, List<U>> thenMApplyAsync(Executor executor, Function<? super T, ? extends U>... fns) {
+        return resetItrCf(CompletableFutureUtils.thenMApplyAsync(cf, cffuScreened(executor), fns));
     }
 
     /**
@@ -609,394 +613,6 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsync`")
     public Cffu<Void> thenMRunAnyAsync(Executor executor, Runnable... actions) {
         return resetCf(CompletableFutureUtils.thenMRunAnyAsync(cf, cffuScreened(executor), actions));
-    }
-
-    // endregion
-    ////////////////////////////////////////////////////////////
-    // region## Then-Multi-Actions-Tuple(thenMTuple*) Methods
-    ////////////////////////////////////////////////////////////
-
-    /**
-     * Tuple variant of {@link #thenMApplyFailFastAsync(Function[])}.
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleFailFastAsync(
-            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenMApplyTupleFailFastAsync(fac.defaultExecutor, fn1, fn2);
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleFailFastAsync(
-            Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return resetCf(CompletableFutureUtils.thenMApplyTupleFailFastAsync(cf, cffuScreened(executor), fn1, fn2));
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyFailFastAsync(Function[])}.
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleFailFastAsync(
-            Function<? super T, ? extends U1> fn1,
-            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenMApplyTupleFailFastAsync(fac.defaultExecutor, fn1, fn2, fn3);
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleFailFastAsync(
-            Executor executor, Function<? super T, ? extends U1> fn1,
-            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return resetCf(CompletableFutureUtils.thenMApplyTupleFailFastAsync(cf, cffuScreened(executor), fn1, fn2, fn3));
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyFailFastAsync(Function[])}.
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleFailFastAsync(
-            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
-            Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenMApplyTupleFailFastAsync(fac.defaultExecutor, fn1, fn2, fn3, fn4);
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleFailFastAsync(
-            Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
-            Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return resetCf(CompletableFutureUtils.thenMApplyTupleFailFastAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4));
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyFailFastAsync(Function[])}.
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleFailFastAsync(
-            Function<? super T, ? extends U1> fn1,
-            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
-            Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenMApplyTupleFailFastAsync(fac.defaultExecutor, fn1, fn2, fn3, fn4, fn5);
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleFailFastAsync(
-            Executor executor, Function<? super T, ? extends U1> fn1,
-            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
-            Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return resetCf(CompletableFutureUtils.thenMApplyTupleFailFastAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4, fn5));
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
-     * <p>
-     * If any of the provided functions fails, its corresponding position will contain {@code null}
-     * (which is indistinguishable from the function having a successful value of {@code null}).
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyAllSuccessTupleAsync(
-            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenMApplyAllSuccessTupleAsync(fac.defaultExecutor, fn1, fn2);
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
-     * <p>
-     * If any of the provided functions fails, its corresponding position will contain {@code null}
-     * (which is indistinguishable from the function having a successful value of {@code null}).
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyAllSuccessTupleAsync(
-            Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cf, cffuScreened(executor), fn1, fn2));
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
-     * <p>
-     * If any of the provided functions fails, its corresponding position will contain {@code null}
-     * (which is indistinguishable from the function having a successful value of {@code null}).
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyAllSuccessTupleAsync(
-            Function<? super T, ? extends U1> fn1,
-            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenMApplyAllSuccessTupleAsync(fac.defaultExecutor, fn1, fn2, fn3);
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
-     * <p>
-     * If any of the provided functions fails, its corresponding position will contain {@code null}
-     * (which is indistinguishable from the function having a successful value of {@code null}).
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyAllSuccessTupleAsync(
-            Executor executor, Function<? super T, ? extends U1> fn1,
-            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3));
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
-     * <p>
-     * If any of the provided functions fails, its corresponding position will contain {@code null}
-     * (which is indistinguishable from the function having a successful value of {@code null}).
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyAllSuccessTupleAsync(
-            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
-            Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenMApplyAllSuccessTupleAsync(fac.defaultExecutor, fn1, fn2, fn3, fn4);
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
-     * <p>
-     * If any of the provided functions fails, its corresponding position will contain {@code null}
-     * (which is indistinguishable from the function having a successful value of {@code null}).
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyAllSuccessTupleAsync(
-            Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
-            Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4));
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
-     * <p>
-     * If any of the provided functions fails, its corresponding position will contain {@code null}
-     * (which is indistinguishable from the function having a successful value of {@code null}).
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyAllSuccessTupleAsync(
-            Function<? super T, ? extends U1> fn1,
-            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
-            Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenMApplyAllSuccessTupleAsync(fac.defaultExecutor, fn1, fn2, fn3, fn4, fn5);
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
-     * <p>
-     * If any of the provided functions fails, its corresponding position will contain {@code null}
-     * (which is indistinguishable from the function having a successful value of {@code null}).
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyAllSuccessTupleAsync(
-            Executor executor, Function<? super T, ? extends U1> fn1,
-            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
-            Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return resetCf(CompletableFutureUtils.thenMApplyAllSuccessTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4, fn5));
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
-     * with {@code null} valueIfNotSuccess.
-     * <p>
-     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
-     * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyMostSuccessTupleAsync(
-            long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenMApplyMostSuccessTupleAsync(fac.defaultExecutor, timeout, unit, fn1, fn2);
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
-     * with {@code null} valueIfNotSuccess.
-     * <p>
-     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
-     * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyMostSuccessTupleAsync(
-            Executor executor, long timeout, TimeUnit unit,
-            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(
-                cf, cffuScreened(executor), timeout, unit, fn1, fn2));
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
-     * with {@code null} valueIfNotSuccess.
-     * <p>
-     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
-     * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyMostSuccessTupleAsync(
-            long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
-            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return thenMApplyMostSuccessTupleAsync(fac.defaultExecutor, timeout, unit, fn1, fn2, fn3);
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
-     * with {@code null} valueIfNotSuccess.
-     * <p>
-     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
-     * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyMostSuccessTupleAsync(
-            Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
-            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
-        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(
-                cf, cffuScreened(executor), timeout, unit, fn1, fn2, fn3));
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
-     * with {@code null} valueIfNotSuccess.
-     * <p>
-     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
-     * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyMostSuccessTupleAsync(
-            long timeout, TimeUnit unit,
-            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
-            Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenMApplyMostSuccessTupleAsync(fac.defaultExecutor, timeout, unit, fn1, fn2, fn3, fn4);
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
-     * with {@code null} valueIfNotSuccess.
-     * <p>
-     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
-     * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyMostSuccessTupleAsync(
-            Executor executor, long timeout, TimeUnit unit,
-            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
-            Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(
-                cf, cffuScreened(executor), timeout, unit, fn1, fn2, fn3, fn4));
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
-     * with {@code null} valueIfNotSuccess.
-     * <p>
-     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
-     * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyMostSuccessTupleAsync(
-            long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
-            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
-            Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return thenMApplyMostSuccessTupleAsync(fac.defaultExecutor, timeout, unit, fn1, fn2, fn3, fn4, fn5);
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
-     * with {@code null} valueIfNotSuccess.
-     * <p>
-     * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
-     * (which is indistinguishable from the supplier having a successful value of {@code null}).
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyMostSuccessTupleAsync(
-            Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
-            Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
-            Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
-        return resetCf(CompletableFutureUtils.thenMApplyMostSuccessTupleAsync(
-                cf, cffuScreened(executor), timeout, unit, fn1, fn2, fn3, fn4, fn5));
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyAsync(Function[])}.
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleAsync(
-            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return thenMApplyTupleAsync(fac.defaultExecutor, fn1, fn2);
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyAsync(Executor, Function[])}.
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleAsync(
-            Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
-        return resetCf(CompletableFutureUtils.thenMApplyTupleAsync(cf, cffuScreened(executor), fn1, fn2));
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyAsync(Function[])}.
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleAsync(
-            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
-            Function<? super T, ? extends U3> fn3) {
-        return thenMApplyTupleAsync(fac.defaultExecutor, fn1, fn2, fn3);
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyAsync(Executor, Function[])}.
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleAsync(
-            Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
-            Function<? super T, ? extends U3> fn3) {
-        return resetCf(CompletableFutureUtils.thenMApplyTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3));
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyAsync(Function[])}.
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleAsync(
-            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
-            Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return thenMApplyTupleAsync(fac.defaultExecutor, fn1, fn2, fn3, fn4);
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyAsync(Executor, Function[])}.
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleAsync(
-            Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
-            Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
-        return resetCf(CompletableFutureUtils.thenMApplyTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4));
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyAsync(Function[])}.
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleAsync(
-            Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
-            Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
-            Function<? super T, ? extends U5> fn5) {
-        return thenMApplyTupleAsync(fac.defaultExecutor, fn1, fn2, fn3, fn4, fn5);
-    }
-
-    /**
-     * Tuple variant of {@link #thenMApplyAsync(Executor, Function[])}.
-     */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
-    public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleAsync(
-            Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
-            Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
-            Function<? super T, ? extends U5> fn5) {
-        return resetCf(CompletableFutureUtils.thenMApplyTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4, fn5));
     }
 
     // endregion
@@ -2839,6 +2455,424 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     public String toString() {
         return getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this)) + "(" + cf + ")";
     }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Tuple Ops
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a {@link TupleOps} instance to access the tuple-based variants of methods from {@link Cffu}
+     * for processing multiple asynchronous actions in a type-safe manner.
+     */
+    public TupleOps tupleOps() {
+        return new TupleOps();
+    }
+
+    /**
+     * The tuple-based variants of methods from {@link Cffu}
+     * for processing multiple asynchronous actions in a type-safe manner.
+     * <p>
+     * While {@link Cffu} uses array-based methods with varargs, this class uses strongly-typed tuples
+     * containing 2 to 5 elements. The tuple approach provides better type safety when working with a fixed number of
+     * heterogeneous actions, as type mismatches are caught at compile time rather than runtime.
+     */
+    public final class TupleOps {
+        // endregion
+        ////////////////////////////////////////////////////////////
+        // region## Then-Multi-Actions-Tuple(thenMTuple*) Methods
+        ////////////////////////////////////////////////////////////
+
+        /**
+         * Tuple variant of {@link #thenMApplyFailFastAsync(Function[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleFailFastAsync(
+                Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
+            return thenMApplyTupleFailFastAsync(fac.defaultExecutor, fn1, fn2);
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleFailFastAsync(
+                Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
+            return resetCf(CfTupleUtils.thenMApplyTupleFailFastAsync(cf, cffuScreened(executor), fn1, fn2));
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyFailFastAsync(Function[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleFailFastAsync(
+                Function<? super T, ? extends U1> fn1,
+                Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
+            return thenMApplyTupleFailFastAsync(fac.defaultExecutor, fn1, fn2, fn3);
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleFailFastAsync(
+                Executor executor, Function<? super T, ? extends U1> fn1,
+                Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
+            return resetCf(CfTupleUtils.thenMApplyTupleFailFastAsync(cf, cffuScreened(executor), fn1, fn2, fn3));
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyFailFastAsync(Function[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleFailFastAsync(
+                Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+                Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
+            return thenMApplyTupleFailFastAsync(fac.defaultExecutor, fn1, fn2, fn3, fn4);
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleFailFastAsync(
+                Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+                Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
+            return resetCf(CfTupleUtils.thenMApplyTupleFailFastAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4));
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyFailFastAsync(Function[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleFailFastAsync(
+                Function<? super T, ? extends U1> fn1,
+                Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
+                Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
+            return thenMApplyTupleFailFastAsync(fac.defaultExecutor, fn1, fn2, fn3, fn4, fn5);
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleFailFastAsync(
+                Executor executor, Function<? super T, ? extends U1> fn1,
+                Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
+                Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
+            return resetCf(CfTupleUtils.thenMApplyTupleFailFastAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4, fn5));
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided functions fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the function having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyAllSuccessTupleAsync(
+                Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
+            return thenMApplyAllSuccessTupleAsync(fac.defaultExecutor, fn1, fn2);
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided functions fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the function having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyAllSuccessTupleAsync(
+                Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
+            return resetCf(CfTupleUtils.thenMApplyAllSuccessTupleAsync(cf, cffuScreened(executor), fn1, fn2));
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided functions fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the function having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyAllSuccessTupleAsync(
+                Function<? super T, ? extends U1> fn1,
+                Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
+            return thenMApplyAllSuccessTupleAsync(fac.defaultExecutor, fn1, fn2, fn3);
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided functions fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the function having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyAllSuccessTupleAsync(
+                Executor executor, Function<? super T, ? extends U1> fn1,
+                Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
+            return resetCf(CfTupleUtils.thenMApplyAllSuccessTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3));
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided functions fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the function having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyAllSuccessTupleAsync(
+                Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+                Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
+            return thenMApplyAllSuccessTupleAsync(fac.defaultExecutor, fn1, fn2, fn3, fn4);
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided functions fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the function having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyAllSuccessTupleAsync(
+                Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+                Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
+            return resetCf(CfTupleUtils.thenMApplyAllSuccessTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4));
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyAllSuccessAsync(Object, Function[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided functions fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the function having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyAllSuccessTupleAsync(
+                Function<? super T, ? extends U1> fn1,
+                Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
+                Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
+            return thenMApplyAllSuccessTupleAsync(fac.defaultExecutor, fn1, fn2, fn3, fn4, fn5);
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyAllSuccessAsync(Executor, Object, Function[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided functions fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the function having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyAllSuccessTupleAsync(
+                Executor executor, Function<? super T, ? extends U1> fn1,
+                Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
+                Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
+            return resetCf(CfTupleUtils.thenMApplyAllSuccessTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4, fn5));
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
+         * with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyMostSuccessTupleAsync(
+                long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
+            return thenMApplyMostSuccessTupleAsync(fac.defaultExecutor, timeout, unit, fn1, fn2);
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
+         * with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyMostSuccessTupleAsync(
+                Executor executor, long timeout, TimeUnit unit,
+                Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
+            return resetCf(CfTupleUtils.thenMApplyMostSuccessTupleAsync(
+                    cf, cffuScreened(executor), timeout, unit, fn1, fn2));
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
+         * with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyMostSuccessTupleAsync(
+                long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
+                Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
+            return thenMApplyMostSuccessTupleAsync(fac.defaultExecutor, timeout, unit, fn1, fn2, fn3);
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
+         * with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyMostSuccessTupleAsync(
+                Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
+                Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
+            return resetCf(CfTupleUtils.thenMApplyMostSuccessTupleAsync(
+                    cf, cffuScreened(executor), timeout, unit, fn1, fn2, fn3));
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
+         * with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyMostSuccessTupleAsync(
+                long timeout, TimeUnit unit,
+                Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+                Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
+            return thenMApplyMostSuccessTupleAsync(fac.defaultExecutor, timeout, unit, fn1, fn2, fn3, fn4);
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
+         * with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyMostSuccessTupleAsync(
+                Executor executor, long timeout, TimeUnit unit,
+                Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+                Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
+            return resetCf(CfTupleUtils.thenMApplyMostSuccessTupleAsync(
+                    cf, cffuScreened(executor), timeout, unit, fn1, fn2, fn3, fn4));
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}
+         * with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyMostSuccessTupleAsync(
+                long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
+                Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
+                Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
+            return thenMApplyMostSuccessTupleAsync(fac.defaultExecutor, timeout, unit, fn1, fn2, fn3, fn4, fn5);
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}
+         * with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyMostSuccessTupleAsync(
+                Executor executor, long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
+                Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
+                Function<? super T, ? extends U4> fn4, Function<? super T, ? extends U5> fn5) {
+            return resetCf(CfTupleUtils.thenMApplyMostSuccessTupleAsync(
+                    cf, cffuScreened(executor), timeout, unit, fn1, fn2, fn3, fn4, fn5));
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyAsync(Function[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleAsync(
+                Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
+            return thenMApplyTupleAsync(fac.defaultExecutor, fn1, fn2);
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyAsync(Executor, Function[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleAsync(
+                Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
+            return resetCf(CfTupleUtils.thenMApplyTupleAsync(cf, cffuScreened(executor), fn1, fn2));
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyAsync(Function[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleAsync(
+                Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+                Function<? super T, ? extends U3> fn3) {
+            return thenMApplyTupleAsync(fac.defaultExecutor, fn1, fn2, fn3);
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyAsync(Executor, Function[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleAsync(
+                Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+                Function<? super T, ? extends U3> fn3) {
+            return resetCf(CfTupleUtils.thenMApplyTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3));
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyAsync(Function[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleAsync(
+                Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+                Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
+            return thenMApplyTupleAsync(fac.defaultExecutor, fn1, fn2, fn3, fn4);
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyAsync(Executor, Function[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleAsync(
+                Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+                Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
+            return resetCf(CfTupleUtils.thenMApplyTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4));
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyAsync(Function[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleAsync(
+                Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+                Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
+                Function<? super T, ? extends U5> fn5) {
+            return thenMApplyTupleAsync(fac.defaultExecutor, fn1, fn2, fn3, fn4, fn5);
+        }
+
+        /**
+         * Tuple variant of {@link #thenMApplyAsync(Executor, Function[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleAsync(
+                Executor executor, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
+                Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
+                Function<? super T, ? extends U5> fn5) {
+            return resetCf(CfTupleUtils.thenMApplyTupleAsync(cf, cffuScreened(executor), fn1, fn2, fn3, fn4, fn5));
+        }
+
+        private TupleOps() {}
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# internal helper methods
+    ////////////////////////////////////////////////////////////////////////////////
 
     private void checkMinimalStage() {
         if (isMinimalStage) throw new UnsupportedOperationException("unsupported because this is a minimal stage");
