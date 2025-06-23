@@ -84,7 +84,7 @@
 		<jsr305.version>3.0.2</jsr305.version>
 		<jetbrains.annotations.version>26.0.2</jetbrains.annotations.version>
 
-		<kotlin.version>2.1.21</kotlin.version>
+		<kotlin.version>2.2.0</kotlin.version>
 		<kotlin.compiler.jvmTarget>${maven.compiler.source}</kotlin.compiler.jvmTarget>
 		<!-- https://kotlinlang.org/docs/maven.html#specifying-compiler-options -->
 		<kotlin.compiler.apiVersion>1.8</kotlin.compiler.apiVersion>
