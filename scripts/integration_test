@@ -79,7 +79,7 @@ readonly MVN_OPTS_FOR_JAVA17=(
   -DswitchToLog4j2LoggingDependencies -Dcffu.exception.log.format=short
 )
 # shellcheck disable=SC2034
-readonly MVN_OPTS_FOR_JAVA23=(
+readonly MVN_OPTS_FOR_JAVA24=(
   -Dkotlin.version=1.9.0
   -Dcffu.exception.log.format=none
 )

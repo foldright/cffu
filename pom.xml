@@ -84,18 +84,18 @@
 		<jsr305.version>3.0.2</jsr305.version>
 		<jetbrains.annotations.version>26.0.2</jetbrains.annotations.version>
 
-		<kotlin.version>2.1.20</kotlin.version>
+		<kotlin.version>2.1.21</kotlin.version>
 		<kotlin.compiler.jvmTarget>${maven.compiler.source}</kotlin.compiler.jvmTarget>
 		<!-- https://kotlinlang.org/docs/maven.html#specifying-compiler-options -->
 		<kotlin.compiler.apiVersion>1.8</kotlin.compiler.apiVersion>
 
 		<slf4j.version>2.0.17</slf4j.version>
-		<log4j2.version>2.24.3</log4j2.version>
+		<log4j2.version>2.25.1</log4j2.version>
 		<log4j2.slf4j.impl.aid>log4j-slf4j2-impl</log4j2.slf4j.impl.aid>
 		<guava.version>33.4.8-jre</guava.version>
 
 		<!-- testing dependencies versions -->
-		<junit5.version>5.12.2</junit5.version>
+		<junit5.version>5.13.3</junit5.version>
 		<kotest.version>5.8.1</kotest.version>
 	</properties>
 
@@ -378,7 +378,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
-					<version>3.4.1</version>
+					<version>3.5.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -452,7 +452,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
-					<version>3.2.7</version>
+					<version>3.2.8</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -472,7 +472,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
-					<version>3.5.0</version>
+					<version>3.6.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -482,12 +482,12 @@
 				<plugin>
 					<groupId>io.github.git-commit-id</groupId>
 					<artifactId>git-commit-id-maven-plugin</artifactId>
-					<version>9.0.1</version>
+					<version>9.0.2</version>
 				</plugin>
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.9.3.0</version>
+					<version>4.9.3.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
@@ -501,7 +501,7 @@
 					-->
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
-					<version>3.5.0</version>
+					<version>3.5.1</version>
 					<configuration>
 						<executable>${java.home}/bin/java</executable>
 						<classpathScope>test</classpathScope>
@@ -583,7 +583,7 @@
 				<dependency>
 					<groupId>com.tngtech.archunit</groupId>
 					<artifactId>archunit-junit5</artifactId>
-					<version>1.4.0</version>
+					<version>1.4.1</version>
 					<scope>test</scope>
 					<exclusions>
 						<exclusion>
@@ -602,7 +602,7 @@
 						-->
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
-						<version>3.6.0</version>
+						<version>3.6.1</version>
 						<executions>
 							<execution>
 								<id>add-test-source</id>
@@ -1049,7 +1049,7 @@
 						<!-- https://central.sonatype.org/publish/publish-portal-maven/#publishing -->
 						<groupId>org.sonatype.central</groupId>
 						<artifactId>central-publishing-maven-plugin</artifactId>
-						<version>0.7.0</version>
+						<version>0.8.0</version>
 						<extensions>true</extensions>
 						<configuration>
 							<publishingServerId>central</publishingServerId>
