@@ -12,6 +12,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+import static io.foldright.cffu.CompletableFutureUtils.unwrapCfException;
 import static io.foldright.cffu.internal.CommonUtils.mapArray;
 import static io.foldright.cffu.internal.ExceptionLogger.Level.ERROR;
 import static io.foldright.cffu.internal.ExceptionLogger.logUncaughtException;
@@ -198,7 +199,10 @@ public final class LLCF {
             try {
                 action.accept(v, ex);
             } catch (Throwable e) {
-                if (ex != null && ex != e) e.addSuppressed(ex);
+                // NOTE: call addSuppressed on unwrapCfException(e) rather than on e directly,
+                // because e may be a wrapper(CompletionException or ExecutionException)
+                // that could later be unwrapped and ignored during processing.
+                if (ex != null && ex != e) unwrapCfException(e).addSuppressed(ex);
                 logUncaughtException(ERROR, where, e);
             }
         };
