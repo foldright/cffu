@@ -1,6 +1,6 @@
 # https://www.jetbrains.com/help/qodana/qodana-yaml.html
 version: "1.0"
-linter: jetbrains/qodana-jvm-community:2024.3
+linter: jetbrains/qodana-jvm-community:2025.1
 profile:
   # https://www.jetbrains.com/help/qodana/inspection-profiles.html
   name: qodana.recommended
