@@ -17,6 +17,7 @@ import java.util.function.*;
 
 import static io.foldright.cffu.CffuFactoryBuilder.cffuScreened;
 import static io.foldright.cffu.CffuFactoryBuilder.cffuUnscreened;
+import static io.foldright.cffu.LLCF.*;
 import static java.util.Objects.requireNonNull;
 
 
@@ -37,7 +38,7 @@ import static java.util.Objects.requireNonNull;
 public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     // region# Internal constructor and fields
-    ////////////////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////////////////
 
     private final CffuFactory fac;
 
@@ -1588,7 +1589,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @see Futures#catching the equivalent Guava method catching()
      */
     public <X extends Throwable> Cffu<T> catching(Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
-        return resetCf(CompletableFutureUtils.catching(cf, exceptionType, fallback));
+        return resetCf(CompletableFutureUtils.catching(cf, exceptionType, nonExSwallowedFunction(fallback, false)));
     }
 
     /**
@@ -1633,7 +1634,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public <X extends Throwable> Cffu<T> catchingAsync(
             Class<X> exceptionType, Function<? super X, ? extends T> fallback, Executor executor) {
-        return resetCf(CompletableFutureUtils.catchingAsync(cf, exceptionType, fallback, cffuScreened(executor)));
+        return resetCf(CompletableFutureUtils.catchingAsync(
+                cf, exceptionType, nonExSwallowedFunction(fallback, false), cffuScreened(executor)));
     }
 
     /**
@@ -1652,7 +1654,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Cffu<T> exceptionally(Function<Throwable, ? extends T> fn) {
-        return resetCf(cf.exceptionally(fn));
+        return resetCf(cf.exceptionally(nonExSwallowedFunction(fn, false)));
     }
 
     /**
@@ -1692,7 +1694,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Cffu<T> exceptionallyAsync(Function<Throwable, ? extends T> fn, Executor executor) {
-        return resetCf(CompletableFutureUtils.exceptionallyAsync(cf, fn, cffuScreened(executor)));
+        return resetCf(CompletableFutureUtils.exceptionallyAsync(cf, nonExSwallowedFunction(fn, false), cffuScreened(executor)));
     }
 
     // endregion
@@ -1906,7 +1908,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public <X extends Throwable> Cffu<T> catchingCompose(
             Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
-        return resetCf(CompletableFutureUtils.catchingCompose(cf, exceptionType, fallback));
+        return resetCf(CompletableFutureUtils.catchingCompose(cf, exceptionType, nonExSwallowedFunction(fallback, false)));
     }
 
     /**
@@ -1949,7 +1951,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     public <X extends Throwable> Cffu<T> catchingComposeAsync(
             Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback, Executor executor) {
-        return resetCf(CompletableFutureUtils.catchingComposeAsync(cf, exceptionType, fallback, cffuScreened(executor)));
+        return resetCf(CompletableFutureUtils.catchingComposeAsync(
+                cf, exceptionType, nonExSwallowedFunction(fallback, false), cffuScreened(executor)));
     }
 
     /**
@@ -1966,7 +1969,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Cffu<T> exceptionallyCompose(Function<Throwable, ? extends CompletionStage<T>> fn) {
-        return resetCf(CompletableFutureUtils.exceptionallyCompose(cf, fn));
+        return resetCf(CompletableFutureUtils.exceptionallyCompose(cf, nonExSwallowedFunction(fn, false)));
     }
 
     /**
@@ -2003,7 +2006,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      */
     @Override
     public Cffu<T> exceptionallyComposeAsync(Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
-        return resetCf(CompletableFutureUtils.exceptionallyComposeAsync(cf, fn, cffuScreened(executor)));
+        return resetCf(CompletableFutureUtils.exceptionallyComposeAsync(cf, nonExSwallowedFunction(fn, false), cffuScreened(executor)));
     }
 
     /**
@@ -2020,7 +2023,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `peek`")
     @Override
     public <U> Cffu<U> handle(BiFunction<? super T, Throwable, ? extends U> fn) {
-        return resetCf(cf.handle(fn));
+        return resetCf(cf.handle(nonExSwallowedBiFunction(fn, false)));
     }
 
     /**
@@ -2057,7 +2060,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `peekAsync`")
     @Override
     public <U> Cffu<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn, Executor executor) {
-        return resetCf(cf.handleAsync(fn, cffuScreened(executor)));
+        return resetCf(cf.handleAsync(nonExSwallowedBiFunction(fn, false), cffuScreened(executor)));
     }
 
     /**
@@ -2080,7 +2083,15 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `peek`")
     @Override
     public Cffu<T> whenComplete(BiConsumer<? super T, ? super Throwable> action) {
-        return resetCf(cf.whenComplete(action));
+        return resetCf(cf.whenComplete(nonExSwallowedWrapForJava8(action)));
+    }
+
+    private static <T> BiConsumer<? super T, ? super Throwable> nonExSwallowedWrapForJava8(
+            BiConsumer<? super T, ? super Throwable> action) {
+        // In Java 8, CompletableFuture.whenComplete swallows any new exceptions thrown by the action.
+        // In Java 9+, the new exceptions are properly propagated(addSuppressed to original exception).
+        if (IS_JAVA9_PLUS) return action;
+        else return nonExSwallowedBiConsumer(action, true);
     }
 
     /**
@@ -2130,7 +2141,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `peekAsync`")
     @Override
     public Cffu<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action, Executor executor) {
-        return resetCf(cf.whenCompleteAsync(action, cffuScreened(executor)));
+        return resetCf(cf.whenCompleteAsync(nonExSwallowedWrapForJava8(action), cffuScreened(executor)));
     }
 
     /**

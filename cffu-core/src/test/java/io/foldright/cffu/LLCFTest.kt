@@ -3,12 +3,16 @@ package io.foldright.cffu
 import io.foldright.cffu.CompletableFutureUtils.completedStage
 import io.foldright.cffu.CompletableFutureUtils.failedFuture
 import io.foldright.test_utils.*
+import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.future.shouldBeCompleted
 import io.kotest.matchers.future.shouldCompleteExceptionallyWith
 import io.kotest.matchers.ints.shouldBeExactly
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
@@ -17,6 +21,9 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.completedFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.CountDownLatch
+import java.util.function.BiConsumer
+import java.util.function.BiFunction
+import java.util.function.Function
 
 class LLCFTest : FunSpec({
     val testExecutor = createThreadPool("CheckMinStageRuntimeTypeTests", queueCapacity = 1000_000)
@@ -217,5 +224,103 @@ class LLCFTest : FunSpec({
         cf.shouldCompleteExceptionallyWith(ex)
 
         LLCF.completeCf0(cf, n, ex).shouldBeFalse()
+    }
+
+    @Suppress("USELESS_CAST", "INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING")
+    test("nonExSwallowedFunction") {
+        LLCF.nonExSwallowedFunction(
+            null as? Function<RuntimeException, Int>,
+            false
+        ).shouldBeNull()
+
+        run {
+            val original = RuntimeException("original")
+            val new = RuntimeException("new")
+            val f: Function<RuntimeException, Int> = LLCF.nonExSwallowedFunction(
+                Function<RuntimeException, Int> { throw new },
+                false
+            )!!
+            shouldThrowExactly<RuntimeException> { f.apply(original) }.shouldBeSameInstanceAs(new)
+            new.suppressed.shouldContainExactly(original)
+            original.suppressed.shouldBeEmpty()
+        }
+
+        run {
+            val original = RuntimeException("original")
+            val new = RuntimeException("new")
+            val f: Function<RuntimeException, Int> = LLCF.nonExSwallowedFunction(
+                Function<RuntimeException, Int> { throw new },
+                true
+            )!!
+            shouldThrowExactly<RuntimeException> { f.apply(original) }.shouldBeSameInstanceAs(new)
+            new.suppressed.shouldBeEmpty()
+            original.suppressed.shouldContainExactly(new)
+        }
+    }
+
+    @Suppress("USELESS_CAST", "INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING")
+    test("nonExSwallowedBiFunction") {
+        LLCF.nonExSwallowedBiFunction(
+            null as? BiFunction<Int, RuntimeException, Int>,
+            false
+        ).shouldBeNull()
+
+        run {
+            val original = RuntimeException("original")
+            val new = RuntimeException("new")
+
+            val f: BiFunction<Int, RuntimeException, Int> = LLCF.nonExSwallowedBiFunction(
+                BiFunction<Int, RuntimeException, Int> { _, _ -> throw new },
+                false
+            )!!
+            shouldThrowExactly<RuntimeException> { f.apply(42, original) }.shouldBeSameInstanceAs(new)
+            new.suppressed.shouldContainExactly(original)
+            original.suppressed.shouldBeEmpty()
+        }
+
+        run {
+            val original = RuntimeException("original")
+            val new = RuntimeException("new")
+            val f: BiFunction<Int, RuntimeException, Int> = LLCF.nonExSwallowedBiFunction(
+                BiFunction<Int, RuntimeException, Int> { _, _ -> throw new },
+                true
+            )!!
+            shouldThrowExactly<RuntimeException> { f.apply(42, original) }.shouldBeSameInstanceAs(new)
+            new.suppressed.shouldBeEmpty()
+            original.suppressed.shouldContainExactly(new)
+        }
+    }
+
+    @Suppress("USELESS_CAST", "INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING")
+    test("nonExSwallowedBiConsumer") {
+        LLCF.nonExSwallowedBiConsumer(
+            null as? BiConsumer<Int, RuntimeException>,
+            false
+        ).shouldBeNull()
+
+        run {
+            val original = RuntimeException("original")
+            val new = RuntimeException("new")
+
+            val f: BiConsumer<Int, RuntimeException> = LLCF.nonExSwallowedBiConsumer(
+                BiConsumer<Int, RuntimeException> { _, _ -> throw new },
+                false
+            )!!
+            shouldThrowExactly<RuntimeException> { f.accept(42, original) }.shouldBeSameInstanceAs(new)
+            new.suppressed.shouldContainExactly(original)
+            original.suppressed.shouldBeEmpty()
+        }
+
+        run {
+            val original = RuntimeException("original")
+            val new = RuntimeException("new")
+            val f: BiConsumer<Int, RuntimeException> = LLCF.nonExSwallowedBiConsumer(
+                BiConsumer<Int, RuntimeException> { _, _ -> throw new },
+                true
+            )!!
+            shouldThrowExactly<RuntimeException> { f.accept(42, original) }.shouldBeSameInstanceAs(new)
+            new.suppressed.shouldBeEmpty()
+            original.suppressed.shouldContainExactly(new)
+        }
     }
 })

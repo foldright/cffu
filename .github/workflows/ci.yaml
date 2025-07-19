@@ -26,6 +26,8 @@ jobs:
           # https://github.com/actions/setup-java?tab=readme-ov-file#install-multiple-jdks
           java-version: |
             8
+            9
+            10
             11
             17
             21

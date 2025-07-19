@@ -4,6 +4,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -238,7 +239,105 @@ public final class LLCF {
     public static void safeAddSuppressedEx(@Nullable Throwable suppressed, Throwable target) {
         if (suppressed == null) return;
         target = unwrapCfException(target);
-        if (suppressed != target) target.addSuppressed(suppressed);
+        if (suppressed != target && !contains(target.getSuppressed(), suppressed))
+            target.addSuppressed(suppressed);
+    }
+
+    private static boolean contains(final Object[] array, final Object objectToFind) {
+        return Arrays.asList(array).contains(objectToFind);
+    }
+
+    /**
+     * Wraps a function that processes exceptions to ensure that
+     * if the function throws a new exception, the original exception is preserved
+     * by adding it as a suppressed exception to the new one.
+     */
+    @Contract(value = "null, _ -> null; !null, _ -> !null", pure = true)
+    public static <X extends Throwable, T, F extends Function<? super X, ? extends T>>
+    @Nullable F nonExSwallowedFunction(@Nullable F fn, boolean addSuppressedToOriginalEx) {
+        if (fn == null) return null;
+        return _wrapFn(fn, addSuppressedToOriginalEx);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static <F extends Function> F _wrapFn(Function fn, boolean addSuppressedToOriginalEx) {
+        final Function f = originalEx -> {
+            try {
+                return fn.apply(originalEx);
+            } catch (Throwable newEx) {
+                if (originalEx != null) {
+                    // Preserve exception by addSuppressed, this ensures
+                    // the error context is not lost when exceptions occur in exception process function
+                    if (addSuppressedToOriginalEx) safeAddSuppressedEx(newEx, (Throwable) originalEx);
+                    else safeAddSuppressedEx((Throwable) originalEx, newEx);
+                }
+
+                throw newEx;
+            }
+        };
+        return (F) f;
+    }
+
+    /**
+     * Wraps a BiFunction that processes exceptions to ensure that
+     * if the function throws a new exception, the original exception is preserved
+     * by adding it as a suppressed exception to the new one.
+     */
+    @Contract(value = "null, _ -> null; !null, _ -> !null", pure = true)
+    public static <T, X extends Throwable, U, F extends BiFunction<? super T, ? extends X, ? extends U>>
+    @Nullable F nonExSwallowedBiFunction(@Nullable F fn, boolean addSuppressedToOriginalEx) {
+        if (fn == null) return null;
+        return _wrapBiFn(fn, addSuppressedToOriginalEx);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static <F extends BiFunction> F _wrapBiFn(BiFunction fn, boolean addSuppressedToOriginalEx) {
+        final BiFunction f = (v, originalEx) -> {
+            try {
+                return fn.apply(v, originalEx);
+            } catch (Throwable newEx) {
+                if (originalEx != null) {
+                    // Preserve exception by addSuppressed, this ensures
+                    // the error context is not lost when exceptions occur in exception process function
+                    if (addSuppressedToOriginalEx) safeAddSuppressedEx(newEx, (Throwable) originalEx);
+                    else safeAddSuppressedEx((Throwable) originalEx, newEx);
+                }
+
+                throw newEx;
+            }
+        };
+        return (F) f;
+    }
+
+    /**
+     * Wraps a BiConsumer that processes exceptions to ensure that
+     * if the consumer throws a new exception, the original exception is preserved
+     * by adding it as a suppressed exception to the new one.
+     */
+    @Contract(value = "null, _ -> null; !null, _ -> !null", pure = true)
+    public static <T, X extends Throwable, C extends BiConsumer<? super T, ? super X>>
+    @Nullable C nonExSwallowedBiConsumer(@Nullable C action, boolean addSuppressedToOriginalEx) {
+        if (action == null) return null;
+        return _wrapBiConsumer(action, addSuppressedToOriginalEx);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static <C extends BiConsumer> C _wrapBiConsumer(BiConsumer action, boolean addSuppressedToOriginalEx) {
+        final BiConsumer a = (v, originalEx) -> {
+            try {
+                action.accept(v, originalEx);
+            } catch (Throwable newEx) {
+                if (originalEx != null) {
+                    // Preserve exception by addSuppressed, this ensures
+                    // the error context is not lost when exceptions occur in exception process action
+                    if (addSuppressedToOriginalEx) safeAddSuppressedEx(newEx, (Throwable) originalEx);
+                    else safeAddSuppressedEx((Throwable) originalEx, newEx);
+                }
+
+                throw newEx;
+            }
+        };
+        return (C) a;
     }
 
     // endregion

@@ -21,6 +21,8 @@ source "$BASH_BUDDY_ROOT/lib/maven_utils.sh"
 readonly default_build_jdk_version=21
 readonly JDK_VERSIONS=(
   8
+  9
+  10
   11
   17
   "$default_build_jdk_version"
