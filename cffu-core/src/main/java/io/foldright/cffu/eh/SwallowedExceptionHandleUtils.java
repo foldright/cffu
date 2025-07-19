@@ -8,8 +8,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import static io.foldright.cffu.CompletableFutureUtils.unwrapCfException;
-import static io.foldright.cffu.LLCF.completeCf0;
-import static io.foldright.cffu.LLCF.peek0;
+import static io.foldright.cffu.LLCF.*;
 import static io.foldright.cffu.internal.CommonUtils.requireArrayAndEleNonNull;
 import static io.foldright.cffu.internal.ExceptionLogger.Level.ERROR;
 import static io.foldright.cffu.internal.ExceptionLogger.Level.WARN;
@@ -168,6 +167,7 @@ public final class SwallowedExceptionHandleUtils {
         try {
             handler.handle(info);
         } catch (Throwable e) {
+            safeAddSuppressedEx(info.exception, e);
             logUncaughtException(ERROR, "exceptionHandler(" + handler.getClass() + ")", e);
         }
     }

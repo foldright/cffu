@@ -2,8 +2,11 @@ package io.foldright.cffu.eh;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -46,7 +49,7 @@ public final class ExceptionInfo {
     public ExceptionInfo(String where, int index, Throwable exception, @Nullable Object attachment) {
         this.where = where;
         this.index = index;
-        this.exception = exception;
+        this.exception = requireNonNull(exception);
         this.attachment = attachment;
     }
 }

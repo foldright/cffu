@@ -10,6 +10,8 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static io.foldright.cffu.CompletableFutureUtils.unwrapCfException;
@@ -199,10 +201,7 @@ public final class LLCF {
             try {
                 action.accept(v, ex);
             } catch (Throwable e) {
-                // NOTE: call addSuppressed on unwrapCfException(e) rather than on e directly,
-                // because e may be a wrapper(CompletionException or ExecutionException)
-                // that could later be unwrapped and ignored during processing.
-                if (ex != null && ex != e) unwrapCfException(e).addSuppressed(ex);
+                safeAddSuppressedEx(ex, e);
                 logUncaughtException(ERROR, where, e);
             }
         };
@@ -216,6 +215,30 @@ public final class LLCF {
     public static <T> boolean completeCf0(CompletableFuture<? super T> cf, @Nullable T value, @Nullable Throwable ex) {
         if (ex == null) return cf.complete(value);
         else return cf.completeExceptionally(ex);
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Non-exception-swallowed safety methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Adds a suppressed exception to a target exception, first unwrapping the target exception
+     * if it is a CompletionException or ExecutionException.
+     * <p>
+     * Unwrapping target exception is necessary to ensures suppressed exceptions are properly preserved,
+     * because CompletableFuture internally wraps exceptions in CompletionException / ExecutionException, which can
+     * later be unwrapped and discarded during CompletableFuture processing (e.g. {@link CompletableFuture#exceptionNow}),
+     * potentially losing any suppressed exceptions that were attached to the wrapper.
+     *
+     * @param suppressed the exception to be added as a suppressed exception. If null, no action is taken
+     * @param target     the target exception to add the suppressed exception to
+     * @see CompletableFutureUtils#unwrapCfException(Throwable)
+     */
+    public static void safeAddSuppressedEx(@Nullable Throwable suppressed, Throwable target) {
+        if (suppressed == null) return;
+        target = unwrapCfException(target);
+        if (suppressed != target) target.addSuppressed(suppressed);
     }
 
     // endregion
@@ -275,7 +298,7 @@ public final class LLCF {
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
     // region# CF execution/executor
-    ////////////////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////////////////
 
     // code is copied from CompletableFuture#USE_COMMON_POOL
     private static final boolean USE_COMMON_POOL = ForkJoinPool.getCommonPoolParallelism() > 1;
