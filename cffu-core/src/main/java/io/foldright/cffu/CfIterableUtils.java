@@ -5,10 +5,13 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * This Utility class provides list-based variants of methods from {@link CompletableFutureUtils}
@@ -23,16 +26,12 @@ import java.util.concurrent.*;
  * @see CfTupleUtils
  */
 public final class CfIterableUtils {
-
-    private CfIterableUtils() {}
-
     /**
      * Iterable variant of {@link CompletableFutureUtils#allResultsOf(CompletionStage[])}.
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<List<T>> allResultsOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
-        CompletionStage<T>[] completionStages = CfIterableUtils.IterHelper.iterToArray(cfs);
-        return CompletableFutureUtils.allResultsOf(completionStages);
+        return CompletableFutureUtils.allResultsOf(toArray(cfs));
     }
 
     /**
@@ -40,8 +39,7 @@ public final class CfIterableUtils {
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<List<T>> allResultsFailFastOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
-        CompletionStage<T>[] completionStages = CfIterableUtils.IterHelper.iterToArray(cfs);
-        return CompletableFutureUtils.allResultsFailFastOf(completionStages);
+        return CompletableFutureUtils.allResultsFailFastOf(toArray(cfs));
     }
 
     /**
@@ -50,10 +48,9 @@ public final class CfIterableUtils {
      * @param valueIfFailed the value to return if any of the futures fail
      */
     @Contract(pure = true)
-    public static <T> CompletableFuture<List<T>> allSuccessResultsOf(@Nullable T valueIfFailed,
-                                                                     Iterable<? extends CompletionStage<? extends T>> cfs) {
-        CompletionStage<T>[] completionStages = CfIterableUtils.IterHelper.iterToArray(cfs);
-        return CompletableFutureUtils.allSuccessResultsOf(valueIfFailed, completionStages);
+    public static <T> CompletableFuture<List<T>> allSuccessResultsOf(
+            @Nullable T valueIfFailed, Iterable<? extends CompletionStage<? extends T>> cfs) {
+        return CompletableFutureUtils.allSuccessResultsOf(valueIfFailed, toArray(cfs));
     }
 
     /**
@@ -62,58 +59,46 @@ public final class CfIterableUtils {
     public static <T> CompletableFuture<List<T>> mostSuccessResultsOf(
             Executor executorWhenTimeout, @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit,
             Iterable<? extends CompletionStage<? extends T>> cfs) {
-        CompletionStage<T>[] completionStages = CfIterableUtils.IterHelper.iterToArray(cfs);
-        return CompletableFutureUtils.mostSuccessResultsOf(executorWhenTimeout, valueIfNotSuccess, timeout, unit, completionStages);
+        return CompletableFutureUtils.mostSuccessResultsOf(
+                executorWhenTimeout, valueIfNotSuccess, timeout, unit, toArray(cfs));
     }
 
     /**
      * Iterable variant of {@link CompletableFutureUtils#anyOf(CompletionStage[])}.
+     *
      * @return a CompletableFuture that completes with the result of the first completed stage
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T> anyOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
-        CompletionStage<T>[] completionStages = CfIterableUtils.IterHelper.iterToArray(cfs);
-        return CompletableFutureUtils.anyOf(completionStages);
+        return CompletableFutureUtils.anyOf(toArray(cfs));
     }
 
     /**
      * Iterable variant of {@link CompletableFutureUtils#anySuccessOf(CompletionStage[])}.
+     *
      * @return a CompletableFuture that completes with the result of the first successfully completed stage
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T> anySuccessOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
-        CompletionStage<T>[] completionStages = CfIterableUtils.IterHelper.iterToArray(cfs);
-        return CompletableFutureUtils.anyOf(completionStages);
+        return CompletableFutureUtils.anyOf(toArray(cfs));
     }
 
-    static class IterHelper {
-        @SuppressWarnings("unchecked")
-        static <T> CompletionStage<T>[] iterToArray(Iterable<? extends CompletionStage<? extends T>> cfs) {
-            Iterable<CompletionStage<T>> narrowed = narrowCompletions(cfs);
-            if (cfs instanceof Collection) {
-                ArrayList<CompletionStage<T>> ts = new ArrayList<>((Collection<CompletionStage<T>>) narrowed);
-                return ts.toArray(new CompletionStage[0]);
-            }
-            List<CompletionStage<T>> result = new ArrayList<>();
-            addAll(result, narrowed.iterator());
-            return result.toArray(new CompletionStage[0]);
+    @SuppressWarnings({"unchecked", "SuspiciousToArrayCall"})
+    private static <T> CompletionStage<? extends T>[] toArray(Iterable<? extends CompletionStage<? extends T>> cfs) {
+        requireNonNull(cfs, "cfs iterable is null");
+        if (cfs instanceof Collection) {
+            return ((Collection<T>) cfs).toArray(EMPTY);
         }
+        List<CompletionStage<? extends T>> list = new ArrayList<>();
+        for (CompletionStage<? extends T> s : cfs) {
+            list.add(s);
+        }
+        return list.toArray(EMPTY);
+    }
 
-        /**
-         * This is eligible because immutable/read-only collections are covariant.
-         */
-        @SuppressWarnings("unchecked")
-        static <T> Iterable<CompletionStage<T>> narrowCompletions(Iterable<? extends CompletionStage<? extends T>> iterable) {
-            Objects.requireNonNull(iterable, "iterable is null");
-            return (Iterable<CompletionStage<T>>) iterable;
-        }
+    @SuppressWarnings("rawtypes")
+    private static final CompletionStage[] EMPTY = new CompletionStage[0];
 
-        static <T> boolean addAll(Collection<T> addTo, Iterator<? extends T> iterator) {
-            boolean wasModified;
-            for(wasModified = false; iterator.hasNext(); wasModified |= addTo.add(iterator.next())) {
-                // loop
-            }
-            return wasModified;
-        }
+    private CfIterableUtils() {
     }
 }
