@@ -4,7 +4,6 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -16,6 +15,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static io.foldright.cffu.CompletableFutureUtils.unwrapCfException;
+import static io.foldright.cffu.internal.CommonUtils.containsInArray;
 import static io.foldright.cffu.internal.CommonUtils.mapArray;
 import static io.foldright.cffu.internal.ExceptionLogger.Level.ERROR;
 import static io.foldright.cffu.internal.ExceptionLogger.logUncaughtException;
@@ -239,12 +239,8 @@ public final class LLCF {
     public static void safeAddSuppressedEx(@Nullable Throwable suppressed, Throwable target) {
         if (suppressed == null) return;
         target = unwrapCfException(target);
-        if (suppressed != target && !contains(target.getSuppressed(), suppressed))
+        if (suppressed != target && !containsInArray(target.getSuppressed(), suppressed))
             target.addSuppressed(suppressed);
-    }
-
-    private static boolean contains(final Object[] array, final Object objectToFind) {
-        return Arrays.asList(array).contains(objectToFind);
     }
 
     /**

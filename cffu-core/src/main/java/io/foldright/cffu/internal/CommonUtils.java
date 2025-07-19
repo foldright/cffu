@@ -43,6 +43,10 @@ public final class CommonUtils {
         return array;
     }
 
+    public static boolean containsInArray(final Object[] array, final Object objectToFind) {
+        return Arrays.asList(array).contains(objectToFind);
+    }
+
     /**
      * Returns normal array list instead of unmodifiable({@link java.util.List#of}) or fixed-size
      * ({@link Arrays#asList}) list. Safer for application code which may reuse the return list as normal collection.
