@@ -2088,8 +2088,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
 
     private static <T> BiConsumer<? super T, ? super Throwable> nonExSwallowedWrapForJava8(
             BiConsumer<? super T, ? super Throwable> action) {
-        // In Java 8, CompletableFuture.whenComplete swallows any new exceptions thrown by the action.
-        // In Java 9+, the new exceptions are properly propagated(addSuppressed to original exception).
+        // In Java 8, CompletableFuture.whenComplete silently swallows exceptions thrown by the action.
+        // In Java 9+, exceptions are properly propagated by being added as suppressed exceptions to the original.
         if (IS_JAVA9_PLUS) return action;
         else return nonExSwallowedBiConsumer(action, true);
     }

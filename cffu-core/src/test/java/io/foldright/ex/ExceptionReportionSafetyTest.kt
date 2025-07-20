@@ -8,8 +8,7 @@ import io.foldright.test_utils.testCffuFac
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldContainExactly
-import io.kotest.matchers.collections.shouldNotContainDuplicates
+import io.kotest.matchers.collections.shouldHaveSingleElement
 import io.kotest.matchers.shouldBe
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutionException
@@ -136,8 +135,8 @@ class ExceptionReportionSafetyTest : FunSpec({
         ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe original
-        // the new exception does not swallowed! 👍
-        if (isJava9Plus()) original.suppressed.shouldContainExactly(new)
+        // the new exception is not swallowed! 👍
+        if (isJava9Plus()) original.suppressed.shouldHaveSingleElement(new)
         // the new exception is swallowed in Java 8! 👎
         else original.suppressed.shouldBeEmpty()
         new.suppressed.shouldBeEmpty()
@@ -155,8 +154,8 @@ class ExceptionReportionSafetyTest : FunSpec({
         ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe original
-        // the new exception does not swallowed! 👍
-        if (isJava9Plus()) original.suppressed.shouldContainExactly(new)
+        // the new exception is not swallowed! 👍
+        if (isJava9Plus()) original.suppressed.shouldHaveSingleElement(new)
         // the new exception is swallowed in Java 8! 👎
         else original.suppressed.shouldBeEmpty()
         new.suppressed.shouldBeEmpty()
@@ -179,11 +178,11 @@ class ExceptionReportionSafetyTest : FunSpec({
 
         ee.cause shouldBe new
         original.suppressed.shouldBeEmpty()
-        // the original exception does not swallow 👍
-        new.suppressed.shouldContainExactly(original)
+        // the original exception is not swallow 👍
+        new.suppressed.shouldHaveSingleElement(original)
     }
 
-    test("👍 Cffu.catchingAsync() does not swallow original exception️").config(enabledIf = java12Plus) {
+    test("👍 Cffu.catchingAsync() does not swallow original exception️") {
         val original = RuntimeException("Bang")
         val new = RuntimeException("exceptionallyAsync")
 
@@ -196,8 +195,8 @@ class ExceptionReportionSafetyTest : FunSpec({
 
         ee.cause shouldBe new
         original.suppressed.shouldBeEmpty()
-        // the original exception does not swallow 👍
-        new.suppressed.shouldContainExactly(original)
+        // the original exception is not swallow 👍
+        new.suppressed.shouldHaveSingleElement(original)
     }
 
     test("👍 Cffu.exceptionally() does not swallow original exception️") {
@@ -213,11 +212,11 @@ class ExceptionReportionSafetyTest : FunSpec({
 
         ee.cause shouldBe new
         original.suppressed.shouldBeEmpty()
-        // the original exception does not swallow 👍
-        new.suppressed.shouldContainExactly(original)
+        // the original exception is not swallow 👍
+        new.suppressed.shouldHaveSingleElement(original)
     }
 
-    test("👍 Cffu.exceptionallyAsync() does not swallow original exception️").config(enabledIf = java12Plus) {
+    test("👍 Cffu.exceptionallyAsync() does not swallow original exception️") {
         val original = RuntimeException("Bang")
         val new = RuntimeException("exceptionallyAsync")
 
@@ -230,11 +229,11 @@ class ExceptionReportionSafetyTest : FunSpec({
 
         ee.cause shouldBe new
         original.suppressed.shouldBeEmpty()
-        // the original exception does not swallow 👍
-        new.suppressed.shouldContainExactly(original)
+        // the original exception is not swallow 👍
+        new.suppressed.shouldHaveSingleElement(original)
     }
 
-    test("👍 Cffu.catchingCompose() does not swallow original exception️").config(enabledIf = java12Plus) {
+    test("👍 Cffu.catchingCompose() does not swallow original exception️") {
         val original = RuntimeException("Bang")
         val new = RuntimeException("exceptionallyCompose")
 
@@ -247,11 +246,11 @@ class ExceptionReportionSafetyTest : FunSpec({
 
         ee.cause shouldBe new
         original.suppressed.shouldBeEmpty()
-        // the original exception does not swallow 👍
-        new.suppressed.shouldContainExactly(original)
+        // the original exception is not swallow 👍
+        new.suppressed.shouldHaveSingleElement(original)
     }
 
-    test("👍 Cffu.catchingComposeAsync() does not swallow original exception️").config(enabledIf = java12Plus) {
+    test("👍 Cffu.catchingComposeAsync() does not swallow original exception️") {
         val original = RuntimeException("Bang")
         val new = RuntimeException("exceptionallyComposeAsync")
 
@@ -264,11 +263,11 @@ class ExceptionReportionSafetyTest : FunSpec({
 
         ee.cause shouldBe new
         original.suppressed.shouldBeEmpty()
-        // the original exception does not swallow 👍
-        new.suppressed.shouldContainExactly(original)
+        // the original exception is not swallow 👍
+        new.suppressed.shouldHaveSingleElement(original)
     }
 
-    test("👍 Cffu.exceptionallyCompose() does not swallow original exception️").config(enabledIf = java12Plus) {
+    test("👍 Cffu.exceptionallyCompose() does not swallow original exception️") {
         val original = RuntimeException("Bang")
         val new = RuntimeException("exceptionallyCompose")
 
@@ -281,11 +280,11 @@ class ExceptionReportionSafetyTest : FunSpec({
 
         ee.cause shouldBe new
         original.suppressed.shouldBeEmpty()
-        // the original exception does not swallow 👍
-        new.suppressed.shouldContainExactly(original)
+        // the original exception is not swallow 👍
+        new.suppressed.shouldHaveSingleElement(original)
     }
 
-    test("👍 Cffu.exceptionallyComposeAsync() does not swallow original exception️").config(enabledIf = java12Plus) {
+    test("👍 Cffu.exceptionallyComposeAsync() does not swallow original exception️") {
         val original = RuntimeException("Bang")
         val new = RuntimeException("exceptionallyComposeAsync")
 
@@ -298,8 +297,8 @@ class ExceptionReportionSafetyTest : FunSpec({
 
         ee.cause shouldBe new
         original.suppressed.shouldBeEmpty()
-        // the original exception does not swallow 👍
-        new.suppressed.shouldContainExactly(original)
+        // the original exception is not swallow 👍
+        new.suppressed.shouldHaveSingleElement(original)
     }
 
     test("👍 Cffu.handle() does not swallow original exception") {
@@ -315,8 +314,8 @@ class ExceptionReportionSafetyTest : FunSpec({
 
         ee.cause shouldBe new
         original.suppressed.shouldBeEmpty()
-        // the original exception does not swallow 👍
-        new.suppressed.shouldContainExactly(original)
+        // the original exception is not swallow 👍
+        new.suppressed.shouldHaveSingleElement(original)
     }
 
     test("👍 Cffu.handleAsync() does not swallow original exception") {
@@ -332,11 +331,11 @@ class ExceptionReportionSafetyTest : FunSpec({
 
         ee.cause shouldBe new
         original.suppressed.shouldBeEmpty()
-        // the original exception does not swallow 👍
-        new.suppressed.shouldContainExactly(original)
+        // the original exception is not swallow 👍
+        new.suppressed.shouldHaveSingleElement(original)
     }
 
-    test("👍 Cffu.whenComplete() does not swallow new exception for Java 9+") {
+    test("👍 Cffu.whenComplete() does not swallow new exception") {
         val original = RuntimeException("Bang")
         val new = RuntimeException("whenComplete")
 
@@ -348,13 +347,12 @@ class ExceptionReportionSafetyTest : FunSpec({
         ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe original
-        // the new exception does not swallowed! 👍
-        original.suppressed.shouldContainExactly(new)
-        original.suppressed.shouldNotContainDuplicates()
+        // the new exception is not swallowed! 👍
+        original.suppressed.shouldHaveSingleElement(new)
         new.suppressed.shouldBeEmpty()
     }
 
-    test("👍 Cffu.whenCompleteAsync() does not swallow new exception for Java 9+") {
+    test("👍 Cffu.whenCompleteAsync() does not swallow new exception") {
         val original = RuntimeException("Bang")
         val new = RuntimeException("whenCompleteAsync")
 
@@ -366,8 +364,8 @@ class ExceptionReportionSafetyTest : FunSpec({
         ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe original
-        // the new exception does not swallowed! 👍
-        original.suppressed.shouldContainExactly(new)
+        // the new exception is not swallowed! 👍
+        original.suppressed.shouldHaveSingleElement(new)
         new.suppressed.shouldBeEmpty()
     }
 })

@@ -2,7 +2,6 @@ package io.foldright.cffu.eh;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 

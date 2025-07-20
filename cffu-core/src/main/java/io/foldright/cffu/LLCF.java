@@ -244,9 +244,8 @@ public final class LLCF {
     }
 
     /**
-     * Wraps a function that processes exceptions to ensure that
-     * if the function throws a new exception, the original exception is preserved
-     * by adding it as a suppressed exception to the new one.
+     * Wraps a function that processes exceptions to ensure that if the error handle function throws a new exception,
+     * the error context is preserved by calling {@link Throwable#addSuppressed}.
      */
     @Contract(value = "null, _ -> null; !null, _ -> !null", pure = true)
     public static <X extends Throwable, T, F extends Function<? super X, ? extends T>>
@@ -262,8 +261,8 @@ public final class LLCF {
                 return fn.apply(originalEx);
             } catch (Throwable newEx) {
                 if (originalEx != null) {
-                    // Preserve exception by addSuppressed, this ensures
-                    // the error context is not lost when exceptions occur in exception process function
+                    // when exceptions occur in this exception process function,
+                    // the error context is preserved by calling addSuppressed
                     if (addSuppressedToOriginalEx) safeAddSuppressedEx(newEx, (Throwable) originalEx);
                     else safeAddSuppressedEx((Throwable) originalEx, newEx);
                 }
@@ -275,9 +274,8 @@ public final class LLCF {
     }
 
     /**
-     * Wraps a BiFunction that processes exceptions to ensure that
-     * if the function throws a new exception, the original exception is preserved
-     * by adding it as a suppressed exception to the new one.
+     * Wraps a BiFunction that processes exceptions to ensure that if the error handle function throws a new exception,
+     * the error context is preserved by calling {@link Throwable#addSuppressed}.
      */
     @Contract(value = "null, _ -> null; !null, _ -> !null", pure = true)
     public static <T, X extends Throwable, U, F extends BiFunction<? super T, ? extends X, ? extends U>>
@@ -293,8 +291,8 @@ public final class LLCF {
                 return fn.apply(v, originalEx);
             } catch (Throwable newEx) {
                 if (originalEx != null) {
-                    // Preserve exception by addSuppressed, this ensures
-                    // the error context is not lost when exceptions occur in exception process function
+                    // when exceptions occur in this exception process function,
+                    // the error context is preserved by calling addSuppressed
                     if (addSuppressedToOriginalEx) safeAddSuppressedEx(newEx, (Throwable) originalEx);
                     else safeAddSuppressedEx((Throwable) originalEx, newEx);
                 }
@@ -306,9 +304,8 @@ public final class LLCF {
     }
 
     /**
-     * Wraps a BiConsumer that processes exceptions to ensure that
-     * if the consumer throws a new exception, the original exception is preserved
-     * by adding it as a suppressed exception to the new one.
+     * Wraps a BiConsumer that processes exceptions to ensure that if the error handle function throws a new exception,
+     * the error context is preserved by calling {@link Throwable#addSuppressed}.
      */
     @Contract(value = "null, _ -> null; !null, _ -> !null", pure = true)
     public static <T, X extends Throwable, C extends BiConsumer<? super T, ? super X>>
@@ -324,8 +321,8 @@ public final class LLCF {
                 action.accept(v, originalEx);
             } catch (Throwable newEx) {
                 if (originalEx != null) {
-                    // Preserve exception by addSuppressed, this ensures
-                    // the error context is not lost when exceptions occur in exception process action
+                    // when exceptions occur in this exception process action,
+                    // the error context is preserved by calling addSuppressed
                     if (addSuppressedToOriginalEx) safeAddSuppressedEx(newEx, (Throwable) originalEx);
                     else safeAddSuppressedEx((Throwable) originalEx, newEx);
                 }
