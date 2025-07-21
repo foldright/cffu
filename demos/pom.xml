@@ -22,7 +22,7 @@
 		<demo.module.name/>
 
 		<!-- testing dependencies versions -->
-		<junit5.version>5.13.3</junit5.version>
+		<junit5.version>5.13.4</junit5.version>
 	</properties>
 
 	<modules>
