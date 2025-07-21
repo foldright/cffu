@@ -35,14 +35,14 @@ import static java.util.Objects.requireNonNull;
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @author HuHao (995483610 at qq dot com)
  * @see CompletableFutureUtils
+ * @see CfIterableUtils
+ * @see CfParallelUtils
  */
 public final class CfTupleUtils {
 
     ////////////////////////////////////////////////////////////////////////////////
     // region# CF Parallel Factory Methods
     ////////////////////////////////////////////////////////////
-
-    ////////////////////////////////////////////////////////////////////////////////
     // region## Multi-Actions-Tuple(MTuple*) Methods(create by actions)
     ////////////////////////////////////////////////////////////
 
