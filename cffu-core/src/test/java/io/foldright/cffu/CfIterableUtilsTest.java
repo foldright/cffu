@@ -66,13 +66,13 @@ class CfIterableUtilsTest {
 
         // Test with a single completed future
         CompletableFuture<String> future1 = CompletableFuture.completedFuture("result1");
-        assertEquals(List.of("result1"), CfIterableUtils.mostSuccessResultsOf(Runnable::run, null, 1, TimeUnit.MILLISECONDS, List.of(future1)).join());
+        assertEquals(List.of("result1"), CfIterableUtils.mostSuccessResultsOf(null, 1, TimeUnit.MILLISECONDS, List.of(future1), Runnable::run).join());
 
         // Test with multiple completed futures
         CompletableFuture<String> future2 = CompletableFuture.completedFuture("result2");
         CompletableFuture<String> future3 = CompletableFuture.completedFuture("result3");
         assertEquals(List.of("result1", "result2", "result3"),
-                CfIterableUtils.mostSuccessResultsOf(Runnable::run, null, 1, TimeUnit.MILLISECONDS, List.of(future1, future2, future3)).join());
+                CfIterableUtils.mostSuccessResultsOf(null, 1, TimeUnit.MILLISECONDS, List.of(future1, future2, future3), Runnable::run).join());
     }
 
     @Test
