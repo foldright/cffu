@@ -40,6 +40,8 @@ import static java.util.Objects.requireNonNull;
  * @see CompletableFutureUtils
  * @see java.util.stream.Stream#parallel()
  * @see java.util.Collection#parallelStream()
+ * @see CfIterableUtils
+ * @see CfTupleUtils
  */
 public final class CfParallelUtils {
     ////////////////////////////////////////////////////////////////////////////////

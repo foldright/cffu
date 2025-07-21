@@ -28,6 +28,7 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @author HuHao (995483610 at qq dot com)
  * @author Eric Lin (linqinghua4 at gmail dot com)
+ * @see CfIterableUtils
  * @see CfParallelUtils
  * @see CfTupleUtils
  */
@@ -1455,7 +1456,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Shortcut to method {@link #anyOf anyOf}, wraps input actions to CompletableFuture
-      * by {@link CompletableFuture#runAsync(Runnable, Executor)}.
+     * by {@link CompletableFuture#runAsync(Runnable, Executor)}.
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
