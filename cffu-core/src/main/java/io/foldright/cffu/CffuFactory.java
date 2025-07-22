@@ -35,7 +35,7 @@ import static java.util.Objects.requireNonNull;
  * <li>factory methods return {@link Cffu} instead of {@link CompletableFuture}.
  * <li>only provide varargs methods for multiple Cffu/CF input arguments;
  *     if you have {@code List} input, use static utility methods {@link #cffuListToArray(List)}
- *     or {@link CompletableFutureUtils#completableFutureListToArray(List)} to convert it to array first.
+ *     to convert it to array first.
  * </ul>
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
@@ -759,7 +759,6 @@ public final class CffuFactory {
      * Convert Cffu list to Cffu array.
      *
      * @see #toCffuArray(CompletionStage[])
-     * @see CompletableFutureUtils#completableFutureListToArray(List)
      */
     @Contract(pure = true)
     public static <T> Cffu<T>[] cffuListToArray(List<Cffu<T>> cffuList) {

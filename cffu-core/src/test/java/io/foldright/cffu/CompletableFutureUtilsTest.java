@@ -1627,18 +1627,6 @@ class CompletableFutureUtilsTest {
     // region# Util Methods(static methods)
     ////////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * {@link CompletableFutureUtils#toCompletableFutureArray}
-     * is tested in {@link CffuFactoryTest#test_toCompletableFutureArray()}
-     */
-    @Test
-    void test_completableFutureListToArray() {
-        @SuppressWarnings("unchecked")
-        CompletableFuture<Integer>[] input = new CompletableFuture[]{completedFuture(n), completedFuture(anotherN)};
-
-        assertArrayEquals(input, CompletableFutureUtils.completableFutureListToArray(Arrays.asList(input)));
-    }
-
     @Test
     void test_unwrapCfException() {
         RuntimeException rt1 = new RuntimeException();
