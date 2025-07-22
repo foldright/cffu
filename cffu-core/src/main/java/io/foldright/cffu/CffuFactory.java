@@ -748,7 +748,6 @@ public final class CffuFactory {
      * Convert Cffu list to Cffu array.
      *
      * @see #toCffuArray(CompletionStage[])
-     * @see CompletableFutureUtils#completableFutureListToArray(List)
      */
     @Contract(pure = true)
     public static <T> Cffu<T>[] cffuListToArray(List<Cffu<T>> cffuList) {

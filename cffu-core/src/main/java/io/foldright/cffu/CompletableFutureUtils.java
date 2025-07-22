@@ -2775,10 +2775,7 @@ public final class CompletableFutureUtils {
     // endregion
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# Convenient Util Methods
-    //
-    //    - toCompletableFutureArray:     CompletionStage[](including Cffu) -> CF[]
-    //    - completableFutureListToArray: List<CF> -> CF[]
+    // region# Additional Utility Methods
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -2801,19 +2798,6 @@ public final class CompletableFutureUtils {
             ret[i] = requireNonNull(stages[i], "stage" + (i + 1) + " is null").toCompletableFuture();
         }
         return ret;
-    }
-
-    /**
-     * Converts input {@link CompletableFuture} list to CompletableFuture array.
-     *
-     * @see #toCompletableFutureArray(CompletionStage[])
-     */
-    @Contract(pure = true)
-    public static <T> CompletableFuture<T>[] completableFutureListToArray(List<CompletableFuture<T>> cfList) {
-        requireNonNull(cfList, "cfList is null");
-        @SuppressWarnings("unchecked")
-        CompletableFuture<T>[] a = new CompletableFuture[cfList.size()];
-        return cfList.toArray(a);
     }
 
     /**
