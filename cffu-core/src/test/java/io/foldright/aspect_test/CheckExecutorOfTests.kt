@@ -96,19 +96,19 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
         }
         run {
             val (sInTE1, sInTE2) = am.createSuppliers(2, testExecutor)
-            mSupplyTupleFailFastAsync(testExecutor, sInTE1, sInTE2)
+            mSupplyTupleFailFastAsync(sInTE1, sInTE2, testExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3) = am.createSuppliers(3, testExecutor)
-            mSupplyTupleFailFastAsync(testExecutor, sInTE1, sInTE2, sInTE3)
+            mSupplyTupleFailFastAsync(sInTE1, sInTE2, sInTE3, testExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4) = am.createSuppliers(4, testExecutor)
-            mSupplyTupleFailFastAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
+            mSupplyTupleFailFastAsync(sInTE1, sInTE2, sInTE3, sInTE4, testExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4, sInTE5) = am.createSuppliers(5, testExecutor)
-            mSupplyTupleFailFastAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
+            mSupplyTupleFailFastAsync(sInTE1, sInTE2, sInTE3, sInTE4, sInTE5, testExecutor)
         }
 
         run {
@@ -129,19 +129,19 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
         }
         run {
             val (sInTE1, sInTE2) = am.createSuppliers(2, testExecutor)
-            mSupplyAllSuccessTupleAsync(testExecutor, sInTE1, sInTE2)
+            mSupplyAllSuccessTupleAsync(sInTE1, sInTE2, testExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3) = am.createSuppliers(3, testExecutor)
-            mSupplyAllSuccessTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3)
+            mSupplyAllSuccessTupleAsync(sInTE1, sInTE2, sInTE3, testExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4) = am.createSuppliers(4, testExecutor)
-            mSupplyAllSuccessTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
+            mSupplyAllSuccessTupleAsync(sInTE1, sInTE2, sInTE3, sInTE4, testExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4, sInTE5) = am.createSuppliers(5, testExecutor)
-            mSupplyAllSuccessTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
+            mSupplyAllSuccessTupleAsync(sInTE1, sInTE2, sInTE3, sInTE4, sInTE5, testExecutor)
         }
 
         run {
@@ -163,20 +163,20 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
 
         run {
             val (sInTE1, sInTE2) = am.createSuppliers(2, testExecutor)
-            mSupplyMostSuccessTupleAsync(testExecutor, LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2)
+            mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, testExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3) = am.createSuppliers(3, testExecutor)
-            mSupplyMostSuccessTupleAsync(testExecutor, LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, sInTE3)
+            mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, sInTE3, testExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4) = am.createSuppliers(4, testExecutor)
-            mSupplyMostSuccessTupleAsync(testExecutor, LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, sInTE3, sInTE4)
+            mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, sInTE3, sInTE4, testExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4, sInTE5) = am.createSuppliers(5, testExecutor)
             mSupplyMostSuccessTupleAsync(
-                testExecutor, LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5
+                LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5, testExecutor
             )
         }
 
@@ -198,19 +198,19 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
         }
         run {
             val (sInTE1, sInTE2) = am.createSuppliers(2, testExecutor)
-            mSupplyTupleAsync(testExecutor, sInTE1, sInTE2)
+            mSupplyTupleAsync(sInTE1, sInTE2, testExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3) = am.createSuppliers(3, testExecutor)
-            mSupplyTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3)
+            mSupplyTupleAsync(sInTE1, sInTE2, sInTE3, testExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4) = am.createSuppliers(4, testExecutor)
-            mSupplyTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
+            mSupplyTupleAsync(sInTE1, sInTE2, sInTE3, sInTE4, testExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4, sInTE5) = am.createSuppliers(5, testExecutor)
-            mSupplyTupleAsync(testExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
+            mSupplyTupleAsync(sInTE1, sInTE2, sInTE3, sInTE4, sInTE5, testExecutor)
         }
 
         am.checkRunningExecutor()
@@ -348,19 +348,19 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
         }
         run {
             val (fInTE1, fInTE2) = am.createFunctions(2, testExecutor)
-            thenMApplyTupleFailFastAsync(cfThis, testExecutor, fInTE1, fInTE2)
+            thenMApplyTupleFailFastAsync(cfThis, fInTE1, fInTE2, testExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3) = am.createFunctions(3, testExecutor)
-            thenMApplyTupleFailFastAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3)
+            thenMApplyTupleFailFastAsync(cfThis, fInTE1, fInTE2, fInTE3, testExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4) = am.createFunctions(4, testExecutor)
-            thenMApplyTupleFailFastAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
+            thenMApplyTupleFailFastAsync(cfThis, fInTE1, fInTE2, fInTE3, fInTE4, testExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, testExecutor)
-            thenMApplyTupleFailFastAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5)
+            thenMApplyTupleFailFastAsync(cfThis, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5, testExecutor)
         }
 
         run {
@@ -381,19 +381,19 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
         }
         run {
             val (fInTE1, fInTE2) = am.createFunctions(2, testExecutor)
-            thenMApplyAllSuccessTupleAsync(cfThis, testExecutor, fInTE1, fInTE2)
+            thenMApplyAllSuccessTupleAsync(cfThis, fInTE1, fInTE2, testExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3) = am.createFunctions(3, testExecutor)
-            thenMApplyAllSuccessTupleAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3)
+            thenMApplyAllSuccessTupleAsync(cfThis, fInTE1, fInTE2, fInTE3, testExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4) = am.createFunctions(4, testExecutor)
-            thenMApplyAllSuccessTupleAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
+            thenMApplyAllSuccessTupleAsync(cfThis, fInTE1, fInTE2, fInTE3, fInTE4, testExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, testExecutor)
-            thenMApplyAllSuccessTupleAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5)
+            thenMApplyAllSuccessTupleAsync(cfThis, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5, testExecutor)
         }
 
         run {
@@ -414,29 +414,29 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
         }
         run {
             val (fInTE1, fInTE2) = am.createFunctions(2, testExecutor)
-            thenMApplyMostSuccessTupleAsync(cfThis, testExecutor, LONG_WAIT_MS, MILLISECONDS, fInTE1, fInTE2)
+            thenMApplyMostSuccessTupleAsync(cfThis, LONG_WAIT_MS, MILLISECONDS, fInTE1, fInTE2, testExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3) = am.createFunctions(3, testExecutor)
-            thenMApplyMostSuccessTupleAsync(cfThis, testExecutor, LONG_WAIT_MS, MILLISECONDS, fInTE1, fInTE2, fInTE3)
+            thenMApplyMostSuccessTupleAsync(cfThis, LONG_WAIT_MS, MILLISECONDS, fInTE1, fInTE2, fInTE3, testExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4) = am.createFunctions(4, testExecutor)
             thenMApplyMostSuccessTupleAsync(
                 cfThis,
-                testExecutor,
                 LONG_WAIT_MS,
                 MILLISECONDS,
                 fInTE1,
                 fInTE2,
                 fInTE3,
-                fInTE4
+                fInTE4,
+                testExecutor
             )
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, testExecutor)
             thenMApplyMostSuccessTupleAsync(
-                cfThis, testExecutor, LONG_WAIT_MS, MILLISECONDS, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5
+                cfThis, LONG_WAIT_MS, MILLISECONDS, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5, testExecutor
             )
         }
 
@@ -458,19 +458,19 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
         }
         run {
             val (fInTE1, fInTE2) = am.createFunctions(2, testExecutor)
-            thenMApplyTupleAsync(cfThis, testExecutor, fInTE1, fInTE2)
+            thenMApplyTupleAsync(cfThis, fInTE1, fInTE2, testExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3) = am.createFunctions(3, testExecutor)
-            thenMApplyTupleAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3)
+            thenMApplyTupleAsync(cfThis, fInTE1, fInTE2, fInTE3, testExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4) = am.createFunctions(4, testExecutor)
-            thenMApplyTupleAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
+            thenMApplyTupleAsync(cfThis, fInTE1, fInTE2, fInTE3, fInTE4, testExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, testExecutor)
-            thenMApplyTupleAsync(cfThis, testExecutor, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5)
+            thenMApplyTupleAsync(cfThis, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5, testExecutor)
         }
 
         am.checkRunningExecutor()
@@ -631,19 +631,19 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         }
         run {
             val (sInTE1, sInTE2) = am.createSuppliers(2, anotherExecutor)
-            testCffuFac.tupleOps().mSupplyTupleFailFastAsync(anotherExecutor, sInTE1, sInTE2)
+            testCffuFac.tupleOps().mSupplyTupleFailFastAsync(sInTE1, sInTE2, anotherExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3) = am.createSuppliers(3, anotherExecutor)
-            testCffuFac.tupleOps().mSupplyTupleFailFastAsync(anotherExecutor, sInTE1, sInTE2, sInTE3)
+            testCffuFac.tupleOps().mSupplyTupleFailFastAsync(sInTE1, sInTE2, sInTE3, anotherExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4) = am.createSuppliers(4, anotherExecutor)
-            testCffuFac.tupleOps().mSupplyTupleFailFastAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
+            testCffuFac.tupleOps().mSupplyTupleFailFastAsync(sInTE1, sInTE2, sInTE3, sInTE4, anotherExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4, sInTE5) = am.createSuppliers(5, anotherExecutor)
-            testCffuFac.tupleOps().mSupplyTupleFailFastAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
+            testCffuFac.tupleOps().mSupplyTupleFailFastAsync(sInTE1, sInTE2, sInTE3, sInTE4, sInTE5, anotherExecutor)
         }
 
         run {
@@ -664,19 +664,19 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         }
         run {
             val (sInTE1, sInTE2) = am.createSuppliers(2, anotherExecutor)
-            testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(anotherExecutor, sInTE1, sInTE2)
+            testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(sInTE1, sInTE2, anotherExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3) = am.createSuppliers(3, anotherExecutor)
-            testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3)
+            testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(sInTE1, sInTE2, sInTE3, anotherExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4) = am.createSuppliers(4, anotherExecutor)
-            testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
+            testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(sInTE1, sInTE2, sInTE3, sInTE4, anotherExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4, sInTE5) = am.createSuppliers(5, anotherExecutor)
-            testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
+            testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(sInTE1, sInTE2, sInTE3, sInTE4, sInTE5, anotherExecutor)
         }
 
         run {
@@ -703,31 +703,31 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         run {
             val (sInTE1, sInTE2) = am.createSuppliers(2, anotherExecutor)
             testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(
-                anotherExecutor, LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2
+                LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, anotherExecutor
             )
         }
         run {
             val (sInTE1, sInTE2, sInTE3) = am.createSuppliers(3, anotherExecutor)
             testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(
-                anotherExecutor, LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, sInTE3
+                LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, sInTE3, anotherExecutor
             )
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4) = am.createSuppliers(4, anotherExecutor)
             testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(
-                anotherExecutor,
                 LONG_WAIT_MS,
                 MILLISECONDS,
                 sInTE1,
                 sInTE2,
                 sInTE3,
-                sInTE4
+                sInTE4,
+                anotherExecutor
             )
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4, sInTE5) = am.createSuppliers(5, anotherExecutor)
             testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(
-                anotherExecutor, LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5
+                LONG_WAIT_MS, MILLISECONDS, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5, anotherExecutor
             )
         }
 
@@ -749,19 +749,19 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         }
         run {
             val (sInTE1, sInTE2) = am.createSuppliers(2, anotherExecutor)
-            testCffuFac.tupleOps().mSupplyTupleAsync(anotherExecutor, sInTE1, sInTE2)
+            testCffuFac.tupleOps().mSupplyTupleAsync(sInTE1, sInTE2, anotherExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3) = am.createSuppliers(3, anotherExecutor)
-            testCffuFac.tupleOps().mSupplyTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3)
+            testCffuFac.tupleOps().mSupplyTupleAsync(sInTE1, sInTE2, sInTE3, anotherExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4) = am.createSuppliers(4, anotherExecutor)
-            testCffuFac.tupleOps().mSupplyTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4)
+            testCffuFac.tupleOps().mSupplyTupleAsync(sInTE1, sInTE2, sInTE3, sInTE4, anotherExecutor)
         }
         run {
             val (sInTE1, sInTE2, sInTE3, sInTE4, sInTE5) = am.createSuppliers(5, anotherExecutor)
-            testCffuFac.tupleOps().mSupplyTupleAsync(anotherExecutor, sInTE1, sInTE2, sInTE3, sInTE4, sInTE5)
+            testCffuFac.tupleOps().mSupplyTupleAsync(sInTE1, sInTE2, sInTE3, sInTE4, sInTE5, anotherExecutor)
         }
 
         am.checkRunningExecutor()
@@ -886,20 +886,20 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         }
         run {
             val (fInTE1, fInTE2) = am.createFunctions(2, anotherExecutor)
-            cfThis.tupleOps().thenMApplyTupleFailFastAsync(anotherExecutor, fInTE1, fInTE2)
+            cfThis.tupleOps().thenMApplyTupleFailFastAsync(fInTE1, fInTE2, anotherExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3) = am.createFunctions(3, anotherExecutor)
-            cfThis.tupleOps().thenMApplyTupleFailFastAsync(anotherExecutor, fInTE1, fInTE2, fInTE3)
+            cfThis.tupleOps().thenMApplyTupleFailFastAsync(fInTE1, fInTE2, fInTE3, anotherExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4) = am.createFunctions(4, anotherExecutor)
-            cfThis.tupleOps().thenMApplyTupleFailFastAsync(anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
+            cfThis.tupleOps().thenMApplyTupleFailFastAsync(fInTE1, fInTE2, fInTE3, fInTE4, anotherExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, anotherExecutor)
             cfThis.tupleOps().thenMApplyTupleFailFastAsync(
-                anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5
+                fInTE1, fInTE2, fInTE3, fInTE4, fInTE5, anotherExecutor
             )
         }
 
@@ -921,20 +921,20 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         }
         run {
             val (fInTE1, fInTE2) = am.createFunctions(2, anotherExecutor)
-            cfThis.tupleOps().thenMApplyAllSuccessTupleAsync(anotherExecutor, fInTE1, fInTE2)
+            cfThis.tupleOps().thenMApplyAllSuccessTupleAsync(fInTE1, fInTE2, anotherExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3) = am.createFunctions(3, anotherExecutor)
-            cfThis.tupleOps().thenMApplyAllSuccessTupleAsync(anotherExecutor, fInTE1, fInTE2, fInTE3)
+            cfThis.tupleOps().thenMApplyAllSuccessTupleAsync(fInTE1, fInTE2, fInTE3, anotherExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4) = am.createFunctions(4, anotherExecutor)
-            cfThis.tupleOps().thenMApplyAllSuccessTupleAsync(anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
+            cfThis.tupleOps().thenMApplyAllSuccessTupleAsync(fInTE1, fInTE2, fInTE3, fInTE4, anotherExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, anotherExecutor)
             cfThis.tupleOps().thenMApplyAllSuccessTupleAsync(
-                anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5
+                fInTE1, fInTE2, fInTE3, fInTE4, fInTE5, anotherExecutor
             )
         }
 
@@ -978,47 +978,47 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         run {
             val (fInTE1, fInTE2) = am.createFunctions(2, anotherExecutor)
             cfThis.tupleOps().thenMApplyMostSuccessTupleAsync(
-                anotherExecutor,
                 LONG_WAIT_MS,
                 MILLISECONDS,
                 fInTE1,
-                fInTE2
+                fInTE2,
+                anotherExecutor
             )
         }
         run {
             val (fInTE1, fInTE2, fInTE3) = am.createFunctions(3, anotherExecutor)
             cfThis.tupleOps().thenMApplyMostSuccessTupleAsync(
-                anotherExecutor,
-                LONG_WAIT_MS,
-                MILLISECONDS,
-                fInTE1,
-                fInTE2,
-                fInTE3
-            )
-        }
-        run {
-            val (fInTE1, fInTE2, fInTE3, fInTE4) = am.createFunctions(4, anotherExecutor)
-            cfThis.tupleOps().thenMApplyMostSuccessTupleAsync(
-                anotherExecutor,
                 LONG_WAIT_MS,
                 MILLISECONDS,
                 fInTE1,
                 fInTE2,
                 fInTE3,
-                fInTE4
+                anotherExecutor
             )
         }
         run {
-            val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, anotherExecutor)
+            val (fInTE1, fInTE2, fInTE3, fInTE4) = am.createFunctions(4, anotherExecutor)
             cfThis.tupleOps().thenMApplyMostSuccessTupleAsync(
-                anotherExecutor,
                 LONG_WAIT_MS,
                 MILLISECONDS,
                 fInTE1,
                 fInTE2,
                 fInTE3,
                 fInTE4,
-                fInTE5
+                anotherExecutor
+            )
+        }
+        run {
+            val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, anotherExecutor)
+            cfThis.tupleOps().thenMApplyMostSuccessTupleAsync(
+                LONG_WAIT_MS,
+                MILLISECONDS,
+                fInTE1,
+                fInTE2,
+                fInTE3,
+                fInTE4,
+                fInTE5,
+                anotherExecutor
             )
         }
 
@@ -1040,19 +1040,19 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         }
         run {
             val (fInTE1, fInTE2) = am.createFunctions(2, anotherExecutor)
-            cfThis.tupleOps().thenMApplyTupleAsync(anotherExecutor, fInTE1, fInTE2)
+            cfThis.tupleOps().thenMApplyTupleAsync(fInTE1, fInTE2, anotherExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3) = am.createFunctions(3, anotherExecutor)
-            cfThis.tupleOps().thenMApplyTupleAsync(anotherExecutor, fInTE1, fInTE2, fInTE3)
+            cfThis.tupleOps().thenMApplyTupleAsync(fInTE1, fInTE2, fInTE3, anotherExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4) = am.createFunctions(4, anotherExecutor)
-            cfThis.tupleOps().thenMApplyTupleAsync(anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4)
+            cfThis.tupleOps().thenMApplyTupleAsync(fInTE1, fInTE2, fInTE3, fInTE4, anotherExecutor)
         }
         run {
             val (fInTE1, fInTE2, fInTE3, fInTE4, fInTE5) = am.createFunctions(5, anotherExecutor)
-            cfThis.tupleOps().thenMApplyTupleAsync(anotherExecutor, fInTE1, fInTE2, fInTE3, fInTE4, fInTE5)
+            cfThis.tupleOps().thenMApplyTupleAsync(fInTE1, fInTE2, fInTE3, fInTE4, fInTE5, anotherExecutor)
         }
 
         am.checkRunningExecutor()

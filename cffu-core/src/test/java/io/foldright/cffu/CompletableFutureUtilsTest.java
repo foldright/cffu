@@ -100,10 +100,7 @@ class CompletableFutureUtilsTest {
         ).get());
 
         assertEquals(Tuple3.of(42, null, null), CfTupleUtils.mSupplyMostSuccessTupleAsync(
-                testExecutor, LONG_WAIT_MS, MILLISECONDS,
-                () -> 42,
-                supplyLater(rte1, SHORT_WAIT_MS),
-                supplyLater(rte2, LONG_WAIT_MS)
+                LONG_WAIT_MS, MILLISECONDS, () -> 42, supplyLater(rte1, SHORT_WAIT_MS), supplyLater(rte2, LONG_WAIT_MS), testExecutor
         ).get());
     }
 
