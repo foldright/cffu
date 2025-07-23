@@ -3038,13 +3038,13 @@ public final class CompletableFutureUtils {
      * @see Futures#catching the equivalent Guava method catching()
      */
     @SuppressWarnings("unchecked")
-    public static <T, X extends Throwable, C extends CompletionStage<? super T>>
-    C catching(C cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
+    public static <T, X extends Throwable, F extends CompletionStage<? super T>>
+    F catching(F cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
 
-        return (C) cfThis.handle((v, ex) -> {
+        return (F) cfThis.handle((v, ex) -> {
             if (ex == null) return cfThis;
             Throwable unwrap = unwrapCfException(ex);
             if (!exceptionType.isAssignableFrom(unwrap.getClass())) return cfThis;
@@ -3070,8 +3070,8 @@ public final class CompletableFutureUtils {
      * @see #unwrapCfException(Throwable)
      * @see Futures#catching the equivalent Guava method catching()
      */
-    public static <T, X extends Throwable, C extends CompletionStage<? super T>>
-    C catchingAsync(C cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
+    public static <T, X extends Throwable, F extends CompletionStage<? super T>>
+    F catchingAsync(F cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
         return catchingAsync(cfThis, exceptionType, fallback, defaultExecutor(cfThis));
     }
 
@@ -3094,14 +3094,14 @@ public final class CompletableFutureUtils {
      * @see Futures#catching the equivalent Guava method catching()
      */
     @SuppressWarnings("unchecked")
-    public static <T, X extends Throwable, C extends CompletionStage<? super T>>
-    C catchingAsync(C cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback, Executor executor) {
+    public static <T, X extends Throwable, F extends CompletionStage<? super T>>
+    F catchingAsync(F cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
         requireNonNull(executor, "executor is null");
 
-        return (C) cfThis.handle((v, ex) -> {
+        return (F) cfThis.handle((v, ex) -> {
             if (ex == null) return cfThis;
             Throwable unwrap = unwrapCfException(ex);
             if (!exceptionType.isAssignableFrom(unwrap.getClass())) return cfThis;
@@ -3122,8 +3122,8 @@ public final class CompletableFutureUtils {
      *           if given CompletionStage completed exceptionally
      * @see #catchingAsync(CompletionStage, Class, Function)
      */
-    public static <T, C extends CompletionStage<? super T>>
-    C exceptionallyAsync(C cfThis, Function<Throwable, ? extends T> fn) {
+    public static <T, F extends CompletionStage<? super T>>
+    F exceptionallyAsync(F cfThis, Function<Throwable, ? extends T> fn) {
         return exceptionallyAsync(cfThis, fn, defaultExecutor(cfThis));
     }
 
@@ -3142,16 +3142,16 @@ public final class CompletableFutureUtils {
      * @see #catchingAsync(CompletionStage, Class, Function, Executor)
      */
     @SuppressWarnings("unchecked")
-    public static <T, C extends CompletionStage<? super T>>
-    C exceptionallyAsync(C cfThis, Function<Throwable, ? extends T> fn, Executor executor) {
+    public static <T, F extends CompletionStage<? super T>>
+    F exceptionallyAsync(F cfThis, Function<Throwable, ? extends T> fn, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
         if (IS_JAVA12_PLUS) {
-            return (C) cfThis.exceptionallyAsync(fn, executor);
+            return (F) cfThis.exceptionallyAsync(fn, executor);
         }
         // below code is copied from CompletionStage#exceptionallyAsync
-        return (C) cfThis.handle((v, ex) -> (ex == null) ? cfThis :
+        return (F) cfThis.handle((v, ex) -> (ex == null) ? cfThis :
                 cfThis.<T>handleAsync((v1, ex1) -> fn.apply(ex1), executor)
         ).thenCompose(x -> x);
     }
@@ -3179,7 +3179,7 @@ public final class CompletableFutureUtils {
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @see #cffuOrTimeout(CompletableFuture, long, TimeUnit, Executor)
      */
-    public static <C extends CompletableFuture<?>> C cffuOrTimeout(C cfThis, long timeout, TimeUnit unit) {
+    public static <F extends CompletableFuture<?>> F cffuOrTimeout(F cfThis, long timeout, TimeUnit unit) {
         return cffuOrTimeout(cfThis, timeout, unit, defaultExecutor(cfThis));
     }
 
@@ -3200,8 +3200,8 @@ public final class CompletableFutureUtils {
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @param executorWhenTimeout the executor to use for asynchronous execution when the wait timed out
      */
-    public static <C extends CompletableFuture<?>> C cffuOrTimeout(
-            C cfThis, long timeout, TimeUnit unit, Executor executorWhenTimeout) {
+    public static <F extends CompletableFuture<?>> F cffuOrTimeout(
+            F cfThis, long timeout, TimeUnit unit, Executor executorWhenTimeout) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(unit, "unit is null");
         requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
@@ -3243,7 +3243,7 @@ public final class CompletableFutureUtils {
      * @see #cffuOrTimeout(CompletableFuture, long, TimeUnit, Executor)
      */
     @Contract("_, _, _ -> param1")
-    public static <C extends CompletableFuture<?>> C orTimeout(C cfThis, long timeout, TimeUnit unit) {
+    public static <F extends CompletableFuture<?>> F orTimeout(F cfThis, long timeout, TimeUnit unit) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(unit, "unit is null");
         // NOTE: No need check minimal stage, because checked in cfThis.orTimeout() / cfThis.isDone() below
@@ -3281,8 +3281,8 @@ public final class CompletableFutureUtils {
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @see #cffuCompleteOnTimeout(CompletableFuture, Object, long, TimeUnit, Executor)
      */
-    public static <T, C extends CompletableFuture<? super T>>
-    C cffuCompleteOnTimeout(C cfThis, @Nullable T value, long timeout, TimeUnit unit) {
+    public static <T, F extends CompletableFuture<? super T>>
+    F cffuCompleteOnTimeout(F cfThis, @Nullable T value, long timeout, TimeUnit unit) {
         return cffuCompleteOnTimeout(cfThis, value, timeout, unit, defaultExecutor(cfThis));
     }
 
@@ -3303,8 +3303,8 @@ public final class CompletableFutureUtils {
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @param executorWhenTimeout the executor to use for asynchronous execution when the wait timed out
      */
-    public static <T, C extends CompletableFuture<? super T>>
-    C cffuCompleteOnTimeout(C cfThis, @Nullable T value, long timeout, TimeUnit unit, Executor executorWhenTimeout) {
+    public static <T, F extends CompletableFuture<? super T>>
+    F cffuCompleteOnTimeout(F cfThis, @Nullable T value, long timeout, TimeUnit unit, Executor executorWhenTimeout) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(unit, "unit is null");
         requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
@@ -3340,8 +3340,8 @@ public final class CompletableFutureUtils {
      * @see #cffuCompleteOnTimeout(CompletableFuture, Object, long, TimeUnit, Executor)
      */
     @Contract("_, _, _, _ -> param1")
-    public static <T, C extends CompletableFuture<? super T>>
-    C completeOnTimeout(C cfThis, @Nullable T value, long timeout, TimeUnit unit) {
+    public static <T, F extends CompletableFuture<? super T>>
+    F completeOnTimeout(F cfThis, @Nullable T value, long timeout, TimeUnit unit) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(unit, "unit is null");
         // NOTE: No need check minimal stage, because checked in cfThis.completeOnTimeout() / cfThis.isDone() below
@@ -3358,7 +3358,7 @@ public final class CompletableFutureUtils {
     }
 
     @SuppressWarnings("unchecked")
-    private static <C extends CompletableFuture<?>> C hopExecutorIfAtCfDelayerThread(C cf, Executor executor) {
+    private static <F extends CompletableFuture<?>> F hopExecutorIfAtCfDelayerThread(F cf, Executor executor) {
         CompletableFuture<Object> ret = newIncompleteFuture(cf);
 
         peek0(cf, (v, ex) -> {
@@ -3366,7 +3366,7 @@ public final class CompletableFutureUtils {
             else screenExecutor(executor).execute(() -> completeCf0(ret, v, ex));
         }, "CFU#hopExecutorIfAtCfDelayerThread");
 
-        return (C) ret;
+        return (F) ret;
     }
 
     // endregion
@@ -3395,13 +3395,13 @@ public final class CompletableFutureUtils {
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */
     @SuppressWarnings("unchecked")
-    public static <T, X extends Throwable, C extends CompletionStage<? super T>>
-    C catchingCompose(C cfThis, Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
+    public static <T, X extends Throwable, F extends CompletionStage<? super T>>
+    F catchingCompose(F cfThis, Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
 
-        return (C) cfThis.handle((v, ex) -> {
+        return (F) cfThis.handle((v, ex) -> {
             if (ex == null) return cfThis;
             Throwable unwrap = unwrapCfException(ex);
             if (!exceptionType.isAssignableFrom(unwrap.getClass())) return cfThis;
@@ -3426,8 +3426,8 @@ public final class CompletableFutureUtils {
      * @see #unwrapCfException(Throwable)
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */
-    public static <T, X extends Throwable, C extends CompletionStage<? super T>> C catchingComposeAsync(
-            C cfThis, Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
+    public static <T, X extends Throwable, F extends CompletionStage<? super T>> F catchingComposeAsync(
+            F cfThis, Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
         return catchingComposeAsync(cfThis, exceptionType, fallback, defaultExecutor(cfThis));
     }
 
@@ -3450,15 +3450,15 @@ public final class CompletableFutureUtils {
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */
     @SuppressWarnings("unchecked")
-    public static <T, X extends Throwable, C extends CompletionStage<? super T>> C catchingComposeAsync(
-            C cfThis, Class<X> exceptionType,
+    public static <T, X extends Throwable, F extends CompletionStage<? super T>> F catchingComposeAsync(
+            F cfThis, Class<X> exceptionType,
             Function<? super X, ? extends CompletionStage<T>> fallback, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
         requireNonNull(executor, "executor is null");
 
-        return (C) cfThis.handle((v, ex) -> {
+        return (F) cfThis.handle((v, ex) -> {
             if (ex == null) return cfThis;
             Throwable unwrap = unwrapCfException(ex);
             if (!exceptionType.isAssignableFrom(unwrap.getClass())) return cfThis;
@@ -3479,15 +3479,15 @@ public final class CompletableFutureUtils {
      * @see #catchingCompose(CompletionStage, Class, Function)
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <T, C extends CompletionStage<? super T>>
-    C exceptionallyCompose(C cfThis, Function<Throwable, ? extends CompletionStage<T>> fn) {
+    public static <T, F extends CompletionStage<? super T>>
+    F exceptionallyCompose(F cfThis, Function<Throwable, ? extends CompletionStage<T>> fn) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(fn, "fn is null");
         if (IS_JAVA12_PLUS) {
-            return (C) cfThis.exceptionallyCompose((Function) fn);
+            return (F) cfThis.exceptionallyCompose((Function) fn);
         }
         // below code is copied from CompletionStage.exceptionallyCompose
-        return (C) cfThis.handle((v, ex) -> (ex == null) ? cfThis : fn.apply(ex)).thenCompose(x -> x);
+        return (F) cfThis.handle((v, ex) -> (ex == null) ? cfThis : fn.apply(ex)).thenCompose(x -> x);
     }
 
     /**
@@ -3503,8 +3503,8 @@ public final class CompletableFutureUtils {
      *           if given CompletionStage completed exceptionally
      * @see #catchingComposeAsync(CompletionStage, Class, Function)
      */
-    public static <T, C extends CompletionStage<? super T>>
-    C exceptionallyComposeAsync(C cfThis, Function<Throwable, ? extends CompletionStage<T>> fn) {
+    public static <T, F extends CompletionStage<? super T>>
+    F exceptionallyComposeAsync(F cfThis, Function<Throwable, ? extends CompletionStage<T>> fn) {
         return exceptionallyComposeAsync(cfThis, fn, defaultExecutor(cfThis));
     }
 
@@ -3522,16 +3522,16 @@ public final class CompletableFutureUtils {
      * @see #catchingComposeAsync(CompletionStage, Class, Function, Executor)
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <T, C extends CompletionStage<? super T>>
-    C exceptionallyComposeAsync(C cfThis, Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
+    public static <T, F extends CompletionStage<? super T>>
+    F exceptionallyComposeAsync(F cfThis, Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
         if (IS_JAVA12_PLUS) {
-            return (C) cfThis.exceptionallyComposeAsync((Function) fn, executor);
+            return (F) cfThis.exceptionallyComposeAsync((Function) fn, executor);
         }
         // below code is copied from CompletionStage.exceptionallyComposeAsync
-        return (C) cfThis.handle((v, ex) -> (ex == null) ? cfThis :
+        return (F) cfThis.handle((v, ex) -> (ex == null) ? cfThis :
                 cfThis.handleAsync((v1, ex1) -> fn.apply(ex1), executor).thenCompose(x -> x)
         ).thenCompose(x -> x);
     }
@@ -3558,8 +3558,8 @@ public final class CompletableFutureUtils {
      * @see java.util.stream.Stream#peek(Consumer)
      */
     @Contract("_, _ -> param1")
-    public static <T, C extends CompletionStage<? extends T>>
-    C peek(C cfThis, BiConsumer<? super T, ? super Throwable> action) {
+    public static <T, F extends CompletionStage<? extends T>>
+    F peek(F cfThis, BiConsumer<? super T, ? super Throwable> action) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(action, "action is null");
 
@@ -3589,8 +3589,8 @@ public final class CompletableFutureUtils {
      * @see java.util.stream.Stream#peek(Consumer)
      */
     @Contract("_, _ -> param1")
-    public static <T, C extends CompletionStage<? extends T>>
-    C peekAsync(C cfThis, BiConsumer<? super T, ? super Throwable> action) {
+    public static <T, F extends CompletionStage<? extends T>>
+    F peekAsync(F cfThis, BiConsumer<? super T, ? super Throwable> action) {
         return peekAsync(cfThis, action, defaultExecutor(cfThis));
     }
 
@@ -3617,8 +3617,8 @@ public final class CompletableFutureUtils {
      * @see java.util.stream.Stream#peek(Consumer)
      */
     @Contract("_, _, _ -> param1")
-    public static <T, C extends CompletionStage<? extends T>>
-    C peekAsync(C cfThis, BiConsumer<? super T, ? super Throwable> action, Executor executor) {
+    public static <T, F extends CompletionStage<? extends T>>
+    F peekAsync(F cfThis, BiConsumer<? super T, ? super Throwable> action, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
@@ -3860,7 +3860,7 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#completeAsync(Supplier)
      */
     @Contract("_, _ -> param1")
-    public static <T, C extends CompletableFuture<? super T>> C completeAsync(C cfThis, Supplier<? extends T> supplier) {
+    public static <T, F extends CompletableFuture<? super T>> F completeAsync(F cfThis, Supplier<? extends T> supplier) {
         return completeAsync(cfThis, supplier, defaultExecutor(cfThis));
     }
 
@@ -3874,8 +3874,8 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#completeAsync(Supplier, Executor)
      */
     @Contract("_, _, _ -> param1")
-    public static <T, C extends CompletableFuture<? super T>>
-    C completeAsync(C cfThis, Supplier<? extends T> supplier, Executor executor) {
+    public static <T, F extends CompletableFuture<? super T>>
+    F completeAsync(F cfThis, Supplier<? extends T> supplier, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(supplier, "supplier is null");
         // NOTE: do NOT translate executor by screenExecutor method; same as CompletableFuture.completeAsync
@@ -3900,8 +3900,8 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#completeExceptionally(Throwable)
      */
     @Contract("_, _ -> param1")
-    public static <C extends CompletableFuture<?>>
-    C completeExceptionallyAsync(C cfThis, Supplier<? extends Throwable> supplier) {
+    public static <F extends CompletableFuture<?>>
+    F completeExceptionallyAsync(F cfThis, Supplier<? extends Throwable> supplier) {
         return completeExceptionallyAsync(cfThis, supplier, defaultExecutor(cfThis));
     }
 
@@ -3915,8 +3915,8 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#completeExceptionally(Throwable)
      */
     @Contract("_, _, _ -> param1")
-    public static <C extends CompletableFuture<?>>
-    C completeExceptionallyAsync(C cfThis, Supplier<? extends Throwable> supplier, Executor executor) {
+    public static <F extends CompletableFuture<?>>
+    F completeExceptionallyAsync(F cfThis, Supplier<? extends Throwable> supplier, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(supplier, "supplier is null");
         // NOTE: do NOT translate executor by screenExecutor method; same as CompletableFuture.completeAsync

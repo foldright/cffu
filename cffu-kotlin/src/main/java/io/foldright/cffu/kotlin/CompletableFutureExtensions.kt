@@ -1642,9 +1642,9 @@ fun CompletableFuture<*>.runAfterEitherSuccessAsync(
  * @param fallback the Function to be called if `input` fails with the expected exception type.
  * The function's argument is the input's exception.
  */
-fun <T, X : Throwable, C : CompletionStage<in T>> C.catching(
+fun <T, X : Throwable, F : CompletionStage<in T>> F.catching(
     exceptionType: Class<X>, fallback: Function<in X, out T>
-): C = CompletableFutureUtils.catching(this, exceptionType, fallback)
+): F = CompletableFutureUtils.catching(this, exceptionType, fallback)
 
 /**
  * Returns a new CompletionStage that, when this stage completes exceptionally with the given exceptionType,
@@ -1658,9 +1658,9 @@ fun <T, X : Throwable, C : CompletionStage<in T>> C.catching(
  * @param fallback the Function to be called if `input` fails with the expected exception type.
  * The function's argument is the input's exception.
  */
-fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingAsync(
+fun <T, X : Throwable, F : CompletionStage<in T>> F.catchingAsync(
     exceptionType: Class<X>, fallback: Function<in X, out T>
-): C = CompletableFutureUtils.catchingAsync(this, exceptionType, fallback)
+): F = CompletableFutureUtils.catchingAsync(this, exceptionType, fallback)
 
 /**
  * Returns a new CompletionStage that, when this stage completes exceptionally with the given exceptionType,
@@ -1674,9 +1674,9 @@ fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingAsync(
  * The function's argument is the input's exception.
  * @param executor the executor to use for asynchronous execution
  */
-fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingAsync(
+fun <T, X : Throwable, F : CompletionStage<in T>> F.catchingAsync(
     exceptionType: Class<X>, fallback: Function<in X, out T>, executor: Executor
-): C = CompletableFutureUtils.catchingAsync(this, exceptionType, fallback, executor)
+): F = CompletableFutureUtils.catchingAsync(this, exceptionType, fallback, executor)
 
 /**
  * Returns a new CompletionStage that, when this stage completes exceptionally, is executed with this
@@ -1687,7 +1687,7 @@ fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingAsync(
  * @param fn the function to use to compute the value of the returned CompletionStage
  * if this CompletionStage completed exceptionally
  */
-fun <T, C : CompletionStage<in T>> C.exceptionallyAsync(fn: Function<Throwable, out T>): C =
+fun <T, F : CompletionStage<in T>> F.exceptionallyAsync(fn: Function<Throwable, out T>): F =
     CompletableFutureUtils.exceptionallyAsync(this, fn)
 
 /**
@@ -1699,7 +1699,7 @@ fun <T, C : CompletionStage<in T>> C.exceptionallyAsync(fn: Function<Throwable, 
  * if this CompletionStage completed exceptionally
  * @param executor the executor to use for asynchronous execution
  */
-fun <T, C : CompletionStage<in T>> C.exceptionallyAsync(fn: Function<Throwable, out T>, executor: Executor): C =
+fun <T, F : CompletionStage<in T>> F.exceptionallyAsync(fn: Function<Throwable, out T>, executor: Executor): F =
     CompletableFutureUtils.exceptionallyAsync(this, fn, executor)
 
 // endregion
@@ -1717,7 +1717,7 @@ fun <T, C : CompletionStage<in T>> C.exceptionallyAsync(fn: Function<Throwable, 
  * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  */
-fun <C : CompletableFuture<*>> C.cffuOrTimeout(timeout: Long, unit: TimeUnit): C =
+fun <F : CompletableFuture<*>> F.cffuOrTimeout(timeout: Long, unit: TimeUnit): F =
     CompletableFutureUtils.cffuOrTimeout(this, timeout, unit)
 
 /**
@@ -1729,7 +1729,7 @@ fun <C : CompletableFuture<*>> C.cffuOrTimeout(timeout: Long, unit: TimeUnit): C
  * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  */
-fun <C : CompletableFuture<*>> C.cffuOrTimeout(executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit): C =
+fun <F : CompletableFuture<*>> F.cffuOrTimeout(executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit): F =
     CompletableFutureUtils.cffuOrTimeout(this, timeout, unit, executorWhenTimeout)
 
 /**
@@ -1763,7 +1763,7 @@ fun <C : CompletableFuture<*>> C.cffuOrTimeout(executorWhenTimeout: Executor, ti
  * @return this CompletableFuture
  * @see cffuOrTimeout
  */
-fun <C : CompletableFuture<*>> C.orTimeout(timeout: Long, unit: TimeUnit): C =
+fun <F : CompletableFuture<*>> F.orTimeout(timeout: Long, unit: TimeUnit): F =
     CompletableFutureUtils.orTimeout(this, timeout, unit)
 
 /**
@@ -1782,9 +1782,9 @@ fun <C : CompletableFuture<*>> C.orTimeout(timeout: Long, unit: TimeUnit): C =
  * @param timeout how long to wait before completing normally with the given value, in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  */
-fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
+fun <T, F : CompletableFuture<in T>> F.cffuCompleteOnTimeout(
     value: T, timeout: Long, unit: TimeUnit
-): C = CompletableFutureUtils.cffuCompleteOnTimeout(this, value, timeout, unit)
+): F = CompletableFutureUtils.cffuCompleteOnTimeout(this, value, timeout, unit)
 
 /**
  * Returns a new CompletableFuture that is completed normally with the given value
@@ -1801,9 +1801,9 @@ fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
  * @param timeout how long to wait before completing normally with the given value, in units of `unit`
  * @param unit a `TimeUnit` determining how to interpret the `timeout` parameter
  */
-fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
+fun <T, F : CompletableFuture<in T>> F.cffuCompleteOnTimeout(
     value: T, executorWhenTimeout: Executor, timeout: Long, unit: TimeUnit
-): C = CompletableFutureUtils.cffuCompleteOnTimeout(this, value, timeout, unit, executorWhenTimeout)
+): F = CompletableFutureUtils.cffuCompleteOnTimeout(this, value, timeout, unit, executorWhenTimeout)
 
 /**
  * Completes this CompletableFuture with the given value if not otherwise completed before the given timeout.
@@ -1830,7 +1830,7 @@ fun <T, C : CompletableFuture<in T>> C.cffuCompleteOnTimeout(
  * @return this CompletableFuture
  * @see cffuCompleteOnTimeout
  */
-fun <T, C : CompletableFuture<in T>> C.completeOnTimeout(value: T, timeout: Long, unit: TimeUnit): C =
+fun <T, F : CompletableFuture<in T>> F.completeOnTimeout(value: T, timeout: Long, unit: TimeUnit): F =
     CompletableFutureUtils.completeOnTimeout(this, value, timeout, unit)
 
 // endregion
@@ -1852,9 +1852,9 @@ fun <T, C : CompletableFuture<in T>> C.completeOnTimeout(value: T, timeout: Long
  * @param fallback the Function to be called if `input` fails with the expected exception type.
  * The function's argument is the input's exception.
  */
-fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingCompose(
+fun <T, X : Throwable, F : CompletionStage<in T>> F.catchingCompose(
     exceptionType: Class<X>, fallback: Function<in X, out CompletionStage<T>>
-): C = CompletableFutureUtils.catchingCompose(this, exceptionType, fallback)
+): F = CompletableFutureUtils.catchingCompose(this, exceptionType, fallback)
 
 /**
  * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
@@ -1867,9 +1867,9 @@ fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingCompose(
  * @param fallback the Function to be called if `input` fails with the expected exception type.
  * The function's argument is the input's exception.
  */
-fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingComposeAsync(
+fun <T, X : Throwable, F : CompletionStage<in T>> F.catchingComposeAsync(
     exceptionType: Class<X>, fallback: Function<in X, out CompletionStage<T>>
-): C = CompletableFutureUtils.catchingComposeAsync(this, exceptionType, fallback)
+): F = CompletableFutureUtils.catchingComposeAsync(this, exceptionType, fallback)
 
 /**
  * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType,
@@ -1883,10 +1883,10 @@ fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingComposeAsync(
  * The function's argument is the input's exception.
  * @param executor the executor to use for asynchronous execution
  */
-fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingComposeAsync(
+fun <T, X : Throwable, F : CompletionStage<in T>> F.catchingComposeAsync(
     exceptionType: Class<X>, fallback: Function<in X, out CompletionStage<T>>,
     executor: Executor
-): C = CompletableFutureUtils.catchingComposeAsync(this, exceptionType, fallback, executor)
+): F = CompletableFutureUtils.catchingComposeAsync(this, exceptionType, fallback, executor)
 
 /**
  * Returns a new CompletionStage that, when given stage completes exceptionally,
@@ -1895,7 +1895,7 @@ fun <T, X : Throwable, C : CompletionStage<in T>> C.catchingComposeAsync(
  * @param fn the function to use to compute the returned
  *           CompletionStage if given CompletionStage completed exceptionally
  */
-fun <T, C : CompletionStage<in T>> C.exceptionallyCompose(fn: Function<Throwable, out CompletionStage<T>>): C =
+fun <T, F : CompletionStage<in T>> F.exceptionallyCompose(fn: Function<Throwable, out CompletionStage<T>>): F =
     CompletableFutureUtils.exceptionallyCompose(this, fn)
 
 /**
@@ -1906,7 +1906,7 @@ fun <T, C : CompletionStage<in T>> C.exceptionallyCompose(fn: Function<Throwable
  * @param fn the function to use to compute the returned
  *           CompletionStage if given CompletionStage completed exceptionally
  */
-fun <T, C : CompletionStage<in T>> C.exceptionallyComposeAsync(fn: Function<Throwable, out CompletionStage<T>>): C =
+fun <T, F : CompletionStage<in T>> F.exceptionallyComposeAsync(fn: Function<Throwable, out CompletionStage<T>>): F =
     CompletableFutureUtils.exceptionallyComposeAsync(this, fn)
 
 /**
@@ -1917,9 +1917,9 @@ fun <T, C : CompletionStage<in T>> C.exceptionallyComposeAsync(fn: Function<Thro
  *                 if given CompletionStage completed exceptionally
  * @param executor the executor to use for asynchronous execution
  */
-fun <T, C : CompletionStage<in T>> C.exceptionallyComposeAsync(
+fun <T, F : CompletionStage<in T>> F.exceptionallyComposeAsync(
     fn: Function<Throwable, out CompletionStage<T>>, executor: Executor
-): C = CompletableFutureUtils.exceptionallyComposeAsync(this, fn, executor)
+): F = CompletableFutureUtils.exceptionallyComposeAsync(this, fn, executor)
 
 /**
  * Peeks the result by executing the given action when this stage completes, returns this stage.
@@ -1942,7 +1942,7 @@ fun <T, C : CompletionStage<in T>> C.exceptionallyComposeAsync(
  * @see CompletionStage.whenComplete
  * @see java.util.stream.Stream.peek
  */
-fun <T, C : CompletionStage<out T>> C.peek(action: BiConsumer<in T, in Throwable>): C =
+fun <T, F : CompletionStage<out T>> F.peek(action: BiConsumer<in T, in Throwable>): F =
     CompletableFutureUtils.peek(this, action)
 
 /**
@@ -1967,7 +1967,7 @@ fun <T, C : CompletionStage<out T>> C.peek(action: BiConsumer<in T, in Throwable
  * @see CompletionStage.whenCompleteAsync
  * @see java.util.stream.Stream.peek
  */
-fun <T, C : CompletionStage<out T>> C.peekAsync(action: BiConsumer<in T, in Throwable>): C =
+fun <T, F : CompletionStage<out T>> F.peekAsync(action: BiConsumer<in T, in Throwable>): F =
     CompletableFutureUtils.peekAsync(this, action)
 
 /**
@@ -1992,7 +1992,7 @@ fun <T, C : CompletionStage<out T>> C.peekAsync(action: BiConsumer<in T, in Thro
  * @see CompletionStage.whenCompleteAsync
  * @see java.util.stream.Stream.peek
  */
-fun <T, C : CompletionStage<out T>> C.peekAsync(action: BiConsumer<in T, in Throwable>, executor: Executor): C =
+fun <T, F : CompletionStage<out T>> F.peekAsync(action: BiConsumer<in T, in Throwable>, executor: Executor): F =
     CompletableFutureUtils.peekAsync(this, action, executor)
 
 // endregion
@@ -2093,7 +2093,7 @@ fun Future<*>.cffuState(): CffuState =
  * @param supplier a function returning the value to be used to complete given CompletableFuture
  * @return given CompletableFuture
  */
-fun <T, C : CompletableFuture<in T>> C.completeAsync(supplier: Supplier<out T>): C =
+fun <T, F : CompletableFuture<in T>> F.completeAsync(supplier: Supplier<out T>): F =
     CompletableFutureUtils.completeAsync(this, supplier)
 
 /**
@@ -2104,7 +2104,7 @@ fun <T, C : CompletableFuture<in T>> C.completeAsync(supplier: Supplier<out T>):
  * @param executor the executor to use for asynchronous execution
  * @return given CompletableFuture
  */
-fun <T, C : CompletableFuture<in T>> C.completeAsync(supplier: Supplier<out T>, executor: Executor): C =
+fun <T, F : CompletableFuture<in T>> F.completeAsync(supplier: Supplier<out T>, executor: Executor): F =
     CompletableFutureUtils.completeAsync(this, supplier, executor)
 
 /**
@@ -2115,7 +2115,7 @@ fun <T, C : CompletableFuture<in T>> C.completeAsync(supplier: Supplier<out T>, 
  * @return the given CompletableFuture
  * @see CompletableFuture.completeExceptionally
  */
-fun <C : CompletableFuture<*>> C.completeExceptionallyAsync(supplier: Supplier<out Throwable>): C =
+fun <F : CompletableFuture<*>> F.completeExceptionallyAsync(supplier: Supplier<out Throwable>): F =
     CompletableFutureUtils.completeExceptionallyAsync(this, supplier)
 
 /**
@@ -2127,7 +2127,7 @@ fun <C : CompletableFuture<*>> C.completeExceptionallyAsync(supplier: Supplier<o
  * @return the given CompletableFuture
  * @see CompletableFuture.completeExceptionally
  */
-fun <C : CompletableFuture<*>> C.completeExceptionallyAsync(supplier: Supplier<out Throwable>, executor: Executor): C =
+fun <F : CompletableFuture<*>> F.completeExceptionallyAsync(supplier: Supplier<out Throwable>, executor: Executor): F =
     CompletableFutureUtils.completeExceptionallyAsync(this, supplier, executor)
 
 // endregion

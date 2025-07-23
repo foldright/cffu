@@ -177,8 +177,8 @@ public final class LLCF {
      * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
      */
     @Contract("_, _, _ -> param1")
-    public static <T, C extends CompletionStage<? extends T>>
-    C peek0(C cfThis, BiConsumer<? super T, ? super Throwable> action, String where) {
+    public static <T, F extends CompletionStage<? extends T>>
+    F peek0(F cfThis, BiConsumer<? super T, ? super Throwable> action, String where) {
         cfThis.whenComplete(safePeekAction(action, where));
         return cfThis;
     }
@@ -191,8 +191,8 @@ public final class LLCF {
      * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
      */
     @Contract("_, _, _, _ -> param1")
-    public static <T, C extends CompletionStage<? extends T>>
-    C peekAsync0(C cfThis, BiConsumer<? super T, ? super Throwable> action, String where, Executor executor) {
+    public static <T, F extends CompletionStage<? extends T>>
+    F peekAsync0(F cfThis, BiConsumer<? super T, ? super Throwable> action, String where, Executor executor) {
         cfThis.whenCompleteAsync(safePeekAction(action, where), executor);
         return cfThis;
     }
@@ -308,14 +308,14 @@ public final class LLCF {
      * the error context is preserved by calling {@link Throwable#addSuppressed}.
      */
     @Contract(value = "null, _ -> null; !null, _ -> !null", pure = true)
-    public static <T, X extends Throwable, C extends BiConsumer<? super T, ? super X>>
-    @Nullable C nonExSwallowedBiConsumer(@Nullable C action, boolean addSuppressedToOriginalEx) {
+    public static <T, X extends Throwable, F extends BiConsumer<? super T, ? super X>>
+    @Nullable F nonExSwallowedBiConsumer(@Nullable F action, boolean addSuppressedToOriginalEx) {
         if (action == null) return null;
         return _wrapBiConsumer(action, addSuppressedToOriginalEx);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static <C extends BiConsumer> C _wrapBiConsumer(BiConsumer action, boolean addSuppressedToOriginalEx) {
+    private static <F extends BiConsumer> F _wrapBiConsumer(BiConsumer action, boolean addSuppressedToOriginalEx) {
         final BiConsumer a = (v, originalEx) -> {
             try {
                 action.accept(v, originalEx);
@@ -330,7 +330,7 @@ public final class LLCF {
                 throw newEx;
             }
         };
-        return (C) a;
+        return (F) a;
     }
 
     // endregion
