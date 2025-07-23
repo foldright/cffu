@@ -29,6 +29,9 @@ public final class CffuFactoryBuilder {
     // region# Internal constructor and fields
     ////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * default executor of Cffu.
+     */
     private final CffuDefaultExecutor defaultExecutor;
 
     private volatile boolean forbidObtrudeMethods = false;

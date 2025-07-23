@@ -1,14 +1,13 @@
 package io.foldright.cffu;
 
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -17,16 +16,27 @@ import static io.foldright.cffu.CffuFactoryBuilder.cffuScreened;
 
 /**
  * Cffu with result type {@link Iterable} (aka. multiply data/collection), {@code MCffu<T, List<T>>} is same as {@code MCffu<List<T>>} except with more methods.
+ *
+ * @param <E> data elements type
+ * @param <T> The result type returned by this future's {@code join}
  */
-public class MCffu<T, C extends Iterable<T>> extends Cffu<C> {
+public final class MCffu<E, T extends Iterable<? extends E>> extends BaseCffu<T, MCffu<E, T>> implements Future<T>, CompletionStage<T> {
+
     ////////////////////////////////////////////////////////////////////////////////
     // region# Internal constructor
+    ////////////////////////////////////////////////////////////////////////////////
 
-    /// /////////////////////////////////////////////////////////////////////////////
-
+    /**
+     * internal constructor
+     */
     @Contract(pure = true)
-    MCffu(CffuFactory cffuFactory, boolean isMinimalStage, CompletableFuture<C> cf) {
+    MCffu(CffuFactory cffuFactory, boolean isMinimalStage, CompletableFuture<T> cf) {
         super(cffuFactory, isMinimalStage, cf);
+    }
+
+    @Override
+    MCffu<E, T> reset0(CffuFactory fac, boolean isMinimalStage, CompletableFuture<T> cf) {
+        return new MCffu<>(fac, isMinimalStage, cf);
     }
 
     // endregion
@@ -62,7 +72,7 @@ public class MCffu<T, C extends Iterable<T>> extends Cffu<C> {
          * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
          */
         @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
-        public <U> MCffu<U, List<U>> thenParApplyFailFastAsync(Function<? super T, ? extends U> fn) {
+        public <U> MCffu<U, List<U>> thenParApplyFailFastAsync(Function<? super E, ? extends U> fn) {
             return thenParApplyFailFastAsync(fn, fac.defaultExecutor);
         }
 
@@ -74,8 +84,8 @@ public class MCffu<T, C extends Iterable<T>> extends Cffu<C> {
          * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
          */
         @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
-        public <U> MCffu<U, List<U>> thenParApplyFailFastAsync(Function<? super T, ? extends U> fn, Executor executor) {
-            return resetItrCf(CfParallelUtils.thenParApplyFailFastAsync(cffuUnwrap(), fn, cffuScreened(executor)));
+        public <U> MCffu<U, List<U>> thenParApplyFailFastAsync(Function<? super E, ? extends U> fn, Executor executor) {
+            return resetToMCffu0(CfParallelUtils.thenParApplyFailFastAsync(cffuUnwrap(), fn, cffuScreened(executor)));
         }
 
         /**
@@ -86,7 +96,7 @@ public class MCffu<T, C extends Iterable<T>> extends Cffu<C> {
          * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
          */
         @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
-        public <U> Cffu<U> thenParApplyAnySuccessAsync(Function<? super T, ? extends U> fn) {
+        public <U> Cffu<U> thenParApplyAnySuccessAsync(Function<? super E, ? extends U> fn) {
             return thenParApplyAnySuccessAsync(fn, fac.defaultExecutor);
         }
 
@@ -98,10 +108,11 @@ public class MCffu<T, C extends Iterable<T>> extends Cffu<C> {
          * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
          */
         @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
-        public <U> Cffu<U> thenParApplyAnySuccessAsync(Function<? super T, ? extends U> fn, Executor executor) {
-            return resetCf(CfParallelUtils.thenParApplyAnySuccessAsync(cffuUnwrap(), fn, cffuScreened(executor)));
+        public <U> Cffu<U> thenParApplyAnySuccessAsync(Function<? super E, ? extends U> fn, Executor executor) {
+            return resetToCffu0(CfParallelUtils.thenParApplyAnySuccessAsync(cffuUnwrap(), fn, cffuScreened(executor)));
         }
 
-        private ParOps() {}
+        private ParOps() {
+        }
     }
 }
