@@ -118,31 +118,31 @@ class CffuFactoryTest {
         final Supplier<Integer> supplier_nnn = supplyLater(nnn);
 
         assertEquals(Tuple2.of(n, s), testCffuFac.tupleOps().mSupplyTupleFailFastAsync(supplier_n, supplier_s).get());
-        assertEquals(Tuple2.of(n, s), testCffuFac.tupleOps().mSupplyTupleFailFastAsync(testExecutor, supplier_n, supplier_s).get());
+        assertEquals(Tuple2.of(n, s), testCffuFac.tupleOps().mSupplyTupleFailFastAsync(supplier_n, supplier_s, testExecutor).get());
         assertEquals(Tuple3.of(n, s, d), testCffuFac.tupleOps().mSupplyTupleFailFastAsync(supplier_n, supplier_s, supplier_d).get());
-        assertEquals(Tuple3.of(n, s, d), testCffuFac.tupleOps().mSupplyTupleFailFastAsync(testExecutor, supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple3.of(n, s, d), testCffuFac.tupleOps().mSupplyTupleFailFastAsync(supplier_n, supplier_s, supplier_d, testExecutor).get());
         assertEquals(Tuple4.of(n, s, d, anotherN), testCffuFac.tupleOps().mSupplyTupleFailFastAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
-        assertEquals(Tuple4.of(n, s, d, anotherN), testCffuFac.tupleOps().mSupplyTupleFailFastAsync(testExecutor, supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), testCffuFac.tupleOps().mSupplyTupleFailFastAsync(supplier_n, supplier_s, supplier_d, supplier_an, testExecutor).get());
         assertEquals(Tuple5.of(n, s, d, anotherN, nnn), testCffuFac.tupleOps().mSupplyTupleFailFastAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nnn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), testCffuFac.tupleOps().mSupplyTupleFailFastAsync(testExecutor, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nnn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), testCffuFac.tupleOps().mSupplyTupleFailFastAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nnn, testExecutor).get());
 
         assertEquals(Tuple2.of(n, s), testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(supplier_n, supplier_s).get());
-        assertEquals(Tuple2.of(n, s), testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(testExecutor, supplier_n, supplier_s).get());
+        assertEquals(Tuple2.of(n, s), testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(supplier_n, supplier_s, testExecutor).get());
         assertEquals(Tuple3.of(n, s, d), testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(supplier_n, supplier_s, supplier_d).get());
-        assertEquals(Tuple3.of(n, s, d), testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(testExecutor, supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple3.of(n, s, d), testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(supplier_n, supplier_s, supplier_d, testExecutor).get());
         assertEquals(Tuple4.of(n, s, d, anotherN), testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
-        assertEquals(Tuple4.of(n, s, d, anotherN), testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(testExecutor, supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(supplier_n, supplier_s, supplier_d, supplier_an, testExecutor).get());
         assertEquals(Tuple5.of(n, s, d, anotherN, nnn), testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nnn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(testExecutor, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nnn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), testCffuFac.tupleOps().mSupplyAllSuccessTupleAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nnn, testExecutor).get());
 
         assertEquals(Tuple2.of(n, s), testCffuFac.tupleOps().mSupplyTupleAsync(supplier_n, supplier_s).get());
-        assertEquals(Tuple2.of(n, s), testCffuFac.tupleOps().mSupplyTupleAsync(testExecutor, supplier_n, supplier_s).get());
+        assertEquals(Tuple2.of(n, s), testCffuFac.tupleOps().mSupplyTupleAsync(supplier_n, supplier_s, testExecutor).get());
         assertEquals(Tuple3.of(n, s, d), testCffuFac.tupleOps().mSupplyTupleAsync(supplier_n, supplier_s, supplier_d).get());
-        assertEquals(Tuple3.of(n, s, d), testCffuFac.tupleOps().mSupplyTupleAsync(testExecutor, supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple3.of(n, s, d), testCffuFac.tupleOps().mSupplyTupleAsync(supplier_n, supplier_s, supplier_d, testExecutor).get());
         assertEquals(Tuple4.of(n, s, d, anotherN), testCffuFac.tupleOps().mSupplyTupleAsync(supplier_n, supplier_s, supplier_d, supplier_an).get());
-        assertEquals(Tuple4.of(n, s, d, anotherN), testCffuFac.tupleOps().mSupplyTupleAsync(testExecutor, supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), testCffuFac.tupleOps().mSupplyTupleAsync(supplier_n, supplier_s, supplier_d, supplier_an, testExecutor).get());
         assertEquals(Tuple5.of(n, s, d, anotherN, nnn), testCffuFac.tupleOps().mSupplyTupleAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nnn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), testCffuFac.tupleOps().mSupplyTupleAsync(testExecutor, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nnn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), testCffuFac.tupleOps().mSupplyTupleAsync(supplier_n, supplier_s, supplier_d, supplier_an, supplier_nnn, testExecutor).get());
     }
 
     @Test
@@ -169,16 +169,16 @@ class CffuFactoryTest {
             return nnn;
         };
         assertEquals(Tuple2.of(n, s), testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, supplier_n, supplier_s).get());
-        assertEquals(Tuple2.of(n, s), testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(testExecutor, LONG_WAIT_MS, MILLISECONDS, supplier_n, supplier_s).get());
+        assertEquals(Tuple2.of(n, s), testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, supplier_n, supplier_s, testExecutor).get());
 
         assertEquals(Tuple3.of(n, s, d), testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, supplier_n, supplier_s, supplier_d).get());
-        assertEquals(Tuple3.of(n, s, d), testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(testExecutor, LONG_WAIT_MS, MILLISECONDS, supplier_n, supplier_s, supplier_d).get());
+        assertEquals(Tuple3.of(n, s, d), testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, supplier_n, supplier_s, supplier_d, testExecutor).get());
 
         assertEquals(Tuple4.of(n, s, d, anotherN), testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an).get());
-        assertEquals(Tuple4.of(n, s, d, anotherN), testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(testExecutor, LONG_WAIT_MS, MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an).get());
+        assertEquals(Tuple4.of(n, s, d, anotherN), testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, testExecutor).get());
 
         assertEquals(Tuple5.of(n, s, d, anotherN, nnn), testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
-        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(testExecutor, LONG_WAIT_MS, MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn).get());
+        assertEquals(Tuple5.of(n, s, d, anotherN, nnn), testCffuFac.tupleOps().mSupplyMostSuccessTupleAsync(LONG_WAIT_MS, MILLISECONDS, supplier_n, supplier_s, supplier_d, supplier_an, supplier_nn, testExecutor).get());
     }
 
     // endregion
