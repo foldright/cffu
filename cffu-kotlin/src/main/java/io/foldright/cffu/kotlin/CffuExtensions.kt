@@ -3,6 +3,7 @@ package io.foldright.cffu.kotlin
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
 import io.foldright.cffu.CffuFactoryBuilder
+import io.foldright.cffu.MCffu
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.Executor
@@ -74,7 +75,7 @@ fun <T> Array<out CompletionStage<T>>.toCffu(cffuFactory: CffuFactory): Array<Cf
  */
 fun <T> Collection<Supplier<out T>>.mSupplyFailFastAsyncCffu(
     cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
-): Cffu<List<T>> = cffuFactory.mSupplyFailFastAsync(executor, *toTypedArray())
+): MCffu<T, List<T>> = cffuFactory.mSupplyFailFastAsync(executor, *toTypedArray())
 
 /**
  * Returns a new Cffu that is asynchronously completed
@@ -86,7 +87,7 @@ fun <T> Collection<Supplier<out T>>.mSupplyFailFastAsyncCffu(
  */
 fun <T> Array<out Supplier<out T>>.mSupplyFailFastAsyncCffu(
     cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
-): Cffu<List<T>> = cffuFactory.mSupplyFailFastAsync(executor, *this)
+): MCffu<T, List<T>> = cffuFactory.mSupplyFailFastAsync(executor, *this)
 
 /**
  * Returns a new Cffu that is asynchronously completed
@@ -103,7 +104,7 @@ fun <T> Array<out Supplier<out T>>.mSupplyFailFastAsyncCffu(
  */
 fun <T> Collection<Supplier<out T>>.mSupplyAllSuccessAsyncCffu(
     cffuFactory: CffuFactory, valueIfFailed: T, executor: Executor = cffuFactory.defaultExecutor()
-): Cffu<List<T>> = cffuFactory.mSupplyAllSuccessAsync(executor, valueIfFailed, *toTypedArray())
+): MCffu<T, List<T>> = cffuFactory.mSupplyAllSuccessAsync(executor, valueIfFailed, *toTypedArray())
 
 /**
  * Returns a new Cffu that is asynchronously completed
@@ -120,7 +121,7 @@ fun <T> Collection<Supplier<out T>>.mSupplyAllSuccessAsyncCffu(
  */
 fun <T> Array<out Supplier<out T>>.mSupplyAllSuccessAsyncCffu(
     cffuFactory: CffuFactory, valueIfFailed: T, executor: Executor = cffuFactory.defaultExecutor()
-): Cffu<List<T>> = cffuFactory.mSupplyAllSuccessAsync(executor, valueIfFailed, *this)
+): MCffu<T, List<T>> = cffuFactory.mSupplyAllSuccessAsync(executor, valueIfFailed, *this)
 
 /**
  * Returns a new Cffu that is asynchronously completed
@@ -142,7 +143,7 @@ fun <T> Array<out Supplier<out T>>.mSupplyAllSuccessAsyncCffu(
 fun <T> Collection<Supplier<out T>>.mSupplyMostSuccessAsyncCffu(
     cffuFactory: CffuFactory, valueIfNotSuccess: T,
     timeout: Long, unit: TimeUnit, executor: Executor = cffuFactory.defaultExecutor()
-): Cffu<List<T>> = cffuFactory.mSupplyMostSuccessAsync(executor, valueIfNotSuccess, timeout, unit, *toTypedArray())
+): MCffu<T, List<T>> = cffuFactory.mSupplyMostSuccessAsync(executor, valueIfNotSuccess, timeout, unit, *toTypedArray())
 
 /**
  * Returns a new Cffu that is asynchronously completed
@@ -164,7 +165,7 @@ fun <T> Collection<Supplier<out T>>.mSupplyMostSuccessAsyncCffu(
 fun <T> Array<out Supplier<out T>>.mSupplyMostSuccessAsyncCffu(
     cffuFactory: CffuFactory, valueIfNotSuccess: T,
     timeout: Long, unit: TimeUnit, executor: Executor = cffuFactory.defaultExecutor()
-): Cffu<List<T>> = cffuFactory.mSupplyMostSuccessAsync(executor, valueIfNotSuccess, timeout, unit, *this)
+): MCffu<T, List<T>> = cffuFactory.mSupplyMostSuccessAsync(executor, valueIfNotSuccess, timeout, unit, *this)
 
 /**
  * Returns a new Cffu that is asynchronously completed
@@ -177,7 +178,7 @@ fun <T> Array<out Supplier<out T>>.mSupplyMostSuccessAsyncCffu(
  */
 fun <T> Collection<Supplier<out T>>.mSupplyAsyncCffu(
     cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
-): Cffu<List<T>> = cffuFactory.mSupplyAsync(executor, *toTypedArray())
+): MCffu<T, List<T>> = cffuFactory.mSupplyAsync(executor, *toTypedArray())
 
 /**
  * Returns a new Cffu that is asynchronously completed
@@ -190,7 +191,7 @@ fun <T> Collection<Supplier<out T>>.mSupplyAsyncCffu(
  */
 fun <T> Array<out Supplier<out T>>.mSupplyAsyncCffu(
     cffuFactory: CffuFactory, executor: Executor = cffuFactory.defaultExecutor()
-): Cffu<List<T>> = cffuFactory.mSupplyAsync(executor, *this)
+): MCffu<T, List<T>> = cffuFactory.mSupplyAsync(executor, *this)
 
 /**
  * Returns a new Cffu that is asynchronously successful
@@ -377,7 +378,7 @@ private fun Array<out Cffu<*>>.resolveFac(cffuFactory: CffuFactory): CffuFactory
  * @see allFailFastOfCffu
  * @see CffuFactory.allResultsFailFastOf
  */
-fun <T> Collection<Cffu<out T>>.allResultsFailFastOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> =
+fun <T> Collection<Cffu<out T>>.allResultsFailFastOfCffu(cffuFactory: CffuFactory = ABSENT): MCffu<T, List<T>> =
     resolveFac(cffuFactory).allResultsFailFastOf(*toTypedArray())
 
 /**
@@ -397,7 +398,7 @@ fun <T> Collection<Cffu<out T>>.allResultsFailFastOfCffu(cffuFactory: CffuFactor
  * @see allFailFastOfCffu
  * @see CffuFactory.allResultsFailFastOf
  */
-fun <T> Array<out Cffu<out T>>.allResultsFailFastOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> =
+fun <T> Array<out Cffu<out T>>.allResultsFailFastOfCffu(cffuFactory: CffuFactory = ABSENT): MCffu<T, List<T>> =
     resolveFac(cffuFactory).allResultsFailFastOf(*this)
 
 /**
@@ -415,7 +416,7 @@ fun <T> Array<out Cffu<out T>>.allResultsFailFastOfCffu(cffuFactory: CffuFactory
  * @see CffuFactory.allResultsFailFastOf
  */
 @JvmName("allResultsFailFastOfCffuCs")
-fun <T> Collection<CompletionStage<out T>>.allResultsFailFastOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+fun <T> Collection<CompletionStage<out T>>.allResultsFailFastOfCffu(cffuFactory: CffuFactory): MCffu<T, List<T>> =
     cffuFactory.allResultsFailFastOf(*toTypedArray())
 
 /**
@@ -432,7 +433,7 @@ fun <T> Collection<CompletionStage<out T>>.allResultsFailFastOfCffu(cffuFactory:
  * @see allFailFastOfCffu
  * @see CffuFactory.allResultsFailFastOf
  */
-fun <T> Array<out CompletionStage<out T>>.allResultsFailFastOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+fun <T> Array<out CompletionStage<out T>>.allResultsFailFastOfCffu(cffuFactory: CffuFactory): MCffu<T, List<T>> =
     cffuFactory.allResultsFailFastOf(*this)
 
 /**
@@ -454,7 +455,7 @@ fun <T> Array<out CompletionStage<out T>>.allResultsFailFastOfCffu(cffuFactory: 
  */
 fun <T> Collection<Cffu<out T>>.allSuccessResultsOfCffu(
     valueIfFailed: T, cffuFactory: CffuFactory = ABSENT
-): Cffu<List<T>> = resolveFac(cffuFactory).allSuccessResultsOf(valueIfFailed, *toTypedArray())
+): MCffu<T, List<T>> = resolveFac(cffuFactory).allSuccessResultsOf(valueIfFailed, *toTypedArray())
 
 /**
  * Returns a new Cffu that is successful with the results in the **same order**
@@ -475,7 +476,7 @@ fun <T> Collection<Cffu<out T>>.allSuccessResultsOfCffu(
  */
 fun <T> Array<out Cffu<out T>>.allSuccessResultsOfCffu(
     valueIfFailed: T, cffuFactory: CffuFactory = ABSENT
-): Cffu<List<T>> = resolveFac(cffuFactory).allSuccessResultsOf(valueIfFailed, *this)
+): MCffu<T, List<T>> = resolveFac(cffuFactory).allSuccessResultsOf(valueIfFailed, *this)
 
 /**
  * Returns a new Cffu that is successful with the results in the **same order**
@@ -494,7 +495,7 @@ fun <T> Array<out Cffu<out T>>.allSuccessResultsOfCffu(
 @JvmName("allSuccessResultsOfCffuCs")
 fun <T> Collection<CompletionStage<out T>>.allSuccessResultsOfCffu(
     valueIfFailed: T, cffuFactory: CffuFactory
-): Cffu<List<T>> = cffuFactory.allSuccessResultsOf(valueIfFailed, *toTypedArray())
+): MCffu<T, List<T>> = cffuFactory.allSuccessResultsOf(valueIfFailed, *toTypedArray())
 
 /**
  * Returns a new Cffu that is successful with the results in the **same order**
@@ -513,7 +514,7 @@ fun <T> Collection<CompletionStage<out T>>.allSuccessResultsOfCffu(
 @JvmName("allSuccessResultsOfCffuCs")
 fun <T> Array<out CompletionStage<out T>>.allSuccessResultsOfCffu(
     valueIfFailed: T, cffuFactory: CffuFactory
-): Cffu<List<T>> = cffuFactory.allSuccessResultsOf(valueIfFailed, *this)
+): MCffu<T, List<T>> = cffuFactory.allSuccessResultsOf(valueIfFailed, *this)
 
 /**
  * Returns a new Cffu with the most results in the **same order** of
@@ -531,7 +532,7 @@ fun <T> Array<out CompletionStage<out T>>.allSuccessResultsOfCffu(
  */
 fun <T> Collection<Cffu<out T>>.mostSuccessResultsOfCffu(
     valueIfNotSuccess: T, timeout: Long, unit: TimeUnit, cffuFactory: CffuFactory = ABSENT
-): Cffu<List<T>> = resolveFac(cffuFactory).mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *toTypedArray())
+): MCffu<T, List<T>> = resolveFac(cffuFactory).mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *toTypedArray())
 
 /**
  * Returns a new Cffu with the most results in the **same order** of
@@ -549,7 +550,7 @@ fun <T> Collection<Cffu<out T>>.mostSuccessResultsOfCffu(
  */
 fun <T> Array<out Cffu<out T>>.mostSuccessResultsOfCffu(
     valueIfNotSuccess: T, timeout: Long, unit: TimeUnit, cffuFactory: CffuFactory = ABSENT
-): Cffu<List<T>> = resolveFac(cffuFactory).mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *this)
+): MCffu<T, List<T>> = resolveFac(cffuFactory).mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *this)
 
 /**
  * Returns a new Cffu with the most results in the **same order** of
@@ -568,7 +569,7 @@ fun <T> Array<out Cffu<out T>>.mostSuccessResultsOfCffu(
 @JvmName("mostSuccessResultsOfCffuCs")
 fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCffu(
     valueIfNotSuccess: T, timeout: Long, unit: TimeUnit, cffuFactory: CffuFactory
-): Cffu<List<T>> = cffuFactory.mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *toTypedArray())
+): MCffu<T, List<T>> = cffuFactory.mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *toTypedArray())
 
 /**
  * Returns a new Cffu with the most results in the **same order** of
@@ -586,7 +587,7 @@ fun <T> Collection<CompletionStage<out T>>.mostSuccessResultsOfCffu(
  */
 fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCffu(
     valueIfNotSuccess: T, timeout: Long, unit: TimeUnit, cffuFactory: CffuFactory
-): Cffu<List<T>> = cffuFactory.mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *this)
+): MCffu<T, List<T>> = cffuFactory.mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, *this)
 
 /**
  * Returns a new Cffu with the results in the **same order** of the given Cffus arguments,
@@ -604,7 +605,7 @@ fun <T> Array<out CompletionStage<out T>>.mostSuccessResultsOfCffu(
  * @see allOfCffu
  * @see CffuFactory.allResultsOf
  */
-fun <T> Collection<Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> =
+fun <T> Collection<Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSENT): MCffu<T, List<T>> =
     resolveFac(cffuFactory).allResultsOf(*toTypedArray())
 
 /**
@@ -623,7 +624,7 @@ fun <T> Collection<Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSE
  * @see allOfCffu
  * @see CffuFactory.allResultsOf
  */
-fun <T> Array<out Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSENT): Cffu<List<T>> =
+fun <T> Array<out Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSENT): MCffu<T, List<T>> =
     resolveFac(cffuFactory).allResultsOf(*this)
 
 /**
@@ -640,7 +641,7 @@ fun <T> Array<out Cffu<out T>>.allResultsOfCffu(cffuFactory: CffuFactory = ABSEN
  * @see CffuFactory.allResultsOf
  */
 @JvmName("allResultsOfCffuCs")
-fun <T> Collection<CompletionStage<out T>>.allResultsOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+fun <T> Collection<CompletionStage<out T>>.allResultsOfCffu(cffuFactory: CffuFactory): MCffu<T, List<T>> =
     cffuFactory.allResultsOf(*toTypedArray())
 
 /**
@@ -656,7 +657,7 @@ fun <T> Collection<CompletionStage<out T>>.allResultsOfCffu(cffuFactory: CffuFac
  * @see allOfCffu
  * @see CffuFactory.allResultsOf
  */
-fun <T> Array<out CompletionStage<out T>>.allResultsOfCffu(cffuFactory: CffuFactory): Cffu<List<T>> =
+fun <T> Array<out CompletionStage<out T>>.allResultsOfCffu(cffuFactory: CffuFactory): MCffu<T, List<T>> =
     cffuFactory.allResultsOf(*this)
 
 /**

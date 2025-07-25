@@ -2,6 +2,7 @@ package io.foldright.demo;
 
 import io.foldright.cffu.Cffu;
 import io.foldright.cffu.CffuFactory;
+import io.foldright.cffu.MCffu;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -28,7 +29,7 @@ public class AllResultsOfDemo {
         // the result can be got by input argument `cf1.get()`, but it's cumbersome.
         // so we can see a lot of util methods to enhance `allOf` with result in our project.
 
-        Cffu<List<Integer>> allResults = cffuFactory.allResultsOf(cffu1, cffu2);
+        MCffu<Integer, List<Integer>> allResults = cffuFactory.allResultsOf(cffu1, cffu2);
         System.out.println(allResults.get());
         // output: [21, 42]
 

@@ -4,6 +4,7 @@ package io.foldright.test_utils
 
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
+import io.foldright.cffu.MCffu
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.matchers.booleans.shouldBeFalse
@@ -336,11 +337,11 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
         else cffuUnwrap().shouldNotMinCf()
 }
 
-fun <T> Cffu<T>.shouldNotBeMinimalStage() {
+fun Cffu<*>.shouldNotBeMinimalStage() {
     shouldNotMinCffu(true)
 }
 
-private fun <T> Cffu<T>.shouldNotMinCffu(recursive: Boolean = false) {
+private fun Cffu<*>.shouldNotMinCffu(recursive: Boolean = false) {
     shouldCompletionStageMethodsAllowed(recursive)
 
     this.complete(null) // make sure completed, avoid running CF blocking
@@ -395,7 +396,7 @@ private fun <T> Cffu<T>.shouldNotMinCffu(recursive: Boolean = false) {
     //# Re-Config methods
 
     if (recursive) {
-        (minimalCompletionStage() as Cffu<T>).shouldMinCffu()
+        (minimalCompletionStage() as Cffu<*>).shouldMinCffu()
 
         toCompletableFuture().shouldNotMinCf()
     }
@@ -411,7 +412,246 @@ private fun <T> Cffu<T>.shouldNotMinCffu(recursive: Boolean = false) {
     obtrudeException(RuntimeException())
     obtrudeValue(null)
 
-    if (recursive) newIncompleteFuture<T>().shouldNotMinCffu()
+    if (recursive) newIncompleteFuture<Void>().shouldNotMinCffu()
+
+    ////////////////////////////////////////////////////////////
+    // Cffu specified methods
+    ////////////////////////////////////////////////////////////
+
+    join(1, TimeUnit.MILLISECONDS)
+    cffuState()
+
+    //# Cffu Re-Config methods
+    if (recursive)
+        withCffuFactory(CffuFactory.builder(blackHoleExecutor).build()).shouldNotMinCffu()
+
+    //# Getter methods of properties
+    cffuFactory()
+    forbidObtrudeMethods()
+    isMinimalStage.shouldBeFalse()
+
+    //# Inspection methods of Cffu
+    if (recursive) cffuUnwrap().shouldNotMinCf()
+}
+
+fun MCffu<*, *>.shouldBeMinimalStage() {
+    shouldMinCffu(true)
+}
+
+private fun MCffu<*, *>.shouldMinCffu(recursive: Boolean = false) {
+    shouldCompletionStageMethodsAllowed(recursive)
+
+    // unsupported because this is a minimal stage
+
+    //# Read(explicitly) methods of CompletableFuture
+
+    shouldThrowExactly<UnsupportedOperationException> {
+        orTimeout(1, TimeUnit.MILLISECONDS)
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        completeOnTimeout(null, 1, TimeUnit.MILLISECONDS)
+    }.message shouldBe "unsupported because this is a minimal stage"
+
+    shouldThrowExactly<UnsupportedOperationException> {
+        get()
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        get(1, TimeUnit.MILLISECONDS)
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        join()
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        get()
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        getNow(null)
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        getSuccessNow(null)
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        resultNow()
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        exceptionNow()
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        isDone
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        isCompletedExceptionally
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        isCancelled
+    }.message shouldBe "unsupported because this is a minimal stage"
+    if (isJava19Plus()) shouldThrowExactly<UnsupportedOperationException> {
+        state()
+    }.message shouldBe "unsupported because this is a minimal stage"
+
+    //# Write methods of CompletableFuture
+
+    shouldThrowExactly<UnsupportedOperationException> {
+        complete(null)
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        completeAsync(null)
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        completeAsync(null, null)
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        completeExceptionally(null)
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        completeExceptionally(null)
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        completeExceptionallyAsync(null)
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        completeExceptionallyAsync(null, null)
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        cancel(false)
+    }.message shouldBe "unsupported because this is a minimal stage"
+
+    //# Re-Config methods
+
+    if (recursive) {
+        (minimalCompletionStage() as MCffu<*, *>).shouldMinCffu()
+        toCompletableFuture().shouldNotMinCf()
+        (copy() as MCffu<*, *>).shouldMinCffu()
+    }
+
+    //# Getter methods of properties
+    defaultExecutor()
+
+    //# Inspection methods of Cffu
+    shouldThrowExactly<UnsupportedOperationException> {
+        numberOfDependents
+    }.message shouldBe "unsupported because this is a minimal stage"
+
+    //# Other dangerous methods of CompletableFuture
+
+    shouldThrowExactly<UnsupportedOperationException> {
+        obtrudeValue(null)
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        obtrudeException(null)
+    }.message shouldBe "unsupported because this is a minimal stage"
+    if (recursive) newIncompleteFuture<Int>().shouldNotMinCffu()
+
+    ////////////////////////////////////////////////////////////
+    // Cffu specified methods
+    ////////////////////////////////////////////////////////////
+
+    shouldThrowExactly<UnsupportedOperationException> {
+        join(1, TimeUnit.MILLISECONDS)
+    }.message shouldBe "unsupported because this is a minimal stage"
+    shouldThrowExactly<UnsupportedOperationException> {
+        cffuState()
+    }.message shouldBe "unsupported because this is a minimal stage"
+
+    //# Cffu Re-Config methods
+    if (recursive)
+        withCffuFactory(CffuFactory.builder(blackHoleExecutor).build()).shouldMinCffu()
+
+    //# Getter methods of properties
+    cffuFactory()
+    forbidObtrudeMethods()
+    isMinimalStage.shouldBeTrue()
+
+    //# Inspection methods of Cffu
+    if (recursive)
+        if (isJava9Plus()) cffuUnwrap().shouldMinCf()
+        else cffuUnwrap().shouldNotMinCf()
+}
+
+fun MCffu<*, *>.shouldNotBeMinimalStage() {
+    shouldNotMinCffu(true)
+}
+
+private fun MCffu<*, *>.shouldNotMinCffu(recursive: Boolean = false) {
+    shouldCompletionStageMethodsAllowed(recursive)
+
+    this.complete(null) // make sure completed, avoid running CF blocking
+
+    if (recursive) {
+        orTimeout(1, TimeUnit.MILLISECONDS).shouldNotMinCffu()
+        completeOnTimeout(null, 1, TimeUnit.MILLISECONDS).shouldNotMinCffu()
+    }
+
+    //# Read(explicitly) methods of CompletableFuture
+
+    if (isCompletedExceptionally) shouldThrowExactly<ExecutionException> { get() }
+    else get()
+
+    if (isCompletedExceptionally) shouldThrowExactly<ExecutionException> { get(1, TimeUnit.MILLISECONDS) }
+    else get(1, TimeUnit.MILLISECONDS)
+
+    if (isCompletedExceptionally) shouldThrowExactly<CompletionException> {
+        join()
+    } else join()
+
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+    if (isCompletedExceptionally) shouldThrowExactly<CompletionException> {
+        getNow(null)
+    } else getNow((null))
+
+    getSuccessNow(null)
+
+    if (isCompletedExceptionally) shouldThrowExactly<IllegalStateException> { resultNow() }
+    else resultNow()
+
+    if (isCompletedExceptionally) exceptionNow()
+    else shouldThrowExactly<IllegalStateException> { exceptionNow() }
+
+    this.isDone
+    // this.isCompletedExceptionally // used above
+    this.isCancelled
+    if (isJava19Plus()) state()
+
+    //# Write methods of CompletableFuture
+
+    // complete(null) // used above
+    if (recursive) {
+        completeAsync { null }.shouldNotMinCffu()
+        completeAsync({ null }, blackHoleExecutor).shouldNotMinCffu()
+        completeExceptionally(RuntimeException())
+        completeExceptionallyAsync { null }.shouldNotMinCffu()
+        completeExceptionallyAsync({ null }, blackHoleExecutor).shouldNotMinCffu()
+        cancel(false)
+    }
+
+    //# Re-Config methods
+
+    if (recursive) {
+        (minimalCompletionStage() as MCffu<*, *>).shouldMinCffu()
+
+        toCompletableFuture().shouldNotMinCf()
+    }
+
+    //# Getter methods of properties
+    defaultExecutor()
+
+    //# Inspection methods of Cffu
+    numberOfDependents
+
+    //# Other dangerous methods of CompletableFuture
+
+    obtrudeException(RuntimeException())
+    obtrudeValue(null)
+
+    if (recursive) newIncompleteFuture<Int>().shouldNotMinCffu()
 
     ////////////////////////////////////////////////////////////
     // Cffu specified methods

@@ -75,7 +75,7 @@ class CffuFactoryTest {
 
         final long tick = System.currentTimeMillis();
         @SuppressWarnings("unchecked")
-        Cffu<List<Integer>>[] cfs = new Cffu[]{
+        MCffu<Integer, List<Integer>>[] cfs = new MCffu[]{
                 testCffuFac.mSupplyFailFastAsync(supplier, supplier),
                 testCffuFac.mSupplyFailFastAsync(testExecutor, supplier, supplier),
                 testCffuFac.mSupplyAllSuccessAsync(anotherN, supplier, supplier),
@@ -87,7 +87,7 @@ class CffuFactoryTest {
         };
         assertTrue(System.currentTimeMillis() - tick < 50);
 
-        for (Cffu<List<Integer>> cf : cfs) {
+        for (MCffu<Integer, List<Integer>> cf : cfs) {
             assertEquals(Arrays.asList(n, n), cf.get());
         }
 
