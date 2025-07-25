@@ -10,12 +10,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.StreamSupport;
 
 import static io.foldright.cffu.CompletableFutureUtils.*;
 import static io.foldright.cffu.LLCF.*;
 import static io.foldright.cffu.eh.SwallowedExceptionHandleUtils.handleAllSwallowedExceptions;
 import static io.foldright.cffu.eh.SwallowedExceptionHandleUtils.handleSwallowedExceptions;
+import static io.foldright.cffu.internal.CommonUtils.toArray;
 import static java.util.Objects.requireNonNull;
 
 
@@ -253,9 +253,8 @@ public final class CfParallelUtils {
     @SuppressWarnings("unchecked")
     private static <T, U> CompletableFuture<U>[] wrapEleFunction0(
             Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
-        return StreamSupport.stream(elements.spliterator(), false)
-                .map(e -> CompletableFuture.supplyAsync(() -> fn.apply(e), executor))
-                .toArray(CompletableFuture[]::new);
+        return toArray(elements, CompletableFuture[]::new,
+                e -> CompletableFuture.supplyAsync(() -> fn.apply(e), executor));
     }
 
     /**
@@ -391,9 +390,8 @@ public final class CfParallelUtils {
     @SuppressWarnings("unchecked")
     private static <T> CompletableFuture<Void>[] wrapEleRunnable0(
             Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
-        return StreamSupport.stream(elements.spliterator(), false)
-                .map(e -> CompletableFuture.runAsync(() -> action.accept(e), executor))
-                .toArray(CompletableFuture[]::new);
+        return toArray(elements, CompletableFuture[]::new,
+                e -> CompletableFuture.runAsync(() -> action.accept(e), executor));
     }
 
     // endregion
