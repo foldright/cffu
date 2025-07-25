@@ -1,5 +1,6 @@
 package io.foldright.cffu.test
 
+import io.foldright.cffu.BaseCffu
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
 import io.foldright.cffu.NoCfsProvidedException
@@ -705,7 +706,7 @@ class CffuExtensionsTest : FunSpec({
 
     val cffuFactoryForOptional = CffuFactory.builder(Executors.newCachedThreadPool()).build()
 
-    fun assertCffuFactoryForOptional(cffu: Cffu<*>) {
+    fun assertCffuFactoryForOptional(cffu: BaseCffu<*, *>) {
         cffu.cffuFactory() shouldBeSameInstanceAs cffuFactoryForOptional
     }
 
