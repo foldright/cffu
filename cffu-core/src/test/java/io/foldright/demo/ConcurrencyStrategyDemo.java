@@ -2,6 +2,7 @@ package io.foldright.demo;
 
 import io.foldright.cffu.Cffu;
 import io.foldright.cffu.CffuFactory;
+import io.foldright.cffu.MCffu;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -33,7 +34,7 @@ public class ConcurrencyStrategyDemo {
         });
         final Cffu<Integer> failed = cffuFactory.failedFuture(new RuntimeException("Bang!"));
 
-        Cffu<List<Integer>> failFast = cffuFactory.allResultsFailFastOf(success, successAfterLongTime, failed);
+        MCffu<Integer, List<Integer>> failFast = cffuFactory.allResultsFailFastOf(success, successAfterLongTime, failed);
         // fail fast without waiting successAfterLongTime
         System.out.println(failFast.exceptionNow());
         // output: java.lang.RuntimeException: Bang!
@@ -42,7 +43,7 @@ public class ConcurrencyStrategyDemo {
         System.out.println(anySuccess.get());
         // output: 42
 
-        Cffu<List<Integer>> mostSuccess = cffuFactory.mostSuccessResultsOf(
+        MCffu<Integer, List<Integer>> mostSuccess = cffuFactory.mostSuccessResultsOf(
                 -1, 100, TimeUnit.MILLISECONDS, success, successAfterLongTime, failed);
         System.out.println(mostSuccess.get());
         // output: [42, -1, -1]
