@@ -38,12 +38,18 @@ import static java.util.Objects.requireNonNull;
 public final class Cffu<T> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     // region# Internal constructor and fields
-    /// /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * CffuFactory that contains configuration(e.g. default executor).
+     */
     private final CffuFactory fac;
 
     private final boolean isMinimalStage;
 
+    /**
+     * underlying CompletableFuture instance.
+     */
     private final CompletableFuture<T> cf;
 
     @Contract(pure = true)

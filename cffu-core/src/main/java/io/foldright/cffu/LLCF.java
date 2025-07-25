@@ -244,8 +244,10 @@ public final class LLCF {
     }
 
     /**
-     * Wraps a function that processes exceptions to ensure that if the error handle function throws a new exception,
+     * Wraps a function that processes exceptions to ensure that if error handling throws a new exception,
      * the error context is preserved by calling {@link Throwable#addSuppressed}.
+     *
+     * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
      */
     @Contract(value = "null, _ -> null; !null, _ -> !null", pure = true)
     public static <X extends Throwable, T, F extends Function<? super X, ? extends T>>
@@ -274,8 +276,10 @@ public final class LLCF {
     }
 
     /**
-     * Wraps a BiFunction that processes exceptions to ensure that if the error handle function throws a new exception,
+     * Wraps a BiFunction that processes exceptions to ensure that if error handling throws a new exception,
      * the error context is preserved by calling {@link Throwable#addSuppressed}.
+     *
+     * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
      */
     @Contract(value = "null, _ -> null; !null, _ -> !null", pure = true)
     public static <T, X extends Throwable, U, F extends BiFunction<? super T, ? extends X, ? extends U>>
@@ -304,8 +308,10 @@ public final class LLCF {
     }
 
     /**
-     * Wraps a BiConsumer that processes exceptions to ensure that if the error handle function throws a new exception,
+     * Wraps a BiConsumer that processes exceptions to ensure that if error handling throws a new exception,
      * the error context is preserved by calling {@link Throwable#addSuppressed}.
+     *
+     * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
      */
     @Contract(value = "null, _ -> null; !null, _ -> !null", pure = true)
     public static <T, X extends Throwable, F extends BiConsumer<? super T, ? super X>>
@@ -390,9 +396,11 @@ public final class LLCF {
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
     // region# CF execution/executor
-    /// /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
 
-    // code is copied from CompletableFuture#USE_COMMON_POOL
+    /**
+     * code is copied from CompletableFuture#USE_COMMON_POOL
+     */
     private static final boolean USE_COMMON_POOL = ForkJoinPool.getCommonPoolParallelism() > 1;
 
     // IMPORTANT: The initialization order of static fields matters. Do not place static fields
