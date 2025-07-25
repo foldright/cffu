@@ -4,7 +4,6 @@ import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.jetbrains.annotations.Contract;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -15,7 +14,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static java.util.Objects.requireNonNull;
+import static io.foldright.cffu.internal.CommonUtils.toArray;
 
 
 /**
@@ -150,7 +149,7 @@ public final class CfIterableUtils {
 
     @SuppressWarnings("unchecked")
     private static <T> Supplier<? extends T>[] toSupplierArray(Iterable<? extends Supplier<? extends T>> suppliers) {
-        return toArray(suppliers, EMPTY_SUPPLIERS, "suppliers");
+        return toArray(suppliers, EMPTY_SUPPLIERS);
     }
 
     @SuppressWarnings("rawtypes")
@@ -219,7 +218,7 @@ public final class CfIterableUtils {
     }
 
     private static Runnable[] toRunnableArray(Iterable<? extends Runnable> actions) {
-        return toArray(actions, EMPTY_RUNNABLES, "actions");
+        return toArray(actions, EMPTY_RUNNABLES);
     }
 
     private static final Runnable[] EMPTY_RUNNABLES = {};
@@ -294,7 +293,7 @@ public final class CfIterableUtils {
 
     @SuppressWarnings("unchecked")
     private static <T> CompletionStage<? extends T>[] toStageArray(Iterable<? extends CompletionStage<? extends T>> cfs) {
-        return toArray(cfs, EMPTY_STAGES, "cfs");
+        return toArray(cfs, EMPTY_STAGES);
     }
 
     @SuppressWarnings("rawtypes")
@@ -452,7 +451,7 @@ public final class CfIterableUtils {
     @SuppressWarnings("unchecked")
     private static <T, U> Function<? super T, ? extends U>[] toFunctionArray(
             Iterable<? extends Function<? super T, ? extends U>> fns) {
-        return toArray(fns, EMPTY_FUNCTIONS, "fns");
+        return toArray(fns, EMPTY_FUNCTIONS);
     }
 
     @SuppressWarnings("rawtypes")
@@ -530,7 +529,7 @@ public final class CfIterableUtils {
 
     @SuppressWarnings("unchecked")
     private static <T> Consumer<? super T>[] toConsumerArray(Iterable<? extends Consumer<? super T>> actions) {
-        return toArray(actions, EMPTY_CONSUMERS, "actions");
+        return toArray(actions, EMPTY_CONSUMERS);
     }
 
     @SuppressWarnings("rawtypes")
@@ -600,25 +599,6 @@ public final class CfIterableUtils {
     public static CompletableFuture<Void> thenMRunAnyAsync(
             CompletableFuture<?> cfThis, Iterable<Runnable> actions, Executor executor) {
         return CompletableFutureUtils.thenMRunAnyAsync(cfThis, executor, toRunnableArray(actions));
-    }
-
-    // endregion
-    // endregion
-    ////////////////////////////////////////////////////////////////////////////////
-    // region# Internal methods
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Converts an Iterable to an array.
-     */
-    private static <T> T[] toArray(Iterable<? extends T> iterable, T[] typeToken, String varName) {
-        requireNonNull(iterable, varName + " iterable is null");
-        if (iterable instanceof Collection) {
-            return ((Collection<? extends T>) iterable).toArray(typeToken);
-        }
-        List<T> list = new ArrayList<>();
-        for (T e : iterable) list.add(e);
-        return list.toArray(typeToken);
     }
 
     private CfIterableUtils() {}

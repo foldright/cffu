@@ -1,12 +1,17 @@
 package io.foldright.cffu.internal;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 
@@ -31,7 +36,8 @@ public final class CommonUtils {
      * }</pre>
      */
     @SuppressWarnings("unchecked")
-    public static <T, R> R[] mapArray(T[] source, IntFunction<Object[]> destConstructor, Function<T, R> mapper) {
+    public static <T, R> R[] mapArray(
+            T[] source, IntFunction<Object[]> destConstructor, Function<? super T, ? extends R> mapper) {
         int len = source.length;
         R[] ret = (R[]) destConstructor.apply(len);
         for (int i = 0; i < len; i++) ret[i] = mapper.apply(source[i]);
@@ -64,6 +70,30 @@ public final class CommonUtils {
         ArrayList<E> ret = new ArrayList<>(len);
         for (int i = 0; i < len; i++) ret.add(array.get(i));
         return ret;
+    }
+
+    /**
+     * Converts an Iterable to an array.
+     */
+    @Contract(value = "null, _ -> null; !null, _ -> !null")
+    public static @Nullable <T> T[] toArray(@Nullable Iterable<? extends T> iterable, T[] typeToken) {
+        if (iterable == null) return null;
+        if (iterable instanceof Collection) {
+            return ((Collection<? extends T>) iterable).toArray(typeToken);
+        }
+        List<T> list = new ArrayList<>();
+        for (T e : iterable) list.add(e);
+        return list.toArray(typeToken);
+    }
+
+    /**
+     * Converts an Iterable to an array.
+     */
+    @Contract(value = "null, _, _ -> null; !null, _, _ -> !null")
+    public static @Nullable <T, U> U[] toArray(
+            @Nullable Iterable<? extends T> iterable, IntFunction<U[]> generator, Function<? super T, ? extends U> mapper) {
+        if (iterable == null) return null;
+        return StreamSupport.stream(iterable.spliterator(), false).map(mapper).toArray(generator);
     }
 
     /**
