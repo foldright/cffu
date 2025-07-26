@@ -13,11 +13,7 @@ import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainOnlyNulls
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeSameInstanceAs
-import io.kotest.matchers.types.shouldBeTypeOf
-import io.kotest.matchers.types.shouldNotBeSameInstanceAs
-import io.kotest.matchers.types.shouldNotBeTypeOf
 import kotlinx.coroutines.future.await
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
@@ -47,28 +43,6 @@ class CffuExtensionsTest : FunSpec({
     test("toCffu for CompletableFuture") {
         val cf = CompletableFuture.completedFuture(n)
         checkToCffu(cf.toCffu(testCffuFac), n)
-    }
-
-    test("toCffu for CompletableFuture collection") {
-        val range = 0 until 10
-        val cfs: List<CompletableFuture<Int>> = range.map {
-            CompletableFuture.completedFuture(it)
-        }
-
-        cfs.toCffu(testCffuFac).forEachIndexed { index, cffu ->
-            checkToCffu(cffu, index)
-        }
-        cfs.toSet().toCffu(testCffuFac).forEachIndexed { index, cffu ->
-            checkToCffu(cffu, index)
-        }
-    }
-
-    test("toCffu for CompletableFuture array") {
-        val cfArray: Array<CompletableFuture<Int>> = Array(10) { CompletableFuture.completedFuture(it) }
-        cfArray.toCffu(testCffuFac).forEachIndexed { index, cffu -> checkToCffu(cffu, index) }
-
-        val csArray: Array<CompletionStage<Int>> = Array(10) { CompletableFuture.completedFuture(it) }
-        csArray.toCffu(testCffuFac).forEachIndexed { index, cffu -> checkToCffu(cffu, index) }
     }
 
     test("M*") {
@@ -763,42 +737,5 @@ class CffuExtensionsTest : FunSpec({
         assertCffuFactoryForOptional(list.anySuccessOfCffu())
         assertEmptyArray { emptyArray.anySuccessOfCffu() }
         assertCffuFactoryForOptional(array.anySuccessOfCffu())
-    }
-
-    ////////////////////////////////////////
-    // - toCompletableFuture
-    ////////////////////////////////////////
-
-    test("toCompletableFuture for Cffu collection/array") {
-        val range = 0 until 10
-        val cfs: List<CompletableFuture<Int>> = range.map {
-            CompletableFuture.completedFuture(it)
-        }
-        val cfArray = cfs.toTypedArray()
-        val csArray: Array<CompletionStage<Int>> = Array(cfArray.size) { cfArray[it] }
-        cfArray.javaClass shouldNotBe csArray.javaClass
-        cfArray::class shouldNotBe csArray::class
-        cfArray shouldBe csArray // shouldBe ignore the array type!
-
-        val cffus: List<Cffu<Int>> = cfs.toCffu(testCffuFac)
-        cffus.toCompletableFuture() shouldBe cfs
-        cffus.toSet().toCompletableFuture() shouldBe cfs
-
-        val cffuArray: Array<Cffu<Int>> = cffus.toTypedArray()
-        cffuArray.toCompletableFuture().let {
-            it shouldBe cfArray
-            it shouldNotBeSameInstanceAs cfArray
-
-            it.shouldBeTypeOf<Array<CompletableFuture<*>>>()
-            it.shouldNotBeTypeOf<Array<CompletionStage<*>>>()
-        }
-
-        csArray.toCompletableFuture().let {
-            it shouldBe cfArray
-            it shouldNotBeSameInstanceAs cfArray
-
-            it.shouldBeTypeOf<Array<CompletableFuture<*>>>()
-            it.shouldNotBeTypeOf<Array<CompletionStage<*>>>()
-        }
     }
 })

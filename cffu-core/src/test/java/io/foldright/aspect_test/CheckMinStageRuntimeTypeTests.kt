@@ -6,7 +6,6 @@ import io.foldright.cffu.CffuFactory
 import io.foldright.cffu.CompletableFutureUtils
 import io.foldright.test_utils.*
 import io.kotest.core.spec.style.AnnotationSpec
-import io.kotest.inspectors.forAll
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.completedFuture
 import java.util.concurrent.CompletionStage
@@ -689,7 +688,6 @@ class CheckMinStageRuntimeTypeTests : AnnotationSpec() {
 
         testCffuFac.toCffu(csThis).shouldNotBeMinimalStage()
         testCffuFac.toCffu(cfThis).shouldNotBeMinimalStage()
-        testCffuFac.toCffuArray(csThis, cfThis).forAll { it.shouldNotBeMinimalStage() }
     }
 
     private fun <T> CompletionStage<T>.shouldBeMinimalStageAsCffu() {
