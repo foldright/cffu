@@ -81,12 +81,10 @@ public final class CffuFactory {
         return CffuFactoryBuilder.withDefaultExecutor(this, defaultExecutor);
     }
 
-    @Contract(pure = true)
     private <T> Cffu<T> createCffu(CompletableFuture<T> cf) {
         return new Cffu<>(this, false, cf);
     }
 
-    @Contract(pure = true)
     private <E, U extends Iterable<? extends E>> MCffu<E, U> createMCffu(CompletableFuture<U> cf) {
         return new MCffu<>(this, false, cf);
     }
@@ -692,7 +690,7 @@ public final class CffuFactory {
     // region## CompletionStage Argument Factory Methods
     //
     //    - toCffu:      CF/CompletionStage   -> Cffu
-    //    - toCffuArray: CF/CompletionStage[] -> Cffu[]
+    //    - toMCffu:     CF/CompletionStage   -> MCffu
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -733,26 +731,6 @@ public final class CffuFactory {
             if (f.fac == this && !f.isMinimalStage) return f;
         }
         return createMCffu(stage.toCompletableFuture());
-    }
-
-    /**
-     * Converts input {@link CompletionStage}(including {@link CompletableFuture})
-     * array element by {@link #toCffu(CompletionStage)}.
-     *
-     * @throws NullPointerException if the stages param or any of its elements are {@code null}
-     * @see #toCffu(CompletionStage)
-     * @see CompletableFutureUtils#toCompletableFutureArray(CompletionStage[])
-     */
-    @Contract(pure = true)
-    @SafeVarargs
-    public final <T> Cffu<T>[] toCffuArray(CompletionStage<T>... stages) {
-        requireNonNull(stages, "stages is null");
-        @SuppressWarnings("unchecked")
-        Cffu<T>[] ret = new Cffu[stages.length];
-        for (int i = 0; i < stages.length; i++) {
-            ret[i] = toCffu(requireNonNull(stages[i], "stage" + (i + 1) + " is null"));
-        }
-        return ret;
     }
 
     // endregion

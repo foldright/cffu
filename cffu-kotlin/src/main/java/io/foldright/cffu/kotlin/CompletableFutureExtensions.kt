@@ -4,7 +4,6 @@ package io.foldright.cffu.kotlin
 
 import com.google.common.util.concurrent.Futures
 import io.foldright.cffu.CfTupleUtils
-import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuState
 import io.foldright.cffu.CompletableFutureUtils
 import io.foldright.cffu.tuple.Tuple2
@@ -2177,27 +2176,3 @@ fun CompletionStage<*>.defaultExecutor(): Executor = CompletableFutureUtils.defa
  */
 fun <U> CompletableFuture<*>.newIncompleteFuture(): CompletableFuture<U> =
     CompletableFutureUtils.newIncompleteFuture(this)
-
-// endregion
-// endregion
-////////////////////////////////////////////////////////////////////////////////
-// region# toCompletableFuture Conversion Methods for Collection/Array
-////////////////////////////////////////////////////////////////////////////////
-
-/**
- * Convert [CompletionStage] (including [Cffu]) collection elements to [CompletableFuture].
- *
- * This method is the same as [CompletableFutureUtils.toCompletableFutureArray],
- * providing this method is convenient for method chaining.
- */
-fun <T> Collection<CompletionStage<T>>.toCompletableFuture(): List<CompletableFuture<T>> =
-    map { it.toCompletableFuture() }
-
-/**
- * Convert [CompletionStage] (including [Cffu]) array elements to [CompletableFuture].
- *
- * This method is the same as [CompletableFutureUtils.toCompletableFutureArray],
- * providing this method is convenient for method chaining.
- */
-fun <T> Array<out CompletionStage<T>>.toCompletableFuture(): Array<CompletableFuture<T>> =
-    CompletableFutureUtils.toCompletableFutureArray(*this)

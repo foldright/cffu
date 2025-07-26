@@ -17,7 +17,6 @@ import java.util.concurrent.*;
 import java.util.function.Supplier;
 
 import static io.foldright.cffu.CompletableFutureUtils.failedFuture;
-import static io.foldright.cffu.CompletableFutureUtils.toCompletableFutureArray;
 import static io.foldright.test_utils.TestUtils.*;
 import static io.foldright.test_utils.TestingConstants.*;
 import static io.foldright.test_utils.TestingExecutorUtils.testCffuFac;
@@ -49,7 +48,6 @@ class CffuFactoryTest {
 
     // endregion
     // region# Factory Methods
-
     // region## supplyAsync*/runAsync* Methods(create by action) + Multi-Actions(M*) Methods(create by actions)
 
     @Test
@@ -836,49 +834,11 @@ class CffuFactoryTest {
         MinStageTestUtils.shouldNotBeMinimalStage(cf3);
     }
 
-    @Test
-    @EnabledForJreRange(min = JRE.JAVA_9)
-    void test_toCffuArray() throws Exception {
-        Cffu<Integer>[] cffus = testCffuFac.toCffuArray(CompletableFuture.completedStage(n), completedFuture(n));
-        assertEquals(n, cffus[1].get());
-
-        MinStageTestUtils.shouldNotBeMinimalStage(cffus[0]);
-        MinStageTestUtils.shouldNotBeMinimalStage(cffus[1]);
-    }
-
     // endregion
     // endregion
     // region# Delay Execution
 
     // tested in CffuApiCompatibilityTest#staticMethods_delayedExecutor
-
-    // endregion
-    // region# Conversion Methods(static methods)
-    //
-    //    - cffuListToArray: List<Cffu> -> Cffu[]
-
-    @Test
-    void test_toCompletableFutureArray() {
-        @SuppressWarnings("unchecked")
-        CompletableFuture<Integer>[] cfArray = new CompletableFuture[]{
-                completedFuture(n),
-                completedFuture(anotherN)
-        };
-        @SuppressWarnings("unchecked")
-        CompletionStage<Integer>[] csArray = new CompletableFuture[]{
-                cfArray[0],
-                cfArray[1],
-        };
-        @SuppressWarnings("unchecked")
-        Cffu<Integer>[] cffuArray = new Cffu[]{
-                testCffuFac.toCffu(cfArray[0]),
-                testCffuFac.toCffu(cfArray[1]),
-        };
-
-        assertArrayEquals(cfArray, toCompletableFutureArray(cfArray));
-        assertArrayEquals(cfArray, toCompletableFutureArray(csArray));
-        assertArrayEquals(cfArray, toCompletableFutureArray(cffuArray));
-    }
 
     // endregion
     // region# Getter Methods of CffuFactory properties
@@ -1160,5 +1120,6 @@ class CffuFactoryTest {
 
     // endregion
     // region# Test helper fields
+
     private final Executor dummyExecutor = Runnable::run;
 }
