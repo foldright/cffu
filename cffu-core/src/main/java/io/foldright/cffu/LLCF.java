@@ -68,7 +68,7 @@ public final class LLCF {
     @SuppressWarnings("unchecked")
     public static <T> CompletableFuture<T> f_toCf0(CompletionStage<? extends T> stage) {
         if (stage instanceof CompletableFuture) return (CompletableFuture<T>) stage;
-        else if (stage instanceof Cffu) return ((Cffu<T>) stage).cffuUnwrap();
+        else if (stage instanceof BaseCffu) return ((BaseCffu<T, ?>) stage).cf;
         else return (CompletableFuture<T>) stage.toCompletableFuture();
     }
 

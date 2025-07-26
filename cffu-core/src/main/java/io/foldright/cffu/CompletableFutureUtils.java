@@ -2570,8 +2570,8 @@ public final class CompletableFutureUtils {
         if (cfThis instanceof CompletableFuture) {
             if (((CompletableFuture<?>) cfThis).isCompletedExceptionally())
                 throw new IllegalStateException("Task completed with exception");
-        } else if (cfThis instanceof Cffu) {
-            if (((Cffu<?>) cfThis).isCompletedExceptionally())
+        } else if (cfThis instanceof BaseCffu) {
+            if (((BaseCffu<?, ?>) cfThis).isCompletedExceptionally())
                 throw new IllegalStateException("Task completed with exception");
         }
 
@@ -2652,8 +2652,8 @@ public final class CompletableFutureUtils {
         // simple path for CompletableFuture/Cffu
         if (cfThis instanceof CompletableFuture)
             return ((CompletableFuture<?>) cfThis).isCompletedExceptionally() ? CffuState.FAILED : CffuState.SUCCESS;
-        else if (cfThis instanceof Cffu)
-            return ((Cffu<?>) cfThis).isCompletedExceptionally() ? CffuState.FAILED : CffuState.SUCCESS;
+        else if (cfThis instanceof BaseCffu)
+            return ((BaseCffu<?, ?>) cfThis).isCompletedExceptionally() ? CffuState.FAILED : CffuState.SUCCESS;
 
         boolean interrupted = false;
         try {
@@ -2807,7 +2807,7 @@ public final class CompletableFutureUtils {
         //       need a SPI in order to support other CompletionStage subclasses equivalently
         if (cfThis instanceof CompletableFuture)
             return IS_JAVA9_PLUS ? ((CompletableFuture<?>) cfThis).defaultExecutor() : ASYNC_POOL;
-        if (cfThis instanceof Cffu) return ((Cffu<?>) cfThis).defaultExecutor();
+        if (cfThis instanceof BaseCffu) return ((BaseCffu<?, ?>) cfThis).defaultExecutor();
         throw new UnsupportedOperationException("Unsupported CompletionStage subclass: " + cfThis.getClass());
     }
 
