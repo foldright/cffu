@@ -35,8 +35,7 @@ import static java.util.Objects.requireNonNull;
  * <ul>
  * <li>factory methods return {@link Cffu} instead of {@link CompletableFuture}.
  * <li>only provide varargs methods for multiple Cffu/CF input arguments;
- *     if you have {@code List} input, use static utility methods {@link #cffuListToArray(List)}
- *     to convert it to array first.
+ *     if you have {@code List} input, use variant methods in {@link IterableOps}.
  * </ul>
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
@@ -823,25 +822,6 @@ public final class CffuFactory {
     public Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
         // NOTE: do NOT translate (ad hoc input)executor to screened executor; same as CompletableFuture.delayedExecutor
         return CompletableFutureUtils.delayedExecutor(delay, unit, cffuUnscreened(executor));
-    }
-
-    // endregion
-    ////////////////////////////////////////////////////////////////////////////////
-    // region# Conversion Methods
-    //
-    //    - cffuListToArray: List<Cffu> -> Cffu[]
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Convert Cffu list to Cffu array.
-     *
-     * @see #toCffuArray(CompletionStage[])
-     */
-    @Contract(pure = true)
-    public static <T> Cffu<T>[] cffuListToArray(List<Cffu<T>> cffuList) {
-        @SuppressWarnings("unchecked")
-        Cffu<T>[] a = new Cffu[cffuList.size()];
-        return cffuList.toArray(a);
     }
 
     // endregion
