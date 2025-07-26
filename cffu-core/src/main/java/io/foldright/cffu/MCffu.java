@@ -36,14 +36,20 @@ public final class MCffu<E, T extends Iterable<? extends E>>
     }
 
     /**
-     * Returns a {@link CffuFactory.ParOps} instance to access the methods for parallel data processing using Cffu.
+     * Returns a {@link ParOps} instance to access the methods for parallel data processing.
+     *
+     * @see CffuFactory#parOps()
+     * @see CfParallelUtils
      */
     public ParOps parOps() {
         return new ParOps();
     }
 
     /**
-     * The methods for parallel data processing using Cffu.
+     * The methods for parallel data processing.
+     *
+     * @see CffuFactory#parOps()
+     * @see CfParallelUtils
      */
     public final class ParOps {
         ////////////////////////////////////////////////////////////////////////////////
