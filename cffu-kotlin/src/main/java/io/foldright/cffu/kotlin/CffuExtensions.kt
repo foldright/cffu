@@ -31,28 +31,6 @@ import java.util.function.Supplier
 fun <T> CompletionStage<T>.toCffu(cffuFactory: CffuFactory): Cffu<T> =
     cffuFactory.toCffu(this)
 
-/**
- * Wrap input [CompletionStage] (including [CompletableFuture]) collection elements to [Cffu] by [CffuFactory.toCffu].
- *
- * This method is the same as [CffuFactory.toCffuArray], providing this method is convenient for method chaining.
- *
- * @see CffuFactory.toCffuArray
- * @see CffuFactory.toCffu
- */
-fun <T> Collection<CompletionStage<T>>.toCffu(cffuFactory: CffuFactory): List<Cffu<T>> =
-    map { it.toCffu(cffuFactory) }
-
-/**
- * Wrap input [CompletionStage] (including [CompletableFuture]) array elements to [Cffu] by [CffuFactory.toCffu].
- *
- * This method is the same as [CffuFactory.toCffuArray], providing this method is convenient for method chaining.
- *
- * @see CffuFactory.toCffuArray
- * @see CffuFactory.toCffu
- */
-fun <T> Array<out CompletionStage<T>>.toCffu(cffuFactory: CffuFactory): Array<Cffu<T>> =
-    cffuFactory.toCffuArray(*this)
-
 // endregion
 ////////////////////////////////////////////////////////////
 // region# Multi-Actions(M*) Methods(create by actions)
