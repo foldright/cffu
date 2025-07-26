@@ -2465,10 +2465,12 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new incomplete Cffu with CompletableFuture of the type to be returned by a CompletionStage method.
      * <p>
-     * <strong>NOTE:</strong> This method existed mainly for API compatibility with {@code CompletableFuture},
-     * prefer {@link CffuFactory#newIncompleteCffu()}.
+     * <strong>NOTE:</strong> This method existed for API compatibility with {@code CompletableFuture},
+     * use {@link CffuFactory#newIncompleteCffu()} / {@link CffuFactory#newIncompleteMCffu()} instead.
      *
      * @see CffuFactory#newIncompleteCffu()
+     * @see CffuFactory#newIncompleteMCffu()
+     * @see CompletableFuture#newIncompleteFuture()
      */
     @Contract(pure = true)
     public final <U> Cffu<U> newIncompleteFuture() {
