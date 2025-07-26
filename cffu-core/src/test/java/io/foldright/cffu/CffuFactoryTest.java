@@ -880,24 +880,6 @@ class CffuFactoryTest {
         assertArrayEquals(cfArray, toCompletableFutureArray(cffuArray));
     }
 
-    //# Conversion (Static) Methods
-    //
-    //    - cffuArrayUnwrap:              Cffu -> CF
-    //    - cffuListToArray:              List<Cffu> -> Cffu[]
-    //    - toCompletableFutureArray:     CompletionStage[](including Cffu) -> CF[]
-
-    @Test
-    void test_cffuListToArray() {
-        @SuppressWarnings("unchecked")
-        Cffu<Integer>[] input = new Cffu[]{
-                testCffuFac.completedFuture(n),
-                testCffuFac.completedFuture(anotherN),
-                testCffuFac.newIncompleteCffu()
-        };
-
-        assertArrayEquals(input, CffuFactory.cffuListToArray(asList(input)));
-    }
-
     // endregion
     // region# Getter Methods of CffuFactory properties
 
@@ -967,7 +949,7 @@ class CffuFactoryTest {
                 });
                 cffuList.add(cffu);
             }
-            CompletableFutureUtils.allOf(CffuFactory.cffuListToArray(cffuList)).join();
+            CfIterableUtils.allOf(cffuList).join();
 
             assertThat(runThreads).hasSize(COUNT);
         }
