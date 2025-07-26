@@ -2818,28 +2818,6 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Converts input {@link CompletionStage} (including {@link Cffu}/{@link CompletableFuture})
-     * array element by {@link CompletionStage#toCompletableFuture()}.
-     *
-     * @throws NullPointerException if any of the given stages are {@code null}
-     * @see CompletionStage#toCompletableFuture()
-     * @see CompletableFuture#toCompletableFuture()
-     * @see Cffu#toCompletableFuture()
-     * @see CffuFactory#toCffuArray(CompletionStage[])
-     */
-    @Contract(pure = true)
-    @SafeVarargs
-    public static <T> CompletableFuture<T>[] toCompletableFutureArray(CompletionStage<T>... stages) {
-        requireNonNull(stages, "stages is null");
-        @SuppressWarnings("unchecked")
-        CompletableFuture<T>[] ret = new CompletableFuture[stages.length];
-        for (int i = 0; i < stages.length; i++) {
-            ret[i] = requireNonNull(stages[i], "stage" + (i + 1) + " is null").toCompletableFuture();
-        }
-        return ret;
-    }
-
-    /**
      * Unwraps CompletableFuture exception ({@link CompletionException} or {@link ExecutionException})
      * to its cause exception. If the input exception is not a {@code CompletableFuture}/{@code ExecutionException}
      * or has no cause, contains a cyclic chain of CompletableFuture exceptions, or is null, returns the input exception.

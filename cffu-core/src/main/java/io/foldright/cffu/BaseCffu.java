@@ -2301,12 +2301,10 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * Returns a {@link CompletableFuture} maintaining the same completion properties as this Cffu.
      * <p>
      * Calling this method is same as calling the {@link CompletableFuture#toCompletableFuture()} method
-     * of the underlying CompletableFuture: {@code underlyingCf.toCompletableFuture()};
-     * {@link CompletableFutureUtils#toCompletableFutureArray(CompletionStage[])} is the batch operation of this method.
+     * of the underlying CompletableFuture: {@code underlyingCf.toCompletableFuture()}.
      * If you need the underlying CompletableFuture instance, call method {@link #cffuUnwrap()}.
      *
      * @return the CompletableFuture
-     * @see CompletableFutureUtils#toCompletableFutureArray(CompletionStage[])
      */
     @Contract(pure = true)
     @Override
