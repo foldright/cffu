@@ -11,7 +11,6 @@ import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
@@ -24,6 +23,8 @@ import static io.foldright.test_utils.TestingConstants.*;
 import static io.foldright.test_utils.TestingExecutorUtils.testCffuFac;
 import static io.foldright.test_utils.TestingExecutorUtils.testExecutor;
 import static java.lang.Thread.currentThread;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -88,7 +89,7 @@ class CffuFactoryTest {
         assertTrue(System.currentTimeMillis() - tick < 50);
 
         for (MCffu<Integer, List<Integer>> cf : cfs) {
-            assertEquals(Arrays.asList(n, n), cf.get());
+            assertEquals(asList(n, n), cf.get());
         }
 
         final long tick1 = System.currentTimeMillis();
@@ -186,10 +187,10 @@ class CffuFactoryTest {
 
     @Test
     void test_allOf() throws Exception {
-        assertEquals(Arrays.asList(n, n + 1),
+        assertEquals(asList(n, n + 1),
                 testCffuFac.allResultsFailFastOf(completedFuture(n), completedFuture(n + 1)).get()
         );
-        assertEquals(Collections.singletonList(n),
+        assertEquals(singletonList(n),
                 testCffuFac.allResultsFailFastOf(completedFuture(n)).get()
         );
 
@@ -197,19 +198,19 @@ class CffuFactoryTest {
                 testCffuFac.allResultsFailFastOf().get()
         );
 
-        assertEquals(Arrays.asList(n, n + 1),
+        assertEquals(asList(n, n + 1),
                 testCffuFac.allResultsFailFastOf(testCffuFac.completedFuture(n), testCffuFac.completedFuture(n + 1)).get()
         );
-        assertEquals(Collections.singletonList(n),
+        assertEquals(singletonList(n),
                 testCffuFac.allResultsFailFastOf(testCffuFac.completedFuture(n)).get()
         );
 
         ////////////////////////////////////////
 
-        assertEquals(Arrays.asList(n, n + 1),
+        assertEquals(asList(n, n + 1),
                 testCffuFac.allSuccessResultsOf(anotherN, completedFuture(n), completedFuture(n + 1)).get()
         );
-        assertEquals(Collections.singletonList(n),
+        assertEquals(singletonList(n),
                 testCffuFac.allSuccessResultsOf(anotherN, completedFuture(n)).get()
         );
 
@@ -217,18 +218,18 @@ class CffuFactoryTest {
                 testCffuFac.allResultsFailFastOf().get()
         );
 
-        assertEquals(Arrays.asList(n, n + 1),
+        assertEquals(asList(n, n + 1),
                 testCffuFac.allSuccessResultsOf(anotherN, testCffuFac.completedFuture(n), testCffuFac.completedFuture(n + 1)).get()
         );
-        assertEquals(Collections.singletonList(n),
+        assertEquals(singletonList(n),
                 testCffuFac.allSuccessResultsOf(anotherN, testCffuFac.completedFuture(n)).get()
         );
 
         ////////////////////////////////////////
-        assertEquals(Arrays.asList(n, n + 1),
+        assertEquals(asList(n, n + 1),
                 testCffuFac.allResultsOf(completedFuture(n), completedFuture(n + 1)).get()
         );
-        assertEquals(Collections.singletonList(n),
+        assertEquals(singletonList(n),
                 testCffuFac.allResultsOf(completedFuture(n)).get()
         );
 
@@ -236,10 +237,10 @@ class CffuFactoryTest {
                 testCffuFac.allResultsOf().get()
         );
 
-        assertEquals(Arrays.asList(n, n + 1),
+        assertEquals(asList(n, n + 1),
                 testCffuFac.allResultsOf(testCffuFac.completedFuture(n), testCffuFac.completedFuture(n + 1)).get()
         );
-        assertEquals(Collections.singletonList(n),
+        assertEquals(singletonList(n),
                 testCffuFac.allResultsOf(testCffuFac.completedFuture(n)).get()
         );
     }
@@ -291,19 +292,19 @@ class CffuFactoryTest {
 
         assertEquals(0, testCffuFac.mostSuccessResultsOf(null, SHORT_WAIT_MS, MILLISECONDS).get().size());
 
-        assertEquals(Arrays.asList(n, null, null, null), testCffuFac.mostSuccessResultsOf(
+        assertEquals(asList(n, null, null, null), testCffuFac.mostSuccessResultsOf(
                 null, SHORT_WAIT_MS, MILLISECONDS, completed, failed, cancelled, incomplete
         ).get());
-        assertEquals(Arrays.asList(n, anotherN, anotherN, anotherN), testCffuFac.mostSuccessResultsOf(
+        assertEquals(asList(n, anotherN, anotherN, anotherN), testCffuFac.mostSuccessResultsOf(
                 anotherN, SHORT_WAIT_MS, MILLISECONDS, completedStage, failed, cancelled, incomplete
         ).get());
 
-        assertEquals(Arrays.asList(anotherN, anotherN, anotherN), testCffuFac.mostSuccessResultsOf(
+        assertEquals(asList(anotherN, anotherN, anotherN), testCffuFac.mostSuccessResultsOf(
                 anotherN, SHORT_WAIT_MS, MILLISECONDS, failed, cancelled, incomplete
         ).get());
 
         // do not wait for failed and cancelled
-        assertEquals(Arrays.asList(anotherN, anotherN), testCffuFac.mostSuccessResultsOf(
+        assertEquals(asList(anotherN, anotherN), testCffuFac.mostSuccessResultsOf(
                 anotherN, Long.MAX_VALUE, MILLISECONDS, failed, cancelled
         ).get());
     }
@@ -697,7 +698,58 @@ class CffuFactoryTest {
 
     @Test
     void test_completedFuture() throws Exception {
-        assertEquals(n, testCffuFac.completedFuture(n).get());
+        final Cffu<Integer> cf = testCffuFac.completedFuture(n);
+        assertEquals(n, cf.get());
+
+        MinStageTestUtils.shouldNotBeMinimalStage(cf);
+    }
+
+    @Test
+    void test_failedFuture() throws Exception {
+        Cffu<Integer> cf = testCffuFac.failedFuture(rte);
+
+        assertSame(rte, assertThrowsExactly(CompletionException.class, cf::join).getCause());
+        assertEquals(n, cf.exceptionally(throwable -> n).get());
+
+        MinStageTestUtils.shouldNotBeMinimalStage(cf);
+    }
+
+    @Test
+    void test_completedMCffu() throws Exception {
+        {
+            final List<Integer> empty = singletonList(n);
+            final MCffu<Integer, List<Integer>> cf = testCffuFac.completedMCffu(empty);
+            assertEquals(empty, cf.get());
+
+            MinStageTestUtils.shouldNotBeMinimalStage(cf);
+        }
+
+        {
+            final List<Integer> singletonList = singletonList(n);
+            final MCffu<Integer, List<Integer>> cf = testCffuFac.completedMCffu(singletonList);
+            assertEquals(singletonList, (cf.get()));
+
+            MinStageTestUtils.shouldNotBeMinimalStage(cf);
+        }
+
+        {
+            final List<String> list = asList("a", "b");
+            final MCffu<String, List<String>> cf = testCffuFac.completedMCffu(list);
+            assertEquals(list, cf.get());
+
+            MinStageTestUtils.shouldNotBeMinimalStage(cf);
+        }
+    }
+
+    @Test
+    void test_failedMCffu() throws Exception {
+        MCffu<Integer, List<Integer>> cf = testCffuFac.failedMCffu(rte);
+
+        assertSame(rte, assertThrowsExactly(CompletionException.class, cf::join).getCause());
+        final List<Integer> singletonList = singletonList(n);
+        assertEquals(singletonList, cf.exceptionally(throwable -> singletonList).get());
+
+        MinStageTestUtils.shouldNotBeMinimalStage(cf);
     }
 
     @Test
@@ -711,16 +763,6 @@ class CffuFactoryTest {
         // CAUTION: Last check minimal stage, may rewrite the CF by obtrude* methods
         MinStageTestUtils.shouldBeMinimalStage((Cffu<?>) stage);
         MinStageTestUtils.shouldBeMinimalStage((Cffu<?>) sa);
-    }
-
-    @Test
-    void test_failedFuture() throws Exception {
-        Cffu<Integer> cf = testCffuFac.failedFuture(rte);
-
-        assertSame(rte, assertThrowsExactly(CompletionException.class, cf::join).getCause());
-        assertEquals(n, cf.exceptionally(throwable -> n).get());
-
-        MinStageTestUtils.shouldNotBeMinimalStage(cf);
     }
 
     @Test
@@ -852,7 +894,7 @@ class CffuFactoryTest {
                 testCffuFac.newIncompleteCffu()
         };
 
-        assertArrayEquals(input, CffuFactory.cffuListToArray(Arrays.asList(input)));
+        assertArrayEquals(input, CffuFactory.cffuListToArray(asList(input)));
     }
 
     // endregion

@@ -87,24 +87,8 @@ public final class CffuFactory {
     }
 
     @Contract(pure = true)
-    private <T> CompletionStage<T> createCffuMin(CompletableFuture<T> cf) {
-        return new Cffu<>(this, true, cf);
-    }
-
     private <E, U extends Iterable<? extends E>> MCffu<E, U> createMCffu(CompletableFuture<U> cf) {
         return new MCffu<>(this, false, cf);
-    }
-
-    /**
-     * Return an incomplete Cffu, equivalent to {@link CompletableFuture#CompletableFuture()} constructor.
-     * <p>
-     * In general, you should not use this method in application code, prefer other factory methods.
-     *
-     * @see CompletableFuture#CompletableFuture()
-     */
-    @Contract(pure = true)
-    public <T> Cffu<T> newIncompleteCffu() {
-        return createCffu(new CompletableFuture<>());
     }
 
     // endregion
@@ -607,12 +591,54 @@ public final class CffuFactory {
      * Returns a new Cffu that is already completed with the given value.
      *
      * @param value the value
-     * @param <T>   the type of the value
+     * @param <T>   The result type returned future
      * @return the completed Cffu
+     * @see #completedMCffu(Iterable)
      */
     @Contract(pure = true)
     public <T> Cffu<T> completedFuture(@Nullable T value) {
         return createCffu(CompletableFuture.completedFuture(value));
+    }
+
+    /**
+     * Returns a new Cffu that is already completed exceptionally with the given exception.
+     *
+     * @param ex  the exception
+     * @param <T> The result type returned future
+     * @return the exceptionally completed Cffu
+     * @see #failedMCffu(Throwable)
+     */
+    @Contract(pure = true)
+    public <T> Cffu<T> failedFuture(Throwable ex) {
+        return createCffu(CompletableFutureUtils.failedFuture(ex));
+    }
+
+    /**
+     * Returns a new MCffu that is already completed with the given value.
+     *
+     * @param value the value
+     * @param <T>   The result collection type returned future
+     * @param <E>   the data element type of result collection
+     * @return the completed MCffu
+     * @see #completedFuture(Object)
+     */
+    @Contract(pure = true)
+    public <E, T extends Iterable<? extends E>> MCffu<E, T> completedMCffu(@Nullable T value) {
+        return createMCffu(CompletableFuture.completedFuture(value));
+    }
+
+    /**
+     * Returns a new MCffu that is already completed exceptionally with the given exception.
+     *
+     * @param ex  the exception
+     * @param <T> The result collection type returned future
+     * @param <E> the data element type of result collection
+     * @return the exceptionally completed MCffu
+     * @see #failedFuture(Throwable)
+     */
+    @Contract(pure = true)
+    public <E, T extends Iterable<? extends E>> MCffu<E, T> failedMCffu(Throwable ex) {
+        return createMCffu(CompletableFutureUtils.failedFuture(ex));
     }
 
     /**
@@ -623,24 +649,12 @@ public final class CffuFactory {
      * this method just returns a *normal* Cffu instance which is NOT a *minimal* CompletionStage.
      *
      * @param value the value
-     * @param <T>   the type of the value
+     * @param <T>   The result type returned future
      * @return the completed CompletionStage
      */
     @Contract(pure = true)
     public <T> CompletionStage<T> completedStage(@Nullable T value) {
-        return createCffuMin((CompletableFuture<T>) CompletableFutureUtils.completedStage(value));
-    }
-
-    /**
-     * Returns a new Cffu that is already completed exceptionally with the given exception.
-     *
-     * @param ex  the exception
-     * @param <T> the type of the value
-     * @return the exceptionally completed Cffu
-     */
-    @Contract(pure = true)
-    public <T> Cffu<T> failedFuture(Throwable ex) {
-        return createCffu(CompletableFutureUtils.failedFuture(ex));
+        return new Cffu<>(this, true, (CompletableFuture<T>) CompletableFutureUtils.completedStage(value));
     }
 
     /**
@@ -651,12 +665,12 @@ public final class CffuFactory {
      * this method just returns a *normal* Cffu instance which is NOT a *minimal* CompletionStage.
      *
      * @param ex  the exception
-     * @param <T> the type of the value
+     * @param <T> The result type returned future
      * @return the exceptionally completed CompletionStage
      */
     @Contract(pure = true)
     public <T> CompletionStage<T> failedStage(Throwable ex) {
-        return createCffuMin((CompletableFuture<T>) CompletableFutureUtils.<T>failedStage(ex));
+        return new Cffu<>(this, true, (CompletableFuture<T>) CompletableFutureUtils.<T>failedStage(ex));
     }
 
     /**
@@ -687,7 +701,7 @@ public final class CffuFactory {
      *
      * @throws NullPointerException if the given stage is null
      * @see CompletionStage#toCompletableFuture()
-     * @see #toCffuArray(CompletionStage[])
+     * @see #toMCffu(CompletionStage)
      * @see Cffu#withCffuFactory(CffuFactory)
      */
     @Contract(pure = true)
@@ -695,9 +709,30 @@ public final class CffuFactory {
         requireNonNull(stage, "stage is null");
         if (stage instanceof Cffu) {
             Cffu<T> f = ((Cffu<T>) stage);
-            if (f.cffuFactory() == this && !f.isMinimalStage()) return f;
+            if (f.fac == this && !f.isMinimalStage) return f;
         }
         return createCffu(stage.toCompletableFuture());
+    }
+
+    /**
+     * Returns a MCffu that maintains the same completion properties as the given stage, configured with this {@code CffuFactory}.
+     * If the given stage is already a MCffu and uses this {@code CffuFactory}, this method may return the given stage.
+     * <p>
+     * This method is similar as  {@link #toCffu(CompletionStage)} but return type MCffu instead of Cffu.
+     *
+     * @throws NullPointerException if the given stage is null
+     * @see #toCffu(CompletionStage)
+     * @see CompletionStage#toCompletableFuture()
+     * @see Cffu#withCffuFactory(CffuFactory)
+     */
+    @Contract(pure = true)
+    public <E, U extends Iterable<? extends E>> MCffu<E, U> toMCffu(CompletionStage<U> stage) {
+        requireNonNull(stage, "stage is null");
+        if (stage instanceof MCffu) {
+            MCffu<E, U> f = ((MCffu<E, U>) stage);
+            if (f.fac == this && !f.isMinimalStage) return f;
+        }
+        return createMCffu(stage.toCompletableFuture());
     }
 
     /**
@@ -718,6 +753,39 @@ public final class CffuFactory {
             ret[i] = toCffu(requireNonNull(stages[i], "stage" + (i + 1) + " is null"));
         }
         return ret;
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region## Incomplete Cffu/MCffu Constructor
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new incomplete Cffu.
+     * <p>
+     * In general, you won't use this method in application code, prefer other factory methods.
+     *
+     * @see #newIncompleteMCffu()
+     * @see CompletableFuture#CompletableFuture()
+     * @see CompletableFuture#newIncompleteFuture()
+     */
+    @Contract(pure = true)
+    public <T> Cffu<T> newIncompleteCffu() {
+        return createCffu(new CompletableFuture<>());
+    }
+
+    /**
+     * Returns a new incomplete MCffu.
+     * <p>
+     * In general, you won't use this method in application code, prefer other factory methods.
+     *
+     * @see #newIncompleteCffu()
+     * @see CompletableFuture#CompletableFuture()
+     * @see CompletableFuture#newIncompleteFuture()
+     */
+    @Contract(pure = true)
+    public <E, U extends Iterable<? extends E>> MCffu<E, U> newIncompleteMCffu() {
+        return createMCffu(new CompletableFuture<>());
     }
 
     // endregion
