@@ -1567,6 +1567,26 @@ public final class CompletableFutureUtils {
     }
 
     // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region## Incomplete CompletableFuture Constructor
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new incomplete CompletableFuture of the type to be returned by a CompletionStage method.
+     * <p>
+     * In general, you won't use this method in application code, prefer other factory methods.
+     *
+     * @param <U> the type of the value
+     * @see CompletableFuture#newIncompleteFuture()
+     * @see CompletableFuture#CompletableFuture()
+     */
+    @Contract(pure = true)
+    public static <U> CompletableFuture<U> newIncompleteFuture(CompletableFuture<?> cfThis) {
+        requireNonNull(cfThis, "cfThis is null");
+        return IS_JAVA9_PLUS ? cfThis.newIncompleteFuture() : new CompletableFuture<>();
+    }
+
+    // endregion
     ////////////////////////////////////////////////////////////
     // region## Delay Execution(backport methods)
     ////////////////////////////////////////////////////////////
@@ -3983,18 +4003,6 @@ public final class CompletableFutureUtils {
             return IS_JAVA9_PLUS ? ((CompletableFuture<?>) cfThis).defaultExecutor() : ASYNC_POOL;
         if (cfThis instanceof Cffu) return ((Cffu<?>) cfThis).defaultExecutor();
         throw new UnsupportedOperationException("Unsupported CompletionStage subclass: " + cfThis.getClass());
-    }
-
-    /**
-     * Returns a new incomplete CompletableFuture of the type to be returned by a CompletionStage method.
-     *
-     * @param <U> the type of the value
-     * @see CompletableFuture#newIncompleteFuture()
-     */
-    @Contract(pure = true)
-    public static <U> CompletableFuture<U> newIncompleteFuture(CompletableFuture<?> cfThis) {
-        requireNonNull(cfThis, "cfThis is null");
-        return IS_JAVA9_PLUS ? cfThis.newIncompleteFuture() : new CompletableFuture<>();
     }
 
     // endregion
