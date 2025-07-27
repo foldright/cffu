@@ -2,6 +2,7 @@ package io.foldright.cffu;
 
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 import java.util.concurrent.*;
@@ -23,6 +24,10 @@ import static io.foldright.cffu.CffuFactoryBuilder.cffuScreened;
  */
 public final class MCffu<E, T extends Iterable<? extends E>>
         extends BaseCffu<T, MCffu<E, T>> implements Future<T>, CompletionStage<T> {
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Internal constructor/methods
+    ////////////////////////////////////////////////////////////////////////////////
+
     /**
      * INTERNAL constructor.
      */
@@ -34,6 +39,27 @@ public final class MCffu<E, T extends Iterable<? extends E>>
     MCffu<E, T> create(CffuFactory fac, boolean isMinimalStage, CompletableFuture<T> cf) {
         return new MCffu<>(fac, isMinimalStage, cf);
     }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Conversion Methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Converts to {@link Cffu}, reuse the underlying CompletableFuture instance and rewraps it to {@link Cffu}.
+     *
+     * @see Cffu#asMCffu(Cffu)
+     * @see CffuFactory#toCffu(CompletionStage)
+     */
+    @Contract(pure = true)
+    public Cffu<T> asCffu() {
+        return createCffu(cf);
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# More Ops
+    ////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Returns a {@link ParOps} instance to access the methods for parallel data processing.
