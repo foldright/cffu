@@ -698,9 +698,10 @@ public final class CffuFactory {
      * If the given stage is already a Cffu and uses this {@code CffuFactory}, this method may return the given stage.
      *
      * @throws NullPointerException if the given stage is null
-     * @see CompletionStage#toCompletableFuture()
+     * @see MCffu#asCffu()
      * @see #toMCffu(CompletionStage)
      * @see Cffu#withCffuFactory(CffuFactory)
+     * @see CompletionStage#toCompletableFuture()
      */
     @Contract(pure = true)
     public <T> Cffu<T> toCffu(CompletionStage<T> stage) {
@@ -719,9 +720,10 @@ public final class CffuFactory {
      * This method is similar as  {@link #toCffu(CompletionStage)} but return type MCffu instead of Cffu.
      *
      * @throws NullPointerException if the given stage is null
+     * @see Cffu#asMCffu(Cffu)
      * @see #toCffu(CompletionStage)
-     * @see CompletionStage#toCompletableFuture()
      * @see Cffu#withCffuFactory(CffuFactory)
+     * @see CompletionStage#toCompletableFuture()
      */
     @Contract(pure = true)
     public <E, U extends Iterable<? extends E>> MCffu<E, U> toMCffu(CompletionStage<U> stage) {
