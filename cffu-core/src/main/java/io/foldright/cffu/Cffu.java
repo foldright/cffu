@@ -1,5 +1,7 @@
 package io.foldright.cffu;
 
+import org.jetbrains.annotations.Contract;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Future;
@@ -22,6 +24,10 @@ import java.util.concurrent.Future;
  * @see MCffu
  */
 public final class Cffu<T> extends BaseCffu<T, Cffu<T>> implements Future<T>, CompletionStage<T> {
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Internal constructor/methods
+    ////////////////////////////////////////////////////////////////////////////////
+
     /**
      * INTERNAL constructor.
      */
@@ -32,5 +38,22 @@ public final class Cffu<T> extends BaseCffu<T, Cffu<T>> implements Future<T>, Co
     @Override
     Cffu<T> create(CffuFactory fac, boolean isMinimalStage, CompletableFuture<T> cf) {
         return new Cffu<>(fac, isMinimalStage, cf);
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Conversion Methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Converts to {@link MCffu}, reuse the underlying CompletableFuture instance and rewraps it to {@link MCffu}.
+     *
+     * @param <E> the data element type of result collection
+     * @see MCffu#asCffu()
+     * @see CffuFactory#toMCffu(CompletionStage)
+     */
+    @Contract(pure = true)
+    public static <E, U extends Iterable<? extends E>> MCffu<E, U> asMCffu(Cffu<U> cffu) {
+        return new MCffu<>(cffu.fac, cffu.isMinimalStage, cffu.cf);
     }
 }

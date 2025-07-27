@@ -18,6 +18,27 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 class MCffuTest {
+    // region# Conversion Methods
+
+    @Test
+    void test_asCffu() throws Exception {
+        final List<Integer> list = asList(1, 2);
+
+        final MCffu<Integer, List<Integer>> mCffu = testCffuFac.completedMCffu(list);
+        final Cffu<List<Integer>> cffu = mCffu.asCffu();
+
+        assertSame(testCffuFac, cffu.cffuFactory());
+        assertFalse(cffu.isMinimalStage);
+        assertSame(list, cffu.get());
+
+        final List<Integer> list3 = asList(1, 2, 3);
+        mCffu.obtrudeValue(list3);
+        assertSame(list3, cffu.get());
+    }
+
+    // endregion
+    // region# More Ops
+
     @Test
     void test_thenParApply() throws Exception {
         final MCffu<Integer, List<Integer>> cfEmpty = testCffuFac.completedMCffu(emptyList());

@@ -38,15 +38,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SuppressWarnings({"RedundantThrows", "DataFlowIssue", "JavadocReference", "resource"})
 class CffuFactoryTest {
-    // region# Constructor Method
-
-    @Test
-    void test_newIncompleteCffu() {
-        Cffu<Integer> cf = testCffuFac.newIncompleteCffu();
-        assertFalse(cf.isDone());
-    }
-
-    // endregion
     // region# Factory Methods
     // region## supplyAsync*/runAsync* Methods(create by action) + Multi-Actions(M*) Methods(create by actions)
 
@@ -798,24 +789,26 @@ class CffuFactoryTest {
 
     @Test
     void test_toCffu() throws Exception {
-        Cffu<Integer> cf = testCffuFac.toCffu(completedFuture(n));
-        assertEquals(n, cf.get());
-        MinStageTestUtils.shouldNotBeMinimalStage(cf);
+        Cffu<Integer> cffu0 = testCffuFac.toCffu(completedFuture(n));
+        assertEquals(n, cffu0.get());
+        MinStageTestUtils.shouldNotBeMinimalStage(cffu0);
 
         final Cffu<Integer> cffu_in = testCffuFac.completedFuture(n);
 
         CffuFactory fac = CffuFactory.builder(dummyExecutor).forbidObtrudeMethods(true).build();
-        Cffu<Integer> cffu = fac.toCffu(cffu_in);
-        assertNotSame(cffu_in, cffu);
-        assertSame(dummyExecutor, cffu.defaultExecutor());
-        assertSame(fac, cffu.cffuFactory());
+        Cffu<Integer> cffu1 = fac.toCffu(cffu_in);
+        assertNotSame(cffu_in, cffu1);
+        assertSame(dummyExecutor, cffu1.defaultExecutor());
+        assertSame(fac, cffu1.cffuFactory());
         assertEquals("obtrude methods is forbidden by cffu", assertThrowsExactly(UnsupportedOperationException.class, () ->
-                cffu.obtrudeValue(anotherN)
+                cffu1.obtrudeValue(anotherN)
         ).getMessage());
-
         assertSame(cffu_in, testCffuFac.toCffu(cffu_in));
+
         final CompletionStage<Integer> minCffu = testCffuFac.completedStage(n);
-        assertNotSame(minCffu, testCffuFac.toCffu(minCffu));
+        final Cffu<Integer> cffu2 = testCffuFac.toCffu(minCffu);
+        assertNotSame(minCffu, cffu2);
+        MinStageTestUtils.shouldNotBeMinimalStage(cffu2);
     }
 
     @Test
@@ -832,6 +825,66 @@ class CffuFactoryTest {
         Cffu<Object> cf3 = testCffuFac.toCffu(CompletableFuture.failedStage(rte));
         assertFalse(cf3.isMinimalStage());
         MinStageTestUtils.shouldNotBeMinimalStage(cf3);
+    }
+
+    @Test
+    void test_toMCffu() throws Exception {
+        final List<Integer> singletonList = singletonList(n);
+        MCffu<Integer, List<Integer>> mCffu0 = testCffuFac.toMCffu(completedFuture(singletonList));
+        assertEquals(singletonList, mCffu0.get());
+        MinStageTestUtils.shouldNotBeMinimalStage(mCffu0);
+
+        final MCffu<Integer, List<Integer>> cffu_in = testCffuFac.completedMCffu(singletonList);
+
+        CffuFactory fac = CffuFactory.builder(dummyExecutor).forbidObtrudeMethods(true).build();
+        MCffu<Integer, List<Integer>> mCffu1 = fac.toMCffu(cffu_in);
+        assertNotSame(cffu_in, mCffu1);
+        assertSame(dummyExecutor, mCffu1.defaultExecutor());
+        assertSame(fac, mCffu1.cffuFactory());
+        assertEquals("obtrude methods is forbidden by cffu", assertThrowsExactly(UnsupportedOperationException.class, () ->
+                mCffu1.obtrudeValue(singletonList(anotherN))
+        ).getMessage());
+        assertSame(cffu_in, testCffuFac.toMCffu(cffu_in));
+
+        final CompletionStage<List<Integer>> minCffu = testCffuFac.completedStage(singletonList);
+
+        final MCffu<Integer, List<Integer>> mCffu2 = testCffuFac.toMCffu(minCffu);
+        assertNotSame(minCffu, mCffu2);
+        MinStageTestUtils.shouldNotBeMinimalStage(mCffu2);
+
+        MCffu<Integer, List<Integer>> minMCffu = Cffu.asMCffu((Cffu<List<Integer>>) minCffu);
+        final MCffu<Integer, List<Integer>> mCffu3 = testCffuFac.toMCffu(minMCffu);
+        assertNotSame(minMCffu, mCffu3);
+        MinStageTestUtils.shouldNotBeMinimalStage(mCffu3);
+    }
+
+    @Test
+    @EnabledForJreRange(min = JRE.JAVA_9)
+    void test_toMCffu__for_factoryMethods_of_Java9() {
+        CompletableFuture<List<Object>> cf1 = CompletableFuture.failedFuture(rte);
+        assertFalse(testCffuFac.toMCffu(cf1).isMinimalStage());
+        MinStageTestUtils.shouldNotBeMinimalStage(cf1);
+
+        final List<Integer> singletonList = singletonList(n);
+        MCffu<Integer, List<Integer>> cf2 = testCffuFac.toMCffu(CompletableFuture.completedStage(singletonList));
+        assertFalse(cf2.isMinimalStage());
+        MinStageTestUtils.shouldNotBeMinimalStage(cf2);
+
+        MCffu<Object, List<Object>> cf3 = testCffuFac.toMCffu(CompletableFuture.failedStage(rte));
+        assertFalse(cf3.isMinimalStage());
+        MinStageTestUtils.shouldNotBeMinimalStage(cf3);
+    }
+
+    // endregion
+    // region## Incomplete Cffu/MCffu Constructor
+
+    @Test
+    void test_newIncomplete() {
+        Cffu<Integer> cf = testCffuFac.newIncompleteCffu();
+        assertFalse(cf.isDone());
+
+        MCffu<Integer, List<Integer>> mCffu = testCffuFac.newIncompleteMCffu();
+        assertFalse(mCffu.isDone());
     }
 
     // endregion
