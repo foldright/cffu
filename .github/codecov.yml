@@ -1,0 +1,9 @@
+# https://docs.codecov.com/docs/codecov-yaml#section-expired-reports
+# https://docs.codecov.com/docs/commit-status#patch-status
+
+coverage:
+  status:
+    project:
+      default:
+        if_not_found: success
+        informational: true

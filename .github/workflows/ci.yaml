@@ -43,6 +43,12 @@ jobs:
         run: rm -rf $HOME/.m2/repository/io/foldright/cffu*
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
+      # https://github.com/marketplace/actions/coveralls-github-action
+      # https://docs.coveralls.io/
+      - name: Upload coverage reports to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          format: "jacoco"
 
       - name: Update TOC of markdown files contained TOC
         # https://github.com/thlorenz/doctoc
