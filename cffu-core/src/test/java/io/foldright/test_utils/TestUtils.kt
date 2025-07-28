@@ -4,7 +4,11 @@ package io.foldright.test_utils
 
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
+import io.foldright.cffu.CompletableFutureUtils
+import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.test.TestCase
+import io.kotest.matchers.future.shouldBeCompletedExceptionally
+import io.kotest.matchers.shouldBe
 import org.apache.commons.lang3.JavaVersion
 import org.apache.commons.lang3.SystemUtils
 import org.apache.commons.lang3.SystemUtils.isJavaVersionAtLeast
@@ -53,6 +57,25 @@ fun <T> supplyLater(value: T, millis: Long = MEDIAN_WAIT_MS) = Supplier<T> {
 fun <T> supplyLater(ex: Throwable, millis: Long = MEDIAN_WAIT_MS) = Supplier<T> {
     sleep(millis)
     throw ex
+}
+
+@JvmOverloads
+fun assertCfWithEx(
+    cf: CompletableFuture<*>, ex: Throwable, timeout: Long = MEDIAN_WAIT_MS, timeUnit: TimeUnit = TimeUnit.MILLISECONDS
+) {
+    shouldThrowExactly<ExecutionException> { cf.get(timeout, timeUnit) }.cause shouldBe ex
+}
+
+fun assertCfWithExType(cf: CompletableFuture<*>, exType: Class<out Throwable>) {
+    cf.shouldBeCompletedExceptionally()
+    CompletableFutureUtils.exceptionNow(cf)::class.java shouldBe exType
+}
+
+@JvmOverloads
+fun assertCfStillIncompleteIn(
+    cf: CompletableFuture<*>, timeout: Long = MEDIAN_WAIT_MS, timeUnit: TimeUnit = TimeUnit.MILLISECONDS
+) {
+    shouldThrowExactly<TimeoutException> { cf.get(timeout, timeUnit) }
 }
 
 // endregion
