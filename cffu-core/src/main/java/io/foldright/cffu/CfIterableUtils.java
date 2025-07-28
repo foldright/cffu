@@ -311,7 +311,7 @@ public final class CfIterableUtils {
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T> anySuccessOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
-        return CompletableFutureUtils.anyOf(toStageArray(cfs));
+        return CompletableFutureUtils.anySuccessOf(toStageArray(cfs));
     }
 
     /**
