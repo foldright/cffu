@@ -3424,7 +3424,7 @@ public final class CompletableFutureUtils {
         return (F) cfThis.handle((v, ex) -> {
             if (ex == null) return cfThis;
             Throwable unwrap = unwrapCfException(ex);
-            if (!exceptionType.isAssignableFrom(unwrap.getClass())) return cfThis;
+            if (!exceptionType.isInstance(unwrap)) return cfThis;
             return fallback.apply((X) unwrap);
         }).thenCompose(x -> x);
     }
@@ -3481,7 +3481,7 @@ public final class CompletableFutureUtils {
         return (F) cfThis.handle((v, ex) -> {
             if (ex == null) return cfThis;
             Throwable unwrap = unwrapCfException(ex);
-            if (!exceptionType.isAssignableFrom(unwrap.getClass())) return cfThis;
+            if (!exceptionType.isInstance(unwrap)) return cfThis;
             return cfThis.handleAsync((v1, ex1) -> fallback.apply((X) unwrap), executor).thenCompose(x -> x);
         }).thenCompose(x -> x);
     }
