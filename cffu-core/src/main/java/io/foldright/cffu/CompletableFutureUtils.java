@@ -4052,33 +4052,34 @@ public final class CompletableFutureUtils {
     /**
      * Unwraps CompletableFuture exception ({@link CompletionException} or {@link ExecutionException})
      * to its cause exception. If the input exception is not a {@code CompletableFuture}/{@code ExecutionException}
-     * or has no cause or is null, returns the input exception itself.
+     * or has no cause, contains a cyclic chain of CompletableFuture exceptions, or is null, returns the input exception.
      *
      * @param ex the exception to be unwrapped, may be null
-     * @throws IllegalArgumentException if there is a loop in the causal chain of input
-     *                                  {@link CompletionException} or {@link ExecutionException}
      * @see com.google.common.base.Throwables#getRootCause(Throwable) Guava method Throwables#getRootCause(),
      * the loop detection code using fast and slow pointers is adapted from it
      */
     @Contract(value = "null -> null; !null -> !null", pure = true)
     public static @Nullable Throwable unwrapCfException(@Nullable final Throwable ex) {
-        if (ex == null) return null;
-
         // keep a slow pointer that slowly walks the causal chain.
         // if the fast pointer ever catches the slower pointer, then there's a loop.
         Throwable fastPointer = ex, slowPointer = ex;
         boolean advanceSlowPointer = false;
 
-        Throwable cause;
-        while ((cause = fastPointer.getCause()) != null
-                && (fastPointer instanceof CompletionException || fastPointer instanceof ExecutionException)) {
+        while (true) {
+            if (!(fastPointer instanceof CompletionException) && !(fastPointer instanceof ExecutionException))
+                return fastPointer;
+
+            final Throwable cause = fastPointer.getCause();
+            // if there is no cause exceptions except for CF exceptions, return the input exception as the best option.
+            if (cause == null) return ex;
+
             fastPointer = cause;
-            if (fastPointer == slowPointer) throw new IllegalArgumentException("Loop in causal chain detected", ex);
+            // if a loop is detected in the causal chain, return the input exception as the best option.
+            if (fastPointer == slowPointer) return ex;
 
             if (advanceSlowPointer) slowPointer = slowPointer.getCause();
             advanceSlowPointer = !advanceSlowPointer; // only advance every other iteration
         }
-        return fastPointer;
     }
 
     private CompletableFutureUtils() {}
