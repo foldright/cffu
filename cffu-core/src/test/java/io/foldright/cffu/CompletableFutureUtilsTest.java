@@ -1944,7 +1944,6 @@ class CompletableFutureUtilsTest {
         assertSame(ex, unwrapCfException(ex));
     }
 
-    @SuppressWarnings("ThrowableNotThrown")
     @Test
     void test_unwrapCfException_loop() {
         {
