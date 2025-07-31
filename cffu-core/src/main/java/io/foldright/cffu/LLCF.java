@@ -170,8 +170,13 @@ public final class LLCF {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Peeks the result by executing the given action when the given stage completes, returns the given stage.
+     * Peeks the result by executing the given action when the given stage completes.
+     * This method is guaranteed to return the given stage without modifying it;
      * The uncaught exceptions thrown by the action are reported.
+     * <p>
+     * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
+     * the given action and other actions added to the input stage cannot be guaranteed. The action should be treated
+     * as "fire and forget" - do not make any assumptions about timing or execution sequence.
      *
      * @see CompletableFutureUtils#peek(CompletionStage, BiConsumer)
      * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
@@ -184,8 +189,13 @@ public final class LLCF {
     }
 
     /**
-     * Peeks the result by executing the given action using the supplied executor when the given stage completes,
-     * returns the given stage. The uncaught exceptions thrown by the action are reported.
+     * Peeks the result by executing the given action using the supplied executor when the given stage completes.
+     * This method is guaranteed to return the given stage without modifying it;
+     * The uncaught exceptions thrown by the action are reported.
+     * <p>
+     * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
+     * the given action and other actions added to the input stage cannot be guaranteed. The action should be treated
+     * as "fire and forget" - do not make any assumptions about timing or execution sequence.
      *
      * @see CompletableFutureUtils#peekAsync(CompletionStage, BiConsumer, Executor)
      * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>

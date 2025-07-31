@@ -2156,12 +2156,16 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * When this cffu is complete, the given action is invoked with the result(or {@code null} if none)
      * and the exception (or {@code null} if none) of this cffu as arguments.
      * <p>
-     * <strong>CAUTION:</strong> The return cffu of method {@link #whenComplete(BiConsumer)}
-     * will contain <strong>DIFFERENT</strong> result to this cffu when this cffu completed normally
-     * but the supplied action throws an exception. This behavior of method {@code whenComplete} is subtle,
-     * and common misused if you just want to <strong>peek</strong> this cffu without affecting the result(e.g.
-     * logging the cf result).<br>For this {@code peek} method, whether the supplied action throws an exception or not,
-     * the result of return cffu(aka. this cffu) is <strong>NOT</strong> affected.
+     * <strong>NOTE:</strong> When using {@link #whenComplete(BiConsumer)},
+     * if the input stage completes normally but the supplied action throws an exception, the returned stage will contain
+     * a <strong>DIFFERENT</strong> result than the input stage. This subtle behavior of {@code whenComplete} can lead to
+     * bugs when you only want to <strong>peek</strong> at the stage's result (e.g. for logging) without modifying it.<br>
+     * In contrast, this {@code peek} method guarantees that the returned stage (which is the input stage)
+     * will maintain its original result, regardless of whether the supplied action throws an exception or not.
+     * <p>
+     * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
+     * the given action and other actions added to the input stage cannot be guaranteed. The action should be treated
+     * as "fire and forget" - do not make any assumptions about timing or execution sequence.
      * <p>
      * Unlike method {@link #handle(BiFunction)} and like method {@link #whenComplete(BiConsumer)},
      * this method is not designed to translate completion outcomes.
@@ -2184,12 +2188,16 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * When this cffu is complete, the given action is invoked with the result(or {@code null} if none)
      * and the exception (or {@code null} if none) of this cffu as arguments.
      * <p>
-     * <strong>CAUTION:</strong> The return cffu of method {@link #whenCompleteAsync(BiConsumer)}
-     * will contain <strong>DIFFERENT</strong> result to this cffu when this cffu completed normally
-     * but the supplied action throws an exception. This behavior of method {@code whenComplete} is subtle,
-     * and common misused if you just want to <strong>peek</strong> this cffu without affecting the result(e.g.
-     * logging the cf result).<br>For this {@code peek} method, whether the supplied action throws an exception or not,
-     * the result of return cffu(aka. this cffu) is <strong>NOT</strong> affected.
+     * <strong>NOTE:</strong> When using {@link #whenCompleteAsync(BiConsumer)},
+     * if the input stage completes normally but the supplied action throws an exception, the returned stage will contain
+     * a <strong>DIFFERENT</strong> result than the input stage. This subtle behavior of {@code whenComplete} can lead to
+     * bugs when you only want to <strong>peek</strong> at the stage's result (e.g. for logging) without modifying it.<br>
+     * In contrast, this {@code peekAsync} method guarantees that the returned stage (which is the input stage)
+     * will maintain its original result, regardless of whether the supplied action throws an exception or not.
+     * <p>
+     * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
+     * the given action and other actions added to the input stage cannot be guaranteed. The action should be treated
+     * as "fire and forget" - do not make any assumptions about timing or execution sequence.
      * <p>
      * Unlike method {@link #handleAsync(BiFunction)} and like method {@link #whenCompleteAsync(BiConsumer)},
      * this method is not designed to translate completion outcomes.
@@ -2211,12 +2219,16 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * When this cffu is complete, the given action is invoked with the result(or {@code null} if none)
      * and the exception (or {@code null} if none) of this cffu as arguments.
      * <p>
-     * <strong>CAUTION:</strong> The return cffu of method {@link #whenCompleteAsync(BiConsumer, Executor)}
-     * will contain <strong>DIFFERENT</strong> result to this cffu when this cffu completed normally
-     * but the supplied action throws an exception. This behavior of method {@code whenComplete} is subtle,
-     * and common misused if you just want to <strong>peek</strong> this cffu without affecting the result(e.g.
-     * logging the cf result).<br>For this {@code peek} method, whether the supplied action throws an exception or not,
-     * the result of return cffu(aka. this cffu) is <strong>NOT</strong> affected.
+     * <strong>NOTE:</strong> When using {@link #whenCompleteAsync(BiConsumer, Executor)},
+     * if the input stage completes normally but the supplied action throws an exception, the returned stage will contain
+     * a <strong>DIFFERENT</strong> result than the input stage. This subtle behavior of {@code whenComplete} can lead to
+     * bugs when you only want to <strong>peek</strong> at the stage's result (e.g. for logging) without modifying it.<br>
+     * In contrast, this {@code peekAsync} method guarantees that the returned stage (which is the input stage)
+     * will maintain its original result, regardless of whether the supplied action throws an exception or not.
+     * <p>
+     * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
+     * the given action and other actions added to the input stage cannot be guaranteed. The action should be treated
+     * as "fire and forget" - do not make any assumptions about timing or execution sequence.
      * <p>
      * Unlike method {@link #handleAsync(BiFunction, Executor)} and like method {@link
      * #whenCompleteAsync(BiConsumer, Executor)}, this method is not designed to translate completion outcomes.
