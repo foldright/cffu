@@ -2,6 +2,7 @@ package io.foldright.cffu
 
 import io.foldright.cffu.CompletableFutureUtils.completedStage
 import io.foldright.cffu.CompletableFutureUtils.failedFuture
+import io.foldright.cffu.LLCF.relayAsync0
 import io.foldright.test_utils.*
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
@@ -224,6 +225,36 @@ class LLCFTest : FunSpec({
         cf.shouldCompleteExceptionallyWith(ex)
 
         LLCF.completeCf0(cf, n, ex).shouldBeFalse()
+    }
+
+    test("relayAsync0") {
+        val mainThread = currentThread();
+
+        val completed = completedFuture(21);
+        val relayed = relayAsync0(completed, { f ->
+            f.thenApply { v ->
+                mainThread.shouldNotBeSameInstanceAs(currentThread())
+                currentThread().belongsTo(testExecutor)
+
+                v * 2;
+            }
+        }, testExecutor);
+        relayed.join() shouldBe 21 * 2
+
+        val completeLater = CompletableFuture.supplyAsync({
+            sleep(200);
+            mainThread.shouldNotBeSameInstanceAs(currentThread())
+
+            currentThread();
+        })
+        val relayedOfCompleteLater = relayAsync0(completeLater, { f ->
+            f.thenAccept { v ->
+                currentThread().shouldBeSameInstanceAs(currentThread())
+                currentThread().shouldBeSameInstanceAs(v)
+            }
+        }, testExecutor)
+        relayedOfCompleteLater.isDone.shouldBeFalse()
+        relayedOfCompleteLater.join().shouldBeNull()
     }
 
     @Suppress("USELESS_CAST", "INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING")

@@ -19,6 +19,7 @@ import static io.foldright.cffu.internal.CommonUtils.containsInArray;
 import static io.foldright.cffu.internal.CommonUtils.mapArray;
 import static io.foldright.cffu.internal.ExceptionLogger.Level.ERROR;
 import static io.foldright.cffu.internal.ExceptionLogger.logUncaughtException;
+import static java.lang.Thread.currentThread;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
@@ -226,6 +227,55 @@ public final class LLCF {
     public static <T> boolean completeCf0(CompletableFuture<? super T> cf, @Nullable T value, @Nullable Throwable ex) {
         if (ex == null) return cf.complete(value);
         else return cf.completeExceptionally(ex);
+    }
+
+    /**
+     * Guarantees the execution of new stage's computations not in the caller thread.
+     * <p>
+     * In {@link CompletionStage} / {@link CompletableFuture}, Execution of a new stage's computations
+     * may be arranged in any of three ways:
+     * <ul>
+     * <li>default execution,
+     * <li>default asynchronous execution (using methods with suffix async
+     * that employ the stage's default asynchronous execution facility),
+     * <li>or custom asynchronous execution (via a supplied Executor).
+     * </ul>
+     * The information above is referenced from {@link java.util.concurrent.CompletionStage}.
+     * <p>
+     * This method introduces the fourth way "relay async" to arrange to computation of a new stage's computations:
+     * <ul>
+     * <li> if input cf is COMPLETED, asynchronous execution in an executor, won't block sequential code of caller。
+     * <li> otherwise, use default execution, save one unnecessary thread switch.
+     * </ul>
+     * <p>
+     * One more thread switch generally won't lead any performance problems,
+     * make wise use of "relay async" when necessary.
+     * <p>
+     * More info about "relay async" see <a href=
+     * "https://github.com/foldright/cffu/blob/oldratlee/main/cffu-core/src/test/java/io/foldright/study/relayasync/RelayAsyncDescriptionExample.java"
+     * >RelayAsyncDescriptionExample.java</a>
+     *
+     * @param cfThis            the input stage(including CompletableFuture)
+     * @param relayComputations the computations of input
+     * @param executor          the executor used to asynchronous execution
+     * @return the return value of function {@code relayComputations}
+     */
+    public static <T, F extends CompletionStage<?>> F relayAsync0(
+            CompletionStage<? extends T> cfThis,
+            Function<CompletableFuture<T>, F> relayComputations, Executor executor) {
+        final CompletableFuture<T> promise = new CompletableFuture<>();
+        final F ret = relayComputations.apply(promise);
+
+        final Thread callerThread = currentThread();
+        final boolean[] finishAttach = {false};
+
+        LLCF.peek0(cfThis, (v, ex) -> {
+            if (!currentThread().equals(callerThread) || finishAttach[0]) completeCf0(promise, v, ex);
+            else executor.execute(() -> completeCf0(promise, v, ex));
+        }, "relayAsync0");
+
+        finishAttach[0] = true;
+        return ret;
     }
 
     // endregion
