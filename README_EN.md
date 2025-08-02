@@ -604,18 +604,18 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu/
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu</artifactId>
-      <version>1.1.8</version>
+      <version>1.1.9</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     Gradle Kotlin DSL
     ```groovy
-    implementation("io.foldright:cffu:1.1.8")
+    implementation("io.foldright:cffu:1.1.9")
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation 'io.foldright:cffu:1.1.8'
+    implementation 'io.foldright:cffu:1.1.9'
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local) implementation for [`cffu executor wrapper SPI`](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -624,7 +624,7 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu/
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu-ttl-executor-wrapper</artifactId>
-      <version>1.1.8</version>
+      <version>1.1.9</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -632,11 +632,11 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu/
 
     Gradle Kotlin DSL
     ```groovy
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.1.8")
+    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.1.9")
     ```
     Gradle Groovy DSL
     ```groovy
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.1.8'
+    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.1.9'
     ```
 
 # 📚 See also
