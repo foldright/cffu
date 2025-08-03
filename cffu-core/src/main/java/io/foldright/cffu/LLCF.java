@@ -230,35 +230,41 @@ public final class LLCF {
     }
 
     /**
-     * Guarantees the execution of new stage's computations not in the caller thread.
+     * Provides the "relay async" way to arrange execution of a new stage's computations that guarantees the execution
+     * of new stage's computations not in the caller thread and minimizes thread switching.
      * <p>
-     * In {@link CompletionStage} / {@link CompletableFuture}, Execution of a new stage's computations
-     * may be arranged in any of three ways:
+     * <blockquote>
+     * In {@link CompletionStage} (including subclass {@link CompletableFuture}),
+     * execution of a new stage's computations may be arranged in any of three ways:
      * <ul>
-     * <li>default execution,
-     * <li>default asynchronous execution (using methods with suffix async
+     * <li>"default execution",
+     * <li>default "asynchronous execution" (using methods with suffix async
      * that employ the stage's default asynchronous execution facility),
-     * <li>or custom asynchronous execution (via a supplied Executor).
+     * <li>or custom "asynchronous execution" (via a supplied Executor).
      * </ul>
-     * The information above is referenced from {@link java.util.concurrent.CompletionStage}.
+     * <cite>— the javadoc of {@link CompletionStage}</cite>
+     * </blockquote>
      * <p>
-     * This method introduces the fourth way "relay async" to arrange to computation of a new stage's computations:
+     * This {@code relayAsync0} method introduces the fourth way "relay async"
+     * to arrange execution of a new stage's computations:
      * <ul>
-     * <li> if input cf is COMPLETED, asynchronous execution in an executor, won't block sequential code of caller。
-     * <li> otherwise, use default execution, save one unnecessary thread switch.
+     * <li>If input cf is COMPLETED when computations execute, use "asynchronous execution" way (via supplied Executor);
+     * Guarantee that a new stage's computations won't block the sequential codes of caller.
+     * <li>Otherwise, use "default execution" way; Save one thread switching.
      * </ul>
      * <p>
-     * One more thread switch generally won't lead any performance problems,
-     * make wise use of "relay async" when necessary.
+     * <strong>CAUTION:</strong> Because one more thread switching generally won't lead to performance problems and using
+     * "asynchronous execution"(methods with suffix <em>async</em>) is simpler, make wise use of "relay async" way when necessary.
      * <p>
-     * More info about "relay async" see <a href=
-     * "https://github.com/foldright/cffu/blob/oldratlee/main/cffu-core/src/test/java/io/foldright/study/relayasync/RelayAsyncDescriptionExample.java"
-     * >RelayAsyncDescriptionExample.java</a>
+     * More info about the "relay async" way (including more description and example codes) see <a href=
+     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/study/relayasync/RelayAsyncDescriptionAndExample.java"
+     * >{@code RelayAsyncDescriptionAndExample.java}</a>
      *
      * @param cfThis            the input stage(including CompletableFuture)
-     * @param relayComputations the computations of input
-     * @param executor          the executor used to asynchronous execution
+     * @param relayComputations the computations to be arranged after input stage
+     * @param executor          the executor used for asynchronous execution
      * @return the return value of function {@code relayComputations}
+     * @see CompletionStage
      */
     public static <T, F extends CompletionStage<?>> F relayAsync0(
             CompletionStage<? extends T> cfThis,
@@ -267,14 +273,21 @@ public final class LLCF {
         final F ret = relayComputations.apply(promise);
 
         final Thread callerThread = currentThread();
-        final boolean[] finishAttach = {false};
+        final boolean[] returnedFromPeek0 = {false};
 
         LLCF.peek0(cfThis, (v, ex) -> {
-            if (!currentThread().equals(callerThread) || finishAttach[0]) completeCf0(promise, v, ex);
-            else executor.execute(() -> completeCf0(promise, v, ex));
+            if (currentThread().equals(callerThread) && !returnedFromPeek0[0]) {
+                // If the action is running in the caller thread(single same thread) and `peek0` invocation does not
+                // return to caller(flag returnedFromPeek0 is false), the action is being executed synchronously.
+                // To prevent blocking the caller's sequential code, use the supplied executor to complete the promise.
+                executor.execute(() -> completeCf0(promise, v, ex));
+            } else {
+                // Otherwise, complete the promise directly, avoiding one thread switching.
+                completeCf0(promise, v, ex);
+            }
         }, "relayAsync0");
 
-        finishAttach[0] = true;
+        returnedFromPeek0[0] = true;
         return ret;
     }
 
