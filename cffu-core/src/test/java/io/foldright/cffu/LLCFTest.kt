@@ -257,15 +257,6 @@ class LLCFTest : FunSpec({
         relayedOfCompleteLater.join().shouldBeNull()
     }
 
-    test("fromSyncCall0") {
-        val cf: CompletableFuture<Int> = LLCF.fromSyncCall0 { 42 }
-        cf.shouldBeCompleted()
-        cf.get().shouldBe(42)
-
-        val rte = RuntimeException("foo")
-        LLCF.fromSyncCall0<Int> { throw rte }.shouldCompleteExceptionallyWith(rte)
-    }
-
     @Suppress("USELESS_CAST", "INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING")
     test("nonExSwallowedFunction") {
         LLCF.nonExSwallowedFunction(

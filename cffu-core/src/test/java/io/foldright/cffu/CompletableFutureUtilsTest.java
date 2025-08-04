@@ -980,6 +980,18 @@ class CompletableFutureUtilsTest {
         assertTrue(failedStage(rte).toCompletableFuture().isDone());
     }
 
+    @Test
+    void test_fromSyncCall() throws Exception {
+        final CompletableFuture<Integer> cf = fromSyncCall(() -> 42);
+        assertTrue(cf.isDone());
+        assertEquals(42, cf.get());
+
+        final RuntimeException rte = new RuntimeException("foo");
+        final ExecutionException ee = assertThrowsExactly(ExecutionException.class,
+                () -> fromSyncCall(() -> {throw rte;}).get());
+        assertSame(rte, ee.getCause());
+    }
+
     // endregion
     // region## Delay Execution(backport methods)
 

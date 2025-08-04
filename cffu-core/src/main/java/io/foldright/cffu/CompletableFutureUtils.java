@@ -1566,6 +1566,24 @@ public final class CompletableFutureUtils {
         return IS_JAVA9_PLUS ? CompletableFuture.failedStage(ex) : failedFuture(ex);
     }
 
+    /**
+     * Wraps the synchronous logic to a {@link CompletableFuture}. Wraps synchronous logic into
+     * a CompletableFuture flow, allowing exceptions to be handled uniformly within the CompletableFuture pipeline
+     * instead of managing separate exceptional paths inside and outside the flow.
+     *
+     * @throws NullPointerException if argument {@code callable} is {@code null}
+     * @see CompletableFuture#runAsync(Runnable)
+     * @see CompletableFuture#supplyAsync(Supplier)
+     */
+    public static <T> CompletableFuture<T> fromSyncCall(Callable<T> callable) {
+        requireNonNull(callable, "callable is null");
+        try {
+            return completedFuture(callable.call());
+        } catch (Throwable ex) {
+            return failedFuture(ex);
+        }
+    }
+
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
     // region## Incomplete CompletableFuture Constructor

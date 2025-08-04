@@ -288,22 +288,6 @@ public final class LLCF {
         return ret;
     }
 
-    /**
-     * Wraps the synchronous logic to a {@link CompletableFuture}. Wraps synchronous logic into
-     * a CompletableFuture flow, allowing exceptions to be handled uniformly within the CompletableFuture pipeline
-     * instead of managing separate exceptional paths inside and outside the flow.
-     *
-     * @see CompletableFuture#runAsync(Runnable)
-     * @see CompletableFuture#supplyAsync(Supplier)
-     */
-    public static <T> CompletableFuture<T> fromSyncCall0(Callable<T> action) {
-        try {
-            return CompletableFuture.completedFuture(action.call());
-        } catch (Throwable ex) {
-            return CompletableFutureUtils.failedFuture(ex);
-        }
-    }
-
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
     // region# Non-exception-swallowed safety methods
