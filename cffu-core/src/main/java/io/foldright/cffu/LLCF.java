@@ -5,10 +5,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -289,6 +286,22 @@ public final class LLCF {
 
         returnedFromPeek0[0] = true;
         return ret;
+    }
+
+    /**
+     * Wraps the synchronous logic to a {@link CompletableFuture}. Wraps synchronous logic into
+     * a CompletableFuture flow, allowing exceptions to be handled uniformly within the CompletableFuture pipeline
+     * instead of managing separate exceptional paths inside and outside the flow.
+     *
+     * @see CompletableFuture#runAsync(Runnable)
+     * @see CompletableFuture#supplyAsync(Supplier)
+     */
+    public static <T> CompletableFuture<T> fromSyncCall0(Callable<T> action) {
+        try {
+            return CompletableFuture.completedFuture(action.call());
+        } catch (Throwable ex) {
+            return CompletableFutureUtils.failedFuture(ex);
+        }
     }
 
     // endregion
