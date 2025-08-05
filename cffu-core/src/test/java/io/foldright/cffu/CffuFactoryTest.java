@@ -756,6 +756,18 @@ class CffuFactoryTest {
         MinStageTestUtils.shouldBeMinimalStage((Cffu<Integer>) se);
     }
 
+    @Test
+    void test_fromSyncCall() throws Exception {
+        final Cffu<Integer> cf = testCffuFac.fromSyncCall(() -> 42);
+        assertTrue(cf.isDone());
+        assertEquals(42, cf.get());
+
+        final RuntimeException rte = new RuntimeException("foo");
+        final ExecutionException ee = assertThrowsExactly(ExecutionException.class,
+                () -> testCffuFac.fromSyncCall(() -> {throw rte;}).get());
+        assertSame(rte, ee.getCause());
+    }
+
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
     // region## CompletionStage Argument Factory Methods

@@ -12,10 +12,7 @@ import org.jetbrains.annotations.Contract;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Supplier;
 
 import static io.foldright.cffu.CffuFactoryBuilder.cffuScreened;
@@ -1217,6 +1214,19 @@ public final class CffuFactory {
     @Contract(pure = true)
     public <T> CompletionStage<T> failedStage(Throwable ex) {
         return createMin((CompletableFuture<T>) CompletableFutureUtils.<T>failedStage(ex));
+    }
+
+    /**
+     * Returns a new Cffu that encapsulates the execution of synchronous logic.
+     * By wrapping synchronous code in a Cffu, exceptions can be handled consistently within the Cffu pipeline,
+     * eliminating the need to manage separate exceptional paths both inside and outside the flow.
+     *
+     * @throws NullPointerException if argument {@code callable} is {@code null}
+     * @see CompletableFuture#runAsync(Runnable)
+     * @see CompletableFuture#supplyAsync(Supplier)
+     */
+    public <T> Cffu<T> fromSyncCall(Callable<T> callable) {
+        return create(CompletableFutureUtils.fromSyncCall(callable));
     }
 
     // endregion
