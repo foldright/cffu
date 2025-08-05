@@ -1567,9 +1567,9 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Wraps the synchronous logic to a {@link CompletableFuture}. Wraps synchronous logic into
-     * a CompletableFuture flow, allowing exceptions to be handled uniformly within the CompletableFuture pipeline
-     * instead of managing separate exceptional paths inside and outside the flow.
+     * Returns a new CompletableFuture that encapsulates the execution of synchronous logic. By wrapping synchronous
+     * code in a CompletableFuture, exceptions can be handled consistently within the CompletableFuture pipeline,
+     * eliminating the need to manage separate exceptional paths both inside and outside the flow.
      *
      * @throws NullPointerException if argument {@code callable} is {@code null}
      * @see CompletableFuture#runAsync(Runnable)
