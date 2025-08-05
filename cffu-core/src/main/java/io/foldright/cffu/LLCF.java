@@ -5,7 +5,10 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -263,9 +266,9 @@ public final class LLCF {
      * @return the return value of function {@code relayComputations}
      * @see CompletionStage
      */
-    public static <T, F extends CompletionStage<?>> F relayAsync0(
+    public static <T, F extends CompletionStage<?>>F relayAsync0(
             CompletionStage<? extends T> cfThis,
-            Function<CompletableFuture<T>, F> relayComputations, Executor executor) {
+            Function<? super CompletableFuture<? extends T>, F> relayComputations, Executor executor) {
         final CompletableFuture<T> promise = new CompletableFuture<>();
         final F ret = relayComputations.apply(promise);
 

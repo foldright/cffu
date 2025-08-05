@@ -67,7 +67,7 @@ public class RelayAsyncDescriptionAndExample {
         //
         // Let's call this way as "relay async".
 
-        LLCF.relayAsync0(cf, f -> f.thenApply(s -> {
+        LLCF.relayAsync0(cf, f -> f.thenApply((String s) -> {
             // a simulating long-running computation...
             sleep(1000);
             // if input cf is COMPLETED, executes via supplied executor
