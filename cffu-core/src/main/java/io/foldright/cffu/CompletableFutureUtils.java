@@ -1575,6 +1575,7 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#runAsync(Runnable)
      * @see CompletableFuture#supplyAsync(Supplier)
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, run directly instead of wrapping")
     public static <T> CompletableFuture<T> fromSyncCall(Callable<T> callable) {
         requireNonNull(callable, "callable is null");
         try {
