@@ -5,7 +5,10 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -265,14 +268,14 @@ public final class LLCF {
      */
     public static <T, F extends CompletionStage<?>> F relayAsync0(
             CompletionStage<? extends T> cfThis,
-            Function<CompletableFuture<T>, F> relayComputations, Executor executor) {
+            Function<? super CompletableFuture<T>, F> relayComputations, Executor executor) {
         final CompletableFuture<T> promise = new CompletableFuture<>();
         final F ret = relayComputations.apply(promise);
 
         final Thread callerThread = currentThread();
         final boolean[] returnedFromPeek0 = {false};
 
-        LLCF.peek0(cfThis, (v, ex) -> {
+        peek0(cfThis, (v, ex) -> {
             if (currentThread().equals(callerThread) && !returnedFromPeek0[0]) {
                 // If the action is running in the caller thread(single same thread) and `peek0` invocation does not
                 // return to caller(flag returnedFromPeek0 is false), the action is being executed synchronously.

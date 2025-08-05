@@ -26,6 +26,7 @@ import static io.foldright.test_utils.TestUtils.sleep;
  * @see LLCF#relayAsync0
  * @see CompletionStage
  */
+@SuppressWarnings("unused")
 public class RelayAsyncDescriptionAndExample {
     static void executeComputationsOfNewStage(CompletableFuture<String> cf) {
 
