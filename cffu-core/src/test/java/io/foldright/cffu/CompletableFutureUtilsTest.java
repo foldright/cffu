@@ -7,6 +7,7 @@ import io.foldright.cffu.tuple.Tuple5;
 import io.foldright.test_utils.TestUtils;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -1509,6 +1510,46 @@ class CompletableFutureUtilsTest {
                 assertEquals(n, cf.get());
             }
         }
+    }
+
+    @Test
+    void test_timeout_data_race() throws Exception {
+        final List<CompletableFuture<Integer>> incompleteCfs = new ArrayList<>(10_000);
+
+        for (int i = 0; i < 5000; i++) {
+            final CompletableFuture<Integer> cf = incompleteCf();
+            orTimeout(cf, 0, MILLISECONDS);
+
+            if (i % 2 == 0) sleepYield();
+
+            cf.complete(n);
+            incompleteCfs.add(cf);
+        }
+        for (int i = 0; i < 5000; i++) {
+            final CompletableFuture<Integer> cf = incompleteCf();
+            completeOnTimeout(cf, n + n, 0, MILLISECONDS);
+
+            if (i % 2 == 0) sleepYield();
+
+            cf.complete(n);
+            incompleteCfs.add(cf);
+        }
+
+        sleep();
+        for (CompletableFuture<Integer> f : incompleteCfs) {
+            assertTrue(f.isDone());
+            if (f.isCompletedExceptionally()) {
+                assertInstanceOf(TimeoutException.class, CompletableFutureUtils.exceptionNow(f));
+            } else {
+                final Integer i = f.get();
+                assertTrue(i == n || i == n + n);
+            }
+        }
+    }
+
+    private static void sleepYield() throws InterruptedException {
+        Thread.yield();
+        Thread.sleep(0);
     }
 
     @Test
