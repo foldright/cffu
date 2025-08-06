@@ -148,9 +148,7 @@ final class TaskSubmitter implements Runnable {
 final class CfTimeout implements Runnable {
     private final CompletableFuture<?> cf;
 
-    CfTimeout(CompletableFuture<?> cf) {
-        this.cf = cf;
-    }
+    CfTimeout(CompletableFuture<?> cf) {this.cf = cf;}
 
     @Override
     public void run() {
@@ -193,9 +191,7 @@ final class CfCompleter<T> implements Runnable {
 final class FutureCanceller implements BiConsumer<Object, Throwable> {
     private final Future<?> f;
 
-    FutureCanceller(Future<?> f) {
-        this.f = requireNonNull(f);
-    }
+    FutureCanceller(Future<?> f) {this.f = f;}
 
     /**
      * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout(long, TimeUnit)}

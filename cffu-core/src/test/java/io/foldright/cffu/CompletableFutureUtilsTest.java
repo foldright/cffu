@@ -7,6 +7,7 @@ import io.foldright.cffu.tuple.Tuple5;
 import io.foldright.test_utils.TestUtils;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -1452,6 +1453,10 @@ class CompletableFutureUtilsTest {
         // orTimeout*
         ////////////////////////////////////////////////////////////////////
 
+        assertEquals(n, orTimeout(completedFuture(n), SHORT_WAIT_MS, MILLISECONDS).get());
+        assertEquals(n, cffuOrTimeout(completedFuture(n), SHORT_WAIT_MS, MILLISECONDS).get());
+        assertEquals(n, cffuOrTimeout(completedFuture(n), SHORT_WAIT_MS, MILLISECONDS, testExecutor).get());
+
         assertInstanceOf(TimeoutException.class, assertThrowsExactly(ExecutionException.class, () ->
                 orTimeout(incompleteCf(), SHORT_WAIT_MS, MILLISECONDS).get()
         ).getCause());
@@ -1461,10 +1466,6 @@ class CompletableFutureUtilsTest {
         assertInstanceOf(TimeoutException.class, assertThrowsExactly(ExecutionException.class, () ->
                 cffuOrTimeout(incompleteCf(), SHORT_WAIT_MS, MILLISECONDS, testExecutor).get()
         ).getCause());
-
-        assertEquals(n, orTimeout(completedFuture(n), SHORT_WAIT_MS, MILLISECONDS).get());
-        assertEquals(n, cffuOrTimeout(completedFuture(n), SHORT_WAIT_MS, MILLISECONDS).get());
-        assertEquals(n, cffuOrTimeout(completedFuture(n), SHORT_WAIT_MS, MILLISECONDS, testExecutor).get());
 
         {
             CompletableFuture<Integer> incomplete = incompleteCf();
@@ -1486,13 +1487,13 @@ class CompletableFutureUtilsTest {
         // completeOnTimeout*
         ////////////////////////////////////////////////////////////////////
 
-        assertEquals(n, completeOnTimeout(incompleteCf(), n, SHORT_WAIT_MS, MILLISECONDS).get());
-        assertEquals(n, cffuCompleteOnTimeout(incompleteCf(), n, SHORT_WAIT_MS, MILLISECONDS).get());
-        assertEquals(n, cffuCompleteOnTimeout(incompleteCf(), n, SHORT_WAIT_MS, MILLISECONDS, testExecutor).get());
-
         assertEquals(n, completeOnTimeout(completedFuture(n), anotherN, SHORT_WAIT_MS, MILLISECONDS).get());
         assertEquals(n, cffuCompleteOnTimeout(completedFuture(n), anotherN, SHORT_WAIT_MS, MILLISECONDS).get());
         assertEquals(n, cffuCompleteOnTimeout(completedFuture(n), anotherN, SHORT_WAIT_MS, MILLISECONDS, testExecutor).get());
+
+        assertEquals(n, completeOnTimeout(incompleteCf(), n, SHORT_WAIT_MS, MILLISECONDS).get());
+        assertEquals(n, cffuCompleteOnTimeout(incompleteCf(), n, SHORT_WAIT_MS, MILLISECONDS).get());
+        assertEquals(n, cffuCompleteOnTimeout(incompleteCf(), n, SHORT_WAIT_MS, MILLISECONDS, testExecutor).get());
 
         {
             CompletableFuture<Integer> incomplete = incompleteCf();
@@ -1509,6 +1510,56 @@ class CompletableFutureUtilsTest {
                 assertEquals(n, cf.get());
             }
         }
+    }
+
+    /**
+     * test coverage for all conditions/lines of `FutureCanceller.accept` and `CfTimeout.run` methods
+     */
+    @Test
+    void test_timeout_data_race() throws Exception {
+        final int round = 5000;
+
+        List<CompletableFuture<Integer>> cfs = new ArrayList<>(round);
+        for (int i = 0; i < round; i++) {
+            final CompletableFuture<Integer> cf = incompleteCf();
+            orTimeout(cf, 0, MILLISECONDS);
+
+            if (i % 2 == 0) sleepYield();
+
+            cf.complete(n);
+            cfs.add(cf);
+        }
+        sleep();
+        for (CompletableFuture<Integer> f : cfs) {
+            assertTrue(f.isDone());
+            if (f.isCompletedExceptionally()) {
+                assertInstanceOf(TimeoutException.class, CompletableFutureUtils.exceptionNow(f));
+            } else {
+                assertEquals(n, f.get());
+            }
+        }
+
+        cfs = new ArrayList<>(round);
+        for (int i = 0; i < round; i++) {
+            final CompletableFuture<Integer> cf = incompleteCf();
+            completeOnTimeout(cf, n + n, 0, MILLISECONDS);
+
+            if (i % 2 == 0) sleepYield();
+
+            cf.complete(n);
+            cfs.add(cf);
+        }
+        sleep();
+        for (CompletableFuture<Integer> f : cfs) {
+            assertTrue(f.isDone());
+            final Integer i = f.get();
+            assertTrue(i == n || i == n + n);
+        }
+    }
+
+    private static void sleepYield() throws InterruptedException {
+        Thread.yield();
+        Thread.sleep(0);
     }
 
     @Test
