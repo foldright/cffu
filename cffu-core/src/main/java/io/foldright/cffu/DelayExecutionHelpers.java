@@ -1,10 +1,10 @@
 package io.foldright.cffu;
 
-////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 //# delay execution helper classes
 //
 //  below code is copied from CompletableFuture with small adoption
-////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -114,9 +114,9 @@ final class DelayedExecutor implements Executor {
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
+/// /////////////////////////////////////////////////////////////////////////////
 // Little classified lambdas to better support monitoring
-////////////////////////////////////////////////////////////////////////////////
+/// /////////////////////////////////////////////////////////////////////////////
 
 /**
  * Action to submit task(Runnable) to executor.
@@ -154,7 +154,8 @@ final class CfTimeout implements Runnable {
 
     @Override
     public void run() {
-        if (!cf.isDone()) cf.completeExceptionally(new TimeoutException());
+        if (!cf.isDone())
+            cf.completeExceptionally(new TimeoutException());
     }
 }
 
@@ -194,7 +195,7 @@ final class FutureCanceller implements BiConsumer<Object, Throwable> {
     private final Future<?> f;
 
     FutureCanceller(Future<?> f) {
-        this.f = requireNonNull(f);
+        this.f = f;
     }
 
     /**
@@ -206,7 +207,8 @@ final class FutureCanceller implements BiConsumer<Object, Throwable> {
      */
     @Override
     public void accept(Object ignore, @Nullable Throwable ex) {
-        if (!f.isDone()) f.cancel(false);
+        if (!f.isDone())
+            f.cancel(false);
     }
 }
 
