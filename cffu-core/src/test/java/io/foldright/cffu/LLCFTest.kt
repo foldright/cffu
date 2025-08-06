@@ -265,6 +265,16 @@ class LLCFTest : FunSpec({
         ).shouldBeNull()
 
         run {
+            val new = RuntimeException("new")
+            val f: Function<RuntimeException?, Int> = LLCF.nonExSwallowedFunction(
+                Function<RuntimeException?, Int> { throw new },
+                false
+            )!!
+            shouldThrowExactly<RuntimeException> { f.apply(null) }.shouldBeSameInstanceAs(new)
+            new.suppressed.shouldBeEmpty()
+        }
+
+        run {
             val original = RuntimeException("original")
             val new = RuntimeException("new")
             val f: Function<RuntimeException, Int> = LLCF.nonExSwallowedFunction(
@@ -295,6 +305,16 @@ class LLCFTest : FunSpec({
             null as? BiFunction<Int, RuntimeException, Int>,
             false
         ).shouldBeNull()
+
+        run {
+            val new = RuntimeException("new")
+            val f: BiFunction<Int, RuntimeException?, Int> = LLCF.nonExSwallowedBiFunction(
+                BiFunction<Int, RuntimeException?, Int> { _, _ -> throw new },
+                false
+            )!!
+            shouldThrowExactly<RuntimeException> { f.apply(42, null) }.shouldBeSameInstanceAs(new)
+            new.suppressed.shouldBeEmpty()
+        }
 
         run {
             val original = RuntimeException("original")
@@ -328,6 +348,17 @@ class LLCFTest : FunSpec({
             null as? BiConsumer<Int, RuntimeException>,
             false
         ).shouldBeNull()
+
+        run {
+            val new = RuntimeException("new")
+
+            val f: BiConsumer<Int, RuntimeException?> = LLCF.nonExSwallowedBiConsumer(
+                BiConsumer<Int, RuntimeException?> { _, _ -> throw new },
+                false
+            )!!
+            shouldThrowExactly<RuntimeException> { f.accept(42, null) }.shouldBeSameInstanceAs(new)
+            new.suppressed.shouldBeEmpty()
+        }
 
         run {
             val original = RuntimeException("original")
