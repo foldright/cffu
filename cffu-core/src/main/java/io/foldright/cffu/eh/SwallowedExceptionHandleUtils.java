@@ -147,7 +147,7 @@ public final class SwallowedExceptionHandleUtils {
 
     /**
      * Creates new CompletionStages that only capture exception results from the input CompletionStages,
-     * avoiding references to the original stages to allow them to be garbage collected ASAP.
+     * avoiding references to the original stages and their results to allow them to be garbage collected ASAP.
      */
     private static CompletionStage<Void>[] unreferenced(CompletionStage<?>[] stages) {
         return CommonUtils.mapArray(stages, CompletionStage[]::new, s -> {

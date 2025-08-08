@@ -35,7 +35,6 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  *    <ul>
  *    <li>return type CompletableFuture that may be a minimal-stage
  *    <li>force cast to {@code CompletableFuture<T>} from any {@code CompletableFuture<?>}
- *    <li>return generic type T but constrained runtime type TupleX
  *    </ul>
  * <li>methods with {@code 0} suffix means no parameter validation, e.g.
  *    <ul><li>no null check</li></ul>
@@ -232,7 +231,6 @@ public final class LLCF {
     /**
      * Provides the "relay async" way to arrange execution of a new stage's computations that guarantees the execution
      * of new stage's computations not in the caller thread and minimizes thread switching.
-     * <p>
      * <blockquote>
      * In {@link CompletionStage} (including subclass {@link CompletableFuture}),
      * execution of a new stage's computations may be arranged in any of three ways:
@@ -264,7 +262,6 @@ public final class LLCF {
      * @param relayComputations the computations to be arranged after input stage
      * @param executor          the executor used for asynchronous execution
      * @return the return value of function {@code relayComputations}
-     * @see CompletionStage
      */
     public static <T, F extends CompletionStage<?>> F relayAsync0(
             CompletionStage<? extends T> cfThis,
@@ -277,7 +274,7 @@ public final class LLCF {
 
         peek0(cfThis, (v, ex) -> {
             if (currentThread().equals(callerThread) && !returnedFromPeek0[0]) {
-                // If the action is running in the caller thread(single same thread) and `peek0` invocation does not
+                // If the action is running in the caller thread(same single thread) and `peek0` invocation does not
                 // return to caller(flag returnedFromPeek0 is false), the action is being executed synchronously.
                 // To prevent blocking the caller's sequential code, use the supplied executor to complete the promise.
                 executor.execute(() -> completeCf0(promise, v, ex));
