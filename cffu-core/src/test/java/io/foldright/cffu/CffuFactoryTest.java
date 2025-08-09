@@ -833,6 +833,46 @@ class CffuFactoryTest {
         MinStageTestUtils.shouldNotBeMinimalStage(cf3);
     }
 
+    @Test
+    void test_toMCffu() throws Exception {
+        final List<Integer> singletonList = singletonList(n);
+        MCffu<Integer, List<Integer>> cf = testCffuFac.toMCffu(completedFuture(singletonList));
+        assertEquals(singletonList, cf.get());
+        MinStageTestUtils.shouldNotBeMinimalStage(cf);
+
+        final MCffu<Integer, List<Integer>> cffu_in = testCffuFac.completedMCffu(singletonList);
+
+        CffuFactory fac = CffuFactory.builder(dummyExecutor).forbidObtrudeMethods(true).build();
+        MCffu<Integer, List<Integer>> cffu = fac.toMCffu(cffu_in);
+        assertNotSame(cffu_in, cffu);
+        assertSame(dummyExecutor, cffu.defaultExecutor());
+        assertSame(fac, cffu.cffuFactory());
+        assertEquals("obtrude methods is forbidden by cffu", assertThrowsExactly(UnsupportedOperationException.class, () ->
+                cffu.obtrudeValue(singletonList(anotherN))
+        ).getMessage());
+
+        assertSame(cffu_in, testCffuFac.toMCffu(cffu_in));
+        final CompletionStage<List<Integer>> minCffu = testCffuFac.completedStage(singletonList);
+        assertNotSame(minCffu, testCffuFac.toMCffu(minCffu));
+    }
+
+    @Test
+    @EnabledForJreRange(min = JRE.JAVA_9)
+    void test_toMCffu__for_factoryMethods_of_Java9() {
+        CompletableFuture<List<Object>> cf1 = CompletableFuture.failedFuture(rte);
+        assertFalse(testCffuFac.toMCffu(cf1).isMinimalStage());
+        MinStageTestUtils.shouldNotBeMinimalStage(cf1);
+
+        final List<Integer> singletonList = singletonList(n);
+        MCffu<Integer, List<Integer>> cf2 = testCffuFac.toMCffu(CompletableFuture.completedStage(singletonList));
+        assertFalse(cf2.isMinimalStage());
+        MinStageTestUtils.shouldNotBeMinimalStage(cf2);
+
+        MCffu<Object, List<Object>> cf3 = testCffuFac.toMCffu(CompletableFuture.failedStage(rte));
+        assertFalse(cf3.isMinimalStage());
+        MinStageTestUtils.shouldNotBeMinimalStage(cf3);
+    }
+
     // endregion
     // endregion
     // region# Delay Execution
