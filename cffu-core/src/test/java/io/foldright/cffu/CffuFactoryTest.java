@@ -925,10 +925,12 @@ class CffuFactoryTest {
         assertThat(testCffuFac.iterableOps().mSupplyFailFastAsync(asList(() -> 1, () -> 2), testExecutor).get()).containsExactly(1, 2);
 
         assertThat(testCffuFac.iterableOps().mSupplyAllSuccessAsync(-1, emptyList()).get()).isEmpty();
-        assertThat(testCffuFac.iterableOps().mSupplyAllSuccessAsync(-1, asList(() -> {throw new RuntimeException();}, () -> 2))
-                .get()).containsExactly(-1, 2);
-        assertThat(testCffuFac.iterableOps().mSupplyAllSuccessAsync(-1, asList(() -> {throw new RuntimeException();}, () -> 2), testExecutor)
-                .get()).containsExactly(-1, 2);
+        assertThat(testCffuFac.iterableOps().mSupplyAllSuccessAsync(-1, asList(() -> {
+            throw new RuntimeException();
+        }, () -> 2)).get()).containsExactly(-1, 2);
+        assertThat(testCffuFac.iterableOps().mSupplyAllSuccessAsync(-1, asList(() -> {
+            throw new RuntimeException();
+        }, () -> 2), testExecutor).get()).containsExactly(-1, 2);
 
         assertThat(testCffuFac.iterableOps().mSupplyMostSuccessAsync(-1, 1, SECONDS, emptyList()).get()).isEmpty();
         assertThat(testCffuFac.iterableOps().mSupplyMostSuccessAsync(-1, 1, SECONDS,
@@ -1116,6 +1118,82 @@ class CffuFactoryTest {
             return "";
         });
         assertTrue(asList("result1", "result2", "result3").contains(testCffuFac.iterableOps().anyOf(asList(future1, future2, future3)).join()));
+    }
+
+    @Test
+    void test_parApply() throws Exception {
+        assertThat(testCffuFac.parOps().parApplyFailFastAsync(emptyList(), (Integer x) -> x + 1).get()).isEmpty();
+        assertThat(testCffuFac.parOps().parApplyFailFastAsync(asList(1, 2), x -> x + 1).get()).containsExactly(2, 3);
+        assertThat(testCffuFac.parOps().parApplyFailFastAsync(asList(1, 2), x -> x + 1, testExecutor).get()).containsExactly(2, 3);
+
+        assertThat(testCffuFac.parOps().parApplyAllSuccessAsync(emptyList(), -1, (Integer x) -> x + 1).get()).isEmpty();
+        assertThat(testCffuFac.parOps().parApplyAllSuccessAsync(asList(1, 2), -1, x -> {
+            if (x == 1) throw new RuntimeException();
+            return x + 1;
+        }).get()).containsExactly(-1, 3);
+        assertThat(testCffuFac.parOps().parApplyAllSuccessAsync(asList(1, 2), -1, x -> {
+            if (x == 1) throw new RuntimeException();
+            return x + 1;
+        }, testExecutor).get()).containsExactly(-1, 3);
+
+        assertThat(testCffuFac.parOps().parApplyMostSuccessAsync(emptyList(), -1, 1, SECONDS, (Integer x) -> x + 1).get()).isEmpty();
+        assertThat(testCffuFac.parOps().parApplyMostSuccessAsync(asList(1, 2), -1, 1, SECONDS, x -> {
+            if (x == 1) throw new RuntimeException();
+            return x + 1;
+        }).get()).containsExactly(-1, 3);
+        assertThat(testCffuFac.parOps().parApplyMostSuccessAsync(asList(1, 2), -1, 1, SECONDS, x -> {
+            if (x == 1) throw new RuntimeException();
+            return x + 1;
+        }, testExecutor).get()).containsExactly(-1, 3);
+
+        assertThat(testCffuFac.parOps().parApplyAsync(emptyList(), (Integer x) -> x + 1).get()).isEmpty();
+        assertThat(testCffuFac.parOps().parApplyAsync(asList(1, 2), x -> x + 1).get()).containsExactly(2, 3);
+        assertThat(testCffuFac.parOps().parApplyAsync(asList(1, 2), x -> x + 1, testExecutor).get()).containsExactly(2, 3);
+
+        assertCfWithExType(testCffuFac.parOps().parApplyAnySuccessAsync(emptyList(), (Integer x) -> x + 1), NoCfsProvidedException.class);
+        assertEquals(3, testCffuFac.parOps().parApplyAnySuccessAsync(asList(1, 2), x -> {
+            if (x == 1) throw new RuntimeException();
+            return x + 1;
+        }).get());
+        assertEquals(3, testCffuFac.parOps().parApplyAnySuccessAsync(asList(1, 2), x -> {
+            if (x == 1) throw new RuntimeException();
+            return x + 1;
+        }, testExecutor).get());
+
+        assertTrue(ForkJoinPool.commonPool().awaitQuiescence(2, MINUTES));
+
+        assertCfStillIncompleteIn(testCffuFac.parOps().parApplyAnyAsync(emptyList(), (Integer x) -> x + 1));
+        assertEquals(3, testCffuFac.parOps().parApplyAnyAsync(asList(1, 2), x -> {
+            if (x == 1) sleep(MEDIAN_WAIT_MS);
+            return x + 1;
+        }).get());
+        assertEquals(3, testCffuFac.parOps().parApplyAnyAsync(asList(1, 2), x -> {
+            if (x == 1) sleep(MEDIAN_WAIT_MS);
+            return x + 1;
+        }, testExecutor).get());
+    }
+
+    @Test
+    void test_parAccept() throws Exception {
+        assertNull(testCffuFac.parOps().parAcceptFailFastAsync(emptyList(), (Integer x) -> {}).get());
+        assertNull(testCffuFac.parOps().parAcceptFailFastAsync(asList(1, 2), x -> {}).get());
+        assertNull(testCffuFac.parOps().parAcceptFailFastAsync(asList(1, 2), x -> {}, testExecutor).get());
+
+        assertNull(testCffuFac.parOps().parAcceptAsync(emptyList(), (Integer x) -> {}).get());
+        assertNull(testCffuFac.parOps().parAcceptAsync(asList(1, 2), x -> {}).get());
+        assertNull(testCffuFac.parOps().parAcceptAsync(asList(1, 2), x -> {}, testExecutor).get());
+
+        assertCfWithExType(testCffuFac.parOps().parAcceptAnySuccessAsync(emptyList(), (Integer x) -> {}), NoCfsProvidedException.class);
+        assertNull(testCffuFac.parOps().parAcceptAnySuccessAsync(asList(1, 2), x -> {
+            if (x == 1) throw new RuntimeException();
+        }).get());
+        assertNull(testCffuFac.parOps().parAcceptAnySuccessAsync(asList(1, 2), x -> {
+            if (x == 1) throw new RuntimeException();
+        }, testExecutor).get());
+
+        assertCfStillIncompleteIn(testCffuFac.parOps().parAcceptAnyAsync(emptyList(), (Integer x) -> {}));
+        assertNull(testCffuFac.parOps().parAcceptAnyAsync(asList(1, 2), x -> {}).get());
+        assertNull(testCffuFac.parOps().parAcceptAnyAsync(asList(1, 2), x -> {}, testExecutor).get());
     }
 
     // endregion
