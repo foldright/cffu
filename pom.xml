@@ -54,11 +54,9 @@
 	<modules>
 		<!-- cffu modules -->
 		<module>cffu-core</module>
-		<module>cffu-kotlin</module>
 		<module>cffu-bom</module>
 		<!-- cffu SPI extension implementation modules -->
 		<module>cffu-ttl-executor-wrapper</module>
-		<module>cffu-listenable-future</module>
 	</modules>
 
 	<properties>

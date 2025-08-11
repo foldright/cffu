@@ -27,7 +27,6 @@
 
 	<modules>
 		<module>cffu-demo</module>
-		<module>cffu-kotlin-demo</module>
 	</modules>
 
 	<dependencies>
@@ -60,11 +59,6 @@
 				<version>${project.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>io.foldright</groupId>
-				<artifactId>cffu-kotlin</artifactId>
-				<version>${project.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

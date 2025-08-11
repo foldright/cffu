@@ -40,7 +40,6 @@ Feel free to:
   - [1. Three ways to use `cffu`](#1-three-ways-to-use-cffu)
     - [1) `Cffu` class](#1-cffu-class)
     - [2) `CompletableFutureUtils` utility class](#2-completablefutureutils-utility-class)
-    - [3) `Kotlin` extension class](#3-kotlin-extension-class)
   - [2. `cffu` Functionality Introduction](#2-cffu-functionality-introduction)
     - [2.1 Return results from multiple Running `CF`](#21-return-results-from-multiple-running-cf)
     - [2.1.1 Returning Results from Multiple Different Types of `CF`](#211-returning-results-from-multiple-different-types-of-cf)
@@ -103,8 +102,6 @@ The provided features include：
 - Factory methods like `failedFuture`, `completedStage`, `failedStage`.
 - Handling operations with `completeAsync`, `exceptionallyAsync`, `exceptionallyCompose`, `copy`.
 
-🍩 Support Kotlin as first-class citizen.
-
 For more details on the usage modes and functionalities of cffu, refer to the [User Guide](#-user-guide).
 
 ## About `CompletableFuture`
@@ -158,9 +155,6 @@ A deeper understanding is essential before applying it to real-world scenarios. 
     - Optimizing `CompletableFuture` usage with utility methods is common in business projects, and `CompletableFutureUtils` offers a set of practical, reliable, efficient, and safe utility methods.
   - Some features of `cffu` are not available in this approach (and no implementation solution is planned) 😔, such as setting a default business thread pool and preventing forced write.
   - Depends on the `io.foldright:cffu` library.
-- 🍩 3) **Using `Kotlin` Extension Methods**
-  - Recommended for projects using `Kotlin`.
-  - Requires the `io.foldright:cffu-kotlin` library.
 
 Before diving into the feature points, check out the examples of the different ways to use `cffu`. 🎪
 
@@ -247,48 +241,6 @@ public class CompletableFutureUtilsDemo {
 ```
 
 > \# See complete runnable demo code in[`CompletableFutureUtilsDemo.java`](demos/cffu-demo/src/main/java/io/foldright/demo/cffu/CompletableFutureUtilsDemo.java)。
-
-### 3) `Kotlin` extension class
-
-```kt
-private val myBizThreadPool: ExecutorService = Executors.newCachedThreadPool()
-
-// create a CffuFactory with configuration of the customized thread pool
-private val cffuFactory: CffuFactory = CffuFactory.builder(myBizThreadPool).build()
-
-fun main() {
-  val cf42 = cffuFactory
-    .supplyAsync { 21 }   // run in myBizThreadPool
-    .thenApply { it * 2 }
-
-  // below tasks all run in myBizThreadPool
-  val longTaskA = cf42.thenApplyAsync { n: Int ->
-    sleep(1001)
-    n / 2
-  }
-  val longTaskB = cf42.thenApplyAsync { n: Int ->
-    sleep(1002)
-    n / 2
-  }
-  val longTaskC = cf42.thenApplyAsync { n: Int ->
-    sleep(100)
-    n * 2
-  }
-  val longFailedTask = cf42.thenApplyAsync<Int> { _ ->
-    sleep(1000)
-    throw RuntimeException("Bang!")
-  }
-
-  val combined = longTaskA.thenCombine(longTaskB, Integer::sum)
-    .orTimeout(1500, TimeUnit.MILLISECONDS)
-  println("combined result: ${combined.get()}")
-
-  val anySuccess: Cffu<Int> = listOf(longTaskC, longFailedTask).anySuccessOfCffu()
-  println("any success result: ${anySuccess.get()}")
-}
-```
-
-> \# See complete runnable demo code in[`CffuDemo.kt`](demos/cffu-kotlin-demo/src/main/java/io/foldright/demo/cffu/kotlin/CffuDemo.kt)。
 
 ## 2. `cffu` Functionality Introduction
 
@@ -573,11 +525,9 @@ For more information, refer to:
 
 - `API` Documentation
   - [`Java API` Documentation](https://foldright.io/api-docs/cffu/)
-  - [`Kotlin API` Documentation](https://foldright.io/api-docs/cffu-kotlin/)
 - Source Code
   - `cffu`: [`Cffu.java`](cffu-core/src/main/java/io/foldright/cffu/Cffu.java), [`CffuFactory.java`](cffu-core/src/main/java/io/foldright/cffu/CffuFactory.java)
   - `CompletableFuture utils`: [`CompletableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu/CompletableFutureUtils.java)
-  - `Kotlin extensions`: [`CffuExtensions.kt`](cffu-kotlin/src/main/java/io/foldright/cffu/kotlin/CffuExtensions.kt), [`CompletableFutureExtensions.kt`](cffu-kotlin/src/main/java/io/foldright/cffu/kotlin/CompletableFutureExtensions.kt)
 
 ## 3. How to Migrate from Direct Use of `CompletableFuture` to `Cffu`
 

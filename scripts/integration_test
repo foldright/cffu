@@ -97,59 +97,18 @@ for jdk_version in "${JDK_VERSIONS[@]}"; do
 
   jvu::switch_to_jdk "$jdk_version"
 
-  # skip kotlin module test for low java version(18-)
-  # need recompile and test later(more info see its comments)
-  pl=()
-  if ((jdk_version < default_build_jdk_version && jdk_version < 19)); then
-    pl=(-pl 'cffu-core,cffu-ttl-executor-wrapper')
-  fi
-
   mvn_opts_for_java_version_var_name="MVN_OPTS_FOR_JAVA${jdk_version}[@]"
 
   # just test without build
   cu::head_line_echo "test with Java $jdk_version: $JAVA_HOME"
   cmd_line=(
     mvu::mvn_cmd ${!mvn_opts_for_java_version_var_name:+"${!mvn_opts_for_java_version_var_name}"}
-    ${pl[@]:+"${pl[@]}"} "${SUREFIRE_TEST_GOAL[@]}"
+    "${SUREFIRE_TEST_GOAL[@]}"
   )
-
-  "${cmd_line[@]}"
 
   # test usage `ThreadPerTaskExecutor` as screen executor of `CompletableFuture`
   #   by setting `-D option java.util.concurrent.ForkJoinPool.common.parallelism=1`
   [ "$jdk_version" = 8 ] && "${cmd_line[@]}" -Djava.util.concurrent.ForkJoinPool.common.parallelism=1
-done
 
-# test the kotlin extension methods works
-#
-# CAUTION: MUST recompile the client sources(test codes) by Java 8
-#   Extensions are resolved statically.
-#   If a class has a member function, and an extension function is defined
-#     which has the same receiver type, the same name, and is applicable to given arguments,
-#   the member always wins
-#   https://kotlinlang.org/docs/extensions.html#extensions-are-resolved-statically
-#
-# RECOMPILE cffu-kotlin and run test
-
-cd cffu-kotlin
-rm -rf target/*test*
-jvu::switch_to_jdk 8
-
-cu::head_line_echo "recompile and test cffu-kotlin with Java 8: $JAVA_HOME"
-mvu::mvn_cmd -Dmaven.main.skip -Denforcer.skip -P!gen-git-properties \
-  test-compile "${SUREFIRE_TEST_GOAL[@]}"
-
-for jdk_version in "${JDK_VERSIONS[@]}"; do
-  # skip jdk 8, already tested above
-  ((jdk_version == 8)) && continue
-
-  jvu::switch_to_jdk "$jdk_version"
-
-  mvn_opts_for_java_version_var_name="MVN_OPTS_FOR_JAVA${jdk_version}[@]"
-
-  # just test without build
-  cu::head_line_echo "test cffu-kotlin with Java $jdk_version: $JAVA_HOME"
-  mvu::mvn_cmd -Dmaven.main.skip -Denforcer.skip \
-    ${!mvn_opts_for_java_version_var_name:+"${!mvn_opts_for_java_version_var_name}"} \
-    "${SUREFIRE_TEST_GOAL[@]}"
+  "${cmd_line[@]}"
 done

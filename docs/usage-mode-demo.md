@@ -41,7 +41,7 @@ public class CffuDemo {
 }
 ```
 
-> \# 完整可运行的Demo代码参见[`CffuDemo.java`](demos/cffu-demo/src/main/java/io/foldright/demo/cffu/CffuDemo.java)。
+> \# 完整可运行的Demo代码参见[`CffuDemo.java`](../demos/cffu-demo/src/main/java/io/foldright/demo/cffu/CffuDemo.java)。
 
 ### 2) `CompletableFutureUtils`工具类
 
@@ -82,47 +82,4 @@ public class CompletableFutureUtilsDemo {
 }
 ```
 
-> \# 完整可运行的Demo代码参见[`CompletableFutureUtilsDemo.java`](demos/cffu-demo/src/main/java/io/foldright/demo/cffu/CompletableFutureUtilsDemo.java)。
-
-### 3) `Kotlin`扩展方法
-
-```kt
-private val myBizThreadPool: ExecutorService = Executors.newCachedThreadPool()
-
-// create a CffuFactory with configuration of the customized thread pool
-private val cffuFactory: CffuFactory = CffuFactory.builder(myBizThreadPool).build()
-
-fun main() {
-  val cf42 = cffuFactory
-    .supplyAsync { 21 }   // run in myBizThreadPool
-    .thenApply { it * 2 }
-
-  // below tasks all run in myBizThreadPool
-  val longTaskA = cf42.thenApplyAsync { n: Int ->
-    sleep(1001)
-    n / 2
-  }
-  val longTaskB = cf42.thenApplyAsync { n: Int ->
-    sleep(1002)
-    n / 2
-  }
-  val longTaskC = cf42.thenApplyAsync { n: Int ->
-    sleep(100)
-    n * 2
-  }
-  val longFailedTask = cf42.thenApplyAsync<Int> { _ ->
-    sleep(1000)
-    throw RuntimeException("Bang!")
-  }
-
-  val combined = longTaskA.thenCombine(longTaskB, Integer::sum)
-    .orTimeout(1500, TimeUnit.MILLISECONDS)
-  println("combined result: ${combined.get()}")
-
-  val anySuccess: Cffu<Int> = listOf(longTaskC, longFailedTask).anySuccessOfCffu()
-  println("any success result: ${anySuccess.get()}")
-}
-```
-
-> \# 完整可运行的Demo代码参见[`CffuDemo.kt`](demos/cffu-kotlin-demo/src/main/java/io/foldright/demo/cffu/kotlin/CffuDemo.kt)。
-
+> \# 完整可运行的Demo代码参见[`CompletableFutureUtilsDemo.java`](../demos/cffu-demo/src/main/java/io/foldright/demo/cffu/CompletableFutureUtilsDemo.java)。

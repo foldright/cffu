@@ -8,9 +8,3 @@ profile:
 projectJDK: "21"
 include:
   - name: CheckDependencyLicenses
-exclude:
-  # https://www.jetbrains.com/help/inspectopedia
-  - name: UnusedSymbol
-    # https://www.jetbrains.com/help/qodana/qodana-yaml.html#exclude-paths
-    paths:
-      - cffu-kotlin/src/main/java/io/foldright/cffu/kotlin/CompletableFutureExtensions.kt

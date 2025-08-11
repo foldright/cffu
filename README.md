@@ -201,8 +201,6 @@
   implementation 'io.foldright:cffu:1.1.11'
   ```
 
-> `cffu`也支持`Kotlin`扩展方法的使用方式，参见[`cffu-kotlin/README.md`](cffu-kotlin/README.md)；使用方式的对比示例参见[`docs/usage-mode-demo.md`](docs/usage-mode-demo.md)。
-
 ## 2. `cffu`功能介绍
 
 ### 2.1 支持返回多个输入`CF`的整体运行结果

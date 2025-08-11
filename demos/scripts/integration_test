@@ -26,5 +26,4 @@ for jdk_version in "${JDK_VERSIONS[@]}"; do
   cu::head_line_echo "test demos with Java $jdk_version: $JAVA_HOME"
 
   cffu-demo/scripts/run.sh
-  cffu-kotlin-demo/scripts/run.sh
 done
