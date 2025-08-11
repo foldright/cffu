@@ -1134,7 +1134,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a cf array whose elements do the result collection for <strong>AllResultsOf*</strong> methods.
+     * Returns a cf array whose elements collect the results for <strong>AllResultsOf*</strong> methods.
      * <p>
      * Implementation Note: Uses AtomicReferenceArray and CAS operations to prevent memory leaks in `AllResultOf*`
      * methods. Without this protection, if any inputs complete exceptionally while others are still running,
@@ -1167,11 +1167,11 @@ public final class CompletableFutureUtils {
      */
     private static final Object SENTINEL_UNNEEDED = new Object();
 
-    private static <T> void fill0(CompletionStage<? extends T>[] stages,
+    private static <T> void fill0(CompletionStage<? extends T>[] inputs,
                                   CompletableFuture<? extends T>[] successOrBeIncomplete,
                                   CompletableFuture<Void>[] failedOrBeIncomplete) {
-        for (int i = 0; i < stages.length; i++) {
-            final CompletableFuture<T> f = f_toCf0(stages[i]);
+        for (int i = 0; i < inputs.length; i++) {
+            final CompletableFuture<T> f = f_toCf0(inputs[i]);
             successOrBeIncomplete[i] = exceptionallyCompose(f, ex -> new CompletableFuture<>());
             failedOrBeIncomplete[i] = f.thenCompose(v -> new CompletableFuture<>());
         }
