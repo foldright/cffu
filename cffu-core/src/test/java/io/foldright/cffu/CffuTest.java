@@ -16,14 +16,16 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static io.foldright.test_utils.TestUtils.nap;
-import static io.foldright.test_utils.TestUtils.snoreZzz;
+import static io.foldright.test_utils.TestUtils.*;
 import static io.foldright.test_utils.TestingConstants.*;
 import static io.foldright.test_utils.TestingExecutorUtils.testCffuFac;
 import static io.foldright.test_utils.TestingExecutorUtils.testExecutor;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.concurrent.CompletableFuture.completedFuture;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.*;
 import static java.util.function.Function.identity;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -544,6 +546,106 @@ class CffuTest {
 
         assertTrue(cffu.toString().contains(cf.toString()));
         assertTrue(cffu.toString().startsWith("Cffu@"));
+    }
+
+    // endregion
+    // region# More Ops
+
+    @Test
+    void test_thenMApply_iterable() throws Exception {
+        final Cffu<Integer> cf = testCffuFac.completedFuture(n);
+
+        assertThat(cf.iterableOps().thenMApplyFailFastAsync(emptyList()).get()).isEmpty();
+        assertThat(cf.iterableOps().thenMApplyFailFastAsync(asList(v -> v + 1, v -> v + 2)).get()).containsExactly(n + 1, n + 2);
+        assertThat(cf.iterableOps().thenMApplyFailFastAsync(asList(v -> v + 1, v -> v + 2), testExecutor).get()).containsExactly(n + 1, n + 2);
+
+        assertThat(cf.iterableOps().thenMApplyAllSuccessAsync( -1, emptyList()).get()).isEmpty();
+        assertThat(cf.iterableOps().thenMApplyAllSuccessAsync( -1,
+                asList(v -> {throw new RuntimeException();}, v -> v + 2)).get())
+                .containsExactly(-1, n + 2);
+        assertThat(cf.iterableOps().thenMApplyAllSuccessAsync( -1,
+                asList(v -> {throw new RuntimeException();}, v -> v + 2), testExecutor).get())
+                .containsExactly(-1, n + 2);
+
+        assertThat(cf.iterableOps().thenMApplyMostSuccessAsync( -1, 1, SECONDS, emptyList()).get()).isEmpty();
+        assertThat(cf.iterableOps().thenMApplyMostSuccessAsync( -1, 1, SECONDS,
+                asList(v -> {throw new RuntimeException();}, v -> v + 2)).get())
+                .containsExactly(-1, n + 2);
+        assertThat(cf.iterableOps().thenMApplyMostSuccessAsync( -1, 1, SECONDS,
+                asList(v -> {throw new RuntimeException();}, v -> v + 2), testExecutor).get())
+                .containsExactly(-1, n + 2);
+
+        assertThat(cf.iterableOps().thenMApplyAsync( emptyList()).get()).isEmpty();
+        assertThat(cf.iterableOps().thenMApplyAsync( asList(v -> v + 1, v -> v + 2)).get()).containsExactly(n + 1, n + 2);
+        assertThat(cf.iterableOps().thenMApplyAsync( asList(v -> v + 1, v -> v + 2), testExecutor).get()).containsExactly(n + 1, n + 2);
+
+        assertCfWithExType(cf.iterableOps().thenMApplyAnySuccessAsync( emptyList()), NoCfsProvidedException.class);
+        assertEquals(2, cf.iterableOps().thenMApplyAnySuccessAsync( asList(v -> {
+            throw new RuntimeException();
+        }, v -> 2)).get());
+        assertEquals(2, cf.iterableOps().thenMApplyAnySuccessAsync( asList(v -> {
+            throw new RuntimeException();
+        }, v -> 2), testExecutor).get());
+
+        assertTrue(ForkJoinPool.commonPool().awaitQuiescence(2, MINUTES));
+
+        assertCfStillIncompleteIn(cf.iterableOps().thenMApplyAnyAsync( emptyList()));
+        assertEquals(2, cf.iterableOps().thenMApplyAnyAsync( asList(v -> {
+            sleep(MEDIAN_WAIT_MS);
+            return 1;
+        }, v -> 2)).get());
+        assertEquals(2, cf.iterableOps().thenMApplyAnyAsync( asList(v -> {
+            sleep(MEDIAN_WAIT_MS);
+            return 1;
+        }, v -> 2), testExecutor).get());
+    }
+
+    @Test
+    void test_thenMAccept_iterable() throws Exception {
+        final Cffu<Integer> cf = testCffuFac.completedFuture(n);
+        assertNull(cf.iterableOps().thenMAcceptFailFastAsync( emptyList()).get());
+        assertNull(cf.iterableOps().thenMAcceptFailFastAsync( asList(v -> {}, v -> {})).get());
+        assertNull(cf.iterableOps().thenMAcceptFailFastAsync( asList(v -> {}, v -> {}), testExecutor).get());
+
+        assertNull(cf.iterableOps().thenMAcceptAsync( emptyList()).get());
+        assertNull(cf.iterableOps().thenMAcceptAsync( asList(v -> {}, v -> {})).get());
+        assertNull(cf.iterableOps().thenMAcceptAsync( asList(v -> {}, v -> {}), testExecutor).get());
+
+        assertCfWithExType(cf.iterableOps().thenMAcceptAnySuccessAsync( emptyList()), NoCfsProvidedException.class);
+        assertNull(cf.iterableOps().thenMAcceptAnySuccessAsync( asList(v -> {
+            throw new RuntimeException();
+        }, v -> {})).get());
+        assertNull(cf.iterableOps().thenMAcceptAnySuccessAsync( asList(v -> {
+            throw new RuntimeException();
+        }, v -> {}), testExecutor).get());
+
+        assertCfStillIncompleteIn(cf.iterableOps().thenMAcceptAnyAsync( emptyList()));
+        assertNull(cf.iterableOps().thenMAcceptAnyAsync( asList(v -> {}, v -> {})).get());
+        assertNull(cf.iterableOps().thenMAcceptAnyAsync( asList(v -> {}, v -> {}), testExecutor).get());
+    }
+
+    @Test
+    void test_thenMRun_iterable() throws Exception {
+        final Cffu<Integer> cf = testCffuFac.completedFuture(n);
+        assertNull(cf.iterableOps().thenMRunFailFastAsync( emptyList()).get());
+        assertNull(cf.iterableOps().thenMRunFailFastAsync( asList(() -> {}, () -> {})).get());
+        assertNull(cf.iterableOps().thenMRunFailFastAsync( asList(() -> {}, () -> {}), testExecutor).get());
+
+        assertNull(cf.iterableOps().thenMRunAsync( emptyList()).get());
+        assertNull(cf.iterableOps().thenMRunAsync( asList(() -> {}, () -> {})).get());
+        assertNull(cf.iterableOps().thenMRunAsync( asList(() -> {}, () -> {}), testExecutor).get());
+
+        assertCfWithExType(cf.iterableOps().thenMRunAnySuccessAsync( emptyList()), NoCfsProvidedException.class);
+        assertNull(cf.iterableOps().thenMRunAnySuccessAsync( asList(() -> {
+            throw new RuntimeException();
+        }, () -> {})).get());
+        assertNull(cf.iterableOps().thenMRunAnySuccessAsync( asList(() -> {
+            throw new RuntimeException();
+        }, () -> {}), testExecutor).get());
+
+        assertCfStillIncompleteIn(cf.iterableOps().thenMRunAnyAsync( emptyList()));
+        assertNull(cf.iterableOps().thenMRunAnyAsync( asList(() -> {}, () -> {})).get());
+        assertNull(cf.iterableOps().thenMRunAnyAsync( asList(() -> {}, () -> {}), testExecutor).get());
     }
 
     // endregion

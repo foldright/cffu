@@ -1156,7 +1156,7 @@ public final class CffuFactory {
          */
         @Contract(pure = true)
         public <T> Cffu<T> anySuccessOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
-            return createCffu(CfIterableUtils.anyOf(cfs));
+            return createCffu(CfIterableUtils.anySuccessOf(cfs));
         }
 
         /**

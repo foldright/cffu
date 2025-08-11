@@ -2,6 +2,7 @@
 
 package io.foldright.test_utils
 
+import io.foldright.cffu.BaseCffu
 import io.foldright.cffu.Cffu
 import io.foldright.cffu.CffuFactory
 import io.foldright.cffu.CompletableFutureUtils
@@ -66,14 +67,32 @@ fun assertCfWithEx(
     shouldThrowExactly<ExecutionException> { cf.get(timeout, timeUnit) }.cause shouldBe ex
 }
 
+@JvmOverloads
+fun assertCfWithEx(
+    cf: BaseCffu<*, *>, ex: Throwable, timeout: Long = MEDIAN_WAIT_MS, timeUnit: TimeUnit = TimeUnit.MILLISECONDS
+) {
+    shouldThrowExactly<ExecutionException> { cf.get(timeout, timeUnit) }.cause shouldBe ex
+}
+
 fun assertCfWithExType(cf: CompletableFuture<*>, exType: Class<out Throwable>) {
     cf.shouldBeCompletedExceptionally()
     CompletableFutureUtils.exceptionNow(cf)::class.java shouldBe exType
 }
 
+fun assertCfWithExType(cf: BaseCffu<*, *>, exType: Class<out Throwable>) {
+    assertCfWithExType(cf.cffuUnwrap(), exType)
+}
+
 @JvmOverloads
 fun assertCfStillIncompleteIn(
     cf: CompletableFuture<*>, timeout: Long = MEDIAN_WAIT_MS, timeUnit: TimeUnit = TimeUnit.MILLISECONDS
+) {
+    shouldThrowExactly<TimeoutException> { cf.get(timeout, timeUnit) }
+}
+
+@JvmOverloads
+fun assertCfStillIncompleteIn(
+    cf: BaseCffu<*, *>, timeout: Long = MEDIAN_WAIT_MS, timeUnit: TimeUnit = TimeUnit.MILLISECONDS
 ) {
     shouldThrowExactly<TimeoutException> { cf.get(timeout, timeUnit) }
 }

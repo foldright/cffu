@@ -24,10 +24,11 @@ import static io.foldright.test_utils.TestingExecutorUtils.testCffuFac;
 import static io.foldright.test_utils.TestingExecutorUtils.testExecutor;
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.*;
 import static java.util.function.Function.identity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @see io.foldright.compatibility_test.CffuApiCompatibilityTest
  */
-@SuppressWarnings({"RedundantThrows", "DataFlowIssue", "JavadocReference"})
+@SuppressWarnings({"RedundantThrows", "DataFlowIssue", "JavadocReference", "resource"})
 class CffuFactoryTest {
     // region# Constructor Method
 
@@ -970,6 +971,209 @@ class CffuFactoryTest {
 
             assertThat(runThreads).hasSize(COUNT);
         }
+    }
+
+    // endregion
+    // region# More Ops
+
+    @Test
+    void test_mSupply_iterable() throws Exception {
+        assertThat(testCffuFac.iterableOps().mSupplyFailFastAsync(emptyList()).get()).isEmpty();
+        assertThat(testCffuFac.iterableOps().mSupplyFailFastAsync(asList(() -> 1, () -> 2)).get()).containsExactly(1, 2);
+        assertThat(testCffuFac.iterableOps().mSupplyFailFastAsync(asList(() -> 1, () -> 2), testExecutor).get()).containsExactly(1, 2);
+
+        assertThat(testCffuFac.iterableOps().mSupplyAllSuccessAsync(-1, emptyList()).get()).isEmpty();
+        assertThat(testCffuFac.iterableOps().mSupplyAllSuccessAsync(-1, asList(() -> {throw new RuntimeException();}, () -> 2))
+                .get()).containsExactly(-1, 2);
+        assertThat(testCffuFac.iterableOps().mSupplyAllSuccessAsync(-1, asList(() -> {throw new RuntimeException();}, () -> 2), testExecutor)
+                .get()).containsExactly(-1, 2);
+
+        assertThat(testCffuFac.iterableOps().mSupplyMostSuccessAsync(-1, 1, SECONDS, emptyList()).get()).isEmpty();
+        assertThat(testCffuFac.iterableOps().mSupplyMostSuccessAsync(-1, 1, SECONDS,
+                asList(() -> {throw new RuntimeException();}, () -> 2)).get()).containsExactly(-1, 2);
+        assertThat(testCffuFac.iterableOps().mSupplyMostSuccessAsync(-1, 1, SECONDS,
+                asList(() -> {throw new RuntimeException();}, () -> 2), testExecutor).get()).containsExactly(-1, 2);
+
+        assertThat(testCffuFac.iterableOps().mSupplyAsync(emptyList()).get()).isEmpty();
+        assertThat(testCffuFac.iterableOps().mSupplyAsync(asList(() -> 1, () -> 2)).get()).containsExactly(1, 2);
+        assertThat(testCffuFac.iterableOps().mSupplyAsync(asList(() -> 1, () -> 2), testExecutor).get()).containsExactly(1, 2);
+
+        assertCfWithExType(testCffuFac.iterableOps().mSupplyAnySuccessAsync(emptyList()), NoCfsProvidedException.class);
+        assertEquals(2, testCffuFac.iterableOps().mSupplyAnySuccessAsync(asList(() -> {
+            throw new RuntimeException();
+        }, () -> 2)).get());
+        assertEquals(2, testCffuFac.iterableOps().mSupplyAnySuccessAsync(asList(() -> {
+            throw new RuntimeException();
+        }, () -> 2), testExecutor).get());
+
+        assertTrue(ForkJoinPool.commonPool().awaitQuiescence(2, MINUTES));
+
+        assertCfStillIncompleteIn(testCffuFac.iterableOps().mSupplyAnyAsync(emptyList()));
+        assertEquals(2, testCffuFac.iterableOps().mSupplyAnyAsync(asList(() -> {
+            sleep(MEDIAN_WAIT_MS);
+            return 1;
+        }, () -> 2)).get());
+        assertEquals(2, testCffuFac.iterableOps().mSupplyAnyAsync(asList(() -> {
+            sleep(MEDIAN_WAIT_MS);
+            return 1;
+        }, () -> 2), testExecutor).get());
+    }
+
+    @Test
+    void test_mRun_iterable() throws Exception {
+        assertNull(testCffuFac.iterableOps().mRunFailFastAsync(emptyList()).get());
+        assertNull(testCffuFac.iterableOps().mRunFailFastAsync(asList(() -> {}, () -> {})).get());
+        assertNull(testCffuFac.iterableOps().mRunFailFastAsync(asList(() -> {}, () -> {}), testExecutor).get());
+
+        assertNull(testCffuFac.iterableOps().mRunAsync(emptyList()).get());
+        assertNull(testCffuFac.iterableOps().mRunAsync(asList(() -> {}, () -> {})).get());
+        assertNull(testCffuFac.iterableOps().mRunAsync(asList(() -> {}, () -> {}), testExecutor).get());
+
+        assertCfWithExType(testCffuFac.iterableOps().mRunAnySuccessAsync(emptyList()), NoCfsProvidedException.class);
+        assertNull(testCffuFac.iterableOps().mRunAnySuccessAsync(asList(() -> {
+            throw new RuntimeException();
+        }, () -> {})).get());
+        assertNull(testCffuFac.iterableOps().mRunAnySuccessAsync(asList(() -> {
+            throw new RuntimeException();
+        }, () -> {}), testExecutor).get());
+
+        assertCfStillIncompleteIn(testCffuFac.iterableOps().mRunAnyAsync(emptyList()));
+        assertNull(testCffuFac.iterableOps().mRunAnyAsync(asList(() -> {}, () -> {})).get());
+        assertNull(testCffuFac.iterableOps().mRunAnyAsync(asList(() -> {}, () -> {}), testExecutor).get());
+    }
+
+    @Test
+    void test_allResultsFailFastOf_iterable() {
+        // Test with an empty iterable
+        assertThat(testCffuFac.iterableOps().allResultsFailFastOf(emptyList()).join()).isEmpty();
+
+        // Test with a single completed future
+        CompletableFuture<String> future1 = CompletableFuture.completedFuture("result1");
+        assertThat(testCffuFac.iterableOps().allResultsFailFastOf(singletonList(future1)).join()).containsExactly("result1");
+
+        // Test with multiple completed futures
+        CompletableFuture<String> future2 = CompletableFuture.completedFuture("result2");
+        CompletableFuture<String> future3 = CompletableFuture.completedFuture("result3");
+        assertThat(testCffuFac.iterableOps().allResultsFailFastOf(asList(future1, future2, future3)).join()).containsExactly("result1", "result2", "result3");
+    }
+
+    @Test
+    void test_allSuccessResultsOf_iterable() {
+        // Test with an empty iterable
+        assertThat(testCffuFac.iterableOps().allSuccessResultsOf(null, emptyList()).join()).isEmpty();
+
+        // Test with a single completed future
+        CompletableFuture<String> future1 = CompletableFuture.completedFuture("result1");
+        assertThat(testCffuFac.iterableOps().allSuccessResultsOf(null, singletonList(future1)).join()).containsExactly("result1");
+
+        // Test with multiple completed futures
+        CompletableFuture<String> future2 = CompletableFuture.completedFuture("result2");
+        CompletableFuture<String> future3 = CompletableFuture.completedFuture("result3");
+        assertThat(testCffuFac.iterableOps().allSuccessResultsOf(null, asList(future1, future2, future3)).join()).containsExactly("result1", "result2", "result3");
+    }
+
+    @Test
+    void test_mostSuccessResultsOf_iterable() throws Exception {
+        assertThat(testCffuFac.iterableOps().mostSuccessResultsOf(null, 10, MILLISECONDS, emptyList()).get()).isEmpty();
+
+        // Test with a single completed future
+        CompletableFuture<String> future1 = CompletableFuture.completedFuture("result1");
+        assertThat(testCffuFac.iterableOps().mostSuccessResultsOf(null, 1, TimeUnit.MILLISECONDS, singletonList(future1)).join())
+                .containsExactly("result1");
+
+        // Test with multiple completed futures
+        CompletableFuture<String> future2 = CompletableFuture.completedFuture("result2");
+        CompletableFuture<String> future3 = CompletableFuture.completedFuture("result3");
+        assertThat(testCffuFac.iterableOps().mostSuccessResultsOf(null, 1, TimeUnit.MILLISECONDS, asList(future1, future2, future3)).join())
+                .containsExactly("result1", "result2", "result3");
+    }
+
+    @Test
+    void test_allResultsOf_iterable() {
+        // Test with an empty iterable
+        assertThat(testCffuFac.iterableOps().allResultsOf(emptyList()).join()).isEmpty();
+
+        // Test with a single completed future
+        CompletableFuture<String> future1 = CompletableFuture.completedFuture("result1");
+        assertThat(testCffuFac.iterableOps().allResultsOf(singletonList(future1)).join()).containsExactly("result1");
+
+        // Test with multiple completed futures
+        CompletableFuture<String> future2 = CompletableFuture.completedFuture("result2");
+        CompletableFuture<String> future3 = CompletableFuture.completedFuture("result3");
+        assertThat(testCffuFac.iterableOps().allResultsOf(asList(future1, future2, future3)).join()).containsExactly("result1", "result2", "result3");
+    }
+
+    @Test
+    void test_allFailFastOf_iterable() {
+        // Test with an empty iterable
+        assertNull(testCffuFac.iterableOps().allFailFastOf(emptyList()).join());
+
+        // Test with a single completed future
+        CompletableFuture<String> future1 = CompletableFuture.completedFuture("result1");
+        assertNull(testCffuFac.iterableOps().allFailFastOf(singletonList(future1)).join());
+
+        // Test with multiple completed futures
+        RuntimeException rte = new RuntimeException();
+        CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {throw rte;});
+        CompletableFuture<Void> future3 = CompletableFuture.runAsync(() -> sleep(LONG_WAIT_MS));
+        assertCfWithEx(testCffuFac.iterableOps().allFailFastOf(asList(future1, future2, future3)), rte);
+    }
+
+    @Test
+    void test_allOf_iterable() {
+        // Test with an empty iterable
+        assertNull(testCffuFac.iterableOps().allOf(emptyList()).join());
+
+        // Test with a single completed future
+        CompletableFuture<String> future1 = CompletableFuture.completedFuture("result1");
+        assertNull(testCffuFac.iterableOps().allOf(singletonList(future1)).join());
+
+        assertTrue(ForkJoinPool.commonPool().awaitQuiescence(2, MINUTES));
+
+        // Test with multiple completed futures
+        RuntimeException rte = new RuntimeException();
+        CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {throw rte;});
+        CompletableFuture<Void> future3 = CompletableFuture.runAsync(() -> sleep(LONG_WAIT_MS));
+        assertCfStillIncompleteIn(testCffuFac.iterableOps().allOf(asList(future1, future2, future3)), MEDIAN_WAIT_MS, MILLISECONDS);
+    }
+
+    @Test
+    void test_anySuccessOf_iterable() {
+        // Test with an empty iterable
+        assertCfWithExType(testCffuFac.iterableOps().anySuccessOf(emptyList()), NoCfsProvidedException.class);
+
+        // Test with a single completed future
+        CompletableFuture<String> future1 = CompletableFuture.completedFuture("result1");
+        assertEquals("result1", testCffuFac.iterableOps().anySuccessOf(singletonList(future1)).join());
+
+        assertTrue(ForkJoinPool.commonPool().awaitQuiescence(2, MINUTES));
+
+        // Test with multiple completed futures
+        CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> {throw new RuntimeException();});
+        CompletableFuture<String> future3 = CompletableFuture.supplyAsync(() -> {
+            sleep(MEDIAN_WAIT_MS);
+            return "";
+        });
+        assertEquals("result1", testCffuFac.iterableOps().anySuccessOf(asList(future2, future1, future3)).join());
+    }
+
+    @Test
+    void test_anyOf_iterable() {
+        assertCfStillIncompleteIn(testCffuFac.iterableOps().anyOf(emptyList()));
+
+        // Test with a single completed future
+        CompletableFuture<String> future1 = CompletableFuture.completedFuture("result1");
+        assertEquals("result1", testCffuFac.iterableOps().anyOf(singletonList(future1)).join());
+
+        assertTrue(ForkJoinPool.commonPool().awaitQuiescence(2, MINUTES));
+
+        // Test with multiple completed futures
+        CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> {throw new RuntimeException();});
+        CompletableFuture<String> future3 = CompletableFuture.supplyAsync(() -> {
+            sleep(MEDIAN_WAIT_MS);
+            return "";
+        });
+        assertTrue(asList("result1", "result2", "result3").contains(testCffuFac.iterableOps().anyOf(asList(future1, future2, future3)).join()));
     }
 
     // endregion
