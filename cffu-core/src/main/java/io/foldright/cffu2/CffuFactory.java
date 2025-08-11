@@ -1,0 +1,1992 @@
+package io.foldright.cffu2;
+
+import com.google.common.util.concurrent.Futures;
+import edu.umd.cs.findbugs.annotations.CheckReturnValue;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import io.foldright.cffu2.CffuFactoryBuilder.CffuDefaultExecutor;
+import io.foldright.cffu2.tuple.Tuple2;
+import io.foldright.cffu2.tuple.Tuple3;
+import io.foldright.cffu2.tuple.Tuple4;
+import io.foldright.cffu2.tuple.Tuple5;
+import org.jetbrains.annotations.Contract;
+
+import javax.annotation.concurrent.ThreadSafe;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import static io.foldright.cffu2.CffuFactoryBuilder.cffuScreened;
+import static io.foldright.cffu2.CffuFactoryBuilder.cffuUnscreened;
+import static java.util.Objects.requireNonNull;
+
+
+/**
+ * This class {@link CffuFactory} is equivalent to {@link CompletableFuture},
+ * contains the static (factory) methods of {@link CompletableFuture}.
+ * <p>
+ * The methods that equivalent to the instance methods of {@link CompletableFuture} is in {@link Cffu} class.
+ * <p>
+ * Use {@link #builder(Executor)} to config and build {@link CffuFactory}.
+ * <p>
+ * About factory methods convention of {@link CffuFactory}:
+ * <ul>
+ * <li>factory methods return {@link Cffu} instead of {@link CompletableFuture}.
+ * <li>only provide varargs methods for multiple Cffu/CF input arguments;
+ *     if you have {@code List} input, use variant methods in {@link IterableOps}.
+ * </ul>
+ *
+ * @author Jerry Lee (oldratlee at gmail dot com)
+ * @author HuHao (995483610 at qq dot com)
+ * @see Cffu
+ * @see MCffu
+ * @see CompletableFuture
+ */
+@ThreadSafe
+public final class CffuFactory {
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Builder and Constructor Methods(including internal constructors and fields)
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * default executor of Cffu.
+     */
+    final CffuDefaultExecutor defaultExecutor;
+
+    final boolean forbidObtrudeMethods;
+
+    CffuFactory(CffuDefaultExecutor defaultExecutor, boolean forbidObtrudeMethods) {
+        this.defaultExecutor = defaultExecutor;
+        this.forbidObtrudeMethods = forbidObtrudeMethods;
+    }
+
+    /**
+     * Returns a {@link CffuFactoryBuilder} with {@code defaultExecutor} setting.
+     *
+     * @see Cffu#defaultExecutor()
+     * @see CffuFactory#defaultExecutor()
+     */
+    @Contract(pure = true)
+    public static CffuFactoryBuilder builder(Executor defaultExecutor) {
+        return new CffuFactoryBuilder(defaultExecutor);
+    }
+
+    /**
+     * Returns a new CffuFactory from this CffuFactory with the defaultExecutor.
+     */
+    @Contract(pure = true)
+    public CffuFactory withDefaultExecutor(Executor defaultExecutor) {
+        return CffuFactoryBuilder.withDefaultExecutor(this, defaultExecutor);
+    }
+
+    private <T> Cffu<T> createCffu(CompletableFuture<T> cf) {
+        return new Cffu<>(this, false, cf);
+    }
+
+    private <E, U extends Iterable<? extends E>> MCffu<E, U> createMCffu(CompletableFuture<U> cf) {
+        return new MCffu<>(this, false, cf);
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Factory Methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // region## supplyAsync*/runAsync* Methods(create by action)
+    //
+    //    - Supplier<T> -> Cffu<T>
+    //    - Runnable    -> Cffu<Void>
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new Cffu that is asynchronously completed by a task running
+     * in the {@link #defaultExecutor()} with the value obtained by calling the given Supplier.
+     *
+     * @param supplier a function returning the value to be used to complete the returned Cffu
+     * @param <T>      the function's return type
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAsync`")
+    public <T> Cffu<T> supplyAsync(Supplier<T> supplier) {
+        return supplyAsync(supplier, defaultExecutor);
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed by a task running
+     * in the given executor with the value obtained by calling the given Supplier.
+     *
+     * @param supplier a function returning the value to be used to complete the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     * @param <T>      the function's return type
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAsync`")
+    public <T> Cffu<T> supplyAsync(Supplier<T> supplier, Executor executor) {
+        return createCffu(CompletableFuture.supplyAsync(supplier, cffuScreened(executor)));
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed by a task running
+     * in the {@link #defaultExecutor()} after it runs the given action.
+     *
+     * @param action the action to run before completing the returned Cffu
+     */
+    public Cffu<Void> runAsync(Runnable action) {
+        return runAsync(action, defaultExecutor);
+    }
+
+    /**
+     * Returns a new Cffu that is asynchronously completed by a task running
+     * in the given executor after it runs the given action.
+     *
+     * @param action   the action to run before completing the returned Cffu
+     * @param executor the executor to use for asynchronous execution
+     */
+    public Cffu<Void> runAsync(Runnable action, Executor executor) {
+        return createCffu(CompletableFuture.runAsync(action, cffuScreened(executor)));
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////
+    // region## Multi-Actions(M*) Methods(create by actions)
+    //
+    //    - Supplier<E>[] -> MCffu<E, List<E>>
+    //    - Runnable[]    -> Cffu<Void>
+    ////////////////////////////////////////////////////////////
+
+    /**
+     * Shortcut to method {@link #allResultsFailFastOf allResultsFailFastOf},
+     * wraps input suppliers to Cffu by {@link #supplyAsync(Supplier)}.
+     * <p>
+     * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    @SafeVarargs
+    public final <E> MCffu<E, List<E>> mSupplyFailFastAsync(Supplier<? extends E>... suppliers) {
+        return mSupplyFailFastAsync(defaultExecutor, suppliers);
+    }
+
+    /**
+     * Shortcut to method {@link #allResultsFailFastOf allResultsFailFastOf},
+     * wraps input suppliers to Cffu by {@link #supplyAsync(Supplier, Executor)}.
+     * <p>
+     * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    @SafeVarargs
+    public final <E> MCffu<E, List<E>> mSupplyFailFastAsync(Executor executor, Supplier<? extends E>... suppliers) {
+        return createMCffu(CompletableFutureUtils.mSupplyFailFastAsync(cffuScreened(executor), suppliers));
+    }
+
+    /**
+     * Shortcut to method {@link #allSuccessResultsOf allSuccessResultsOf},
+     * wraps input suppliers to Cffu by {@link #supplyAsync(Supplier)}.
+     * <p>
+     * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    @SafeVarargs
+    public final <E> MCffu<E, List<E>> mSupplyAllSuccessAsync(
+            @Nullable E valueIfFailed, Supplier<? extends E>... suppliers) {
+        return mSupplyAllSuccessAsync(defaultExecutor, valueIfFailed, suppliers);
+    }
+
+    /**
+     * Shortcut to method {@link #allSuccessResultsOf allSuccessResultsOf},
+     * wraps input suppliers to Cffu by {@link #supplyAsync(Supplier, Executor)}.
+     * <p>
+     * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    @SafeVarargs
+    public final <E> MCffu<E, List<E>> mSupplyAllSuccessAsync(
+            Executor executor, @Nullable E valueIfFailed, Supplier<? extends E>... suppliers) {
+        return createMCffu(CompletableFutureUtils.mSupplyAllSuccessAsync(cffuScreened(executor), valueIfFailed, suppliers));
+    }
+
+    /**
+     * Shortcut to method {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[]) mostSuccessResultsOf},
+     * wraps input suppliers to Cffu by {@link #supplyAsync(Supplier)}.
+     * <p>
+     * See the {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[]) mostSuccessResultsOf}
+     * documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    @SafeVarargs
+    public final <E> MCffu<E, List<E>> mSupplyMostSuccessAsync(
+            @Nullable E valueIfNotSuccess, long timeout, TimeUnit unit, Supplier<? extends E>... suppliers) {
+        return mSupplyMostSuccessAsync(defaultExecutor, valueIfNotSuccess, timeout, unit, suppliers);
+    }
+
+    /**
+     * Shortcut to method {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[]) mostSuccessResultsOf},
+     * wraps input suppliers to Cffu by {@link #supplyAsync(Supplier)}.
+     * <p>
+     * See the {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[]) mostSuccessResultsOf}
+     * documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    @SafeVarargs
+    public final <E> MCffu<E, List<E>> mSupplyMostSuccessAsync(
+            Executor executor, @Nullable E valueIfNotSuccess, long timeout, TimeUnit unit,
+            Supplier<? extends E>... suppliers) {
+        return createMCffu(CompletableFutureUtils.mSupplyMostSuccessAsync(
+                cffuScreened(executor), valueIfNotSuccess, timeout, unit, suppliers));
+    }
+
+    /**
+     * Shortcut to method {@link #allResultsOf allResultsOf}, wraps input suppliers to Cffu by {@link #supplyAsync(Supplier)}.
+     * <p>
+     * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    @SafeVarargs
+    public final <E> MCffu<E, List<E>> mSupplyAsync(Supplier<? extends E>... suppliers) {
+        return mSupplyAsync(defaultExecutor, suppliers);
+    }
+
+    /**
+     * Shortcut to method {@link #allResultsOf allResultsOf},
+     * wraps input suppliers to Cffu by {@link #supplyAsync(Supplier, Executor)}.
+     * <p>
+     * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    @SafeVarargs
+    public final <E> MCffu<E, List<E>> mSupplyAsync(
+            Executor executor, Supplier<? extends E>... suppliers) {
+        return createMCffu(CompletableFutureUtils.mSupplyAsync(cffuScreened(executor), suppliers));
+    }
+
+    /**
+     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input suppliers to Cffu by {@link #supplyAsync(Supplier)}.
+     * <p>
+     * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    @SafeVarargs
+    public final <T> Cffu<T> mSupplyAnySuccessAsync(Supplier<? extends T>... suppliers) {
+        return mSupplyAnySuccessAsync(defaultExecutor, suppliers);
+    }
+
+    /**
+     * Shortcut to method {@link #anySuccessOf anySuccessOf},
+     * wraps input suppliers to Cffu by {@link #supplyAsync(Supplier, Executor)}.
+     * <p>
+     * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    @SafeVarargs
+    public final <T> Cffu<T> mSupplyAnySuccessAsync(Executor executor, Supplier<? extends T>... suppliers) {
+        return createCffu(CompletableFutureUtils.mSupplyAnySuccessAsync(cffuScreened(executor), suppliers));
+    }
+
+    /**
+     * Shortcut to method {@link #anyOf anyOf}, wraps input suppliers to Cffu by {@link #supplyAsync(Supplier)}.
+     * <p>
+     * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    @SafeVarargs
+    public final <T> Cffu<T> mSupplyAnyAsync(Supplier<? extends T>... suppliers) {
+        return mSupplyAnyAsync(defaultExecutor, suppliers);
+    }
+
+    /**
+     * Shortcut to method {@link #anySuccessOf anySuccessOf},
+     * wraps input suppliers to Cffu by {@link #supplyAsync(Supplier, Executor)}.
+     * <p>
+     * See the {@link #anyOf anyOf} documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    @SafeVarargs
+    public final <T> Cffu<T> mSupplyAnyAsync(Executor executor, Supplier<? extends T>... suppliers) {
+        return createCffu(CompletableFutureUtils.mSupplyAnyAsync(cffuScreened(executor), suppliers));
+    }
+
+    /**
+     * Shortcut to method {@link #allFailFastOf allFailFastOf}, wraps input actions to Cffu by {@link #runAsync(Runnable)}.
+     * <p>
+     * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    public Cffu<Void> mRunFailFastAsync(Runnable... actions) {
+        return mRunFailFastAsync(defaultExecutor, actions);
+    }
+
+    /**
+     * Shortcut to method {@link #allFailFastOf allFailFastOf},
+     * wraps input actions to Cffu by {@link #runAsync(Runnable, Executor)}.
+     * <p>
+     * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    public Cffu<Void> mRunFailFastAsync(Executor executor, Runnable... actions) {
+        return createCffu(CompletableFutureUtils.mRunFailFastAsync(cffuScreened(executor), actions));
+    }
+
+    /**
+     * Shortcut to method {@link #allOf allOf}, wraps input actions to Cffu by {@link #runAsync(Runnable)}.
+     * <p>
+     * See the {@link #allOf allOf} documentation for the rules of result computation.
+     */
+    public Cffu<Void> mRunAsync(Runnable... actions) {
+        return mRunAsync(defaultExecutor, actions);
+    }
+
+    /**
+     * Shortcut to method {@link #allOf allOf}, wraps input actions to Cffu by {@link #runAsync(Runnable, Executor)}.
+     * <p>
+     * See the {@link #allOf allOf} documentation for the rules of result computation.
+     */
+    public Cffu<Void> mRunAsync(Executor executor, Runnable... actions) {
+        return createCffu(CompletableFutureUtils.mRunAsync(cffuScreened(executor), actions));
+    }
+
+    /**
+     * Shortcut to method {@link #anySuccessOf anySuccessOf}, wraps input actions to Cffu by {@link #runAsync(Runnable)}.
+     * <p>
+     * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    public Cffu<Void> mRunAnySuccessAsync(Runnable... actions) {
+        return mRunAnySuccessAsync(defaultExecutor, actions);
+    }
+
+    /**
+     * Shortcut to method {@link #anySuccessOf anySuccessOf},
+     * wraps input actions to Cffu by {@link #runAsync(Runnable, Executor)}.
+     * <p>
+     * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    public Cffu<Void> mRunAnySuccessAsync(Executor executor, Runnable... actions) {
+        return createCffu(CompletableFutureUtils.mRunAnySuccessAsync(cffuScreened(executor), actions));
+    }
+
+    /**
+     * Shortcut to method {@link #anyOf anyOf}, wraps input actions to Cffu by {@link #runAsync(Runnable)}.
+     * <p>
+     * See the {@link #anyOf anyOf} documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    public Cffu<Void> mRunAnyAsync(Runnable... actions) {
+        return mRunAnyAsync(defaultExecutor, actions);
+    }
+
+    /**
+     * Shortcut to method {@link #anyOf anyOf}, wraps input actions to Cffu by {@link #runAsync(Runnable, Executor)}.
+     * <p>
+     * See the {@link #anyOf anyOf} documentation for the rules of result computation.
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+    public Cffu<Void> mRunAnyAsync(Executor executor, Runnable... actions) {
+        return createCffu(CompletableFutureUtils.mRunAnyAsync(cffuScreened(executor), actions));
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region## allOf* Methods(including mostSuccessResultsOf)
+    //
+    //    CompletionStage<T>[] -> MCffu<T, List<T>>
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new Cffu that is completed normally with a list containing
+     * the successful results of all given stages when all the given stages complete normally;
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * WITHOUT waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * If no stages are provided, returns a Cffu completed with the value empty list.
+     * <p>
+     * The list of results is in the <strong>same order</strong> as the input list.
+     * <p>
+     * This method is the same as {@link #allResultsOf allResultsOf} method except for the fail-fast behavior.
+     *
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
+     * @see Futures#allAsList the equivalent Guava method allAsList()
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    public final <T> MCffu<T, List<T>> allResultsFailFastOf(CompletionStage<? extends T>... cfs) {
+        return createMCffu(CompletableFutureUtils.allResultsFailFastOf(cfs));
+    }
+
+    /**
+     * Returns a new Cffu that is completed normally with a list containing the successful results of
+     * all given stages when all the given stages complete; The list of results is in the <strong>same order</strong>
+     * as the input list, and if any of given stages complete exceptionally, their corresponding position will contain
+     * {@code valueIfFailed} (which is indistinguishable from the stage having a successful value of {@code valueIfFailed}).
+     * If no stages are provided, returns a Cffu completed with the value empty list.
+     * <p>
+     * The list of results is in the <strong>same order</strong> as the input list.
+     * <p>
+     * This method differs from {@link #allResultsFailFastOf allResultsFailFastOf} method in that it's tolerant
+     * of failed stages for any of the items, representing them as {@code valueIfFailed} in the result list.
+     *
+     * @param valueIfFailed the value used as result if the input stage completed exceptionally
+     * @throws NullPointerException if the cfs param or any of its elements is {@code null}
+     * @see Cffu#getSuccessNow(Object)
+     * @see Futures#successfulAsList the equivalent Guava method successfulAsList()
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    public final <T> MCffu<T, List<T>> allSuccessResultsOf(
+            @Nullable T valueIfFailed, CompletionStage<? extends T>... cfs) {
+        return createMCffu(CompletableFutureUtils.allSuccessResultsOf(valueIfFailed, cfs));
+    }
+
+    /**
+     * Returns a new Cffu that is completed normally with a list containing the successful results of
+     * the given stages before the given timeout (aka as many results as possible in the given time);
+     * The list of results is in the <strong>same order</strong> as the input list, and if any of given stages
+     * complete exceptionally or are incomplete, their corresponding positions will contain {@code valueIfNotSuccess}
+     * (which is indistinguishable from the stage having a successful value of {@code valueIfNotSuccess}).
+     * If no stages are provided, returns a Cffu completed with the value empty list.
+     * <p>
+     * The list of results is in the <strong>same order</strong> as the input list.
+     * <p>
+     * This method differs from {@link #allResultsFailFastOf allResultsFailFastOf} method in that it's tolerant of
+     * failed or incomplete stages for any of the items, representing them as {@code valueIfNotSuccess} in the result list.
+     *
+     * @param valueIfNotSuccess the value used as result if the input stage not completed normally
+     * @param timeout           how long to wait in units of {@code unit}
+     * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
+     * @see Cffu#getSuccessNow(Object)
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    public final <T> MCffu<T, List<T>> mostSuccessResultsOf(
+            @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit, CompletionStage<? extends T>... cfs) {
+        return createMCffu(CompletableFutureUtils.mostSuccessResultsOf(
+                defaultExecutor, valueIfNotSuccess, timeout, unit, cfs));
+    }
+
+    /**
+     * Returns a new Cffu that is completed normally with a list containing
+     * the successful results of all given stages when all the given stages complete;
+     * If any of the given stages complete exceptionally, then the returned Cffu
+     * also does so, with a CompletionException holding this exception as its cause.
+     * If no stages are provided, returns a Cffu completed with the value empty list.
+     * <p>
+     * The list of results is in the <strong>same order</strong> as the input list.
+     * <p>
+     * Comparing the waiting-all-<strong>complete</strong> behavior of this method, the fail-fast behavior
+     * of {@link #allResultsFailFastOf allResultsFailFastOf} method is more responsive to user
+     * and generally more desired in the application.
+     * <p>
+     * This method is the same as {@link #allOf allOf} method,
+     * except that the returned Cffu contains the results of the given stages.
+     *
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    public final <T> MCffu<T, List<T>> allResultsOf(CompletionStage<? extends T>... cfs) {
+        return createMCffu(CompletableFutureUtils.allResultsOf(cfs));
+    }
+
+    /**
+     * Returns a new Cffu that is completed normally when all the given stages complete normally;
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so,
+     * WITHOUT waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
+     * If no stages are provided, returns a Cffu completed with the value {@code null}.
+     * <p>
+     * The successful results, if any, of the given stages are not reflected in the returned Cffu
+     * ({@code Cffu<Void>}), but may be obtained by inspecting them individually; Or using below methods
+     * reflected results in the returned Cffu which are more convenient, safer and best-practice of concurrency:
+     * <ul>
+     * <li>{@link #allResultsFailFastOf  allResultsFailFastOf}, {@link TupleOps#allTupleFailFastOf allTupleFailFastOf}
+     * <li>{@link #allSuccessResultsOf allSuccessResultsOf}, {@link TupleOps#allSuccessTupleOf allSuccessTupleOf}
+     * <li>{@link #mostSuccessResultsOf mostSuccessResultsOf}, {@link TupleOps#mostSuccessTupleOf mostSuccessTupleOf}
+     * <li>{@link #allResultsOf allResultsOf}, {@link TupleOps#allTupleOf allTupleOf}
+     * </ul>
+     * <p>
+     * This method is the same as {@link #allOf allOf} method except for the fail-fast behavior.
+     *
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
+     * @see Futures#whenAllSucceed the equivalent Guava method whenAllSucceed()
+     */
+    @Contract(pure = true)
+    public Cffu<Void> allFailFastOf(CompletionStage<?>... cfs) {
+        return createCffu(CompletableFutureUtils.allFailFastOf(cfs));
+    }
+
+    /**
+     * Returns a new Cffu that is completed when all the given stages complete;
+     * If any of the given stages complete exceptionally, then the returned Cffu
+     * also does so, with a CompletionException holding this exception as its cause.
+     * If no stages are provided, returns a Cffu completed with the value {@code null}.
+     * <p>
+     * The successful results, if any, of the given stages are not reflected in the returned Cffu
+     * ({@code Cffu<Void>}), but may be obtained by inspecting them individually; Or using below methods
+     * reflected results in the returned Cffu which are more convenient, safer and best-practice of concurrency:
+     * <ul>
+     * <li>{@link #allResultsOf allResultsOf}, {@link TupleOps#allTupleOf allTupleOf}
+     * <li>{@link #allResultsFailFastOf  allResultsFailFastOf}, {@link TupleOps#allTupleFailFastOf allTupleFailFastOf}
+     * <li>{@link #allSuccessResultsOf allSuccessResultsOf}, {@link TupleOps#allSuccessTupleOf allSuccessTupleOf}
+     * <li>{@link #mostSuccessResultsOf mostSuccessResultsOf}, {@link TupleOps#mostSuccessTupleOf mostSuccessTupleOf}
+     * </ul>
+     * <p>
+     * Among the applications of this method is to await completion of a set of independent stages
+     * before continuing a program, as in: {@code cffuFactory.allOf(c1, c2, c3).join();}.
+     *
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
+     * @see Futures#whenAllComplete the equivalent Guava method whenAllComplete()
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; forget to call its `join()` method?")
+    @Contract(pure = true)
+    public Cffu<Void> allOf(CompletionStage<?>... cfs) {
+        return createCffu(CompletableFutureUtils.allOf(cfs));
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region## anyOf* Methods
+    //
+    //    CompletionStage<T>[] -> Cffu<T>
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new Cffu that completed normally when any of the given stages complete normally,
+     * with the same result; Otherwise, when all the given stages complete exceptionally, the returned Cffu
+     * also does so, with a CompletionException holding an exception from any of the given stages as its cause.
+     * If no stages are provided, returns a new Cffu that is already completed exceptionally
+     * with a {@link NoCfsProvidedException}.
+     * <p>
+     * This method differs from {@link #anyOf anyOf} method in that this method is any-<strong>success</strong>
+     * instead of the any-<strong>complete</strong> behavior of method {@link #anyOf anyOf}.
+     *
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
+     */
+    @SafeVarargs
+    public final <T> Cffu<T> anySuccessOf(CompletionStage<? extends T>... cfs) {
+        return createCffu(CompletableFutureUtils.anySuccessOf(cfs));
+    }
+
+    /**
+     * Returns a new Cffu that is completed with the same successful result or exception of any of
+     * the given stages when one stage completes. If no stages are provided, returns an incomplete Cffu.
+     * <p>
+     * Comparing the any-<strong>complete</strong> behavior of this method, the any-<strong>success</strong> behavior of
+     * method {@link #anySuccessOf anySuccessOf} is more responsive to user and generally more desired in the application.
+     *
+     * @throws NullPointerException if the cfs param or any of its elements are {@code null}
+     */
+    @Contract(pure = true)
+    @SafeVarargs
+    public final <T> Cffu<T> anyOf(CompletionStage<? extends T>... cfs) {
+        return createCffu(CompletableFutureUtils.anyOf(cfs));
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region## Immediate Value Argument Factory Methods
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new Cffu that is already completed with the given value.
+     *
+     * @param value the value
+     * @param <T>   The result type returned future
+     * @return the completed Cffu
+     * @see #completedMCffu(Iterable)
+     */
+    @Contract(pure = true)
+    public <T> Cffu<T> completedFuture(@Nullable T value) {
+        return createCffu(CompletableFuture.completedFuture(value));
+    }
+
+    /**
+     * Returns a new Cffu that is already completed exceptionally with the given exception.
+     *
+     * @param ex  the exception
+     * @param <T> The result type returned future
+     * @return the exceptionally completed Cffu
+     * @see #failedMCffu(Throwable)
+     */
+    @Contract(pure = true)
+    public <T> Cffu<T> failedFuture(Throwable ex) {
+        return createCffu(CompletableFutureUtils.failedFuture(ex));
+    }
+
+    /**
+     * Returns a new MCffu that is already completed with the given value.
+     *
+     * @param value the value
+     * @param <T>   The result collection type returned future
+     * @param <E>   the data element type of result collection
+     * @return the completed MCffu
+     * @see #completedFuture(Object)
+     */
+    @Contract(pure = true)
+    public <E, T extends Iterable<? extends E>> MCffu<E, T> completedMCffu(@Nullable T value) {
+        return createMCffu(CompletableFuture.completedFuture(value));
+    }
+
+    /**
+     * Returns a new MCffu that is already completed exceptionally with the given exception.
+     *
+     * @param ex  the exception
+     * @param <T> The result collection type returned future
+     * @param <E> the data element type of result collection
+     * @return the exceptionally completed MCffu
+     * @see #failedFuture(Throwable)
+     */
+    @Contract(pure = true)
+    public <E, T extends Iterable<? extends E>> MCffu<E, T> failedMCffu(Throwable ex) {
+        return createMCffu(CompletableFutureUtils.failedFuture(ex));
+    }
+
+    /**
+     * Returns a new CompletionStage that is already completed with the given value
+     * and supports only those methods in interface {@link CompletionStage}.
+     * <p>
+     * <strong>CAUTION:</strong> if run on old Java 8 (which does not support *minimal* CompletionStage),
+     * this method just returns a *normal* Cffu instance which is NOT a *minimal* CompletionStage.
+     *
+     * @param value the value
+     * @param <T>   The result type returned future
+     * @return the completed CompletionStage
+     */
+    @Contract(pure = true)
+    public <T> CompletionStage<T> completedStage(@Nullable T value) {
+        return new Cffu<>(this, true, (CompletableFuture<T>) CompletableFutureUtils.completedStage(value));
+    }
+
+    /**
+     * Returns a new CompletionStage that is already completed exceptionally
+     * with the given exception and supports only those methods in interface {@link CompletionStage}.
+     * <p>
+     * <strong>CAUTION:</strong> if run on old Java 8 (which does not support *minimal* CompletionStage),
+     * this method just returns a *normal* Cffu instance which is NOT a *minimal* CompletionStage.
+     *
+     * @param ex  the exception
+     * @param <T> The result type returned future
+     * @return the exceptionally completed CompletionStage
+     */
+    @Contract(pure = true)
+    public <T> CompletionStage<T> failedStage(Throwable ex) {
+        return new Cffu<>(this, true, (CompletableFuture<T>) CompletableFutureUtils.<T>failedStage(ex));
+    }
+
+    /**
+     * Returns a new Cffu that encapsulates the execution of synchronous logic.
+     * By wrapping synchronous code in a Cffu, exceptions can be handled consistently within the Cffu pipeline,
+     * eliminating the need to manage separate exceptional paths both inside and outside the flow.
+     *
+     * @throws NullPointerException if argument {@code callable} is {@code null}
+     * @see CompletableFuture#runAsync(Runnable)
+     * @see CompletableFuture#supplyAsync(Supplier)
+     */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, run directly instead of wrapping")
+    public <T> Cffu<T> fromSyncCall(Callable<T> callable) {
+        return createCffu(CompletableFutureUtils.fromSyncCall(callable));
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region## CompletionStage Argument Factory Methods
+    //
+    //    - toCffu:      CF/CompletionStage   -> Cffu
+    //    - toMCffu:     CF/CompletionStage   -> MCffu
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a Cffu that maintains the same completion properties as the given stage, configured with this {@code CffuFactory}.
+     * If the given stage is already a Cffu and uses this {@code CffuFactory}, this method may return the given stage.
+     *
+     * @throws NullPointerException if the given stage is null
+     * @see MCffu#asCffu()
+     * @see #toMCffu(CompletionStage)
+     * @see Cffu#withCffuFactory(CffuFactory)
+     * @see CompletionStage#toCompletableFuture()
+     */
+    @Contract(pure = true)
+    public <T> Cffu<T> toCffu(CompletionStage<T> stage) {
+        requireNonNull(stage, "stage is null");
+        if (stage instanceof Cffu) {
+            Cffu<T> f = ((Cffu<T>) stage);
+            if (f.fac == this && !f.isMinimalStage) return f;
+        }
+        return createCffu(stage.toCompletableFuture());
+    }
+
+    /**
+     * Returns a MCffu that maintains the same completion properties as the given stage, configured with this {@code CffuFactory}.
+     * If the given stage is already a MCffu and uses this {@code CffuFactory}, this method may return the given stage.
+     * <p>
+     * This method is similar as  {@link #toCffu(CompletionStage)} but return type MCffu instead of Cffu.
+     *
+     * @throws NullPointerException if the given stage is null
+     * @see Cffu#asMCffu(Cffu)
+     * @see #toCffu(CompletionStage)
+     * @see Cffu#withCffuFactory(CffuFactory)
+     * @see CompletionStage#toCompletableFuture()
+     */
+    @Contract(pure = true)
+    public <E, U extends Iterable<? extends E>> MCffu<E, U> toMCffu(CompletionStage<U> stage) {
+        requireNonNull(stage, "stage is null");
+        if (stage instanceof MCffu) {
+            MCffu<E, U> f = ((MCffu<E, U>) stage);
+            if (f.fac == this && !f.isMinimalStage) return f;
+        }
+        return createMCffu(stage.toCompletableFuture());
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region## Incomplete Cffu/MCffu Constructor
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new incomplete Cffu.
+     * <p>
+     * In general, you won't use this method in application code, prefer other factory methods.
+     *
+     * @see #newIncompleteMCffu()
+     * @see CompletableFuture#CompletableFuture()
+     * @see CompletableFuture#newIncompleteFuture()
+     */
+    @Contract(pure = true)
+    public <T> Cffu<T> newIncompleteCffu() {
+        return createCffu(new CompletableFuture<>());
+    }
+
+    /**
+     * Returns a new incomplete MCffu.
+     * <p>
+     * In general, you won't use this method in application code, prefer other factory methods.
+     *
+     * @see #newIncompleteCffu()
+     * @see CompletableFuture#CompletableFuture()
+     * @see CompletableFuture#newIncompleteFuture()
+     */
+    @Contract(pure = true)
+    public <E, U extends Iterable<? extends E>> MCffu<E, U> newIncompleteMCffu() {
+        return createMCffu(new CompletableFuture<>());
+    }
+
+    // endregion
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Delay Execution
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a new Executor that submits a task to the default executor
+     * after the given delay (or no delay if non-positive).
+     * Each delay commences upon invocation of the returned executor's {@code execute} method.
+     *
+     * @param delay how long to delay, in units of {@code unit}
+     * @param unit  a {@code TimeUnit} determining how to interpret the {@code delay} parameter
+     * @return the new delayed executor
+     */
+    @Contract(pure = true)
+    public Executor delayedExecutor(long delay, TimeUnit unit) {
+        return delayedExecutor(delay, unit, defaultExecutor);
+    }
+
+    /**
+     * Returns a new Executor that submits a task to the given base executor
+     * after the given delay (or no delay if non-positive).
+     * Each delay commences upon invocation of the returned executor's {@code execute} method.
+     *
+     * @param delay    how long to delay, in units of {@code unit}
+     * @param unit     a {@code TimeUnit} determining how to interpret the {@code delay} parameter
+     * @param executor the base executor
+     * @return the new delayed executor
+     */
+    @Contract(pure = true)
+    public Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
+        // NOTE: do NOT translate (ad hoc input)executor to screened executor; same as CompletableFuture.delayedExecutor
+        return CompletableFutureUtils.delayedExecutor(delay, unit, cffuUnscreened(executor));
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# Getter Methods of CffuFactory properties
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns the default Executor used for async methods that do not specify an Executor.
+     * Configured by {@link CffuFactory#builder(Executor)}.
+     *
+     * @return the default executor
+     * @see Cffu#defaultExecutor()
+     * @see CffuFactory#builder(Executor)
+     */
+    @Contract(pure = true)
+    public Executor defaultExecutor() {
+        return defaultExecutor.original;
+    }
+
+    /**
+     * Returns {@code forbidObtrudeMethods} or not.
+     *
+     * @see CffuFactoryBuilder#forbidObtrudeMethods(boolean)
+     */
+    @Contract(pure = true)
+    public boolean forbidObtrudeMethods() {
+        return forbidObtrudeMethods;
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
+    // region# More Ops
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a {@link IterableOps} instance to access the {@link Iterable}-based variants
+     * (including {@link Collection}, {@link List}, etc.) of same-named varargs methods from {@link CffuFactory}.
+     * These methods handle multiple actions and Futures with the same type (aka. homogeneous).
+     *
+     * @see BaseCffu#iterableOps()
+     * @see CfIterableUtils
+     */
+    public IterableOps iterableOps() {
+        return new IterableOps();
+    }
+
+    /**
+     * Returns a {@link ParOps} instance to access the methods for parallel data processing.
+     *
+     * @see MCffu#parOps()
+     * @see CfParallelUtils
+     */
+    public ParOps parOps() {
+        return new ParOps();
+    }
+
+    /**
+     * Returns a {@link TupleOps} instance to access the tuple-based variants of methods from {@link CffuFactory}
+     * for processing and composing multiple asynchronous actions and CompletableFutures in a type-safe manner.
+     *
+     * @see BaseCffu#tupleOps()
+     * @see CfTupleUtils
+     */
+    public TupleOps tupleOps() {
+        return new TupleOps();
+    }
+
+    /**
+     * The {@link Iterable}-based variants (including {@link Collection}, {@link List}, etc.) of
+     * same-named varargs methods from {@link CffuFactory}.
+     * These methods handle multiple actions and Futures with the same type (aka. homogeneous).
+     */
+    public final class IterableOps {
+        ////////////////////////////////////////////////////////////
+        // region## Multi-Actions(M*) Methods(create by actions)
+        //
+        //    - Iterable<Supplier<E>> -> MCffu<E, List<E>>
+        //    - Iterable<Runnable>    -> Cffu<Void>
+        ////////////////////////////////////////////////////////////
+
+        /**
+         * Iterable variant of {@link CffuFactory#mSupplyFailFastAsync(Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public <E> MCffu<E, List<E>> mSupplyFailFastAsync(Iterable<Supplier<? extends E>> suppliers) {
+            return mSupplyFailFastAsync(suppliers, defaultExecutor);
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mSupplyFailFastAsync(Executor, Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public <E> MCffu<E, List<E>> mSupplyFailFastAsync(Iterable<Supplier<? extends E>> suppliers, Executor executor) {
+            return createMCffu(CfIterableUtils.mSupplyFailFastAsync(suppliers, executor));
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mSupplyAllSuccessAsync(Object, Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public <E> MCffu<E, List<E>> mSupplyAllSuccessAsync(
+                @Nullable E valueIfFailed, Iterable<Supplier<? extends E>> suppliers) {
+            return mSupplyAllSuccessAsync(valueIfFailed, suppliers, defaultExecutor);
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mSupplyAllSuccessAsync(Executor, Object, Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public <E> MCffu<E, List<E>> mSupplyAllSuccessAsync(
+                @Nullable E valueIfFailed, Iterable<Supplier<? extends E>> suppliers, Executor executor) {
+            return createMCffu(CfIterableUtils.mSupplyAllSuccessAsync(valueIfFailed, suppliers, executor));
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public <E> MCffu<E, List<E>> mSupplyMostSuccessAsync(
+                @Nullable E valueIfNotSuccess, long timeout, TimeUnit unit, Iterable<Supplier<? extends E>> suppliers) {
+            return mSupplyMostSuccessAsync(valueIfNotSuccess, timeout, unit, suppliers, defaultExecutor);
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public <E> MCffu<E, List<E>> mSupplyMostSuccessAsync(
+                @Nullable E valueIfNotSuccess, long timeout, TimeUnit unit,
+                Iterable<Supplier<? extends E>> suppliers, Executor executor) {
+            return createMCffu(CfIterableUtils.mSupplyMostSuccessAsync(valueIfNotSuccess, timeout, unit, suppliers, executor));
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mSupplyAsync(Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public <E> MCffu<E, List<E>> mSupplyAsync(Iterable<Supplier<? extends E>> suppliers) {
+            return mSupplyAsync(suppliers, defaultExecutor);
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mSupplyAsync(Executor, Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public <E> MCffu<E, List<E>> mSupplyAsync(Iterable<Supplier<? extends E>> suppliers, Executor executor) {
+            return createMCffu(CfIterableUtils.mSupplyAsync(suppliers, executor));
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mSupplyAnySuccessAsync(Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public <T> Cffu<T> mSupplyAnySuccessAsync(Iterable<Supplier<? extends T>> suppliers) {
+            return mSupplyAnySuccessAsync(suppliers, defaultExecutor);
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mSupplyAnySuccessAsync(Executor, Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public <T> Cffu<T> mSupplyAnySuccessAsync(Iterable<Supplier<? extends T>> suppliers, Executor executor) {
+            return createCffu(CfIterableUtils.mSupplyAnySuccessAsync(suppliers, executor));
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mSupplyAnyAsync(Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public <T> Cffu<T> mSupplyAnyAsync(Iterable<Supplier<? extends T>> suppliers) {
+            return mSupplyAnyAsync(suppliers, defaultExecutor);
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mSupplyAnyAsync(Executor, Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public <T> Cffu<T> mSupplyAnyAsync(Iterable<Supplier<? extends T>> suppliers, Executor executor) {
+            return createCffu(CfIterableUtils.mSupplyAnyAsync(suppliers, executor));
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mRunFailFastAsync(Runnable...)}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public Cffu<Void> mRunFailFastAsync(Iterable<Runnable> actions) {
+            return mRunFailFastAsync(actions, defaultExecutor);
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mRunFailFastAsync(Executor, Runnable...)}.
+         */
+        public Cffu<Void> mRunFailFastAsync(Iterable<Runnable> actions, Executor executor) {
+            return createCffu(CfIterableUtils.mRunFailFastAsync(actions, executor));
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mRunAsync(Runnable...)}.
+         */
+        public Cffu<Void> mRunAsync(Iterable<Runnable> actions) {
+            return mRunAsync(actions, defaultExecutor);
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mRunAsync(Executor, Runnable...)}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public Cffu<Void> mRunAsync(Iterable<Runnable> actions, Executor executor) {
+            return createCffu(CfIterableUtils.mRunAsync(actions, executor));
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mRunAnySuccessAsync(Runnable...)}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public Cffu<Void> mRunAnySuccessAsync(Iterable<Runnable> actions) {
+            return mRunAnySuccessAsync(actions, defaultExecutor);
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mRunAnySuccessAsync(Executor, Runnable...)}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public Cffu<Void> mRunAnySuccessAsync(Iterable<Runnable> actions, Executor executor) {
+            return createCffu(CfIterableUtils.mRunAnySuccessAsync(actions, executor));
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mRunAnyAsync(Runnable...)}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public Cffu<Void> mRunAnyAsync(Iterable<Runnable> actions) {
+            return mRunAnyAsync(actions, defaultExecutor);
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mRunAnyAsync(Executor, Runnable...)}.
+         */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        public Cffu<Void> mRunAnyAsync(Iterable<Runnable> actions, Executor executor) {
+            return createCffu(CfIterableUtils.mRunAnyAsync(actions, executor));
+        }
+
+        // endregion
+        ////////////////////////////////////////////////////////////
+        // region## allOf* Methods(including mostSuccessResultsOf)
+        //
+        //    Iterable<CompletionStage<T>> -> MCffu<T, List<T>>
+        ////////////////////////////////////////////////////////////
+
+        /**
+         * Iterable variant of {@link CffuFactory#allResultsFailFastOf(CompletionStage[])}.
+         */
+        @Contract(pure = true)
+        public <T> MCffu<T, List<T>> allResultsFailFastOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
+            return createMCffu(CfIterableUtils.allResultsFailFastOf(cfs));
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#allSuccessResultsOf(Object, CompletionStage[])}.
+         */
+        @Contract(pure = true)
+        public <T> MCffu<T, List<T>> allSuccessResultsOf(
+                @Nullable T valueIfFailed, Iterable<? extends CompletionStage<? extends T>> cfs) {
+            return createMCffu(CfIterableUtils.allSuccessResultsOf(valueIfFailed, cfs));
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}.
+         */
+        @Contract(pure = true)
+        public <T> MCffu<T, List<T>> mostSuccessResultsOf(
+                @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit,
+                Iterable<? extends CompletionStage<? extends T>> cfs) {
+            return createMCffu(CfIterableUtils.mostSuccessResultsOf(valueIfNotSuccess, timeout, unit, cfs, defaultExecutor));
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#allResultsOf}.
+         */
+        @Contract(pure = true)
+        public <T> MCffu<T, List<T>> allResultsOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
+            return createMCffu(CfIterableUtils.allResultsOf(cfs));
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#allFailFastOf(CompletionStage[])}.
+         */
+        @Contract(pure = true)
+        public Cffu<Void> allFailFastOf(Iterable<? extends CompletionStage<?>> cfs) {
+            return createCffu(CfIterableUtils.allFailFastOf(cfs));
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#allOf(CompletionStage[])}.
+         */
+        @Contract(pure = true)
+        public Cffu<Void> allOf(Iterable<? extends CompletionStage<?>> cfs) {
+            return createCffu(CfIterableUtils.allOf(cfs));
+        }
+
+        // endregion
+        ////////////////////////////////////////////////////////////
+        // region## anyOf* Methods
+        //
+        //    Iterable<CompletionStage<T>> -> CompletableFuture<T>
+        ////////////////////////////////////////////////////////////
+
+        /**
+         * Iterable variant of {@link CffuFactory#anySuccessOf(CompletionStage[])}.
+         */
+        @Contract(pure = true)
+        public <T> Cffu<T> anySuccessOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
+            return createCffu(CfIterableUtils.anySuccessOf(cfs));
+        }
+
+        /**
+         * Iterable variant of {@link CffuFactory#anyOf(CompletionStage[])}.
+         */
+        @Contract(pure = true)
+        public <T> Cffu<T> anyOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
+            return createCffu(CfIterableUtils.anyOf(cfs));
+        }
+
+        private IterableOps() {}
+    }
+
+    /**
+     * The methods for parallel data processing.
+     *
+     * @see MCffu#parOps()
+     * @see CfParallelUtils
+     */
+    public final class ParOps {
+        ////////////////////////////////////////////////////////////////////////////////
+        // region# Par Methods(create by multiply data and one action)
+        //
+        //    - parApply* (Iterable, Function: T -> U)    -> MCffu<U, List<U>>
+        //    - parAccept*(Iterable, Consumer: T -> Void) -> Cffu<Void>
+        ////////////////////////////////////////////////////////////////////////////////
+
+        /**
+         * Shortcut to method {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> MCffu<U, List<U>> parApplyFailFastAsync(
+                Iterable<? extends T> elements, Function<? super T, ? extends U> fn) {
+            return parApplyFailFastAsync(elements, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> MCffu<U, List<U>> parApplyFailFastAsync(
+                Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
+            return createMCffu(CfParallelUtils.parApplyFailFastAsync(elements, fn, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> MCffu<U, List<U>> parApplyAllSuccessAsync(
+                Iterable<? extends T> elements, @Nullable U valueIfFailed, Function<? super T, ? extends U> fn) {
+            return parApplyAllSuccessAsync(elements, valueIfFailed, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> MCffu<U, List<U>> parApplyAllSuccessAsync(
+                Iterable<? extends T> elements, @Nullable U valueIfFailed, Function<? super T, ? extends U> fn, Executor executor) {
+            return createMCffu(CfParallelUtils.parApplyAllSuccessAsync(elements, valueIfFailed, fn, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> MCffu<U, List<U>> parApplyMostSuccessAsync(
+                Iterable<? extends T> elements, @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
+                Function<? super T, ? extends U> fn) {
+            return parApplyMostSuccessAsync(elements, valueIfNotSuccess, timeout, unit, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> MCffu<U, List<U>> parApplyMostSuccessAsync(
+                Iterable<? extends T> elements, @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
+                Function<? super T, ? extends U> fn, Executor executor) {
+            return createMCffu(CfParallelUtils.parApplyMostSuccessAsync(elements, valueIfNotSuccess, timeout, unit, fn, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#allResultsOf allResultsOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> MCffu<U, List<U>> parApplyAsync(
+                Iterable<? extends T> elements, Function<? super T, ? extends U> fn) {
+            return parApplyAsync(elements, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#allResultsOf allResultsOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> MCffu<U, List<U>> parApplyAsync(
+                Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
+            return createMCffu(CfParallelUtils.parApplyAsync(elements, fn, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> Cffu<U> parApplyAnySuccessAsync(
+                Iterable<? extends T> elements, Function<? super T, ? extends U> fn) {
+            return parApplyAnySuccessAsync(elements, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> Cffu<U> parApplyAnySuccessAsync(
+                Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
+            return createCffu(CfParallelUtils.parApplyAnySuccessAsync(elements, fn, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#anyOf anyOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> Cffu<U> parApplyAnyAsync(
+                Iterable<? extends T> elements, Function<? super T, ? extends U> fn) {
+            return parApplyAnyAsync(elements, fn, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#anyOf anyOf},
+         * processes multiple input elements in parallel by wrapping each element's function computation
+         * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
+         * <p>
+         * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T, U> Cffu<U> parApplyAnyAsync(
+                Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
+            return createCffu(CfParallelUtils.parApplyAnyAsync(elements, fn, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf},
+         * processes multiple input elements in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T> Cffu<Void> parAcceptFailFastAsync(
+                Iterable<? extends T> elements, Consumer<? super T> action) {
+            return parAcceptFailFastAsync(elements, action, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf},
+         * processes multiple input elements in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable, Executor)}.
+         * <p>
+         * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T> Cffu<Void> parAcceptFailFastAsync(
+                Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
+            return createCffu(CfParallelUtils.parAcceptFailFastAsync(elements, action, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#allResultsOf allResultsOf},
+         * processes multiple input elements in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T> Cffu<Void> parAcceptAsync(
+                Iterable<? extends T> elements, Consumer<? super T> action) {
+            return parAcceptAsync(elements, action, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#allResultsOf allResultsOf},
+         * processes multiple input elements in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable, Executor)}.
+         * <p>
+         * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T> Cffu<Void> parAcceptAsync(
+                Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
+            return createCffu(CfParallelUtils.parAcceptAsync(elements, action, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf},
+         * processes multiple input elements in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T> Cffu<Void> parAcceptAnySuccessAsync(
+                Iterable<? extends T> elements, Consumer<? super T> action) {
+            return parAcceptAnySuccessAsync(elements, action, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf},
+         * processes multiple input elements in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable, Executor)}.
+         * <p>
+         * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T> Cffu<Void> parAcceptAnySuccessAsync(
+                Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
+            return createCffu(CfParallelUtils.parAcceptAnySuccessAsync(elements, action, cffuScreened(executor)));
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#anyOf anyOf},
+         * processes multiple input elements in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable)} with the executor {@link #defaultExecutor()}.
+         * <p>
+         * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T> Cffu<Void> parAcceptAnyAsync(
+                Iterable<? extends T> elements, Consumer<? super T> action) {
+            return parAcceptAnyAsync(elements, action, defaultExecutor);
+        }
+
+        /**
+         * Shortcut to method {@link CffuFactory#anyOf anyOf},
+         * processes multiple input elements in parallel by wrapping each element's consumer computation
+         * into a Cffu using {@link CffuFactory#runAsync(Runnable, Executor)}.
+         * <p>
+         * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
+        public <T> Cffu<Void> parAcceptAnyAsync(
+                Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
+            return createCffu(CfParallelUtils.parAcceptAnyAsync(elements, action, cffuScreened(executor)));
+        }
+
+        private ParOps() {}
+    }
+
+    /**
+     * The tuple-based variants of methods from {@link CffuFactory}
+     * for processing and composing multiple asynchronous actions and CompletableFutures in a type-safe manner.
+     * <p>
+     * While {@link CffuFactory} uses array-based methods with varargs, this class uses strongly-typed tuples
+     * containing 2 to 5 elements. The tuple approach provides better type safety when working with a fixed number of
+     * heterogeneous actions or CompletableFutures, as type mismatches are caught at compile time rather than runtime.
+     *
+     * @see BaseCffu#tupleOps()
+     * @see CfTupleUtils
+     */
+    public final class TupleOps {
+        ////////////////////////////////////////////////////////////
+        // region## Multi-Actions-Tuple(MTuple*) Methods(create by actions)
+        ////////////////////////////////////////////////////////////
+
+        /**
+         * Tuple variant of {@link #mSupplyFailFastAsync(Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyTupleFailFastAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
+            return mSupplyTupleFailFastAsync(supplier1, supplier2, defaultExecutor);
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyTupleFailFastAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Executor executor) {
+            return createCffu(CfTupleUtils.mSupplyTupleFailFastAsync(supplier1, supplier2, cffuScreened(executor)));
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyFailFastAsync(Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyTupleFailFastAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
+            return mSupplyTupleFailFastAsync(supplier1, supplier2, supplier3, defaultExecutor);
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyTupleFailFastAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
+                Executor executor) {
+            return createCffu(CfTupleUtils.mSupplyTupleFailFastAsync(supplier1, supplier2, supplier3, cffuScreened(executor)));
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyFailFastAsync(Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyTupleFailFastAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+                Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
+            return mSupplyTupleFailFastAsync(supplier1, supplier2, supplier3, supplier4, defaultExecutor);
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyTupleFailFastAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+                Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Executor executor) {
+            return createCffu(CfTupleUtils.mSupplyTupleFailFastAsync(
+                    supplier1, supplier2, supplier3, supplier4, cffuScreened(executor)));
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyFailFastAsync(Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleFailFastAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
+                Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
+            return mSupplyTupleFailFastAsync(supplier1, supplier2, supplier3, supplier4, supplier5, defaultExecutor);
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleFailFastAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
+                Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5, Executor executor) {
+            return createCffu(CfTupleUtils.mSupplyTupleFailFastAsync(
+                    supplier1, supplier2, supplier3, supplier4, supplier5, cffuScreened(executor)));
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyAllSuccessTupleAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
+            return mSupplyAllSuccessTupleAsync(supplier1, supplier2, defaultExecutor);
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyAllSuccessTupleAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Executor executor) {
+            return createCffu(CfTupleUtils.mSupplyAllSuccessTupleAsync(supplier1, supplier2, cffuScreened(executor)));
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyAllSuccessTupleAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
+            return mSupplyAllSuccessTupleAsync(supplier1, supplier2, supplier3, defaultExecutor);
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyAllSuccessTupleAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
+                Executor executor) {
+            return createCffu(CfTupleUtils.mSupplyAllSuccessTupleAsync(supplier1, supplier2, supplier3, cffuScreened(executor)));
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyAllSuccessTupleAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+                Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
+            return mSupplyAllSuccessTupleAsync(supplier1, supplier2, supplier3, supplier4, defaultExecutor);
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyAllSuccessTupleAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+                Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Executor executor) {
+            return createCffu(CfTupleUtils.mSupplyAllSuccessTupleAsync(
+                    supplier1, supplier2, supplier3, supplier4, cffuScreened(executor)));
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyAllSuccessAsync(Object, Supplier[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyAllSuccessTupleAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
+                Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
+            return mSupplyAllSuccessTupleAsync(supplier1, supplier2, supplier3, supplier4, supplier5, defaultExecutor);
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyAllSuccessAsync(Executor, Object, Supplier[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided suppliers fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyAllSuccessTupleAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
+                Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5, Executor executor) {
+            return createCffu(CfTupleUtils.mSupplyAllSuccessTupleAsync(
+                    supplier1, supplier2, supplier3, supplier4, supplier5, cffuScreened(executor)));
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyMostSuccessTupleAsync(
+                long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
+            return mSupplyMostSuccessTupleAsync(timeout, unit, supplier1, supplier2, defaultExecutor);
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
+         * with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyMostSuccessTupleAsync(
+                long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+                Executor executor) {
+            return createCffu(CfTupleUtils.mSupplyMostSuccessTupleAsync(
+                    timeout, unit, supplier1, supplier2, cffuScreened(executor)));
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyMostSuccessTupleAsync(
+                long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
+                Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
+            return mSupplyMostSuccessTupleAsync(timeout, unit, supplier1, supplier2, supplier3, defaultExecutor);
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
+         * with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyMostSuccessTupleAsync(
+                long timeout, TimeUnit unit, Supplier<? extends T1> supplier1,
+                Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3, Executor executor) {
+            return createCffu(CfTupleUtils.mSupplyMostSuccessTupleAsync(
+                    timeout, unit, supplier1, supplier2, supplier3, cffuScreened(executor)));
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyMostSuccessTupleAsync(
+                long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+                Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
+            return mSupplyMostSuccessTupleAsync(timeout, unit, supplier1, supplier2, supplier3, supplier4, defaultExecutor);
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
+         * with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyMostSuccessTupleAsync(
+                long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+                Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Executor executor) {
+            return createCffu(CfTupleUtils.mSupplyMostSuccessTupleAsync(
+                    timeout, unit, supplier1, supplier2, supplier3, supplier4, cffuScreened(executor)));
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])} with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyMostSuccessTupleAsync(
+                long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+                Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
+            return mSupplyMostSuccessTupleAsync(timeout, unit, supplier1, supplier2, supplier3, supplier4, supplier5, defaultExecutor
+            );
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}
+         * with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyMostSuccessTupleAsync(
+                long timeout, TimeUnit unit, Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+                Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5,
+                Executor executor) {
+            return createCffu(CfTupleUtils.mSupplyMostSuccessTupleAsync(
+                    timeout, unit, supplier1, supplier2, supplier3, supplier4, supplier5, cffuScreened(executor)));
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyAsync(Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyTupleAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2) {
+            return mSupplyTupleAsync(supplier1, supplier2, defaultExecutor);
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2> Cffu<Tuple2<T1, T2>> mSupplyTupleAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Executor executor) {
+            return createCffu(CfTupleUtils.mSupplyTupleAsync(supplier1, supplier2, cffuScreened(executor)));
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyAsync(Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyTupleAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3) {
+            return mSupplyTupleAsync(supplier1, supplier2, supplier3, defaultExecutor);
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mSupplyTupleAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
+                Executor executor) {
+            return createCffu(CfTupleUtils.mSupplyTupleAsync(supplier1, supplier2, supplier3, cffuScreened(executor)));
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyAsync(Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyTupleAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+                Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4) {
+            return mSupplyTupleAsync(supplier1, supplier2, supplier3, supplier4, defaultExecutor);
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mSupplyTupleAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2,
+                Supplier<? extends T3> supplier3, Supplier<? extends T4> supplier4, Executor executor) {
+            return createCffu(CfTupleUtils.mSupplyTupleAsync(
+                    supplier1, supplier2, supplier3, supplier4, cffuScreened(executor)));
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyAsync(Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
+                Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5) {
+            return mSupplyTupleAsync(supplier1, supplier2, supplier3, supplier4, supplier5, defaultExecutor);
+        }
+
+        /**
+         * Tuple variant of {@link #mSupplyFailFastAsync(Executor, Supplier[])}.
+         */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
+        public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mSupplyTupleAsync(
+                Supplier<? extends T1> supplier1, Supplier<? extends T2> supplier2, Supplier<? extends T3> supplier3,
+                Supplier<? extends T4> supplier4, Supplier<? extends T5> supplier5, Executor executor) {
+            return createCffu(CfTupleUtils.mSupplyTupleAsync(
+                    supplier1, supplier2, supplier3, supplier4, supplier5, cffuScreened(executor)));
+        }
+
+        // endregion
+        ////////////////////////////////////////////////////////////////////////////////
+        // region## allTupleOf*/mostSuccessTupleOf Methods
+        ////////////////////////////////////////////////////////////////////////////////
+
+        /**
+         * Tuple variant of {@link #allResultsFailFastOf(CompletionStage[])}.
+         */
+        @Contract(pure = true)
+        public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleFailFastOf(
+                CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
+            return createCffu(CfTupleUtils.allTupleFailFastOf(cf1, cf2));
+        }
+
+        /**
+         * Tuple variant of {@link #allResultsFailFastOf(CompletionStage[])}.
+         */
+        @Contract(pure = true)
+        public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleFailFastOf(
+                CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
+            return createCffu(CfTupleUtils.allTupleFailFastOf(cf1, cf2, cf3));
+        }
+
+        /**
+         * Tuple variant of {@link #allResultsFailFastOf(CompletionStage[])}.
+         */
+        @Contract(pure = true)
+        public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleFailFastOf(
+                CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+                CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
+            return createCffu(CfTupleUtils.allTupleFailFastOf(cf1, cf2, cf3, cf4));
+        }
+
+        /**
+         * Tuple variant of {@link #allResultsFailFastOf(CompletionStage[])}.
+         */
+        @Contract(pure = true)
+        public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleFailFastOf(
+                CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
+                CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
+            return createCffu(CfTupleUtils.allTupleFailFastOf(cf1, cf2, cf3, cf4, cf5));
+        }
+
+        /**
+         * Tuple variant of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided stages fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the stage having a successful value of {@code null}).
+         */
+        @Contract(pure = true)
+        public <T1, T2> Cffu<Tuple2<T1, T2>> allSuccessTupleOf(
+                CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
+            return createCffu(CfTupleUtils.allSuccessTupleOf(cf1, cf2));
+        }
+
+        /**
+         * Tuple variant of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided stages fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the stage having a successful value of {@code null}).
+         */
+        @Contract(pure = true)
+        public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allSuccessTupleOf(
+                CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
+            return createCffu(CfTupleUtils.allSuccessTupleOf(cf1, cf2, cf3));
+        }
+
+        /**
+         * Tuple variant of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided stages fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the stage having a successful value of {@code null}).
+         */
+        @Contract(pure = true)
+        public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allSuccessTupleOf(
+                CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+                CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
+            return createCffu(CfTupleUtils.allSuccessTupleOf(cf1, cf2, cf3, cf4));
+        }
+
+        /**
+         * Tuple variant of {@link #allSuccessResultsOf(Object, CompletionStage[])} with {@code null} valueIfFailed.
+         * <p>
+         * If any of the provided stages fails, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the stage having a successful value of {@code null}).
+         */
+        @Contract(pure = true)
+        public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allSuccessTupleOf(
+                CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
+                CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
+            return createCffu(CfTupleUtils.allSuccessTupleOf(cf1, cf2, cf3, cf4, cf5));
+        }
+
+        /**
+         * Tuple variant of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+         * with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @Contract(pure = true)
+        public <T1, T2> Cffu<Tuple2<T1, T2>> mostSuccessTupleOf(
+                long timeout, TimeUnit unit, CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
+            return createCffu(CfTupleUtils.mostSuccessTupleOf(defaultExecutor, timeout, unit, cf1, cf2));
+        }
+
+        /**
+         * Tuple variant of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+         * with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @Contract(pure = true)
+        public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mostSuccessTupleOf(
+                long timeout, TimeUnit unit,
+                CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
+            return createCffu(CfTupleUtils.mostSuccessTupleOf(defaultExecutor, timeout, unit, cf1, cf2, cf3));
+        }
+
+        /**
+         * Tuple variant of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+         * with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @Contract(pure = true)
+        public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mostSuccessTupleOf(
+                long timeout, TimeUnit unit,
+                CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+                CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
+            return createCffu(CfTupleUtils.mostSuccessTupleOf(defaultExecutor, timeout, unit, cf1, cf2, cf3, cf4));
+        }
+
+        /**
+         * Tuple variant of {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}
+         * with {@code null} valueIfNotSuccess.
+         * <p>
+         * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
+         * (which is indistinguishable from the supplier having a successful value of {@code null}).
+         */
+        @Contract(pure = true)
+        public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mostSuccessTupleOf(
+                long timeout, TimeUnit unit,
+                CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
+                CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
+            return createCffu(CfTupleUtils.mostSuccessTupleOf(defaultExecutor, timeout, unit, cf1, cf2, cf3, cf4, cf5));
+        }
+
+        /**
+         * Tuple variant of {@link #allResultsOf(CompletionStage[])}.
+         */
+        @Contract(pure = true)
+        public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOf(
+                CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
+            return createCffu(CfTupleUtils.allTupleOf(cf1, cf2));
+        }
+
+        /**
+         * Tuple variant of {@link #allResultsOf(CompletionStage[])}.
+         */
+        @Contract(pure = true)
+        public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOf(
+                CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
+            return createCffu(CfTupleUtils.allTupleOf(cf1, cf2, cf3));
+        }
+
+        /**
+         * Tuple variant of {@link #allResultsOf(CompletionStage[])}.
+         */
+        @Contract(pure = true)
+        public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOf(
+                CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
+                CompletionStage<? extends T3> cf3, CompletionStage<? extends T4> cf4) {
+            return createCffu(CfTupleUtils.allTupleOf(cf1, cf2, cf3, cf4));
+        }
+
+        /**
+         * Tuple variant of {@link #allResultsOf(CompletionStage[])}.
+         */
+        @Contract(pure = true)
+        public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
+                CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
+                CompletionStage<? extends T4> cf4, CompletionStage<? extends T5> cf5) {
+            return createCffu(CfTupleUtils.allTupleOf(cf1, cf2, cf3, cf4, cf5));
+        }
+
+        private TupleOps() {}
+    }
+}

@@ -1,8 +1,8 @@
 package io.foldright.demo;
 
-import io.foldright.cffu.CfTupleUtils;
-import io.foldright.cffu.CffuFactory;
-import io.foldright.cffu.CompletableFutureUtils;
+import io.foldright.cffu2.CfTupleUtils;
+import io.foldright.cffu2.CffuFactory;
+import io.foldright.cffu2.CompletableFutureUtils;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;

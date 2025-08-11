@@ -1,6 +1,6 @@
 package io.foldright.demo;
 
-import io.foldright.cffu.CompletableFutureUtils;
+import io.foldright.cffu2.CompletableFutureUtils;
 
 import java.util.concurrent.CompletableFuture;
 

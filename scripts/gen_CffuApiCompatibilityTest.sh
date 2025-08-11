@@ -28,7 +28,7 @@ fi
 "$SED_CMD" -r '
   /^import /,/^import static/ {
     # adjust imports
-    s/import io\.foldright\.test_utils\.TestingExecutorUtils;/import io.foldright.cffu.Cffu;\nimport io.foldright.cffu.CffuFactory;\nimport io.foldright.test_utils.TestingExecutorUtils;/
+    s/import io\.foldright\.test_utils\.TestingExecutorUtils;/import io.foldright.cffu2.Cffu;\nimport io.foldright.cffu2.CffuFactory;\nimport io.foldright.test_utils.TestingExecutorUtils;/
     /import java.util.concurrent.CompletableFuture;/d
   }
 

@@ -1,9 +1,9 @@
 package io.foldright.aspect_test
 
-import io.foldright.cffu.CfTupleUtils
-import io.foldright.cffu.Cffu
-import io.foldright.cffu.CffuFactory
-import io.foldright.cffu.CompletableFutureUtils
+import io.foldright.cffu2.CfTupleUtils
+import io.foldright.cffu2.Cffu
+import io.foldright.cffu2.CffuFactory
+import io.foldright.cffu2.CompletableFutureUtils
 import io.foldright.test_utils.*
 import io.kotest.core.spec.style.AnnotationSpec
 import java.util.concurrent.CompletableFuture

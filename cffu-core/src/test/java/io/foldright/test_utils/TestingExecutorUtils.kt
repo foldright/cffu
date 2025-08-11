@@ -2,7 +2,7 @@
 
 package io.foldright.test_utils
 
-import io.foldright.cffu.CffuFactory
+import io.foldright.cffu2.CffuFactory
 import io.kotest.assertions.fail
 import io.kotest.core.config.AbstractProjectConfig
 import io.kotest.core.listeners.AfterProjectListener

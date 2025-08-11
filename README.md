@@ -177,7 +177,7 @@
 
 2\) 如果不能修改使用`CompletableFuture`的代码（如在外部库中返回的`CF`）
 
-使用[`CffuFactory.toCffu(CompletionStage)`方法](https://foldright.io/api-docs/cffu/1.1.11/io/foldright/cffu/CffuFactory.html#toCffu(java.util.concurrent.CompletionStage))，将`CompletableFuture`或`CompletionStage`转换成`Cffu`类型。
+使用[`CffuFactory.toCffu(CompletionStage)`方法](https://foldright.io/api-docs/cffu/1.1.11/io/foldright/cffu2/CffuFactory.html#toCffu(java.util.concurrent.CompletionStage))，将`CompletableFuture`或`CompletionStage`转换成`Cffu`类型。
 
 ### 1.3 库依赖（包含`CompletableFutureUtils`工具类）
 
@@ -588,7 +588,7 @@ public class MultipleActionsDemo {
 
 应该只处理当前业务自己清楚明确能恢复的具体异常，由外层处理其它的异常；避免掩盖Bug或是错误地处理了自己不能恢复的异常。
 
-`cffu`提供了相应的[`catching*`方法](https://foldright.io/api-docs/cffu/1.1.11/io/foldright/cffu/CompletableFutureUtils.html#catching(F,java.lang.Class,java.util.function.Function))，支持指定要处理异常类型；相比`CF#exceptionally`方法新加了一个异常类型参数，使用方式类似，不附代码示例。
+`cffu`提供了相应的[`catching*`方法](https://foldright.io/api-docs/cffu/1.1.11/io/foldright/cffu2/CompletableFutureUtils.html#catching(F,java.lang.Class,java.util.function.Function))，支持指定要处理异常类型；相比`CF#exceptionally`方法新加了一个异常类型参数，使用方式类似，不附代码示例。
 
 ### 2.6 `Backport`支持`Java 8`
 
@@ -615,18 +615,18 @@ public class MultipleActionsDemo {
 
 `cffu`库提供了超时执行安全的新实现方法：
 
-- [`Cffu#orTimeout()`](https://foldright.io/api-docs/cffu/1.1.11/io/foldright/cffu/Cffu.html#orTimeout(long,java.util.concurrent.TimeUnit))
-  / [`Cffu#completeOnTimeoutTimeout()`](https://foldright.io/api-docs/cffu/1.1.11/io/foldright/cffu/Cffu.html#completeOnTimeout(java.lang.Object,long,java.util.concurrent.TimeUnit))
-- [`CFU#cffuOrTimeout()`](https://foldright.io/api-docs/cffu/1.1.11/io/foldright/cffu/CompletableFutureUtils.html#cffuOrTimeout(F,long,java.util.concurrent.TimeUnit))
-  / [`CFU#cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu/1.1.11/io/foldright/cffu/CompletableFutureUtils.html#cffuCompleteOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
+- [`Cffu#orTimeout()`](https://foldright.io/api-docs/cffu/1.1.11/io/foldright/cffu2/Cffu.html#orTimeout(long,java.util.concurrent.TimeUnit))
+  / [`Cffu#completeOnTimeoutTimeout()`](https://foldright.io/api-docs/cffu/1.1.11/io/foldright/cffu2/Cffu.html#completeOnTimeout(java.lang.Object,long,java.util.concurrent.TimeUnit))
+- [`CFU#cffuOrTimeout()`](https://foldright.io/api-docs/cffu/1.1.11/io/foldright/cffu2/CompletableFutureUtils.html#cffuOrTimeout(F,long,java.util.concurrent.TimeUnit))
+  / [`CFU#cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu/1.1.11/io/foldright/cffu2/CompletableFutureUtils.html#cffuCompleteOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
 
 保证业务逻辑不会在`CF`的单线程`ScheduledThreadPoolExecutor`中执行。
 
 更多说明参见：
 
 - 演示问题的[`DelayDysfunctionDemo.java`](https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java)
-- `cffu backport`方法的`JavaDoc`： [`CFU#orTimeout()`](https://foldright.io/api-docs/cffu/1.1.11/io/foldright/cffu/CompletableFutureUtils.html#orTimeout(F,long,java.util.concurrent.TimeUnit))
-  / [`CFU#completeOnTimeout()`](https://foldright.io/api-docs/cffu/1.1.11/io/foldright/cffu/CompletableFutureUtils.html#completeOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
+- `cffu backport`方法的`JavaDoc`： [`CFU#orTimeout()`](https://foldright.io/api-docs/cffu/1.1.11/io/foldright/cffu2/CompletableFutureUtils.html#orTimeout(F,long,java.util.concurrent.TimeUnit))
+  / [`CFU#completeOnTimeout()`](https://foldright.io/api-docs/cffu/1.1.11/io/foldright/cffu2/CompletableFutureUtils.html#completeOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
 - 文章[`CompletableFuture`超时功能使用不当直接生产事故](https://juejin.cn/post/7411686792342274089)
 
 ### 2.8 支持超时的`join`方法
@@ -662,8 +662,8 @@ public class MultipleActionsDemo {
 
 - [`Java API`文档](https://foldright.io/api-docs/cffu/)
 - 实现源码
-  - [`Cffu.java`](cffu-core/src/main/java/io/foldright/cffu/Cffu.java)、[`CffuFactory.java`](cffu-core/src/main/java/io/foldright/cffu/CffuFactory.java)
-  - [`CompletableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu/CompletableFutureUtils.java)
+  - [`Cffu.java`](cffu-core/src/main/java/io/foldright/cffu2/Cffu.java)、[`CffuFactory.java`](cffu-core/src/main/java/io/foldright/cffu2/CffuFactory.java)
+  - [`CompletableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu2/CompletableFutureUtils.java)
 
 # 🔌 API Docs
 

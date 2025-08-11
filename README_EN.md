@@ -526,8 +526,8 @@ For more information, refer to:
 - `API` Documentation
   - [`Java API` Documentation](https://foldright.io/api-docs/cffu/)
 - Source Code
-  - `cffu`: [`Cffu.java`](cffu-core/src/main/java/io/foldright/cffu/Cffu.java), [`CffuFactory.java`](cffu-core/src/main/java/io/foldright/cffu/CffuFactory.java)
-  - `CompletableFuture utils`: [`CompletableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu/CompletableFutureUtils.java)
+  - `cffu`: [`Cffu.java`](cffu-core/src/main/java/io/foldright/cffu2/Cffu.java), [`CffuFactory.java`](cffu-core/src/main/java/io/foldright/cffu2/CffuFactory.java)
+  - `CompletableFuture utils`: [`CompletableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu2/CompletableFutureUtils.java)
 
 ## 3. How to Migrate from Direct Use of `CompletableFuture` to `Cffu`
 

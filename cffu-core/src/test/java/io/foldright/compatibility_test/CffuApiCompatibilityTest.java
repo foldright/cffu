@@ -2,8 +2,8 @@ package io.foldright.compatibility_test;
 
 import io.foldright.test_utils.MinStageTestUtils;
 import io.foldright.test_utils.TestUtils;
-import io.foldright.cffu.Cffu;
-import io.foldright.cffu.CffuFactory;
+import io.foldright.cffu2.Cffu;
+import io.foldright.cffu2.CffuFactory;
 import io.foldright.test_utils.TestingExecutorUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

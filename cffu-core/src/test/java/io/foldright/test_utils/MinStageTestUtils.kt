@@ -2,9 +2,9 @@
 
 package io.foldright.test_utils
 
-import io.foldright.cffu.Cffu
-import io.foldright.cffu.CffuFactory
-import io.foldright.cffu.MCffu
+import io.foldright.cffu2.Cffu
+import io.foldright.cffu2.CffuFactory
+import io.foldright.cffu2.MCffu
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.matchers.booleans.shouldBeFalse

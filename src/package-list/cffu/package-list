@@ -1,4 +1,5 @@
-io.foldright.cffu
-io.foldright.cffu.tuple
-io.foldright.cffu.spi
-io.foldright.cffu.ttl
+io.foldright.cffu2
+io.foldright.cffu2.tuple
+io.foldright.cffu2.spi
+io.foldright.cffu2.eh
+io.foldright.cffu2.ttl

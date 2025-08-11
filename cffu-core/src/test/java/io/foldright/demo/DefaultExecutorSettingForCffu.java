@@ -1,7 +1,7 @@
 package io.foldright.demo;
 
-import io.foldright.cffu.Cffu;
-import io.foldright.cffu.CffuFactory;
+import io.foldright.cffu2.Cffu;
+import io.foldright.cffu2.CffuFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

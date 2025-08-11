@@ -11,8 +11,8 @@
 	<artifactId>cffu-demo</artifactId>
 
 	<properties>
-		<demo.module.name>io.foldright.cffu.demo</demo.module.name>
-		<exec.main.class>io.foldright.demo.cffu.CffuDemo</exec.main.class>
+		<demo.module.name>io.foldright.cffu2.demo</demo.module.name>
+		<exec.main.class>io.foldright.demo.cffu2.CffuDemo</exec.main.class>
 	</properties>
 
 	<dependencies>

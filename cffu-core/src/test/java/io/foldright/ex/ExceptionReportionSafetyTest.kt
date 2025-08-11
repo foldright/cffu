@@ -1,7 +1,7 @@
 package io.foldright.ex
 
-import io.foldright.cffu.Cffu
-import io.foldright.cffu.CompletableFutureUtils
+import io.foldright.cffu2.Cffu
+import io.foldright.cffu2.CompletableFutureUtils
 import io.foldright.test_utils.isJava9Plus
 import io.foldright.test_utils.java12Plus
 import io.foldright.test_utils.testCffuFac

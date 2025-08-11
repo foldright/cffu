@@ -1,14 +1,14 @@
 package io.foldright.demo;
 
-import io.foldright.cffu.Cffu;
-import io.foldright.cffu.CffuFactory;
-import io.foldright.cffu.tuple.Tuple2;
+import io.foldright.cffu2.Cffu;
+import io.foldright.cffu2.CffuFactory;
+import io.foldright.cffu2.tuple.Tuple2;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static io.foldright.cffu.CfTupleUtils.allTupleFailFastOf;
+import static io.foldright.cffu2.CfTupleUtils.allTupleFailFastOf;
 
 
 public class AllTupleOfDemo {

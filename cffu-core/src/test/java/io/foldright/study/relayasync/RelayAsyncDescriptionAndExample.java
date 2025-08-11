@@ -1,6 +1,6 @@
 package io.foldright.study.relayasync;
 
-import io.foldright.cffu.LLCF;
+import io.foldright.cffu2.LLCF;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static io.foldright.cffu.CompletableFutureUtils.allOf;
-import static io.foldright.cffu.CompletableFutureUtils.cffuOrTimeout;
+import static io.foldright.cffu2.CompletableFutureUtils.allOf;
+import static io.foldright.cffu2.CompletableFutureUtils.cffuOrTimeout;
 import static io.foldright.test_utils.TestUtils.sleep;
 import static java.lang.System.currentTimeMillis;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;

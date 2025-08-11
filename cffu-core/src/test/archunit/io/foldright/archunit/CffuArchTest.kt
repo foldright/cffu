@@ -9,9 +9,9 @@ import com.tngtech.archunit.lang.ArchRule
 import com.tngtech.archunit.lang.ConditionEvents
 import com.tngtech.archunit.lang.SimpleConditionEvent
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition
-import io.foldright.cffu.Cffu
-import io.foldright.cffu.CffuFactory
-import io.foldright.cffu.CffuFactoryBuilder
+import io.foldright.cffu2.Cffu
+import io.foldright.cffu2.CffuFactory
+import io.foldright.cffu2.CffuFactoryBuilder
 
 /**
  * [ArchUnit User Guide - 3.3. Using JUnit 4 or JUnit 5](https://www.archunit.org/userguide/html/000_Index.html#_using_junit_4_or_junit_5)

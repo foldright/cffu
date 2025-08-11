@@ -13,5 +13,5 @@ source "$BABY_ROOT"/lib/common_utils.sh
 source "$BABY_ROOT"/lib/maven_utils.sh
 
 mvu::mvn_cmd clean compile exec:exec
-mvu::mvn_cmd exec:exec -Dexec.main.class=io.foldright.demo.cffu.CompletableFutureUtilsDemo
-mvu::mvn_cmd exec:exec -Dexec.main.class=io.foldright.demo.cffu.CovariantDemo
+mvu::mvn_cmd exec:exec -Dexec.main.class=io.foldright.demo.cffu2.CompletableFutureUtilsDemo
+mvu::mvn_cmd exec:exec -Dexec.main.class=io.foldright.demo.cffu2.CovariantDemo

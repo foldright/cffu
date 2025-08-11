@@ -1,6 +1,6 @@
 package io.foldright.aspect_test
 
-import io.foldright.cffu.CompletableFutureUtils
+import io.foldright.cffu2.CompletableFutureUtils
 import io.foldright.test_utils.sleep
 import io.foldright.test_utils.testCffuFac
 import io.kotest.core.spec.style.FunSpec

@@ -1,12 +1,12 @@
 package io.foldright.study.relayasync;
 
-import io.foldright.cffu.LLCF;
+import io.foldright.cffu2.LLCF;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
-import static io.foldright.cffu.LLCF.completeCf0;
+import static io.foldright.cffu2.LLCF.completeCf0;
 import static io.foldright.test_utils.TestUtils.sleep;
 import static java.lang.Thread.currentThread;
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,8 +1,8 @@
 package io.foldright.demo;
 
-import io.foldright.cffu.Cffu;
-import io.foldright.cffu.CffuFactory;
-import io.foldright.cffu.MCffu;
+import io.foldright.cffu2.Cffu;
+import io.foldright.cffu2.CffuFactory;
+import io.foldright.cffu2.MCffu;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static io.foldright.cffu.CompletableFutureUtils.*;
+import static io.foldright.cffu2.CompletableFutureUtils.*;
 
 
 @SuppressWarnings({"ThrowablePrintedToSystemOut", "SameParameterValue"})
