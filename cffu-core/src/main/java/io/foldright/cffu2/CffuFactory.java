@@ -717,7 +717,7 @@ public final class CffuFactory {
      * Returns a MCffu that maintains the same completion properties as the given stage, configured with this {@code CffuFactory}.
      * If the given stage is already a MCffu and uses this {@code CffuFactory}, this method may return the given stage.
      * <p>
-     * This method is similar as  {@link #toCffu(CompletionStage)} but return type MCffu instead of Cffu.
+     * This method is similar as {@link #toCffu(CompletionStage)} but return type MCffu instead of Cffu.
      *
      * @throws NullPointerException if the given stage is null
      * @see Cffu#asMCffu(Cffu)

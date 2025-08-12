@@ -41,6 +41,7 @@ jobs:
 
       - name: Remove self maven install files
         run: rm -rf $HOME/.m2/repository/io/foldright/cffu*
+      # https://github.com/codecov/codecov-action
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
       # https://github.com/marketplace/actions/coveralls-github-action
@@ -49,6 +50,7 @@ jobs:
         uses: coverallsapp/github-action@v2
         with:
           format: "jacoco"
+          fail-on-error: false
 
       - name: Update TOC of markdown files contained TOC
         # https://github.com/thlorenz/doctoc
