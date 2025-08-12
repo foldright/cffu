@@ -255,7 +255,7 @@ public final class LLCF {
      * "asynchronous execution"(methods with suffix <em>async</em>) is simpler, make wise use of "relay async" way when necessary.
      * <p>
      * More info about the "relay async" way (including more description and example codes) see <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/study/relayasync/RelayAsyncDescriptionAndExample.java"
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/study/relayasync/RelayAsyncDescriptionAndExample.java"
      * >{@code RelayAsyncDescriptionAndExample.java}</a>
      *
      * @param cfThis            the input stage(including CompletableFuture)

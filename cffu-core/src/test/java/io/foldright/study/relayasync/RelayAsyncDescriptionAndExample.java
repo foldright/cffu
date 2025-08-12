@@ -37,8 +37,8 @@ public class RelayAsyncDescriptionAndExample {
         cf.thenApply(s -> {
             // a simulating long-running computation...
             sleep(1000);
-            // if input cf is COMPLETED when computations execute,
-            // executes the long time computation SYNCHRONOUSLY (aka. in the caller thread);
+            // if input cf is COMPLETED when create a continuation stage (calling `thenApply`),
+            //   executes the long time computation SYNCHRONOUSLY (aka. in the caller thread);
             // this SYNCHRONIZED execution leads to BLOCKing sequential codes of caller... ⚠️
 
             return s + s;
@@ -52,8 +52,8 @@ public class RelayAsyncDescriptionAndExample {
             // a simulating long-running computation...
             sleep(1000);
             // always executes via an executor(guarantees not to block sequential code of caller).
-            // if input cf is INCOMPLETE when computations execute,
-            // the execution via an executor leads to ONE MORE thread switching. ⚠️
+            // if input cf is INCOMPLETE when create a continuation stage (calling `thenApplyAsync`),
+            //   the execution via an executor leads to ONE MORE thread switching. ⚠️
 
             return s + s;
         });
@@ -62,8 +62,8 @@ public class RelayAsyncDescriptionAndExample {
         // How about the fourth way to arrange execution of a new stage's computations?
         // ================================================================================
         //
-        // - if input cf is COMPLETED when computations execute, use "asynchronous execution" (via supplied Executor),
-        //   won't block sequential code of caller ✅
+        // - if input cf is COMPLETED when create a continuation stage,
+        //   use "asynchronous execution" (via supplied Executor), won't block sequential code of caller ✅
         // - otherwise, use "default execution", save one thread switching ✅
         //
         // Let's call this way as "relay async".
@@ -71,8 +71,8 @@ public class RelayAsyncDescriptionAndExample {
         LLCF.relayAsync0(cf, f -> f.thenApply(s -> {
             // a simulating long-running computation...
             sleep(1000);
-            // if input cf is COMPLETED, executes via supplied executor
-            // if input cf is INCOMPLETE, use "default execution"
+            // if input cf is COMPLETED when create a continuation stage (calling `thenApply`), executes via supplied executor
+            // if input cf is INCOMPLETE when create a continuation stage (calling `thenApply`), use "default execution"
 
             return s + s;
         }), ForkJoinPool.commonPool());
