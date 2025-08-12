@@ -1776,7 +1776,7 @@ fun <F : CompletableFuture<*>> F.orTimeout(timeout: Long, unit: TimeUnit): F =
  * **CAUTION:** This method returns a new CompletableFuture and this behavior is DIFFERENT from the original CF method
  * [CompletableFuture.completeOnTimeout] and its backport method [completeOnTimeout], because the returned new CF
  * instance avoids the subsequent usage of the delay thread. More info see the javadoc of [completeOnTimeout] and the demo
- * [DelayDysfunctionDemo](https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java).
+ * [DelayDysfunctionDemo](https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java).
  *
  * @param value the value to use upon timeout
  * @param timeout how long to wait before completing normally with the given value, in units of `unit`
@@ -1794,7 +1794,7 @@ fun <T, F : CompletableFuture<in T>> F.cffuCompleteOnTimeout(
  * **CAUTION:** This method returns a new CompletableFuture and this behavior is DIFFERENT from the original CF method
  * [CompletableFuture.completeOnTimeout] and its backport method [completeOnTimeout], because the returned new CF
  * instance avoids the subsequent usage of the delay thread. More info see the javadoc of [completeOnTimeout] and the demo
- * [DelayDysfunctionDemo](https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java).
+ * [DelayDysfunctionDemo](https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java).
  *
  * @param value the value to use upon timeout
  * @param executorWhenTimeout the async executor when triggered by timeout

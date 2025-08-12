@@ -1676,7 +1676,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
      * need be declared to avoid the compilation error, more info see <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
@@ -1719,7 +1719,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
      * need be declared to avoid the compilation error, more info see <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
@@ -1800,7 +1800,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
      * need be declared to avoid the compilation error, more info see <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
@@ -1840,7 +1840,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
      * need be declared to avoid the compilation error, more info see <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
@@ -1880,7 +1880,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
      * need be declared to avoid the compilation error, more info see <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
@@ -1912,7 +1912,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
@@ -1930,7 +1930,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
@@ -1957,7 +1957,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
@@ -1974,7 +1974,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
@@ -2000,7 +2000,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
@@ -2018,7 +2018,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
@@ -2045,7 +2045,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
@@ -2063,7 +2063,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
      * to avoid the compilation error, more info see <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
@@ -3211,7 +3211,7 @@ public final class CompletableFutureUtils {
      * the subsequent usage of the delay thread; This behavior is DIFFERENT from the original CF method
      * {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and its backport method {@link #orTimeout orTimeout}.
      * More info see the javadoc of {@link #orTimeout orTimeout} and the demo <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
@@ -3231,7 +3231,7 @@ public final class CompletableFutureUtils {
      * the subsequent usage of the delay thread; This behavior is DIFFERENT from the original CF method
      * {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and its backport method {@link #orTimeout orTimeout}.
      * More info see the javadoc of {@link #orTimeout orTimeout} and the demo <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
      * @param timeout             how long to wait before completing exceptionally with a TimeoutException,
@@ -3312,7 +3312,7 @@ public final class CompletableFutureUtils {
      * the subsequent usage of the delay thread. This behavior is DIFFERENT from the original CF method {@link
      * CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout
      * completeOnTimeout}. More info see the javadoc of {@link #completeOnTimeout completeOnTimeout} and the demo <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
      * @param value   the value to use upon timeout
@@ -3334,7 +3334,7 @@ public final class CompletableFutureUtils {
      * the subsequent usage of the delay thread. This behavior is DIFFERENT from the original CF method {@link
      * CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout
      * completeOnTimeout}. More info see the javadoc of {@link #completeOnTimeout completeOnTimeout} and the demo <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
      * @param value               the value to use upon timeout
