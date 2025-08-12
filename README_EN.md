@@ -1,15 +1,15 @@
 # <div align="center"><a href="#dummy"><img src="https://github.com/foldright/cffu/assets/1063891/124658cd-025f-471e-8da1-7eea0e482915" alt="🦝 CompletableFuture Fu (CF-Fu)"></a></div>
 
 <p align="center">
-<a href="https://github.com/foldright/cffu/actions/workflows/fast_ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/fast_ci.yaml?branch=main&logo=github&logoColor=white&label=fast ci" alt="Fast CI - GH Workflow Build Status"></a>
-<a href="https://github.com/foldright/cffu/actions/workflows/ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/ci.yaml?branch=main&logo=github&logoColor=white&label=strong ci" alt="Strong CI - GH Workflow Build Status"></a>
-<a href="https://app.codecov.io/gh/foldright/cffu/tree/main"><img src="https://img.shields.io/codecov/c/github/foldright/cffu/main?logo=codecov&logoColor=white" alt="Codecov"></a>
-<a href="https://qodana.cloud/projects/A61Yy"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/qodana_code_quality.yml?branch=main&logo=jetbrains&logoColor=white&label=qodana" alt="Qodana - GH Workflow Build Status"></a>
+<a href="https://github.com/foldright/cffu/actions/workflows/fast_ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/fast_ci.yaml?branch=2.x-dev&logo=github&logoColor=white&label=fast%20ci" alt="Fast Build CI"></a>
+<a href="https://github.com/foldright/cffu/actions/workflows/ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/ci.yaml?branch=2.x-dev&logo=github&logoColor=white&label=strong%20ci" alt="Strong Build CI"></a>
+<a href="https://app.codecov.io/gh/foldright/cffu/tree/2.x-dev"><img src="https://img.shields.io/codecov/c/github/foldright/cffu/2.x-dev?logo=codecov&logoColor=white" alt="Codecov"></a>
+<a href="https://qodana.cloud/projects/A61Yy/reports?branch=2.x-dev"><img src="https://img.shields.io/github/actions/workflow/status/foldright/cffu/qodana_code_quality.yml?branch=2.x-dev&logo=jetbrains&logoColor=white&label=qodana" alt="Qodana Code Inspections"></a>
 <a href="https://openjdk.java.net/"><img src="https://img.shields.io/badge/Java-8+-339933?logo=openjdk&logoColor=white" alt="Java support"></a>
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/foldright/cffu?color=4D7A97&logo=apache" alt="License"></a>
-<a href="https://foldright.io/api-docs/cffu/"><img src="https://img.shields.io/github/release/foldright/cffu?label=javadoc&color=339933&logo=read-the-docs&logoColor=white" alt="Javadocs"></a>
-<a href="https://central.sonatype.com/artifact/io.foldright/cffu2/1.1.11/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
-<a href="https://github.com/foldright/cffu/releases"><img src="https://img.shields.io/github/release/foldright/cffu.svg" alt="GitHub Releases"></a>
+<a href="https://foldright.io/api-docs/cffu2/"><img src="https://img.shields.io/github/release/foldright/cffu?label=javadoc&color=339933&logo=read-the-docs&logoColor=white&filter=v2.*" alt="Javadocs"></a>
+<a href="https://central.sonatype.com/artifact/io.foldright/cffu2/2.0.0-Alpha1/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu2?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
+<a href="https://github.com/foldright/cffu/releases"><img src="https://img.shields.io/github/release/foldright/cffu.svg?filter=v2.*" alt="GitHub Releases"></a>
 <a href="https://github.com/foldright/cffu/stargazers"><img src="https://img.shields.io/github/stars/foldright/cffu?style=flat" alt="GitHub Stars"></a>
 <a href="https://github.com/foldright/cffu/fork"><img src="https://img.shields.io/github/forks/foldright/cffu?style=flat" alt="GitHub Forks"></a>
 <a href="https://github.com/foldright/cffu/issues"><img src="https://img.shields.io/github/issues/foldright/cffu" alt="GitHub Issues"></a>
@@ -524,7 +524,7 @@ This new method is simple to use and does not require a code example.
 For more information, refer to:
 
 - `API` Documentation
-  - [`Java API` Documentation](https://foldright.io/api-docs/cffu/)
+  - [`Java API` Documentation](https://foldright.io/api-docs/cffu2/)
 - Source Code
   - `cffu`: [`Cffu.java`](cffu-core/src/main/java/io/foldright/cffu2/Cffu.java), [`CffuFactory.java`](cffu-core/src/main/java/io/foldright/cffu2/CffuFactory.java)
   - `CompletableFuture utils`: [`CompletableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu2/CompletableFutureUtils.java)
@@ -543,11 +543,11 @@ This migration is possible because:
 
 # 🔌 API Docs
 
-Current version of `Java API` documentation: https://foldright.io/api-docs/cffu/
+Current version of `Java API` documentation: https://foldright.io/api-docs/cffu2/
 
 # 🍪Dependencies
 
-> check out [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu2/1.1.11/versions) for new or available versions。
+> check out [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu2/2.0.0-Alpha1/versions) for new or available versions。
 
 - `cffu`library（including[`Java CompletableFuture`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html) enhanced `CompletableFutureUtils`）:
   - For `Maven` projects:
@@ -555,19 +555,19 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu/
     ```xml
     <dependency>
       <groupId>io.foldright</groupId>
-      <artifactId>cffu</artifactId>
-      <version>1.1.11</version>
+      <artifactId>cffu2</artifactId>
+      <version>2.0.0-Alpha1</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     Gradle Kotlin DSL
     ```groovy
-    implementation("io.foldright:cffu:1.1.11")
+    implementation("io.foldright:cffu2:2.0.0-Alpha1")
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation 'io.foldright:cffu:1.1.11'
+    implementation 'io.foldright:cffu2:2.0.0-Alpha1'
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local) implementation for [`cffu executor wrapper SPI`](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -576,7 +576,7 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu/
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu2-ttl-executor-wrapper</artifactId>
-      <version>1.1.11</version>
+      <version>2.0.0-Alpha1</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -584,11 +584,11 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu/
 
     Gradle Kotlin DSL
     ```groovy
-    runtimeOnly("io.foldright:cffu2-ttl-executor-wrapper:1.1.11")
+    runtimeOnly("io.foldright:cffu2-ttl-executor-wrapper:2.0.0-Alpha1")
     ```
     Gradle Groovy DSL
     ```groovy
-    runtimeOnly 'io.foldright:cffu2-ttl-executor-wrapper:1.1.11'
+    runtimeOnly 'io.foldright:cffu2-ttl-executor-wrapper:2.0.0-Alpha1'
     ```
 
 # 📚 See also

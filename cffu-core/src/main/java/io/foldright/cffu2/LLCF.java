@@ -255,7 +255,7 @@ public final class LLCF {
      * "asynchronous execution"(methods with suffix <em>async</em>) is simpler, make wise use of "relay async" way when necessary.
      * <p>
      * More info about the "relay async" way (including more description and example codes) see <a href=
-     * "https://github.com/foldright/cffu/blob/main/cffu-core/src/test/java/io/foldright/study/relayasync/RelayAsyncDescriptionAndExample.java"
+     * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/study/relayasync/RelayAsyncDescriptionAndExample.java"
      * >{@code RelayAsyncDescriptionAndExample.java}</a>
      *
      * @param cfThis            the input stage(including CompletableFuture)
@@ -441,7 +441,7 @@ public final class LLCF {
      * a naive black hole to prevent code elimination, more info see <a href=
      * "https://github.com/openjdk/jmh/blob/1.37/jmh-core/src/main/java/org/openjdk/jmh/infra/Blackhole.java">JMH black hole</a>
      */
-    private static volatile int BLACK_HOLE = 0xCFF0CFF0;
+    private static volatile int BLACK_HOLE = 0xCFF0;
 
     // `CompletableFuture.completedStage` is the new method since java 9
     static final boolean IS_JAVA9_PLUS = methodExists(() -> CompletableFuture.completedStage(null));
