@@ -9,8 +9,8 @@
 			https://github.com/anliksim/maven-template-bom
 	-->
 	<groupId>io.foldright</groupId>
-	<artifactId>cffu-bom</artifactId>
-	<version>1.x-SNAPSHOT</version>
+	<artifactId>cffu2-bom</artifactId>
+	<version>2.x-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
 	<description>cffu bom</description>
@@ -69,12 +69,12 @@
 		<dependencies>
 			<dependency>
 				<groupId>io.foldright</groupId>
-				<artifactId>cffu</artifactId>
+				<artifactId>cffu2</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.foldright</groupId>
-				<artifactId>cffu-ttl-executor-wrapper</artifactId>
+				<artifactId>cffu2-ttl-executor-wrapper</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 		</dependencies>

@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>io.foldright</groupId>
-		<artifactId>cffu-parent</artifactId>
-		<version>1.x-SNAPSHOT</version>
+		<artifactId>cffu2-parent</artifactId>
+		<version>2.x-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>cffu</artifactId>
+	<artifactId>cffu2</artifactId>
 	<name>CompletableFuture-Fu(cffu)</name>
 	<description>
 		🦝 A tiny sidekick library to make CompletableFuture usage

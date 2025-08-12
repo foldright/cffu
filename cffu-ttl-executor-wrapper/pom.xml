@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>io.foldright</groupId>
-		<artifactId>cffu-parent</artifactId>
-		<version>1.x-SNAPSHOT</version>
+		<artifactId>cffu2-parent</artifactId>
+		<version>2.x-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>cffu-ttl-executor-wrapper</artifactId>
+	<artifactId>cffu2-ttl-executor-wrapper</artifactId>
 	<name>cffu executor wrapper provider for TTL</name>
 	<description>${project.name}</description>
 	<url>https://github.com/foldright/cffu</url>
@@ -57,7 +57,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>io.foldright</groupId>
-			<artifactId>cffu</artifactId>
+			<artifactId>cffu2</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

@@ -8,7 +8,7 @@
 <a href="https://openjdk.java.net/"><img src="https://img.shields.io/badge/Java-8+-339933?logo=openjdk&logoColor=white" alt="Java support"></a>
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/foldright/cffu?color=4D7A97&logo=apache" alt="License"></a>
 <a href="https://foldright.io/api-docs/cffu/"><img src="https://img.shields.io/github/release/foldright/cffu?label=javadoc&color=339933&logo=read-the-docs&logoColor=white" alt="Javadocs"></a>
-<a href="https://central.sonatype.com/artifact/io.foldright/cffu/1.0.0/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
+<a href="https://central.sonatype.com/artifact/io.foldright/cffu2/1.1.11/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
 <a href="https://github.com/foldright/cffu/releases"><img src="https://img.shields.io/github/release/foldright/cffu.svg" alt="GitHub Releases"></a>
 <a href="https://github.com/foldright/cffu/stargazers"><img src="https://img.shields.io/github/stars/foldright/cffu?style=flat" alt="GitHub Stars"></a>
 <a href="https://github.com/foldright/cffu/fork"><img src="https://img.shields.io/github/forks/foldright/cffu?style=flat" alt="GitHub Forks"></a>
@@ -673,7 +673,7 @@ public class MultipleActionsDemo {
 
 # 🍪依赖
 
-> 可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu/1.0.0/versions) 查看最新版本与可用版本列表。
+> 可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu2/1.1.11/versions) 查看最新版本与可用版本列表。
 
 - `cffu`库（包含[`Java CompletableFuture`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)的增强`CompletableFutureUtils`）:
   - For `Maven` projects:
@@ -701,7 +701,7 @@ public class MultipleActionsDemo {
     ```xml
     <dependency>
       <groupId>io.foldright</groupId>
-      <artifactId>cffu-ttl-executor-wrapper</artifactId>
+      <artifactId>cffu2-ttl-executor-wrapper</artifactId>
       <version>1.1.11</version>
       <scope>runtime</scope>
     </dependency>
@@ -710,11 +710,11 @@ public class MultipleActionsDemo {
 
     Gradle Kotlin DSL
     ```groovy
-    runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.1.11")
+    runtimeOnly("io.foldright:cffu2-ttl-executor-wrapper:1.1.11")
     ```
     Gradle Groovy DSL
     ```groovy
-    runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.1.11'
+    runtimeOnly 'io.foldright:cffu2-ttl-executor-wrapper:1.1.11'
     ```
 - `cffu bom`:
   - For `Maven` projects:
@@ -722,7 +722,7 @@ public class MultipleActionsDemo {
     ```xml
     <dependency>
       <groupId>io.foldright</groupId>
-      <artifactId>cffu-bom</artifactId>
+      <artifactId>cffu2-bom</artifactId>
       <version>1.1.11</version>
       <type>pom</type>
       <scope>import</scope>
@@ -732,11 +732,11 @@ public class MultipleActionsDemo {
 
     Gradle Kotlin DSL
     ```groovy
-    implementation(platform("io.foldright:cffu-bom:1.1.11"))
+    implementation(platform("io.foldright:cffu2-bom:1.1.11"))
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation platform('io.foldright:cffu-bom:1.1.11')
+    implementation platform('io.foldright:cffu2-bom:1.1.11')
     ```
 
 # 📚 更多资料
