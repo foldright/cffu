@@ -78,7 +78,7 @@
 		<release.pom.version.regex>${ga.release.pom.version.regex}</release.pom.version.regex>
 		<maven.enforcer.pom.version.regex>${snapshot.pom.version.regex}</maven.enforcer.pom.version.regex>
 
-		<spotbugs.annotations.version>4.8.6</spotbugs.annotations.version>
+		<spotbugs.annotations.version>4.9.4</spotbugs.annotations.version>
 		<jsr305.version>3.0.2</jsr305.version>
 		<jetbrains.annotations.version>26.0.2</jetbrains.annotations.version>
 
@@ -445,7 +445,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.11.2</version>
+					<version>3.11.3</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
