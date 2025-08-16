@@ -685,6 +685,19 @@ public final class CffuFactory {
         return createCffu(CompletableFutureUtils.fromSyncCall(callable));
     }
 
+    /**
+     * Returns a new MCffu that encapsulates the execution of synchronous logic.
+     * By wrapping synchronous code in a MCffu, exceptions can be handled consistently within the MCffu pipeline,
+     * eliminating the need to manage separate exceptional paths both inside and outside the flow.
+     *
+     * @throws NullPointerException if argument {@code callable} is {@code null}
+     * @see #fromSyncCall(Callable)
+     */
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, run directly instead of wrapping")
+    public <E, T extends Iterable<? extends E>> MCffu<E, T> mCffuFromSyncCall(Callable<T> callable) {
+        return createMCffu(CompletableFutureUtils.fromSyncCall(callable));
+    }
+
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
     // region## CompletionStage Argument Factory Methods

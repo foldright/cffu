@@ -779,9 +779,14 @@ class CffuFactoryTest {
         assertEquals(42, cf.get());
 
         final RuntimeException rte = new RuntimeException("foo");
-        final ExecutionException ee = assertThrowsExactly(ExecutionException.class,
-                () -> testCffuFac.fromSyncCall(() -> {throw rte;}).get());
-        assertSame(rte, ee.getCause());
+        assertCfWithEx(testCffuFac.fromSyncCall(() -> {throw rte;}), rte);
+
+        final List<Integer> list = asList(1, 2);
+        final MCffu<Integer, List<Integer>> mCffu = testCffuFac.mCffuFromSyncCall(() -> list);
+        assertTrue(mCffu.isDone());
+        assertSame(list, mCffu.get());
+
+        assertCfWithEx(testCffuFac.mCffuFromSyncCall(() -> {throw rte;}), rte);
     }
 
     // endregion
