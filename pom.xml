@@ -82,10 +82,7 @@
 		<jsr305.version>3.0.2</jsr305.version>
 		<jetbrains.annotations.version>26.0.2</jetbrains.annotations.version>
 
-		<kotlin.version>2.1.21</kotlin.version>
-		<kotlin.compiler.jvmTarget>${maven.compiler.source}</kotlin.compiler.jvmTarget>
-		<!-- https://kotlinlang.org/docs/maven.html#specifying-compiler-options -->
-		<kotlin.compiler.apiVersion>1.8</kotlin.compiler.apiVersion>
+		<kotlin.version>2.2.10</kotlin.version>
 
 		<slf4j.version>2.0.17</slf4j.version>
 		<log4j2.version>2.25.1</log4j2.version>
@@ -94,7 +91,7 @@
 
 		<!-- testing dependencies versions -->
 		<junit5.version>5.13.4</junit5.version>
-		<kotest.version>5.8.1</kotest.version>
+		<kotest.version>5.9.1</kotest.version>
 	</properties>
 
 	<dependencies>

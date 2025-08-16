@@ -37,9 +37,9 @@ readonly JDK_VERSIONS=(
 # shellcheck disable=SC2034
 readonly MVU_MVN_OPTS=(
   "${MVU_DEFAULT_MVN_OPTS[@]}"
-  -DperformRelease
-  ${CI_MORE_MVN_OPTS:+${CI_MORE_MVN_OPTS}}
+  -DperformRelease -Dcffu.exception.log.format=short
   -P!gen-sign -P!enforce-project-version-when-release
+  ${CI_MORE_MVN_OPTS:+${CI_MORE_MVN_OPTS}}
   dependency:tree
 )
 
@@ -56,7 +56,7 @@ jvu::switch_to_jdk "$default_build_jdk_version"
 cu::log_then_run scripts/gen_CffuApiCompatibilityTest.sh
 
 cu::head_line_echo "build and test with Java $default_build_jdk_version: $JAVA_HOME"
-mvu::mvn_cmd clean install
+mvu::mvn_cmd clean install -Dcffu.exception.log.format=
 
 ########################################
 # test by multiple version jdks
@@ -64,24 +64,18 @@ mvu::mvn_cmd clean install
 
 # shellcheck disable=SC2034
 readonly MVN_OPTS_FOR_JAVA8=(
-  -Dkotlin.version=1.6.0 -Dguava.version=29.0-jre
   -P!default-logging-dependencies -P!default-arch-unit-test
-  -Dcffu.exception.log.format=short
 )
 # shellcheck disable=SC2034
 readonly MVN_OPTS_FOR_JAVA11=(
-  -Dkotlin.version=1.7.0
   -DswitchToLog4j2LoggingDependencies -Pswitch-slf4j-to-v1
-  -Dcffu.exception.log.format=short
 )
 # shellcheck disable=SC2034
 readonly MVN_OPTS_FOR_JAVA17=(
-  -Dkotlin.version=1.8.0
-  -DswitchToLog4j2LoggingDependencies -Dcffu.exception.log.format=short
+  -DswitchToLog4j2LoggingDependencies
 )
 # shellcheck disable=SC2034
 readonly MVN_OPTS_FOR_JAVA24=(
-  -Dkotlin.version=1.9.0
   -Dcffu.exception.log.format=none
 )
 
