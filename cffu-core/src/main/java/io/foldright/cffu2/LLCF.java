@@ -87,15 +87,12 @@ public final class LLCF {
      * <strong>CAUTION:</strong> This method is NOT type safe! Because reused the CF instance, The returned cf
      * may be a minimal-stage, MUST NOT be written or read(explicitly) (e.g. {@link CompletableFuture#complete});
      * Otherwise, the caller usage of cf may throw UnsupportedOperationException.
-     * <p>
-     * Implementation Note: The returned instances of calling {@code copy} methods
-     * ({@link CompletableFuture#copy}) on minimal-stage instances is still minimal-stage
-     * (e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()})
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T> f_toCfCopy0(CompletionStage<? extends T> stage) {
         final CompletableFuture<T> f = f_toCf0(stage);
-        return IS_JAVA9_PLUS ? f.copy() : f.thenApply(x -> x);
+        // since minimal-stage is not writable, defensive copy is unneeded, just return minimal-stage.
+        return isMinStageCf(f) ? f : copy0(f);
     }
 
     /**
@@ -138,7 +135,7 @@ public final class LLCF {
     @Contract(pure = true)
     public static <T> CompletableFuture<T> toNonMinCfCopy0(CompletionStage<? extends T> stage) {
         final CompletableFuture<T> f = f_toCf0(stage);
-        return isMinStageCf(f) ? f.toCompletableFuture() : IS_JAVA9_PLUS ? f.copy() : f.thenApply(x -> x);
+        return isMinStageCf(f) ? f.toCompletableFuture() : copy0(f);
     }
 
     /**
@@ -148,6 +145,19 @@ public final class LLCF {
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] toNonMinCfCopyArray0(CompletionStage<? extends T>[] stages) {
         return mapArray(stages, CompletableFuture[]::new, LLCF::toNonMinCfCopy0);
+    }
+
+    /**
+     * Equivalent method of {@link CompletableFuture#copy()} with {Java 8} backwards compatibility.
+     * <p>
+     * Implementation Note: The returned instances of calling {@code copy}/{@code thenApply} methods
+     * ({@link CompletableFuture#copy}) on minimal-stage instances is still minimal-stage
+     * (e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().thenApply(...)}).
+     *
+     * @see CompletableFutureUtils#copy(CompletableFuture)
+     */
+    public static <T> CompletableFuture<T> copy0(CompletableFuture<T> cf) {
+        return IS_JAVA9_PLUS ? cf.copy() : cf.thenApply(x -> x);
     }
 
     /**

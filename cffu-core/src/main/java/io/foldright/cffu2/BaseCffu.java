@@ -2321,7 +2321,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     public final F withCffuFactory(CffuFactory cffuFactory) {
         // NOTE: Copy the underlying cf to ensure this method/with* methods create new Cffu instance with NEW cf instance,
         //       preventing modifications/write methods to the new returned Cffu instance from affecting this Cffu in surprise
-        return create(cffuFactory, isMinimalStage, CompletableFutureUtils.copy(cf));
+        return create(cffuFactory, isMinimalStage, copy0(cf));
     }
 
     // endregion

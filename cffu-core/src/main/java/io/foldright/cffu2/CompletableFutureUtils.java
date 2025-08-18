@@ -2512,7 +2512,7 @@ public final class CompletableFutureUtils {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(unit, "unit is null");
         // defensive copy input cf to avoid writing it by `orTimeout`
-        return cfThis.isDone() ? cfThis.join() : orTimeout(copy(cfThis), timeout, unit).join();
+        return cfThis.isDone() ? cfThis.join() : orTimeout(copy0(cfThis), timeout, unit).join();
     }
 
     /**
@@ -2759,6 +2759,20 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
+     * Returns a new CompletableFuture that is completed normally with the same value as this CompletableFuture when
+     * it completes normally. If this CompletableFuture completes exceptionally, then the returned CompletableFuture
+     * completes exceptionally with a CompletionException with this exception as cause. The behavior is equivalent
+     * to {@code thenApply(x -> x)}. This method may be useful as a form of "defensive copying", to prevent clients
+     * from completing, while still being able to arrange dependent actions.
+     *
+     * @see CompletableFuture#copy()
+     */
+    @Contract(pure = true)
+    public static <T> CompletableFuture<T> copy(CompletableFuture<T> cfThis) {
+        return copy0(requireNonNull(cfThis, "cfThis is null"));
+    }
+
+    /**
      * Returns a new CompletionStage that is completed normally with the same value as given CompletableFuture
      * when it completes normally, and cannot be independently completed or otherwise used in ways
      * not defined by the methods of interface {@link CompletionStage}.
@@ -2774,21 +2788,6 @@ public final class CompletableFutureUtils {
     public static <T> CompletionStage<T> minimalCompletionStage(CompletableFuture<T> cfThis) {
         requireNonNull(cfThis, "cfThis is null");
         return IS_JAVA9_PLUS ? cfThis.minimalCompletionStage() : cfThis.thenApply(x -> x);
-    }
-
-    /**
-     * Returns a new CompletableFuture that is completed normally with the same value as this CompletableFuture when
-     * it completes normally. If this CompletableFuture completes exceptionally, then the returned CompletableFuture
-     * completes exceptionally with a CompletionException with this exception as cause. The behavior is equivalent
-     * to {@code thenApply(x -> x)}. This method may be useful as a form of "defensive copying", to prevent clients
-     * from completing, while still being able to arrange dependent actions.
-     *
-     * @see CompletableFuture#copy()
-     */
-    @Contract(pure = true)
-    public static <T> CompletableFuture<T> copy(CompletableFuture<T> cfThis) {
-        requireNonNull(cfThis, "cfThis is null");
-        return IS_JAVA9_PLUS ? cfThis.copy() : cfThis.thenApply(x -> x);
     }
 
     /**
