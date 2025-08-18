@@ -77,17 +77,35 @@ class LLCFTest : FunSpec({
     }
 
     test("f_toCfCopy0") {
-        arrayOf(
-            completedStage(n),
-            testCffuFac.completedStage(n),
-        ).forEach { s ->
+        completedStage(n).let { s ->
             LLCF.f_toCfCopy0(s).apply {
-                shouldNotBeSameInstanceAs(s)
                 if (isJava9Plus()) {
                     LLCF.isMinStageCf(this).shouldBeTrue()
 
+                    shouldBeSameInstanceAs(s)
                     shouldBeMinimalStage()
                 } else {
+                    LLCF.isMinStageCf(this).shouldBeFalse()
+
+                    shouldNotBeSameInstanceAs(s)
+                    shouldBeCompleted()
+                    join() shouldBe n
+                }
+            }
+        }
+
+        testCffuFac.completedStage(n).let { s ->
+            val minCffu = s as Cffu<Int>
+            LLCF.f_toCfCopy0(minCffu).apply {
+                if (isJava9Plus()) {
+                    LLCF.isMinStageCf(this).shouldBeTrue()
+
+                    shouldBeSameInstanceAs(minCffu.cffuUnwrap())
+                    shouldBeMinimalStage()
+                } else {
+                    LLCF.isMinStageCf(this).shouldBeFalse()
+
+                    shouldNotBeSameInstanceAs(minCffu.cffuUnwrap())
                     shouldBeCompleted()
                     join() shouldBe n
                 }
@@ -109,19 +127,38 @@ class LLCFTest : FunSpec({
     }
 
     test("f_toCfCopyArray0") {
-        val minStages = arrayOf(
-            completedStage(n),
-            testCffuFac.completedStage(n),
-        )
+        val minStages = Array(2) { completedStage(it) }
         LLCF.f_toCfCopyArray0(minStages).forEachIndexed { idx, f ->
-            f.shouldNotBeSameInstanceAs(minStages[idx])
             if (isJava9Plus()) {
                 LLCF.isMinStageCf(f).shouldBeTrue()
 
+                f.shouldBeSameInstanceAs(minStages[idx])
                 f.shouldBeMinimalStage()
             } else {
+                LLCF.isMinStageCf(f).shouldBeFalse()
+
+                f.shouldNotBeSameInstanceAs(s)
                 f.shouldBeCompleted()
-                f.join() shouldBe n
+                f.join() shouldBe idx
+            }
+        }
+
+        val minCffus = Array(2) {
+            testCffuFac.completedStage(it)
+        }
+        LLCF.f_toCfCopyArray0(minCffus).forEachIndexed { idx, f ->
+            val minCffu: Cffu<Int> = minCffus[idx] as Cffu<Int>
+            if (isJava9Plus()) {
+                LLCF.isMinStageCf(f).shouldBeTrue()
+
+                f.shouldBeSameInstanceAs(minCffu.cffuUnwrap())
+                f.shouldBeMinimalStage()
+            } else {
+                LLCF.isMinStageCf(f).shouldBeFalse()
+
+                f.shouldNotBeSameInstanceAs(minCffu.cffuUnwrap())
+                f.shouldBeCompleted()
+                f.join() shouldBe idx
             }
         }
 

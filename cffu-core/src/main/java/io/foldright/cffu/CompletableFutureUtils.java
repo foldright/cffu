@@ -4012,8 +4012,7 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T> copy(CompletableFuture<T> cfThis) {
-        requireNonNull(cfThis, "cfThis is null");
-        return IS_JAVA9_PLUS ? cfThis.copy() : cfThis.thenApply(x -> x);
+        return copy0(requireNonNull(cfThis, "cfThis is null"));
     }
 
     /**
