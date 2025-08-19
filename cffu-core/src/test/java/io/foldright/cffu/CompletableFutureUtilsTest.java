@@ -249,11 +249,15 @@ class CompletableFutureUtilsTest {
 
     @Test
     void test_allOf_methods__success__trivial_case() throws Exception {
-        assertEquals(Arrays.asList(n, n + 1, n + 2), allResultsOf(
+        final List<Integer> a3 = allResultsOf(
                 completedFuture(n),
                 completedStage(n + 1),
                 completedFuture(n + 2)
-        ).get());
+        ).get();
+        assertEquals(Arrays.asList(n, n + 1, n + 2), a3);
+        // return list is normal array list, it modifiable
+        a3.add(0);
+        a3.remove(0);
 
         assertEquals(Arrays.asList(n, n + 1), allResultsOf(
                 completedStage(n),
@@ -263,7 +267,11 @@ class CompletableFutureUtilsTest {
         assertEquals(Collections.singletonList(n), allResultsOf(completedFuture(n)).get());
         assertEquals(Collections.singletonList(n), allResultsOf(completedStage(n)).get());
 
-        assertEquals(Collections.emptyList(), allResultsOf().get());
+        final List<Object> a0 = allResultsOf().get();
+        assertEquals(Collections.emptyList(), a0);
+        // return list is normal array list, it modifiable
+        a0.add(0);
+        a3.remove(0);
 
         ////////////////////////////////////////////////////////////////////////////////
 
