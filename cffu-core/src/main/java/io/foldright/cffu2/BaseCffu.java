@@ -19,6 +19,7 @@ import java.util.function.*;
 
 import static io.foldright.cffu2.CffuFactoryBuilder.cffuScreened;
 import static io.foldright.cffu2.CffuFactoryBuilder.cffuUnscreened;
+import static io.foldright.cffu2.CompletableFutureUtils.*;
 import static io.foldright.cffu2.LLCF.*;
 import static java.util.Objects.requireNonNull;
 

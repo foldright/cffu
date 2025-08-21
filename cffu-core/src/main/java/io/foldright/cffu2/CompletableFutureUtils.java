@@ -2813,7 +2813,7 @@ public final class CompletableFutureUtils {
     // endregion
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# Additional Utility Methods
+    // region# CF Exception Utility Methods
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -2847,6 +2847,51 @@ public final class CompletableFutureUtils {
             if (advanceSlowPointer) slowPointer = slowPointer.getCause();
             advanceSlowPointer = !advanceSlowPointer; // only advance every other iteration
         }
+    }
+
+    /**
+     * Wraps a function that processes exceptions to ensure that if error handling throws a new exception,
+     * the error context is preserved by calling {@link Throwable#addSuppressed}.
+     *
+     * @param addSuppressedToOriginalEx if true, the new exception is added as a suppressed exception to the original exception;
+     *                                  if false, the original exception is added as a suppressed exception to the new exception
+     * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
+     */
+    @Contract(value = "null, _ -> null; !null, _ -> !null", pure = true)
+    public static <X extends Throwable, T, F extends Function<? super X, ? extends T>>
+    @Nullable F nonExSwallowedFunction(@Nullable F fn, boolean addSuppressedToOriginalEx) {
+        if (fn == null) return null;
+        return NonExSwallowedFunction.wrap(fn, addSuppressedToOriginalEx);
+    }
+
+    /**
+     * Wraps a BiFunction that processes exceptions to ensure that if error handling throws a new exception,
+     * the error context is preserved by calling {@link Throwable#addSuppressed}.
+     *
+     * @param addSuppressedToOriginalEx if true, the new exception is added as a suppressed exception to the original exception;
+     *                                  if false, the original exception is added as a suppressed exception to the new exception
+     * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
+     */
+    @Contract(value = "null, _ -> null; !null, _ -> !null", pure = true)
+    public static <T, X extends Throwable, U, F extends BiFunction<? super T, ? extends X, ? extends U>>
+    @Nullable F nonExSwallowedBiFunction(@Nullable F fn, boolean addSuppressedToOriginalEx) {
+        if (fn == null) return null;
+        return NonExSwallowedBiFunction.wrap(fn, addSuppressedToOriginalEx);
+    }
+
+    /**
+     * Wraps a BiConsumer that processes exceptions to ensure that if error handling throws a new exception,
+     * the error context is preserved by calling {@link Throwable#addSuppressed}.
+     *
+     * @param addSuppressedToOriginalEx if true, the new exception is added as a suppressed exception to the original exception;
+     *                                  if false, the original exception is added as a suppressed exception to the new exception
+     * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
+     */
+    @Contract(value = "null, _ -> null; !null, _ -> !null", pure = true)
+    public static <T, X extends Throwable, F extends BiConsumer<? super T, ? super X>>
+    @Nullable F nonExSwallowedBiConsumer(@Nullable F action, boolean addSuppressedToOriginalEx) {
+        if (action == null) return null;
+        return NonExSwallowedBiConsumer.wrap(action, addSuppressedToOriginalEx);
     }
 
     private CompletableFutureUtils() {}

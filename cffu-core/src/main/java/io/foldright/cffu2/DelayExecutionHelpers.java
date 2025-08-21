@@ -1,10 +1,10 @@
 package io.foldright.cffu2;
 
-////////////////////////////////////////////////////////////////////////////////
+// =============================================================================
 //# delay execution helper classes
 //
 //  below code is copied from CompletableFuture with small adoption
-////////////////////////////////////////////////////////////////////////////////
+// =============================================================================
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -114,9 +114,9 @@ final class DelayedExecutor implements Executor {
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// =============================================================================
 // Little classified lambdas to better support monitoring
-////////////////////////////////////////////////////////////////////////////////
+// =============================================================================
 
 /**
  * Action to submit task(Runnable) to executor.

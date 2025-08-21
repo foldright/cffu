@@ -10,7 +10,6 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -321,102 +320,6 @@ public final class LLCF {
         target = unwrapCfException(target);
         if (suppressed != target && !containsInArray(target.getSuppressed(), suppressed))
             target.addSuppressed(suppressed);
-    }
-
-    /**
-     * Wraps a function that processes exceptions to ensure that if error handling throws a new exception,
-     * the error context is preserved by calling {@link Throwable#addSuppressed}.
-     *
-     * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
-     */
-    @Contract(value = "null, _ -> null; !null, _ -> !null", pure = true)
-    public static <X extends Throwable, T, F extends Function<? super X, ? extends T>>
-    @Nullable F nonExSwallowedFunction(@Nullable F fn, boolean addSuppressedToOriginalEx) {
-        if (fn == null) return null;
-        return _wrapFn(fn, addSuppressedToOriginalEx);
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private static <F extends Function> F _wrapFn(Function fn, boolean addSuppressedToOriginalEx) {
-        final Function f = originalEx -> {
-            try {
-                return fn.apply(originalEx);
-            } catch (Throwable newEx) {
-                if (originalEx != null) {
-                    // when exceptions occur in this exception process function,
-                    // the error context is preserved by calling addSuppressed
-                    if (addSuppressedToOriginalEx) safeAddSuppressedEx(newEx, (Throwable) originalEx);
-                    else safeAddSuppressedEx((Throwable) originalEx, newEx);
-                }
-
-                throw newEx;
-            }
-        };
-        return (F) f;
-    }
-
-    /**
-     * Wraps a BiFunction that processes exceptions to ensure that if error handling throws a new exception,
-     * the error context is preserved by calling {@link Throwable#addSuppressed}.
-     *
-     * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
-     */
-    @Contract(value = "null, _ -> null; !null, _ -> !null", pure = true)
-    public static <T, X extends Throwable, U, F extends BiFunction<? super T, ? extends X, ? extends U>>
-    @Nullable F nonExSwallowedBiFunction(@Nullable F fn, boolean addSuppressedToOriginalEx) {
-        if (fn == null) return null;
-        return _wrapBiFn(fn, addSuppressedToOriginalEx);
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private static <F extends BiFunction> F _wrapBiFn(BiFunction fn, boolean addSuppressedToOriginalEx) {
-        final BiFunction f = (v, originalEx) -> {
-            try {
-                return fn.apply(v, originalEx);
-            } catch (Throwable newEx) {
-                if (originalEx != null) {
-                    // when exceptions occur in this exception process function,
-                    // the error context is preserved by calling addSuppressed
-                    if (addSuppressedToOriginalEx) safeAddSuppressedEx(newEx, (Throwable) originalEx);
-                    else safeAddSuppressedEx((Throwable) originalEx, newEx);
-                }
-
-                throw newEx;
-            }
-        };
-        return (F) f;
-    }
-
-    /**
-     * Wraps a BiConsumer that processes exceptions to ensure that if error handling throws a new exception,
-     * the error context is preserved by calling {@link Throwable#addSuppressed}.
-     *
-     * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
-     */
-    @Contract(value = "null, _ -> null; !null, _ -> !null", pure = true)
-    public static <T, X extends Throwable, F extends BiConsumer<? super T, ? super X>>
-    @Nullable F nonExSwallowedBiConsumer(@Nullable F action, boolean addSuppressedToOriginalEx) {
-        if (action == null) return null;
-        return _wrapBiConsumer(action, addSuppressedToOriginalEx);
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private static <F extends BiConsumer> F _wrapBiConsumer(BiConsumer action, boolean addSuppressedToOriginalEx) {
-        final BiConsumer a = (v, originalEx) -> {
-            try {
-                action.accept(v, originalEx);
-            } catch (Throwable newEx) {
-                if (originalEx != null) {
-                    // when exceptions occur in this exception process action,
-                    // the error context is preserved by calling addSuppressed
-                    if (addSuppressedToOriginalEx) safeAddSuppressedEx(newEx, (Throwable) originalEx);
-                    else safeAddSuppressedEx((Throwable) originalEx, newEx);
-                }
-
-                throw newEx;
-            }
-        };
-        return (F) a;
     }
 
     // endregion
