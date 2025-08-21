@@ -91,8 +91,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu that, when this stage completes normally,
-     * is executed with this stage's result as the argument to the supplied function.
+     * Returns a new Cffu that, when this Cffu completes normally,
+     * is executed with this Cffu's result as the argument to the supplied function.
      * <p>
      * This method is analogous to {@link java.util.Optional#map Optional.map} and
      * {@link java.util.stream.Stream#map Stream.map}.
@@ -109,9 +109,9 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this stage completes normally,
+     * Returns a new Cffu that, when this Cffu completes normally,
      * is executed using {@link #defaultExecutor()},
-     * with this stage's result as the argument to the supplied function.
+     * with this Cffu's result as the argument to the supplied function.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
@@ -125,9 +125,9 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this stage completes normally,
+     * Returns a new Cffu that, when this Cffu completes normally,
      * is executed using the supplied Executor,
-     * with this stage's result as the argument to the supplied function.
+     * with this Cffu's result as the argument to the supplied function.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
@@ -142,8 +142,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this stage completes normally,
-     * is executed with this stage's result as the argument to the supplied action.
+     * Returns a new Cffu that, when this Cffu completes normally,
+     * is executed with this Cffu's result as the argument to the supplied action.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
@@ -155,9 +155,9 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this stage completes normally,
+     * Returns a new Cffu that, when this Cffu completes normally,
      * is executed using {@link #defaultExecutor()},
-     * with this stage's result as the argument to the supplied action.
+     * with this Cffu's result as the argument to the supplied action.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
@@ -169,8 +169,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this stage completes normally,
-     * is executed using the supplied Executor, with this stage's result as the argument to the supplied action.
+     * Returns a new Cffu that, when this Cffu completes normally,
+     * is executed using the supplied Executor, with this Cffu's result as the argument to the supplied action.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
@@ -183,7 +183,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this stage completes normally, executes the given action.
+     * Returns a new Cffu that, when this Cffu completes normally, executes the given action.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
@@ -195,7 +195,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this stage completes normally,
+     * Returns a new Cffu that, when this Cffu completes normally,
      * executes the given action using {@link #defaultExecutor()}.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
@@ -208,7 +208,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this stage completes normally,
+     * Returns a new Cffu that, when this Cffu completes normally,
      * executes the given action using the supplied Executor.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
@@ -232,7 +232,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Shortcut to method {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf},
      * wraps input functions to Cffu by {@link CffuFactory#supplyAsync(Supplier)};
-     * The given stage's result is used as the argument of functions.
+     * This Cffu's result is used as the argument of functions.
      * <p>
      * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
@@ -245,7 +245,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Shortcut to method {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf},
      * wraps input functions to Cffu by {@link CffuFactory#supplyAsync(Supplier, Executor)};
-     * The given stage's result is used as the argument of functions.
+     * This Cffu's result is used as the argument of functions.
      * <p>
      * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      * <p>
@@ -263,7 +263,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Shortcut to method {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf},
      * wraps input functions to Cffu by {@link CffuFactory#supplyAsync(Supplier)};
-     * The given stage's result is used as the argument of functions.
+     * This Cffu's result is used as the argument of functions.
      * <p>
      * See the {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
@@ -277,7 +277,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Shortcut to method {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf},
      * wraps input functions to Cffu by {@link CffuFactory#supplyAsync(Supplier, Executor)};
-     * The given stage's result is used as the argument of functions.
+     * This Cffu's result is used as the argument of functions.
      * <p>
      * See the {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      * <p>
@@ -296,7 +296,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Shortcut to method {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf},
      * wraps input functions to Cffu by {@link CffuFactory#supplyAsync(Supplier)};
-     * The given stage's result is used as the argument of functions.
+     * This Cffu's result is used as the argument of functions.
      * <p>
      * See the {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
      */
@@ -310,7 +310,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Shortcut to method {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf},
      * wraps input functions to Cffu by {@link CffuFactory#supplyAsync(Supplier, Executor)};
-     * The given stage's result is used as the argument of functions.
+     * This Cffu's result is used as the argument of functions.
      * <p>
      * See the {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
      */
@@ -325,7 +325,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Shortcut to method {@link CffuFactory#allResultsOf allResultsOf}, wraps input functions to Cffu by
-     * {@link CffuFactory#supplyAsync(Supplier)}; The given stage's result is used as the argument of functions.
+     * {@link CffuFactory#supplyAsync(Supplier)}; This Cffu's result is used as the argument of functions.
      * <p>
      * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
      */
@@ -337,7 +337,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Shortcut to method {@link CffuFactory#allResultsOf allResultsOf}, wraps input functions to Cffu by
-     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
+     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; This Cffu's result is used as the argument of functions.
      * <p>
      * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
      * <p>
@@ -354,7 +354,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf}, wraps input functions to Cffu by
-     * {@link CffuFactory#supplyAsync(Supplier)}; The given stage's result is used as the argument of functions.
+     * {@link CffuFactory#supplyAsync(Supplier)}; This Cffu's result is used as the argument of functions.
      * <p>
      * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
@@ -366,7 +366,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf}, wraps input functions to Cffu by
-     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
+     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; This Cffu's result is used as the argument of functions.
      * <p>
      * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
@@ -383,7 +383,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Shortcut to method {@link CffuFactory#anyOf anyOf}, wraps input functions to Cffu by
-     * {@link CffuFactory#supplyAsync(Supplier)}; The given stage's result is used as the argument of functions.
+     * {@link CffuFactory#supplyAsync(Supplier)}; This Cffu's result is used as the argument of functions.
      * <p>
      * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
      */
@@ -395,7 +395,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Shortcut to method {@link CffuFactory#anyOf anyOf}, wraps input functions to Cffu by
-     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of functions.
+     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; This Cffu's result is used as the argument of functions.
      * <p>
      * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
      * <p>
@@ -412,7 +412,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Shortcut to method {@link CffuFactory#allFailFastOf allFailFastOf}, wraps input functions to Cffu by
-     * {@link CffuFactory#supplyAsync(Supplier)}; The given stage's result is used as the argument of actions.
+     * {@link CffuFactory#supplyAsync(Supplier)}; This Cffu's result is used as the argument of actions.
      * <p>
      * See the {@link CffuFactory#allFailFastOf allFailFastOf} documentation for the rules of result computation.
      * <p>
@@ -429,7 +429,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Shortcut to method {@link CffuFactory#allFailFastOf allFailFastOf}, wraps input functions to Cffu by
-     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of actions.
+     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; This Cffu's result is used as the argument of actions.
      * <p>
      * See the {@link CffuFactory#allFailFastOf allFailFastOf} documentation for the rules of result computation.
      * <p>
@@ -446,7 +446,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Shortcut to method {@link CffuFactory#allOf allOf}, wraps input functions to Cffu by
-     * {@link CffuFactory#supplyAsync(Supplier)}; The given stage's result is used as the argument of actions.
+     * {@link CffuFactory#supplyAsync(Supplier)}; This Cffu's result is used as the argument of actions.
      * <p>
      * See the {@link CffuFactory#allOf allOf} documentation for the rules of result computation.
      * <p>
@@ -462,7 +462,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Shortcut to method {@link CffuFactory#allOf allOf}, wraps input functions to Cffu by
-     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of actions.
+     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; This Cffu's result is used as the argument of actions.
      * <p>
      * See the {@link CffuFactory#allOf allOf} documentation for the rules of result computation.
      * <p>
@@ -478,7 +478,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf}, wraps input functions to Cffu by
-     * {@link CffuFactory#supplyAsync(Supplier)}; The given stage's result is used as the argument of actions.
+     * {@link CffuFactory#supplyAsync(Supplier)}; This Cffu's result is used as the argument of actions.
      * <p>
      * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
@@ -495,7 +495,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf}, wraps input functions to Cffu by
-     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of actions.
+     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; This Cffu's result is used as the argument of actions.
      * <p>
      * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
@@ -512,7 +512,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Shortcut to method {@link CffuFactory#anyOf anyOf}, wraps input functions to Cffu by
-     * {@link CffuFactory#supplyAsync(Supplier)}; The given stage's result is used as the argument of actions.
+     * {@link CffuFactory#supplyAsync(Supplier)}; This Cffu's result is used as the argument of actions.
      * <p>
      * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
      * <p>
@@ -529,7 +529,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Shortcut to method {@link CffuFactory#anyOf anyOf}, wraps input functions to Cffu by
-     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; The given stage's result is used as the argument of actions.
+     * {@link CffuFactory#supplyAsync(Supplier, Executor)}; This Cffu's result is used as the argument of actions.
      * <p>
      * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
      * <p>
@@ -640,7 +640,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed with the two results as arguments to the supplied function.
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
@@ -658,7 +658,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed using {@link #defaultExecutor()}, with the two results as arguments to the supplied function.
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
@@ -676,7 +676,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed using the supplied executor, with the two results as arguments to the supplied function.
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
@@ -695,7 +695,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed with the two results as arguments to the supplied action.
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
@@ -711,7 +711,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed using {@link #defaultExecutor()}, with the two results as arguments to the supplied action.
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
@@ -727,7 +727,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed using the supplied executor, with the two results as arguments to the supplied action.
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
@@ -744,7 +744,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally, executes the given action.
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally, executes the given action.
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
@@ -757,7 +757,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * executes the given action using {@link #defaultExecutor()}.
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
@@ -771,7 +771,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * executes the given action using the supplied executor.
      * if any of the given stage complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
@@ -786,7 +786,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed with the two results as arguments to the supplied function.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
@@ -804,7 +804,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed using {@link #defaultExecutor()}, with the two results as arguments to the supplied function.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
@@ -822,7 +822,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed using the supplied executor, with the two results as arguments to the supplied function.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
@@ -841,7 +841,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed with the two results as arguments to the supplied action.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
@@ -856,7 +856,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed using {@link #defaultExecutor()}, with the two results as arguments to the supplied action.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
@@ -872,7 +872,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed using the supplied executor, with the two results as arguments to the supplied action.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
@@ -889,7 +889,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally, executes the given action.
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally, executes the given action.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
      *
@@ -902,7 +902,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * executes the given action using {@link #defaultExecutor()}.
      * <p>
      * See the {@link CompletionStage} documentation for rules
@@ -917,7 +917,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this and the other given stage both complete normally,
+     * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * executes the given action using the supplied executor.
      * <p>
      * See the {@link CompletionStage} documentation for rules covering exceptional completion.
@@ -1269,10 +1269,10 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this stage completes exceptionally,
-     * is executed with this stage's exception as the argument to the supplied function.
-     * Otherwise, if this stage completes normally,
-     * then the returned stage also completes normally with the same value.
+     * Returns a new Cffu that, when this Cffu completes exceptionally,
+     * is executed with this Cffu's exception as the argument to the supplied function.
+     * Otherwise, if this Cffu completes normally,
+     * then the returned Cffu also completes normally with the same value.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catching(Class, Function)}
@@ -1288,11 +1288,11 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this stage completes exceptionally,
-     * is executed with this stage's exception as the argument to the supplied function,
+     * Returns a new Cffu that, when this Cffu completes exceptionally,
+     * is executed with this Cffu's exception as the argument to the supplied function,
      * using {@link #defaultExecutor()}.
-     * Otherwise, if this stage completes normally,
-     * then the returned stage also completes normally with the same value.
+     * Otherwise, if this Cffu completes normally,
+     * then the returned Cffu also completes normally with the same value.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catchingAsync(Class, Function)}
@@ -1308,10 +1308,10 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this stage completes exceptionally,
-     * is executed with this stage's exception as the argument to the supplied function,
-     * using the supplied Executor. Otherwise, if this stage completes normally,
-     * then the returned stage also completes normally with the same value.
+     * Returns a new Cffu that, when this Cffu completes exceptionally,
+     * is executed with this Cffu's exception as the argument to the supplied function,
+     * using the supplied Executor. Otherwise, if this Cffu completes normally,
+     * then the returned Cffu also completes normally with the same value.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catchingAsync(Class, Function, Executor)}
@@ -1459,8 +1459,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * Returns a new Cffu that is completed with the same value
      * as the CompletionStage returned by the given function.
      * <p>
-     * When this stage completes normally, the given function is invoked
-     * with this stage's result as the argument, returning another CompletionStage.
+     * When this Cffu completes normally, the given function is invoked
+     * with this Cffu's result as the argument, returning another CompletionStage.
      * When that stage completes normally, the Cffu returned by this method
      * is completed with the same value.
      * <p>
@@ -1483,7 +1483,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * Returns a new Cffu that is completed with the same value as the CompletionStage
      * returned by the given function, executed using {@link #defaultExecutor()}.
      * <p>
-     * When this stage completes normally, the given function is invoked with this stage's result as the argument,
+     * When this Cffu completes normally, the given function is invoked with this Cffu's result as the argument,
      * returning another CompletionStage.  When that stage completes normally,
      * the Cffu returned by this method is completed with the same value.
      * <p>
@@ -1503,7 +1503,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * Returns a new Cffu that is completed with the same value as the CompletionStage
      * returned by the given function, executed using the supplied Executor.
      * <p>
-     * When this stage completes normally, the given function is invoked with this stage's result as the argument,
+     * When this Cffu completes normally, the given function is invoked with this Cffu's result as the argument,
      * returning another CompletionStage.  When that stage completes normally,
      * the Cffu returned by this method is completed with the same value.
      * <p>
@@ -1586,8 +1586,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this stage completes exceptionally,
-     * is composed using the results of the supplied function applied to this stage's exception.
+     * Returns a new Cffu that, when this Cffu completes exceptionally,
+     * is composed using the results of the supplied function applied to this Cffu's exception.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catchingCompose(Class, Function)}
@@ -1603,8 +1603,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this stage completes exceptionally,
-     * is composed using the results of the supplied function applied to this stage's exception,
+     * Returns a new Cffu that, when this Cffu completes exceptionally,
+     * is composed using the results of the supplied function applied to this Cffu's exception,
      * using {@link #defaultExecutor()}.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
@@ -1621,8 +1621,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu that, when this stage completes exceptionally,
-     * is composed using the results of the supplied function applied to this stage's exception,
+     * Returns a new Cffu that, when this Cffu completes exceptionally,
+     * is composed using the results of the supplied function applied to this Cffu's exception,
      * using the supplied Executor.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
@@ -1694,19 +1694,19 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu with the same result or exception as this stage,
-     * that executes the given action when this stage completes.
+     * Returns a new Cffu with the same result or exception as this Cffu,
+     * that executes the given action when this Cffu completes.
      * <p>
-     * When this stage is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this stage as arguments.
-     * The returned stage is completed when the action returns.
+     * When this Cffu is complete, the given action is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of this Cffu as arguments.
+     * The returned Cffu is completed when the action returns.
      * <p>
      * Unlike method {@link #handle handle}, this method is not designed to translate completion outcomes,
      * so the supplied action should not throw an exception. However, if it does, the following rules apply:
-     * if this stage completed normally but the supplied action throws an exception,
-     * then the returned stage completes exceptionally with the supplied action's exception.
-     * Or, if this stage completed exceptionally and the supplied action throws an exception,
-     * then the returned stage completes exceptionally with this stage's exception.
+     * if this Cffu completed normally but the supplied action throws an exception,
+     * then the returned Cffu completes exceptionally with the supplied action's exception.
+     * Or, if this Cffu completed exceptionally and the supplied action throws an exception,
+     * then the returned Cffu completes exceptionally with this Cffu's exception.
      *
      * @param action the action to perform
      */
@@ -1725,21 +1725,21 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu with the same result or exception as this stage,
+     * Returns a new Cffu with the same result or exception as this Cffu,
      * that executes the given action using {@link #defaultExecutor()}
-     * when this stage completes.
+     * when this Cffu completes.
      * <p>
-     * When this stage is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this stage as arguments.
-     * The returned stage is completed when the action returns.
+     * When this Cffu is complete, the given action is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of this Cffu as arguments.
+     * The returned Cffu is completed when the action returns.
      * <p>
      * Unlike method {@link #handleAsync(BiFunction) handleAsync}, this method is not designed to
      * translate completion outcomes, so the supplied action should not throw an exception.
      * However, if it does, the following rules apply:
-     * If this stage completed normally but the supplied action throws an exception,
-     * then the returned stage completes exceptionally with the supplied action's exception.
-     * Or, if this stage completed exceptionally and the supplied action throws an exception,
-     * then the returned stage completes exceptionally with this stage's exception.
+     * If this Cffu completed normally but the supplied action throws an exception,
+     * then the returned Cffu completes exceptionally with the supplied action's exception.
+     * Or, if this Cffu completed exceptionally and the supplied action throws an exception,
+     * then the returned Cffu completes exceptionally with this Cffu's exception.
      *
      * @param action the action to perform
      */
@@ -1750,20 +1750,20 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * Returns a new Cffu with the same result or exception as this stage,
-     * that executes the given action using the supplied Executor when this stage completes.
+     * Returns a new Cffu with the same result or exception as this Cffu,
+     * that executes the given action using the supplied Executor when this Cffu completes.
      * <p>
-     * When this stage is complete, the given action is invoked with the result (or {@code null} if none)
-     * and the exception (or {@code null} if none) of this stage as arguments.
-     * The returned stage is completed when the action returns.
+     * When this Cffu is complete, the given action is invoked with the result (or {@code null} if none)
+     * and the exception (or {@code null} if none) of this Cffu as arguments.
+     * The returned Cffu is completed when the action returns.
      * <p>
      * Unlike method {@link #handleAsync(BiFunction, Executor) handleAsync}, this method is not designed to
      * translate completion outcomes, so the supplied action should not throw an exception.
      * However, if it does, the following rules apply:
-     * If this stage completed normally but the supplied action throws an exception,
-     * then the returned stage completes exceptionally with the supplied action's exception.
-     * Or, if this stage completed exceptionally and the supplied action throws an exception,
-     * then the returned stage completes exceptionally with this stage's exception.
+     * If this Cffu completed normally but the supplied action throws an exception,
+     * then the returned Cffu completes exceptionally with the supplied action's exception.
+     * Or, if this Cffu completed exceptionally and the supplied action throws an exception,
+     * then the returned Cffu completes exceptionally with this Cffu's exception.
      *
      * @param action   the action to perform
      * @param executor the executor to use for asynchronous execution
@@ -1781,10 +1781,10 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * and the exception (or {@code null} if none) of this cffu as arguments.
      * <p>
      * <strong>NOTE:</strong> When using {@link #whenComplete(BiConsumer)},
-     * if the input stage completes normally but the supplied action throws an exception, the returned stage will contain
+     * if the input stage completes normally but the supplied action throws an exception, the returned Cffu will contain
      * a <strong>DIFFERENT</strong> result than the input stage. This subtle behavior of {@code whenComplete} can lead to
      * bugs when you only want to <strong>peek</strong> at the stage's result (e.g. for logging) without modifying it.<br>
-     * In contrast, this {@code peek} method guarantees that the returned stage (which is the input stage)
+     * In contrast, this {@code peek} method guarantees that the returned Cffu (which is the input stage)
      * will maintain its original result, regardless of whether the supplied action throws an exception or not.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
@@ -1813,10 +1813,10 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * and the exception (or {@code null} if none) of this cffu as arguments.
      * <p>
      * <strong>NOTE:</strong> When using {@link #whenCompleteAsync(BiConsumer)},
-     * if the input stage completes normally but the supplied action throws an exception, the returned stage will contain
+     * if the input stage completes normally but the supplied action throws an exception, the returned Cffu will contain
      * a <strong>DIFFERENT</strong> result than the input stage. This subtle behavior of {@code whenComplete} can lead to
      * bugs when you only want to <strong>peek</strong> at the stage's result (e.g. for logging) without modifying it.<br>
-     * In contrast, this {@code peekAsync} method guarantees that the returned stage (which is the input stage)
+     * In contrast, this {@code peekAsync} method guarantees that the returned Cffu (which is the input stage)
      * will maintain its original result, regardless of whether the supplied action throws an exception or not.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
@@ -1844,10 +1844,10 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * and the exception (or {@code null} if none) of this cffu as arguments.
      * <p>
      * <strong>NOTE:</strong> When using {@link #whenCompleteAsync(BiConsumer, Executor)},
-     * if the input stage completes normally but the supplied action throws an exception, the returned stage will contain
+     * if the input stage completes normally but the supplied action throws an exception, the returned Cffu will contain
      * a <strong>DIFFERENT</strong> result than the input stage. This subtle behavior of {@code whenComplete} can lead to
      * bugs when you only want to <strong>peek</strong> at the stage's result (e.g. for logging) without modifying it.<br>
-     * In contrast, this {@code peekAsync} method guarantees that the returned stage (which is the input stage)
+     * In contrast, this {@code peekAsync} method guarantees that the returned Cffu (which is the input stage)
      * will maintain its original result, regardless of whether the supplied action throws an exception or not.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between

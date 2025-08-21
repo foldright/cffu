@@ -85,7 +85,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's function computation
          * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
          * <p>
          * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
@@ -97,7 +97,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's function computation
          * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
          * <p>
          * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
@@ -109,7 +109,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's function computation
          * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
          * <p>
          * See the {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
@@ -121,7 +121,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's function computation
          * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
          * <p>
          * See the {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
@@ -133,7 +133,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's function computation
          * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
          * <p>
          * See the {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
@@ -146,7 +146,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's function computation
          * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
          * <p>
          * See the {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
@@ -160,7 +160,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#allResultsOf allResultsOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's function computation
          * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
          * <p>
          * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
@@ -172,7 +172,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#allResultsOf allResultsOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's function computation
          * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
          * <p>
          * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
@@ -184,7 +184,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's function computation
          * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
          * <p>
          * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
@@ -196,7 +196,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's function computation
          * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
          * <p>
          * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
@@ -208,7 +208,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#anyOf anyOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's function computation
          * into a Cffu using {@link CffuFactory#supplyAsync(Supplier)} with the executor {@link #defaultExecutor()}.
          * <p>
          * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
@@ -220,7 +220,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#anyOf anyOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's function computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's function computation
          * into a Cffu using {@link CffuFactory#supplyAsync(Supplier, Executor)}.
          * <p>
          * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
@@ -232,7 +232,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's consumer computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's consumer computation
          * into a Cffu using {@link CffuFactory#runAsync(Runnable)} with the executor {@link #defaultExecutor()}.
          * <p>
          * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
@@ -244,7 +244,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's consumer computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's consumer computation
          * into a Cffu using {@link CffuFactory#runAsync(Runnable, Executor)}.
          * <p>
          * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
@@ -256,7 +256,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#allResultsOf allResultsOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's consumer computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's consumer computation
          * into a Cffu using {@link CffuFactory#runAsync(Runnable)} with the executor {@link #defaultExecutor()}.
          * <p>
          * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
@@ -268,7 +268,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#allResultsOf allResultsOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's consumer computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's consumer computation
          * into a Cffu using {@link CffuFactory#runAsync(Runnable, Executor)}.
          * <p>
          * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
@@ -280,7 +280,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's consumer computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's consumer computation
          * into a Cffu using {@link CffuFactory#runAsync(Runnable)} with the executor {@link #defaultExecutor()}.
          * <p>
          * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
@@ -292,7 +292,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#anySuccessOf anySuccessOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's consumer computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's consumer computation
          * into a Cffu using {@link CffuFactory#runAsync(Runnable, Executor)}.
          * <p>
          * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
@@ -304,7 +304,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#anyOf anyOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's consumer computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's consumer computation
          * into a Cffu using {@link CffuFactory#runAsync(Runnable)} with the executor {@link #defaultExecutor()}.
          * <p>
          * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
@@ -316,7 +316,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
         /**
          * Shortcut to method {@link CffuFactory#anyOf anyOf},
-         * processes elements from the result of parameter stage in parallel by wrapping each element's consumer computation
+         * processes elements from the result of this MCffu in parallel by wrapping each element's consumer computation
          * into a Cffu using {@link CffuFactory#runAsync(Runnable, Executor)}.
          * <p>
          * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.

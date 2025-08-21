@@ -156,7 +156,7 @@
 
 - 优化`CompletableFuture`使用的工具方法在业务项目中很常见
 - `CompletableFutureUtils`提供了一系列实用高效安全可靠的工具方法
-- 这种使用方式有些`cffu`功能没有提供（也没有想到好的实现方案）  
+- 这种使用方式有些`cffu`功能没有提供（也没有想到合适的实现方案）  
   如支持设置缺省的业务线程池、禁止强制篡改
 
 ### 1.2 迁移使用`CompletableFuture`类的代码到使用`Cffu`类
@@ -615,8 +615,8 @@ public class MultipleActionsDemo {
 
 `cffu`库提供了超时执行安全的新实现方法：
 
-- [`Cffu#orTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha1/io/foldright/cffu2/Cffu.html#orTimeout(long,java.util.concurrent.TimeUnit))
-  / [`Cffu#completeOnTimeoutTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha1/io/foldright/cffu2/Cffu.html#completeOnTimeout(java.lang.Object,long,java.util.concurrent.TimeUnit))
+- [`Cffu#orTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha1/io/foldright/cffu2/BaseCffu.html#orTimeout(long,java.util.concurrent.TimeUnit))
+  / [`Cffu#completeOnTimeoutTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha1/io/foldright/cffu2/BaseCffu.html#completeOnTimeout(java.lang.Object,long,java.util.concurrent.TimeUnit))
 - [`CFU#cffuOrTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha1/io/foldright/cffu2/CompletableFutureUtils.html#cffuOrTimeout(F,long,java.util.concurrent.TimeUnit))
   / [`CFU#cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha1/io/foldright/cffu2/CompletableFutureUtils.html#cffuCompleteOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
 

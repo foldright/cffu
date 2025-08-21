@@ -664,10 +664,10 @@ public final class CompletableFutureUtils {
                 results.compareAndSet(i, null, v);
                 return completedFuture(null);
             } else {
-                // this `if checking` is a simple optimization for benign race condition.
-                // the code logic would still be correct if directly setting SENTINEL_UNNEEDED without checking
+                // This `if` check is a minor optimization for a benign race condition.
+                // The logic would remain correct even if SENTINEL_UNNEEDED were set unconditionally.
                 if (results.get(0) != SENTINEL_UNNEEDED)
-                    // if any stage has failed, all results are unneeded; mark all slots with SENTINEL_UNNEEDED
+                    // Once any stage fails, the results from all stages are no longer needed
                     fillAtomicReferenceArray(results, (T) SENTINEL_UNNEEDED);
                 return failedFuture(ex);
             }
