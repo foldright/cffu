@@ -1,22 +1,18 @@
 package io.foldright.aspect_test
 
 import io.foldright.cffu2.CompletableFutureUtils
+import io.foldright.test_utils.isRunStrictlyInFjCommonPool
 import io.foldright.test_utils.sleep
 import io.foldright.test_utils.testCffuFac
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeTrue
-import java.lang.Thread.currentThread
+import io.kotest.matchers.collections.shouldBeEmpty
 import java.util.concurrent.*
 import java.util.function.Supplier
 
 class CheckUnscreenedExecutorTests : FunSpec({
 
     val commonPool = ForkJoinPool.commonPool()
-
-    fun isRunStrictlyInFjCommonPool(): Boolean {
-        val runningThread = currentThread()
-        return runningThread.name.startsWith("ForkJoinPool.commonPool-worker-")
-    }
 
     test("check screen executor for unscreened methods") {
         var counter = 0
@@ -65,6 +61,6 @@ class CheckUnscreenedExecutorTests : FunSpec({
             blockingQueue.poll(1, TimeUnit.SECONDS)!!.shouldBeTrue()
         }
         println(blockingQueue.size)
-        blockingQueue.isEmpty().shouldBeTrue()
+        blockingQueue.shouldBeEmpty()
     }
 })

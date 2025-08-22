@@ -40,7 +40,7 @@ fun createThreadPool(
     val counter = AtomicLong()
     val prefix = "${threadNamePrefix}_${Random.nextULong()}_"
 
-    val qc = queueCapacity ?: (THREAD_COUNT_OF_POOL * 500).coerceAtLeast(5000);
+    val qc = queueCapacity ?: (THREAD_COUNT_OF_POOL * 500).coerceAtLeast(5000)
 
     val executorService = if (!isForkJoin)
         ThreadPoolExecutor(
@@ -66,6 +66,10 @@ fun createThreadPool(
         override fun own(thread: Thread): Boolean = thread.name.startsWith(prefix)
 
         override fun unwrap(): ExecutorService = executorService
+
+        override fun close() {
+            executorService.close()
+        }
 
         override fun toString(): String =
             "test ${if (isForkJoin) "ForkJoinPool" else "ThreadPoolExecutor"} with thread name prefix `$prefix`, $executorService"
@@ -93,14 +97,21 @@ fun assertNotRunningInExecutor(executor: Executor) {
 
 fun Thread.belongsTo(executor: Executor): Boolean = (executor as ThreadPoolAcquaintance).own(this)
 
-fun assertRunningByFjCommonPool(callingThread: Thread) {
+private const val threadNamePrefixOfCommonPool = "ForkJoinPool.commonPool-worker-"
+
+fun isRunStrictlyInFjCommonPool(): Boolean {
+    val runningThread = currentThread()
+    return runningThread.name.startsWith(threadNamePrefixOfCommonPool)
+}
+
+fun assertRunningInCfAsyncPool(submittingThread: Thread) {
     val runningThread = currentThread()
 
-    val runInCallingThread = runningThread == callingThread
-    val runInCpThread = runningThread.name.startsWith("ForkJoinPool.commonPool-worker-")
+    val runInSubmittingThread = runningThread == submittingThread
+    val runInCpThread = runningThread.name.startsWith(threadNamePrefixOfCommonPool)
 
     val actualMsg = "actual" +
-            (if (!runInCallingThread) " not" else "") +
+            (if (!runInSubmittingThread) " not" else "") +
             " running in calling thread" +
             (if (!runInCpThread) " not" else "") +
             " running in common pool thread"
@@ -108,12 +119,12 @@ fun assertRunningByFjCommonPool(callingThread: Thread) {
     val isCpParallel = System.getProperty("java.util.concurrent.ForkJoinPool.common.parallelism") != "1"
     val (expected, expectedMsg) = if (isCpParallel)
         runInCpThread to "expect running in common pool thread"
-    else (!runInCallingThread && !runInCpThread) to "expect not running in calling thread" +
+    else (!runInSubmittingThread && !runInCpThread) to "expect not running in calling thread" +
             "and not in common pool thread(because common pool is not parallel)"
 
     if (!expected) fail(
-        "assertRunningByFjCommonPool failed.\n$expectedMsg $actualMsg.\ncontext info:\n" +
-                "  running thread: $runningThread\n  calling thread: $callingThread"
+        "assertRunningInCfAsyncPool failed.\n$expectedMsg $actualMsg.\ncontext info:\n" +
+                "  running thread: $runningThread\n  calling thread: $submittingThread"
     )
 }
 
