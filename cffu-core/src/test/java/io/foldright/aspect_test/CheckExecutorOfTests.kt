@@ -235,23 +235,23 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
         val am = ExTracingActionMaker()
 
         CompletableFutureUtils.catchingComposeAsync(
-            CompletableFutureUtils.failedFuture<Int>(RuntimeException("Failed")),
+            CompletableFutureUtils.failedFuture(RuntimeException("Failed")),
             RuntimeException::class.java,
             am.createExHandleComposeFunction()
         )
         CompletableFutureUtils.catchingComposeAsync(
-            CompletableFutureUtils.failedFuture<Int>(RuntimeException("Failed")),
+            CompletableFutureUtils.failedFuture(RuntimeException("Failed")),
             RuntimeException::class.java,
             am.createExHandleComposeFunction(testExecutor),
             testExecutor
         )
 
         CompletableFutureUtils.exceptionallyComposeAsync(
-            CompletableFutureUtils.failedFuture<Int>(RuntimeException("Failed")),
+            CompletableFutureUtils.failedFuture(RuntimeException("Failed")),
             am.createExHandleComposeFunction()
         )
         CompletableFutureUtils.exceptionallyComposeAsync(
-            CompletableFutureUtils.failedFuture<Int>(RuntimeException("Failed")),
+            CompletableFutureUtils.failedFuture(RuntimeException("Failed")),
             am.createExHandleComposeFunction(testExecutor),
             testExecutor
         )
@@ -480,7 +480,6 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
 
         am.checkRunningExecutor()
     }
-
 
     test("Multi-Actions-Tuple(MTuple*) Methods(create by actions)") {
         val am = ExTracingActionMaker()
@@ -831,8 +830,20 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
 class CheckExecutorOfCffuMethodsTests : FunSpec({
     val anotherExecutor = createThreadPool("CheckExecutorOfCffuMethodsTests")
 
+    test("CffuFactory - supplyAsync*/runAsync* Methods(create by action)") {
+        val am = ExTracingActionMaker()
+
+        testCffuFac.supplyAsync(am.createSupplier(testExecutor))
+        testCffuFac.supplyAsync(am.createSupplier(anotherExecutor), anotherExecutor)
+
+        testCffuFac.runAsync(am.createRunnable(testExecutor))
+        testCffuFac.runAsync(am.createRunnable(anotherExecutor), anotherExecutor)
+
+        am.checkRunningExecutor()
+    }
+
     (1..3).forEach { count ->
-        test("Multi-Actions(M*) Methods with $count actions") {
+        test("CffuFactory - Multi-Actions(M*) Methods with $count actions") {
             val am = ExTracingActionMaker()
 
             testCffuFac.mSupplyFailFastAsync(*am.createSuppliers(count, testExecutor))
@@ -875,6 +886,240 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
 
             am.checkRunningExecutor()
         }
+    }
+
+    test("CffuFactory - mostSuccessResultsOf method") {
+        val am = ExTracingActionMaker()
+
+        testCffuFac.mostSuccessResultsOf(-1, SHORT_WAIT_MS, MILLISECONDS, incompleteCf())
+            .thenRun(am.createRunnable(testExecutor))
+
+        am.checkRunningExecutor()
+    }
+
+    test("CffuFactory - Delay Execution") {
+        val am = ExTracingActionMaker()
+
+        testCffuFac.delayedExecutor(1, MILLISECONDS).execute(am.createFutureTask(testExecutor))
+        testCffuFac.delayedExecutor(1, MILLISECONDS, anotherExecutor).execute(am.createFutureTask(anotherExecutor))
+
+        am.checkRunningExecutor()
+    }
+
+    (1..3).forEach { count ->
+        test("CffuFactory.iterableOps - Multi-Actions(M*) Methods with $count actions") {
+            val am = ExTracingActionMaker()
+
+            testCffuFac.iterableOps().mSupplyFailFastAsync(am.createSuppliers(count, testExecutor).asList())
+            testCffuFac.iterableOps()
+                .mSupplyFailFastAsync(am.createSuppliers(count, anotherExecutor).asList(), anotherExecutor)
+
+            testCffuFac.iterableOps().mSupplyAllSuccessAsync(null, am.createSuppliers(count, testExecutor).asList())
+            testCffuFac.iterableOps().mSupplyAllSuccessAsync(
+                null, am.createSuppliers(count, anotherExecutor).asList(), anotherExecutor
+            )
+
+            testCffuFac.iterableOps().mSupplyMostSuccessAsync(
+                null, LONG_WAIT_MS, MILLISECONDS, am.createSuppliers(count, testExecutor).asList()
+            )
+            testCffuFac.iterableOps().mSupplyMostSuccessAsync(
+                null, LONG_WAIT_MS, MILLISECONDS, am.createSuppliers(count, anotherExecutor).asList(), anotherExecutor
+            )
+
+            testCffuFac.iterableOps().mSupplyAsync(am.createSuppliers(count, testExecutor).asList())
+            testCffuFac.iterableOps().mSupplyAsync(am.createSuppliers(count, anotherExecutor).asList(), anotherExecutor)
+
+            testCffuFac.iterableOps().mSupplyAnySuccessAsync(am.createSuppliers(count, testExecutor).asList())
+            testCffuFac.iterableOps()
+                .mSupplyAnySuccessAsync(am.createSuppliers(count, anotherExecutor).asList(), anotherExecutor)
+
+            testCffuFac.iterableOps().mSupplyAnyAsync(am.createSuppliers(count, testExecutor).asList())
+            testCffuFac.iterableOps()
+                .mSupplyAnyAsync(am.createSuppliers(count, anotherExecutor).asList(), anotherExecutor)
+
+            testCffuFac.iterableOps().mRunFailFastAsync(am.createRunnables(count, testExecutor).asList())
+            testCffuFac.iterableOps()
+                .mRunFailFastAsync(am.createRunnables(count, anotherExecutor).asList(), anotherExecutor)
+
+            testCffuFac.iterableOps().mRunAsync(am.createRunnables(count, testExecutor).asList())
+            testCffuFac.iterableOps().mRunAsync(am.createRunnables(count, anotherExecutor).asList(), anotherExecutor)
+
+            testCffuFac.iterableOps().mRunAnySuccessAsync(am.createRunnables(count, testExecutor).asList())
+            testCffuFac.iterableOps()
+                .mRunAnySuccessAsync(am.createRunnables(count, anotherExecutor).asList(), anotherExecutor)
+
+            testCffuFac.iterableOps().mRunAnyAsync(am.createRunnables(count, testExecutor).asList())
+            testCffuFac.iterableOps().mRunAnyAsync(am.createRunnables(count, anotherExecutor).asList(), anotherExecutor)
+
+            am.checkRunningExecutor()
+        }
+    }
+
+    test("CffuFactory.iterableOps - mostSuccessResultsOf method") {
+        val am = ExTracingActionMaker()
+
+        testCffuFac.iterableOps().mostSuccessResultsOf(-1, SHORT_WAIT_MS, MILLISECONDS, listOf(incompleteCf()))
+            .thenRun(am.createRunnable(testExecutor))
+
+        am.checkRunningExecutor()
+    }
+
+    val cfThis = testCffuFac.completedFuture(n)
+
+    (1..3).forEach { count ->
+        test("CffuFactory.iterableOps - Then-Multi-Actions(thenM*) Methods with $count actions") {
+            val am = ExTracingActionMaker()
+
+            cfThis.iterableOps().thenMApplyFailFastAsync(am.createFunctions(count, testExecutor).asList())
+            cfThis.iterableOps()
+                .thenMApplyFailFastAsync(am.createFunctions(count, anotherExecutor).asList(), anotherExecutor)
+
+            cfThis.iterableOps().thenMApplyAllSuccessAsync(null, am.createFunctions(count, testExecutor).asList())
+            cfThis.iterableOps()
+                .thenMApplyAllSuccessAsync(null, am.createFunctions(count, anotherExecutor).asList(), anotherExecutor)
+
+            cfThis.iterableOps()
+                .thenMApplyMostSuccessAsync(
+                    null,
+                    LONG_WAIT_MS,
+                    MILLISECONDS,
+                    am.createFunctions(count, testExecutor).asList()
+                )
+            cfThis.iterableOps().thenMApplyMostSuccessAsync(
+                null, LONG_WAIT_MS, MILLISECONDS, am.createFunctions(count, anotherExecutor).asList(), anotherExecutor
+            )
+
+            cfThis.iterableOps().thenMApplyAsync(am.createFunctions(count, testExecutor).asList())
+            cfThis.iterableOps().thenMApplyAsync(am.createFunctions(count, anotherExecutor).asList(), anotherExecutor)
+
+            cfThis.iterableOps().thenMApplyAnySuccessAsync(am.createFunctions(count, testExecutor).asList())
+            cfThis.iterableOps().thenMApplyAnySuccessAsync(
+                am.createFunctions(count, anotherExecutor).asList(), anotherExecutor
+            )
+
+            cfThis.iterableOps().thenMApplyAnyAsync(am.createFunctions(count, testExecutor).asList())
+            cfThis.iterableOps().thenMApplyAnyAsync(
+                am.createFunctions(count, anotherExecutor).asList(), anotherExecutor
+            )
+
+            cfThis.iterableOps().thenMAcceptFailFastAsync(am.createConsumers(count, testExecutor).asList())
+            cfThis.iterableOps().thenMAcceptFailFastAsync(
+                am.createConsumers(count, anotherExecutor).asList(), anotherExecutor
+            )
+
+            cfThis.iterableOps().thenMAcceptAsync(am.createConsumers(count, testExecutor).asList())
+            cfThis.iterableOps()
+                .thenMAcceptAsync(am.createConsumers(count, anotherExecutor).asList(), anotherExecutor)
+
+            cfThis.iterableOps().thenMAcceptAnySuccessAsync(am.createConsumers(count, testExecutor).asList())
+            cfThis.iterableOps().thenMAcceptAnySuccessAsync(
+                am.createConsumers(count, anotherExecutor).asList(), anotherExecutor
+            )
+
+            cfThis.iterableOps().thenMAcceptAnyAsync(am.createConsumers(count, testExecutor).asList())
+            cfThis.iterableOps().thenMAcceptAnyAsync(
+                am.createConsumers(count, anotherExecutor).asList(), anotherExecutor
+            )
+
+            cfThis.iterableOps().thenMRunFailFastAsync(am.createRunnables(count, testExecutor).asList())
+            cfThis.iterableOps().thenMRunFailFastAsync(
+                am.createRunnables(count, anotherExecutor).asList(), anotherExecutor
+            )
+
+            cfThis.iterableOps().thenMRunAsync(am.createRunnables(count, testExecutor).asList())
+            cfThis.iterableOps().thenMRunAsync(am.createRunnables(count, anotherExecutor).asList(), anotherExecutor)
+
+            cfThis.iterableOps().thenMRunAnySuccessAsync(am.createRunnables(count, testExecutor).asList())
+            cfThis.iterableOps().thenMRunAnySuccessAsync(
+                am.createRunnables(count, anotherExecutor).asList(), anotherExecutor
+            )
+
+            cfThis.iterableOps().thenMRunAnyAsync(am.createRunnables(count, testExecutor).asList())
+            cfThis.iterableOps()
+                .thenMRunAnyAsync(am.createRunnables(count, anotherExecutor).asList(), anotherExecutor)
+
+            am.checkRunningExecutor()
+        }
+    }
+
+    test("CffuFactory.ParOps - Factory Methods") {
+        val am = ExTracingActionMaker()
+
+        testCffuFac.parOps().parApplyFailFastAsync(listOf(1), am.createFunction(testExecutor))
+        testCffuFac.parOps().parApplyFailFastAsync(listOf(1), am.createFunction(anotherExecutor), anotherExecutor)
+
+        testCffuFac.parOps().parApplyAllSuccessAsync(listOf(1), -1, am.createFunction(testExecutor))
+        testCffuFac.parOps().parApplyAllSuccessAsync(listOf(1), -1, am.createFunction(anotherExecutor), anotherExecutor)
+
+        testCffuFac.parOps()
+            .parApplyMostSuccessAsync(listOf(1), -1, LONG_WAIT_MS, MILLISECONDS, am.createFunction(testExecutor))
+        testCffuFac.parOps().parApplyMostSuccessAsync(
+            listOf(1), -1, LONG_WAIT_MS, MILLISECONDS, am.createFunction(anotherExecutor), anotherExecutor
+        )
+
+        testCffuFac.parOps().parApplyAsync(listOf(1), am.createFunction(testExecutor))
+        testCffuFac.parOps().parApplyAsync(listOf(1), am.createFunction(anotherExecutor), anotherExecutor)
+
+        testCffuFac.parOps().parApplyAnySuccessAsync(listOf(1), am.createFunction(testExecutor))
+        testCffuFac.parOps().parApplyAnySuccessAsync(listOf(1), am.createFunction(anotherExecutor), anotherExecutor)
+
+        testCffuFac.parOps().parApplyAnyAsync(listOf(1), am.createFunction(testExecutor))
+        testCffuFac.parOps().parApplyAnyAsync(listOf(1), am.createFunction(anotherExecutor), anotherExecutor)
+
+        testCffuFac.parOps().parAcceptFailFastAsync(listOf(1), am.createConsumer(testExecutor))
+        testCffuFac.parOps().parAcceptFailFastAsync(listOf(1), am.createConsumer(anotherExecutor), anotherExecutor)
+
+        testCffuFac.parOps().parAcceptAsync(listOf(1), am.createConsumer(testExecutor))
+        testCffuFac.parOps().parAcceptAsync(listOf(1), am.createConsumer(anotherExecutor), anotherExecutor)
+
+        testCffuFac.parOps().parAcceptAnySuccessAsync(listOf(1), am.createConsumer(testExecutor))
+        testCffuFac.parOps().parAcceptAnySuccessAsync(listOf(1), am.createConsumer(anotherExecutor), anotherExecutor)
+
+        testCffuFac.parOps().parAcceptAnyAsync(listOf(1), am.createConsumer(testExecutor))
+        testCffuFac.parOps().parAcceptAnyAsync(listOf(1), am.createConsumer(anotherExecutor), anotherExecutor)
+
+        am.checkRunningExecutor()
+    }
+
+    val listCfThis = testCffuFac.completedMCffu(listOf(1))
+
+    test("Cffu.parOps - Instance Methods") {
+        val am = ExTracingActionMaker()
+
+        listCfThis.parOps().thenParApplyFailFastAsync(am.createFunction(testExecutor))
+        listCfThis.parOps().thenParApplyFailFastAsync(am.createFunction(anotherExecutor), anotherExecutor)
+
+        listCfThis.parOps().thenParApplyAllSuccessAsync(-1, am.createFunction(testExecutor))
+        listCfThis.parOps().thenParApplyAllSuccessAsync(-1, am.createFunction(anotherExecutor), anotherExecutor)
+
+        listCfThis.parOps()
+            .thenParApplyMostSuccessAsync(-1, LONG_WAIT_MS, MILLISECONDS, am.createFunction(testExecutor))
+        listCfThis.parOps().thenParApplyMostSuccessAsync(
+            -1, LONG_WAIT_MS, MILLISECONDS, am.createFunction(anotherExecutor), anotherExecutor
+        )
+
+        listCfThis.parOps().thenParApplyAsync(am.createFunction(testExecutor))
+        listCfThis.parOps().thenParApplyAsync(am.createFunction(anotherExecutor), anotherExecutor)
+
+        listCfThis.parOps().thenParApplyAnySuccessAsync(am.createFunction(testExecutor))
+        listCfThis.parOps().thenParApplyAnySuccessAsync(am.createFunction(anotherExecutor), anotherExecutor)
+
+        listCfThis.parOps().thenParApplyAnyAsync(am.createFunction(testExecutor))
+        listCfThis.parOps().thenParApplyAnyAsync(am.createFunction(anotherExecutor), anotherExecutor)
+
+        listCfThis.parOps().thenParAcceptFailFastAsync(am.createConsumer(testExecutor))
+        listCfThis.parOps().thenParAcceptFailFastAsync(am.createConsumer(anotherExecutor), anotherExecutor)
+
+        listCfThis.parOps().thenParAcceptAsync(am.createConsumer(testExecutor))
+        listCfThis.parOps().thenParAcceptAsync(am.createConsumer(anotherExecutor), anotherExecutor)
+
+        listCfThis.parOps().thenParAcceptAnySuccessAsync(am.createConsumer(testExecutor))
+        listCfThis.parOps().thenParAcceptAnySuccessAsync(am.createConsumer(anotherExecutor), anotherExecutor)
+
+        listCfThis.parOps().thenParAcceptAnyAsync(am.createConsumer(testExecutor))
+        listCfThis.parOps().thenParAcceptAnyAsync(am.createConsumer(anotherExecutor), anotherExecutor)
+
+        am.checkRunningExecutor()
     }
 
     test("Multi-Actions-Tuple(MTuple*) Methods(create by actions)") {
@@ -1028,87 +1273,42 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         am.checkRunningExecutor()
     }
 
-    test("Delay Execution") {
+    test("mostSuccessTupleOf method") {
         val am = ExTracingActionMaker()
 
-        testCffuFac.delayedExecutor(1, MILLISECONDS).execute(am.createFutureTask(testExecutor))
-        testCffuFac.delayedExecutor(1, MILLISECONDS, anotherExecutor).execute(am.createFutureTask(anotherExecutor))
+        testCffuFac.tupleOps()
+            .mostSuccessTupleOf(SHORT_WAIT_MS, MILLISECONDS, incompleteCf<Int>(), incompleteCf<Char>())
+            .thenRun(am.createRunnable(testExecutor))
+
+        testCffuFac.tupleOps().mostSuccessTupleOf(
+            SHORT_WAIT_MS,
+            MILLISECONDS,
+            incompleteCf<Int>(),
+            incompleteCf<Char>(),
+            incompleteCf<Int>()
+        )
+            .thenRun(am.createRunnable(testExecutor))
+
+        testCffuFac.tupleOps().mostSuccessTupleOf(
+            SHORT_WAIT_MS,
+            MILLISECONDS,
+            incompleteCf<Int>(),
+            incompleteCf<Char>(),
+            incompleteCf<Int>(),
+            incompleteCf<Int>()
+        ).thenRun(am.createRunnable(testExecutor))
+
+        testCffuFac.tupleOps().mostSuccessTupleOf(
+            SHORT_WAIT_MS,
+            MILLISECONDS,
+            incompleteCf<Int>(),
+            incompleteCf<Char>(),
+            incompleteCf<Int>(),
+            incompleteCf<Int>(),
+            incompleteCf<Int>()
+        ).thenRun(am.createRunnable(testExecutor))
 
         am.checkRunningExecutor()
-    }
-
-    val cfThis = testCffuFac.completedFuture(n)
-
-    (1..3).forEach { count ->
-        test("Then-Multi-Actions(thenM*) Methods with $count actions") {
-            val am = ExTracingActionMaker()
-
-            cfThis.thenMApplyFailFastAsync(*am.createFunctions(count, testExecutor))
-            cfThis.thenMApplyFailFastAsync(
-                anotherExecutor, *am.createFunctions(count, anotherExecutor)
-            )
-
-            cfThis.thenMApplyAllSuccessAsync(null, *am.createFunctions(count, testExecutor))
-            cfThis.thenMApplyAllSuccessAsync<Int>(
-                anotherExecutor, null, *am.createFunctions(count, anotherExecutor)
-            )
-
-            cfThis.thenMApplyMostSuccessAsync(
-                null, LONG_WAIT_MS, MILLISECONDS, *am.createFunctions(count, testExecutor)
-            )
-            cfThis.thenMApplyMostSuccessAsync(
-                anotherExecutor, null, LONG_WAIT_MS, MILLISECONDS, *am.createFunctions(count, anotherExecutor)
-            )
-
-            cfThis.thenMApplyAsync(*am.createFunctions(count, testExecutor))
-            cfThis.thenMApplyAsync(anotherExecutor, *am.createFunctions(count, anotherExecutor))
-
-            cfThis.thenMApplyAnySuccessAsync(*am.createFunctions(count, testExecutor))
-            cfThis.thenMApplyAnySuccessAsync(
-                anotherExecutor, *am.createFunctions(count, anotherExecutor)
-            )
-
-            cfThis.thenMApplyAnyAsync(*am.createFunctions(count, testExecutor))
-            cfThis.thenMApplyAnyAsync(
-                anotherExecutor, *am.createFunctions(count, anotherExecutor)
-            )
-
-            cfThis.thenMAcceptFailFastAsync(*am.createConsumers(count, testExecutor))
-            cfThis.thenMAcceptFailFastAsync(
-                anotherExecutor, *am.createConsumers(count, anotherExecutor)
-            )
-
-            cfThis.thenMAcceptAsync(*am.createConsumers(count, testExecutor))
-            cfThis.thenMAcceptAsync(anotherExecutor, *am.createConsumers(count, anotherExecutor))
-
-            cfThis.thenMAcceptAnySuccessAsync(*am.createConsumers(count, testExecutor))
-            cfThis.thenMAcceptAnySuccessAsync(
-                anotherExecutor, *am.createConsumers(count, anotherExecutor)
-            )
-
-            cfThis.thenMAcceptAnyAsync(*am.createConsumers(count, testExecutor))
-            cfThis.thenMAcceptAnyAsync(
-                anotherExecutor, *am.createConsumers(count, anotherExecutor)
-            )
-
-            cfThis.thenMRunFailFastAsync(*am.createRunnables(count, testExecutor))
-            cfThis.thenMRunFailFastAsync(
-                anotherExecutor, *am.createRunnables(count, anotherExecutor)
-            )
-
-            cfThis.thenMRunAsync(*am.createRunnables(count, testExecutor))
-            cfThis.thenMRunAsync(anotherExecutor, *am.createRunnables(count, anotherExecutor))
-
-            cfThis.thenMRunAnySuccessAsync(*am.createRunnables(count, testExecutor))
-            cfThis.thenMRunAnySuccessAsync(
-                anotherExecutor, *am.createRunnables(count, anotherExecutor)
-            )
-
-            cfThis.thenMRunAnyAsync(*am.createRunnables(count, testExecutor))
-            cfThis.thenMRunAnyAsync(anotherExecutor, *am.createRunnables(count, anotherExecutor))
-
-            am.checkRunningExecutor()
-        }
     }
 
     test("Then-Multi-Actions-Tuple(thenMTuple*) Methods") {
@@ -1267,42 +1467,134 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         am.checkRunningExecutor()
     }
 
-    val other = CompletableFuture.completedFuture(anotherN)
-
-    test("thenBoth* Methods(binary input) with fail-fast support") {
+    test("Simple then* Methods of CompletionStage") {
         val am = ExTracingActionMaker()
 
-        cfThis.thenCombineFailFastAsync(other, am.createBiFunction(testExecutor))
-        cfThis.thenCombineFailFastAsync(other, am.createBiFunction(anotherExecutor), anotherExecutor)
+        cfThis.thenApplyAsync(am.createFunction(testExecutor))
+        cfThis.thenApplyAsync(am.createFunction(anotherExecutor), anotherExecutor)
 
-        cfThis.thenAcceptBothFailFastAsync(other, am.createBiConsumer(testExecutor))
-        cfThis.thenAcceptBothFailFastAsync(
-            other, am.createBiConsumer(anotherExecutor), anotherExecutor
-        )
+        cfThis.thenAcceptAsync(am.createConsumer(testExecutor))
+        cfThis.thenAcceptAsync(am.createConsumer(anotherExecutor), anotherExecutor)
 
-        cfThis.runAfterBothFailFastAsync(other, am.createFutureTask(testExecutor))
-        cfThis.runAfterBothFailFastAsync(other, am.createFutureTask(anotherExecutor), anotherExecutor)
+        cfThis.thenRunAsync(am.createRunnable(testExecutor))
+        cfThis.thenRunAsync(am.createRunnable(anotherExecutor), anotherExecutor)
 
         am.checkRunningExecutor()
     }
 
-    test("thenEither* Methods(binary input) with either(any)-success support") {
+
+    (1..3).forEach { count ->
+        test("Then-Multi-Actions(thenM*) Methods with $count actions") {
+            val am = ExTracingActionMaker()
+
+            cfThis.thenMApplyFailFastAsync(*am.createFunctions(count, testExecutor))
+            cfThis.thenMApplyFailFastAsync(
+                anotherExecutor, *am.createFunctions(count, anotherExecutor)
+            )
+
+            cfThis.thenMApplyAllSuccessAsync(null, *am.createFunctions(count, testExecutor))
+            cfThis.thenMApplyAllSuccessAsync<Int>(
+                anotherExecutor, null, *am.createFunctions(count, anotherExecutor)
+            )
+
+            cfThis.thenMApplyMostSuccessAsync(
+                null, LONG_WAIT_MS, MILLISECONDS, *am.createFunctions(count, testExecutor)
+            )
+            cfThis.thenMApplyMostSuccessAsync(
+                anotherExecutor, null, LONG_WAIT_MS, MILLISECONDS, *am.createFunctions(count, anotherExecutor)
+            )
+
+            cfThis.thenMApplyAsync(*am.createFunctions(count, testExecutor))
+            cfThis.thenMApplyAsync(anotherExecutor, *am.createFunctions(count, anotherExecutor))
+
+            cfThis.thenMApplyAnySuccessAsync(*am.createFunctions(count, testExecutor))
+            cfThis.thenMApplyAnySuccessAsync(
+                anotherExecutor, *am.createFunctions(count, anotherExecutor)
+            )
+
+            cfThis.thenMApplyAnyAsync(*am.createFunctions(count, testExecutor))
+            cfThis.thenMApplyAnyAsync(
+                anotherExecutor, *am.createFunctions(count, anotherExecutor)
+            )
+
+            cfThis.thenMAcceptFailFastAsync(*am.createConsumers(count, testExecutor))
+            cfThis.thenMAcceptFailFastAsync(
+                anotherExecutor, *am.createConsumers(count, anotherExecutor)
+            )
+
+            cfThis.thenMAcceptAsync(*am.createConsumers(count, testExecutor))
+            cfThis.thenMAcceptAsync(anotherExecutor, *am.createConsumers(count, anotherExecutor))
+
+            cfThis.thenMAcceptAnySuccessAsync(*am.createConsumers(count, testExecutor))
+            cfThis.thenMAcceptAnySuccessAsync(
+                anotherExecutor, *am.createConsumers(count, anotherExecutor)
+            )
+
+            cfThis.thenMAcceptAnyAsync(*am.createConsumers(count, testExecutor))
+            cfThis.thenMAcceptAnyAsync(
+                anotherExecutor, *am.createConsumers(count, anotherExecutor)
+            )
+
+            cfThis.thenMRunFailFastAsync(*am.createRunnables(count, testExecutor))
+            cfThis.thenMRunFailFastAsync(
+                anotherExecutor, *am.createRunnables(count, anotherExecutor)
+            )
+
+            cfThis.thenMRunAsync(*am.createRunnables(count, testExecutor))
+            cfThis.thenMRunAsync(anotherExecutor, *am.createRunnables(count, anotherExecutor))
+
+            cfThis.thenMRunAnySuccessAsync(*am.createRunnables(count, testExecutor))
+            cfThis.thenMRunAnySuccessAsync(
+                anotherExecutor, *am.createRunnables(count, anotherExecutor)
+            )
+
+            cfThis.thenMRunAnyAsync(*am.createRunnables(count, testExecutor))
+            cfThis.thenMRunAnyAsync(anotherExecutor, *am.createRunnables(count, anotherExecutor))
+
+            am.checkRunningExecutor()
+        }
+    }
+
+    val other = CompletableFuture.completedFuture(anotherN)
+
+    test("thenBoth* Methods") {
+        val am = ExTracingActionMaker()
+
+        cfThis.thenCombineFailFastAsync(other, am.createBiFunction(testExecutor))
+        cfThis.thenCombineFailFastAsync(other, am.createBiFunction(anotherExecutor), anotherExecutor)
+        cfThis.thenCombineAsync(other, am.createBiFunction(testExecutor))
+        cfThis.thenCombineAsync(other, am.createBiFunction(anotherExecutor), anotherExecutor)
+
+        cfThis.thenAcceptBothFailFastAsync(other, am.createBiConsumer(testExecutor))
+        cfThis.thenAcceptBothFailFastAsync(other, am.createBiConsumer(anotherExecutor), anotherExecutor)
+        cfThis.thenAcceptBothAsync(other, am.createBiConsumer(testExecutor))
+        cfThis.thenAcceptBothAsync(other, am.createBiConsumer(anotherExecutor), anotherExecutor)
+
+        cfThis.runAfterBothFailFastAsync(other, am.createFutureTask(testExecutor))
+        cfThis.runAfterBothFailFastAsync(other, am.createFutureTask(anotherExecutor), anotherExecutor)
+        cfThis.runAfterBothAsync(other, am.createFutureTask(testExecutor))
+        cfThis.runAfterBothAsync(other, am.createFutureTask(anotherExecutor), anotherExecutor)
+
+        am.checkRunningExecutor()
+    }
+
+    test("thenEither* Methods") {
         val am = ExTracingActionMaker()
 
         cfThis.applyToEitherSuccessAsync(other, am.createFunctions(1, testExecutor)[0])
-        cfThis.applyToEitherSuccessAsync(
-            other, am.createFunctions(1, anotherExecutor)[0], anotherExecutor
-        )
+        cfThis.applyToEitherSuccessAsync(other, am.createFunctions(1, anotherExecutor)[0], anotherExecutor)
+        cfThis.applyToEitherAsync(other, am.createFunctions(1, testExecutor)[0])
+        cfThis.applyToEitherAsync(other, am.createFunctions(1, anotherExecutor)[0], anotherExecutor)
 
         cfThis.acceptEitherSuccessAsync(other, am.createConsumers(1, testExecutor)[0])
-        cfThis.acceptEitherSuccessAsync(
-            other, am.createConsumers(1, anotherExecutor)[0], anotherExecutor
-        )
+        cfThis.acceptEitherSuccessAsync(other, am.createConsumers(1, anotherExecutor)[0], anotherExecutor)
+        cfThis.acceptEitherAsync(other, am.createConsumers(1, testExecutor)[0])
+        cfThis.acceptEitherAsync(other, am.createConsumers(1, anotherExecutor)[0], anotherExecutor)
 
         cfThis.runAfterEitherSuccessAsync(other, am.createFutureTask(testExecutor))
-        cfThis.runAfterEitherSuccessAsync(
-            other, am.createFutureTask(anotherExecutor), anotherExecutor
-        )
+        cfThis.runAfterEitherSuccessAsync(other, am.createFutureTask(anotherExecutor), anotherExecutor)
+        cfThis.runAfterEitherAsync(other, am.createFutureTask(testExecutor))
+        cfThis.runAfterEitherAsync(other, am.createFutureTask(anotherExecutor), anotherExecutor)
 
         am.checkRunningExecutor()
     }
@@ -1319,6 +1611,61 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
 
         failedCf.exceptionallyAsync(am.createExFunction(testExecutor))
         failedCf.exceptionallyAsync(am.createExFunction(anotherExecutor), anotherExecutor)
+
+        am.checkRunningExecutor()
+    }
+
+    test("Timeout Control Methods of CompletableFuture") {
+        val am = ExTracingActionMaker()
+
+        testCffuFac.newIncompleteCffu<Int>().orTimeout(SHORT_WAIT_MS, MILLISECONDS)
+            .exceptionally(am.createExHandleFunction(testExecutor))
+
+        testCffuFac.newIncompleteCffu<Int>().completeOnTimeout(n, SHORT_WAIT_MS, MILLISECONDS)
+            .thenRun(am.createRunnable(testExecutor))
+
+        am.checkRunningExecutor()
+    }
+
+    test("Advanced Methods of CompletionStage") {
+        val am = ExTracingActionMaker()
+
+        cfThis.thenComposeAsync(am.createComposeFunction(testExecutor))
+        cfThis.thenComposeAsync(am.createComposeFunction(anotherExecutor), anotherExecutor)
+
+        testCffuFac.failedFuture<Int>(RuntimeException("Failed")).catchingComposeAsync(
+            RuntimeException::class.java, am.createExHandleComposeFunction(testExecutor)
+        )
+        testCffuFac.failedFuture<Int>(RuntimeException("Failed")).catchingComposeAsync(
+            RuntimeException::class.java, am.createExHandleComposeFunction(anotherExecutor), anotherExecutor
+        )
+
+        testCffuFac.failedFuture<Int>(RuntimeException("Failed"))
+            .exceptionallyComposeAsync(am.createExHandleComposeFunction(testExecutor))
+        testCffuFac.failedFuture<Int>(RuntimeException("Failed"))
+            .exceptionallyComposeAsync(am.createExHandleComposeFunction(anotherExecutor), anotherExecutor)
+
+        cfThis.handleAsync(am.createExHandleBiFunction(testExecutor))
+        cfThis.handleAsync(am.createExHandleBiFunction(anotherExecutor), anotherExecutor)
+
+        cfThis.whenCompleteAsync(am.createExHandleBiConsumer(testExecutor))
+        cfThis.whenCompleteAsync(am.createExHandleBiConsumer(anotherExecutor), anotherExecutor)
+
+        cfThis.peekAsync(am.createExHandleBiConsumer(testExecutor))
+        cfThis.peekAsync(am.createExHandleBiConsumer(anotherExecutor), anotherExecutor)
+
+        am.checkRunningExecutor()
+    }
+
+    test("Write Methods of CompletableFuture") {
+        val am = ExTracingActionMaker()
+
+        testCffuFac.newIncompleteCffu<Int>().completeAsync(am.createSupplier(testExecutor))
+        testCffuFac.newIncompleteCffu<Int>().completeAsync(am.createSupplier(anotherExecutor), anotherExecutor)
+
+        testCffuFac.newIncompleteCffu<Int>().completeExceptionallyAsync(am.createExSupplier(testExecutor))
+        testCffuFac.newIncompleteCffu<Int>()
+            .completeExceptionallyAsync(am.createExSupplier(anotherExecutor), anotherExecutor)
 
         am.checkRunningExecutor()
     }
@@ -1382,6 +1729,14 @@ class ExTracingActionMaker(private val testingThread: Thread = currentThread()) 
         }
     }
 
+    fun createComposeFunction(executor: Executor = LLCF.ASYNC_POOL): Function<Int, CompletionStage<Int>> {
+        val exCf = createExCfMergedToHolder()
+        return Function {
+            checkRunningAndRecordEx(executor, exCf)
+            CompletableFuture()
+        }
+    }
+
     fun createExHandleFunction(executor: Executor = LLCF.ASYNC_POOL): Function<Throwable, Int> {
         val exCf = createExCfMergedToHolder()
         return Function {
@@ -1425,6 +1780,14 @@ class ExTracingActionMaker(private val testingThread: Thread = currentThread()) 
         return BiFunction { x, y ->
             checkRunningAndRecordEx(executor, exCf)
             x + y
+        }
+    }
+
+    fun createExHandleBiFunction(executor: Executor = LLCF.ASYNC_POOL): BiFunction<Int, Throwable?, Int> {
+        val exCf = createExCfMergedToHolder()
+        return BiFunction { x, y ->
+            checkRunningAndRecordEx(executor, exCf)
+            x
         }
     }
 
