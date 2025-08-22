@@ -27,13 +27,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class CompletableFutureApiCompatibilityTest {
     private static final String hello = "CompletableFuture API Compatibility Test - Hello";
 
-    ////////////////////////////////////////////////////////////////////////////////
+    // =============================================================================
     // Static Methods
-    ////////////////////////////////////////////////////////////////////////////////
+    // =============================================================================
 
-    ////////////////////////////////////////
+    // =====================================
     //# Factory Methods of CompletableFuture
-    ////////////////////////////////////////
+    // =====================================
 
     @Test
     void factoryMethods_byImmediateValue() throws Exception {
@@ -114,9 +114,9 @@ class CompletableFutureApiCompatibilityTest {
         assertEquals(n, cf.get());
     }
 
-    ////////////////////////////////////////
+    // =====================================
     //# allOf / anyOf methods
-    ////////////////////////////////////////
+    // =====================================
 
     @Test
     void staticMethods_allOf_anyOf() throws Exception {
@@ -133,9 +133,9 @@ class CompletableFutureApiCompatibilityTest {
         assertNotNull(CompletableFuture.anyOf(f1, f2, f3).get());
     }
 
-    ////////////////////////////////////////
+    // =====================================
     //# Delay Execution
-    ////////////////////////////////////////
+    // =====================================
 
     @Test
     @EnabledForJreRange(min = JRE.JAVA_9)
@@ -158,9 +158,9 @@ class CompletableFutureApiCompatibilityTest {
         assertEquals(hello, holder.get());
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
+    // =============================================================================
     //# Instance Methods
-    ////////////////////////////////////////////////////////////////////////////////
+    // =============================================================================
 
     @Test
     void simpleThenMethods() throws Exception {
@@ -572,9 +572,9 @@ class CompletableFutureApiCompatibilityTest {
         assertSame(ex, assertThrowsExactly(ExecutionException.class, incomplete2::get).getCause());
     }
 
-    ////////////////////////////////////////
+    // =====================================
     //# Re-Config methods
-    ////////////////////////////////////////
+    // =====================================
 
     @Test
     void reConfigMethods() throws Exception {
@@ -639,9 +639,9 @@ class CompletableFutureApiCompatibilityTest {
         assertFalse(cf.newIncompleteFuture().isDone());
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
+    // =============================================================================
     //# the behavior that is easy to misunderstand
-    ////////////////////////////////////////////////////////////////////////////////
+    // =============================================================================
 
     @Test
     void test_similarities_and_differences_between_cancelled_and_exceptionally() throws Exception {
@@ -765,9 +765,9 @@ class CompletableFutureApiCompatibilityTest {
         assertSame(rte, joinEx.getCause().getCause());
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
+    // =============================================================================
     //# test helper fields
-    ////////////////////////////////////////////////////////////////////////////////
+    // =============================================================================
 
     private static ExecutorService executorService;
 

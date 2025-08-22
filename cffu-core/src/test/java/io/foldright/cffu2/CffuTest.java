@@ -37,20 +37,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SuppressWarnings("RedundantThrows")
 class CffuTest {
-    ////////////////////////////////////////////////////////////////////////////////
     // region# Simple then* Methods of CompletionStage
     //
     //    - thenApply*(Function):  T -> U
     //    - thenAccept*(Consumer): T -> Void
     //    - thenRun*(Runnable):    Void -> Void
-    ////////////////////////////////////////////////////////////////////////////////
 
     // tested in implementation??
 
     // endregion
-    ////////////////////////////////////////////////////////////
     // region# Then-Multi-Actions(thenM*) Methods
-    ////////////////////////////////////////////////////////////
 
     @Test
     void test_thenMApply() throws Exception {
@@ -148,9 +144,7 @@ class CffuTest {
     }
 
     // endregion
-    ////////////////////////////////////////////////////////////
     // region# Then-Multi-Actions-Tuple(thenMTuple*) Methods
-    ////////////////////////////////////////////////////////////
 
     @Test
     void test_thenMApplyTupleAsync() throws Exception {
@@ -216,9 +210,7 @@ class CffuTest {
     }
 
     // endregion
-    ////////////////////////////////////////////////////////////////////////////////
     // region# thenBoth* Methods(binary input) of CompletionStage
-    ////////////////////////////////////////////////////////////////////////////////
 
     @Test
     void bothFailFast() throws Exception {
@@ -262,9 +254,7 @@ class CffuTest {
     }
 
     // endregion
-    ////////////////////////////////////////////////////////////////////////////////
     // region# thenEither* Methods(binary input) of CompletionStage
-    ////////////////////////////////////////////////////////////////////////////////
 
     @Test
     void test_either_success() throws Exception {
@@ -287,9 +277,7 @@ class CffuTest {
     }
 
     // endregion
-    ////////////////////////////////////////////////////////////////////////////////
     // region# Error Handling Methods of CompletionStage
-    ////////////////////////////////////////////////////////////////////////////////
 
     @Test
     void test_catching() throws Exception {
@@ -315,10 +303,8 @@ class CffuTest {
     }
 
     // endregion
-    ////////////////////////////////////////////////////////////////////////////////
     // region# Timeout Control Methods
     // also tested in CffuApiCompatibilityTest
-    ////////////////////////////////////////////////////////////////////////////////
 
     @Test
     void test_timeout() throws Exception {
@@ -344,9 +330,7 @@ class CffuTest {
     }
 
     // endregion
-    ////////////////////////////////////////////////////////////////////////////////
     // region# Advanced Methods(compose* and handle-like methods)
-    ////////////////////////////////////////////////////////////////////////////////
 
     @Test
     void test_catchingCompose() throws Exception {
@@ -394,9 +378,7 @@ class CffuTest {
     }
 
     // endregion
-    ////////////////////////////////////////////////////////////////////////////////
     // region# Read(explicitly) Methods
-    ////////////////////////////////////////////////////////////////////////////////
 
     @Test
     void test_cffuJoin() {
@@ -454,16 +436,11 @@ class CffuTest {
     }
 
     // endregion
-    ////////////////////////////////////////////////////////////////////////////////
     // region# Write Methods
-    ////////////////////////////////////////////////////////////////////////////////
-
     // also tested in CffuApiCompatibilityTest
 
     // endregion
-    ////////////////////////////////////////////////////////////////////////////////
     // region# Re-Config Methods
-    ////////////////////////////////////////////////////////////////////////////////
 
     @Test
     void test_withCffuFactory() {
@@ -479,9 +456,7 @@ class CffuTest {
     }
 
     // endregion
-    ////////////////////////////////////////////////////////////////////////////////
     // region# Getter Methods of Cffu properties
-    ////////////////////////////////////////////////////////////////////////////////
 
     @Test
     void test_isMinimalStage() {
@@ -499,9 +474,7 @@ class CffuTest {
     }
 
     // endregion
-    ////////////////////////////////////////////////////////////////////////////////
     // region# Inspection Methods
-    ////////////////////////////////////////////////////////////////////////////////
 
     @Test
     void test_cffuUnwrap() {
@@ -522,9 +495,7 @@ class CffuTest {
     }
 
     // endregion
-    ////////////////////////////////////////////////////////////////////////////////
     // region# Other Uncommon Methods(dangerous or trivial)
-    ////////////////////////////////////////////////////////////////////////////////
 
     @Test
     void test_forbidObtrudeMethods() {
@@ -532,12 +503,10 @@ class CffuTest {
         assertTrue(forbidObtrudeMethodsCffuFactory.completedFuture(n).forbidObtrudeMethods());
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
     //# Inspection methods of Cffu
     //
     //    - cffuUnwrap()
     //    - getNumberOfDependents()
-    ////////////////////////////////////////////////////////////////////////////////
 
     @Test
     void test_toString() {
@@ -559,42 +528,42 @@ class CffuTest {
         assertThat(cf.iterableOps().thenMApplyFailFastAsync(asList(v -> v + 1, v -> v + 2)).get()).containsExactly(n + 1, n + 2);
         assertThat(cf.iterableOps().thenMApplyFailFastAsync(asList(v -> v + 1, v -> v + 2), testExecutor).get()).containsExactly(n + 1, n + 2);
 
-        assertThat(cf.iterableOps().thenMApplyAllSuccessAsync( -1, emptyList()).get()).isEmpty();
-        assertThat(cf.iterableOps().thenMApplyAllSuccessAsync( -1,
+        assertThat(cf.iterableOps().thenMApplyAllSuccessAsync(-1, emptyList()).get()).isEmpty();
+        assertThat(cf.iterableOps().thenMApplyAllSuccessAsync(-1,
                 asList(v -> {throw new RuntimeException();}, v -> v + 2)).get())
                 .containsExactly(-1, n + 2);
-        assertThat(cf.iterableOps().thenMApplyAllSuccessAsync( -1,
+        assertThat(cf.iterableOps().thenMApplyAllSuccessAsync(-1,
                 asList(v -> {throw new RuntimeException();}, v -> v + 2), testExecutor).get())
                 .containsExactly(-1, n + 2);
 
-        assertThat(cf.iterableOps().thenMApplyMostSuccessAsync( -1, 1, SECONDS, emptyList()).get()).isEmpty();
-        assertThat(cf.iterableOps().thenMApplyMostSuccessAsync( -1, 1, SECONDS,
+        assertThat(cf.iterableOps().thenMApplyMostSuccessAsync(-1, 1, SECONDS, emptyList()).get()).isEmpty();
+        assertThat(cf.iterableOps().thenMApplyMostSuccessAsync(-1, 1, SECONDS,
                 asList(v -> {throw new RuntimeException();}, v -> v + 2)).get())
                 .containsExactly(-1, n + 2);
-        assertThat(cf.iterableOps().thenMApplyMostSuccessAsync( -1, 1, SECONDS,
+        assertThat(cf.iterableOps().thenMApplyMostSuccessAsync(-1, 1, SECONDS,
                 asList(v -> {throw new RuntimeException();}, v -> v + 2), testExecutor).get())
                 .containsExactly(-1, n + 2);
 
-        assertThat(cf.iterableOps().thenMApplyAsync( emptyList()).get()).isEmpty();
-        assertThat(cf.iterableOps().thenMApplyAsync( asList(v -> v + 1, v -> v + 2)).get()).containsExactly(n + 1, n + 2);
-        assertThat(cf.iterableOps().thenMApplyAsync( asList(v -> v + 1, v -> v + 2), testExecutor).get()).containsExactly(n + 1, n + 2);
+        assertThat(cf.iterableOps().thenMApplyAsync(emptyList()).get()).isEmpty();
+        assertThat(cf.iterableOps().thenMApplyAsync(asList(v -> v + 1, v -> v + 2)).get()).containsExactly(n + 1, n + 2);
+        assertThat(cf.iterableOps().thenMApplyAsync(asList(v -> v + 1, v -> v + 2), testExecutor).get()).containsExactly(n + 1, n + 2);
 
-        assertCfWithExType(cf.iterableOps().thenMApplyAnySuccessAsync( emptyList()), NoCfsProvidedException.class);
-        assertEquals(2, cf.iterableOps().thenMApplyAnySuccessAsync( asList(v -> {
+        assertCfWithExType(cf.iterableOps().thenMApplyAnySuccessAsync(emptyList()), NoCfsProvidedException.class);
+        assertEquals(2, cf.iterableOps().thenMApplyAnySuccessAsync(asList(v -> {
             throw new RuntimeException();
         }, v -> 2)).get());
-        assertEquals(2, cf.iterableOps().thenMApplyAnySuccessAsync( asList(v -> {
+        assertEquals(2, cf.iterableOps().thenMApplyAnySuccessAsync(asList(v -> {
             throw new RuntimeException();
         }, v -> 2), testExecutor).get());
 
         assertTrue(ForkJoinPool.commonPool().awaitQuiescence(2, MINUTES));
 
-        assertCfStillIncompleteIn(cf.iterableOps().thenMApplyAnyAsync( emptyList()));
-        assertEquals(2, cf.iterableOps().thenMApplyAnyAsync( asList(v -> {
+        assertCfStillIncompleteIn(cf.iterableOps().thenMApplyAnyAsync(emptyList()));
+        assertEquals(2, cf.iterableOps().thenMApplyAnyAsync(asList(v -> {
             sleep(MEDIAN_WAIT_MS);
             return 1;
         }, v -> 2)).get());
-        assertEquals(2, cf.iterableOps().thenMApplyAnyAsync( asList(v -> {
+        assertEquals(2, cf.iterableOps().thenMApplyAnyAsync(asList(v -> {
             sleep(MEDIAN_WAIT_MS);
             return 1;
         }, v -> 2), testExecutor).get());
@@ -603,55 +572,53 @@ class CffuTest {
     @Test
     void test_thenMAccept_iterable() throws Exception {
         final Cffu<Integer> cf = testCffuFac.completedFuture(n);
-        assertNull(cf.iterableOps().thenMAcceptFailFastAsync( emptyList()).get());
-        assertNull(cf.iterableOps().thenMAcceptFailFastAsync( asList(v -> {}, v -> {})).get());
-        assertNull(cf.iterableOps().thenMAcceptFailFastAsync( asList(v -> {}, v -> {}), testExecutor).get());
+        assertNull(cf.iterableOps().thenMAcceptFailFastAsync(emptyList()).get());
+        assertNull(cf.iterableOps().thenMAcceptFailFastAsync(asList(v -> {}, v -> {})).get());
+        assertNull(cf.iterableOps().thenMAcceptFailFastAsync(asList(v -> {}, v -> {}), testExecutor).get());
 
-        assertNull(cf.iterableOps().thenMAcceptAsync( emptyList()).get());
-        assertNull(cf.iterableOps().thenMAcceptAsync( asList(v -> {}, v -> {})).get());
-        assertNull(cf.iterableOps().thenMAcceptAsync( asList(v -> {}, v -> {}), testExecutor).get());
+        assertNull(cf.iterableOps().thenMAcceptAsync(emptyList()).get());
+        assertNull(cf.iterableOps().thenMAcceptAsync(asList(v -> {}, v -> {})).get());
+        assertNull(cf.iterableOps().thenMAcceptAsync(asList(v -> {}, v -> {}), testExecutor).get());
 
-        assertCfWithExType(cf.iterableOps().thenMAcceptAnySuccessAsync( emptyList()), NoCfsProvidedException.class);
-        assertNull(cf.iterableOps().thenMAcceptAnySuccessAsync( asList(v -> {
+        assertCfWithExType(cf.iterableOps().thenMAcceptAnySuccessAsync(emptyList()), NoCfsProvidedException.class);
+        assertNull(cf.iterableOps().thenMAcceptAnySuccessAsync(asList(v -> {
             throw new RuntimeException();
         }, v -> {})).get());
-        assertNull(cf.iterableOps().thenMAcceptAnySuccessAsync( asList(v -> {
+        assertNull(cf.iterableOps().thenMAcceptAnySuccessAsync(asList(v -> {
             throw new RuntimeException();
         }, v -> {}), testExecutor).get());
 
-        assertCfStillIncompleteIn(cf.iterableOps().thenMAcceptAnyAsync( emptyList()));
-        assertNull(cf.iterableOps().thenMAcceptAnyAsync( asList(v -> {}, v -> {})).get());
-        assertNull(cf.iterableOps().thenMAcceptAnyAsync( asList(v -> {}, v -> {}), testExecutor).get());
+        assertCfStillIncompleteIn(cf.iterableOps().thenMAcceptAnyAsync(emptyList()));
+        assertNull(cf.iterableOps().thenMAcceptAnyAsync(asList(v -> {}, v -> {})).get());
+        assertNull(cf.iterableOps().thenMAcceptAnyAsync(asList(v -> {}, v -> {}), testExecutor).get());
     }
 
     @Test
     void test_thenMRun_iterable() throws Exception {
         final Cffu<Integer> cf = testCffuFac.completedFuture(n);
-        assertNull(cf.iterableOps().thenMRunFailFastAsync( emptyList()).get());
-        assertNull(cf.iterableOps().thenMRunFailFastAsync( asList(() -> {}, () -> {})).get());
-        assertNull(cf.iterableOps().thenMRunFailFastAsync( asList(() -> {}, () -> {}), testExecutor).get());
+        assertNull(cf.iterableOps().thenMRunFailFastAsync(emptyList()).get());
+        assertNull(cf.iterableOps().thenMRunFailFastAsync(asList(() -> {}, () -> {})).get());
+        assertNull(cf.iterableOps().thenMRunFailFastAsync(asList(() -> {}, () -> {}), testExecutor).get());
 
-        assertNull(cf.iterableOps().thenMRunAsync( emptyList()).get());
-        assertNull(cf.iterableOps().thenMRunAsync( asList(() -> {}, () -> {})).get());
-        assertNull(cf.iterableOps().thenMRunAsync( asList(() -> {}, () -> {}), testExecutor).get());
+        assertNull(cf.iterableOps().thenMRunAsync(emptyList()).get());
+        assertNull(cf.iterableOps().thenMRunAsync(asList(() -> {}, () -> {})).get());
+        assertNull(cf.iterableOps().thenMRunAsync(asList(() -> {}, () -> {}), testExecutor).get());
 
-        assertCfWithExType(cf.iterableOps().thenMRunAnySuccessAsync( emptyList()), NoCfsProvidedException.class);
-        assertNull(cf.iterableOps().thenMRunAnySuccessAsync( asList(() -> {
+        assertCfWithExType(cf.iterableOps().thenMRunAnySuccessAsync(emptyList()), NoCfsProvidedException.class);
+        assertNull(cf.iterableOps().thenMRunAnySuccessAsync(asList(() -> {
             throw new RuntimeException();
         }, () -> {})).get());
-        assertNull(cf.iterableOps().thenMRunAnySuccessAsync( asList(() -> {
+        assertNull(cf.iterableOps().thenMRunAnySuccessAsync(asList(() -> {
             throw new RuntimeException();
         }, () -> {}), testExecutor).get());
 
-        assertCfStillIncompleteIn(cf.iterableOps().thenMRunAnyAsync( emptyList()));
-        assertNull(cf.iterableOps().thenMRunAnyAsync( asList(() -> {}, () -> {})).get());
-        assertNull(cf.iterableOps().thenMRunAnyAsync( asList(() -> {}, () -> {}), testExecutor).get());
+        assertCfStillIncompleteIn(cf.iterableOps().thenMRunAnyAsync(emptyList()));
+        assertNull(cf.iterableOps().thenMRunAnyAsync(asList(() -> {}, () -> {})).get());
+        assertNull(cf.iterableOps().thenMRunAnyAsync(asList(() -> {}, () -> {}), testExecutor).get());
     }
 
     // endregion
-    ////////////////////////////////////////////////////////////////////////////////
     // region# Test helper fields
-    ////////////////////////////////////////////////////////////////////////////////
 
     private final CffuFactory forbidObtrudeMethodsCffuFactory = CffuFactory.builder(testExecutor).forbidObtrudeMethods(true).build();
 }

@@ -4,12 +4,9 @@ import io.foldright.cffu2.CompletableFutureUtils.completedStage
 import io.foldright.cffu2.CompletableFutureUtils.failedFuture
 import io.foldright.cffu2.LLCF.relayAsync0
 import io.foldright.test_utils.*
-import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.future.shouldBeCompleted
 import io.kotest.matchers.future.shouldCompleteExceptionallyWith
 import io.kotest.matchers.ints.shouldBeExactly
@@ -22,9 +19,6 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.completedFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.CountDownLatch
-import java.util.function.BiConsumer
-import java.util.function.BiFunction
-import java.util.function.Function
 
 class LLCFTest : FunSpec({
     val testExecutor = createThreadPool("CheckMinStageRuntimeTypeTests", queueCapacity = 1000_000)

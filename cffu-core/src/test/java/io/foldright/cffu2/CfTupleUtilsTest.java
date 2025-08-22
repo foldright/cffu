@@ -26,9 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CfTupleUtilsTest {
 
     // endregion
-    ////////////////////////////////////////////////////////////
     // region## Multi-Actions-Tuple(MTuple*) Methods(create by actions)
-    ////////////////////////////////////////////////////////////
 
     @Test
     void test_mSupplyMostSuccessTupleAsync() throws Exception {
@@ -139,9 +137,7 @@ class CfTupleUtilsTest {
     }
 
     // endregion
-    ////////////////////////////////////////////////////////////
     // region## allTupleOf*/mostSuccessTupleOf Methods
-    ////////////////////////////////////////////////////////////
 
     @Test
     void test_allTupleOf() throws Exception {
@@ -288,9 +284,7 @@ class CfTupleUtilsTest {
     }
 
     // endregion
-    ////////////////////////////////////////////////////////////
     // region## Then-Multi-Actions-Tuple(thenMTuple*) Methods
-    ////////////////////////////////////////////////////////////
 
     @Test
     void test_thenTuple_methods() throws Exception {

@@ -10,7 +10,7 @@ import java.util.function.BiConsumer
 import java.util.function.BiFunction
 import java.util.function.Function
 
-class CFUTests: FunSpec({
+class CFUTests : FunSpec({
     @Suppress("USELESS_CAST", "INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING")
     test("nonExSwallowedFunction") {
         CompletableFutureUtils.nonExSwallowedFunction(

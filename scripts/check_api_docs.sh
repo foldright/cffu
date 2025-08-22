@@ -7,11 +7,10 @@ readonly SELF_PATH SELF_DIR=${SELF_PATH%/*}
 # cd to project directory
 cd "$SELF_DIR"/..
 
-
 DOC_DIRS=(
- target/reports/apidocs
- cffu-core/target/reports/apidocs
- cffu-ttl-executor-wrapper/target/reports/apidocs
+  target/reports/apidocs
+  cffu-core/target/reports/apidocs
+  cffu-ttl-executor-wrapper/target/reports/apidocs
 )
 
 invalid=false

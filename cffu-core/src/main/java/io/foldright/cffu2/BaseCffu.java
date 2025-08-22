@@ -20,7 +20,8 @@ import java.util.function.*;
 import static io.foldright.cffu2.CffuFactoryBuilder.cffuScreened;
 import static io.foldright.cffu2.CffuFactoryBuilder.cffuUnscreened;
 import static io.foldright.cffu2.CompletableFutureUtils.*;
-import static io.foldright.cffu2.LLCF.*;
+import static io.foldright.cffu2.LLCF.IS_JAVA9_PLUS;
+import static io.foldright.cffu2.LLCF.copy0;
 import static java.util.Objects.requireNonNull;
 
 

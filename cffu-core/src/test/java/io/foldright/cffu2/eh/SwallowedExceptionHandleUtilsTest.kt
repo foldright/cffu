@@ -179,7 +179,9 @@ class SwallowedExceptionHandleUtilsTest : FunSpec({
         val rte = RuntimeException("Bang...")
         val outRte = RuntimeException("exception of output")
         val where = "exceptionHandler"
-        handleSwallowedExceptions(where, eh, failedFuture<Int>(outRte), failedFuture<Int>(outRte), failedFuture<Int>(rte))
+        handleSwallowedExceptions(
+            where, eh, failedFuture<Int>(outRte), failedFuture<Int>(outRte), failedFuture<Int>(rte)
+        )
         eiList shouldHaveSize 1
         eiList.first().where shouldBe where
         eiList.first().index shouldBe 1

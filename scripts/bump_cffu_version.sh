@@ -57,4 +57,3 @@ readonly SEARCH_PATTERN
 
 ignoreFailRg "$SEARCH_PATTERN" -l -g '!scripts/' |
   myXargs sed -i -r "s#$SEARCH_PATTERN#$NEW_VERSION#g"
-

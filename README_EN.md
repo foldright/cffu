@@ -8,7 +8,7 @@
 <a href="https://openjdk.java.net/"><img src="https://img.shields.io/badge/Java-8+-339933?logo=openjdk&logoColor=white" alt="Java support"></a>
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/foldright/cffu?color=4D7A97&logo=apache" alt="License"></a>
 <a href="https://foldright.io/api-docs/cffu2/"><img src="https://img.shields.io/github/release/foldright/cffu?label=javadoc&color=339933&logo=read-the-docs&logoColor=white&filter=v2.*" alt="Javadocs"></a>
-<a href="https://central.sonatype.com/artifact/io.foldright/cffu2/2.0.0-Alpha1/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu2?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
+<a href="https://central.sonatype.com/artifact/io.foldright/cffu2/2.0.0-Alpha2/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu2?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
 <a href="https://github.com/foldright/cffu/releases"><img src="https://img.shields.io/github/release/foldright/cffu.svg?filter=v2.*" alt="GitHub Releases"></a>
 <a href="https://github.com/foldright/cffu/stargazers"><img src="https://img.shields.io/github/stars/foldright/cffu?style=flat" alt="GitHub Stars"></a>
 <a href="https://github.com/foldright/cffu/fork"><img src="https://img.shields.io/github/forks/foldright/cffu?style=flat" alt="GitHub Forks"></a>
@@ -18,12 +18,13 @@
 <a href="https://gitpod.io/#https://github.com/foldright/cffu"><img src="https://img.shields.io/badge/Gitpod-ready to code-339933?label=gitpod&logo=gitpod&logoColor=white" alt="gitpod: Ready to Code"></a>
 </p>
 
-👉 cffu (CompletableFuture Fu 🦝) is a lightweight enhancement library for [`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html) (CF), 
+👉 cffu (CompletableFuture Fu 🦝) is a lightweight enhancement library for [`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html) (CF),
 designed to give you quick and easy development experience with less pitfalls, and to provide more convenient, efficient, and safe application of CF in business contexts.
 
 Welcome! 👏 💖
 
 Feel free to:
+
 - suggest and ask questions: [Submit issues](https://github.com/foldright/cffu/issues/new).
 - contribute and improve: [Forking it and submitting pull request](https://github.com/foldright/cffu/fork).
 
@@ -62,9 +63,6 @@ Feel free to:
 --------------------------------------------------------------------------------
 🔧 Features
 
-
-
-
 For more details on the usage and features of cffu, refer to the User Guide.
 
 # 🔧 Features
@@ -72,16 +70,19 @@ For more details on the usage and features of cffu, refer to the User Guide.
 The provided features include：
 
 🏪 More convenient methods, such as:
+
 - Return multiple CF results instead of void (allOf), e.g., `allResultsFailFastOf`, `allResultsOf`, `mSupplyFailFastAsync`, `thenMApplyFailFastAsync`.
 - Return multiple different type CF results instead of the same type, e.g., `allTupleFailFastOf`, `allTupleOf`, `mSupplyTupleFailFastAsync`, `thenMApplyTupleFailFastAsync`.
 - Direct execution of multiple actions without wrapping them into CompletableFuture, e.g., `mSupplyTupleFailFastAsync`, `mSupplyMostSuccessAsync`, `thenMApplyTupleFailFastAsync`, `thenMRunFailFastAsync`.
 
 ⚙️ More efficient and flexible concurrent execution strategies, such as:
+
 - **AllFailFast strategy**: Fail fast and return when any input CF fails, rather than waiting for all CFs to complete (allOf).
 - **AnySuccess strategy**: Returns the first successful CF result, rather than the first completed (which might be a failure) (anyOf).
 - **MostSuccess strategy**: Returns the successful results of multiple CFs within a specified time, ignoring failed or incomplete CFs (returns a default value).
 
 🦺 Safer usage, such as:
+
 - Timeout-enabled join methods with `join(timeout, unit)`.
 - Safe timeout execution with `cffuOrTimeout`/`cffuCompleteOnTimeout`.
 - Peek method that ensures the result won't be modified.
@@ -89,14 +90,17 @@ The provided features include：
 - Comprehensive code quality annotations on class methods to prompt IDE issues early, such as `@NonNull`, `@Nullable`, `@CheckReturnValue`, `@Contract`, etc.
 
 🧩 New methods not provided by Java CF (e.g., `join(timeout, unit)`, `cffuOrTimeout`, `peek`), such as:
+
 - Asynchronous exceptional completion with `completeExceptionallyAsync`.
 - Non-blocking successful result retrieval with `getSuccessNow`.
 - Unwrapping CF wrapped exception into business exception with `unwrapCfException`.
 
 💪 Enhanced existing methods, such as:
+
 - `anySuccessOf`/`anyOf` methods: Return specific type T (type-safe) instead of `Object` (`CompletableFuture#anyOf`).
 
 ⏳ Backport support for Java 8: All new CF features from Java 9+ are available in Java 8, such as:
+
 - Timeout control with `orTimeout`/`completeOnTimeout`.
 - Delayed execution with `delayedExecutor`.
 - Factory methods like `failedFuture`, `completedStage`, `failedStage`.
@@ -547,7 +551,7 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu2
 
 # 🍪Dependencies
 
-> check out [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu2/2.0.0-Alpha1/versions) for new or available versions。
+> check out [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu2/2.0.0-Alpha2/versions) for new or available versions。
 
 - `cffu`library（including[`Java CompletableFuture`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html) enhanced `CompletableFutureUtils`）:
   - For `Maven` projects:
@@ -556,18 +560,18 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu2
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu2</artifactId>
-      <version>2.0.0-Alpha1</version>
+      <version>2.0.0-Alpha2</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     Gradle Kotlin DSL
     ```groovy
-    implementation("io.foldright:cffu2:2.0.0-Alpha1")
+    implementation("io.foldright:cffu2:2.0.0-Alpha2")
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation 'io.foldright:cffu2:2.0.0-Alpha1'
+    implementation 'io.foldright:cffu2:2.0.0-Alpha2'
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local) implementation for [`cffu executor wrapper SPI`](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -576,7 +580,7 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu2
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu2-ttl-executor-wrapper</artifactId>
-      <version>2.0.0-Alpha1</version>
+      <version>2.0.0-Alpha2</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -584,11 +588,11 @@ Current version of `Java API` documentation: https://foldright.io/api-docs/cffu2
 
     Gradle Kotlin DSL
     ```groovy
-    runtimeOnly("io.foldright:cffu2-ttl-executor-wrapper:2.0.0-Alpha1")
+    runtimeOnly("io.foldright:cffu2-ttl-executor-wrapper:2.0.0-Alpha2")
     ```
     Gradle Groovy DSL
     ```groovy
-    runtimeOnly 'io.foldright:cffu2-ttl-executor-wrapper:2.0.0-Alpha1'
+    runtimeOnly 'io.foldright:cffu2-ttl-executor-wrapper:2.0.0-Alpha2'
     ```
 
 # 📚 See also

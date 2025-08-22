@@ -29,13 +29,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class CffuApiCompatibilityTest {
     private static final String hello = "Cffu API Compatibility Test - Hello";
 
-    ////////////////////////////////////////////////////////////////////////////////
+    // =============================================================================
     // Static Methods
-    ////////////////////////////////////////////////////////////////////////////////
+    // =============================================================================
 
-    ////////////////////////////////////////
+    // =====================================
     //# Factory Methods of Cffu
-    ////////////////////////////////////////
+    // =====================================
 
     @Test
     void factoryMethods_byImmediateValue() throws Exception {
@@ -115,9 +115,9 @@ class CffuApiCompatibilityTest {
         assertEquals(n, cf.get());
     }
 
-    ////////////////////////////////////////
+    // =====================================
     //# allOf / anyOf methods
-    ////////////////////////////////////////
+    // =====================================
 
     @Test
     void staticMethods_allOf_anyOf() throws Exception {
@@ -134,9 +134,9 @@ class CffuApiCompatibilityTest {
         assertNotNull(cffuFactory.anyOf(f1, f2, f3).get());
     }
 
-    ////////////////////////////////////////
+    // =====================================
     //# Delay Execution
-    ////////////////////////////////////////
+    // =====================================
 
     @Test
     void staticMethods_delayedExecutor() throws Exception {
@@ -158,9 +158,9 @@ class CffuApiCompatibilityTest {
         assertEquals(hello, holder.get());
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
+    // =============================================================================
     //# Instance Methods
-    ////////////////////////////////////////////////////////////////////////////////
+    // =============================================================================
 
     @Test
     void simpleThenMethods() throws Exception {
@@ -567,9 +567,9 @@ class CffuApiCompatibilityTest {
         assertSame(ex, assertThrowsExactly(ExecutionException.class, incomplete2::get).getCause());
     }
 
-    ////////////////////////////////////////
+    // =====================================
     //# Re-Config methods
-    ////////////////////////////////////////
+    // =====================================
 
     @Test
     void reConfigMethods() throws Exception {
@@ -631,9 +631,9 @@ class CffuApiCompatibilityTest {
         assertFalse(cf.newIncompleteFuture().isDone());
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
+    // =============================================================================
     //# the behavior that is easy to misunderstand
-    ////////////////////////////////////////////////////////////////////////////////
+    // =============================================================================
 
     @Test
     void test_similarities_and_differences_between_cancelled_and_exceptionally() throws Exception {
@@ -756,9 +756,9 @@ class CffuApiCompatibilityTest {
         assertSame(rte, joinEx.getCause().getCause());
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
+    // =============================================================================
     //# test helper fields
-    ////////////////////////////////////////////////////////////////////////////////
+    // =============================================================================
 
     private static ExecutorService executorService;
 
