@@ -3256,7 +3256,7 @@ public final class CompletableFutureUtils {
      * and this backport method are <strong>UNSAFE</strong>!
      * <p>
      * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
-     * in CompletableFuture's internal <strong>SINGLE-thread delay executor</strong> (including timeout functionality).
+     * in CompletableFuture's internal <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor (including timeout functionality).
      * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
@@ -3264,10 +3264,10 @@ public final class CompletableFutureUtils {
      * cffuOrTimeout} instead of {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and this backport method.
      * Using {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and this backport method is appropriate only when:
      * <ul>
-     * <li>the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods), and/or
-     * <li>all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
+     * <li>the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods),
+     * <li>and/or all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
      *    (i.e., the dependent CompletableFutures are created using async methods).
-     * </ul> In these cases, using these unsafe methods avoids an unnecessary thread switch when timeout occurs; However, these
+     * </ul> In these cases, using these unsafe methods avoids an unnecessary thread switching when timeout occurs; However, these
      * conditions are difficult to guarantee in practice especially when the returned CompletableFuture is used by others' codes.
      * <p>
      * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} method leaks if the
@@ -3358,7 +3358,7 @@ public final class CompletableFutureUtils {
      * and this backport method are <strong>UNSAFE</strong>!
      * <p>
      * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
-     * in CompletableFuture's internal <strong>SINGLE-thread delay executor</strong> (including timeout functionality).
+     * in CompletableFuture's internal <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor (including timeout functionality).
      * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
@@ -3366,10 +3366,10 @@ public final class CompletableFutureUtils {
      * cffuCompleteOnTimeout} instead of {@link CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout} and this backport method.
      * Using {@link CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout} and this backport method is appropriate only when:
      * <ul>
-     * <li>the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods), and/or
-     * <li>all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
+     * <li>the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods),
+     * <li>and/or all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
      *    (i.e., the dependent CompletableFutures are created using async methods).
-     * </ul> In these cases, using these unsafe methods avoids an unnecessary thread switch when timeout occurs; However, these
+     * </ul> In these cases, using these unsafe methods avoids an unnecessary thread switching when timeout occurs; However, these
      * conditions are difficult to guarantee in practice especially when the returned CompletableFuture is used by others' codes.
      *
      * @param value   the value to use upon timeout
@@ -3589,8 +3589,8 @@ public final class CompletableFutureUtils {
      * will maintain its original result, regardless of whether the supplied action throws an exception or not.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
-     * the given action and other actions added to the input stage cannot be guaranteed. The action should be treated
-     * as "fire and forget" - do not make any assumptions about timing or execution sequence.
+     * the given action and other actions added to the input stage cannot be guaranteed. The given action should
+     * be treated as "fire and forget" - do not make any assumptions about timing or execution sequence.
      * <p>
      * Unlike method {@link CompletionStage#handle(BiFunction)} and like method
      * {@link CompletionStage#whenComplete(BiConsumer)}, this method is not designed to translate completion outcomes.
@@ -3624,8 +3624,8 @@ public final class CompletableFutureUtils {
      * will maintain its original result, regardless of whether the supplied action throws an exception or not.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
-     * the given action and other actions added to the input stage cannot be guaranteed. The action should be treated
-     * as "fire and forget" - do not make any assumptions about timing or execution sequence.
+     * the given action and other actions added to the input stage cannot be guaranteed. The given action should
+     * be treated as "fire and forget" - do not make any assumptions about timing or execution sequence.
      * <p>
      * Unlike method {@link CompletionStage#handleAsync(BiFunction)} and like method {@link
      * CompletionStage#whenCompleteAsync(BiConsumer)}, this method is not designed to translate completion outcomes.
@@ -3656,8 +3656,8 @@ public final class CompletableFutureUtils {
      * will maintain its original result, regardless of whether the supplied action throws an exception or not.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
-     * the given action and other actions added to the input stage cannot be guaranteed. The action should be treated
-     * as "fire and forget" - do not make any assumptions about timing or execution sequence.
+     * the given action and other actions added to the input stage cannot be guaranteed. The given action should
+     * be treated as "fire and forget" - do not make any assumptions about timing or execution sequence.
      * <p>
      * Unlike method {@link CompletionStage#handleAsync(BiFunction, Executor)} and like method {@link
      * CompletionStage#whenCompleteAsync(BiConsumer, Executor)}, this method is not designed to translate completion outcomes.

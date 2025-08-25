@@ -1736,17 +1736,17 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <strong>CAUTION:</strong> This method is <strong>UNSAFE</strong>!
      * <p>
      * When the wait timed out, the subsequent non-async actions of the dependent Cffus/CompletableFutures are performed
-     * in CompletableFuture's internal <strong>SINGLE-thread delay executor</strong> (including timeout functionality).
+     * in CompletableFuture's internal <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor (including timeout functionality).
      * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
      * <strong>Strongly recommend</strong> using the safe method {@link #orTimeout(long, TimeUnit) orTimeout}
      * instead of this method. Using this method is appropriate only when:
      * <ul>
-     * <li>the returned Cffu is only read explicitly(e.g. by get/join/resultNow methods), and/or
-     * <li>all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously
+     * <li>the returned Cffu is only read explicitly(e.g. by get/join/resultNow methods),
+     * <li>and/or all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously
      *    (i.e., the dependent Cffus/CompletableFutures are created using async methods).
-     * </ul> In these cases, using this unsafe method avoids an unnecessary thread switch when timeout occurs; However,
+     * </ul> In these cases, using this unsafe method avoids an unnecessary thread switching when timeout occurs; However,
      * these conditions are difficult to guarantee in practice especially when the returned Cffu is used by others' codes.
      * <p>
      * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} leaks if the future
@@ -1796,17 +1796,17 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * <strong>CAUTION:</strong> This method is <strong>UNSAFE</strong>!
      * <p>
      * When the wait timed out, the subsequent non-async actions of the dependent Cffus/CompletableFutures are performed
-     * in CompletableFuture's internal <strong>SINGLE-thread delay executor</strong> (including timeout functionality).
+     * in CompletableFuture's internal <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor (including timeout functionality).
      * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
      * <strong>Strongly recommend</strong> using the safe method {@link #completeOnTimeout(Object, long, TimeUnit)
      * completeOnTimeout} instead of this method. Using this method is appropriate only when:
      * <ul>
-     * <li>the returned Cffu is only read explicitly(e.g. by get/join/resultNow methods), and/or
-     * <li>all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously
+     * <li>the returned Cffu is only read explicitly(e.g. by get/join/resultNow methods),
+     * <li>and/or all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously
      *    (i.e., the dependent Cffus/CompletableFutures are created using async methods).
-     * </ul> In these cases, using this unsafe method avoids an unnecessary thread switch when timeout occurs; However,
+     * </ul> In these cases, using this unsafe method avoids an unnecessary thread switching when timeout occurs; However,
      * these conditions are difficult to guarantee in practice especially when the returned Cffu is used by others' codes.
      *
      * @param value   the value to use upon timeout
@@ -2164,8 +2164,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * will maintain its original result, regardless of whether the supplied action throws an exception or not.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
-     * the given action and other actions added to the input stage cannot be guaranteed. The action should be treated
-     * as "fire and forget" - do not make any assumptions about timing or execution sequence.
+     * the given action and other actions added to the input stage cannot be guaranteed. The given action should
+     * be treated as "fire and forget" - do not make any assumptions about timing or execution sequence.
      * <p>
      * Unlike method {@link #handle(BiFunction)} and like method {@link #whenComplete(BiConsumer)},
      * this method is not designed to translate completion outcomes.
@@ -2196,8 +2196,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * will maintain its original result, regardless of whether the supplied action throws an exception or not.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
-     * the given action and other actions added to the input stage cannot be guaranteed. The action should be treated
-     * as "fire and forget" - do not make any assumptions about timing or execution sequence.
+     * the given action and other actions added to the input stage cannot be guaranteed. The given action should
+     * be treated as "fire and forget" - do not make any assumptions about timing or execution sequence.
      * <p>
      * Unlike method {@link #handleAsync(BiFunction)} and like method {@link #whenCompleteAsync(BiConsumer)},
      * this method is not designed to translate completion outcomes.
@@ -2227,8 +2227,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * will maintain its original result, regardless of whether the supplied action throws an exception or not.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
-     * the given action and other actions added to the input stage cannot be guaranteed. The action should be treated
-     * as "fire and forget" - do not make any assumptions about timing or execution sequence.
+     * the given action and other actions added to the input stage cannot be guaranteed. The given action should
+     * be treated as "fire and forget" - do not make any assumptions about timing or execution sequence.
      * <p>
      * Unlike method {@link #handleAsync(BiFunction, Executor)} and like method {@link
      * #whenCompleteAsync(BiConsumer, Executor)}, this method is not designed to translate completion outcomes.
