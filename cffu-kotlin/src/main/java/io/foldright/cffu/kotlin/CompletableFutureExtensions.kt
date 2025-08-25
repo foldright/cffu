@@ -1739,17 +1739,17 @@ fun <F : CompletableFuture<*>> F.cffuOrTimeout(executorWhenTimeout: Executor, ti
  * **CAUTION:** [CompletableFuture.orTimeout] and this backport method are **UNSAFE**!
  *
  * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
- * in CompletableFuture's internal **SINGLE-thread delay executor** (including timeout functionality).
+ * in CompletableFuture's internal **SINGLE-thread** ScheduledThreadPoolExecutor (including timeout functionality).
  * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
  * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
  *
  * **Strongly recommend** using the safe method [cffuOrTimeout] instead of [CompletableFuture.orTimeout] and
  * this backport method. Using [CompletableFuture.orTimeout] and this backport method is appropriate only when:
  *
- *  * the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods), and/or
- *  * all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
+ *  * the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods),
+ *  * and/or all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
  * (i.e., the dependent CompletableFutures are created using async methods).
- *  In these cases, using these unsafe methods avoids an unnecessary thread switch when timeout occurs; However, these
+ *  In these cases, using these unsafe methods avoids an unnecessary thread switching when timeout occurs; However, these
  * conditions are difficult to guarantee in practice especially when the returned CompletableFuture is used by others' codes.
  *
  * Note: Before Java 21(Java 20-), [CompletableFuture.orTimeout] leaks if the future completes exceptionally,
@@ -1811,17 +1811,17 @@ fun <T, F : CompletableFuture<in T>> F.cffuCompleteOnTimeout(
  * **CAUTION:** [CompletableFuture.completeOnTimeout] and this backport method are **UNSAFE**!
  *
  * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
- * in CompletableFuture's internal **SINGLE-thread delay executor** (including timeout functionality).
+ * in CompletableFuture's internal **SINGLE-thread** ScheduledThreadPoolExecutor (including timeout functionality).
  * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
  * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
  *
  * **Strongly recommend** using the safe method [cffuCompleteOnTimeout] instead of [CompletableFuture.completeOnTimeout] and
  * this backport method. Using [CompletableFuture.completeOnTimeout] and this backport method is appropriate only when:
  *
- *  * the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods), and/or
- *  * all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
+ *  * the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods),
+ *  * and/or all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
  * (i.e., the dependent CompletableFutures are created using async methods).
- *  In these cases, using these unsafe methods avoids an unnecessary thread switch when timeout occurs; However, these
+ *  In these cases, using these unsafe methods avoids an unnecessary thread switching when timeout occurs; However, these
  * conditions are difficult to guarantee in practice especially when the returned CompletableFuture is used by others' codes.
  *
  * @param value the value to use upon timeout

@@ -185,8 +185,8 @@ public final class LLCF {
      * The uncaught exceptions thrown by the action are reported.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
-     * the given action and other actions added to the input stage cannot be guaranteed. The action should be treated
-     * as "fire and forget" - do not make any assumptions about timing or execution sequence.
+     * the given action and other actions added to the input stage cannot be guaranteed. The given action should
+     * be treated as "fire and forget" - do not make any assumptions about timing or execution sequence.
      *
      * @see CompletableFutureUtils#peek(CompletionStage, BiConsumer)
      * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
@@ -204,8 +204,8 @@ public final class LLCF {
      * The uncaught exceptions thrown by the action are reported.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
-     * the given action and other actions added to the input stage cannot be guaranteed. The action should be treated
-     * as "fire and forget" - do not make any assumptions about timing or execution sequence.
+     * the given action and other actions added to the input stage cannot be guaranteed. The given action should
+     * be treated as "fire and forget" - do not make any assumptions about timing or execution sequence.
      *
      * @see CompletableFutureUtils#peekAsync(CompletionStage, BiConsumer, Executor)
      * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
