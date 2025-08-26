@@ -3732,8 +3732,7 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#join()
      */
     @Blocking
-    @Nullable
-    public static <T> T join(CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit) {
+    public static <T> @Nullable T join(CompletableFuture<? extends T> cfThis, long timeout, TimeUnit unit) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(unit, "unit is null");
         // defensive copy input cf to avoid writing it by `orTimeout`
@@ -3751,8 +3750,7 @@ public final class CompletableFutureUtils {
      * @throws NullPointerException if the given CompletableFuture is {@code null}
      */
     @Contract(pure = true)
-    @Nullable
-    public static <T> T getSuccessNow(CompletableFuture<? extends T> cfThis, @Nullable T valueIfNotSuccess) {
+    public static <T> @Nullable T getSuccessNow(CompletableFuture<? extends T> cfThis, @Nullable T valueIfNotSuccess) {
         requireNonNull(cfThis, "cfThis is null");
         // NOTE: No need check minimal stage, because checked in cfThis.isDone() below
         try {
@@ -3780,8 +3778,7 @@ public final class CompletableFutureUtils {
      * @throws IllegalStateException if the task has not completed or the task did not complete with a result
      */
     @Contract(pure = true)
-    @Nullable
-    public static <T> T resultNow(Future<? extends T> cfThis) {
+    public static <T> @Nullable T resultNow(Future<? extends T> cfThis) {
         requireNonNull(cfThis, "cfThis is null");
         if (IS_JAVA19_PLUS) {
             return cfThis.resultNow();

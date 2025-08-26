@@ -2279,9 +2279,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws InterruptedException  if the current thread was interrupted while waiting
      */
     @Blocking
-    @Nullable
     @Override
-    public T get() throws InterruptedException, ExecutionException {
+    public @Nullable T get() throws InterruptedException, ExecutionException {
         checkMinimalStage();
         return cf.get();
     }
@@ -2299,9 +2298,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws TimeoutException      if the wait timed out
      */
     @Blocking
-    @Nullable
     @Override
-    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public @Nullable T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         checkMinimalStage();
         return cf.get(timeout, unit);
     }
@@ -2319,8 +2317,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      *                               or a completion computation threw an exception
      */
     @Blocking
-    @Nullable
-    public T join() {
+    public @Nullable T join() {
         checkMinimalStage();
         return cf.join();
     }
@@ -2354,8 +2351,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @see #orTimeout(long, TimeUnit)
      */
     @Blocking
-    @Nullable
-    public T join(long timeout, TimeUnit unit) {
+    public @Nullable T join(long timeout, TimeUnit unit) {
         checkMinimalStage();
         return CompletableFutureUtils.join(cf, timeout, unit);
     }
@@ -2372,8 +2368,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @see #getSuccessNow(Object)
      */
     @Contract(pure = true)
-    @Nullable
-    public T getNow(T valueIfAbsent) {
+    public @Nullable T getNow(T valueIfAbsent) {
         checkMinimalStage();
         return cf.getNow(valueIfAbsent);
     }
@@ -2388,8 +2383,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @return the result value, if completed normally, else the given valueIfNotSuccess
      */
     @Contract(pure = true)
-    @Nullable
-    public T getSuccessNow(@Nullable T valueIfNotSuccess) {
+    public @Nullable T getSuccessNow(@Nullable T valueIfNotSuccess) {
         checkMinimalStage();
         return CompletableFutureUtils.getSuccessNow(cf, valueIfNotSuccess);
     }
@@ -2411,9 +2405,8 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @throws IllegalStateException if the task has not completed or the task did not complete with a result
      */
     @Contract(pure = true)
-    @Nullable
     @Override
-    public T resultNow() {
+    public @Nullable T resultNow() {
         checkMinimalStage();
         return CompletableFutureUtils.resultNow(cf);
     }

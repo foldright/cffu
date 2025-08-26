@@ -1,10 +1,10 @@
 package io.foldright.cffu;
 
-////////////////////////////////////////////////////////////////////////////////
+// =============================================================================
 //# delay execution helper classes
 //
 //  below code is copied from CompletableFuture with small adoption
-////////////////////////////////////////////////////////////////////////////////
+// =============================================================================
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -114,9 +114,9 @@ final class DelayedExecutor implements Executor {
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// =============================================================================
 // Little classified lambdas to better support monitoring
-////////////////////////////////////////////////////////////////////////////////
+// =============================================================================
 
 /**
  * Action to submit task(Runnable) to executor.
@@ -164,8 +164,7 @@ final class CfTimeout implements Runnable {
 @SuppressWarnings("JavadocReference")
 final class CfCompleter<T> implements Runnable {
     private final CompletableFuture<? super T> cf;
-    @Nullable
-    private final T value;
+    private final @Nullable T value;
 
     CfCompleter(CompletableFuture<? super T> cf, @Nullable T value) {
         this.cf = cf;
@@ -213,10 +212,8 @@ final class FutureCanceller implements BiConsumer<Object, Throwable> {
 @SuppressFBWarnings("SE_BAD_FIELD")
 final class CfCompleterBySupplier<T> extends ForkJoinTask<Void>
         implements Runnable, CompletableFuture.AsynchronousCompletionTask {
-    @Nullable
-    private CompletableFuture<? super T> dep;
-    @Nullable
-    private Supplier<? extends T> fn;
+    private @Nullable CompletableFuture<? super T> dep;
+    private @Nullable Supplier<? extends T> fn;
 
     CfCompleterBySupplier(CompletableFuture<? super T> dep, Supplier<? extends T> fn) {
         this.dep = dep;
@@ -260,10 +257,8 @@ final class CfCompleterBySupplier<T> extends ForkJoinTask<Void>
 @SuppressFBWarnings("SE_BAD_FIELD")
 final class CfExCompleterBySupplier extends ForkJoinTask<Void>
         implements Runnable, CompletableFuture.AsynchronousCompletionTask {
-    @Nullable
-    private CompletableFuture<?> dep;
-    @Nullable
-    private Supplier<? extends Throwable> fn;
+    private @Nullable CompletableFuture<?> dep;
+    private @Nullable Supplier<? extends Throwable> fn;
 
     CfExCompleterBySupplier(CompletableFuture<?> dep, Supplier<? extends Throwable> fn) {
         this.dep = dep;
