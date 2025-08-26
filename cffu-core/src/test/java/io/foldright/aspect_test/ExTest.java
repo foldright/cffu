@@ -1,4 +1,4 @@
-package io.foldright.ex;
+package io.foldright.aspect_test;
 
 import org.junit.jupiter.api.Test;
 
