@@ -1904,9 +1904,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * @throws InterruptedException  if the current thread was interrupted while waiting
      */
     @Blocking
-    @Nullable
     @Override
-    public final T get() throws InterruptedException, ExecutionException {
+    public final @Nullable T get() throws InterruptedException, ExecutionException {
         checkMinimalStage();
         return cf.get();
     }
@@ -1924,9 +1923,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * @throws TimeoutException      if the wait timed out
      */
     @Blocking
-    @Nullable
     @Override
-    public final T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public final @Nullable T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         checkMinimalStage();
         return cf.get(timeout, unit);
     }
@@ -1944,8 +1942,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      *                               or a completion computation threw an exception
      */
     @Blocking
-    @Nullable
-    public final T join() {
+    public final @Nullable T join() {
         checkMinimalStage();
         return cf.join();
     }
@@ -1979,8 +1976,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * @see #orTimeout(long, TimeUnit)
      */
     @Blocking
-    @Nullable
-    public final T join(long timeout, TimeUnit unit) {
+    public final @Nullable T join(long timeout, TimeUnit unit) {
         checkMinimalStage();
         return CompletableFutureUtils.join(cf, timeout, unit);
     }
@@ -1997,8 +1993,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * @see #getSuccessNow(Object)
      */
     @Contract(pure = true)
-    @Nullable
-    public final T getNow(T valueIfAbsent) {
+    public final @Nullable T getNow(T valueIfAbsent) {
         checkMinimalStage();
         return cf.getNow(valueIfAbsent);
     }
@@ -2013,8 +2008,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * @return the result value, if completed normally, else the given valueIfNotSuccess
      */
     @Contract(pure = true)
-    @Nullable
-    public final T getSuccessNow(@Nullable T valueIfNotSuccess) {
+    public final @Nullable T getSuccessNow(@Nullable T valueIfNotSuccess) {
         checkMinimalStage();
         return CompletableFutureUtils.getSuccessNow(cf, valueIfNotSuccess);
     }
@@ -2036,9 +2030,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * @throws IllegalStateException if the task has not completed or the task did not complete with a result
      */
     @Contract(pure = true)
-    @Nullable
     @Override
-    public final T resultNow() {
+    public final @Nullable T resultNow() {
         checkMinimalStage();
         return CompletableFutureUtils.resultNow(cf);
     }

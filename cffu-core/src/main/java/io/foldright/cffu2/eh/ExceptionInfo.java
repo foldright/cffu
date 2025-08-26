@@ -39,8 +39,7 @@ public final class ExceptionInfo {
      * @see SwallowedExceptionHandleUtils#handleAllSwallowedExceptions(String, Object[], ExceptionHandler, CompletionStage[])
      * @see SwallowedExceptionHandleUtils#handleSwallowedExceptions(String, Object[], ExceptionHandler, CompletableFuture, CompletionStage[])
      */
-    @Nullable
-    public final Object attachment;
+    public final @Nullable Object attachment;
 
     /**
      * Constructs an {@code ExceptionInfo} with the specified location, index, exception, and attachment.
