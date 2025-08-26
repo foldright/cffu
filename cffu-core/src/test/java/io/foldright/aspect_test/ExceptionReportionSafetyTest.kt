@@ -1,4 +1,4 @@
-package io.foldright.ex
+package io.foldright.aspect_test
 
 import io.foldright.cffu2.Cffu
 import io.foldright.cffu2.CompletableFutureUtils
