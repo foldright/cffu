@@ -1993,7 +1993,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * @see #getSuccessNow(Object)
      */
     @Contract(pure = true)
-    public final @Nullable T getNow(T valueIfAbsent) {
+    public final @Nullable T getNow(@Nullable T valueIfAbsent) {
         checkMinimalStage();
         return cf.getNow(valueIfAbsent);
     }
