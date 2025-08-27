@@ -62,7 +62,7 @@ public final class ListenableFutureUtils {
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T> toCompletableFuture(
-            ListenableFuture<T> lf, Executor executor, boolean interruptLfWhenCancellationException) {
+            ListenableFuture<? extends T> lf, Executor executor, boolean interruptLfWhenCancellationException) {
         requireNonNull(lf, "listenableFuture is null");
         requireNonNull(executor, "executor is null");
 
@@ -111,7 +111,7 @@ public final class ListenableFutureUtils {
      */
     @Contract(pure = true)
     public static <T> Cffu<T> toCffu(
-            ListenableFuture<T> lf, CffuFactory cffuFactory, boolean interruptLfWhenCancellationException) {
+            ListenableFuture<? extends T> lf, CffuFactory cffuFactory, boolean interruptLfWhenCancellationException) {
         return cffuFactory.toCffu(toCompletableFuture(
                 lf, cffuFactory.defaultExecutor(), interruptLfWhenCancellationException));
     }
@@ -120,7 +120,7 @@ public final class ListenableFutureUtils {
      * Converts input {@link CompletableFuture} to {@link ListenableFuture}.
      */
     @Contract(pure = true)
-    public static <T> ListenableFuture<T> toListenableFuture(CompletableFuture<T> cf) {
+    public static <T> ListenableFuture<T> toListenableFuture(CompletableFuture<? extends T> cf) {
         requireNonNull(cf, "cf is null");
         if (LLCF.isMinStageCf(cf)) throw new UnsupportedOperationException();
 
@@ -168,7 +168,7 @@ public final class ListenableFutureUtils {
      * Converts input {@link Cffu} to {@link ListenableFuture}.
      */
     @Contract(pure = true)
-    public static <T> ListenableFuture<T> toListenableFuture(Cffu<T> cf) {
+    public static <T> ListenableFuture<T> toListenableFuture(Cffu<? extends T> cf) {
         requireNonNull(cf, "cf is null");
         if (cf.isMinimalStage()) throw new UnsupportedOperationException();
 

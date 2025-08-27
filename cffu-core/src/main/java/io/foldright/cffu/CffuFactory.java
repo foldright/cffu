@@ -1226,7 +1226,7 @@ public final class CffuFactory {
      * @see CompletableFuture#supplyAsync(Supplier)
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, run directly instead of wrapping")
-    public <T> Cffu<T> fromSyncCall(Callable<T> callable) {
+    public <T> Cffu<T> fromSyncCall(Callable<? extends T> callable) {
         return create(CompletableFutureUtils.fromSyncCall(callable));
     }
 

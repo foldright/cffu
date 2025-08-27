@@ -31,7 +31,7 @@ public final class CommonUtils {
      * }</pre>
      */
     @SuppressWarnings("unchecked")
-    public static <T, R> R[] mapArray(T[] source, IntFunction<Object[]> destConstructor, Function<T, R> mapper) {
+    public static <T, R> R[] mapArray(T[] source, IntFunction<Object[]> destConstructor, Function<? super T, ? extends R> mapper) {
         int len = source.length;
         R[] ret = (R[]) destConstructor.apply(len);
         for (int i = 0; i < len; i++) ret[i] = mapper.apply(source[i]);
@@ -59,7 +59,7 @@ public final class CommonUtils {
     /**
      * Returns a new {@link ArrayList} with the same elements as the given {@link AtomicReferenceArray}.
      */
-    public static <E> ArrayList<E> arrayList(AtomicReferenceArray<E> array) {
+    public static <E> ArrayList<E> arrayList(AtomicReferenceArray<? extends E> array) {
         int len = array.length();
         ArrayList<E> ret = new ArrayList<>(len);
         for (int i = 0; i < len; i++) ret.add(array.get(i));
@@ -69,7 +69,7 @@ public final class CommonUtils {
     /**
      * Returns a new array with the same elements as the given {@link AtomicReferenceArray}.
      */
-    public static <E> E[] toArray(AtomicReferenceArray<E> array) {
+    public static <E> E[] toArray(AtomicReferenceArray<? extends E> array) {
         int len = array.length();
         @SuppressWarnings("unchecked")
         E[] ret = (E[]) new Object[len];
