@@ -950,7 +950,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * @param <U>   the function's return type
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherSuccess`")
-    public final <U> Cffu<U> applyToEitherSuccess(CompletionStage<? extends T> other, Function<? super T, U> fn) {
+    public final <U> Cffu<U> applyToEitherSuccess(CompletionStage<? extends T> other, Function<? super T, ? extends U> fn) {
         return createCffu(CompletableFutureUtils.applyToEitherSuccess(cf, other, fn));
     }
 
@@ -964,7 +964,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * @param <U>   the function's return type
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherSuccessAsync`")
-    public final <U> Cffu<U> applyToEitherSuccessAsync(CompletionStage<? extends T> other, Function<? super T, U> fn) {
+    public final <U> Cffu<U> applyToEitherSuccessAsync(CompletionStage<? extends T> other, Function<? super T, ? extends U> fn) {
         return applyToEitherSuccessAsync(other, fn, fac.defaultExecutor);
     }
 
@@ -979,7 +979,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      */
     @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherSuccessAsync`")
     public final <U> Cffu<U> applyToEitherSuccessAsync(
-            CompletionStage<? extends T> other, Function<? super T, U> fn, Executor executor) {
+            CompletionStage<? extends T> other, Function<? super T, ? extends U> fn, Executor executor) {
         return createCffu(CompletableFutureUtils.applyToEitherSuccessAsync(cf, other, fn, cffuScreened(executor)));
     }
 
@@ -2532,7 +2532,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMApplyFailFastAsync(Function[])}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
-        public <U> MCffu<U, List<U>> thenMApplyFailFastAsync(Iterable<Function<? super T, ? extends U>> fns) {
+        public <U> MCffu<U, List<U>> thenMApplyFailFastAsync(Iterable<? extends Function<? super T, ? extends U>> fns) {
             return thenMApplyFailFastAsync(fns, fac.defaultExecutor);
         }
 
@@ -2540,7 +2540,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMApplyFailFastAsync(Executor, Function[])}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
-        public <U> MCffu<U, List<U>> thenMApplyFailFastAsync(Iterable<Function<? super T, ? extends U>> fns, Executor executor) {
+        public <U> MCffu<U, List<U>> thenMApplyFailFastAsync(Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
             return createMCffu(CfIterableUtils.thenMApplyFailFastAsync(cf, fns, executor));
         }
 
@@ -2549,7 +2549,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
         public <U> MCffu<U, List<U>> thenMApplyAllSuccessAsync(
-                @Nullable U valueIfFailed, Iterable<Function<? super T, ? extends U>> fns) {
+                @Nullable U valueIfFailed, Iterable<? extends Function<? super T, ? extends U>> fns) {
             return thenMApplyAllSuccessAsync(valueIfFailed, fns, fac.defaultExecutor);
         }
 
@@ -2558,7 +2558,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
         public <U> MCffu<U, List<U>> thenMApplyAllSuccessAsync(
-                @Nullable U valueIfFailed, Iterable<Function<? super T, ? extends U>> fns, Executor executor) {
+                @Nullable U valueIfFailed, Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
             return createMCffu(CfIterableUtils.thenMApplyAllSuccessAsync(cf, valueIfFailed, fns, executor));
         }
 
@@ -2568,7 +2568,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
         public <U> MCffu<U, List<U>> thenMApplyMostSuccessAsync(
                 @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
-                Iterable<Function<? super T, ? extends U>> fns) {
+                Iterable<? extends Function<? super T, ? extends U>> fns) {
             return thenMApplyMostSuccessAsync(valueIfNotSuccess, timeout, unit, fns, fac.defaultExecutor);
         }
 
@@ -2578,7 +2578,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
         public <U> MCffu<U, List<U>> thenMApplyMostSuccessAsync(
                 @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
-                Iterable<Function<? super T, ? extends U>> fns, Executor executor) {
+                Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
             return createMCffu(CfIterableUtils.thenMApplyMostSuccessAsync(cf, valueIfNotSuccess, timeout, unit, fns, executor));
         }
 
@@ -2586,7 +2586,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMApplyAsync(Function[])}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
-        public <U> MCffu<U, List<U>> thenMApplyAsync(Iterable<Function<? super T, ? extends U>> fns) {
+        public <U> MCffu<U, List<U>> thenMApplyAsync(Iterable<? extends Function<? super T, ? extends U>> fns) {
             return thenMApplyAsync(fns, fac.defaultExecutor);
         }
 
@@ -2594,7 +2594,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMApplyAsync(Executor, Function[])}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
-        public <U> MCffu<U, List<U>> thenMApplyAsync(Iterable<Function<? super T, ? extends U>> fns, Executor executor) {
+        public <U> MCffu<U, List<U>> thenMApplyAsync(Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
             return createMCffu(CfIterableUtils.thenMApplyAsync(cf, fns, executor));
         }
 
@@ -2602,7 +2602,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMApplyAnySuccessAsync(Function[])}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
-        public <U> Cffu<U> thenMApplyAnySuccessAsync(Iterable<Function<? super T, ? extends U>> fns) {
+        public <U> Cffu<U> thenMApplyAnySuccessAsync(Iterable<? extends Function<? super T, ? extends U>> fns) {
             return thenMApplyAnySuccessAsync(fns, fac.defaultExecutor);
         }
 
@@ -2610,7 +2610,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMApplyAnySuccessAsync(Executor, Function[])}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
-        public <U> Cffu<U> thenMApplyAnySuccessAsync(Iterable<Function<? super T, ? extends U>> fns, Executor executor) {
+        public <U> Cffu<U> thenMApplyAnySuccessAsync(Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
             return createCffu(CfIterableUtils.thenMApplyAnySuccessAsync(cf, fns, executor));
         }
 
@@ -2618,7 +2618,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMApplyAnyAsync(Function[])}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
-        public <U> Cffu<U> thenMApplyAnyAsync(Iterable<Function<? super T, ? extends U>> fns) {
+        public <U> Cffu<U> thenMApplyAnyAsync(Iterable<? extends Function<? super T, ? extends U>> fns) {
             return thenMApplyAnyAsync(fns, fac.defaultExecutor);
         }
 
@@ -2626,7 +2626,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMApplyAnyAsync(Executor, Function[])}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
-        public <U> Cffu<U> thenMApplyAnyAsync(Iterable<Function<? super T, ? extends U>> fns, Executor executor) {
+        public <U> Cffu<U> thenMApplyAnyAsync(Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
             return createCffu(CfIterableUtils.thenMApplyAnyAsync(cf, fns, executor));
         }
 
@@ -2634,7 +2634,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMAcceptFailFastAsync(Consumer[])}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
-        public Cffu<Void> thenMAcceptFailFastAsync(Iterable<Consumer<? super T>> actions) {
+        public Cffu<Void> thenMAcceptFailFastAsync(Iterable<? extends Consumer<? super T>> actions) {
             return thenMAcceptFailFastAsync(actions, fac.defaultExecutor);
         }
 
@@ -2642,21 +2642,21 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMAcceptFailFastAsync(Executor, Consumer[])}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
-        public Cffu<Void> thenMAcceptFailFastAsync(Iterable<Consumer<? super T>> actions, Executor executor) {
+        public Cffu<Void> thenMAcceptFailFastAsync(Iterable<? extends Consumer<? super T>> actions, Executor executor) {
             return createCffu(CfIterableUtils.thenMAcceptFailFastAsync(cf, actions, executor));
         }
 
         /**
          * Iterable variant of {@link BaseCffu#thenMAcceptAsync(Consumer[])}.
          */
-        public Cffu<Void> thenMAcceptAsync(Iterable<Consumer<? super T>> actions) {
+        public Cffu<Void> thenMAcceptAsync(Iterable<? extends Consumer<? super T>> actions) {
             return thenMAcceptAsync(actions, fac.defaultExecutor);
         }
 
         /**
          * Iterable variant of {@link BaseCffu#thenMAcceptAsync(Executor, Consumer[])}.
          */
-        public Cffu<Void> thenMAcceptAsync(Iterable<Consumer<? super T>> actions, Executor executor) {
+        public Cffu<Void> thenMAcceptAsync(Iterable<? extends Consumer<? super T>> actions, Executor executor) {
             return createCffu(CfIterableUtils.thenMAcceptAsync(cf, actions, executor));
         }
 
@@ -2664,7 +2664,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMAcceptAnySuccessAsync(Consumer[])}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
-        public Cffu<Void> thenMAcceptAnySuccessAsync(Iterable<Consumer<? super T>> actions) {
+        public Cffu<Void> thenMAcceptAnySuccessAsync(Iterable<? extends Consumer<? super T>> actions) {
             return thenMAcceptAnySuccessAsync(actions, fac.defaultExecutor);
         }
 
@@ -2672,7 +2672,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMAcceptAnySuccessAsync(Executor, Consumer[])}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
-        public Cffu<Void> thenMAcceptAnySuccessAsync(Iterable<Consumer<? super T>> actions, Executor executor) {
+        public Cffu<Void> thenMAcceptAnySuccessAsync(Iterable<? extends Consumer<? super T>> actions, Executor executor) {
             return createCffu(CfIterableUtils.thenMAcceptAnySuccessAsync(cf, actions, executor));
         }
 
@@ -2680,7 +2680,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMAcceptAnyAsync(Consumer[])}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
-        public Cffu<Void> thenMAcceptAnyAsync(Iterable<Consumer<? super T>> actions) {
+        public Cffu<Void> thenMAcceptAnyAsync(Iterable<? extends Consumer<? super T>> actions) {
             return thenMAcceptAnyAsync(actions, fac.defaultExecutor);
         }
 
@@ -2688,7 +2688,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMAcceptAnyAsync(Executor, Consumer[])}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
-        public Cffu<Void> thenMAcceptAnyAsync(Iterable<Consumer<? super T>> actions, Executor executor) {
+        public Cffu<Void> thenMAcceptAnyAsync(Iterable<? extends Consumer<? super T>> actions, Executor executor) {
             return createCffu(CfIterableUtils.thenMAcceptAnyAsync(cf, actions, executor));
         }
 
@@ -2696,7 +2696,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMRunFailFastAsync(Runnable...)}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
-        public Cffu<Void> thenMRunFailFastAsync(Iterable<Runnable> actions) {
+        public Cffu<Void> thenMRunFailFastAsync(Iterable<? extends Runnable> actions) {
             return thenMRunFailFastAsync(actions, fac.defaultExecutor);
         }
 
@@ -2704,21 +2704,21 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMRunFailFastAsync(Executor, Runnable...)}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
-        public Cffu<Void> thenMRunFailFastAsync(Iterable<Runnable> actions, Executor executor) {
+        public Cffu<Void> thenMRunFailFastAsync(Iterable<? extends Runnable> actions, Executor executor) {
             return createCffu(CfIterableUtils.thenMRunFailFastAsync(cf, actions, executor));
         }
 
         /**
          * Iterable variant of {@link BaseCffu#thenMRunAsync(Runnable...)}.
          */
-        public Cffu<Void> thenMRunAsync(Iterable<Runnable> actions) {
+        public Cffu<Void> thenMRunAsync(Iterable<? extends Runnable> actions) {
             return thenMRunAsync(actions, fac.defaultExecutor);
         }
 
         /**
          * Iterable variant of {@link BaseCffu#thenMRunAsync(Executor, Runnable...)}.
          */
-        public Cffu<Void> thenMRunAsync(Iterable<Runnable> actions, Executor executor) {
+        public Cffu<Void> thenMRunAsync(Iterable<? extends Runnable> actions, Executor executor) {
             return createCffu(CfIterableUtils.thenMRunAsync(cf, actions, executor));
         }
 
@@ -2726,7 +2726,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMRunAnySuccessAsync(Runnable...)}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
-        public Cffu<Void> thenMRunAnySuccessAsync(Iterable<Runnable> actions) {
+        public Cffu<Void> thenMRunAnySuccessAsync(Iterable<? extends Runnable> actions) {
             return thenMRunAnySuccessAsync(actions, fac.defaultExecutor);
         }
 
@@ -2734,7 +2734,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMRunAnySuccessAsync(Executor, Runnable...)}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
-        public Cffu<Void> thenMRunAnySuccessAsync(Iterable<Runnable> actions, Executor executor) {
+        public Cffu<Void> thenMRunAnySuccessAsync(Iterable<? extends Runnable> actions, Executor executor) {
             return createCffu(CfIterableUtils.thenMRunAnySuccessAsync(cf, actions, executor));
         }
 
@@ -2742,7 +2742,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMRunAnyAsync(Runnable...)}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
-        public Cffu<Void> thenMRunAnyAsync(Iterable<Runnable> actions) {
+        public Cffu<Void> thenMRunAnyAsync(Iterable<? extends Runnable> actions) {
             return thenMRunAnyAsync(actions, fac.defaultExecutor);
         }
 
@@ -2750,7 +2750,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * Iterable variant of {@link BaseCffu#thenMRunAnyAsync(Executor, Runnable...)}.
          */
         @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
-        public Cffu<Void> thenMRunAnyAsync(Iterable<Runnable> actions, Executor executor) {
+        public Cffu<Void> thenMRunAnyAsync(Iterable<? extends Runnable> actions, Executor executor) {
             return createCffu(CfIterableUtils.thenMRunAnyAsync(cf, actions, executor));
         }
 

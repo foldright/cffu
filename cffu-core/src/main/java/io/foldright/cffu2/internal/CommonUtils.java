@@ -65,7 +65,7 @@ public final class CommonUtils {
     /**
      * Returns a new {@link ArrayList} with the same elements as the given {@link AtomicReferenceArray}.
      */
-    public static <E> ArrayList<E> arrayList(AtomicReferenceArray<E> array) {
+    public static <E> ArrayList<E> arrayList(AtomicReferenceArray<? extends E> array) {
         int len = array.length();
         ArrayList<E> ret = new ArrayList<>(len);
         for (int i = 0; i < len; i++) ret.add(array.get(i));
@@ -99,7 +99,7 @@ public final class CommonUtils {
     /**
      * Returns a new array with the same elements as the given {@link AtomicReferenceArray}.
      */
-    public static <E> E[] toArray(AtomicReferenceArray<E> array) {
+    public static <E> E[] toArray(AtomicReferenceArray<? extends E> array) {
         int len = array.length();
         @SuppressWarnings("unchecked")
         E[] ret = (E[]) new Object[len];

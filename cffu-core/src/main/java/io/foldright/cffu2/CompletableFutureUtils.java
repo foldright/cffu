@@ -421,7 +421,7 @@ public final class CompletableFutureUtils {
     }
 
     static <T, U> CompletionStage<U>[] f_convertStageArray0(
-            CompletionStage<? extends T>[] stages, Function<CompletionStage<T>, CompletionStage<U>> converter) {
+            CompletionStage<? extends T>[] stages, Function<? super CompletionStage<T>, ? extends CompletionStage<U>> converter) {
         @SuppressWarnings({"unchecked", "rawtypes"})
         CompletionStage<T>[] ss = (CompletionStage[]) stages;
         return mapArray(ss, CompletionStage[]::new, converter);
@@ -828,7 +828,7 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#supplyAsync(Supplier)
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, run directly instead of wrapping")
-    public static <T> CompletableFuture<T> fromSyncCall(Callable<T> callable) {
+    public static <T> CompletableFuture<T> fromSyncCall(Callable<? extends T> callable) {
         requireNonNull(callable, "callable is null");
         try {
             return completedFuture(callable.call());
@@ -2292,7 +2292,7 @@ public final class CompletableFutureUtils {
      *           if given CompletionStage completed exceptionally
      * @see #catchingCompose(CompletionStage, Class, Function)
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked", "rawtypes", "BoundedWildcard"})
     public static <T, F extends CompletionStage<? super T>>
     F exceptionallyCompose(F cfThis, Function<Throwable, ? extends CompletionStage<T>> fn) {
         requireNonNull(cfThis, "cfThis is null");
@@ -2335,7 +2335,7 @@ public final class CompletableFutureUtils {
      * @param executor the executor to use for asynchronous execution
      * @see #catchingComposeAsync(CompletionStage, Class, Function, Executor)
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked", "rawtypes", "BoundedWildcard"})
     public static <T, F extends CompletionStage<? super T>>
     F exceptionallyComposeAsync(F cfThis, Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
