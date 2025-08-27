@@ -7,4 +7,5 @@ profile:
 # https://www.jetbrains.com/help/qodana/qodana-yaml.html#Configure+the+JDK+version
 projectJDK: "21"
 include:
+  - name: BoundedWildcard
   - name: CheckDependencyLicenses
