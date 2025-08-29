@@ -570,10 +570,14 @@ public final class CompletableFutureUtils {
      * ({@code CompletableFuture<Void>}), but may be obtained by inspecting them individually; Or using below methods
      * reflected results in the returned CompletableFuture which are more convenient, safer and best-practice of concurrency:
      * <ul>
-     * <li>{@link #allResultsFailFastOf  allResultsFailFastOf}, {@link CfTupleUtils#allTupleFailFastOf allTupleFailFastOf}
-     * <li>{@link #allSuccessResultsOf allSuccessResultsOf}, {@link CfTupleUtils#allSuccessTupleOf allSuccessTupleOf}
-     * <li>{@link #mostSuccessResultsOf mostSuccessResultsOf}, {@link CfTupleUtils#mostSuccessTupleOf mostSuccessTupleOf}
-     * <li>{@link #allResultsOf allResultsOf}, {@link CfTupleUtils#allTupleOf allTupleOf}
+     * <li>{@link #allResultsFailFastOf  allResultsFailFastOf}, {@link CfIterableUtils#allFailFastOf allFailFastOf},
+     *     {@link CfParallelUtils#parApplyFailFastAsync parApplyFailFastAsync}
+     * <li>{@link #allSuccessResultsOf allSuccessResultsOf}, {@link CfIterableUtils#allSuccessResultsOf allSuccessResultsOf},
+     *     {@link CfParallelUtils#parApplyAllSuccessAsync parApplyAllSuccessAsync}
+     * <li>{@link #mostSuccessResultsOf mostSuccessResultsOf}, {@link CfIterableUtils#mostSuccessResultsOf mostSuccessResultsOf}
+     *     {@link CfParallelUtils#parApplyMostSuccessAsync parApplyMostSuccessAsync}
+     * <li>{@link #allResultsOf allResultsOf}, {@link CfIterableUtils#allResultsOf allResultsOf}
+     *     {@link CfParallelUtils#parApplyAsync parApplyAsync}
      * </ul>
      * <p>
      * This method is the same as {@link #allOf allOf} method except for the fail-fast behavior.
@@ -616,10 +620,14 @@ public final class CompletableFutureUtils {
      * ({@code CompletableFuture<Void>}), but may be obtained by inspecting them individually; Or using below methods
      * reflected results in the returned CompletableFuture which are more convenient, safer and best-practice of concurrency:
      * <ul>
-     * <li>{@link #allResultsOf allResultsOf}, {@link CfTupleUtils#allTupleOf allTupleOf}
-     * <li>{@link #allResultsFailFastOf  allResultsFailFastOf}, {@link CfTupleUtils#allTupleFailFastOf allTupleFailFastOf}
-     * <li>{@link #allSuccessResultsOf allSuccessResultsOf}, {@link CfTupleUtils#allSuccessTupleOf allSuccessTupleOf}
-     * <li>{@link #mostSuccessResultsOf mostSuccessResultsOf}, {@link CfTupleUtils#mostSuccessTupleOf mostSuccessTupleOf}
+     * <li>{@link #allResultsOf allResultsOf}, {@link CfIterableUtils#allResultsOf allResultsOf}
+     *     {@link CfParallelUtils#parApplyAsync parApplyAsync}
+     * <li>{@link #allResultsFailFastOf  allResultsFailFastOf}, {@link CfIterableUtils#allFailFastOf allFailFastOf},
+     *     {@link CfParallelUtils#parApplyFailFastAsync parApplyFailFastAsync}
+     * <li>{@link #allSuccessResultsOf allSuccessResultsOf}, {@link CfIterableUtils#allSuccessResultsOf allSuccessResultsOf},
+     *     {@link CfParallelUtils#parApplyAllSuccessAsync parApplyAllSuccessAsync}
+     * <li>{@link #mostSuccessResultsOf mostSuccessResultsOf}, {@link CfIterableUtils#mostSuccessResultsOf mostSuccessResultsOf}
+     *     {@link CfParallelUtils#parApplyMostSuccessAsync parApplyMostSuccessAsync}
      * </ul>
      * <p>
      * Among the applications of this method is to await completion of a set of independent stages
@@ -1983,9 +1991,9 @@ public final class CompletableFutureUtils {
      * Uses the default executor of parameter cfThis as {@code executorWhenTimeout}.
      * <p>
      * <strong>CAUTION:</strong> This method returns a new CompletableFuture instead of {@code cfThis} to avoid
-     * the subsequent usage of the delay thread; This behavior is DIFFERENT from the original CF method
-     * {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and its backport method {@link #orTimeout orTimeout}.
-     * More info see the javadoc of {@link #orTimeout orTimeout} and the demo <a href=
+     * the subsequent usage of the <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor's thread; This behavior is
+     * DIFFERENT from the original CF method {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and its backport
+     * method {@link #orTimeout orTimeout}. More info see the javadoc of {@link #orTimeout orTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
@@ -2003,9 +2011,9 @@ public final class CompletableFutureUtils {
      * CompletableFuture completed with the same successful result or exception of the given CompletableFuture.
      * <p>
      * <strong>CAUTION:</strong> This method returns a new CompletableFuture instead of {@code cfThis} to avoid
-     * the subsequent usage of the delay thread; This behavior is DIFFERENT from the original CF method
-     * {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and its backport method {@link #orTimeout orTimeout}.
-     * More info see the javadoc of {@link #orTimeout orTimeout} and the demo <a href=
+     * the subsequent usage of the <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor's thread; This behavior is
+     * DIFFERENT from the original CF method {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and its backport
+     * method {@link #orTimeout orTimeout}. More info see the javadoc of {@link #orTimeout orTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
@@ -2031,7 +2039,7 @@ public final class CompletableFutureUtils {
      * and this backport method are <strong>UNSAFE</strong>!
      * <p>
      * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
-     * in CompletableFuture's internal <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor (including timeout functionality).
+     * in CompletableFuture's internal <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor (including delay functionality).
      * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
@@ -2084,9 +2092,10 @@ public final class CompletableFutureUtils {
      * Uses the default executor of parameter cfThis as {@code executorWhenTimeout}.
      * <p>
      * <strong>CAUTION:</strong> This method returns a new CompletableFuture instead of {@code cfThis} to avoid
-     * the subsequent usage of the delay thread. This behavior is DIFFERENT from the original CF method {@link
-     * CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout
-     * completeOnTimeout}. More info see the javadoc of {@link #completeOnTimeout completeOnTimeout} and the demo <a href=
+     * the subsequent usage of the <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor's thread; This behavior is
+     * DIFFERENT from the original CF method {@link CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout}
+     * and its backport method {@link #completeOnTimeout completeOnTimeout}.
+     * More info see the javadoc of {@link #completeOnTimeout completeOnTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
@@ -2106,9 +2115,10 @@ public final class CompletableFutureUtils {
      * CompletableFuture completed with the same successful result or exception of the given CompletableFuture.
      * <p>
      * <strong>CAUTION:</strong> This method returns a new CompletableFuture instead of {@code cfThis} to avoid
-     * the subsequent usage of the delay thread. This behavior is DIFFERENT from the original CF method {@link
-     * CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout} and its backport method {@link #completeOnTimeout
-     * completeOnTimeout}. More info see the javadoc of {@link #completeOnTimeout completeOnTimeout} and the demo <a href=
+     * the subsequent usage of the <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor's thread; This behavior is
+     * DIFFERENT from the original CF method {@link CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout}
+     * and its backport method {@link #completeOnTimeout completeOnTimeout}.
+     * More info see the javadoc of {@link #completeOnTimeout completeOnTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
@@ -2133,7 +2143,7 @@ public final class CompletableFutureUtils {
      * and this backport method are <strong>UNSAFE</strong>!
      * <p>
      * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
-     * in CompletableFuture's internal <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor (including timeout functionality).
+     * in CompletableFuture's internal <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor (including delay functionality).
      * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>

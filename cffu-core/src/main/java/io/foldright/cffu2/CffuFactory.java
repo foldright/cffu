@@ -759,8 +759,8 @@ public final class CffuFactory {
      * In general, you won't use this method in application code, prefer other factory methods.
      *
      * @see #newIncompleteMCffu()
-     * @see CompletableFuture#CompletableFuture()
      * @see CompletableFuture#newIncompleteFuture()
+     * @see CompletableFuture#CompletableFuture()
      */
     @Contract(pure = true)
     public <T> Cffu<T> newIncompleteCffu() {
@@ -773,8 +773,8 @@ public final class CffuFactory {
      * In general, you won't use this method in application code, prefer other factory methods.
      *
      * @see #newIncompleteCffu()
-     * @see CompletableFuture#CompletableFuture()
      * @see CompletableFuture#newIncompleteFuture()
+     * @see CompletableFuture#CompletableFuture()
      */
     @Contract(pure = true)
     public <E, U extends Iterable<? extends E>> MCffu<E, U> newIncompleteMCffu() {
@@ -899,7 +899,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mSupplyFailFastAsync(Supplier[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `mRunAsync`")
         public <E> MCffu<E, List<E>> mSupplyFailFastAsync(Iterable<? extends Supplier<? extends E>> suppliers) {
             return mSupplyFailFastAsync(suppliers, defaultExecutor);
         }
@@ -907,7 +907,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mSupplyFailFastAsync(Executor, Supplier[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `mRunAsync`")
         public <E> MCffu<E, List<E>> mSupplyFailFastAsync(Iterable<? extends Supplier<? extends E>> suppliers, Executor executor) {
             return createMCffu(CfIterableUtils.mSupplyFailFastAsync(suppliers, executor));
         }
@@ -915,7 +915,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mSupplyAllSuccessAsync(Object, Supplier[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `mRunAsync`")
         public <E> MCffu<E, List<E>> mSupplyAllSuccessAsync(
                 @Nullable E valueIfFailed, Iterable<? extends Supplier<? extends E>> suppliers) {
             return mSupplyAllSuccessAsync(valueIfFailed, suppliers, defaultExecutor);
@@ -924,7 +924,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mSupplyAllSuccessAsync(Executor, Object, Supplier[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `mRunAsync`")
         public <E> MCffu<E, List<E>> mSupplyAllSuccessAsync(
                 @Nullable E valueIfFailed, Iterable<? extends Supplier<? extends E>> suppliers, Executor executor) {
             return createMCffu(CfIterableUtils.mSupplyAllSuccessAsync(valueIfFailed, suppliers, executor));
@@ -933,7 +933,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mSupplyMostSuccessAsync(Object, long, TimeUnit, Supplier[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `mRunAsync`")
         public <E> MCffu<E, List<E>> mSupplyMostSuccessAsync(
                 @Nullable E valueIfNotSuccess, long timeout, TimeUnit unit, Iterable<? extends Supplier<? extends E>> suppliers) {
             return mSupplyMostSuccessAsync(valueIfNotSuccess, timeout, unit, suppliers, defaultExecutor);
@@ -942,7 +942,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mSupplyMostSuccessAsync(Executor, Object, long, TimeUnit, Supplier[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `mRunAsync`")
         public <E> MCffu<E, List<E>> mSupplyMostSuccessAsync(
                 @Nullable E valueIfNotSuccess, long timeout, TimeUnit unit,
                 Iterable<? extends Supplier<? extends E>> suppliers, Executor executor) {
@@ -952,7 +952,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mSupplyAsync(Supplier[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `mRunAsync`")
         public <E> MCffu<E, List<E>> mSupplyAsync(Iterable<? extends Supplier<? extends E>> suppliers) {
             return mSupplyAsync(suppliers, defaultExecutor);
         }
@@ -960,7 +960,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mSupplyAsync(Executor, Supplier[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `mRunAsync`")
         public <E> MCffu<E, List<E>> mSupplyAsync(Iterable<? extends Supplier<? extends E>> suppliers, Executor executor) {
             return createMCffu(CfIterableUtils.mSupplyAsync(suppliers, executor));
         }
@@ -968,7 +968,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mSupplyAnySuccessAsync(Supplier[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
         public <T> Cffu<T> mSupplyAnySuccessAsync(Iterable<? extends Supplier<? extends T>> suppliers) {
             return mSupplyAnySuccessAsync(suppliers, defaultExecutor);
         }
@@ -976,7 +976,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mSupplyAnySuccessAsync(Executor, Supplier[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
         public <T> Cffu<T> mSupplyAnySuccessAsync(Iterable<? extends Supplier<? extends T>> suppliers, Executor executor) {
             return createCffu(CfIterableUtils.mSupplyAnySuccessAsync(suppliers, executor));
         }
@@ -984,7 +984,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mSupplyAnyAsync(Supplier[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
         public <T> Cffu<T> mSupplyAnyAsync(Iterable<? extends Supplier<? extends T>> suppliers) {
             return mSupplyAnyAsync(suppliers, defaultExecutor);
         }
@@ -992,7 +992,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mSupplyAnyAsync(Executor, Supplier[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
         public <T> Cffu<T> mSupplyAnyAsync(Iterable<? extends Supplier<? extends T>> suppliers, Executor executor) {
             return createCffu(CfIterableUtils.mSupplyAnyAsync(suppliers, executor));
         }
@@ -1000,7 +1000,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mRunFailFastAsync(Runnable...)}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
         public Cffu<Void> mRunFailFastAsync(Iterable<? extends Runnable> actions) {
             return mRunFailFastAsync(actions, defaultExecutor);
         }
@@ -1008,7 +1008,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mRunFailFastAsync(Executor, Runnable...)}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
         public Cffu<Void> mRunFailFastAsync(Iterable<? extends Runnable> actions, Executor executor) {
             return createCffu(CfIterableUtils.mRunFailFastAsync(actions, executor));
         }
@@ -1030,7 +1030,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mRunAnySuccessAsync(Runnable...)}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
         public Cffu<Void> mRunAnySuccessAsync(Iterable<? extends Runnable> actions) {
             return mRunAnySuccessAsync(actions, defaultExecutor);
         }
@@ -1038,7 +1038,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mRunAnySuccessAsync(Executor, Runnable...)}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
         public Cffu<Void> mRunAnySuccessAsync(Iterable<? extends Runnable> actions, Executor executor) {
             return createCffu(CfIterableUtils.mRunAnySuccessAsync(actions, executor));
         }
@@ -1046,7 +1046,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mRunAnyAsync(Runnable...)}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
         public Cffu<Void> mRunAnyAsync(Iterable<? extends Runnable> actions) {
             return mRunAnyAsync(actions, defaultExecutor);
         }
@@ -1054,7 +1054,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mRunAnyAsync(Executor, Runnable...)}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `mRunAsync`")
         public Cffu<Void> mRunAnyAsync(Iterable<? extends Runnable> actions, Executor executor) {
             return createCffu(CfIterableUtils.mRunAnyAsync(actions, executor));
         }
