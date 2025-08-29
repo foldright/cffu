@@ -21,6 +21,8 @@ import static java.util.Objects.requireNonNull;
  */
 @ApiStatus.Internal
 public final class CommonUtils {
+    // region# Array Utility Methods
+
     @SafeVarargs
     public static <T> T[] requireArrayAndEleNonNull(String varName, T... array) {
         requireNonNull(array, varName + "s is null");
@@ -53,24 +55,8 @@ public final class CommonUtils {
         return Arrays.asList(array).contains(objectToFind);
     }
 
-    /**
-     * Returns normal array list instead of unmodifiable({@link java.util.List#of}) or fixed-size
-     * ({@link Arrays#asList}) list. Safer for application code which may reuse the return list as normal collection.
-     */
-    @SafeVarargs
-    public static <T> ArrayList<T> arrayList(T... elements) {
-        return new ArrayList<>(Arrays.asList(elements));
-    }
-
-    /**
-     * Returns a new {@link ArrayList} with the same elements as the given {@link AtomicReferenceArray}.
-     */
-    public static <E> ArrayList<E> arrayList(AtomicReferenceArray<? extends E> array) {
-        int len = array.length();
-        ArrayList<E> ret = new ArrayList<>(len);
-        for (int i = 0; i < len; i++) ret.add(array.get(i));
-        return ret;
-    }
+    // endregion
+    // region# Conversation Methods (Iterable -> Array)
 
     /**
      * Converts an Iterable to an array.
@@ -96,6 +82,9 @@ public final class CommonUtils {
         return StreamSupport.stream(iterable.spliterator(), false).map(mapper).toArray(generator);
     }
 
+    // endregion
+    // region# AtomicReferenceArray Utility Methods
+
     /**
      * Returns a new array with the same elements as the given {@link AtomicReferenceArray}.
      */
@@ -115,6 +104,28 @@ public final class CommonUtils {
     public static <E> void fillAtomicReferenceArray(
             AtomicReferenceArray<? super E> array, E value) {
         for (int i = 0, len = array.length(); i < len; i++) array.set(i, value);
+    }
+
+    // endregion
+    // region# List Utility Methods
+
+    /**
+     * Returns normal array list instead of unmodifiable({@link java.util.List#of}) or fixed-size
+     * ({@link Arrays#asList}) list. Safer for application code which may reuse the return list as normal collection.
+     */
+    @SafeVarargs
+    public static <T> ArrayList<T> arrayList(T... elements) {
+        return new ArrayList<>(Arrays.asList(elements));
+    }
+
+    /**
+     * Returns a new {@link ArrayList} with the same elements as the given {@link AtomicReferenceArray}.
+     */
+    public static <E> ArrayList<E> arrayList(AtomicReferenceArray<? extends E> array) {
+        int len = array.length();
+        ArrayList<E> ret = new ArrayList<>(len);
+        for (int i = 0; i < len; i++) ret.add(array.get(i));
+        return ret;
     }
 
     private CommonUtils() {}

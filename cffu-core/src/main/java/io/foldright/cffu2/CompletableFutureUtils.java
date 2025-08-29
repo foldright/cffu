@@ -561,6 +561,40 @@ public final class CompletableFutureUtils {
     }
 
     /**
+     * Returns a cf array whose elements collect the results for <strong>AllResultsOf*</strong> methods.
+     * <p>
+     * Implementation Note: Uses AtomicReferenceArray and CAS operations to prevent memory leaks in `AllResultOf*`
+     * methods. Without this protection, if any inputs complete exceptionally while others are still running,
+     * the results array would unnecessarily retain memory for cf results that will never be used.
+     */
+    @SuppressWarnings("unchecked")
+    static <T> CompletableFuture<Void>[] createAllResultsSetterCfs(
+            CompletionStage<? extends T>[] stages, AtomicReferenceArray<T> results) {
+        final CompletableFuture<Void>[] resultSetterCfs = new CompletableFuture[stages.length];
+        return fillArray(resultSetterCfs, i -> f_toCf0(stages[i]).<CompletableFuture<Void>>handle((v, ex) -> {
+            if (ex == null) {
+                // atomically store value if slot has not been marked as unneeded with SENTINEL_UNNEEDED
+                results.compareAndSet(i, null, v);
+                return completedFuture(null);
+            } else {
+                // This `if` check is a minor optimization for a benign race condition.
+                // The logic would remain correct even if SENTINEL_UNNEEDED were set unconditionally.
+                if (results.get(0) != SENTINEL_UNNEEDED)
+                    // Once any stage fails, the results from all stages are no longer needed
+                    fillAtomicReferenceArray(results, (T) SENTINEL_UNNEEDED);
+                return failedFuture(ex);
+            }
+        }).thenCompose(x -> x));
+    }
+
+    /**
+     * A sentinel object used to mark slots in {@link AtomicReferenceArray} where values no longer need to be written.
+     *
+     * @see #createAllResultsSetterCfs
+     */
+    private static final Object SENTINEL_UNNEEDED = new Object();
+
+    /**
      * Returns a new CompletableFuture that is completed normally when all the given stages complete normally;
      * If any of the given stages complete exceptionally, then the returned CompletableFuture also does so,
      * WITHOUT waiting other incomplete given stages, with a CompletionException holding this exception as its cause.
@@ -610,6 +644,16 @@ public final class CompletableFutureUtils {
         return f_cast(CompletableFuture.anyOf(failedOrBeIncomplete));
     }
 
+    private static <T> void fill0(CompletionStage<? extends T>[] inputs,
+                                  CompletableFuture<? extends T>[] successOrBeIncomplete,
+                                  CompletableFuture<Void>[] failedOrBeIncomplete) {
+        for (int i = 0; i < inputs.length; i++) {
+            final CompletableFuture<T> f = f_toCf0(inputs[i]);
+            successOrBeIncomplete[i] = exceptionallyCompose(f, ex -> new CompletableFuture<>());
+            failedOrBeIncomplete[i] = f.thenCompose(v -> new CompletableFuture<>());
+        }
+    }
+
     /**
      * Returns a new CompletableFuture that is completed when all the given stages complete;
      * If any of the given stages complete exceptionally, then the returned CompletableFuture
@@ -653,50 +697,6 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     static <S extends CompletionStage<?>> S[] requireCfsAndEleNonNull(S... stages) {
         return requireArrayAndEleNonNull("cf", stages);
-    }
-
-    /**
-     * Returns a cf array whose elements collect the results for <strong>AllResultsOf*</strong> methods.
-     * <p>
-     * Implementation Note: Uses AtomicReferenceArray and CAS operations to prevent memory leaks in `AllResultOf*`
-     * methods. Without this protection, if any inputs complete exceptionally while others are still running,
-     * the results array would unnecessarily retain memory for cf results that will never be used.
-     */
-    @SuppressWarnings("unchecked")
-    static <T> CompletableFuture<Void>[] createAllResultsSetterCfs(
-            CompletionStage<? extends T>[] stages, AtomicReferenceArray<T> results) {
-        final CompletableFuture<Void>[] resultSetterCfs = new CompletableFuture[stages.length];
-        return fillArray(resultSetterCfs, i -> f_toCf0(stages[i]).<CompletableFuture<Void>>handle((v, ex) -> {
-            if (ex == null) {
-                // atomically store value if slot has not been marked as unneeded with SENTINEL_UNNEEDED
-                results.compareAndSet(i, null, v);
-                return completedFuture(null);
-            } else {
-                // This `if` check is a minor optimization for a benign race condition.
-                // The logic would remain correct even if SENTINEL_UNNEEDED were set unconditionally.
-                if (results.get(0) != SENTINEL_UNNEEDED)
-                    // Once any stage fails, the results from all stages are no longer needed
-                    fillAtomicReferenceArray(results, (T) SENTINEL_UNNEEDED);
-                return failedFuture(ex);
-            }
-        }).thenCompose(x -> x));
-    }
-
-    /**
-     * A sentinel object used to mark slots in {@link AtomicReferenceArray} where values no longer need to be written.
-     *
-     * @see #createAllResultsSetterCfs
-     */
-    private static final Object SENTINEL_UNNEEDED = new Object();
-
-    private static <T> void fill0(CompletionStage<? extends T>[] inputs,
-                                  CompletableFuture<? extends T>[] successOrBeIncomplete,
-                                  CompletableFuture<Void>[] failedOrBeIncomplete) {
-        for (int i = 0; i < inputs.length; i++) {
-            final CompletableFuture<T> f = f_toCf0(inputs[i]);
-            successOrBeIncomplete[i] = exceptionallyCompose(f, ex -> new CompletableFuture<>());
-            failedOrBeIncomplete[i] = f.thenCompose(v -> new CompletableFuture<>());
-        }
     }
 
     // endregion
@@ -2031,6 +2031,18 @@ public final class CompletableFutureUtils {
         return hopExecutorIfAtCfDelayerThread(orTimeout(cfThis, timeout, unit), executorWhenTimeout);
     }
 
+    @SuppressWarnings("unchecked")
+    private static <F extends CompletableFuture<?>> F hopExecutorIfAtCfDelayerThread(F cf, Executor executor) {
+        CompletableFuture<Object> ret = newIncompleteFuture(cf);
+
+        peek0(cf, (v, ex) -> {
+            if (!atCfDelayerThread()) completeCf0(ret, v, ex);
+            else screenExecutor(executor).execute(() -> completeCf0(ret, v, ex));
+        }, "CFU#hopExecutorIfAtCfDelayerThread");
+
+        return (F) ret;
+    }
+
     /**
      * Exceptionally completes given CompletableFuture with a {@link TimeoutException}
      * if not otherwise completed before the given timeout.
@@ -2179,18 +2191,6 @@ public final class CompletableFutureUtils {
             }
         }
         return cfThis;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <F extends CompletableFuture<?>> F hopExecutorIfAtCfDelayerThread(F cf, Executor executor) {
-        CompletableFuture<Object> ret = newIncompleteFuture(cf);
-
-        peek0(cf, (v, ex) -> {
-            if (!atCfDelayerThread()) completeCf0(ret, v, ex);
-            else screenExecutor(executor).execute(() -> completeCf0(ret, v, ex));
-        }, "CFU#hopExecutorIfAtCfDelayerThread");
-
-        return (F) ret;
     }
 
     // endregion
