@@ -1008,6 +1008,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mRunFailFastAsync(Executor, Runnable...)}.
          */
+        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
         public Cffu<Void> mRunFailFastAsync(Iterable<? extends Runnable> actions, Executor executor) {
             return createCffu(CfIterableUtils.mRunFailFastAsync(actions, executor));
         }
@@ -1022,7 +1023,6 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mRunAsync(Executor, Runnable...)}.
          */
-        @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
         public Cffu<Void> mRunAsync(Iterable<? extends Runnable> actions, Executor executor) {
             return createCffu(CfIterableUtils.mRunAsync(actions, executor));
         }

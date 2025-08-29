@@ -168,6 +168,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#mRunFailFastAsync(Executor, Runnable...)}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static CompletableFuture<Void> mRunFailFastAsync(Iterable<? extends Runnable> actions, Executor executor) {
         return CompletableFutureUtils.mRunFailFastAsync(executor, toRunnableArray(actions));
     }
@@ -182,7 +183,6 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#mRunAsync(Executor, Runnable...)}.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
     public static CompletableFuture<Void> mRunAsync(Iterable<? extends Runnable> actions, Executor executor) {
         return CompletableFutureUtils.mRunAsync(executor, toRunnableArray(actions));
     }
