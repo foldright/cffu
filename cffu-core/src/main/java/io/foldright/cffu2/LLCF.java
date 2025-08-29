@@ -400,18 +400,13 @@ public final class LLCF {
      * @see CompletableFutureUtils#defaultExecutor(CompletionStage)
      */
     // field initialization code is copied from CompletableFuture#ASYNC_POOL with small adoption.
-    public static final Executor ASYNC_POOL;
+    public static final Executor ASYNC_POOL = IS_JAVA9_PLUS
+            ? completedFuture(null).defaultExecutor()
+            : USE_COMMON_POOL ? ForkJoinPool.commonPool() : new ThreadPerTaskExecutor();
 
-    private static final Class<?> MIN_STAGE_CLASS;
-
-    static {
-        if (IS_JAVA9_PLUS) ASYNC_POOL = completedFuture(null).defaultExecutor();
-        else if (USE_COMMON_POOL) ASYNC_POOL = ForkJoinPool.commonPool();
-        else ASYNC_POOL = new ThreadPerTaskExecutor();
-
-        if (!IS_JAVA9_PLUS) MIN_STAGE_CLASS = null;
-        else MIN_STAGE_CLASS = CompletableFuture.completedStage(null).getClass();
-    }
+    private static final @Nullable Class<?> MIN_STAGE_CLASS = IS_JAVA9_PLUS
+            ? CompletableFuture.completedStage(null).getClass()
+            : null;
 
     /**
      * Fallback if {@link ForkJoinPool#commonPool()} cannot support parallelism.
