@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -37,11 +39,10 @@ public final class CommonUtils {
      * mapArray(source, String[]::new, i -> "integer: " + i);
      * }</pre>
      */
-    @SuppressWarnings("unchecked")
     public static <T, R> R[] mapArray(
-            T[] source, IntFunction<Object[]> destConstructor, Function<? super T, ? extends R> mapper) {
+            T[] source, IntFunction<R[]> destConstructor, Function<? super T, ? extends R> mapper) {
         int len = source.length;
-        R[] ret = (R[]) destConstructor.apply(len);
+        R[] ret = destConstructor.apply(len);
         for (int i = 0; i < len; i++) ret[i] = mapper.apply(source[i]);
         return ret;
     }
@@ -53,6 +54,21 @@ public final class CommonUtils {
 
     public static boolean containsInArray(final Object[] array, final Object objectToFind) {
         return Arrays.asList(array).contains(objectToFind);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> CompletableFuture<T>[] createCfArray(int length) {
+        return new CompletableFuture[length];
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> CompletionStage<T>[] createStageArray(int length) {
+        return new CompletionStage[length];
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T[] f_createArray(int length) {
+        return (T[]) new Object[length];
     }
 
     // endregion
@@ -88,10 +104,9 @@ public final class CommonUtils {
     /**
      * Returns a new array with the same elements as the given {@link AtomicReferenceArray}.
      */
-    public static <E> E[] toArray(AtomicReferenceArray<? extends E> array) {
+    public static <E> E[] f_toArray(AtomicReferenceArray<? extends E> array) {
         int len = array.length();
-        @SuppressWarnings("unchecked")
-        E[] ret = (E[]) new Object[len];
+        E[] ret = f_createArray(len);
         for (int i = 0; i < len; i++) ret[i] = array.get(i);
         return ret;
     }
@@ -126,6 +141,13 @@ public final class CommonUtils {
         ArrayList<E> ret = new ArrayList<>(len);
         for (int i = 0; i < len; i++) ret.add(array.get(i));
         return ret;
+    }
+
+    // endregion
+    // region# Other Mics Methods
+
+    public static <T> @Nullable T castOrNull(Class<T> clazz, @Nullable Object obj) {
+        return clazz.isInstance(obj) ? clazz.cast(obj) : null;
     }
 
     private CommonUtils() {}

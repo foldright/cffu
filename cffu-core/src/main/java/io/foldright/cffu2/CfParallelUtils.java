@@ -2,6 +2,7 @@ package io.foldright.cffu2;
 
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import io.foldright.cffu2.internal.CommonUtils;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -251,10 +252,9 @@ public final class CfParallelUtils {
         return ret;
     }
 
-    @SuppressWarnings("unchecked")
     private static <T, U> CompletableFuture<U>[] wrapEleFunction0(
             Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
-        return toArray(elements, CompletableFuture[]::new,
+        return toArray(elements, CommonUtils::createCfArray,
                 e -> CompletableFuture.supplyAsync(() -> fn.apply(e), executor));
     }
 
@@ -388,10 +388,9 @@ public final class CfParallelUtils {
         return ret;
     }
 
-    @SuppressWarnings("unchecked")
     private static <T> CompletableFuture<Void>[] wrapEleRunnable0(
             Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
-        return toArray(elements, CompletableFuture[]::new,
+        return toArray(elements, CommonUtils::createCfArray,
                 e -> CompletableFuture.runAsync(() -> action.accept(e), executor));
     }
 

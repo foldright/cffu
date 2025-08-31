@@ -1,6 +1,7 @@
 package io.foldright.cffu2;
 
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
+import io.foldright.cffu2.internal.CommonUtils;
 import io.foldright.cffu2.tuple.Tuple2;
 import io.foldright.cffu2.tuple.Tuple3;
 import io.foldright.cffu2.tuple.Tuple4;
@@ -153,7 +154,7 @@ public final class CfTupleUtils {
         if (failFast) resultsSetter = allFailFastOf0(resultsSetterCfs);
         else resultsSetter = CompletableFuture.allOf(resultsSetterCfs);
 
-        return resultsSetter.thenApply(unused -> f_tupleOf0(toArray(results)));
+        return resultsSetter.thenApply(unused -> f_tupleOf0(f_toArray(results)));
     }
 
     /**
@@ -289,7 +290,8 @@ public final class CfTupleUtils {
     }
 
     private static <T> CompletableFuture<T> f_allSuccessTupleOf0(CompletionStage<?>[] stages) {
-        return f_allTupleOf0(false, f_convertStageArray0(stages, s -> s.exceptionally(ex -> null)));
+        return f_allTupleOf0(false, mapArray(stages, CommonUtils::createStageArray,
+                s -> covariantExceptionally(s, ex -> null)));
     }
 
     /**
