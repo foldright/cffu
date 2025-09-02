@@ -80,7 +80,7 @@
 
 		<spotbugs.annotations.version>4.9.4</spotbugs.annotations.version>
 		<jsr305.version>3.0.2</jsr305.version>
-		<jetbrains.annotations.version>26.0.2</jetbrains.annotations.version>
+		<jetbrains.annotations.version>26.0.2-1</jetbrains.annotations.version>
 
 		<kotlin.version>2.2.10</kotlin.version>
 
@@ -482,7 +482,7 @@
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.9.4.0</version>
+					<version>4.9.4.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
