@@ -80,7 +80,7 @@ public final class SwallowedExceptionHandleUtils {
      * @param where the location where the exception occurs
      */
     public static void handleSwallowedExceptions(
-            String where, CompletableFuture<?> output, CompletionStage<?>... inputs) {
+            String where, CompletionStage<?> output, CompletionStage<?>... inputs) {
         handleSwallowedExceptions(where, cffuSwallowedExceptionHandler(), output, inputs);
     }
 
@@ -92,7 +92,7 @@ public final class SwallowedExceptionHandleUtils {
      * @param exceptionHandler the exception handler
      */
     public static void handleSwallowedExceptions(
-            String where, ExceptionHandler exceptionHandler, CompletableFuture<?> output, CompletionStage<?>... inputs) {
+            String where, ExceptionHandler exceptionHandler, CompletionStage<?> output, CompletionStage<?>... inputs) {
         handleSwallowedExceptions(where, null, exceptionHandler, output, inputs);
     }
 
@@ -106,7 +106,7 @@ public final class SwallowedExceptionHandleUtils {
      */
     public static void handleSwallowedExceptions(
             String where, @Nullable Object[] attachments, ExceptionHandler exceptionHandler,
-            CompletableFuture<?> output, CompletionStage<?>... inputs) {
+            CompletionStage<?> output, CompletionStage<?>... inputs) {
         requireNonNull(where, "where is null");
         requireNonNull(exceptionHandler, "exceptionHandler is null");
         requireNonNull(output, "output is null");

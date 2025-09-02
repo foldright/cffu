@@ -2,7 +2,6 @@ package io.foldright.cffu2.eh;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import static java.util.Objects.requireNonNull;
@@ -37,7 +36,7 @@ public final class ExceptionInfo {
      * The attachment object is provided through the attachments parameter of the handle methods in {@link SwallowedExceptionHandleUtils}.
      *
      * @see SwallowedExceptionHandleUtils#handleAllSwallowedExceptions(String, Object[], ExceptionHandler, CompletionStage[])
-     * @see SwallowedExceptionHandleUtils#handleSwallowedExceptions(String, Object[], ExceptionHandler, CompletableFuture, CompletionStage[])
+     * @see SwallowedExceptionHandleUtils#handleSwallowedExceptions(String, Object[], ExceptionHandler, CompletionStage, CompletionStage[])
      */
     public final @Nullable Object attachment;
 
