@@ -1642,7 +1642,7 @@ fun CompletableFuture<*>.runAfterEitherSuccessAsync(
  * @param fallback the Function to be called if `input` fails with the expected exception type.
  * The function's argument is the input's exception.
  */
-fun <T, X : Throwable, F : CompletionStage<in T>> F.catching(
+fun <T, X : Throwable, F : CompletionStage<T>> F.catching(
     exceptionType: Class<X>, fallback: Function<in X, out T>
 ): F = CompletableFutureUtils.catching(this, exceptionType, fallback)
 
@@ -1658,7 +1658,7 @@ fun <T, X : Throwable, F : CompletionStage<in T>> F.catching(
  * @param fallback the Function to be called if `input` fails with the expected exception type.
  * The function's argument is the input's exception.
  */
-fun <T, X : Throwable, F : CompletionStage<in T>> F.catchingAsync(
+fun <T, X : Throwable, F : CompletionStage<T>> F.catchingAsync(
     exceptionType: Class<X>, fallback: Function<in X, out T>
 ): F = CompletableFutureUtils.catchingAsync(this, exceptionType, fallback)
 
@@ -1674,7 +1674,7 @@ fun <T, X : Throwable, F : CompletionStage<in T>> F.catchingAsync(
  * The function's argument is the input's exception.
  * @param executor the executor to use for asynchronous execution
  */
-fun <T, X : Throwable, F : CompletionStage<in T>> F.catchingAsync(
+fun <T, X : Throwable, F : CompletionStage<T>> F.catchingAsync(
     exceptionType: Class<X>, fallback: Function<in X, out T>, executor: Executor
 ): F = CompletableFutureUtils.catchingAsync(this, exceptionType, fallback, executor)
 
@@ -1687,7 +1687,7 @@ fun <T, X : Throwable, F : CompletionStage<in T>> F.catchingAsync(
  * @param fn the function to use to compute the value of the returned CompletionStage
  * if this CompletionStage completed exceptionally
  */
-fun <T, F : CompletionStage<in T>> F.exceptionallyAsync(fn: Function<Throwable, out T>): F =
+fun <T, F : CompletionStage<T>> F.exceptionallyAsync(fn: Function<Throwable, out T>): F =
     CompletableFutureUtils.exceptionallyAsync(this, fn)
 
 /**
@@ -1699,7 +1699,7 @@ fun <T, F : CompletionStage<in T>> F.exceptionallyAsync(fn: Function<Throwable, 
  * if this CompletionStage completed exceptionally
  * @param executor the executor to use for asynchronous execution
  */
-fun <T, F : CompletionStage<in T>> F.exceptionallyAsync(fn: Function<Throwable, out T>, executor: Executor): F =
+fun <T, F : CompletionStage<T>> F.exceptionallyAsync(fn: Function<Throwable, out T>, executor: Executor): F =
     CompletableFutureUtils.exceptionallyAsync(this, fn, executor)
 
 // endregion
@@ -1852,7 +1852,7 @@ fun <T, F : CompletableFuture<in T>> F.completeOnTimeout(value: T, timeout: Long
  * @param fallback the Function to be called if `input` fails with the expected exception type.
  * The function's argument is the input's exception.
  */
-fun <T, X : Throwable, F : CompletionStage<in T>> F.catchingCompose(
+fun <T, X : Throwable, F : CompletionStage<T>> F.catchingCompose(
     exceptionType: Class<X>, fallback: Function<in X, out CompletionStage<T>>
 ): F = CompletableFutureUtils.catchingCompose(this, exceptionType, fallback)
 
@@ -1867,7 +1867,7 @@ fun <T, X : Throwable, F : CompletionStage<in T>> F.catchingCompose(
  * @param fallback the Function to be called if `input` fails with the expected exception type.
  * The function's argument is the input's exception.
  */
-fun <T, X : Throwable, F : CompletionStage<in T>> F.catchingComposeAsync(
+fun <T, X : Throwable, F : CompletionStage<T>> F.catchingComposeAsync(
     exceptionType: Class<X>, fallback: Function<in X, out CompletionStage<T>>
 ): F = CompletableFutureUtils.catchingComposeAsync(this, exceptionType, fallback)
 
@@ -1883,7 +1883,7 @@ fun <T, X : Throwable, F : CompletionStage<in T>> F.catchingComposeAsync(
  * The function's argument is the input's exception.
  * @param executor the executor to use for asynchronous execution
  */
-fun <T, X : Throwable, F : CompletionStage<in T>> F.catchingComposeAsync(
+fun <T, X : Throwable, F : CompletionStage<T>> F.catchingComposeAsync(
     exceptionType: Class<X>, fallback: Function<in X, out CompletionStage<T>>,
     executor: Executor
 ): F = CompletableFutureUtils.catchingComposeAsync(this, exceptionType, fallback, executor)
@@ -1895,7 +1895,7 @@ fun <T, X : Throwable, F : CompletionStage<in T>> F.catchingComposeAsync(
  * @param fn the function to use to compute the returned
  *           CompletionStage if given CompletionStage completed exceptionally
  */
-fun <T, F : CompletionStage<in T>> F.exceptionallyCompose(fn: Function<Throwable, out CompletionStage<T>>): F =
+fun <T, F : CompletionStage<T>> F.exceptionallyCompose(fn: Function<Throwable, out CompletionStage<T>>): F =
     CompletableFutureUtils.exceptionallyCompose(this, fn)
 
 /**
@@ -1906,7 +1906,7 @@ fun <T, F : CompletionStage<in T>> F.exceptionallyCompose(fn: Function<Throwable
  * @param fn the function to use to compute the returned
  *           CompletionStage if given CompletionStage completed exceptionally
  */
-fun <T, F : CompletionStage<in T>> F.exceptionallyComposeAsync(fn: Function<Throwable, out CompletionStage<T>>): F =
+fun <T, F : CompletionStage<T>> F.exceptionallyComposeAsync(fn: Function<Throwable, out CompletionStage<T>>): F =
     CompletableFutureUtils.exceptionallyComposeAsync(this, fn)
 
 /**
@@ -1917,7 +1917,7 @@ fun <T, F : CompletionStage<in T>> F.exceptionallyComposeAsync(fn: Function<Thro
  *                 if given CompletionStage completed exceptionally
  * @param executor the executor to use for asynchronous execution
  */
-fun <T, F : CompletionStage<in T>> F.exceptionallyComposeAsync(
+fun <T, F : CompletionStage<T>> F.exceptionallyComposeAsync(
     fn: Function<Throwable, out CompletionStage<T>>, executor: Executor
 ): F = CompletableFutureUtils.exceptionallyComposeAsync(this, fn, executor)
 

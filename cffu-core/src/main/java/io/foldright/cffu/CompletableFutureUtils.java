@@ -247,7 +247,7 @@ public final class CompletableFutureUtils {
     }
 
     private static <T> CompletableFuture<? extends T>[] wrapSuppliers0(Executor executor, Supplier<? extends T>[] suppliers) {
-        return mapArray(suppliers, CompletableFuture[]::new, s -> CompletableFuture.supplyAsync(s, executor));
+        return mapArray(suppliers, CommonUtils::createCfArray, s -> CompletableFuture.supplyAsync(s, executor));
     }
 
     /**
@@ -361,7 +361,7 @@ public final class CompletableFutureUtils {
     }
 
     private static CompletableFuture<Void>[] wrapRunnables0(Executor executor, Runnable[] actions) {
-        return mapArray(actions, CompletableFuture[]::new, a -> CompletableFuture.runAsync(a, executor));
+        return mapArray(actions, CommonUtils::createCfArray, a -> CompletableFuture.runAsync(a, executor));
     }
 
     // endregion
@@ -476,7 +476,7 @@ public final class CompletableFutureUtils {
         if (failFast) resultsSetter = allFailFastOf0(resultsSetterCfs);
         else resultsSetter = CompletableFuture.allOf(resultsSetterCfs);
 
-        return resultsSetter.thenApply(unused -> f_tupleOf0(toArray(results)));
+        return resultsSetter.thenApply(unused -> f_tupleOf0(f_toArray(results)));
     }
 
     /**
@@ -612,14 +612,14 @@ public final class CompletableFutureUtils {
     }
 
     private static <T> CompletableFuture<T> f_allSuccessTupleOf0(CompletionStage<?>[] stages) {
-        return f_allTupleOf0(false, f_convertStageArray0(stages, s -> s.exceptionally(ex -> null)));
+        return f_allTupleOf0(false, mapArray(stages, CommonUtils::createStageArray,
+                s -> covariantExceptionally(s, ex -> null)));
     }
 
-    private static <T, U> CompletionStage<U>[] f_convertStageArray0(
-            CompletionStage<? extends T>[] stages, Function<? super CompletionStage<T>, ? extends CompletionStage<U>> converter) {
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        CompletionStage<T>[] ss = (CompletionStage[]) stages;
-        return mapArray(ss, CompletionStage[]::new, converter);
+    @SuppressWarnings("unchecked")
+    private static <T> CompletionStage<T> covariantExceptionally(
+            CompletionStage<? extends T> stage, Function<Throwable, ? extends T> fn) {
+        return ((CompletionStage<T>) stage).exceptionally(fn);
     }
 
     /**
@@ -775,9 +775,8 @@ public final class CompletableFutureUtils {
      * @param cfs MUST be *Non-Minimal* CF instances in order to read results(`getSuccessNow`),
      *            otherwise UnsupportedOperationException
      */
-    @SuppressWarnings("unchecked")
     private static <T> T[] f_mGetSuccessNow0(@Nullable T valueIfNotSuccess, CompletableFuture<? extends T>[] cfs) {
-        return (T[]) fillArray(new Object[cfs.length], i -> getSuccessNow(cfs[i], valueIfNotSuccess));
+        return fillArray(f_createArray(cfs.length), i -> getSuccessNow(cfs[i], valueIfNotSuccess));
     }
 
     /**
@@ -922,7 +921,8 @@ public final class CompletableFutureUtils {
 
     private static <T> CompletableFuture<List<T>> allSuccessResultsOf0(
             @Nullable T valueIfFailed, CompletionStage<? extends T>[] cfs) {
-        return allResultsOf0(false, f_convertStageArray0(cfs, s -> s.exceptionally(ex -> valueIfFailed)));
+        return allResultsOf0(false, mapArray(cfs, CommonUtils::createStageArray,
+                s -> covariantExceptionally(s, ex -> valueIfFailed)));
     }
 
     /**
@@ -999,7 +999,7 @@ public final class CompletableFutureUtils {
         // 1. MUST be non-minimal-stage CF instances in order to read results(`getSuccessNow`), otherwise UnsupportedOpException.
         // 2. SHOULD copy input cfs(by calling `exceptionally` method) to avoid memory leaks,
         //    otherwise all input cfs would be retained until output cf completes.
-        CompletableFuture<T>[] cfArray = mapArray(cfs, CompletableFuture[]::new,
+        CompletableFuture<T>[] cfArray = mapArray(cfs, CommonUtils::createCfArray,
                 s -> LLCF.<T>toNonMinCf0(s).exceptionally(v -> valueIfNotSuccess));
         return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, timeout, unit, executorWhenTimeout)
                 .handle((unused, ex) -> arrayList(f_mGetSuccessNow0(valueIfNotSuccess, cfArray)));
@@ -1079,10 +1079,9 @@ public final class CompletableFutureUtils {
         // ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
         if (len == 1) return toNonMinCf0(cfs[0]).thenApply(unused -> null);
 
-        final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[len];
+        final CompletableFuture<?>[] successOrBeIncomplete = createCfArray(len);
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
-        @SuppressWarnings("unchecked")
-        final CompletableFuture<Void>[] failedOrBeIncomplete = new CompletableFuture[len + 1];
+        final CompletableFuture<Void>[] failedOrBeIncomplete = createCfArray(len + 1);
         fill0(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of failedOrBeIncomplete HERE:
@@ -1140,10 +1139,9 @@ public final class CompletableFutureUtils {
      * methods. Without this protection, if any inputs complete exceptionally while others are still running,
      * the results array would unnecessarily retain memory for cf results that will never be used.
      */
-    @SuppressWarnings("unchecked")
     private static <T> CompletableFuture<Void>[] createAllResultsSetterCfs(
             CompletionStage<? extends T>[] stages, AtomicReferenceArray<T> results) {
-        final CompletableFuture<Void>[] resultSetterCfs = new CompletableFuture[stages.length];
+        final CompletableFuture<Void>[] resultSetterCfs = createCfArray(stages.length);
         return fillArray(resultSetterCfs, i -> f_toCf0(stages[i]).<CompletableFuture<Void>>handle((v, ex) -> {
             if (ex == null) {
                 // atomically store value if slot has not been marked as unneeded with SENTINEL_UNNEEDED
@@ -1154,10 +1152,15 @@ public final class CompletableFutureUtils {
                 // the code logic would still be correct if directly setting SENTINEL_UNNEEDED without checking
                 if (results.get(0) != SENTINEL_UNNEEDED)
                     // if any stage has failed, all results are unneeded; mark all slots with SENTINEL_UNNEEDED
-                    fillAtomicReferenceArray(results, (T) SENTINEL_UNNEEDED);
+                    fillSentinelTo(results);
                 return failedFuture(ex);
             }
         }).thenCompose(x -> x));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> void fillSentinelTo(AtomicReferenceArray<T> results) {
+        fillAtomicReferenceArray(results, (T) SENTINEL_UNNEEDED);
     }
 
     /**
@@ -1211,9 +1214,8 @@ public final class CompletableFutureUtils {
         if (len == 1) return toNonMinCfCopy0(cfs[0]);
 
         // NOTE: fill ONE MORE element of successOrBeIncompleteCfs LATER
-        final CompletableFuture<?>[] successOrBeIncomplete = new CompletableFuture[len + 1];
-        @SuppressWarnings("unchecked")
-        final CompletableFuture<Void>[] failedOrBeIncomplete = new CompletableFuture[len];
+        final CompletableFuture<?>[] successOrBeIncomplete = createCfArray(len + 1);
+        final CompletableFuture<Void>[] failedOrBeIncomplete = createCfArray(len);
         fill0(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of successOrBeIncompleteCfs HERE:
@@ -1901,7 +1903,7 @@ public final class CompletableFutureUtils {
 
     private static <T, U> CompletableFuture<U>[] wrapFunctions0(
             Executor executor, @Nullable T v, Function<? super T, ? extends U>[] fns) {
-        return mapArray(fns, CompletableFuture[]::new, f -> CompletableFuture.supplyAsync(() -> f.apply(v), executor));
+        return mapArray(fns, CommonUtils::createCfArray, f -> CompletableFuture.supplyAsync(() -> f.apply(v), executor));
     }
 
     /**
@@ -2083,7 +2085,7 @@ public final class CompletableFutureUtils {
     }
 
     private static <T> CompletableFuture<Void>[] wrapConsumers0(Executor executor, T v, Consumer<? super T>[] actions) {
-        return mapArray(actions, CompletableFuture[]::new, a -> CompletableFuture.runAsync(() -> a.accept(v), executor));
+        return mapArray(actions, CommonUtils::createCfArray, a -> CompletableFuture.runAsync(() -> a.accept(v), executor));
     }
 
     /**
@@ -3076,19 +3078,18 @@ public final class CompletableFutureUtils {
      * @see #unwrapCfException(Throwable)
      * @see Futures#catching the equivalent Guava method catching()
      */
-    @SuppressWarnings("unchecked")
-    public static <T, X extends Throwable, F extends CompletionStage<? super T>>
+    public static <T, X extends Throwable, F extends CompletionStage<T>>
     F catching(F cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
 
-        return (F) cfThis.handle((v, ex) -> {
-            if (ex == null) return cfThis;
-            Throwable unwrap = unwrapCfException(ex);
-            if (!exceptionType.isInstance(unwrap)) return cfThis;
-            return completedFuture(fallback.apply((X) unwrap));
+        CompletionStage<T> ret = cfThis.handle((v, ex) -> {
+            X bizEx = castOrNull(exceptionType, unwrapCfException(ex));
+            if (bizEx == null) return cfThis;
+            return CompletableFuture.<T>completedFuture(fallback.apply(bizEx));
         }).thenCompose(x -> x);
+        return f_selfTypeDownCast(ret);
     }
 
     /**
@@ -3109,7 +3110,7 @@ public final class CompletableFutureUtils {
      * @see #unwrapCfException(Throwable)
      * @see Futures#catching the equivalent Guava method catching()
      */
-    public static <T, X extends Throwable, F extends CompletionStage<? super T>>
+    public static <T, X extends Throwable, F extends CompletionStage<T>>
     F catchingAsync(F cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback) {
         return catchingAsync(cfThis, exceptionType, fallback, defaultExecutor(cfThis));
     }
@@ -3132,20 +3133,24 @@ public final class CompletableFutureUtils {
      * @see #unwrapCfException(Throwable)
      * @see Futures#catching the equivalent Guava method catching()
      */
-    @SuppressWarnings("unchecked")
-    public static <T, X extends Throwable, F extends CompletionStage<? super T>>
+    public static <T, X extends Throwable, F extends CompletionStage<T>>
     F catchingAsync(F cfThis, Class<X> exceptionType, Function<? super X, ? extends T> fallback, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
         requireNonNull(executor, "executor is null");
 
-        return (F) cfThis.handle((v, ex) -> {
-            if (ex == null) return cfThis;
-            Throwable unwrap = unwrapCfException(ex);
-            if (!exceptionType.isInstance(unwrap)) return cfThis;
-            return cfThis.<T>handleAsync((v1, ex1) -> fallback.apply((X) unwrap), executor);
+        CompletionStage<T> ret = cfThis.handle((v, ex) -> {
+            X bizEx = castOrNull(exceptionType, unwrapCfException(ex));
+            if (bizEx == null) return cfThis;
+            return cfThis.<T>handleAsync((v1, ex1) -> fallback.apply(bizEx), executor);
         }).thenCompose(x -> x);
+        return f_selfTypeDownCast(ret);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <F extends CompletionStage<?>> F f_selfTypeDownCast(CompletionStage<?> stage) {
+        return (F) stage;
     }
 
     /**
@@ -3161,7 +3166,7 @@ public final class CompletableFutureUtils {
      *           if given CompletionStage completed exceptionally
      * @see #catchingAsync(CompletionStage, Class, Function)
      */
-    public static <T, F extends CompletionStage<? super T>>
+    public static <T, F extends CompletionStage<T>>
     F exceptionallyAsync(F cfThis, Function<Throwable, ? extends T> fn) {
         return exceptionallyAsync(cfThis, fn, defaultExecutor(cfThis));
     }
@@ -3180,19 +3185,20 @@ public final class CompletableFutureUtils {
      * @param executor the executor to use for asynchronous execution
      * @see #catchingAsync(CompletionStage, Class, Function, Executor)
      */
-    @SuppressWarnings("unchecked")
-    public static <T, F extends CompletionStage<? super T>>
+    public static <T, F extends CompletionStage<T>>
     F exceptionallyAsync(F cfThis, Function<Throwable, ? extends T> fn, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
         if (IS_JAVA12_PLUS) {
-            return (F) cfThis.exceptionallyAsync(fn, executor);
+            CompletionStage<T> ret = cfThis.exceptionallyAsync(fn, executor);
+            return f_selfTypeDownCast(ret);
         }
         // below code is copied from CompletionStage#exceptionallyAsync
-        return (F) cfThis.handle((v, ex) -> (ex == null) ? cfThis :
+        CompletionStage<T> ret = cfThis.handle((v, ex) -> (ex == null) ? cfThis :
                 cfThis.<T>handleAsync((v1, ex1) -> fn.apply(ex1), executor)
         ).thenCompose(x -> x);
+        return f_selfTypeDownCast(ret);
     }
 
     // endregion
@@ -3396,7 +3402,6 @@ public final class CompletableFutureUtils {
         return cfThis;
     }
 
-    @SuppressWarnings("unchecked")
     private static <F extends CompletableFuture<?>> F hopExecutorIfAtCfDelayerThread(F cf, Executor executor) {
         CompletableFuture<Object> ret = newIncompleteFuture(cf);
 
@@ -3405,7 +3410,7 @@ public final class CompletableFutureUtils {
             else screenExecutor(executor).execute(() -> completeCf0(ret, v, ex));
         }, "CFU#hopExecutorIfAtCfDelayerThread");
 
-        return (F) ret;
+        return f_selfTypeDownCast(ret);
     }
 
     // endregion
@@ -3433,19 +3438,18 @@ public final class CompletableFutureUtils {
      * @see #unwrapCfException(Throwable)
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */
-    @SuppressWarnings("unchecked")
-    public static <T, X extends Throwable, F extends CompletionStage<? super T>>
+    public static <T, X extends Throwable, F extends CompletionStage<T>>
     F catchingCompose(F cfThis, Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(exceptionType, "exceptionType is null");
         requireNonNull(fallback, "fallback is null");
 
-        return (F) cfThis.handle((v, ex) -> {
-            if (ex == null) return cfThis;
-            Throwable unwrap = unwrapCfException(ex);
-            if (!exceptionType.isInstance(unwrap)) return cfThis;
-            return fallback.apply((X) unwrap);
+        CompletionStage<T> ret = cfThis.handle((v, ex) -> {
+            X bizEx = castOrNull(exceptionType, unwrapCfException(ex));
+            if (bizEx == null) return cfThis;
+            return fallback.apply(bizEx);
         }).thenCompose(x -> x);
+        return f_selfTypeDownCast(ret);
     }
 
     /**
@@ -3465,7 +3469,7 @@ public final class CompletableFutureUtils {
      * @see #unwrapCfException(Throwable)
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */
-    public static <T, X extends Throwable, F extends CompletionStage<? super T>> F catchingComposeAsync(
+    public static <T, X extends Throwable, F extends CompletionStage<T>> F catchingComposeAsync(
             F cfThis, Class<X> exceptionType, Function<? super X, ? extends CompletionStage<T>> fallback) {
         return catchingComposeAsync(cfThis, exceptionType, fallback, defaultExecutor(cfThis));
     }
@@ -3488,8 +3492,7 @@ public final class CompletableFutureUtils {
      * @see #unwrapCfException(Throwable)
      * @see Futures#catchingAsync the equivalent Guava method catchingAsync()
      */
-    @SuppressWarnings("unchecked")
-    public static <T, X extends Throwable, F extends CompletionStage<? super T>> F catchingComposeAsync(
+    public static <T, X extends Throwable, F extends CompletionStage<T>> F catchingComposeAsync(
             F cfThis, Class<X> exceptionType,
             Function<? super X, ? extends CompletionStage<T>> fallback, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
@@ -3497,12 +3500,12 @@ public final class CompletableFutureUtils {
         requireNonNull(fallback, "fallback is null");
         requireNonNull(executor, "executor is null");
 
-        return (F) cfThis.handle((v, ex) -> {
-            if (ex == null) return cfThis;
-            Throwable unwrap = unwrapCfException(ex);
-            if (!exceptionType.isInstance(unwrap)) return cfThis;
-            return cfThis.handleAsync((v1, ex1) -> fallback.apply((X) unwrap), executor).thenCompose(x -> x);
+        CompletionStage<T> ret = cfThis.handle((v, ex) -> {
+            X bizEx = castOrNull(exceptionType, unwrapCfException(ex));
+            if (bizEx == null) return cfThis;
+            return cfThis.handleAsync((v1, ex1) -> fallback.apply(bizEx), executor).thenCompose(x -> x);
         }).thenCompose(x -> x);
+        return f_selfTypeDownCast(ret);
     }
 
     /**
@@ -3517,16 +3520,17 @@ public final class CompletableFutureUtils {
      *           if given CompletionStage completed exceptionally
      * @see #catchingCompose(CompletionStage, Class, Function)
      */
-    @SuppressWarnings({"unchecked", "rawtypes", "BoundedWildcard"})
-    public static <T, F extends CompletionStage<? super T>>
+    public static <T, F extends CompletionStage<T>>
     F exceptionallyCompose(F cfThis, Function<Throwable, ? extends CompletionStage<T>> fn) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(fn, "fn is null");
         if (IS_JAVA12_PLUS) {
-            return (F) cfThis.exceptionallyCompose((Function) fn);
+            CompletionStage<T> ret = cfThis.exceptionallyCompose(fn);
+            return f_selfTypeDownCast(ret);
         }
         // below code is copied from CompletionStage.exceptionallyCompose
-        return (F) cfThis.handle((v, ex) -> (ex == null) ? cfThis : fn.apply(ex)).thenCompose(x -> x);
+        CompletionStage<T> ret = cfThis.handle((v, ex) -> (ex == null) ? cfThis : fn.apply(ex)).thenCompose(x -> x);
+        return f_selfTypeDownCast(ret);
     }
 
     /**
@@ -3542,7 +3546,7 @@ public final class CompletableFutureUtils {
      *           if given CompletionStage completed exceptionally
      * @see #catchingComposeAsync(CompletionStage, Class, Function)
      */
-    public static <T, F extends CompletionStage<? super T>>
+    public static <T, F extends CompletionStage<T>>
     F exceptionallyComposeAsync(F cfThis, Function<Throwable, ? extends CompletionStage<T>> fn) {
         return exceptionallyComposeAsync(cfThis, fn, defaultExecutor(cfThis));
     }
@@ -3560,19 +3564,20 @@ public final class CompletableFutureUtils {
      * @param executor the executor to use for asynchronous execution
      * @see #catchingComposeAsync(CompletionStage, Class, Function, Executor)
      */
-    @SuppressWarnings({"unchecked", "rawtypes", "BoundedWildcard"})
-    public static <T, F extends CompletionStage<? super T>>
+    public static <T, F extends CompletionStage<T>>
     F exceptionallyComposeAsync(F cfThis, Function<Throwable, ? extends CompletionStage<T>> fn, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
         if (IS_JAVA12_PLUS) {
-            return (F) cfThis.exceptionallyComposeAsync((Function) fn, executor);
+            CompletionStage<T> ret = cfThis.exceptionallyComposeAsync(fn, executor);
+            return f_selfTypeDownCast(ret);
         }
         // below code is copied from CompletionStage.exceptionallyComposeAsync
-        return (F) cfThis.handle((v, ex) -> (ex == null) ? cfThis :
+        CompletionStage<T> ret = cfThis.handle((v, ex) -> (ex == null) ? cfThis :
                 cfThis.handleAsync((v1, ex1) -> fn.apply(ex1), executor).thenCompose(x -> x)
         ).thenCompose(x -> x);
+        return f_selfTypeDownCast(ret);
     }
 
     /**
@@ -4055,8 +4060,7 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<T>[] toCompletableFutureArray(CompletionStage<T>... stages) {
         requireNonNull(stages, "stages is null");
-        @SuppressWarnings("unchecked")
-        CompletableFuture<T>[] ret = new CompletableFuture[stages.length];
+        CompletableFuture<T>[] ret = createCfArray(stages.length);
         for (int i = 0; i < stages.length; i++) {
             ret[i] = requireNonNull(stages[i], "stage" + (i + 1) + " is null").toCompletableFuture();
         }
@@ -4071,9 +4075,7 @@ public final class CompletableFutureUtils {
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] completableFutureListToArray(List<CompletableFuture<T>> cfList) {
         requireNonNull(cfList, "cfList is null");
-        @SuppressWarnings("unchecked")
-        CompletableFuture<T>[] a = new CompletableFuture[cfList.size()];
-        return cfList.toArray(a);
+        return cfList.toArray(createCfArray(cfList.size()));
     }
 
     /**

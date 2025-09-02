@@ -1,6 +1,7 @@
 package io.foldright.cffu;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
+import io.foldright.cffu.internal.CommonUtils;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -78,7 +79,7 @@ public final class LLCF {
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] f_toCfArray0(CompletionStage<? extends T>[] stages) {
-        return mapArray(stages, CompletableFuture[]::new, LLCF::f_toCf0);
+        return mapArray(stages, CommonUtils::createCfArray, LLCF::f_toCf0);
     }
 
     /**
@@ -101,7 +102,7 @@ public final class LLCF {
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] f_toCfCopyArray0(CompletionStage<? extends T>[] stages) {
-        return mapArray(stages, CompletableFuture[]::new, LLCF::f_toCfCopy0);
+        return mapArray(stages, CommonUtils::createCfArray, LLCF::f_toCfCopy0);
     }
 
     /**
@@ -122,7 +123,7 @@ public final class LLCF {
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] toNonMinCfArray0(CompletionStage<? extends T>[] stages) {
-        return mapArray(stages, CompletableFuture[]::new, LLCF::toNonMinCf0);
+        return mapArray(stages, CommonUtils::createCfArray, LLCF::toNonMinCf0);
     }
 
     /**
@@ -144,7 +145,7 @@ public final class LLCF {
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] toNonMinCfCopyArray0(CompletionStage<? extends T>[] stages) {
-        return mapArray(stages, CompletableFuture[]::new, LLCF::toNonMinCfCopy0);
+        return mapArray(stages, CommonUtils::createCfArray, LLCF::toNonMinCfCopy0);
     }
 
     /**

@@ -17,6 +17,7 @@ import java.util.function.Supplier;
 
 import static io.foldright.cffu.CffuFactoryBuilder.cffuScreened;
 import static io.foldright.cffu.CffuFactoryBuilder.cffuUnscreened;
+import static io.foldright.cffu.internal.CommonUtils.createCffuArray;
 import static java.util.Objects.requireNonNull;
 
 
@@ -1269,8 +1270,7 @@ public final class CffuFactory {
     @SafeVarargs
     public final <T> Cffu<T>[] toCffuArray(CompletionStage<T>... stages) {
         requireNonNull(stages, "stages is null");
-        @SuppressWarnings("unchecked")
-        Cffu<T>[] ret = new Cffu[stages.length];
+        Cffu<T>[] ret = createCffuArray(stages.length);
         for (int i = 0; i < stages.length; i++) {
             ret[i] = toCffu(requireNonNull(stages[i], "stage" + (i + 1) + " is null"));
         }
@@ -1328,9 +1328,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public static <T> Cffu<T>[] cffuListToArray(List<Cffu<T>> cffuList) {
-        @SuppressWarnings("unchecked")
-        Cffu<T>[] a = new Cffu[cffuList.size()];
-        return cffuList.toArray(a);
+        return cffuList.toArray(createCffuArray(cffuList.size()));
     }
 
     // endregion
