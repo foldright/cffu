@@ -80,9 +80,9 @@
 		<release.pom.version.regex>${ga.release.pom.version.regex}</release.pom.version.regex>
 		<maven.enforcer.pom.version.regex>${snapshot.pom.version.regex}</maven.enforcer.pom.version.regex>
 
-		<spotbugs.annotations.version>4.8.6</spotbugs.annotations.version>
+		<spotbugs.annotations.version>4.9.4</spotbugs.annotations.version>
 		<jsr305.version>3.0.2</jsr305.version>
-		<jetbrains.annotations.version>26.0.2</jetbrains.annotations.version>
+		<jetbrains.annotations.version>26.0.2-1</jetbrains.annotations.version>
 
 		<kotlin.version>2.1.21</kotlin.version>
 		<kotlin.compiler.jvmTarget>${maven.compiler.source}</kotlin.compiler.jvmTarget>
@@ -412,7 +412,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.5.3</version>
+					<version>3.5.4</version>
 					<configuration>
 						<argLine>@{argLine} -ea</argLine>
 					</configuration>
@@ -431,7 +431,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.6.0</version>
+					<version>3.6.1</version>
 					<configuration>
 						<shadeSourcesContent>true</shadeSourcesContent>
 						<dependencyReducedPomLocation>
@@ -487,7 +487,7 @@
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.9.4.0</version>
+					<version>4.9.4.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
@@ -577,6 +577,7 @@
 					<name>skipDefaultProfileArchUnitTest</name>
 					<value>!true</value>
 				</property>
+				<jdk>[11,)</jdk>
 			</activation>
 			<dependencies>
 				<!-- https://www.archunit.org/ -->

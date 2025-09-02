@@ -65,7 +65,7 @@ mvu::mvn_cmd clean install
 # shellcheck disable=SC2034
 readonly MVN_OPTS_FOR_JAVA8=(
   -Dkotlin.version=1.6.0 -Dguava.version=29.0-jre
-  -P!default-logging-dependencies -P!default-arch-unit-test
+  -P!default-logging-dependencies
   -Dcffu.exception.log.format=short
 )
 # shellcheck disable=SC2034
