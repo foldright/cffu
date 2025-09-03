@@ -24,6 +24,6 @@ fi
 ########################################
 # maven deploy
 ########################################
-rm -rf "$HOME/.m2/repository/io/foldright"/cffu*
-cu::log_then_run ./mvnw clean
-cu::log_then_run ./mvnw deploy -DperformRelease -Dmaven.test.skip
+cu::log_then_run rm -rf "$HOME/.m2/repository/io/foldright"/cffu*
+cu::log_then_run ./mvnw -V clean
+cu::log_then_run ./mvnw -V deploy -DperformRelease -Dmaven.test.skip
