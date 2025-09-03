@@ -285,7 +285,7 @@ public final class CfParallelUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        CompletableFuture<Void>[] inputs = wrapEleRunnable0(elements, action, executor);
+        CompletableFuture<Void>[] inputs = wrapEleConsumer0(elements, action, executor);
         CompletableFuture<Void> ret = allFailFastOf0(inputs);
         handleSwallowedExceptions("parAcceptFailFastAsync", ret, inputs);
         return ret;
@@ -316,7 +316,7 @@ public final class CfParallelUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        CompletableFuture<Void>[] inputs = wrapEleRunnable0(elements, action, executor);
+        CompletableFuture<Void>[] inputs = wrapEleConsumer0(elements, action, executor);
         CompletableFuture<Void> ret = CompletableFuture.allOf(inputs);
         handleSwallowedExceptions("parAcceptAsync", ret, inputs);
         return ret;
@@ -349,7 +349,7 @@ public final class CfParallelUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        CompletableFuture<Void>[] inputs = wrapEleRunnable0(elements, action, executor);
+        CompletableFuture<Void>[] inputs = wrapEleConsumer0(elements, action, executor);
         CompletableFuture<Void> ret = anySuccessOf0(inputs);
         handleSwallowedExceptions("parAcceptAnySuccessAsync", ret, inputs);
         return ret;
@@ -382,13 +382,13 @@ public final class CfParallelUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        CompletableFuture<Void>[] inputs = wrapEleRunnable0(elements, action, executor);
+        CompletableFuture<Void>[] inputs = wrapEleConsumer0(elements, action, executor);
         CompletableFuture<Void> ret = f_cast(CompletableFuture.anyOf(inputs));
         handleSwallowedExceptions("parAcceptAnyAsync", ret, inputs);
         return ret;
     }
 
-    private static <T> CompletableFuture<Void>[] wrapEleRunnable0(
+    private static <T> CompletableFuture<Void>[] wrapEleConsumer0(
             Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
         return toArray(elements, CommonUtils::createCfArray,
                 e -> CompletableFuture.runAsync(() -> action.accept(e), executor));
