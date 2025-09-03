@@ -24,18 +24,18 @@ This dependency should only be used at `Runtime`.
     <groupId>io.foldright</groupId>
     <artifactId>cffu-ttl-executor-wrapper</artifactId>
     <scope>runtime</scope>
-    <version>1.1.13</version>
+    <version>1.1.14</version>
   </dependency>
   ```
 - For `Gradle` projects:
 
   Gradle Kotlin DSL
   ```groovy
-  runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.1.13")
+  runtimeOnly("io.foldright:cffu-ttl-executor-wrapper:1.1.14")
   ```
   Gradle Groovy DSL
   ```groovy
-  runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.1.13'
+  runtimeOnly 'io.foldright:cffu-ttl-executor-wrapper:1.1.14'
   ```
 
 `cffu-ttl-executor-wrapper` has published to maven central, find the latest version at
