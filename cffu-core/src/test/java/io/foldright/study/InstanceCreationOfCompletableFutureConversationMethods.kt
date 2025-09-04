@@ -33,21 +33,21 @@ class InstanceCreationOfCompletableFutureConversationMethods : FunSpec({
             // CompletableFuture.toCompletableFuture() return THIS
             shouldBeSameInstanceAs(cf)
 
-            LLCF.isMinStageCf(this).shouldBeFalse()
+            LLCF.isMinStageCf0(this).shouldBeFalse()
         }
 
         cf.copy().apply {
             // CompletableFuture.copy() return a NEW instance
             shouldNotBeSameInstanceAs(cf)
 
-            LLCF.isMinStageCf(this).shouldBeFalse()
+            LLCF.isMinStageCf0(this).shouldBeFalse()
         }
 
         if (isJava9Plus()) cf.minimalCompletionStage().apply {
             // CompletableFuture.minimalCompletionStage() return a NEW instance
             shouldNotBeSameInstanceAs(cf)
 
-            LLCF.isMinStageCf(this as CompletableFuture<*>).shouldBeTrue()
+            LLCF.isMinStageCf0(this as CompletableFuture<*>).shouldBeTrue()
         }
     }
 
@@ -59,21 +59,21 @@ class InstanceCreationOfCompletableFutureConversationMethods : FunSpec({
             shouldNotBeSameInstanceAs(minStage)
 
             // minStage.toCompletableFuture() return a new CompletableFuture for min stage
-            LLCF.isMinStageCf(this).shouldBeFalse()
+            LLCF.isMinStageCf0(this).shouldBeFalse()
         }
 
         minStage.copy().apply {
             // minStage.copy() return a NEW instance
             shouldNotBeSameInstanceAs(minStage)
 
-            LLCF.isMinStageCf(this).shouldBeTrue()
+            LLCF.isMinStageCf0(this).shouldBeTrue()
         }
 
         minStage.minimalCompletionStage().apply {
             // minStage.minimalCompletionStage() return a NEW instance
             shouldNotBeSameInstanceAs(minStage)
 
-            LLCF.isMinStageCf(this as CompletableFuture<*>).shouldBeTrue()
+            LLCF.isMinStageCf0(this as CompletableFuture<*>).shouldBeTrue()
         }
     }
 })

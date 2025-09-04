@@ -2758,7 +2758,7 @@ public final class CompletableFutureUtils {
         requireNonNull(supplier, "supplier is null");
         // NOTE: do NOT translate executor by screenExecutor method; same as CompletableFuture.completeAsync
         requireNonNull(executor, "executor is null");
-        if (isMinStageCf(cfThis)) throw new UnsupportedOperationException();
+        if (isMinStageCf0(cfThis)) throw new UnsupportedOperationException();
 
         executor.execute(new CfExCompleterBySupplier(cfThis, supplier));
         return cfThis;

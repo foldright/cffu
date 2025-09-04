@@ -92,7 +92,7 @@ public final class LLCF {
     public static <T> CompletableFuture<T> f_toCfCopy0(CompletionStage<? extends T> stage) {
         final CompletableFuture<T> f = f_toCf0(stage);
         // since minimal-stage is not writable, defensive copy is unneeded, just return minimal-stage.
-        return isMinStageCf(f) ? f : copy0(f);
+        return isMinStageCf0(f) ? f : copy0(f);
     }
 
     /**
@@ -113,7 +113,7 @@ public final class LLCF {
     @Contract(pure = true)
     public static <T> CompletableFuture<T> toNonMinCf0(CompletionStage<? extends T> stage) {
         final CompletableFuture<T> f = f_toCf0(stage);
-        return isMinStageCf(f) ? f.toCompletableFuture() : f;
+        return isMinStageCf0(f) ? f.toCompletableFuture() : f;
     }
 
     /**
@@ -135,7 +135,7 @@ public final class LLCF {
     @Contract(pure = true)
     public static <T> CompletableFuture<T> toNonMinCfCopy0(CompletionStage<? extends T> stage) {
         final CompletableFuture<T> f = f_toCf0(stage);
-        return isMinStageCf(f) ? f.toCompletableFuture() : copy0(f);
+        return isMinStageCf0(f) ? f.toCompletableFuture() : copy0(f);
     }
 
     /**
@@ -157,7 +157,7 @@ public final class LLCF {
      * This type contract for minimal-stage MUST be followed for end users APIs.
      */
     @Contract(pure = true)
-    public static boolean isMinStageCf(CompletableFuture<?> cf) {
+    public static boolean isMinStageCf0(CompletableFuture<?> cf) {
         return cf.getClass().equals(MIN_STAGE_CLASS);
     }
 
