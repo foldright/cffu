@@ -148,19 +148,6 @@ public final class LLCF {
     }
 
     /**
-     * Equivalent method of {@link CompletableFuture#copy()} with {Java 8} backwards compatibility.
-     * <p>
-     * Implementation Note: The returned instances of calling {@code copy}/{@code thenApply} methods
-     * ({@link CompletableFuture#copy}) on minimal-stage instances is still minimal-stage
-     * (e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().thenApply(...)}).
-     *
-     * @see CompletableFutureUtils#copy(CompletableFuture)
-     */
-    public static <T> CompletableFuture<T> copy0(CompletableFuture<T> cf) {
-        return IS_JAVA9_PLUS ? cf.copy() : cf.thenApply(x -> x);
-    }
-
-    /**
      * Checks if the given {@code CompletableFuture} instance is a minimal-stage.
      * <p>
      * Implementation Note: While minimal-stage is implemented as a private subclass of CompletableFuture,
@@ -236,6 +223,19 @@ public final class LLCF {
     public static <T> boolean completeCf0(CompletableFuture<? super T> cf, @Nullable T value, @Nullable Throwable ex) {
         if (ex == null) return cf.complete(value);
         else return cf.completeExceptionally(ex);
+    }
+
+    /**
+     * Equivalent method of {@link CompletableFuture#copy()} with {Java 8} backwards compatibility.
+     * <p>
+     * Implementation Note: The returned instances of calling {@code copy}/{@code thenApply} methods
+     * ({@link CompletableFuture#copy}) on minimal-stage instances is still minimal-stage
+     * (e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().thenApply(...)}).
+     *
+     * @see CompletableFutureUtils#copy(CompletableFuture)
+     */
+    public static <T> CompletableFuture<T> copy0(CompletableFuture<T> cf) {
+        return IS_JAVA9_PLUS ? cf.copy() : cf.thenApply(x -> x);
     }
 
     /**
@@ -325,30 +325,7 @@ public final class LLCF {
 
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# CF execution/executor methods
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Null-checks user executor argument, and translates uses of commonPool to ASYNC_POOL in case parallelism disabled.
-     */
-    @Contract(pure = true)
-    @SuppressWarnings("resource")
-    public static Executor screenExecutor(Executor e) {
-        // Implementation note: CompletableFuture API methods already call this method internally; Only underlying
-        // methods that directly use an executor need to call this method (e.g. CFU#hopExecutorIfAtCfDelayerThread)
-        //
-        // below code is copied from CompletableFuture#screenExecutor with small adoption
-        if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool()) return ASYNC_POOL;
-        return requireNonNull(e, "executor is null");
-    }
-
-    // endregion
-    ////////////////////////////////////////////////////////////////////////////////
-    // region# Internal static fields/helpers
-    ////////////////////////////////////////////////////////////////////////////////
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // region# Java version check logic for compatibility
+    // region# Internal Java version check logic for compatibility
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -381,6 +358,20 @@ public final class LLCF {
     ////////////////////////////////////////////////////////////////////////////////
     // region# CF execution/executor
     ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Null-checks user executor argument, and translates uses of commonPool to ASYNC_POOL in case parallelism disabled.
+     */
+    @Contract(pure = true)
+    @SuppressWarnings("resource")
+    public static Executor screenExecutor(Executor e) {
+        // Implementation note: CompletableFuture API methods already call this method internally; Only underlying
+        // methods that directly use an executor need to call this method (e.g. CFU#hopExecutorIfAtCfDelayerThread)
+        //
+        // below code is copied from CompletableFuture#screenExecutor with small adoption
+        if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool()) return ASYNC_POOL;
+        return requireNonNull(e, "executor is null");
+    }
 
     /**
      * code is copied from CompletableFuture#USE_COMMON_POOL
