@@ -18,7 +18,6 @@ import java.util.function.Supplier;
 
 import static io.foldright.cffu2.CompletableFutureUtils.*;
 import static io.foldright.cffu2.LLCF.ASYNC_POOL;
-import static io.foldright.cffu2.LLCF.toNonMinCf0;
 import static io.foldright.cffu2.eh.SwallowedExceptionHandleUtils.handleAllSwallowedExceptions;
 import static io.foldright.cffu2.eh.SwallowedExceptionHandleUtils.handleSwallowedExceptions;
 import static io.foldright.cffu2.internal.CommonUtils.*;
@@ -291,7 +290,7 @@ public final class CfTupleUtils {
 
     private static <T> CompletableFuture<T> f_allSuccessTupleOf0(CompletionStage<?>[] stages) {
         return f_allTupleOf0(false, mapArray(stages, CommonUtils::createStageArray,
-                s -> covariantExceptionally(s, ex -> null)));
+                s -> LLCF.covariantExceptionally0(s, ex -> null)));
     }
 
     /**
@@ -435,7 +434,7 @@ public final class CfTupleUtils {
         // 2. SHOULD copy input cfs(by calling `exceptionally` method) to avoid memory leaks,
         //    otherwise all input cfs would be retained until output cf completes.
         CompletableFuture<?>[] cfArray = mapArray(stages, CompletableFuture[]::new,
-                s -> toNonMinCf0(s).exceptionally(v -> null));
+                s -> LLCF.toNonMinCf0(s).exceptionally(v -> null));
         return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, timeout, unit, executorWhenTimeout)
                 .handle((unused, ex) -> f_tupleOf0(f_mGetSuccessNow0(null, cfArray)));
     }

@@ -239,6 +239,24 @@ public final class LLCF {
     }
 
     /**
+     * Safely relax type argument restriction of input CompletionStage
+     * when using {@link CompletionStage#exceptionally(Function)}.
+     * <p>
+     * Example code:
+     * <pre>{@code CompletionStage<? extend T> stage = ...;
+     * Function<Throwable, ? extends T> fn = ...;
+     *
+     * CompletionStage<T> s1 = stage.exceptionally(fn);            // compile ERROR
+     * CompletionStage<T> s2 = covariantExceptionally0(stage, fn); // compile success
+     * }</pre>
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> CompletionStage<T> covariantExceptionally0(
+            CompletionStage<? extends T> stage, Function<Throwable, ? extends T> fn) {
+        return ((CompletionStage<T>) stage).exceptionally(fn);
+    }
+
+    /**
      * Provides the "relay async" way to arrange execution of a new stage's computations that guarantees the execution
      * of new stage's computations not in the caller thread and minimizes thread switching.
      * <blockquote>

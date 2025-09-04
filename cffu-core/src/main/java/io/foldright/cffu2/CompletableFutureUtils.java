@@ -418,13 +418,7 @@ public final class CompletableFutureUtils {
     static <T> CompletableFuture<List<T>> allSuccessResultsOf0(
             @Nullable T valueIfFailed, CompletionStage<? extends T>[] cfs) {
         return allResultsOf0(false, mapArray(cfs, CommonUtils::createStageArray,
-                s -> covariantExceptionally(s, ex -> valueIfFailed)));
-    }
-
-    @SuppressWarnings("unchecked")
-    static <T> CompletionStage<T> covariantExceptionally(
-            CompletionStage<? extends T> stage, Function<Throwable, ? extends T> fn) {
-        return ((CompletionStage<T>) stage).exceptionally(fn);
+                s -> covariantExceptionally0(s, ex -> valueIfFailed)));
     }
 
     /**
