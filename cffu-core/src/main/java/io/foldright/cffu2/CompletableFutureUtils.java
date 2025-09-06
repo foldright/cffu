@@ -939,13 +939,19 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
-        requireNonNull(cfThis, "cfThis is null");
-        requireNonNull(executor, "executor is null");
         // defensive shallow copy of input array argument by `clone`,
         //   since it is used asynchronously in `thenCompose` and could be mutated by caller (NOT thread-safe)
         // this same defensive copying pattern is used in similar methods below.
-        Function<? super T, ? extends U>[] copy = requireArrayAndEleNonNull("fn", fns).clone();
+        return _thenMApplyFailFastAsync(cfThis, executor, fns, true);
+    }
 
+    static <T, U> CompletableFuture<List<U>> _thenMApplyFailFastAsync(
+            CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>[] fns, boolean defensiveCopy) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("fn", fns);
+
+        final Function<? super T, ? extends U>[] copy = defensiveCopy ? fns.clone() : fns;
         return cfThis.thenCompose(v -> {
             CompletableFuture<U>[] inputs = wrapFunctions0(executor, v, copy);
             CompletableFuture<List<U>> ret = allResultsOf0(true, inputs);
@@ -984,10 +990,17 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<List<U>> thenMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
             @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
+        return _thenMApplyAllSuccessAsync(cfThis, executor, valueIfFailed, fns, true);
+    }
+
+    static <T, U> CompletableFuture<List<U>> _thenMApplyAllSuccessAsync(
+            CompletableFuture<? extends T> cfThis, Executor executor,
+            @Nullable U valueIfFailed, Function<? super T, ? extends U>[] fns, boolean defensiveCopy) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        Function<? super T, ? extends U>[] copy = requireArrayAndEleNonNull("fn", fns).clone();
+        requireArrayAndEleNonNull("fn", fns);
 
+        final Function<? super T, ? extends U>[] copy = defensiveCopy ? fns.clone() : fns;
         return cfThis.thenCompose(v -> {
             CompletableFuture<U>[] inputs = wrapFunctions0(executor, v, copy);
             handleAllSwallowedExceptions("thenMApplyAllSuccessAsync", inputs);
@@ -1025,11 +1038,18 @@ public final class CompletableFutureUtils {
     public static <T, U> CompletableFuture<List<U>> thenMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, @Nullable U valueIfNotSuccess,
             long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
+        return _thenMApplyMostSuccessAsync(cfThis, executor, valueIfNotSuccess, timeout, unit, fns, true);
+    }
+
+    static <T, U> CompletableFuture<List<U>> _thenMApplyMostSuccessAsync(
+            CompletableFuture<? extends T> cfThis, Executor executor, @Nullable U valueIfNotSuccess,
+            long timeout, TimeUnit unit, Function<? super T, ? extends U>[] fns, boolean defensiveCopy) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
         requireNonNull(unit, "unit is null");
-        Function<? super T, ? extends U>[] copy = requireArrayAndEleNonNull("fn", fns).clone();
+        requireArrayAndEleNonNull("fn", fns);
 
+        final Function<? super T, ? extends U>[] copy = defensiveCopy ? fns.clone() : fns;
         return cfThis.thenCompose(v -> {
             CompletableFuture<U>[] inputs = wrapFunctions0(executor, v, copy);
             handleAllSwallowedExceptions("thenMApplyMostSuccessAsync", inputs);
@@ -1066,10 +1086,16 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
+        return _thenMApplyAsync(cfThis, executor, fns, true);
+    }
+
+    static <T, U> CompletableFuture<List<U>> _thenMApplyAsync(
+            CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>[] fns, boolean defensiveCopy) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        Function<? super T, ? extends U>[] copy = requireArrayAndEleNonNull("fn", fns).clone();
+        requireArrayAndEleNonNull("fn", fns);
 
+        final Function<? super T, ? extends U>[] copy = defensiveCopy ? fns.clone() : fns;
         return cfThis.thenCompose(v -> {
             CompletableFuture<U>[] inputs = wrapFunctions0(executor, v, copy);
             CompletableFuture<List<U>> ret = allResultsOf0(false, inputs);
@@ -1107,10 +1133,16 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
+        return _thenMApplyAnySuccessAsync(cfThis, executor, fns, true);
+    }
+
+    static <T, U> CompletableFuture<U> _thenMApplyAnySuccessAsync(
+            CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>[] fns, boolean defensiveCopy) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        Function<? super T, ? extends U>[] copy = requireArrayAndEleNonNull("fn", fns).clone();
+        requireArrayAndEleNonNull("fn", fns);
 
+        final Function<? super T, ? extends U>[] copy = defensiveCopy ? fns.clone() : fns;
         return cfThis.thenCompose(v -> {
             CompletableFuture<U>[] inputs = wrapFunctions0(executor, v, copy);
             CompletableFuture<U> ret = anySuccessOf0(inputs);
@@ -1148,10 +1180,16 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
+        return _thenMApplyAnyAsync(cfThis, executor, fns, true);
+    }
+
+    static <T, U> CompletableFuture<U> _thenMApplyAnyAsync(
+            CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>[] fns, boolean defensiveCopy) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        Function<? super T, ? extends U>[] copy = requireArrayAndEleNonNull("fn", fns).clone();
+        requireArrayAndEleNonNull("fn", fns);
 
+        final Function<? super T, ? extends U>[] copy = defensiveCopy ? fns.clone() : fns;
         return cfThis.thenCompose(v -> {
             CompletableFuture<U>[] inputs = wrapFunctions0(executor, v, copy);
             CompletableFuture<U> ret = f_cast(CompletableFuture.anyOf(inputs));
@@ -1200,10 +1238,16 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
+        return _thenMAcceptFailFastAsync(cfThis, executor, actions, true);
+    }
+
+    static <T> CompletableFuture<Void> _thenMAcceptFailFastAsync(
+            CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>[] actions, boolean defensiveCopy) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        Consumer<? super T>[] copy = requireArrayAndEleNonNull("action", actions).clone();
+        requireArrayAndEleNonNull("action", actions);
 
+        final Consumer<? super T>[] copy = defensiveCopy ? actions.clone() : actions;
         return cfThis.thenCompose(v -> {
             CompletableFuture<Void>[] inputs = wrapConsumers0(executor, v, copy);
             CompletableFuture<Void> ret = allFailFastOf0(inputs);
@@ -1244,10 +1288,16 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
+        return _thenMAcceptAsync(cfThis, executor, actions, true);
+    }
+
+    static <T> CompletableFuture<Void> _thenMAcceptAsync(
+            CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>[] actions, boolean defensiveCopy) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        Consumer<? super T>[] copy = requireArrayAndEleNonNull("action", actions).clone();
+        requireArrayAndEleNonNull("action", actions);
 
+        final Consumer<? super T>[] copy = defensiveCopy ? actions.clone() : actions;
         return cfThis.thenCompose(v -> {
             CompletableFuture<Void>[] inputs = wrapConsumers0(executor, v, copy);
             CompletableFuture<Void> ret = CompletableFuture.allOf(inputs);
@@ -1290,10 +1340,16 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
+        return _thenMAcceptAnySuccessAsync(cfThis, executor, actions, true);
+    }
+
+    static <T> CompletableFuture<Void> _thenMAcceptAnySuccessAsync(
+            CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>[] actions, boolean defensiveCopy) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        Consumer<? super T>[] copy = requireArrayAndEleNonNull("action", actions).clone();
+        requireArrayAndEleNonNull("action", actions);
 
+        final Consumer<? super T>[] copy = defensiveCopy ? actions.clone() : actions;
         return cfThis.thenCompose(v -> {
             CompletableFuture<Void>[] inputs = wrapConsumers0(executor, v, copy);
             CompletableFuture<Void> ret = anySuccessOf0(inputs);
@@ -1336,10 +1392,16 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
+        return _thenMAcceptAnyAsync(cfThis, executor, actions, true);
+    }
+
+    static <T> CompletableFuture<Void> _thenMAcceptAnyAsync(
+            CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>[] actions, boolean defensiveCopy) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        Consumer<? super T>[] copy = requireArrayAndEleNonNull("action", actions).clone();
+        requireArrayAndEleNonNull("action", actions);
 
+        final Consumer<? super T>[] copy = defensiveCopy ? actions.clone() : actions;
         return cfThis.thenCompose(v -> {
             CompletableFuture<Void>[] inputs = wrapConsumers0(executor, v, copy);
             CompletableFuture<Void> ret = f_cast(CompletableFuture.anyOf(inputs));
@@ -1372,10 +1434,16 @@ public final class CompletableFutureUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
     public static CompletableFuture<Void> thenMRunFailFastAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
+        return _thenMRunFailFastAsync(cfThis, executor, actions, true);
+    }
+
+    static CompletableFuture<Void> _thenMRunFailFastAsync(
+            CompletableFuture<?> cfThis, Executor executor, Runnable[] actions, boolean defensiveCopy) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        Runnable[] copy = requireArrayAndEleNonNull("action", actions).clone();
+        requireArrayAndEleNonNull("action", actions);
 
+        final Runnable[] copy = defensiveCopy ? actions.clone() : actions;
         return cfThis.thenCompose(unused -> {
             CompletableFuture<Void>[] inputs = wrapRunnables0(executor, copy);
             CompletableFuture<Void> ret = allFailFastOf0(inputs);
@@ -1402,10 +1470,16 @@ public final class CompletableFutureUtils {
      */
     public static CompletableFuture<Void> thenMRunAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
+        return _thenMRunAsync(cfThis, executor, actions, true);
+    }
+
+    static CompletableFuture<Void> _thenMRunAsync(
+            CompletableFuture<?> cfThis, Executor executor, Runnable[] actions, boolean defensiveCopy) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        Runnable[] copy = requireArrayAndEleNonNull("action", actions).clone();
+        requireArrayAndEleNonNull("action", actions);
 
+        final Runnable[] copy = defensiveCopy ? actions.clone() : actions;
         return cfThis.thenCompose(unused -> {
             CompletableFuture<Void>[] inputs = wrapRunnables0(executor, copy);
             CompletableFuture<Void> ret = CompletableFuture.allOf(inputs);
@@ -1434,10 +1508,16 @@ public final class CompletableFutureUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
     public static CompletableFuture<Void> thenMRunAnySuccessAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
+        return _thenMRunAnySuccessAsync(cfThis, executor, actions, true);
+    }
+
+    public static CompletableFuture<Void> _thenMRunAnySuccessAsync(
+            CompletableFuture<?> cfThis, Executor executor, Runnable[] actions, boolean defensiveCopy) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        Runnable[] copy = requireArrayAndEleNonNull("action", actions).clone();
+        requireArrayAndEleNonNull("action", actions);
 
+        final Runnable[] copy = defensiveCopy ? actions.clone() : actions;
         return cfThis.thenCompose(unused -> {
             CompletableFuture<Void>[] inputs = wrapRunnables0(executor, copy);
             CompletableFuture<Void> ret = anySuccessOf0(inputs);
@@ -1466,10 +1546,16 @@ public final class CompletableFutureUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
     public static CompletableFuture<Void> thenMRunAnyAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
+        return _thenMRunAnyAsync(cfThis, executor, actions, true);
+    }
+
+    static CompletableFuture<Void> _thenMRunAnyAsync(
+            CompletableFuture<?> cfThis, Executor executor, Runnable[] actions, boolean defensiveCopy) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
-        Runnable[] copy = requireArrayAndEleNonNull("action", actions).clone();
+        requireArrayAndEleNonNull("action", actions);
 
+        final Runnable[] copy = defensiveCopy ? actions.clone() : actions;
         return cfThis.thenCompose(unused -> {
             CompletableFuture<Void>[] inputs = wrapRunnables0(executor, copy);
             CompletableFuture<Void> ret = f_cast(CompletableFuture.anyOf(inputs));

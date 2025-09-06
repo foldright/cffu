@@ -2501,7 +2501,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      *
      * @see CfIterableUtils
      */
-    public IterableOps iterableOps() {
+    public final IterableOps iterableOps() {
         return new IterableOps();
     }
 

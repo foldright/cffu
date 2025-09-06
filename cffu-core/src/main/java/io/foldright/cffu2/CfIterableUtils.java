@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static io.foldright.cffu2.CompletableFutureUtils.*;
 import static io.foldright.cffu2.internal.CommonUtils.toArray;
 
 
@@ -344,7 +345,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U> CompletableFuture<List<U>> thenMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis, Iterable<? extends Function<? super T, ? extends U>> fns) {
-        return CompletableFutureUtils.thenMApplyFailFastAsync(cfThis, toFunctionArray(fns));
+        return thenMApplyFailFastAsync(cfThis, fns, defaultExecutor(cfThis));
     }
 
     /**
@@ -353,7 +354,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U> CompletableFuture<List<U>> thenMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis, Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
-        return CompletableFutureUtils.thenMApplyFailFastAsync(cfThis, executor, toFunctionArray(fns));
+        return _thenMApplyFailFastAsync(cfThis, executor, toFunctionArray(fns), false);
     }
 
     /**
@@ -362,7 +363,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U> CompletableFuture<List<U>> thenMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, @Nullable U valueIfFailed, Iterable<? extends Function<? super T, ? extends U>> fns) {
-        return CompletableFutureUtils.thenMApplyAllSuccessAsync(cfThis, valueIfFailed, toFunctionArray(fns));
+        return thenMApplyAllSuccessAsync(cfThis, valueIfFailed, fns, defaultExecutor(cfThis));
     }
 
     /**
@@ -372,7 +373,7 @@ public final class CfIterableUtils {
     public static <T, U> CompletableFuture<List<U>> thenMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, @Nullable U valueIfFailed,
             Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
-        return CompletableFutureUtils.thenMApplyAllSuccessAsync(cfThis, executor, valueIfFailed, toFunctionArray(fns));
+        return _thenMApplyAllSuccessAsync(cfThis, executor, valueIfFailed, toFunctionArray(fns), false);
     }
 
     /**
@@ -382,7 +383,7 @@ public final class CfIterableUtils {
     public static <T, U> CompletableFuture<List<U>> thenMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, @Nullable U valueIfNotSuccess,
             long timeout, TimeUnit unit, Iterable<? extends Function<? super T, ? extends U>> fns) {
-        return CompletableFutureUtils.thenMApplyMostSuccessAsync(cfThis, valueIfNotSuccess, timeout, unit, toFunctionArray(fns));
+        return thenMApplyMostSuccessAsync(cfThis, valueIfNotSuccess, timeout, unit, fns, defaultExecutor(cfThis));
     }
 
     /**
@@ -392,8 +393,7 @@ public final class CfIterableUtils {
     public static <T, U> CompletableFuture<List<U>> thenMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, @Nullable U valueIfNotSuccess,
             long timeout, TimeUnit unit, Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
-        return CompletableFutureUtils.thenMApplyMostSuccessAsync(
-                cfThis, executor, valueIfNotSuccess, timeout, unit, toFunctionArray(fns));
+        return _thenMApplyMostSuccessAsync(cfThis, executor, valueIfNotSuccess, timeout, unit, toFunctionArray(fns), false);
     }
 
     /**
@@ -402,7 +402,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U> CompletableFuture<List<U>> thenMApplyAsync(
             CompletableFuture<? extends T> cfThis, Iterable<? extends Function<? super T, ? extends U>> fns) {
-        return CompletableFutureUtils.thenMApplyAsync(cfThis, toFunctionArray(fns));
+        return thenMApplyAsync(cfThis, fns, defaultExecutor(cfThis));
     }
 
     /**
@@ -411,7 +411,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U> CompletableFuture<List<U>> thenMApplyAsync(
             CompletableFuture<? extends T> cfThis, Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
-        return CompletableFutureUtils.thenMApplyAsync(cfThis, executor, toFunctionArray(fns));
+        return _thenMApplyAsync(cfThis, executor, toFunctionArray(fns), false);
     }
 
     /**
@@ -420,7 +420,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U> CompletableFuture<U> thenMApplyAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Iterable<? extends Function<? super T, ? extends U>> fns) {
-        return CompletableFutureUtils.thenMApplyAnySuccessAsync(cfThis, toFunctionArray(fns));
+        return thenMApplyAnySuccessAsync(cfThis, fns, defaultExecutor(cfThis));
     }
 
     /**
@@ -429,7 +429,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U> CompletableFuture<U> thenMApplyAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
-        return CompletableFutureUtils.thenMApplyAnySuccessAsync(cfThis, executor, toFunctionArray(fns));
+        return _thenMApplyAnySuccessAsync(cfThis, executor, toFunctionArray(fns), false);
     }
 
     /**
@@ -438,7 +438,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U> CompletableFuture<U> thenMApplyAnyAsync(
             CompletableFuture<? extends T> cfThis, Iterable<? extends Function<? super T, ? extends U>> fns) {
-        return CompletableFutureUtils.thenMApplyAnyAsync(cfThis, toFunctionArray(fns));
+        return thenMApplyAnyAsync(cfThis, fns, defaultExecutor(cfThis));
     }
 
     /**
@@ -447,7 +447,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T, U> CompletableFuture<U> thenMApplyAnyAsync(
             CompletableFuture<? extends T> cfThis, Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
-        return CompletableFutureUtils.thenMApplyAnyAsync(cfThis, executor, toFunctionArray(fns));
+        return _thenMApplyAnyAsync(cfThis, executor, toFunctionArray(fns), false);
     }
 
     @SuppressWarnings("unchecked")
@@ -465,7 +465,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T> CompletableFuture<Void> thenMAcceptFailFastAsync(
             CompletableFuture<? extends T> cfThis, Iterable<? extends Consumer<? super T>> actions) {
-        return CompletableFutureUtils.thenMAcceptFailFastAsync(cfThis, toConsumerArray(actions));
+        return thenMAcceptFailFastAsync(cfThis, actions, defaultExecutor(cfThis));
     }
 
     /**
@@ -474,7 +474,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T> CompletableFuture<Void> thenMAcceptFailFastAsync(
             CompletableFuture<? extends T> cfThis, Iterable<? extends Consumer<? super T>> actions, Executor executor) {
-        return CompletableFutureUtils.thenMAcceptFailFastAsync(cfThis, executor, toConsumerArray(actions));
+        return _thenMAcceptFailFastAsync(cfThis, executor, toConsumerArray(actions), false);
     }
 
     /**
@@ -482,7 +482,7 @@ public final class CfIterableUtils {
      */
     public static <T> CompletableFuture<Void> thenMAcceptAsync(
             CompletableFuture<? extends T> cfThis, Iterable<? extends Consumer<? super T>> actions) {
-        return CompletableFutureUtils.thenMAcceptAsync(cfThis, toConsumerArray(actions));
+        return thenMAcceptAsync(cfThis, actions, defaultExecutor(cfThis));
     }
 
     /**
@@ -490,7 +490,7 @@ public final class CfIterableUtils {
      */
     public static <T> CompletableFuture<Void> thenMAcceptAsync(
             CompletableFuture<? extends T> cfThis, Iterable<? extends Consumer<? super T>> actions, Executor executor) {
-        return CompletableFutureUtils.thenMAcceptAsync(cfThis, executor, toConsumerArray(actions));
+        return _thenMAcceptAsync(cfThis, executor, toConsumerArray(actions), false);
     }
 
     /**
@@ -499,7 +499,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T> CompletableFuture<Void> thenMAcceptAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Iterable<? extends Consumer<? super T>> actions) {
-        return CompletableFutureUtils.thenMAcceptAnySuccessAsync(cfThis, toConsumerArray(actions));
+        return thenMAcceptAnySuccessAsync(cfThis, actions, defaultExecutor(cfThis));
     }
 
     /**
@@ -508,7 +508,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T> CompletableFuture<Void> thenMAcceptAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Iterable<? extends Consumer<? super T>> actions, Executor executor) {
-        return CompletableFutureUtils.thenMAcceptAnySuccessAsync(cfThis, executor, toConsumerArray(actions));
+        return _thenMAcceptAnySuccessAsync(cfThis, executor, toConsumerArray(actions), false);
     }
 
     /**
@@ -517,7 +517,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T> CompletableFuture<Void> thenMAcceptAnyAsync(
             CompletableFuture<? extends T> cfThis, Iterable<? extends Consumer<? super T>> actions) {
-        return CompletableFutureUtils.thenMAcceptAnyAsync(cfThis, toConsumerArray(actions));
+        return thenMAcceptAnyAsync(cfThis, actions, defaultExecutor(cfThis));
     }
 
     /**
@@ -526,7 +526,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
     public static <T> CompletableFuture<Void> thenMAcceptAnyAsync(
             CompletableFuture<? extends T> cfThis, Iterable<? extends Consumer<? super T>> actions, Executor executor) {
-        return CompletableFutureUtils.thenMAcceptAnyAsync(cfThis, executor, toConsumerArray(actions));
+        return _thenMAcceptAnyAsync(cfThis, executor, toConsumerArray(actions), false);
     }
 
     @SuppressWarnings("unchecked")
@@ -542,8 +542,8 @@ public final class CfIterableUtils {
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
     public static CompletableFuture<Void> thenMRunFailFastAsync(
-                CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions) {
-        return CompletableFutureUtils.thenMRunFailFastAsync(cfThis, toRunnableArray(actions));
+            CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions) {
+        return thenMRunFailFastAsync(cfThis, actions, defaultExecutor(cfThis));
     }
 
     /**
@@ -552,14 +552,14 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
     public static CompletableFuture<Void> thenMRunFailFastAsync(
             CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions, Executor executor) {
-        return CompletableFutureUtils.thenMRunFailFastAsync(cfThis, executor, toRunnableArray(actions));
+        return _thenMRunFailFastAsync(cfThis, executor, toRunnableArray(actions), false);
     }
 
     /**
      * Iterable variant of {@link CompletableFutureUtils#thenMRunAsync(CompletableFuture, Runnable...)}.
      */
     public static CompletableFuture<Void> thenMRunAsync(CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions) {
-        return CompletableFutureUtils.thenMRunAsync(cfThis, toRunnableArray(actions));
+        return thenMRunAsync(cfThis, actions, defaultExecutor(cfThis));
     }
 
     /**
@@ -567,7 +567,7 @@ public final class CfIterableUtils {
      */
     public static CompletableFuture<Void> thenMRunAsync(
             CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions, Executor executor) {
-        return CompletableFutureUtils.thenMRunAsync(cfThis, executor, toRunnableArray(actions));
+        return _thenMRunAsync(cfThis, executor, toRunnableArray(actions), false);
     }
 
     /**
@@ -576,7 +576,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
     public static CompletableFuture<Void> thenMRunAnySuccessAsync(
             CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions) {
-        return CompletableFutureUtils.thenMRunAnySuccessAsync(cfThis, toRunnableArray(actions));
+        return thenMRunAnySuccessAsync(cfThis, actions, defaultExecutor(cfThis));
     }
 
     /**
@@ -585,7 +585,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
     public static CompletableFuture<Void> thenMRunAnySuccessAsync(
             CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions, Executor executor) {
-        return CompletableFutureUtils.thenMRunAnySuccessAsync(cfThis, executor, toRunnableArray(actions));
+        return _thenMRunAnySuccessAsync(cfThis, executor, toRunnableArray(actions), false);
     }
 
     /**
@@ -593,7 +593,7 @@ public final class CfIterableUtils {
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
     public static CompletableFuture<Void> thenMRunAnyAsync(CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions) {
-        return CompletableFutureUtils.thenMRunAnyAsync(cfThis, toRunnableArray(actions));
+        return thenMRunAnyAsync(cfThis, actions, defaultExecutor(cfThis));
     }
 
     /**
@@ -602,7 +602,7 @@ public final class CfIterableUtils {
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
     public static CompletableFuture<Void> thenMRunAnyAsync(
             CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions, Executor executor) {
-        return CompletableFutureUtils.thenMRunAnyAsync(cfThis, executor, toRunnableArray(actions));
+        return _thenMRunAnyAsync(cfThis, executor, toRunnableArray(actions), false);
     }
 
     private CfIterableUtils() {}
