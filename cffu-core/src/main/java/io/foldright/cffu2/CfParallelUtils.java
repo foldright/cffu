@@ -17,7 +17,6 @@ import static io.foldright.cffu2.LLCF.ASYNC_POOL;
 import static io.foldright.cffu2.LLCF.f_cast;
 import static io.foldright.cffu2.eh.SwallowedExceptionHandleUtils.handleAllSwallowedExceptions;
 import static io.foldright.cffu2.eh.SwallowedExceptionHandleUtils.handleSwallowedExceptions;
-import static io.foldright.cffu2.internal.CommonUtils.toArray;
 import static java.util.Objects.requireNonNull;
 
 
@@ -79,9 +78,14 @@ public final class CfParallelUtils {
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
+        return parApplyFailFastAsync0(elements, fn, executor, "parApplyFailFastAsync");
+    }
+
+    private static <T, U> CompletableFuture<List<U>> parApplyFailFastAsync0(
+            Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor, String where) {
         CompletableFuture<U>[] cfs = wrapEleFunction0(elements, fn, executor);
         CompletableFuture<List<U>> ret = allResultsOf0(true, cfs);
-        handleSwallowedExceptions("parApplyFailFastAsync", ret, cfs);
+        handleSwallowedExceptions(where, ret, cfs);
         return ret;
     }
 
@@ -107,14 +111,19 @@ public final class CfParallelUtils {
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
     public static <T, U> CompletableFuture<List<U>> parApplyAllSuccessAsync(
-            Iterable<? extends T> elements, @Nullable U valueIfFailed,
-            Function<? super T, ? extends U> fn, Executor executor) {
+            Iterable<? extends T> elements, @Nullable U valueIfFailed, Function<? super T, ? extends U> fn, Executor executor) {
         requireNonNull(elements, "elements is null");
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
+        return parApplyAllSuccessAsync0(elements, valueIfFailed, fn, executor, "parApplyAllSuccessAsync");
+    }
+
+    private static <T, U> CompletableFuture<List<U>> parApplyAllSuccessAsync0(
+            Iterable<? extends T> elements, @Nullable U valueIfFailed,
+            Function<? super T, ? extends U> fn, Executor executor, String where) {
         CompletableFuture<U>[] cfs = wrapEleFunction0(elements, fn, executor);
-        handleAllSwallowedExceptions("parApplyAllSuccessAsync", cfs);
+        handleAllSwallowedExceptions(where, cfs);
         return allSuccessResultsOf0(valueIfFailed, cfs);
     }
 
@@ -127,8 +136,8 @@ public final class CfParallelUtils {
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
     public static <T, U> CompletableFuture<List<U>> parApplyMostSuccessAsync(
-            Iterable<? extends T> elements, @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
-            Function<? super T, ? extends U> fn) {
+            Iterable<? extends T> elements, @Nullable U valueIfNotSuccess,
+            long timeout, TimeUnit unit, Function<? super T, ? extends U> fn) {
         return parApplyMostSuccessAsync(elements, valueIfNotSuccess, timeout, unit, fn, ASYNC_POOL);
     }
 
@@ -141,15 +150,21 @@ public final class CfParallelUtils {
      */
     @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
     public static <T, U> CompletableFuture<List<U>> parApplyMostSuccessAsync(
-            Iterable<? extends T> elements, @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
-            Function<? super T, ? extends U> fn, Executor executor) {
+            Iterable<? extends T> elements, @Nullable U valueIfNotSuccess,
+            long timeout, TimeUnit unit, Function<? super T, ? extends U> fn, Executor executor) {
         requireNonNull(elements, "elements is null");
         requireNonNull(unit, "unit is null");
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
+        return parApplyMostSuccessAsync0(elements, valueIfNotSuccess, timeout, unit, fn, executor, "parApplyMostSuccessAsync");
+    }
+
+    private static <T, U> CompletableFuture<List<U>> parApplyMostSuccessAsync0(
+            Iterable<? extends T> elements, @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
+            Function<? super T, ? extends U> fn, Executor executor, String where) {
         CompletableFuture<U>[] cfs = wrapEleFunction0(elements, fn, executor);
-        handleAllSwallowedExceptions("parApplyMostSuccessAsync", cfs);
+        handleAllSwallowedExceptions(where, cfs);
         return mostSuccessResultsOf0(executor, valueIfNotSuccess, timeout, unit, cfs);
     }
 
@@ -180,9 +195,14 @@ public final class CfParallelUtils {
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
+        return parApplyAsync0(elements, fn, executor, "parApplyAsync");
+    }
+
+    private static <T, U> CompletableFuture<List<U>> parApplyAsync0(
+            Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor, String where) {
         CompletableFuture<U>[] cfs = wrapEleFunction0(elements, fn, executor);
         CompletableFuture<List<U>> ret = allResultsOf0(false, cfs);
-        handleSwallowedExceptions("parApplyAsync", ret, cfs);
+        handleSwallowedExceptions(where, ret, cfs);
         return ret;
     }
 
@@ -213,9 +233,14 @@ public final class CfParallelUtils {
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
+        return parApplyAnySuccessAsync0(elements, fn, executor, "parApplyAnySuccessAsync");
+    }
+
+    private static <T, U> CompletableFuture<U> parApplyAnySuccessAsync0(
+            Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor, String where) {
         CompletableFuture<U>[] cfs = wrapEleFunction0(elements, fn, executor);
         CompletableFuture<U> ret = anySuccessOf0(cfs);
-        handleSwallowedExceptions("parApplyAnySuccessAsync", ret, cfs);
+        handleSwallowedExceptions(where, ret, cfs);
         return ret;
     }
 
@@ -246,15 +271,20 @@ public final class CfParallelUtils {
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
+        return parApplyAnyAsync0(elements, fn, executor, "parApplyAnyAsync");
+    }
+
+    private static <T, U> CompletableFuture<U> parApplyAnyAsync0(
+            Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor, String where) {
         CompletableFuture<U>[] cfs = wrapEleFunction0(elements, fn, executor);
         CompletableFuture<U> ret = f_cast(CompletableFuture.anyOf(cfs));
-        handleSwallowedExceptions("parApplyAnyAsync", ret, cfs);
+        handleSwallowedExceptions(where, ret, cfs);
         return ret;
     }
 
     private static <T, U> CompletableFuture<U>[] wrapEleFunction0(
             Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
-        return toArray(elements, CommonUtils::createCfArray,
+        return CommonUtils.toArray(elements, CommonUtils::createCfArray,
                 e -> CompletableFuture.supplyAsync(() -> fn.apply(e), executor));
     }
 
@@ -285,9 +315,14 @@ public final class CfParallelUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
+        return parAcceptFailFastAsync0(elements, action, executor, "parAcceptFailFastAsync");
+    }
+
+    private static <T> CompletableFuture<Void> parAcceptFailFastAsync0(
+            Iterable<? extends T> elements, Consumer<? super T> action, Executor executor, String where) {
         CompletableFuture<Void>[] inputs = wrapEleConsumer0(elements, action, executor);
         CompletableFuture<Void> ret = allFailFastOf0(inputs);
-        handleSwallowedExceptions("parAcceptFailFastAsync", ret, inputs);
+        handleSwallowedExceptions(where, ret, inputs);
         return ret;
     }
 
@@ -316,9 +351,14 @@ public final class CfParallelUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
+        return parAcceptAsync0(elements, action, executor, "parAcceptAsync");
+    }
+
+    private static <T> CompletableFuture<Void> parAcceptAsync0(
+            Iterable<? extends T> elements, Consumer<? super T> action, Executor executor, String where) {
         CompletableFuture<Void>[] inputs = wrapEleConsumer0(elements, action, executor);
         CompletableFuture<Void> ret = CompletableFuture.allOf(inputs);
-        handleSwallowedExceptions("parAcceptAsync", ret, inputs);
+        handleSwallowedExceptions(where, ret, inputs);
         return ret;
     }
 
@@ -349,9 +389,14 @@ public final class CfParallelUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
+        return parAcceptAnySuccessAsync0(elements, action, executor, "parAcceptAnySuccessAsync");
+    }
+
+    private static <T> CompletableFuture<Void> parAcceptAnySuccessAsync0(
+            Iterable<? extends T> elements, Consumer<? super T> action, Executor executor, String where) {
         CompletableFuture<Void>[] inputs = wrapEleConsumer0(elements, action, executor);
         CompletableFuture<Void> ret = anySuccessOf0(inputs);
-        handleSwallowedExceptions("parAcceptAnySuccessAsync", ret, inputs);
+        handleSwallowedExceptions(where, ret, inputs);
         return ret;
     }
 
@@ -382,15 +427,20 @@ public final class CfParallelUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
+        return parAcceptAnyAsync0(elements, action, executor, "parAcceptAnyAsync");
+    }
+
+    private static <T> CompletableFuture<Void> parAcceptAnyAsync0(
+            Iterable<? extends T> elements, Consumer<? super T> action, Executor executor, String where) {
         CompletableFuture<Void>[] inputs = wrapEleConsumer0(elements, action, executor);
         CompletableFuture<Void> ret = f_cast(CompletableFuture.anyOf(inputs));
-        handleSwallowedExceptions("parAcceptAnyAsync", ret, inputs);
+        handleSwallowedExceptions(where, ret, inputs);
         return ret;
     }
 
     private static <T> CompletableFuture<Void>[] wrapEleConsumer0(
             Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
-        return toArray(elements, CommonUtils::createCfArray,
+        return CommonUtils.toArray(elements, CommonUtils::createCfArray,
                 e -> CompletableFuture.runAsync(() -> action.accept(e), executor));
     }
 
@@ -429,7 +479,7 @@ public final class CfParallelUtils {
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
-        return cfThis.thenCompose(elements -> parApplyFailFastAsync(elements, fn, executor));
+        return cfThis.thenCompose(elements -> parApplyFailFastAsync0(elements, fn, executor, "thenParApplyFailFastAsync"));
     }
 
     /**
@@ -461,7 +511,8 @@ public final class CfParallelUtils {
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
-        return cfThis.thenCompose(elements -> parApplyAllSuccessAsync(elements, valueIfFailed, fn, executor));
+        return cfThis.thenCompose(elements -> parApplyAllSuccessAsync0(
+                elements, valueIfFailed, fn, executor, "thenParApplyAllSuccessAsync"));
     }
 
     /**
@@ -494,7 +545,8 @@ public final class CfParallelUtils {
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
-        return cfThis.thenCompose(elements -> parApplyMostSuccessAsync(elements, valueIfNotSuccess, timeout, unit, fn, executor));
+        return cfThis.thenCompose(elements -> parApplyMostSuccessAsync0(
+                elements, valueIfNotSuccess, timeout, unit, fn, executor, "thenParApplyMostSuccessAsync"));
     }
 
     /**
@@ -524,7 +576,7 @@ public final class CfParallelUtils {
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
-        return cfThis.thenCompose(elements -> parApplyAsync(elements, fn, executor));
+        return cfThis.thenCompose(elements -> parApplyAsync0(elements, fn, executor, "thenParApplyAsync"));
     }
 
     /**
@@ -554,7 +606,7 @@ public final class CfParallelUtils {
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
-        return cfThis.thenCompose(elements -> parApplyAnySuccessAsync(elements, fn, executor));
+        return cfThis.thenCompose(elements -> parApplyAnySuccessAsync0(elements, fn, executor, "thenParApplyAnySuccessAsync"));
     }
 
     /**
@@ -584,7 +636,7 @@ public final class CfParallelUtils {
         requireNonNull(fn, "fn is null");
         requireNonNull(executor, "executor is null");
 
-        return cfThis.thenCompose(elements -> parApplyAnyAsync(elements, fn, executor));
+        return cfThis.thenCompose(elements -> parApplyAnyAsync0(elements, fn, executor, "thenParApplyAnyAsync"));
     }
 
     /**
@@ -614,7 +666,8 @@ public final class CfParallelUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return cfThis.thenCompose(elements -> parAcceptFailFastAsync(elements, action, executor));
+        return cfThis.thenCompose(elements -> parAcceptFailFastAsync0(
+                elements, action, executor, "thenParAcceptFailFastAsync"));
     }
 
     /**
@@ -642,7 +695,7 @@ public final class CfParallelUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return cfThis.thenCompose(elements -> parAcceptAsync(elements, action, executor));
+        return cfThis.thenCompose(elements -> parAcceptAsync0(elements, action, executor, "thenParAcceptAsync"));
     }
 
     /**
@@ -672,7 +725,8 @@ public final class CfParallelUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return cfThis.thenCompose(elements -> parAcceptAnySuccessAsync(elements, action, executor));
+        return cfThis.thenCompose(elements -> parAcceptAnySuccessAsync0(
+                elements, action, executor, "thenParAcceptAnySuccessAsync"));
     }
 
     /**
@@ -702,7 +756,7 @@ public final class CfParallelUtils {
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        return cfThis.thenCompose(elements -> parAcceptAnyAsync(elements, action, executor));
+        return cfThis.thenCompose(elements -> parAcceptAnyAsync0(elements, action, executor, "thenParAcceptAnyAsync"));
     }
 
     private CfParallelUtils() {}
