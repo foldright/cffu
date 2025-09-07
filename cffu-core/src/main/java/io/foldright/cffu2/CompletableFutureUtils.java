@@ -39,7 +39,7 @@ public final class CompletableFutureUtils {
      *
      * - methods with `f_` prefix means not type-safe, e.g.
      *    - return type CompletableFuture that may be a minimal-stage
-     *    - force cast to CompletableFuture<T> from any CompletableFuture<?>
+     *    - forcefully cast to CompletableFuture<T> from any CompletableFuture<?>
      *    - return generic type T but constrained runtime type TupleX
      * - methods with `0` suffix means no parameter validation, e.g.
      *    - no null check
@@ -2588,8 +2588,7 @@ public final class CompletableFutureUtils {
      *
      * <pre>{@code result = cf.copy() // defensive copy to avoid writing this cf unexpectedly
      *     .orTimeout(timeout, unit)
-     *     .join();
-     * }</pre>
+     *     .join();}</pre>
      *
      * @param timeout the maximum time to wait
      * @param unit    the time unit of the timeout argument
@@ -2640,8 +2639,7 @@ public final class CompletableFutureUtils {
      * <pre>{@code results = futures.stream()
      *     .filter(f -> f.state() == Future.State.SUCCESS)
      *     .map(Future::resultNow)
-     *     .toList();
-     * }</pre>
+     *     .toList();}</pre>
      *
      * @return the computed result
      * @throws IllegalStateException if the task has not completed or the task did not complete with a result
@@ -2943,6 +2941,17 @@ public final class CompletableFutureUtils {
     /**
      * Wraps an exception-handling {@code Function} to ensure that if the handling throws a new exception,
      * the error context is preserved by calling {@link Throwable#addSuppressed}.
+     * <p>
+     * Example usage with {@link CompletableFuture#exceptionally CompletableFuture#exceptionally},
+     * {@link CompletableFuture#exceptionallyCompose CompletableFuture#exceptionallyCompose}
+     * {@link CompletableFutureUtils#catching CompletableFutureUtils#catching}
+     * or {@link CompletableFutureUtils#catchingCompose CompletableFutureUtils#catching}:
+     * <pre>{@code  cf.exceptionally(nonExSwallowedFunction(fn, false));
+     * CompletableFutureUtils.catching(cf, exceptionType, nonExSwallowedFunction(fallback, false));}</pre>
+     * <p>
+     * For more details on exception swallowing in exception handling methods, see the test cases in <a href=
+     * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/aspect_test/ExSwallowingOfExHandlingMethodsTests.kt"
+     * >ExSwallowingOfExHandlingMethodsTests</a>.
      *
      * @param addSuppressedToOriginalEx if true, the new exception is added as a suppressed exception to the original exception;
      *                                  otherwise, the original exception is added as a suppressed exception to the new exception
@@ -2970,6 +2979,13 @@ public final class CompletableFutureUtils {
     /**
      * Wraps an exception-handling {@code BiFunction} to ensure that if the handling throws a new exception,
      * the error context is preserved by calling {@link Throwable#addSuppressed}.
+     * <p>
+     * Example usage with {@link CompletableFuture#handle}:
+     * <pre>{@code cf.handle(nonExSwallowedBiFunction(fn, false));}</pre>
+     * <p>
+     * For more details on exception swallowing in exception handling methods, see the test cases in <a href=
+     * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/aspect_test/ExSwallowingOfExHandlingMethodsTests.kt"
+     * >ExSwallowingOfExHandlingMethodsTests</a>.
      *
      * @param addSuppressedToOriginalEx if true, the new exception is added as a suppressed exception to the original exception;
      *                                  otherwise, the original exception is added as a suppressed exception to the new exception
@@ -2997,6 +3013,13 @@ public final class CompletableFutureUtils {
     /**
      * Wraps an exception-handling {@code BiConsumer} to ensure that if the handling throws a new exception,
      * the error context is preserved by calling {@link Throwable#addSuppressed}.
+     * <p>
+     * Example usage with {@link CompletableFuture#whenComplete}:
+     * <pre>{@code cf.whenComplete(nonExSwallowedBiConsumer(action, true));}</pre>
+     * <p>
+     * For more details on exception swallowing in exception handling methods, see the test cases in <a href=
+     * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/aspect_test/ExSwallowingOfExHandlingMethodsTests.kt"
+     * >ExSwallowingOfExHandlingMethodsTests</a>.
      *
      * @param addSuppressedToOriginalEx if true, the new exception is added as a suppressed exception to the original exception;
      *                                  otherwise, the original exception is added as a suppressed exception to the new exception

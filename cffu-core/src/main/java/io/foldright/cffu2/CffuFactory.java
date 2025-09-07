@@ -85,7 +85,7 @@ public final class CffuFactory {
         return new Cffu<>(this, false, cf);
     }
 
-    private <E, U extends Iterable<? extends E>> MCffu<E, U> createMCffu(CompletableFuture<U> cf) {
+    private <E, T extends Iterable<? extends E>> MCffu<E, T> createMCffu(CompletableFuture<T> cf) {
         return new MCffu<>(this, false, cf);
     }
 
@@ -739,10 +739,10 @@ public final class CffuFactory {
      * @see CompletionStage#toCompletableFuture()
      */
     @Contract(pure = true)
-    public <E, U extends Iterable<? extends E>> MCffu<E, U> toMCffu(CompletionStage<U> stage) {
+    public <E, T extends Iterable<? extends E>> MCffu<E, T> toMCffu(CompletionStage<T> stage) {
         requireNonNull(stage, "stage is null");
         if (stage instanceof MCffu) {
-            MCffu<E, U> f = ((MCffu<E, U>) stage);
+            MCffu<E, T> f = ((MCffu<E, T>) stage);
             if (f.fac == this && !f.isMinimalStage) return f;
         }
         return createMCffu(stage.toCompletableFuture());
@@ -777,7 +777,7 @@ public final class CffuFactory {
      * @see CompletableFuture#CompletableFuture()
      */
     @Contract(pure = true)
-    public <E, U extends Iterable<? extends E>> MCffu<E, U> newIncompleteMCffu() {
+    public <E, T extends Iterable<? extends E>> MCffu<E, T> newIncompleteMCffu() {
         return createMCffu(new CompletableFuture<>());
     }
 

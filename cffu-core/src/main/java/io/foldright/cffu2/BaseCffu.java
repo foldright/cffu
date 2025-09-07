@@ -1965,8 +1965,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      *
      * <pre>{@code result = cffu.copy() // defensive copy to avoid writing this cffu unexpectedly
      *     .orTimeout(timeout, unit)
-     *     .join();
-     * }</pre>
+     *     .join();}</pre>
      *
      * @param timeout the maximum time to wait
      * @param unit    the time unit of the timeout argument
@@ -2025,8 +2024,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <pre>{@code results = futures.stream()
      *     .filter(f -> f.state() == Future.State.SUCCESS)
      *     .map(Future::resultNow)
-     *     .toList();
-     * }</pre>
+     *     .toList();}</pre>
      *
      * @return the computed result
      * @throws IllegalStateException if the task has not completed or the task did not complete with a result
@@ -2267,8 +2265,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      *
      * <pre>{@code cffu2 = cffu
      *     .withDefaultExecutor(executor2) // reset to use executor2
-     *     .minimalCompletionStage();      // restrict to methods of CompletionStage
-     * }</pre>
+     *     .minimalCompletionStage();      // restrict to methods of CompletionStage}</pre>
      * <p>
      * <strong>CAUTION:</strong> if run on old Java 8 (which does not support *minimal* CompletionStage),
      * this method just returns a *normal* Cffu instance which is NOT a *minimal* CompletionStage.
@@ -2288,8 +2285,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      *
      * <pre>{@code cffu2 = cffu
      *     .withDefaultExecutor(executor2) // reset to use executor2
-     *     .minimalCompletionStage();      // restrict to methods of CompletionStage
-     * }</pre>
+     *     .minimalCompletionStage();      // restrict to methods of CompletionStage}</pre>
      *
      * @see #minimalCompletionStage()
      */
@@ -2308,8 +2304,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      *
      * <pre>{@code cffu2 = cffu
      *     .withCffuFactory(cffuFactory2) // reset to use config from cffuFactory2
-     *     .minimalCompletionStage();     // restrict to methods of CompletionStage
-     * }</pre>
+     *     .minimalCompletionStage();     // restrict to methods of CompletionStage}</pre>
      *
      * @param cffuFactory cffuFactory contained configuration
      * @see #minimalCompletionStage()

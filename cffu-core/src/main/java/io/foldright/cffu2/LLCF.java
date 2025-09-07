@@ -34,7 +34,7 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  * <li>methods with {@code f_} prefix means not type-safe, e.g.
  *    <ul>
  *    <li>return type CompletableFuture that may be a minimal-stage
- *    <li>force cast to {@code CompletableFuture<T>} from any {@code CompletableFuture<?>}
+ *    <li>forcefully cast to {@code CompletableFuture<T>} from any {@code CompletableFuture<?>}
  *    </ul>
  * <li>methods with {@code 0} suffix means no parameter validation, e.g.
  *    <ul><li>no null check</li></ul>
@@ -49,7 +49,7 @@ public final class LLCF {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Force casts CompletableFuture with the value type, IGNORE the compile-time type check.
+     * Forcefully casts CompletableFuture with the value type, IGNORE the compile-time type check.
      */
     @Contract(pure = true)
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -58,7 +58,7 @@ public final class LLCF {
     }
 
     /**
-     * Force converts CompletionStage to CompletableFuture, reuse cf instances as many as possible.
+     * Forcefully converts CompletionStage to CompletableFuture, reuse cf instances as many as possible.
      * <p>
      * <strong>CAUTION:</strong> This method is NOT type safe! Because reused the CF instance, The returned cf
      * may be a minimal-stage, MUST NOT be written or read(explicitly) (e.g. {@link CompletableFuture#complete});
@@ -73,7 +73,7 @@ public final class LLCF {
     }
 
     /**
-     * Force converts CompletionStage array to CompletableFuture array, reuse cf instances as many as possible.
+     * Forcefully converts CompletionStage array to CompletableFuture array, reuse cf instances as many as possible.
      * This method is NOT type safe! More info see method {@link #f_toCf0(CompletionStage)}.
      */
     @Contract(pure = true)
@@ -243,12 +243,11 @@ public final class LLCF {
      * when using {@link CompletionStage#exceptionally(Function)}.
      * <p>
      * Example code:
-     * <pre>{@code CompletionStage<? extend T> stage = ...;
+     * <pre>{@code  CompletionStage<? extend T> stage = ...;
      * Function<Throwable, ? extends T> fn = ...;
      *
      * CompletionStage<T> s1 = stage.exceptionally(fn);            // compile ERROR
-     * CompletionStage<T> s2 = covariantExceptionally0(stage, fn); // compile success
-     * }</pre>
+     * CompletionStage<T> s2 = covariantExceptionally0(stage, fn); // compile success}</pre>
      */
     @SuppressWarnings("unchecked")
     public static <T> CompletionStage<T> covariantExceptionally0(

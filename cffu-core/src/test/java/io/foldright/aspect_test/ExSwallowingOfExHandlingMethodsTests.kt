@@ -16,148 +16,148 @@ import java.util.concurrent.ExecutionException
 /**
  * @see ExTest.test_addSuppressed_not_allowed_add_self
  */
-class ExceptionReportionSafetyTest : FunSpec({
+class ExSwallowingOfExHandlingMethodsTests : FunSpec({
     ////////////////////////////////////////////////////////////////////////////////
     // CompletableFuture
     ////////////////////////////////////////////////////////////////////////////////
 
-    test("👎 CF.exceptionally() swallows original exception️") {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("exceptionally")
+    test("❗️ CF.exceptionally() swallows original exception️") {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: CompletableFuture<Int> = CompletableFutureUtils.failedFuture<Int>(original)
             .exceptionally { throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe new
-        // the exception is swallowed! 👎
-        original.suppressed.shouldBeEmpty()
+        // the original exception is swallowed ❗️
         new.suppressed.shouldBeEmpty()
+
+        original.suppressed.shouldBeEmpty()
     }
 
-    test("👎 CF.exceptionallyAsync() swallows original exception️").config(enabledIf = java12Plus) {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("exceptionallyAsync")
+    test("❗️ CF.exceptionallyAsync() swallows original exception️").config(enabledIf = java12Plus) {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: CompletableFuture<Int> = CompletableFutureUtils.failedFuture<Int>(original)
             .exceptionallyAsync { throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe new
-        // the exception is swallowed! 👎
-        original.suppressed.shouldBeEmpty()
+        // the original exception is swallowed ❗️
         new.suppressed.shouldBeEmpty()
+
+        original.suppressed.shouldBeEmpty()
     }
 
-    test("👎 CF.exceptionallyCompose() swallows original exception️").config(enabledIf = java12Plus) {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("exceptionallyCompose")
+    test("❗️ CF.exceptionallyCompose() swallows original exception️").config(enabledIf = java12Plus) {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: CompletableFuture<Int> = CompletableFutureUtils.failedFuture<Int>(original)
             .exceptionallyCompose { throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe new
-        // the exception is swallowed! 👎
-        original.suppressed.shouldBeEmpty()
+        // the original exception is swallowed ❗️
         new.suppressed.shouldBeEmpty()
+
+        original.suppressed.shouldBeEmpty()
     }
 
-    test("👎 CF.exceptionallyComposeAsync() swallows original exception️").config(enabledIf = java12Plus) {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("exceptionallyComposeAsync")
+    test("❗️ CF.exceptionallyComposeAsync() swallows original exception️").config(enabledIf = java12Plus) {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: CompletableFuture<Int> = CompletableFutureUtils.failedFuture<Int>(original)
             .exceptionallyComposeAsync { throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe new
-        // the exception is swallowed! 👎
-        original.suppressed.shouldBeEmpty()
+        // the original exception is swallowed ❗️
         new.suppressed.shouldBeEmpty()
+
+        original.suppressed.shouldBeEmpty()
     }
 
-    test("👎 CF.handle() swallows original exception") {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("handle")
+    test("❗️ CF.handle() swallows original exception") {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: CompletableFuture<Int> = CompletableFutureUtils.failedFuture<Int>(original)
             .handle { _, _ -> throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe new
-        // the exception is swallowed! 👎
-        original.suppressed.shouldBeEmpty()
+        // the original exception is swallowed ❗️
         new.suppressed.shouldBeEmpty()
+
+        original.suppressed.shouldBeEmpty()
     }
 
-    test("👎 CF.handleAsync() swallows original exception") {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("handleAsync")
+    test("❗️ CF.handleAsync() swallows original exception") {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: CompletableFuture<Int> = CompletableFutureUtils.failedFuture<Int>(original)
             .handleAsync { _, _ -> throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe new
-        // the exception is swallowed! 👎
-        original.suppressed.shouldBeEmpty()
+        // the original exception is swallowed ❗️
         new.suppressed.shouldBeEmpty()
+
+        original.suppressed.shouldBeEmpty()
     }
 
-    test("👍 CF.whenComplete() does not swallow new exception for Java 9+") {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("whenComplete")
+    test("❗️ CF.whenComplete() swallows new exception on Java 8; ✅ but does not swallow new exception on Java 9+") {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: CompletableFuture<Int> = CompletableFutureUtils.failedFuture<Int>(original)
             .whenComplete { _, _ -> throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe original
-        // the new exception is not swallowed! 👍
+        // the new exception is not swallowed ✅
         if (isJava9Plus()) original.suppressed.shouldHaveSingleElement(new)
-        // the new exception is swallowed in Java 8! 👎
+        // the new exception is swallowed in Java 8 ❗️
         else original.suppressed.shouldBeEmpty()
+
         new.suppressed.shouldBeEmpty()
     }
 
-    test("👍 CF.whenCompleteAsync() does not swallow new exception for Java 9+") {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("whenCompleteAsync")
+    test("❗️ CF.whenCompleteAsync() swallows new exception on Java 8; ✅ but does not swallow new exception on Java 9+") {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: CompletableFuture<Int> = CompletableFutureUtils.failedFuture<Int>(original)
             .whenCompleteAsync { _, _ -> throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe original
-        // the new exception is not swallowed! 👍
+        // the new exception is not swallowed ✅
         if (isJava9Plus()) original.suppressed.shouldHaveSingleElement(new)
-        // the new exception is swallowed in Java 8! 👎
+        // the new exception is swallowed in Java 8 ❗️
         else original.suppressed.shouldBeEmpty()
+
         new.suppressed.shouldBeEmpty()
     }
 
@@ -165,207 +165,207 @@ class ExceptionReportionSafetyTest : FunSpec({
     // Cffu
     ////////////////////////////////////////////////////////////////////////////////
 
-    test("👍 Cffu.catching() does not swallow original exception️") {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("exceptionally")
+    test("✅ Cffu.catching() does not swallow original exception️") {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: Cffu<Int> = testCffuFac.failedFuture<Int>(original)
             .catching(RuntimeException::class.java) { throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe new
-        original.suppressed.shouldBeEmpty()
-        // the original exception is not swallow 👍
+        // the original exception is not swallowed ✅
         new.suppressed.shouldHaveSingleElement(original)
+
+        original.suppressed.shouldBeEmpty()
     }
 
-    test("👍 Cffu.catchingAsync() does not swallow original exception️") {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("exceptionallyAsync")
+    test("✅ Cffu.catchingAsync() does not swallow original exception️") {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: Cffu<Int> = testCffuFac.failedFuture<Int>(original)
             .catchingAsync(RuntimeException::class.java) { throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe new
-        original.suppressed.shouldBeEmpty()
-        // the original exception is not swallow 👍
+        // the original exception is not swallowed ✅
         new.suppressed.shouldHaveSingleElement(original)
+
+        original.suppressed.shouldBeEmpty()
     }
 
-    test("👍 Cffu.exceptionally() does not swallow original exception️") {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("exceptionally")
+    test("✅ Cffu.exceptionally() does not swallow original exception️") {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: Cffu<Int> = testCffuFac.failedFuture<Int>(original)
             .exceptionally { throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe new
-        original.suppressed.shouldBeEmpty()
-        // the original exception is not swallow 👍
+        // the original exception is not swallowed ✅
         new.suppressed.shouldHaveSingleElement(original)
+
+        original.suppressed.shouldBeEmpty()
     }
 
-    test("👍 Cffu.exceptionallyAsync() does not swallow original exception️") {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("exceptionallyAsync")
+    test("✅ Cffu.exceptionallyAsync() does not swallow original exception️") {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: Cffu<Int> = testCffuFac.failedFuture<Int>(original)
             .exceptionallyAsync { throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe new
-        original.suppressed.shouldBeEmpty()
-        // the original exception is not swallow 👍
+        // the original exception is not swallowed ✅
         new.suppressed.shouldHaveSingleElement(original)
+
+        original.suppressed.shouldBeEmpty()
     }
 
-    test("👍 Cffu.catchingCompose() does not swallow original exception️") {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("exceptionallyCompose")
+    test("✅ Cffu.catchingCompose() does not swallow original exception️") {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: Cffu<Int> = testCffuFac.failedFuture<Int>(original)
             .catchingCompose(RuntimeException::class.java) { throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe new
-        original.suppressed.shouldBeEmpty()
-        // the original exception is not swallow 👍
+        // the original exception is not swallowed ✅
         new.suppressed.shouldHaveSingleElement(original)
+
+        original.suppressed.shouldBeEmpty()
     }
 
-    test("👍 Cffu.catchingComposeAsync() does not swallow original exception️") {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("exceptionallyComposeAsync")
+    test("✅ Cffu.catchingComposeAsync() does not swallow original exception️") {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: Cffu<Int> = testCffuFac.failedFuture<Int>(original)
             .catchingComposeAsync(RuntimeException::class.java) { throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe new
-        original.suppressed.shouldBeEmpty()
-        // the original exception is not swallow 👍
+        // the original exception is not swallowed ✅
         new.suppressed.shouldHaveSingleElement(original)
+
+        original.suppressed.shouldBeEmpty()
     }
 
-    test("👍 Cffu.exceptionallyCompose() does not swallow original exception️") {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("exceptionallyCompose")
+    test("✅ Cffu.exceptionallyCompose() does not swallow original exception️") {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: Cffu<Int> = testCffuFac.failedFuture<Int>(original)
             .exceptionallyCompose { throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe new
-        original.suppressed.shouldBeEmpty()
-        // the original exception is not swallow 👍
+        // the original exception is not swallowed ✅
         new.suppressed.shouldHaveSingleElement(original)
+
+        original.suppressed.shouldBeEmpty()
     }
 
-    test("👍 Cffu.exceptionallyComposeAsync() does not swallow original exception️") {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("exceptionallyComposeAsync")
+    test("✅ Cffu.exceptionallyComposeAsync() does not swallow original exception️") {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: Cffu<Int> = testCffuFac.failedFuture<Int>(original)
             .exceptionallyComposeAsync { throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe new
-        original.suppressed.shouldBeEmpty()
-        // the original exception is not swallow 👍
+        // the original exception is not swallowed ✅
         new.suppressed.shouldHaveSingleElement(original)
+
+        original.suppressed.shouldBeEmpty()
     }
 
-    test("👍 Cffu.handle() does not swallow original exception") {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("handle")
+    test("✅ Cffu.handle() does not swallow original exception") {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: Cffu<Int> = testCffuFac.failedFuture<Int>(original)
             .handle { _, _ -> throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe new
-        original.suppressed.shouldBeEmpty()
-        // the original exception is not swallow 👍
+        // the original exception is not swallowed ✅
         new.suppressed.shouldHaveSingleElement(original)
+
+        original.suppressed.shouldBeEmpty()
     }
 
-    test("👍 Cffu.handleAsync() does not swallow original exception") {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("handleAsync")
+    test("✅ Cffu.handleAsync() does not swallow original exception") {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: Cffu<Int> = testCffuFac.failedFuture<Int>(original)
             .handleAsync { _, _ -> throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe new
-        original.suppressed.shouldBeEmpty()
-        // the original exception is not swallow 👍
+        // the original exception is not swallowed ✅
         new.suppressed.shouldHaveSingleElement(original)
+
+        original.suppressed.shouldBeEmpty()
     }
 
-    test("👍 Cffu.whenComplete() does not swallow new exception") {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("whenComplete")
+    test("✅ Cffu.whenComplete() does not swallow new exception") {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: Cffu<Int> = testCffuFac.failedFuture<Int>(original)
             .whenComplete { _, _ -> throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe original
-        // the new exception is not swallowed! 👍
+        // the new exception is not swallowed ✅
         original.suppressed.shouldHaveSingleElement(new)
+
         new.suppressed.shouldBeEmpty()
     }
 
-    test("👍 Cffu.whenCompleteAsync() does not swallow new exception") {
-        val original = RuntimeException("Bang")
-        val new = RuntimeException("whenCompleteAsync")
+    test("✅ Cffu.whenCompleteAsync() does not swallow new exception") {
+        val original = RuntimeException()
+        val new = RuntimeException()
 
         val cf: Cffu<Int> = testCffuFac.failedFuture<Int>(original)
             .whenCompleteAsync { _, _ -> throw new }
 
         val ee = shouldThrowExactly<ExecutionException> { cf.get() }
         ee.suppressed.shouldBeEmpty()
-        ee.suppressed.shouldBeEmpty()
 
         ee.cause shouldBe original
-        // the new exception is not swallowed! 👍
+        // the new exception is not swallowed ✅
         original.suppressed.shouldHaveSingleElement(new)
+
         new.suppressed.shouldBeEmpty()
     }
 })

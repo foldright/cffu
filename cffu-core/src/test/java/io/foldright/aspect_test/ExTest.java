@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 
 /**
- * @see ExceptionReportionSafetyTest
+ * @see ExSwallowingOfExHandlingMethodsTests
  */
 public class ExTest {
     @Test
