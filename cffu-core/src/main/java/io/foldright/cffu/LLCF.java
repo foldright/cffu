@@ -35,7 +35,7 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  * <li>methods with {@code f_} prefix means not type-safe, e.g.
  *    <ul>
  *    <li>return type CompletableFuture that may be a minimal-stage
- *    <li>force cast to {@code CompletableFuture<T>} from any {@code CompletableFuture<?>}
+ *    <li>forcefully cast to {@code CompletableFuture<T>} from any {@code CompletableFuture<?>}
  *    </ul>
  * <li>methods with {@code 0} suffix means no parameter validation, e.g.
  *    <ul><li>no null check</li></ul>
@@ -92,7 +92,7 @@ public final class LLCF {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Force casts CompletableFuture with the value type, IGNORE the compile-time type check.
+     * Forcefully casts CompletableFuture with the value type, IGNORE the compile-time type check.
      */
     @Contract(pure = true)
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -101,7 +101,7 @@ public final class LLCF {
     }
 
     /**
-     * Force converts CompletionStage to CompletableFuture, reuse cf instances as many as possible.
+     * Forcefully converts CompletionStage to CompletableFuture, reuse cf instances as many as possible.
      * <p>
      * <strong>CAUTION:</strong> This method is NOT type safe! Because reused the CF instance, The returned cf
      * may be a minimal-stage, MUST NOT be written or read(explicitly) (e.g. {@link CompletableFuture#complete});
@@ -116,7 +116,7 @@ public final class LLCF {
     }
 
     /**
-     * Force converts CompletionStage array to CompletableFuture array, reuse cf instances as many as possible.
+     * Forcefully converts CompletionStage array to CompletableFuture array, reuse cf instances as many as possible.
      * This method is NOT type safe! More info see method {@link #f_toCf0(CompletionStage)}.
      */
     @Contract(pure = true)
@@ -369,6 +369,17 @@ public final class LLCF {
     /**
      * Wraps an exception-handling {@code Function} to ensure that if the handling throws a new exception,
      * the error context is preserved by calling {@link Throwable#addSuppressed}.
+     * <p>
+     * Example usage with {@link CompletableFuture#exceptionally CompletableFuture#exceptionally},
+     * {@link CompletableFuture#exceptionallyCompose CompletableFuture#exceptionallyCompose}
+     * {@link CompletableFutureUtils#catching CompletableFutureUtils#catching}
+     * or {@link CompletableFutureUtils#catchingCompose CompletableFutureUtils#catching}:
+     * <pre>{@code  cf.exceptionally(nonExSwallowedFunction(fn, false));
+     * CompletableFutureUtils.catching(cf, exceptionType, nonExSwallowedFunction(fallback, false));}</pre>
+     * <p>
+     * For more details on exception swallowing in exception handling methods, see the test cases in <a href=
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/aspect_test/ExSwallowingOfExHandlingMethodsTests.kt"
+     * >ExSwallowingOfExHandlingMethodsTests</a>.
      *
      * @param addSuppressedToOriginalEx if true, the new exception is added as a suppressed exception to the original exception;
      *                                  otherwise, the original exception is added as a suppressed exception to the new exception
@@ -396,6 +407,13 @@ public final class LLCF {
     /**
      * Wraps an exception-handling {@code BiFunction} to ensure that if the handling throws a new exception,
      * the error context is preserved by calling {@link Throwable#addSuppressed}.
+     * <p>
+     * Example usage with {@link CompletableFuture#handle}:
+     * <pre>{@code cf.handle(nonExSwallowedBiFunction(fn, false));}</pre>
+     * <p>
+     * For more details on exception swallowing in exception handling methods, see the test cases in <a href=
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/aspect_test/ExSwallowingOfExHandlingMethodsTests.kt"
+     * >ExSwallowingOfExHandlingMethodsTests</a>.
      *
      * @param addSuppressedToOriginalEx if true, the new exception is added as a suppressed exception to the original exception;
      *                                  otherwise, the original exception is added as a suppressed exception to the new exception
@@ -423,6 +441,13 @@ public final class LLCF {
     /**
      * Wraps an exception-handling {@code BiConsumer} to ensure that if the handling throws a new exception,
      * the error context is preserved by calling {@link Throwable#addSuppressed}.
+     * <p>
+     * Example usage with {@link CompletableFuture#whenComplete}:
+     * <pre>{@code cf.whenComplete(nonExSwallowedBiConsumer(action, true));}</pre>
+     * <p>
+     * For more details on exception swallowing in exception handling methods, see the test cases in <a href=
+     * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/aspect_test/ExSwallowingOfExHandlingMethodsTests.kt"
+     * >ExSwallowingOfExHandlingMethodsTests</a>.
      *
      * @param addSuppressedToOriginalEx if true, the new exception is added as a suppressed exception to the original exception;
      *                                  otherwise, the original exception is added as a suppressed exception to the new exception

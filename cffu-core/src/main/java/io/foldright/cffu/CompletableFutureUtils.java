@@ -39,7 +39,7 @@ public final class CompletableFutureUtils {
      *
      * - methods with `f_` prefix means not type-safe, e.g.
      *    - return type CompletableFuture that may be a minimal-stage
-     *    - force cast to CompletableFuture<T> from any CompletableFuture<?>
+     *    - forcefully cast to CompletableFuture<T> from any CompletableFuture<?>
      *    - return generic type T but constrained runtime type TupleX
      * - methods with `0` suffix means no parameter validation, e.g.
      *    - no null check
@@ -3724,8 +3724,7 @@ public final class CompletableFutureUtils {
      *
      * <pre>{@code result = cf.copy() // defensive copy to avoid writing this cf unexpectedly
      *     .orTimeout(timeout, unit)
-     *     .join();
-     * }</pre>
+     *     .join();}</pre>
      *
      * @param timeout the maximum time to wait
      * @param unit    the time unit of the timeout argument
@@ -3776,8 +3775,7 @@ public final class CompletableFutureUtils {
      * <pre>{@code results = futures.stream()
      *     .filter(f -> f.state() == Future.State.SUCCESS)
      *     .map(Future::resultNow)
-     *     .toList();
-     * }</pre>
+     *     .toList();}</pre>
      *
      * @return the computed result
      * @throws IllegalStateException if the task has not completed or the task did not complete with a result
