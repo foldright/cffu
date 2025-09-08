@@ -14,6 +14,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static io.foldright.cffu2.CompletableFutureUtils.newIncompleteFuture;
 import static io.foldright.cffu2.CompletableFutureUtils.unwrapCfException;
 import static io.foldright.cffu2.internal.CommonUtils.containsInArray;
 import static io.foldright.cffu2.internal.CommonUtils.mapArray;
@@ -159,6 +160,24 @@ public final class LLCF {
     @Contract(pure = true)
     public static boolean isMinStageCf0(CompletableFuture<?> cf) {
         return cf.getClass().equals(MIN_STAGE_CLASS);
+    }
+
+    /**
+     * Forcefully casts a CompletionStage to a subclass, enabling a "self-type" cast. To maintain generic type safety,
+     * the generic type argument of the input stage and the return value should be identical. For more on the "self type",
+     * see "Item 2: Consider a builder when faced with many constructor parameters" in "Effective Java, Third Edition".
+     * <p>
+     * Example codes:
+     * <pre>{@code CompletionStage<? extends T> input1 = ...;
+     * CompletableFuture<? extends T> output1 = f_selfTypeDownCast(input1);
+     *
+     * CompletionStage<?> input2 = ...;
+     * Cffu<?> output2 = f_selfTypeDownCast(input2);
+     * }</pre>
+     */
+    @SuppressWarnings("unchecked")
+    public static <F extends CompletionStage<?>> F f_selfTypeDownCast(CompletionStage<?> stage) {
+        return (F) stage;
     }
 
     // endregion
@@ -313,6 +332,24 @@ public final class LLCF {
 
         returnedFromPeek0[0] = true;
         return ret;
+    }
+
+    /**
+     * Returns a new CompletableFuture which guarantees that
+     * the execution of subsequent stage's computations not in the cf delayer thread.
+     *
+     * @param executor used to trigger subsequent stage's computations
+     *                 if input CompletableFuture is trigger in cf delayer thread
+     */
+    public static <F extends CompletableFuture<?>> F switchExecutorIfTriggersInCfDelayerThread(F cf, Executor executor) {
+        CompletableFuture<Object> ret = newIncompleteFuture(cf);
+
+        peek0(cf, (v, ex) -> {
+            if (!Delayer.atCfDelayerThread()) completeCf0(ret, v, ex);
+            else executor.execute(() -> completeCf0(ret, v, ex));
+        }, "switchExecutorIfAtCfDelayerThread0");
+
+        return f_selfTypeDownCast(ret);
     }
 
     // endregion

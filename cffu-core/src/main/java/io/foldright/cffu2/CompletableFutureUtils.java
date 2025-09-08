@@ -13,7 +13,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.function.*;
 
-import static io.foldright.cffu2.Delayer.atCfDelayerThread;
 import static io.foldright.cffu2.LLCF.*;
 import static io.foldright.cffu2.eh.SwallowedExceptionHandleUtils.handleAllSwallowedExceptions;
 import static io.foldright.cffu2.eh.SwallowedExceptionHandleUtils.handleSwallowedExceptions;
@@ -2010,11 +2009,6 @@ public final class CompletableFutureUtils {
         return f_selfTypeDownCast(ret);
     }
 
-    @SuppressWarnings("unchecked")
-    private static <F extends CompletionStage<?>> F f_selfTypeDownCast(CompletionStage<?> stage) {
-        return (F) stage;
-    }
-
     /**
      * Returns a new CompletableFuture that, when given stage completes exceptionally, is executed with given
      * stage's exception as the argument to the supplied function, using the default executor of parameter cfThis.
@@ -2113,18 +2107,8 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
 
-        return hopExecutorIfAtCfDelayerThread(orTimeout(cfThis, timeout, unit), executorWhenTimeout);
-    }
-
-    private static <F extends CompletableFuture<?>> F hopExecutorIfAtCfDelayerThread(F cf, Executor executor) {
-        CompletableFuture<Object> ret = newIncompleteFuture(cf);
-
-        peek0(cf, (v, ex) -> {
-            if (!atCfDelayerThread()) completeCf0(ret, v, ex);
-            else screenExecutor(executor).execute(() -> completeCf0(ret, v, ex));
-        }, "CFU#hopExecutorIfAtCfDelayerThread");
-
-        return f_selfTypeDownCast(ret);
+        final F f = orTimeout(cfThis, timeout, unit);
+        return switchExecutorIfTriggersInCfDelayerThread(f, screenExecutor(executorWhenTimeout));
     }
 
     /**
@@ -2229,7 +2213,8 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         requireNonNull(executorWhenTimeout, "executorWhenTimeout is null");
 
-        return hopExecutorIfAtCfDelayerThread(completeOnTimeout(cfThis, value, timeout, unit), executorWhenTimeout);
+        final F f = completeOnTimeout(cfThis, value, timeout, unit);
+        return switchExecutorIfTriggersInCfDelayerThread(f, screenExecutor(executorWhenTimeout));
     }
 
     /**

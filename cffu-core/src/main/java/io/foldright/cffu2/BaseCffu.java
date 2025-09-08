@@ -20,8 +20,7 @@ import java.util.function.*;
 import static io.foldright.cffu2.CffuFactoryBuilder.cffuScreened;
 import static io.foldright.cffu2.CffuFactoryBuilder.cffuUnscreened;
 import static io.foldright.cffu2.CompletableFutureUtils.*;
-import static io.foldright.cffu2.LLCF.IS_JAVA9_PLUS;
-import static io.foldright.cffu2.LLCF.copy0;
+import static io.foldright.cffu2.LLCF.*;
 import static java.util.Objects.requireNonNull;
 
 
@@ -69,9 +68,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         return create(fac, isMinimalStage, cf);
     }
 
-    @SuppressWarnings("unchecked")
     private F this_() {
-        return (F) this;
+        return f_selfTypeDownCast(this);
     }
 
     final <U> Cffu<U> createCffu(CompletableFuture<U> cf) {
