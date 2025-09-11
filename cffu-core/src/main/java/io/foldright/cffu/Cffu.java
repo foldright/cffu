@@ -1027,7 +1027,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <U>   the type of the other CompletionStage's result
      * @param <V>   the function's return type
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothFailFast`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBoth`")
     public <U, V> Cffu<V> thenCombineFailFast(
             CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
         return resetCf(CompletableFutureUtils.thenCombineFailFast(cf, other, fn));
@@ -1045,7 +1045,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <U>   the type of the other CompletionStage's result
      * @param <V>   the function's return type
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothFailFastAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothAsync`")
     public <U, V> Cffu<V> thenCombineFailFastAsync(
             CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
         return thenCombineFailFastAsync(other, fn, fac.defaultExecutor);
@@ -1064,7 +1064,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param <U>      the type of the other CompletionStage's result
      * @param <V>      the function's return type
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothFailFastAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothAsync`")
     public <U, V> Cffu<V> thenCombineFailFastAsync(
             CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
         return resetCf(CompletableFutureUtils.thenCombineFailFastAsync(cf, other, fn, cffuScreened(executor)));
@@ -1081,6 +1081,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param action the action to perform before completing the returned Cffu
      * @param <U>    the type of the other CompletionStage's result
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBoth`")
     public <U> Cffu<Void> thenAcceptBothFailFast(
             CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
         return resetCf(CompletableFutureUtils.thenAcceptBothFailFast(cf, other, action));
@@ -1097,6 +1098,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param action the action to perform before completing the returned Cffu
      * @param <U>    the type of the other CompletionStage's result
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothAsync`")
     public <U> Cffu<Void> thenAcceptBothFailFastAsync(
             CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
         return thenAcceptBothFailFastAsync(other, action, fac.defaultExecutor);
@@ -1114,6 +1116,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param executor the executor to use for asynchronous execution
      * @param <U>      the type of the other CompletionStage's result
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `thenAcceptBothAsync`")
     public <U> Cffu<Void> thenAcceptBothFailFastAsync(
             CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action, Executor executor) {
         return resetCf(CompletableFutureUtils.thenAcceptBothFailFastAsync(cf, other, action, cffuScreened(executor)));
@@ -1128,6 +1131,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAfterBoth`")
     public Cffu<Void> runAfterBothFailFast(CompletionStage<?> other, Runnable action) {
         return resetCf(CompletableFutureUtils.runAfterBothFailFast(cf, other, action));
     }
@@ -1142,6 +1146,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAfterBothAsync`")
     public Cffu<Void> runAfterBothFailFastAsync(CompletionStage<?> other, Runnable action) {
         return runAfterBothFailFastAsync(other, action, fac.defaultExecutor);
     }
@@ -1157,6 +1162,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param action   the action to perform before completing the returned Cffu
      * @param executor the executor to use for asynchronous execution
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAfterBothAsync`")
     public Cffu<Void> runAfterBothFailFastAsync(CompletionStage<?> other, Runnable action, Executor executor) {
         return resetCf(CompletableFutureUtils.runAfterBothFailFastAsync(cf, other, action, cffuScreened(executor)));
     }
@@ -1324,7 +1330,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param fn    the function to use to compute the value of the returned Cffu
      * @param <U>   the function's return type
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherSuccess`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEither`")
     public <U> Cffu<U> applyToEitherSuccess(CompletionStage<? extends T> other, Function<? super T, ? extends U> fn) {
         return resetCf(CompletableFutureUtils.applyToEitherSuccess(cf, other, fn));
     }
@@ -1338,7 +1344,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param fn    the function to use to compute the value of the returned Cffu
      * @param <U>   the function's return type
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherSuccessAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherAsync`")
     public <U> Cffu<U> applyToEitherSuccessAsync(CompletionStage<? extends T> other, Function<? super T, ? extends U> fn) {
         return applyToEitherSuccessAsync(other, fn, fac.defaultExecutor);
     }
@@ -1352,7 +1358,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param executor the executor to use for asynchronous execution
      * @param <U>      the function's return type
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherSuccessAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherAsync`")
     public <U> Cffu<U> applyToEitherSuccessAsync(
             CompletionStage<? extends T> other, Function<? super T, ? extends U> fn, Executor executor) {
         return resetCf(CompletableFutureUtils.applyToEitherSuccessAsync(cf, other, fn, cffuScreened(executor)));
@@ -1365,6 +1371,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEither`")
     public Cffu<Void> acceptEitherSuccess(CompletionStage<? extends T> other, Consumer<? super T> action) {
         return resetCf(CompletableFutureUtils.acceptEitherSuccess(cf, other, action));
     }
@@ -1377,6 +1384,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherAsync`")
     public Cffu<Void> acceptEitherSuccessAsync(CompletionStage<? extends T> other, Consumer<? super T> action) {
         return acceptEitherSuccessAsync(other, action, fac.defaultExecutor);
     }
@@ -1389,6 +1397,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param action   the action to perform before completing the returned Cffu
      * @param executor the executor to use for asynchronous execution
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherAsync`")
     public Cffu<Void> acceptEitherSuccessAsync(
             CompletionStage<? extends T> other, Consumer<? super T> action, Executor executor) {
         return resetCf(CompletableFutureUtils.acceptEitherSuccessAsync(cf, other, action, cffuScreened(executor)));
@@ -1402,6 +1411,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAfterEither`")
     public Cffu<Void> runAfterEitherSuccess(CompletionStage<?> other, Runnable action) {
         return resetCf(CompletableFutureUtils.runAfterEitherSuccess(cf, other, action));
     }
@@ -1415,6 +1425,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAfterEitherAsync`")
     public Cffu<Void> runAfterEitherSuccessAsync(CompletionStage<?> other, Runnable action) {
         return runAfterEitherSuccessAsync(other, action, fac.defaultExecutor);
     }
@@ -1429,6 +1440,7 @@ public final class Cffu<T> implements Future<T>, CompletionStage<T> {
      * @param action   the action to perform before completing the returned Cffu
      * @param executor the executor to use for asynchronous execution
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `runAfterEitherAsync`")
     public Cffu<Void> runAfterEitherSuccessAsync(CompletionStage<?> other, Runnable action, Executor executor) {
         return resetCf(CompletableFutureUtils.runAfterEitherSuccessAsync(cf, other, action, cffuScreened(executor)));
     }
