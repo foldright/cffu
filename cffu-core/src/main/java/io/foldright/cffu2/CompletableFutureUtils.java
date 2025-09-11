@@ -1581,6 +1581,7 @@ public final class CompletableFutureUtils {
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `thenAcceptBoth`")
     public static <T, U, V> CompletableFuture<V> thenCombineFailFast(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiFunction<? super T, ? super U, ? extends V> fn) {
@@ -1600,6 +1601,7 @@ public final class CompletableFutureUtils {
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `thenAcceptBothAsync`")
     public static <T, U, V> CompletableFuture<V> thenCombineFailFastAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiFunction<? super T, ? super U, ? extends V> fn) {
@@ -1616,6 +1618,7 @@ public final class CompletableFutureUtils {
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `thenAcceptBothAsync`")
     public static <T, U, V> CompletableFuture<V> thenCombineFailFastAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
@@ -1659,6 +1662,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `thenAcceptBoth`")
     public static <T, U> CompletableFuture<Void> thenAcceptBothFailFast(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiConsumer<? super T, ? super U> action) {
@@ -1678,6 +1682,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `thenAcceptBothAsync`")
     public static <T, U> CompletableFuture<Void> thenAcceptBothFailFastAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiConsumer<? super T, ? super U> action) {
@@ -1694,6 +1699,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `thenAcceptBothAsync`")
     public static <T, U> CompletableFuture<Void> thenAcceptBothFailFastAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiConsumer<? super T, ? super U> action, Executor executor) {
@@ -1712,6 +1718,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `runAfterBoth`")
     public static CompletableFuture<Void> runAfterBothFailFast(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
         requireThisAndOtherNonNull(cfThis, other);
@@ -1729,6 +1736,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `runAfterBothAsync`")
     public static CompletableFuture<Void> runAfterBothFailFastAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
         return runAfterBothFailFastAsync(cfThis, other, action, defaultExecutor(cfThis));
@@ -1743,6 +1751,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `runAfterBothAsync`")
     public static CompletableFuture<Void> runAfterBothFailFastAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action, Executor executor) {
         requireThisAndOtherNonNull(cfThis, other);
@@ -1768,6 +1777,7 @@ public final class CompletableFutureUtils {
      * @param fn  the function to use to compute the value of the returned CompletableFuture
      * @param <U> the function's return type
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `acceptEither`")
     public static <T, U> CompletableFuture<U> applyToEitherSuccess(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other, Function<? super T, ? extends U> fn) {
         requireThisAndOtherNonNull(cfThis, other);
@@ -1784,6 +1794,7 @@ public final class CompletableFutureUtils {
      * @param fn  the function to use to compute the value of the returned CompletableFuture
      * @param <U> the function's return type
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `acceptEitherAsync`")
     public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other, Function<? super T, ? extends U> fn) {
         return applyToEitherSuccessAsync(cfThis, other, fn, defaultExecutor(cfThis));
@@ -1797,6 +1808,7 @@ public final class CompletableFutureUtils {
      * @param executor the executor to use for asynchronous execution
      * @param <U>      the function's return type
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `acceptEitherAsync`")
     public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other,
             Function<? super T, ? extends U> fn, Executor executor) {
@@ -1832,6 +1844,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `acceptEither`")
     public static <T> CompletableFuture<Void> acceptEitherSuccess(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other, Consumer<? super T> action) {
         requireThisAndOtherNonNull(cfThis, other);
@@ -1847,6 +1860,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherAsync`")
     public static <T> CompletableFuture<Void> acceptEitherSuccessAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other, Consumer<? super T> action) {
         return acceptEitherSuccessAsync(cfThis, other, action, defaultExecutor(cfThis));
@@ -1859,6 +1873,7 @@ public final class CompletableFutureUtils {
      * @param action   the action to perform before completing the returned CompletableFuture
      * @param executor the executor to use for asynchronous execution
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `acceptEitherAsync`")
     public static <T> CompletableFuture<Void> acceptEitherSuccessAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other,
             Consumer<? super T> action, Executor executor) {
@@ -1877,6 +1892,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `runAfterEither`")
     public static CompletableFuture<Void> runAfterEitherSuccess(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
         requireThisAndOtherNonNull(cfThis, other);
@@ -1894,6 +1910,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `runAfterEitherAsync`")
     public static CompletableFuture<Void> runAfterEitherSuccessAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
         return runAfterEitherSuccessAsync(cfThis, other, action, defaultExecutor(cfThis));
@@ -1908,6 +1925,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `runAfterEitherAsync`")
     public static CompletableFuture<Void> runAfterEitherSuccessAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action, Executor executor) {
         requireThisAndOtherNonNull(cfThis, other);

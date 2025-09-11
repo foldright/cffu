@@ -1348,7 +1348,6 @@ public final class CffuFactory {
          * <p>
          * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
         public <T> Cffu<Void> parAcceptAsync(
                 Iterable<? extends T> elements, Consumer<? super T> action) {
             return parAcceptAsync(elements, action, defaultExecutor);
@@ -1361,7 +1360,6 @@ public final class CffuFactory {
          * <p>
          * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `parAcceptAsync`")
         public <T> Cffu<Void> parAcceptAsync(
                 Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
             return createCffu(CfParallelUtils.parAcceptAsync(elements, action, cffuScreened(executor)));
