@@ -210,12 +210,11 @@ public final class LLCF {
      * see "Item 2: Consider a builder when faced with many constructor parameters" in "Effective Java, Third Edition".
      * <p>
      * Example codes:
-     * <pre>{@code CompletionStage<? extends T> input1 = ...;
+     * <pre>{@code  CompletionStage<? extends T> input1 = ...;
      * CompletableFuture<? extends T> output1 = f_selfTypeDownCast(input1);
      *
      * CompletionStage<?> input2 = ...;
-     * Cffu<?> output2 = f_selfTypeDownCast(input2);
-     * }</pre>
+     * Cffu<?> output2 = f_selfTypeDownCast(input2);}</pre>
      */
     @SuppressWarnings("unchecked")
     public static <F extends CompletionStage<?>> F f_selfTypeDownCast(CompletionStage<?> stage) {

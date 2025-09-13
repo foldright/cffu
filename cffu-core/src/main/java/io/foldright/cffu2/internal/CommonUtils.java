@@ -35,9 +35,8 @@ public final class CommonUtils {
     /**
      * example code of "map int[] to string[]":
      *
-     * <pre>{@code Integer[] source = new Integer[3];
-     * mapArray(source, String[]::new, i -> "integer: " + i);
-     * }</pre>
+     * <pre>{@code  Integer[] source = new Integer[3];
+     * mapArray(source, String[]::new, i -> "integer: " + i);}</pre>
      */
     public static <T, R> R[] mapArray(
             T[] source, IntFunction<R[]> destConstructor, Function<? super T, ? extends R> mapper) {

@@ -8,7 +8,7 @@
 <a href="https://openjdk.java.net/"><img src="https://img.shields.io/badge/Java-8+-339933?logo=openjdk&logoColor=white" alt="Java support"></a>
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/foldright/cffu?color=4D7A97&logo=apache" alt="License"></a>
 <a href="https://foldright.io/api-docs/cffu2/"><img src="https://img.shields.io/github/release/foldright/cffu?label=javadoc&color=339933&logo=read-the-docs&logoColor=white&filter=v2.*" alt="Javadocs"></a>
-<a href="https://central.sonatype.com/artifact/io.foldright/cffu2/2.0.0-Alpha4/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu2?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
+<a href="https://central.sonatype.com/artifact/io.foldright/cffu2/2.0.0-Alpha5/versions"><img src="https://img.shields.io/maven-central/v/io.foldright/cffu2?logo=apache-maven&logoColor=white" alt="Maven Central"></a>
 <a href="https://github.com/foldright/cffu/releases"><img src="https://img.shields.io/github/release/foldright/cffu.svg?filter=v2.*" alt="GitHub Releases"></a>
 <a href="https://github.com/foldright/cffu/stargazers"><img src="https://img.shields.io/github/stars/foldright/cffu?style=flat" alt="GitHub Stars"></a>
 <a href="https://github.com/foldright/cffu/fork"><img src="https://img.shields.io/github/forks/foldright/cffu?style=flat" alt="GitHub Forks"></a>
@@ -177,7 +177,7 @@
 
 2\) 如果不能修改使用`CompletableFuture`的代码（如在外部库中返回的`CF`）
 
-使用[`CffuFactory.toCffu(CompletionStage)`方法](https://foldright.io/api-docs/cffu2/2.0.0-Alpha4/io/foldright/cffu2/CffuFactory.html#toCffu(java.util.concurrent.CompletionStage))，将`CompletableFuture`或`CompletionStage`转换成`Cffu`类型。
+使用[`CffuFactory.toCffu(CompletionStage)`方法](https://foldright.io/api-docs/cffu2/2.0.0-Alpha5/io/foldright/cffu2/CffuFactory.html#toCffu(java.util.concurrent.CompletionStage))，将`CompletableFuture`或`CompletionStage`转换成`Cffu`类型。
 
 ### 1.3 库依赖（包含`CompletableFutureUtils`工具类）
 
@@ -187,18 +187,18 @@
   <dependency>
     <groupId>io.foldright</groupId>
     <artifactId>cffu2</artifactId>
-    <version>2.0.0-Alpha4</version>
+    <version>2.0.0-Alpha5</version>
   </dependency>
   ```
 - For `Gradle` projects:
 
   Gradle Kotlin DSL
   ```groovy
-  implementation("io.foldright:cffu2:2.0.0-Alpha4")
+  implementation("io.foldright:cffu2:2.0.0-Alpha5")
   ```
   Gradle Groovy DSL
   ```groovy
-  implementation 'io.foldright:cffu2:2.0.0-Alpha4'
+  implementation 'io.foldright:cffu2:2.0.0-Alpha5'
   ```
 
 ## 2. `cffu`功能介绍
@@ -588,7 +588,7 @@ public class MultipleActionsDemo {
 
 应该只处理当前业务自己清楚明确能恢复的具体异常，由外层处理其它的异常；避免掩盖Bug或是错误地处理了自己不能恢复的异常。
 
-`cffu`提供了相应的[`catching*`方法](https://foldright.io/api-docs/cffu2/2.0.0-Alpha4/io/foldright/cffu2/CompletableFutureUtils.html#catching(F,java.lang.Class,java.util.function.Function))，支持指定要处理异常类型；相比`CF#exceptionally`方法新加了一个异常类型参数，使用方式类似，不附代码示例。
+`cffu`提供了相应的[`catching*`方法](https://foldright.io/api-docs/cffu2/2.0.0-Alpha5/io/foldright/cffu2/CompletableFutureUtils.html#catching(F,java.lang.Class,java.util.function.Function))，支持指定要处理异常类型；相比`CF#exceptionally`方法新加了一个异常类型参数，使用方式类似，不附代码示例。
 
 ### 2.6 `Backport`支持`Java 8`
 
@@ -615,18 +615,18 @@ public class MultipleActionsDemo {
 
 `cffu`库提供了超时执行安全的新实现方法：
 
-- [`Cffu#orTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha4/io/foldright/cffu2/BaseCffu.html#orTimeout(long,java.util.concurrent.TimeUnit))
-  / [`Cffu#completeOnTimeoutTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha4/io/foldright/cffu2/BaseCffu.html#completeOnTimeout(java.lang.Object,long,java.util.concurrent.TimeUnit))
-- [`CFU#cffuOrTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha4/io/foldright/cffu2/CompletableFutureUtils.html#cffuOrTimeout(F,long,java.util.concurrent.TimeUnit))
-  / [`CFU#cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha4/io/foldright/cffu2/CompletableFutureUtils.html#cffuCompleteOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
+- [`Cffu#orTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha5/io/foldright/cffu2/BaseCffu.html#orTimeout(long,java.util.concurrent.TimeUnit))
+  / [`Cffu#completeOnTimeoutTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha5/io/foldright/cffu2/BaseCffu.html#completeOnTimeout(java.lang.Object,long,java.util.concurrent.TimeUnit))
+- [`CFU#cffuOrTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha5/io/foldright/cffu2/CompletableFutureUtils.html#cffuOrTimeout(F,long,java.util.concurrent.TimeUnit))
+  / [`CFU#cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha5/io/foldright/cffu2/CompletableFutureUtils.html#cffuCompleteOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
 
 保证业务逻辑不会在`CF`的单线程`ScheduledThreadPoolExecutor`中执行。
 
 更多说明参见：
 
 - 演示问题的[`DelayDysfunctionDemo.java`](https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java)
-- `cffu backport`方法的`JavaDoc`： [`CFU#orTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha4/io/foldright/cffu2/CompletableFutureUtils.html#orTimeout(F,long,java.util.concurrent.TimeUnit))
-  / [`CFU#completeOnTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha4/io/foldright/cffu2/CompletableFutureUtils.html#completeOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
+- `cffu backport`方法的`JavaDoc`： [`CFU#orTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha5/io/foldright/cffu2/CompletableFutureUtils.html#orTimeout(F,long,java.util.concurrent.TimeUnit))
+  / [`CFU#completeOnTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha5/io/foldright/cffu2/CompletableFutureUtils.html#completeOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
 - 文章[`CompletableFuture`超时功能使用不当直接生产事故](https://juejin.cn/post/7411686792342274089)
 
 ### 2.8 支持超时的`join`方法
@@ -673,7 +673,7 @@ public class MultipleActionsDemo {
 
 # 🍪依赖
 
-> 可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu2/2.0.0-Alpha4/versions) 查看最新版本与可用版本列表。
+> 可以在 [central.sonatype.com](https://central.sonatype.com/artifact/io.foldright/cffu2/2.0.0-Alpha5/versions) 查看最新版本与可用版本列表。
 
 - `cffu`库（包含[`Java CompletableFuture`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)的增强`CompletableFutureUtils`）:
   - For `Maven` projects:
@@ -682,18 +682,18 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu2</artifactId>
-      <version>2.0.0-Alpha4</version>
+      <version>2.0.0-Alpha5</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     Gradle Kotlin DSL
     ```groovy
-    implementation("io.foldright:cffu2:2.0.0-Alpha4")
+    implementation("io.foldright:cffu2:2.0.0-Alpha5")
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation 'io.foldright:cffu2:2.0.0-Alpha4'
+    implementation 'io.foldright:cffu2:2.0.0-Alpha5'
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local)的[`cffu executor wrapper SPI`实现](cffu-ttl-executor-wrapper)：
   - For `Maven` projects:
@@ -702,7 +702,7 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu2-ttl-executor-wrapper</artifactId>
-      <version>2.0.0-Alpha4</version>
+      <version>2.0.0-Alpha5</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -710,11 +710,11 @@ public class MultipleActionsDemo {
 
     Gradle Kotlin DSL
     ```groovy
-    runtimeOnly("io.foldright:cffu2-ttl-executor-wrapper:2.0.0-Alpha4")
+    runtimeOnly("io.foldright:cffu2-ttl-executor-wrapper:2.0.0-Alpha5")
     ```
     Gradle Groovy DSL
     ```groovy
-    runtimeOnly 'io.foldright:cffu2-ttl-executor-wrapper:2.0.0-Alpha4'
+    runtimeOnly 'io.foldright:cffu2-ttl-executor-wrapper:2.0.0-Alpha5'
     ```
 - `cffu bom`:
   - For `Maven` projects:
@@ -723,7 +723,7 @@ public class MultipleActionsDemo {
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu2-bom</artifactId>
-      <version>2.0.0-Alpha4</version>
+      <version>2.0.0-Alpha5</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -732,11 +732,11 @@ public class MultipleActionsDemo {
 
     Gradle Kotlin DSL
     ```groovy
-    implementation(platform("io.foldright:cffu2-bom:2.0.0-Alpha4"))
+    implementation(platform("io.foldright:cffu2-bom:2.0.0-Alpha5"))
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation platform('io.foldright:cffu2-bom:2.0.0-Alpha4')
+    implementation platform('io.foldright:cffu2-bom:2.0.0-Alpha5')
     ```
 
 # 📚 更多资料
