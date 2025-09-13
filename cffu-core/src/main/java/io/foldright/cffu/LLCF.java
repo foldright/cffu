@@ -46,6 +46,48 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  */
 public final class LLCF {
     ////////////////////////////////////////////////////////////////////////////////
+    // region# Internal Fields (Java version check for compatibility)
+    ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * a naive black hole to prevent code elimination, more info see <a href=
+     * "https://github.com/openjdk/jmh/blob/1.37/jmh-core/src/main/java/org/openjdk/jmh/infra/Blackhole.java">JMH black hole</a>
+     */
+    private static volatile int BLACK_HOLE = 0xCFF0;
+
+    // `CompletableFuture.completedStage` is the new method since java 9
+    static final boolean IS_JAVA9_PLUS = methodExists(() -> CompletableFuture.completedStage(null));
+    // `CompletableFuture.exceptionallyCompose` is the new method since java 12
+    static final boolean IS_JAVA12_PLUS = methodExists(() ->
+            completedFuture(null).exceptionallyCompose(ex -> null));
+    // `CompletableFuture.resultNow` is the new method since java 19
+    static final boolean IS_JAVA19_PLUS = methodExists(() -> completedFuture(null).resultNow());
+    // `List.reversed` is the new method since java 21
+    static final boolean IS_JAVA21_PLUS = methodExists(() -> new ArrayList<>().reversed());
+
+    private static boolean methodExists(Supplier<?> methodCallCheck) {
+        try {
+            int i = BLACK_HOLE; // volatile read
+            BLACK_HOLE = Objects.hashCode(methodCallCheck.get()) ^ i;
+            return true;
+        } catch (NoSuchMethodError e) {
+            return false;
+        }
+    }
+
+    private static final @Nullable Class<?> MIN_STAGE_CLASS = IS_JAVA9_PLUS
+            ? CompletableFuture.completedStage(null).getClass()
+            : null;
+
+    // CAUTION: The initialization order of static fields matters. Do not place static fields
+    // before their dependencies, as this will result in using uninitialized dependency values.
+    //
+    // Dependencies:
+    // - IS_JAVA*_PLUS depends on BLACK_HOLE
+    // - MIN_STAGE_CLASS depends on IS_JAVA9_PLUS
+
+    // endregion
+    ////////////////////////////////////////////////////////////////////////////////
     // region# Low Level conversion and test methods for CompletableFuture
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -149,19 +191,6 @@ public final class LLCF {
     }
 
     /**
-     * Equivalent method of {@link CompletableFuture#copy()} with {Java 8} backwards compatibility.
-     * <p>
-     * Implementation Note: The returned instances of calling {@code copy}/{@code thenApply} methods
-     * ({@link CompletableFuture#copy}) on minimal-stage instances is still minimal-stage
-     * (e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().thenApply(...)}).
-     *
-     * @see CompletableFutureUtils#copy(CompletableFuture)
-     */
-    public static <T> CompletableFuture<T> copy0(CompletableFuture<T> cf) {
-        return IS_JAVA9_PLUS ? cf.copy() : cf.thenApply(x -> x);
-    }
-
-    /**
      * Checks if the given {@code CompletableFuture} instance is a minimal-stage.
      * <p>
      * Implementation Note: While minimal-stage is implemented as a private subclass of CompletableFuture,
@@ -237,6 +266,19 @@ public final class LLCF {
     public static <T> boolean completeCf0(CompletableFuture<? super T> cf, @Nullable T value, @Nullable Throwable ex) {
         if (ex == null) return cf.complete(value);
         else return cf.completeExceptionally(ex);
+    }
+
+    /**
+     * Equivalent method of {@link CompletableFuture#copy()} with {Java 8} backwards compatibility.
+     * <p>
+     * Implementation Note: The returned instances of calling {@code copy}/{@code thenApply} methods
+     * ({@link CompletableFuture#copy}) on minimal-stage instances is still minimal-stage
+     * (e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().thenApply(...)}).
+     *
+     * @see CompletableFutureUtils#copy(CompletableFuture)
+     */
+    public static <T> CompletableFuture<T> copy0(CompletableFuture<T> cf) {
+        return IS_JAVA9_PLUS ? cf.copy() : cf.thenApply(x -> x);
     }
 
     /**
@@ -407,7 +449,7 @@ public final class LLCF {
 
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# CF execution/executor methods
+    // region# CF executor
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -424,57 +466,10 @@ public final class LLCF {
         return requireNonNull(e, "executor is null");
     }
 
-    // endregion
-    ////////////////////////////////////////////////////////////////////////////////
-    // region# Internal Static Fields/Helpers
-    ////////////////////////////////////////////////////////////////////////////////
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // region# Java version check logic for compatibility
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * a naive black hole to prevent code elimination, more info see <a href=
-     * "https://github.com/openjdk/jmh/blob/1.37/jmh-core/src/main/java/org/openjdk/jmh/infra/Blackhole.java">JMH black hole</a>
-     */
-    private static volatile int BLACK_HOLE = 0xCFF0CFF0;
-
-    // `CompletableFuture.completedStage` is the new method since java 9
-    static final boolean IS_JAVA9_PLUS = methodExists(() -> CompletableFuture.completedStage(null));
-    // `CompletableFuture.exceptionallyCompose` is the new method since java 12
-    static final boolean IS_JAVA12_PLUS = methodExists(() ->
-            completedFuture(null).exceptionallyCompose(ex -> null));
-    // `CompletableFuture.resultNow` is the new method since java 19
-    static final boolean IS_JAVA19_PLUS = methodExists(() -> completedFuture(null).resultNow());
-    // `List.reversed` is the new method since java 21
-    static final boolean IS_JAVA21_PLUS = methodExists(() -> new ArrayList<>().reversed());
-
-    private static boolean methodExists(Supplier<?> methodCallCheck) {
-        try {
-            int i = BLACK_HOLE; // volatile read
-            BLACK_HOLE = Objects.hashCode(methodCallCheck.get()) ^ i;
-            return true;
-        } catch (NoSuchMethodError e) {
-            return false;
-        }
-    }
-
-    // endregion
-    ////////////////////////////////////////////////////////////////////////////////
-    // region# CF execution/executor
-    ////////////////////////////////////////////////////////////////////////////////
-
     /**
      * code is copied from CompletableFuture#USE_COMMON_POOL
      */
     private static final boolean USE_COMMON_POOL = ForkJoinPool.getCommonPoolParallelism() > 1;
-
-    // IMPORTANT: The initialization order of static fields matters. Do not place static fields
-    // before their dependencies, as this will result in using uninitialized dependency values.
-    //
-    // Dependencies:
-    // - ASYNC_POOL depends on IS_JAVA9_PLUS and USE_COMMON_POOL
-    // - MIN_STAGE_CLASS depends on IS_JAVA9_PLUS
 
     /**
      * Default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses
@@ -486,10 +481,6 @@ public final class LLCF {
     public static final Executor ASYNC_POOL = IS_JAVA9_PLUS
             ? completedFuture(null).defaultExecutor()
             : USE_COMMON_POOL ? ForkJoinPool.commonPool() : new ThreadPerTaskExecutor();
-
-    private static final @Nullable Class<?> MIN_STAGE_CLASS = IS_JAVA9_PLUS
-            ? CompletableFuture.completedStage(null).getClass()
-            : null;
 
     /**
      * Fallback if {@link ForkJoinPool#commonPool()} cannot support parallelism.
