@@ -64,7 +64,7 @@ mvu::mvn_cmd clean install -Dcffu.exception.log.format=
 
 # shellcheck disable=SC2034
 readonly MVN_OPTS_FOR_JAVA8=(
-  -P!default-logging-dependencies -P!default-arch-unit-test
+  -P!default-logging-dependencies
 )
 # shellcheck disable=SC2034
 readonly MVN_OPTS_FOR_JAVA11=(

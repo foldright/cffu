@@ -82,7 +82,7 @@
 		<jsr305.version>3.0.2</jsr305.version>
 		<jetbrains.annotations.version>26.0.2-1</jetbrains.annotations.version>
 
-		<kotlin.version>2.2.10</kotlin.version>
+		<kotlin.version>2.2.20</kotlin.version>
 
 		<slf4j.version>2.0.17</slf4j.version>
 		<log4j2.version>2.25.1</log4j2.version>
@@ -407,7 +407,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.5.3</version>
+					<version>3.5.4</version>
 					<configuration>
 						<argLine>@{argLine} -ea</argLine>
 					</configuration>
@@ -426,7 +426,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.6.0</version>
+					<version>3.6.1</version>
 					<configuration>
 						<shadeSourcesContent>true</shadeSourcesContent>
 						<dependencyReducedPomLocation>
@@ -482,7 +482,7 @@
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.9.4.1</version>
+					<version>4.9.4.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
@@ -572,6 +572,7 @@
 					<name>skipDefaultProfileArchUnitTest</name>
 					<value>!true</value>
 				</property>
+				<jdk>[11,)</jdk>
 			</activation>
 			<dependencies>
 				<!-- https://www.archunit.org/ -->
