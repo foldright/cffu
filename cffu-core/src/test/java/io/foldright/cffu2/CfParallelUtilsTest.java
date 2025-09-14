@@ -12,6 +12,7 @@ import static io.foldright.test_utils.TestingConstants.MEDIAN_WAIT_MS;
 import static io.foldright.test_utils.TestingExecutorUtils.testExecutor;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,6 +24,14 @@ class CfParallelUtilsTest {
     @Test
     void test_parApply() throws Exception {
         assertThat(parApplyFailFastAsync(emptyList(), (Integer x) -> x + 1).get()).isEmpty();
+        assertThat(parApplyFailFastAsync(asList(null, 2), x -> {
+            if (x == null) return null;
+            return x + 1;
+        }).get()).containsExactly(null, 3);
+        assertThat(parApplyFailFastAsync(asList(1, null), x -> {
+            if (x == null) return null;
+            return x + 1;
+        }, testExecutor).get()).containsExactly(2, null);
         assertThat(parApplyFailFastAsync(asList(1, 2), x -> x + 1).get()).containsExactly(2, 3);
         assertThat(parApplyFailFastAsync(asList(1, 2), x -> x + 1, testExecutor).get()).containsExactly(2, 3);
 
@@ -76,6 +85,8 @@ class CfParallelUtilsTest {
     @Test
     void test_parAccept() throws Exception {
         assertNull(parAcceptFailFastAsync(emptyList(), (Integer x) -> {}).get());
+        assertNull(parAcceptFailFastAsync(asList(null, 2), x -> {}).get());
+        assertNull(parAcceptFailFastAsync(asList(1, null), x -> {}, testExecutor).get());
         assertNull(parAcceptFailFastAsync(asList(1, 2), x -> {}).get());
         assertNull(parAcceptFailFastAsync(asList(1, 2), x -> {}, testExecutor).get());
 
@@ -98,12 +109,19 @@ class CfParallelUtilsTest {
 
     @Test
     void test_thenParApply() throws Exception {
-        final CompletableFuture<List<Integer>> cfEmpty = CompletableFuture.completedFuture(emptyList());
-        final CompletableFuture<List<Integer>> cf = CompletableFuture.completedFuture(asList(1, 2));
-
+        final CompletableFuture<List<Integer>> cfEmpty = completedFuture(emptyList());
+        final CompletableFuture<List<Integer>> cf = completedFuture(asList(1, 2));
         assertThat(thenParApplyFailFastAsync(cfEmpty, (Integer x) -> x + 1).get()).isEmpty();
         assertThat(thenParApplyFailFastAsync(cf, x -> x + 1).get()).containsExactly(2, 3);
         assertThat(thenParApplyFailFastAsync(cf, x -> x + 1, testExecutor).get()).containsExactly(2, 3);
+        assertThat(thenParApplyFailFastAsync(completedFuture(asList(null, 2)), x -> {
+            if (x == null) return null;
+            return x + 1;
+        }).get()).containsExactly(null, 3);
+        assertThat(thenParApplyFailFastAsync(completedFuture(asList(1, null)), x -> {
+            if (x == null) return null;
+            return x + 1;
+        }, testExecutor).get()).containsExactly(2, null);
 
         assertThat(thenParApplyAllSuccessAsync(cfEmpty, -1, (Integer x) -> x + 1).get()).isEmpty();
         assertThat(thenParApplyAllSuccessAsync(cf, -1, x -> {
@@ -154,12 +172,14 @@ class CfParallelUtilsTest {
 
     @Test
     void test_thenParAccept() throws Exception {
-        final CompletableFuture<List<Integer>> cfEmpty = CompletableFuture.completedFuture(emptyList());
-        final CompletableFuture<List<Integer>> cf = CompletableFuture.completedFuture(asList(1, 2));
+        final CompletableFuture<List<Integer>> cfEmpty = completedFuture(emptyList());
+        final CompletableFuture<List<Integer>> cf = completedFuture(asList(1, 2));
 
         assertNull(thenParAcceptFailFastAsync(cfEmpty, (Integer x) -> {}).get());
         assertNull(thenParAcceptFailFastAsync(cf, x -> {}).get());
         assertNull(thenParAcceptFailFastAsync(cf, x -> {}, testExecutor).get());
+        assertNull(thenParAcceptFailFastAsync(completedFuture(asList(null, 2)), x -> {}).get());
+        assertNull(thenParAcceptFailFastAsync(completedFuture(asList(1, null)), x -> {}, testExecutor).get());
 
         assertNull(thenParAcceptAsync(cfEmpty, (Integer x) -> {}).get());
         assertNull(thenParAcceptAsync(cf, x -> {}).get());
