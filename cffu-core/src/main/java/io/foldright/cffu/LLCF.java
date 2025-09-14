@@ -134,7 +134,7 @@ public final class LLCF {
     @Contract(pure = true)
     public static <T> CompletableFuture<T> f_toCfCopy0(CompletionStage<? extends T> stage) {
         final CompletableFuture<T> f = f_toCf0(stage);
-        // since minimal-stage is not writable, defensive copy is unneeded, just return minimal-stage.
+        // because minimal-stage is not writable, defensive copy is unneeded, directly return minimal-stage instance.
         return isMinStageCf(f) ? f : copy0(f);
     }
 
@@ -378,6 +378,12 @@ public final class LLCF {
      * <pre>{@code  cf.exceptionally(nonExSwallowedFunction(fn, false));
      * CompletableFutureUtils.catching(cf, exceptionType, nonExSwallowedFunction(fallback, false));}</pre>
      * <p>
+     * The methods {@link CompletableFuture#exceptionally exceptionally*} in {@code CompletableFuture} and the
+     * methods {@link CompletableFutureUtils#exceptionallyCompose CompletableFutureUtils#exceptionallyCompose*} /
+     * {@link CompletableFutureUtils#catching catching*} in {@code CompletableFutureUtils} do not incorporate
+     * the {@code nonExSwallowed} logic, in order to maintain consistent and predictable behavior with the standard {@code CompletableFuture}.
+     * It is recommended to use {@link Cffu} which has enhanced exception handling with the {@code nonExSwallowed} logic.
+     * <p>
      * For more details on exception swallowing in exception handling methods, see the test cases in <a href=
      * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/aspect_test/ExSwallowingOfExHandlingMethodsTests.kt"
      * >ExSwallowingOfExHandlingMethodsTests</a>.
@@ -409,8 +415,12 @@ public final class LLCF {
      * Wraps an exception-handling {@code BiFunction} to ensure that if the handling throws a new exception,
      * the error context is preserved by calling {@link Throwable#addSuppressed}.
      * <p>
-     * Example usage with {@link CompletableFuture#handle}:
+     * Example usage with {@link CompletableFuture#handle CompletableFuture#handle}:
      * <pre>{@code cf.handle(nonExSwallowedBiFunction(fn, false));}</pre>
+     * <p>
+     * The methods {@link CompletableFuture#handle CompletableFuture#handle*} in {@code CompletableFuture}
+     * do not incorporate the {@code nonExSwallowed} logic.
+     * It is recommended to use {@link Cffu} which has enhanced exception handling with the {@code nonExSwallowed} logic.
      * <p>
      * For more details on exception swallowing in exception handling methods, see the test cases in <a href=
      * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/aspect_test/ExSwallowingOfExHandlingMethodsTests.kt"
@@ -443,8 +453,12 @@ public final class LLCF {
      * Wraps an exception-handling {@code BiConsumer} to ensure that if the handling throws a new exception,
      * the error context is preserved by calling {@link Throwable#addSuppressed}.
      * <p>
-     * Example usage with {@link CompletableFuture#whenComplete}:
+     * Example usage with {@link CompletableFuture#whenComplete CompletableFuture#whenComplete}:
      * <pre>{@code cf.whenComplete(nonExSwallowedBiConsumer(action, true));}</pre>
+     * <p>
+     * The methods {@link CompletableFuture#whenComplete CompletableFuture#whenComplete*} in {@code CompletableFuture}
+     * may not incorporate the {@code nonExSwallowed} logic.
+     * It is recommended to use {@link Cffu} which has enhanced exception handling with the {@code nonExSwallowed} logic.
      * <p>
      * For more details on exception swallowing in exception handling methods, see the test cases in <a href=
      * "https://github.com/foldright/cffu/blob/1.x-dev/cffu-core/src/test/java/io/foldright/aspect_test/ExSwallowingOfExHandlingMethodsTests.kt"
