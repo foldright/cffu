@@ -216,6 +216,7 @@ public final class LLCF {
      * CompletionStage<?> input2 = ...;
      * Cffu<?> output2 = f_selfTypeDownCast(input2);}</pre>
      */
+    @Contract(pure = true)
     @SuppressWarnings("unchecked")
     public static <F extends CompletionStage<?>> F f_selfTypeDownCast(CompletionStage<?> stage) {
         return (F) stage;
@@ -294,6 +295,7 @@ public final class LLCF {
      *
      * @see CompletableFutureUtils#copy(CompletableFuture)
      */
+    @Contract(pure = true)
     public static <T> CompletableFuture<T> copy0(CompletableFuture<T> cf) {
         return IS_JAVA9_PLUS ? cf.copy() : cf.thenApply(x -> x);
     }
@@ -382,6 +384,7 @@ public final class LLCF {
      * @param executor used to trigger subsequent stage's computations
      *                 if input CompletableFuture is trigger in cf delayer thread
      */
+    @Contract(pure = true)
     public static <F extends CompletableFuture<?>> F switchExecutorIfTriggersInCfDelayerThread(F cf, Executor executor) {
         CompletableFuture<Object> ret = newIncompleteFuture(cf);
 
