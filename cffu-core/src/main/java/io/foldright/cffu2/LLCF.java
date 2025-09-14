@@ -134,7 +134,7 @@ public final class LLCF {
     @Contract(pure = true)
     public static <T> CompletableFuture<T> f_toCfCopy0(CompletionStage<? extends T> stage) {
         final CompletableFuture<T> f = f_toCf0(stage);
-        // since minimal-stage is not writable, defensive copy is unneeded, just return minimal-stage.
+        // because minimal-stage is not writable, defensive copy is unneeded, directly return minimal-stage instance.
         return isMinStageCf0(f) ? f : copy0(f);
     }
 

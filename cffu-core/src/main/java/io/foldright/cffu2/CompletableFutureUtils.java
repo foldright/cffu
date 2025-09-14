@@ -1510,7 +1510,7 @@ public final class CompletableFutureUtils {
         return _thenMRunAnySuccessAsync(cfThis, executor, actions, true);
     }
 
-    public static CompletableFuture<Void> _thenMRunAnySuccessAsync(
+    static CompletableFuture<Void> _thenMRunAnySuccessAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable[] actions, boolean defensiveCopy) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
@@ -2952,6 +2952,12 @@ public final class CompletableFutureUtils {
      * <pre>{@code  cf.exceptionally(nonExSwallowedFunction(fn, false));
      * CompletableFutureUtils.catching(cf, exceptionType, nonExSwallowedFunction(fallback, false));}</pre>
      * <p>
+     * The methods {@link CompletableFuture#exceptionally exceptionally*} in {@code CompletableFuture} and the
+     * methods {@link CompletableFutureUtils#exceptionallyCompose CompletableFutureUtils#exceptionallyCompose*} /
+     * {@link CompletableFutureUtils#catching catching*} in {@code CompletableFutureUtils} do not incorporate
+     * the {@code nonExSwallowed} logic, in order to maintain consistent and predictable behavior with the standard {@code CompletableFuture}.
+     * It is recommended to use {@link Cffu} which has enhanced exception handling with the {@code nonExSwallowed} logic.
+     * <p>
      * For more details on exception swallowing in exception handling methods, see the test cases in <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/aspect_test/ExSwallowingOfExHandlingMethodsTests.kt"
      * >ExSwallowingOfExHandlingMethodsTests</a>.
@@ -2983,8 +2989,12 @@ public final class CompletableFutureUtils {
      * Wraps an exception-handling {@code BiFunction} to ensure that if the handling throws a new exception,
      * the error context is preserved by calling {@link Throwable#addSuppressed}.
      * <p>
-     * Example usage with {@link CompletableFuture#handle}:
+     * Example usage with {@link CompletableFuture#handle CompletableFuture#handle}:
      * <pre>{@code cf.handle(nonExSwallowedBiFunction(fn, false));}</pre>
+     * <p>
+     * The methods {@link CompletableFuture#handle CompletableFuture#handle*} in {@code CompletableFuture}
+     * do not incorporate the {@code nonExSwallowed} logic.
+     * It is recommended to use {@link Cffu} which has enhanced exception handling with the {@code nonExSwallowed} logic.
      * <p>
      * For more details on exception swallowing in exception handling methods, see the test cases in <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/aspect_test/ExSwallowingOfExHandlingMethodsTests.kt"
@@ -3017,8 +3027,12 @@ public final class CompletableFutureUtils {
      * Wraps an exception-handling {@code BiConsumer} to ensure that if the handling throws a new exception,
      * the error context is preserved by calling {@link Throwable#addSuppressed}.
      * <p>
-     * Example usage with {@link CompletableFuture#whenComplete}:
+     * Example usage with {@link CompletableFuture#whenComplete CompletableFuture#whenComplete}:
      * <pre>{@code cf.whenComplete(nonExSwallowedBiConsumer(action, true));}</pre>
+     * <p>
+     * The methods {@link CompletableFuture#whenComplete CompletableFuture#whenComplete*} in {@code CompletableFuture}
+     * may not incorporate the {@code nonExSwallowed} logic.
+     * It is recommended to use {@link Cffu} which has enhanced exception handling with the {@code nonExSwallowed} logic.
      * <p>
      * For more details on exception swallowing in exception handling methods, see the test cases in <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/aspect_test/ExSwallowingOfExHandlingMethodsTests.kt"
