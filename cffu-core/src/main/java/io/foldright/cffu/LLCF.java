@@ -277,6 +277,7 @@ public final class LLCF {
      *
      * @see CompletableFutureUtils#copy(CompletableFuture)
      */
+    @Contract(pure = true)
     public static <T> CompletableFuture<T> copy0(CompletableFuture<T> cf) {
         return IS_JAVA9_PLUS ? cf.copy() : cf.thenApply(x -> x);
     }
