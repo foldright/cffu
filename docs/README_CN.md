@@ -18,6 +18,10 @@
 <a href="https://gitpod.io/#https://github.com/foldright/cffu"><img src="https://img.shields.io/badge/Gitpod-ready to code-339933?label=gitpod&logo=gitpod&logoColor=white" alt="gitpod: Ready to Code"></a>
 </p>
 
+[📖 English Documentation](../../README.md) | 📖 中文文档
+
+--------------------------------------------------------------------------------
+
 👉 `cffu`（`CompletableFuture-Fu` 🦝）是一个小小的[`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)辅助增强库，提升`CF`使用体验并减少误用，在业务中更方便高效安全地使用`CF`。😋🚀🦺
 
 欢迎 👏 💖
@@ -668,8 +672,6 @@ public class MultipleActionsDemo {
 # 🔌 API Docs
 
 - 当前版本的`Java API`文档： https://foldright.io/api-docs/cffu2/
-
-代码示例：
 
 # 🍪依赖
 

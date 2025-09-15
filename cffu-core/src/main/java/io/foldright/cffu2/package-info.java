@@ -1,6 +1,7 @@
 /**
- * A tiny sidekick library to make CompletableFuture usage more convenient, more efficient and safer
- * in your application. 😋🚀🦺
+ *
+ * A tiny 0-dependency sidekick library that improves the CompletableFuture(CF) usage experience and reduces misuse,
+ * enabling more convenient, efficient, and safe use of `CF` in your application. 😋🚀🦺
  * <p> The core classes are {@link io.foldright.cffu2.Cffu}/{@link io.foldright.cffu2.CffuFactory}. And the core
  * util class {@link io.foldright.cffu2.CompletableFutureUtils} of {@link java.util.concurrent.CompletableFuture}
  * contains the enhanced and backport methods for {@link java.util.concurrent.CompletableFuture}.

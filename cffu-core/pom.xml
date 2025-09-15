@@ -11,8 +11,9 @@
 	<artifactId>cffu2</artifactId>
 	<name>CompletableFuture-Fu(cffu)</name>
 	<description>
-		🦝 A tiny sidekick library to make CompletableFuture usage
-		more convenient, more efficient and safer in your application. 😋🚀🦺
+		🦝 Java CompletableFuture-Fu ("CF-Fu", pronounced "Shifu" 🦝) is a tiny 0-dependency sidekick library
+		that improves the CompletableFuture(CF) usage experience and reduces misuse,
+		enabling more convenient, efficient, and safe use of `CF` in your application. 😋🚀🦺
 	</description>
 	<url>https://github.com/foldright/cffu</url>
 	<inceptionYear>2023</inceptionYear>
