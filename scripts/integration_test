@@ -25,7 +25,7 @@ readonly JDK_VERSIONS=(
   11
   17
   "$default_build_jdk_version"
-  24
+  25
 )
 
 # here use `install` and `-D performRelease` intended
@@ -80,7 +80,7 @@ readonly MVN_OPTS_FOR_JAVA17=(
   -DswitchToLog4j2LoggingDependencies -Dcffu.exception.log.format=short
 )
 # shellcheck disable=SC2034
-readonly MVN_OPTS_FOR_JAVA24=(
+readonly MVN_OPTS_FOR_JAVA25=(
   -Dkotlin.version=1.9.0
   -Dcffu.exception.log.format=none
 )
