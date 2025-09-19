@@ -9,6 +9,9 @@ package io.foldright.cffu;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -57,11 +60,15 @@ final class Delayer {
      */
     @SuppressWarnings("JavadocReference")
     static boolean atCfDelayerThread() {
-        final String name = Thread.currentThread().getName();
-        return "CompletableFutureDelayScheduler".equals(name) || THREAD_NAME_OF_CFFU_DELAY_SCHEDULER.equals(name);
+        return DELAY_SCHEDULER_THREAD_NAMES.contains(Thread.currentThread().getName());
     }
 
     private static final String THREAD_NAME_OF_CFFU_DELAY_SCHEDULER = "CffuBuiltinDelayScheduler";
+    private static final Set<String> DELAY_SCHEDULER_THREAD_NAMES = new HashSet<>(Arrays.asList(
+            "CompletableFutureDelayScheduler", // Java 9 ~ 24
+            "ForkJoinPool.commonPool-delayScheduler", // Java 25
+            THREAD_NAME_OF_CFFU_DELAY_SCHEDULER
+    ));
 
     /**
      * Holds {@link #delayer} scheduler as field of static inner class for lazy loading(init only when needed).
