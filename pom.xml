@@ -701,7 +701,8 @@
 											<!-- https://www.mojohaus.org/extra-enforcer-rules/enforceBytecodeVersion.html -->
 											<maxJdkVersion>${maven.compiler.source}</maxJdkVersion>
 											<excludes>
-												<exclude>com.tngtech.archunit:archunit</exclude>
+												<exclude>com.tngtech.archunit</exclude>
+												<exclude>net.bytebuddy</exclude>
 											</excludes>
 										</enforceBytecodeVersion>
 									</rules>
