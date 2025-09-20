@@ -1,6 +1,5 @@
 package io.foldright.demo;
 
-import io.foldright.cffu2.CfTupleUtils;
 import io.foldright.cffu2.CffuFactory;
 import io.foldright.cffu2.CompletableFutureUtils;
 
@@ -98,20 +97,6 @@ public class MultipleActionsDemo {
                 v -> v + 3
         ).thenAccept(System.out::println);
         // output: [43, 44, 45]
-
-        CfTupleUtils.thenMApplyTupleFailFastAsync(
-                completedFuture(42),
-                v -> "string" + v,
-                v -> v + 1,
-                v -> v + 2.1
-        ).thenAccept(System.out::println);
-        // output: Tuple3(string42, 43, 44.1)
-        cffuFactory.completedFuture(42).tupleOps().thenMApplyAllSuccessTupleAsync(
-                v -> "string" + v,
-                v -> v + 1,
-                v -> v + 2.1
-        ).thenAccept(System.out::println);
-        // output: Tuple3(string42, 43, 44.1)
 
         sleep(1000);
     }

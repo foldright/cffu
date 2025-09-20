@@ -22,7 +22,8 @@
 
 --------------------------------------------------------------------------------
 
-👉 Java CompletableFuture-Fu ("CF-Fu", pronounced "Shifu" 🦝) is a tiny 0-dependency sidekick library that improves the [`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)
+👉 Java CompletableFuture-Fu ("CF-Fu", pronounced "Shifu" 🦝) is a tiny 0-dependency library that improves
+the [`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)
 usage experience and reduces misuse, enabling more convenient, efficient, and safe use of `CF` in your application. 😋🚀🦺
 
 Welcome 👏💖
@@ -46,15 +47,16 @@ Welcome 👏💖
     - [1.3 dependencies (including `CompletableFutureUtils` utility class)](#13-dependencies-including-completablefutureutils-utility-class)
   - [2. `cffu` feature introduction](#2-cffu-feature-introduction)
     - [2.1 support for returning overall results of multiple input `CF`s](#21-support-for-returning-overall-results-of-multiple-input-cfs)
-    - [2.2 support for setting default business thread pool and encapsulation carrying](#22-support-for-setting-default-business-thread-pool-and-encapsulation-carrying)
+    - [2.2 support for setting default business thread pool](#22-support-for-setting-default-business-thread-pool)
     - [2.3 efficient and flexible concurrent execution strategies (`AllFailFast` / `AnySuccess` / `AllSuccess` / `MostSuccess`)](#23-efficient-and-flexible-concurrent-execution-strategies-allfailfast--anysuccess--allsuccess--mostsuccess)
     - [2.4 support for directly running multiple `action`s instead of wrapping them into `Completablefuture`s first](#24-support-for-directly-running-multiple-actions-instead-of-wrapping-them-into-completablefutures-first)
-    - [2.5 support for handling specific exception types instead of all `Throwable` exceptions](#25-support-for-handling-specific-exception-types-instead-of-all-throwable-exceptions)
-    - [2.6 backport support for `Java 8`](#26-backport-support-for-java-8)
-    - [2.7 timeout-safe new implementation of `orTimeout` / `completeOnTimeout`](#27-timeout-safe-new-implementation-of-ortimeout--completeontimeout)
-    - [2.8 support for timeout-enabled `join` method](#28-support-for-timeout-enabled-join-method)
-    - [2.9 `anyOf` method that returns specific types](#29-anyof-method-that-returns-specific-types)
-    - [2.10 `allOf/anyOf` methods that accept broader input types](#210-allofanyof-methods-that-accept-broader-input-types)
+    - [2.5 Support for async parallel processing of collection data, instead of wrapping data and `Action` into `CompletableFuture`s first](#25-support-for-async-parallel-processing-of-collection-data-instead-of-wrapping-data-and-action-into-completablefutures-first)
+    - [2.6 support for handling specific exception types instead of all `Throwable` exceptions](#26-support-for-handling-specific-exception-types-instead-of-all-throwable-exceptions)
+    - [2.7 backport support for `Java 8`](#27-backport-support-for-java-8)
+    - [2.8 timeout-safe new implementation of `orTimeout` / `completeOnTimeout`](#28-timeout-safe-new-implementation-of-ortimeout--completeontimeout)
+    - [2.9 support for timeout-enabled `join` method](#29-support-for-timeout-enabled-join-method)
+    - [2.10 `anyOf` method that returns specific types](#210-anyof-method-that-returns-specific-types)
+    - [2.11 `allOf/anyOf` methods that accept broader input types](#211-allofanyof-methods-that-accept-broader-input-types)
     - [more feature documentation](#more-feature-documentation)
 - [🔌 API Docs](#-api-docs)
 - [🍪 Dependencies](#-dependencies)
@@ -67,39 +69,51 @@ Welcome 👏💖
 
 # 🔧 Features
 
-☘️ **Completing missing functionality in business use**
+☘️ **Completing missing functionality in business development**
 
 - 🏪 More convenient features, such as:
-  - Support for returning results of multiple input `CF`s instead of returning results without input `CF` contents (`CompletableFuture#allOf`)  
-    Such as methods `allResultsFailFastOf` / `allResultsOf` / `mSupplyFailFastAsync` / `thenMApplyFailFastAsync`
-  - Support for returning results of multiple input `CF`s with different types instead of the same type  
-    Such as methods `allTupleFailFastOf` / `allTupleOf` / `mSupplyTupleFailFastAsync` / `thenMApplyTupleFailFastAsync`
-  - Support for directly running multiple `Action`s instead of wrapping them into `CompletableFuture`s first  
-    Such as methods `mSupplyAsync` / `mRunAsync` / `mSupplyFailFastAsync` / `thenMApplyMostSuccessTupleAsync`
-  - Support for setting a default business thread pool and encapsulation carrying via `CffuFactory#builder(executor)` method,
+  - Support for returning overall results of multiple input `CF`s
+    instead of returning `CF<Void>` without input `CF` results (`CompletableFuture#allOf`)
+    - Such as methods `allResultsFailFastOf` / `mSupplyFailFastAsync` / `thenMApplyMostSuccessAsync`
+  - Support for directly running multiple `Action`s instead of wrapping them into `CompletableFuture`s first
+    - Such as methods `mSupplyAsync` / `mRunFailFastAsync` / `thenMApplyAllSuccessAsync`
+    - Aka. multiple instruction, single data (`MISD`) style processing
+  - Support for async parallel processing of collection data,
+    instead of wrapping data with actions into `CompletableFuture`s first
+    - Such as methods `CfParallelUtils#parApplyFailFastAsync` / `CfParallelUtils#thenParAcceptAnySuccessAsync`
+    - Aka. single instruction, multiple data (`SIMD`) style processing
+  - Support for inputting collections of `CF`s / `Action`s instead of converting them to array first
+    - Such as methods `CfIterableUtils#allResultsFailFastOf` /
+      `CfIterableUtils#mSupplyFailFastAsync` / `CfIterableUtils#thenMApplyMostSuccessAsync`
+  - Support for setting a default business thread pool via `CffuFactory#builder(executor)` method,
     instead of repeatedly passing business thread pool parameters during async execution
-  - Support for handling specific exception types via `catching` methods instead of handling all `Throwable` exceptions (`CompletableFuture#exceptionally`)
+  - Support for handling specific exception types via `catching` methods
+    instead of handling all `Throwable` exceptions (`CompletableFuture#exceptionally`)
 - 🚦 More efficient and flexible concurrent execution strategies, such as:
-  - `AllFailFast` strategy: fail fast when any of the multiple input `CF`s fails
-    instead of futilely waiting for all `CF`s to complete (`CompletableFuture#allOf`)
+  - `AllFailFast` strategy: fail fast when any of the multiple input `CF`s complete
+    exceptionally instead of futilely waiting for all `CF`s to complete (`CompletableFuture#allOf`)
   - `AnySuccess` strategy: Return the first successful `CF` result
-    instead of the first completed but possibly failed `CF` (`CompletableFuture#anyOf`)
-  - `AllSuccess` strategy: Return successful results from multiple `CF`s, returning specified default values for failed `CF`s
+    instead of the first completed but possibly exceptional `CF` (`CompletableFuture#anyOf`)
+  - `AllSuccess` strategy: Return successful results from multiple `CF`s,
+    returning specified default values for exceptional `CF`s
   - `MostSuccess` strategy: Return successful results from multiple `CF`s within a specified time,
-    returning specified default values for failed or timed-out `CF`s
+    returning specified default values for exceptional or timed-out `CF`s
   - `All(Complete)` / `Any(Complete)` strategies: These two are strategies already supported by `CompletableFuture`
 - 🦺 Safer usage patterns, such as:
-  - Timeout-safe new implementation of `orTimeout` / `completeOnTimeout` methods  
-    The `CF#orTimeout` / `CF#completeOnTimeout` methods can break CompletableFuture's timeout and delay functionality❗️
-  - `peek` processing method that definitely won't modify `CF` results  
-    The `whenComplete` method may modify the `CF` result, and the returned `CF` result may not be consistent with the input
+  - Timeout-safe new implementation of `orTimeout` / `completeOnTimeout` methods
+    - The `CF#orTimeout` / `CF#completeOnTimeout` methods can break CompletableFuture's timeout and delay functionality❗️
+  - `peek` processing method that definitely won't modify `CF` results
+    - The `whenComplete` method may modify the `CF` result,
+      and the returned `CF` result may not be consistent with the input
   - Support for timeout-enabled `join(timeout, unit)` method
   - Support for the forbidding `obtrude` methods via `CffuFactoryBuilder#forbidObtrudeMethods` method
-  - Complete code quality annotations attached to class methods, enabling `IDE`s to provide early problem warnings during coding  
-    Such as `@NonNull`, `@Nullable`, `@CheckReturnValue`, `@Contract`, etc.
+  - Complete code quality annotations attached to class methods,
+    enabling `IDE`s to provide early problem warnings during coding
+    - Such as `@NonNull`, `@Nullable`, `@CheckReturnValue`, `@Contract`, etc.
 - 🧩 Missing basic functionality, in addition to the safety-oriented new implementations above, including:
   - Async exception completion, `completeExceptionallyAsync` method
-  - Non-blocking retrieval of successful results, returning specified default values for failed or still-running `CF`s, `getSuccessNow` method
+  - Non-blocking retrieval of successful results, returning specified default values
+    for exceptional or incomplete `CF`s, `getSuccessNow` method
   - Unwrapping `CF` exceptions into business exceptions, `unwrapCfException` method
 
 ⏳ **`Backport` support for `Java 8`**, all new `CF` methods from `Java 9+` versions
@@ -131,13 +145,14 @@ and the industry has a large number of tools and frameworks available.
 > "[Programming Concurrency on the JVM](https://www.google.com/books/edition/Programming_Concurrency_on_the_JVM/xstYEQAAQBAJ)",
 > "[Learning Concurrent Programming in Scala (2nd Edition)](https://www.google.com/books/edition/Learning_Concurrent_Programming_in_Scala/D1QoDwAAQBAJ)".
 
-Among them, [`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html) has its advantages:
+Among them, [`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)
+has its advantages:
 
 - **Widely Known and Widely Used**
   - `CompletableFuture` was provided in `Java 8` released in 2014, 10 years ago
-  - The parent interface [`Future`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Future.html) of `CompletableFuture` was provided
-    as early as `Java 5` released in 2004, 20 years ago. Although the `Future` interface
-    doesn't support asynchronous retrieval of execution results and orchestration of concurrent execution logic,
+  - The parent interface [`Future`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrnt/Future.html)
+    of `CompletableFuture` was provided as early as `Java 5` released in 2004, 20 years ago. Although the `Future`
+    interface doesn't support asynchronous retrieval of execution results and orchestration of concurrent execution logic,
     it has made the majority of `Java` developers familiar with the typical concept and tool of `Future`
 - **Powerful but Not Excessively Complex**
   - Sufficient to handle daily business asynchronous concurrency needs
@@ -206,9 +221,9 @@ Migrating to the `Cffu` class involves 2 simple changes:
 > The reason this migration is possible is that:
 >
 > - All instance methods of the `CompletableFuture` class are implemented
-    >   in the `Cffu` class with the same method signatures and functionality
+    in the `Cffu` class with the same method signatures and functionality
 > - All static methods of the `CompletableFuture` class are implemented
-    >   in the `CffuFactory` class with the same method signatures and functionality
+    in the `CffuFactory` class with the same method signatures and functionality
 
 2\) If you cannot modify code that uses `CompletableFuture` (such as `CF` returned from external libraries)
 
@@ -241,8 +256,8 @@ to convert `CompletableFuture` or `CompletionStage` to `Cffu` type.
 
 ### 2.1 support for returning overall results of multiple input `CF`s
 
-The `allOf` method of `CompletableFuture` doesn't return the execution results of the input `CF`s
-(the method's return type is `CF<Void>`). To get the execution results of input `CF`s, you need to:
+The return type of `CompletableFuture#allOf` method is `CF<Void>` without the execution results of the input `CF`s.
+To get the execution results of input `CF`s, you need to:
 
 - After the `allOf` method, get results through explicit read operations (like `join` / `get`) on the input parameter `CF`s
   - Cumbersome operation 🔧🤯
@@ -250,12 +265,15 @@ The `allOf` method of `CompletableFuture` doesn't return the execution results o
     For more explanation, see article [CompletableFuture Principles and Practice - 4.2.2 Thread Pool Circular References Can Cause Deadlocks](https://juejin.cn/post/7098727514725416967#heading-24)
 - Or set external variables in the passed `CompletableFuture Action`
   - Need to pay attention to thread safety issues of multithreaded read-write ⚠️🔀  
-    Multi-threaded read-write involves the complexity of multithreaded data transfer; omitting correct handling of concurrent logic data read-write is a common problem in business code❗️
+    Multi-threaded read-write involves the complexity of multithreaded data transfer;
+    omitting correct handling of concurrent logic data read-write is a common problem in business code❗️
   - Avoid concurrent pitfalls; concurrent logic is complex and bug-prone 🐞  
-    If timeouts are involved, it becomes even more complex; even `JDK CompletableFuture` itself has [bug fixes](https://github.com/foldright/cffu/releases/tag/v1.0.0-Alpha20) in this area in `Java 21` ⏰
+    If timeouts are involved, it becomes even more complex; even `JDK CompletableFuture` itself has
+    [bug fixes](https://github.com/foldright/cffu/releases/tag/v1.0.0-Alpha20) in this area in `Java 21` ⏰
 
-Methods like `cffu`'s `allResultsFailFastOf` / `allResultsOf` / `mostSuccessResultsOf` provide functionality
-to return results of input `CF`s. Using these methods to get overall execution results of input `CF`s:
+Methods in `cffu` like `allResultsFailFastOf` / `mSupplyFailFastAsync` / `thenMApplyMostSuccessAsync`
+provide functionality to return results of input `CF`s.
+Using these methods to get overall execution results of input `CF`s:
 
 - Convenient and straightforward
 - Because the returned result is a `CF` with overall results,
@@ -307,45 +325,10 @@ public class AllResultsOfDemo {
 }
 ```
 
-> \# Complete runnable demo code can be found at [`AllResultsOfDemo.java`](cffu-core/src/test/java/io/foldright/demo/AllResultsOfDemo.java).
+> \# Complete runnable demo code can be found at
+> [`AllResultsOfDemo.java`](cffu-core/src/test/java/io/foldright/demo/AllResultsOfDemo.java).
 
-The above shows multiple `CF`s with the same result type. `cffu` also provides methods like `allTupleFailFastOf`
-/ `allTupleOf` / `mSupplyTupleFailFastAsync` that return results of multiple input `CF`s with different types.
-
-Example code:
-
-```java
-public class AllTupleOfDemo {
-  private static final ExecutorService myBizExecutor = Executors.newCachedThreadPool();
-  private static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
-
-  public static void main(String[] args) throws Exception {
-    //////////////////////////////////////////////////
-    // allTupleFailFastOf / allTupleOf
-    //////////////////////////////////////////////////
-    Cffu<String> cffu1 = cffuFactory.completedFuture("foo");
-    Cffu<Integer> cffu2 = cffuFactory.completedFuture(42);
-
-    Cffu<Tuple2<String, Integer>> allTuple = cffuFactory.tupleOps().allTupleFailFastOf(cffu1, cffu2);
-    System.out.println(allTuple.get());
-    // output: Tuple2(foo, 42)
-
-    //////////////////////////////////////////////////
-    // or CompletableFutureUtils.allTupleFailFastOf / allTupleOf
-    //////////////////////////////////////////////////
-    CompletableFuture<String> cf1 = CompletableFuture.completedFuture("foo");
-    CompletableFuture<Integer> cf2 = CompletableFuture.completedFuture(42);
-
-    CompletableFuture<Tuple2<String, Integer>> allTuple2 = allTupleFailFastOf(cf1, cf2);
-    System.out.println(allTuple2.get());
-    // output: Tuple2(foo, 42)
-  }
-}
-```
-
-> \# Complete runnable demo code can be found at [`AllTupleOfDemo.java`](cffu-core/src/test/java/io/foldright/demo/AllTupleOfDemo.java).
-
-### 2.2 support for setting default business thread pool and encapsulation carrying
+### 2.2 support for setting default business thread pool
 
 The default thread pool used by `CompletableFuture` async execution (i.e., `*Async` methods)
 is `ForkJoinPool.commonPool()`; using this default thread pool in business is very dangerous❗
@@ -363,9 +346,10 @@ this makes using `CompletableFuture` cumbersome and error-prone 🤯❌
 
 Additionally, when under-layer operations call back to business logic (such as `RPC` callbacks),
 it's not appropriate or convenient to provide a thread pool for the business;
-using `Cffu` to encapsulate and carry the business thread pool specified by upper-level business
+using `Cffu` to set the default business thread pool specified by upper-level business
 is both convenient, reasonable, and safe.  
-For more information about this usage scenario, see [CompletableFuture Principles and Practice - 4.2.3 Asynchronous RPC Calls Should Not Block IO Thread Pools](https://juejin.cn/post/7098727514725416967#heading-25)
+For more information about this usage scenario, see
+[CompletableFuture Principles and Practice - 4.2.3 Asynchronous RPC Calls Should Not Block IO Thread Pools](https://juejin.cn/post/7098727514725416967#heading-25)
 
 Example code:
 
@@ -394,7 +378,8 @@ public class NoDefaultExecutorSettingForCompletableFuture {
 }
 ```
 
-> \# Complete runnable demo code can be found at [`NoDefaultExecutorSettingForCompletableFuture.java`](cffu-core/src/test/java/io/foldright/demo/NoDefaultExecutorSettingForCompletableFuture.java).
+> \# Complete runnable demo code can be found at
+> [`NoDefaultExecutorSettingForCompletableFuture.java`](cffu-core/src/test/java/io/foldright/demo/NoDefaultExecutorSettingForCompletableFuture.java).
 
 The `Cffu` class supports setting a default business thread pool,
 avoiding the above cumbersomeness and dangers. Example code:
@@ -417,51 +402,52 @@ public class DefaultExecutorSettingForCffu {
 }
 ```
 
-> \# Complete runnable demo code can be found at [`DefaultExecutorSettingForCffu.java`](cffu-core/src/test/java/io/foldright/demo/DefaultExecutorSettingForCffu.java).
+> \# Complete runnable demo code can be found at
+> [`DefaultExecutorSettingForCffu.java`](cffu-core/src/test/java/io/foldright/demo/DefaultExecutorSettingForCffu.java).
 
 ### 2.3 efficient and flexible concurrent execution strategies (`AllFailFast` / `AnySuccess` / `AllSuccess` / `MostSuccess`)
 
-- `CompletableFuture`'s `allOf` method waits for all input `CF`s to complete;
-  even if a `CF` fails, it still waits for subsequent `CF`s to complete before returning a failed `CF`.
+- `CompletableFuture`'s `allOf` method waits for all input `CF`s to complete; even if a `CF` completes
+  exceptionally, it still waits for subsequent `CF`s to complete before returning an exceptional `CF`.
   - For business logic, this failure-and-continue-waiting strategy (`AllComplete`) slows down business responsiveness;
-    businesses would prefer fail fast when input `CF`s fail, instead of futilely waiting
+    businesses would prefer fail fast when any of input `CF` complete exceptionally, instead of futilely waiting
   - `cffu` provides corresponding methods like `allResultsFailFastOf`
     that support the `AllFailFast` concurrent execution strategy
-  - Both `allOf` / `allResultsFailFastOf` return successful results only when all input `CF`s succeed
+  - Both `allOf` and `allResultsFailFastOf` return successful results only when all input `CF`s successful
 - `CompletableFuture`'s `anyOf` method returns the first completed `CF` without waiting for subsequent
-  uncompleted `CF`s in racing mode; even if the first completed `CF` failed, it returns this failed `CF` result.
-  - For business logic, what's often wanted is not the first completed but failed `CF` result (`AnyComplete`),
-    but rather the first successful `CF` result in racing mode
+  incomplete `CF`s; even if the first completed `CF` is exceptional, it returns this exceptional `CF` result.
+  - For business logic, what's often wanted is not the first completed but exceptional `CF` result (`AnyComplete`),
+    but rather the first successful `CF` result
   - `cffu` provides corresponding methods like `anySuccessOf`
     that support the `AnySuccess` concurrent execution strategy
-  - `anySuccessOf` returns a failure result only when all input `CF`s fail
-- Return successful results from multiple `CF`s, returning specified default values for failed `CF`s
-  - When business logic includes fault tolerance, successful partial results can be used
-    when some `CF`s fail, instead of overall failure
+  - `anySuccessOf` returns a exceptional result only when all input `CF`s exceptional
+- Return successful results from multiple `CF`s, returning specified default values for exceptional `CF`s
+  - When business logic includes fault tolerance, successful partial results can be used,
+    instead of overall failure when some `CF`s fail
   - `cffu` provides corresponding methods like `allSuccessOf`
     that support the `AllSuccess` concurrent execution strategy
 - Return successful results from multiple `CF`s within a specified time,
-  returning specified default values for failed or timed-out `CF`s
+  returning specified default values for incomplete or timed-out `CF`s
   - When business is eventually consistent, return available results as much as possible;
-    for `CF`s that couldn't return in time and are still running,
-    results will be written to distributed cache for the next business request, avoiding duplicate calculations
+    for `CF`s that couldn't return in time, results will be written to distributed cache
+    for the next business request, avoiding duplicate calculations
   - This is a common business usage pattern; `cffu` provides corresponding methods
     like `mostSuccessResultsOf` that support the `MostSuccess` concurrent execution strategy
 
-> 📔 For more about concurrent execution strategies for multiple `CF`s,
-> see the JavaScript specification [`Promise Concurrency`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#promise_concurrency);
+> 📔 For more about concurrent execution strategies for multiple `CF`s, see the JavaScript specification
+> [`Promise Concurrency`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#promise_concurrency);
 > in JavaScript, `Promise` corresponds to `CompletableFuture`.
 >
 > JavaScript `Promise` provides 4 concurrent execution methods:
 >
 > - [`Promise.all()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all):
-    >   Wait for all `Promise`s to succeed, immediately return failure if any fails (`AllFailFast`)
+    Wait for all `Promise`s to complete, immediately return exceptionally if any input complete exceptionally (`AllFailFast`)
 > - [`Promise.allSettled()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled):
-    >   Wait for all `Promise`s to complete, regardless of success or failure (`AllComplete`)
+    Wait for all `Promise`s to complete, regardless of success or failure (`AllComplete`)
 > - [`Promise.any()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/any):
-    >   Racing mode, immediately return the first successful `Promise` (`AnySuccess`)
+    Racing mode, immediately return the first successful `Promise` (`AnySuccess`)
 > - [`Promise.race()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race):
-    >   Racing mode, immediately return the first completed `Promise` (`AnyComplete`)
+    Racing mode, immediately return the first completed `Promise` (`AnyComplete`)
 >
 > PS: The method naming of JavaScript `Promise` is well-considered~ 👍
 >
@@ -536,7 +522,8 @@ public class ConcurrencyStrategyDemo {
 }
 ```
 
-> \# Complete runnable demo code can be found at [`ConcurrencyStrategyDemo.java`](cffu-core/src/test/java/io/foldright/demo/ConcurrencyStrategyDemo.java).
+> \# Complete runnable demo code can be found at
+> [`ConcurrencyStrategyDemo.java`](cffu-core/src/test/java/io/foldright/demo/ConcurrencyStrategyDemo.java).
 
 ### 2.4 support for directly running multiple `action`s instead of wrapping them into `Completablefuture`s first
 
@@ -641,27 +628,96 @@ public class MultipleActionsDemo {
         v -> v + 3
     ).thenAccept(System.out::println);
     // output: [43, 44, 45]
-
-    CfTupleUtils.thenMApplyTupleFailFastAsync(
-        completedFuture(42),
-        v -> "string" + v,
-        v -> v + 1,
-        v -> v + 2.1
-    ).thenAccept(System.out::println);
-    // output: Tuple3(string42, 43, 44.1)
-    cffuFactory.completedFuture(42).tupleOps().thenMApplyAllSuccessTupleAsync(
-        v -> "string" + v,
-        v -> v + 1,
-        v -> v + 2.1
-    ).thenAccept(System.out::println);
-    // output: Tuple3(string42, 43, 44.1)
   }
 }
 ```
 
-> \# Complete runnable demo code can be found at [`MultipleActionsDemo.java`](cffu-core/src/test/java/io/foldright/demo/MultipleActionsDemo.java).
+> \# Complete runnable demo code can be found at
+> [`MultipleActionsDemo.java`](cffu-core/src/test/java/io/foldright/demo/MultipleActionsDemo.java).
 
-### 2.5 support for handling specific exception types instead of all `Throwable` exceptions
+### 2.5 Support for async parallel processing of collection data, instead of wrapping data and `Action` into `CompletableFuture`s first
+
+Async parallel processing of multiple data items is a common business requirement,
+but implementing it with the `CompletableFuture` API is cumbersome and complex,
+also obscures the business logic,` and a simple implementation **may swallow exceptions**❗
+
+`cffu` provides methods for async parallel data processing to solve these problems.
+
+Example code:
+
+```java
+public class CfParallelDemo {
+  private static final ExecutorService myBizExecutor = Executors.newCachedThreadPool();
+  private static final CffuFactory cffuFactory = CffuFactory.builder(myBizExecutor).build();
+
+  static void parApplyFailFastAsyncDemo() {
+    final Function<Integer, Integer> fn = x -> x + 1;
+    final List<Integer> list = asList(42, 43, 44);
+
+    // wrap data with action to CompletableFutures first, AWKWARD and COMPLEX! 😖
+    CompletableFuture<Integer>[] cfs = new CompletableFuture[list.size()];
+    for (int i = 0; i < list.size(); i++) {
+      Integer e = list.get(i);
+      cfs[i] = CompletableFuture.supplyAsync(() -> fn.apply(e));
+    }
+    CompletableFutureUtils.allResultsFailFastOf(cfs).thenAccept(System.out::println);
+    // output: [43, 44, 45]
+    cffuFactory.allResultsFailFastOf(cfs).thenAccept(System.out::println);
+    // output: [43, 44, 45]
+
+    // just process multiple data, fresh and cool 😋
+    CfParallelUtils.parApplyFailFastAsync(
+        asList(42, 43, 44),
+        x -> x + 1
+    ).thenAccept(System.out::println);
+    // output: [43, 44, 45]
+    cffuFactory.parOps().parApplyFailFastAsync(
+        asList(42, 43, 44),
+        x -> x + 1
+    ).thenAccept(System.out::println);
+    // output: [43, 44, 45]
+  }
+
+  static void thenParApplyFailFastAsyncDemo() {
+    final Function<Integer, Integer> fn = x -> x + 1;
+    final CompletableFuture<List<Integer>> cf = completedFuture(asList(42, 43, 44));
+
+    // wrap data with action to CompletableFutures first, AWKWARD and COMPLEX! 😖
+    cf.thenCompose(list -> {
+      CompletableFuture<Integer>[] cfs = new CompletableFuture[list.size()];
+      for (int i = 0; i < list.size(); i++) {
+        Integer e = list.get(i);
+        cfs[i] = CompletableFuture.supplyAsync(() -> fn.apply(e));
+      }
+      return CompletableFutureUtils.allResultsFailFastOf(cfs);
+    }).thenAccept(System.out::println);
+    // output: [43, 44, 45]
+    final MCffu<Integer, List<Integer>> mCffu = cffuFactory.completedMCffu(asList(42, 43, 44));
+    mCffu.thenCompose(list -> {
+      CompletableFuture<Integer>[] cfs = new CompletableFuture[list.size()];
+      for (int i = 0; i < list.size(); i++) {
+        Integer e = list.get(i);
+        cfs[i] = CompletableFuture.supplyAsync(() -> fn.apply(e));
+      }
+      return CompletableFutureUtils.allResultsFailFastOf(cfs);
+    }).thenAccept(System.out::println);
+    // output: [43, 44, 45]
+
+    // just process multiple data, fresh and cool 😋
+    CfParallelUtils.thenParApplyFailFastAsync(cf, x -> x + 1)
+        .thenAccept(System.out::println);
+    // output: [43, 44, 45]
+    mCffu.parOps().thenParApplyFailFastAsync(x -> x + 1)
+        .thenAccept(System.out::println);
+    // output: [43, 44, 45]
+  }
+}
+```
+
+> \# Complete runnable demo code can be found at
+> [`CfParallelDemo.java`](cffu-core/src/test/java/io/foldright/demo/CfParallelDemo.java).
+
+### 2.6 support for handling specific exception types instead of all `Throwable` exceptions
 
 In business processing `try-catch` statements, catching all exceptions (`Throwable`) is often not a good practice.
 Similarly, the `CompletableFuture#exceptionally` method also handles all exceptions (`Throwable`).
@@ -674,7 +730,7 @@ avoid masking bugs or incorrectly handling exceptions that you cannot recover fr
 that support specifying exception types to handle; compared to the `CF#exceptionally` method,
 it adds an exception type parameter, with similar usage, so no code example is provided.
 
-### 2.6 backport support for `Java 8`
+### 2.7 backport support for `Java 8`
 
 All new `CF` methods from `Java 9+` higher versions are directly available in `Java 8` lower versions.
 
@@ -688,10 +744,11 @@ Important `backport` features include:
 
 These `backport` methods are existing functionality of `CompletableFuture`, so no code examples are provided.
 
-### 2.7 timeout-safe new implementation of `orTimeout` / `completeOnTimeout`
+### 2.8 timeout-safe new implementation of `orTimeout` / `completeOnTimeout`
 
-The `CF#orTimeout()` / `CF#completeOnTimeout()` methods use the internal single-threaded `ScheduledThreadPoolExecutor` of `CF`
-to trigger business logic execution when timeouts occur, which can break CompletableFuture's timeout and delay functionality❗
+The `CF#orTimeout()` / `CF#completeOnTimeout()` methods use
+the internal single-threaded `ScheduledThreadPoolExecutor` of `CF` to trigger business logic execution
+when timeouts occur, which can break CompletableFuture's timeout and delay functionality❗
 
 Because timeout and delayed execution are basic functionalities, once they fail, it can lead to:
 
@@ -715,7 +772,7 @@ For more information, see:
   / [`CFU#completeOnTimeout()`](https://foldright.io/api-docs/cffu2/2.0.0-Alpha6/io/foldright/cffu2/CompletableFutureUtils.html#completeOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
 - Article [Improper Use of `CompletableFuture` Timeout Functionality Causes Production Incidents](https://juejin.cn/post/7411686792342274089)
 
-### 2.8 support for timeout-enabled `join` method
+### 2.9 support for timeout-enabled `join` method
 
 The `cf.join()` method "waits forever without timeout", which is very dangerous in business❗️
 When unexpected long waits occur, it can lead to:
@@ -729,7 +786,7 @@ it's like `cf.get(timeout, unit)` compared to `cf.get()`.
 
 This new method is simple and similar to use, so no code example is provided.
 
-### 2.9 `anyOf` method that returns specific types
+### 2.10 `anyOf` method that returns specific types
 
 `CompletableFuture`'s `anyOf()` method returns type `Object`, losing specific types,
 making it inconvenient to use return values requiring casting operations, and it's not type-safe.
@@ -738,7 +795,7 @@ making it inconvenient to use return values requiring casting operations, and it
 
 This method is simple and similar to use, so no code example is provided.
 
-### 2.10 `allOf/anyOf` methods that accept broader input types
+### 2.11 `allOf/anyOf` methods that accept broader input types
 
 `CompletableFuture`'s `allOf()` / `anyOf()` methods take `CompletableFuture` parameter types,
 not the broader `CompletionStage` types; for `CompletionStage` type inputs,
@@ -756,9 +813,12 @@ You can refer to:
 - [`Java API` Documentation](https://foldright.io/api-docs/cffu2/)
 - Implementation source code, such as
   - [`Cffu.java`](cffu-core/src/main/java/io/foldright/cffu2/Cffu.java),
+    [`MCffu.java`](cffu-core/src/main/java/io/foldright/cffu2/MCffu.java),
     [`BaseCffu.java`](cffu-core/src/main/java/io/foldright/cffu2/BaseCffu.java),
     [`CffuFactory.java`](cffu-core/src/main/java/io/foldright/cffu2/CffuFactory.java)
-  - [`CompletableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu2/CompletableFutureUtils.java)
+  - [`CompletableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu2/CompletableFutureUtils.java),
+    [`CfIterableUtils.java`](cffu-core/src/main/java/io/foldright/cffu2/CfIterableUtils.java),
+    [`CfParallelUtils.java`](cffu-core/src/main/java/io/foldright/cffu2/CfParallelUtils.java)
 
 # 🔌 API Docs
 

@@ -21,7 +21,7 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * Utility class for parallel data processing using CompletableFuture.
+ * Utility class for async parallel data processing using CompletableFuture.
  * <p>
  * Supports different concurrency strategies:
  * all-fail-fast, all-success, most-success, all-complete, any-success and any-complete.

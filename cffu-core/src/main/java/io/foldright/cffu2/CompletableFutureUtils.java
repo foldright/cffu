@@ -22,11 +22,12 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 
 
 /**
- * This class contains the new enhanced and backport methods for {@link CompletableFuture}.
+ * Utility class providing enhanced and backport methods for {@link CompletableFuture}.
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @author HuHao (995483610 at qq dot com)
  * @author Eric Lin (linqinghua4 at gmail dot com)
+ * @see CompletableFuture
  * @see CfIterableUtils
  * @see CfParallelUtils
  * @see CfTupleUtils

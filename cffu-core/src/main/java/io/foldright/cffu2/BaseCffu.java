@@ -25,8 +25,8 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * Base class providing shared functionality for {@link Cffu} and {@link MCffu} implementations.
- * For application, should use {@link Cffu} or {@link MCffu} directly rather than this internal class.
+ * Base class providing shared functionality for {@link Cffu} and {@link MCffu} subclass implementations.
+ * For application code, should always use type {@link Cffu} or {@link MCffu} rather than this type {@link BaseCffu}.
  *
  * @param <T> The result type returned by this future's {@code join}
  * @param <F> the type of the implementation {@code BaseCffu}
