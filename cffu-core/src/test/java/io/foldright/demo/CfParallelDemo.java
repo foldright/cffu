@@ -53,7 +53,7 @@ public class CfParallelDemo {
         cffuFactory.allResultsFailFastOf(cfs).thenAccept(System.out::println);
         // output: [43, 44, 45]
 
-        // just process multiple data, fresh and cool 😋
+        // just parallel process multiple data, fresh and cool 😋
         CfParallelUtils.parApplyFailFastAsync(
                 asList(42, 43, 44),
                 x -> x + 1
@@ -95,7 +95,7 @@ public class CfParallelDemo {
         }).thenAccept(System.out::println);
         // output: [43, 44, 45]
 
-        // just process multiple data, fresh and cool 😋
+        // just parallel process multiple data, fresh and cool 😋
         CfParallelUtils.thenParApplyFailFastAsync(cf, x -> x + 1)
                 .thenAccept(System.out::println);
         // output: [43, 44, 45]
