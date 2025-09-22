@@ -22,6 +22,7 @@
       <w>coverallsapp</w>
       <w>doctoc</w>
       <w>foldright</w>
+      <w>gavs</w>
       <w>huhaosumail</w>
       <w>juejin</w>
       <w>kotest</w>
@@ -32,11 +33,12 @@
       <w>mvnw</w>
       <w>oldratlee</w>
       <w>ossrh</w>
+      <w>revapi</w>
       <w>ripgrep</w>
       <w>runnables</w>
       <w>shifu</w>
       <w>synchronizer</w>
-      <w>synchronizers</w>
+      <w>synhronizers</w>
       <w>throwables</w>
       <w>unscreened</w>
       <w>wrappee</w>
