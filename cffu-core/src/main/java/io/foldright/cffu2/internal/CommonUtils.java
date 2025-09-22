@@ -56,17 +56,17 @@ public final class CommonUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> CompletableFuture<T>[] createCfArray(int length) {
+    public static <T> CompletableFuture<T>[] newCfArray(int length) {
         return new CompletableFuture[length];
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> CompletionStage<T>[] createStageArray(int length) {
+    public static <T> CompletionStage<T>[] newStageArray(int length) {
         return new CompletionStage[length];
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T[] f_createArray(int length) {
+    public static <T> T[] f_newArray(int length) {
         return (T[]) new Object[length];
     }
 
@@ -105,7 +105,7 @@ public final class CommonUtils {
      */
     public static <E> E[] f_toArray(AtomicReferenceArray<? extends E> array) {
         int len = array.length();
-        E[] ret = f_createArray(len);
+        E[] ret = f_newArray(len);
         for (int i = 0; i < len; i++) ret[i] = array.get(i);
         return ret;
     }

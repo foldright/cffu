@@ -284,7 +284,7 @@ public final class CfParallelUtils {
 
     private static <T, U> CompletableFuture<U>[] wrapEleFunction0(
             Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
-        return CommonUtils.toArray(elements, CommonUtils::createCfArray,
+        return CommonUtils.toArray(elements, CommonUtils::newCfArray,
                 e -> CompletableFuture.supplyAsync(() -> fn.apply(e), executor));
     }
 
@@ -440,7 +440,7 @@ public final class CfParallelUtils {
 
     private static <T> CompletableFuture<Void>[] wrapEleConsumer0(
             Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
-        return CommonUtils.toArray(elements, CommonUtils::createCfArray,
+        return CommonUtils.toArray(elements, CommonUtils::newCfArray,
                 e -> CompletableFuture.runAsync(() -> action.accept(e), executor));
     }
 

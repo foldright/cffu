@@ -121,7 +121,7 @@ public final class LLCF {
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] f_toCfArray0(CompletionStage<? extends T>[] stages) {
-        return mapArray(stages, CommonUtils::createCfArray, LLCF::f_toCf0);
+        return mapArray(stages, CommonUtils::newCfArray, LLCF::f_toCf0);
     }
 
     /**
@@ -144,7 +144,7 @@ public final class LLCF {
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] f_toCfCopyArray0(CompletionStage<? extends T>[] stages) {
-        return mapArray(stages, CommonUtils::createCfArray, LLCF::f_toCfCopy0);
+        return mapArray(stages, CommonUtils::newCfArray, LLCF::f_toCfCopy0);
     }
 
     /**
@@ -165,7 +165,7 @@ public final class LLCF {
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] toNonMinCfArray0(CompletionStage<? extends T>[] stages) {
-        return mapArray(stages, CommonUtils::createCfArray, LLCF::toNonMinCf0);
+        return mapArray(stages, CommonUtils::newCfArray, LLCF::toNonMinCf0);
     }
 
     /**
@@ -187,7 +187,7 @@ public final class LLCF {
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] toNonMinCfCopyArray0(CompletionStage<? extends T>[] stages) {
-        return mapArray(stages, CommonUtils::createCfArray, LLCF::toNonMinCfCopy0);
+        return mapArray(stages, CommonUtils::newCfArray, LLCF::toNonMinCfCopy0);
     }
 
     /**

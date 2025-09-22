@@ -247,7 +247,7 @@ public final class CompletableFutureUtils {
     }
 
     static <T> CompletableFuture<? extends T>[] wrapSuppliers0(Executor executor, Supplier<? extends T>[] suppliers) {
-        return mapArray(suppliers, CommonUtils::createCfArray, s -> CompletableFuture.supplyAsync(s, executor));
+        return mapArray(suppliers, CommonUtils::newCfArray, s -> CompletableFuture.supplyAsync(s, executor));
     }
 
     /**
@@ -361,7 +361,7 @@ public final class CompletableFutureUtils {
     }
 
     private static CompletableFuture<Void>[] wrapRunnables0(Executor executor, Runnable[] actions) {
-        return mapArray(actions, CommonUtils::createCfArray, a -> CompletableFuture.runAsync(a, executor));
+        return mapArray(actions, CommonUtils::newCfArray, a -> CompletableFuture.runAsync(a, executor));
     }
 
     // endregion
@@ -417,7 +417,7 @@ public final class CompletableFutureUtils {
 
     static <T> CompletableFuture<List<T>> allSuccessResultsOf0(
             @Nullable T valueIfFailed, CompletionStage<? extends T>[] cfs) {
-        return allResultsOf0(false, mapArray(cfs, CommonUtils::createStageArray,
+        return allResultsOf0(false, mapArray(cfs, CommonUtils::newStageArray,
                 s -> covariantExceptionally0(s, ex -> valueIfFailed)));
     }
 
@@ -495,7 +495,7 @@ public final class CompletableFutureUtils {
         // 1. MUST be non-minimal-stage CF instances in order to read results(`getSuccessNow`), otherwise UnsupportedOpException.
         // 2. SHOULD copy input cfs(by calling `exceptionally` method) to avoid memory leaks,
         //    otherwise all input cfs would be retained until output cf completes.
-        CompletableFuture<T>[] cfArray = mapArray(cfs, CommonUtils::createCfArray,
+        CompletableFuture<T>[] cfArray = mapArray(cfs, CommonUtils::newCfArray,
                 s -> LLCF.<T>toNonMinCf0(s).exceptionally(v -> valueIfNotSuccess));
         return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, timeout, unit, executorWhenTimeout)
                 .handle((unused, ex) -> arrayList(f_mGetSuccessNow0(valueIfNotSuccess, cfArray)));
@@ -509,7 +509,7 @@ public final class CompletableFutureUtils {
      *            otherwise UnsupportedOperationException
      */
     static <T> T[] f_mGetSuccessNow0(@Nullable T valueIfNotSuccess, CompletableFuture<? extends T>[] cfs) {
-        return fillArray(f_createArray(cfs.length), i -> CompletableFutureUtils.getSuccessNow(cfs[i], valueIfNotSuccess));
+        return fillArray(f_newArray(cfs.length), i -> CompletableFutureUtils.getSuccessNow(cfs[i], valueIfNotSuccess));
     }
 
     /**
@@ -562,7 +562,7 @@ public final class CompletableFutureUtils {
      */
     static <T> CompletableFuture<Void>[] createAllResultsSetterCfs(
             CompletionStage<? extends T>[] stages, AtomicReferenceArray<T> results) {
-        final CompletableFuture<Void>[] resultSetterCfs = createCfArray(stages.length);
+        final CompletableFuture<Void>[] resultSetterCfs = newCfArray(stages.length);
         return fillArray(resultSetterCfs, i -> f_toCf0(stages[i]).<CompletableFuture<Void>>handle((v, ex) -> {
             if (ex == null) {
                 // atomically store value if slot has not been marked as unneeded with SENTINEL_UNNEEDED
@@ -628,9 +628,9 @@ public final class CompletableFutureUtils {
         // ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
         if (len == 1) return toNonMinCf0(cfs[0]).thenApply(unused -> null);
 
-        final CompletableFuture<?>[] successOrBeIncomplete = createCfArray(len);
+        final CompletableFuture<?>[] successOrBeIncomplete = newCfArray(len);
         // NOTE: fill ONE MORE element of failedOrBeIncomplete LATER
-        final CompletableFuture<Void>[] failedOrBeIncomplete = createCfArray(len + 1);
+        final CompletableFuture<Void>[] failedOrBeIncomplete = newCfArray(len + 1);
         fill0(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of failedOrBeIncomplete HERE:
@@ -729,8 +729,8 @@ public final class CompletableFutureUtils {
         if (len == 1) return toNonMinCfCopy0(cfs[0]);
 
         // NOTE: fill ONE MORE element of successOrBeIncompleteCfs LATER
-        final CompletableFuture<?>[] successOrBeIncomplete = createCfArray(len + 1);
-        final CompletableFuture<Void>[] failedOrBeIncomplete = createCfArray(len);
+        final CompletableFuture<?>[] successOrBeIncomplete = newCfArray(len + 1);
+        final CompletableFuture<Void>[] failedOrBeIncomplete = newCfArray(len);
         fill0(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of successOrBeIncompleteCfs HERE:
@@ -1200,7 +1200,7 @@ public final class CompletableFutureUtils {
 
     static <T, U> CompletableFuture<U>[] wrapFunctions0(
             Executor executor, @Nullable T v, Function<? super T, ? extends U>[] fns) {
-        return mapArray(fns, CommonUtils::createCfArray, f -> CompletableFuture.supplyAsync(() -> f.apply(v), executor));
+        return mapArray(fns, CommonUtils::newCfArray, f -> CompletableFuture.supplyAsync(() -> f.apply(v), executor));
     }
 
     /**
@@ -1411,7 +1411,7 @@ public final class CompletableFutureUtils {
     }
 
     private static <T> CompletableFuture<Void>[] wrapConsumers0(Executor executor, T v, Consumer<? super T>[] actions) {
-        return mapArray(actions, CommonUtils::createCfArray, a -> CompletableFuture.runAsync(() -> a.accept(v), executor));
+        return mapArray(actions, CommonUtils::newCfArray, a -> CompletableFuture.runAsync(() -> a.accept(v), executor));
     }
 
     /**

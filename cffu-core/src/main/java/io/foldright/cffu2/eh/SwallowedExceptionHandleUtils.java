@@ -150,7 +150,7 @@ public final class SwallowedExceptionHandleUtils {
      * ensuring the original stages and their results can be garbage collected ASAP by avoiding references.
      */
     private static CompletionStage<Void>[] unreferenced(CompletionStage<?>[] stages) {
-        return CommonUtils.mapArray(stages, CommonUtils::createStageArray, s -> {
+        return CommonUtils.mapArray(stages, CommonUtils::newStageArray, s -> {
             CompletableFuture<Void> ret = new CompletableFuture<>();
             peek0(s, (v, ex) -> completeCf0(ret, null, ex), "unreferenced");
             return ret;

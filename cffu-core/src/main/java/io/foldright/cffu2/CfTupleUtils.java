@@ -289,7 +289,7 @@ public final class CfTupleUtils {
     }
 
     private static <T> CompletableFuture<T> f_allSuccessTupleOf0(CompletionStage<?>[] stages) {
-        return f_allTupleOf0(false, mapArray(stages, CommonUtils::createStageArray,
+        return f_allTupleOf0(false, mapArray(stages, CommonUtils::newStageArray,
                 s -> LLCF.covariantExceptionally0(s, ex -> null)));
     }
 
