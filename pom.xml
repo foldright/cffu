@@ -490,6 +490,29 @@
 					<version>4.9.6.0</version>
 				</plugin>
 				<plugin>
+					<!--
+						https://revapi.org/revapi-site/main/index.html
+						https://github.com/revapi/revapi
+
+						https://revapi.org/revapi-maven-plugin/0.15.1/index.html
+						https://revapi.org/revapi-maven-plugin/0.15.0/_attachments/check-mojo.html
+					-->
+					<groupId>org.revapi</groupId>
+					<artifactId>revapi-maven-plugin</artifactId>
+					<version>0.15.1</version>
+					<configuration>
+						<failOnUnresolvedArtifacts>true</failOnUnresolvedArtifacts>
+						<checkDependencies>false</checkDependencies>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>org.revapi</groupId>
+							<artifactId>revapi-java</artifactId>
+							<version>0.28.4</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<version>0.8.13</version>

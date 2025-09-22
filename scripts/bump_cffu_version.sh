@@ -35,13 +35,26 @@ myXargs() {
 # biz logic
 ################################################################################
 
-# shellcheck disable=SC2154
-[ $# -eq 2 ] || cu::die "need exalt 2 argument for old and new versions!"
+HEAD_COMMIT_ID=$(git rev-parse HEAD)
+readonly HEAD_COMMIT_ID REL_VERSION_INFO_FILE="next.release.version.info.$HEAD_COMMIT_ID"
 
-readonly OLD_VERSION=$1
+if [ -f "$REL_VERSION_INFO_FILE" ]; then
+  # shellcheck disable=SC1090
+  source "$REL_VERSION_INFO_FILE"
+fi
+
+if [ -n "${API_CHECKER_NEXT_REL_VERSION:-}" ]; then
+  readonly OLD_VERSION=$API_CHECKER_LATEST_REL_VERSION
+  readonly NEW_VERSION=$API_CHECKER_NEXT_REL_VERSION
+else
+  # shellcheck disable=SC2154
+  [ $# -eq 2 ] || cu::die "need exact 2 argument for old and new versions!"
+
+  readonly OLD_VERSION=$1
+  readonly NEW_VERSION=$2
+fi
+
 isValidVersion "$OLD_VERSION" || cu::die "invalid old version: $1"
-
-readonly NEW_VERSION=$2
 isValidVersion "$NEW_VERSION" || cu::die "invalid new version: $2"
 
 readonly ALPHA_SUFFIX=-Alpha
