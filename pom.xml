@@ -85,12 +85,12 @@
 		<kotlin.version>2.2.20</kotlin.version>
 
 		<slf4j.version>2.0.17</slf4j.version>
-		<log4j2.version>2.25.1</log4j2.version>
+		<log4j2.version>2.25.2</log4j2.version>
 		<log4j2.slf4j.impl.aid>log4j-slf4j2-impl</log4j2.slf4j.impl.aid>
 		<guava.version>33.5.0-jre</guava.version>
 
 		<!-- testing dependencies versions -->
-		<junit5.version>5.13.4</junit5.version>
+		<junit5.version>5.14.0</junit5.version>
 		<kotest.version>5.9.1</kotest.version>
 	</properties>
 
@@ -151,7 +151,7 @@
 			<dependency>
 				<groupId>org.assertj</groupId>
 				<artifactId>assertj-bom</artifactId>
-				<version>3.27.5</version>
+				<version>3.27.6</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -209,7 +209,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.18.0</version>
+				<version>3.19.0</version>
 			</dependency>
 
 			<!-- logging libs -->
@@ -395,7 +395,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.14.0</version>
+					<version>3.14.1</version>
 					<configuration>
 						<!-- https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#compilerArgs -->
 						<compilerArgs>
@@ -442,7 +442,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.11.3</version>
+					<version>3.12.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -467,12 +467,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
-					<version>3.6.1</version>
+					<version>3.6.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.8.1</version>
+					<version>3.9.0</version>
 				</plugin>
 				<plugin>
 					<groupId>io.github.git-commit-id</groupId>
@@ -553,7 +553,7 @@
 					-->
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
-					<version>3.5.1</version>
+					<version>3.6.1</version>
 					<configuration>
 						<executable>${java.home}/bin/java</executable>
 						<classpathScope>test</classpathScope>
@@ -770,7 +770,7 @@
 							<dependency>
 								<groupId>org.codehaus.mojo</groupId>
 								<artifactId>extra-enforcer-rules</artifactId>
-								<version>1.7.0</version>
+								<version>1.11.0</version>
 							</dependency>
 						</dependencies>
 					</plugin>
@@ -1103,7 +1103,7 @@
 						<!-- https://central.sonatype.org/publish/publish-portal-maven/#publishing -->
 						<groupId>org.sonatype.central</groupId>
 						<artifactId>central-publishing-maven-plugin</artifactId>
-						<version>0.8.0</version>
+						<version>0.9.0</version>
 						<extensions>true</extensions>
 						<configuration>
 							<publishingServerId>central</publishingServerId>
