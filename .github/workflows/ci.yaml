@@ -16,7 +16,12 @@ jobs:
       max-parallel: 64
 
     steps:
-      - run: sudo apt-get install ripgrep
+      - name: Install ripgrep
+        run: |
+          # Don't waste a bunch of time processing man-db triggers
+          echo "set man-db/auto-update false" | sudo debconf-communicate
+          sudo dpkg-reconfigure man-db
+          sudo apt-get install ripgrep
       - uses: actions/checkout@v5
         with:
           submodules: recursive
