@@ -29,12 +29,11 @@ jobs:
         uses: actions/setup-java@v5
         with:
           # https://github.com/actions/setup-java?tab=readme-ov-file#install-multiple-jdks
+          #
+          # image(ubuntu-latest/ubuntu-24.04) Included Software Java 8/11/17/21
+          #   https://github.com/actions/runner-images
           java-version: |
-            8
             9
-            11
-            17
-            21
             25
           distribution: zulu
           cache: maven
