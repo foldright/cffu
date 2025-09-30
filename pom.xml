@@ -497,7 +497,41 @@
 					<version>0.15.1</version>
 					<configuration>
 						<failOnUnresolvedArtifacts>true</failOnUnresolvedArtifacts>
+						<failOnMissingConfigurationFiles>true</failOnMissingConfigurationFiles>
 						<checkDependencies>false</checkDependencies>
+						<analysisConfiguration>
+							<!--
+								Matching and Filtering Java Elements
+									how the java element matcher can be used with revapi.differences and revapi.filter
+								https://revapi.org/revapi-java/0.28.4/element-matching.html
+							-->
+							<revapi.java>
+								<!-- Java Analyzer
+									Configuration https://revapi.org/revapi-java/0.28.4/configuration.html
+									List of API Differences https://revapi.org/revapi-java/0.28.4/differences.html
+								-->
+								<missing-classes>
+									<behavior>report</behavior>
+								</missing-classes>
+							</revapi.java>
+							<revapi.filter>
+								<!-- Element Filter https://revapi.org/revapi-basic-features/0.13.1/filter.html -->
+								<elements>
+									<exclude>
+										<item>
+											<!-- https://revapi.org/revapi-java/0.28.4/element-matching.html#_package_matcher -->
+											<matcher>java-package</matcher>
+											<match>/.*\.internal\..*/</match>
+										</item>
+										<item>
+											<!-- https://revapi.org/revapi-java/0.28.4/element-matching.html#_package_matcher -->
+											<matcher>java</matcher>
+											<match>@org.jetbrains.annotations.ApiStatus.Internal ^*;</match>
+										</item>
+									</exclude>
+								</elements>
+							</revapi.filter>
+						</analysisConfiguration>
 					</configuration>
 					<dependencies>
 						<dependency>
