@@ -8,6 +8,7 @@ import io.foldright.cffu2.tuple.Tuple4;
 import io.foldright.cffu2.tuple.Tuple5;
 import org.jetbrains.annotations.Contract;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
@@ -153,20 +154,20 @@ public final class CfTupleUtils {
         if (failFast) resultsSetter = allFailFastOf0(resultsSetterCfs);
         else resultsSetter = CompletableFuture.allOf(resultsSetterCfs);
 
-        return resultsSetter.thenApply(unused -> f_tupleOf0(f_toArray(results)));
+        return resultsSetter.thenApply(unused -> f_tupleOf0(toArrayList(results)));
     }
 
     /**
      * Returns generic type {@code T} but constrained to type TupleX.
      */
     @SuppressWarnings("unchecked")
-    private static <T> T f_tupleOf0(Object[] xs) {
-        final int len = xs.length;
+    private static <T> T f_tupleOf0(List<?> xs) {
+        final int len = xs.size();
         final Object ret;
-        if (len == 2) ret = Tuple2.of(xs[0], xs[1]);
-        else if (len == 3) ret = Tuple3.of(xs[0], xs[1], xs[2]);
-        else if (len == 4) ret = Tuple4.of(xs[0], xs[1], xs[2], xs[3]);
-        else ret = Tuple5.of(xs[0], xs[1], xs[2], xs[3], xs[4]);
+        if (len == 2) ret = Tuple2.of(xs.get(0), xs.get(1));
+        else if (len == 3) ret = Tuple3.of(xs.get(0), xs.get(1), xs.get(2));
+        else if (len == 4) ret = Tuple4.of(xs.get(0), xs.get(1), xs.get(2), xs.get(3));
+        else ret = Tuple5.of(xs.get(0), xs.get(1), xs.get(2), xs.get(3), xs.get(4));
         return (T) ret;
     }
 
@@ -436,7 +437,7 @@ public final class CfTupleUtils {
         CompletableFuture<?>[] cfArray = mapArray(stages, CompletableFuture[]::new,
                 s -> LLCF.toNonMinCf0(s).exceptionally(v -> null));
         return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, timeout, unit, executorWhenTimeout)
-                .handle((unused, ex) -> f_tupleOf0(f_mGetSuccessNow0(null, cfArray)));
+                .handle((unused, ex) -> f_tupleOf0(mGetSuccessNow0(null, cfArray)));
     }
 
     /**

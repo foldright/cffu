@@ -46,11 +46,17 @@ public final class CommonUtils {
         return ret;
     }
 
+    /**
+     * Fills the input array where each element is calculated by calling the specified init function.
+     */
     public static <T> T[] fillArray(T[] array, IntFunction<T> init) {
         Arrays.setAll(array, init);
         return array;
     }
 
+    /**
+     * Checks if the object is in the given array.
+     */
     public static boolean containsInArray(final Object[] array, final Object objectToFind) {
         return Arrays.asList(array).contains(objectToFind);
     }
@@ -65,9 +71,28 @@ public final class CommonUtils {
         return new CompletionStage[length];
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T[] f_newArray(int length) {
-        return (T[]) new Object[length];
+    // endregion
+    // region# List Utility Methods
+
+    /**
+     * Returns normal array list instead of unmodifiable({@link java.util.List#of}) or fixed-size
+     * ({@link Arrays#asList}) list. Safer for application code which may reuse the return list as normal collection.
+     */
+    @Contract("_ -> new")
+    @SafeVarargs
+    public static <T> ArrayList<T> arrayList(T... elements) {
+        return new ArrayList<>(Arrays.asList(elements));
+    }
+
+    /**
+     * Creates a new array with the specified size,
+     * where each element is calculated by calling the specified init function.
+     */
+    @Contract("_, _ -> new")
+    public static <T> ArrayList<T> arrayList(int size, IntFunction<? extends T> init) {
+        final ArrayList<T> ret = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) ret.add(init.apply(i));
+        return ret;
     }
 
     // endregion
@@ -101,16 +126,6 @@ public final class CommonUtils {
     // region# AtomicReferenceArray Utility Methods
 
     /**
-     * Returns a new array with the same elements as the given {@link AtomicReferenceArray}.
-     */
-    public static <E> E[] f_toArray(AtomicReferenceArray<? extends E> array) {
-        int len = array.length();
-        E[] ret = f_newArray(len);
-        for (int i = 0; i < len; i++) ret[i] = array.get(i);
-        return ret;
-    }
-
-    /**
      * Fills the given {@link AtomicReferenceArray} with the same elements as the given value.
      *
      * @see Arrays#fill(Object[], Object)
@@ -120,22 +135,11 @@ public final class CommonUtils {
         for (int i = 0, len = array.length(); i < len; i++) array.set(i, value);
     }
 
-    // endregion
-    // region# List Utility Methods
-
-    /**
-     * Returns normal array list instead of unmodifiable({@link java.util.List#of}) or fixed-size
-     * ({@link Arrays#asList}) list. Safer for application code which may reuse the return list as normal collection.
-     */
-    @SafeVarargs
-    public static <T> ArrayList<T> arrayList(T... elements) {
-        return new ArrayList<>(Arrays.asList(elements));
-    }
-
     /**
      * Returns a new {@link ArrayList} with the same elements as the given {@link AtomicReferenceArray}.
      */
-    public static <E> ArrayList<E> arrayList(AtomicReferenceArray<? extends E> array) {
+    @Contract("_ -> new")
+    public static <E> ArrayList<E> toArrayList(AtomicReferenceArray<? extends E> array) {
         int len = array.length();
         ArrayList<E> ret = new ArrayList<>(len);
         for (int i = 0; i < len; i++) ret.add(array.get(i));

@@ -8,6 +8,7 @@ import io.foldright.cffu2.tuple.Tuple2;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.Contract;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReferenceArray;
@@ -498,7 +499,7 @@ public final class CompletableFutureUtils {
         CompletableFuture<T>[] cfArray = mapArray(cfs, CommonUtils::newCfArray,
                 s -> LLCF.<T>toNonMinCf0(s).exceptionally(v -> valueIfNotSuccess));
         return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, timeout, unit, executorWhenTimeout)
-                .handle((unused, ex) -> arrayList(f_mGetSuccessNow0(valueIfNotSuccess, cfArray)));
+                .handle((unused, ex) -> mGetSuccessNow0(valueIfNotSuccess, cfArray));
     }
 
     /**
@@ -508,8 +509,8 @@ public final class CompletableFutureUtils {
      * @param cfs MUST be *Non-Minimal* CF instances in order to read results(`getSuccessNow`),
      *            otherwise UnsupportedOperationException
      */
-    static <T> T[] f_mGetSuccessNow0(@Nullable T valueIfNotSuccess, CompletableFuture<? extends T>[] cfs) {
-        return fillArray(f_newArray(cfs.length), i -> CompletableFutureUtils.getSuccessNow(cfs[i], valueIfNotSuccess));
+    static <T> ArrayList<T> mGetSuccessNow0(@Nullable T valueIfNotSuccess, CompletableFuture<? extends T>[] cfs) {
+        return arrayList(cfs.length, i -> getSuccessNow(cfs[i], valueIfNotSuccess));
     }
 
     /**
@@ -550,7 +551,7 @@ public final class CompletableFutureUtils {
         if (failFast) resultsSetter = allFailFastOf0(resultsSetterCfs);
         else resultsSetter = CompletableFuture.allOf(resultsSetterCfs);
 
-        return f_cast(resultsSetter.thenApply(unused -> arrayList(results)));
+        return f_cast(resultsSetter.thenApply(unused -> toArrayList(results)));
     }
 
     /**
