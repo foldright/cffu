@@ -6,7 +6,6 @@ import java.util.concurrent.CompletableFuture;
 
 import static io.foldright.cffu2.CompletableFutureUtils.allOf;
 import static io.foldright.cffu2.CompletableFutureUtils.cffuOrTimeout;
-import static io.foldright.test_utils.TestUtils.sleep;
 import static java.lang.System.currentTimeMillis;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
@@ -113,6 +112,14 @@ public class CfDelayDysfunctionDemo {
 
         allOf(subsequentCfs.toArray(new CompletableFuture<?>[0])).join();
         logWithTimeAndThread("warmup pools end");
+    }
+
+    private static void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            // ignore
+        }
     }
 }
 

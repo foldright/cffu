@@ -2,14 +2,13 @@ package io.foldright.demo;
 
 import io.foldright.cffu2.Cffu;
 import io.foldright.cffu2.CffuFactory;
+import io.foldright.cffu2.CompletableFutureUtils;
 import io.foldright.cffu2.MCffu;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import static io.foldright.cffu2.CompletableFutureUtils.allResultsOf;
 
 
 public class AllResultsOfDemo {
@@ -27,7 +26,7 @@ public class AllResultsOfDemo {
         // result type is Void!
         //
         // the result can be got by input argument `cf1.get()`, but it's cumbersome.
-        // so we can see a lot of util methods to enhance `allOf` with result in our project.
+        // so we can see a lot of util methods to enhance `allOf` with the results in our project.
 
         MCffu<Integer, List<Integer>> allResults = cffuFactory.allResultsOf(cffu1, cffu2);
         System.out.println(allResults.get());
@@ -42,7 +41,7 @@ public class AllResultsOfDemo {
         CompletableFuture<Void> all2 = CompletableFuture.allOf(cf1, cf2);
         // result type is Void!
 
-        CompletableFuture<List<Integer>> allResults2 = allResultsOf(cf1, cf2);
+        CompletableFuture<List<Integer>> allResults2 = CompletableFutureUtils.allResultsOf(cf1, cf2);
         System.out.println(allResults2.get());
         // output: [21, 42]
 

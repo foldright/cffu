@@ -7,7 +7,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static io.foldright.test_utils.TestUtils.sleep;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
 
@@ -99,5 +98,13 @@ public class MultipleActionsDemo {
         // output: [43, 44, 45]
 
         sleep(1000);
+    }
+
+    private static void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            // ignore
+        }
     }
 }

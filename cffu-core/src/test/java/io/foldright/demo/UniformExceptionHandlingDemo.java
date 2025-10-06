@@ -22,9 +22,9 @@ public class UniformExceptionHandlingDemo {
 
     private static void towPathsExceptionHandling() {
         try {
-            final String result = mayExceptionalSyncProcess();
+            String result = mayExceptionalSyncProcess();
 
-            final CompletableFuture<Integer> cf = CompletableFuture.supplyAsync(() -> result.length() * 2);
+            CompletableFuture<Integer> cf = CompletableFuture.supplyAsync(() -> result.length() * 2);
             cf.exceptionally(ex -> 42)
                     .thenAccept(System.out::println);
         } catch (Exception e) {
@@ -33,10 +33,10 @@ public class UniformExceptionHandlingDemo {
     }
 
     private static void uniformExceptionHandling() {
-        final CompletableFuture<String> syncCf = CompletableFutureUtils.fromSyncCall(
+        CompletableFuture<String> syncCf = CompletableFutureUtils.fromSyncCall(
                 UniformExceptionHandlingDemo::mayExceptionalSyncProcess);
 
-        final CompletableFuture<Integer> cf = syncCf.thenApplyAsync(s -> s.length() * 2);
+        CompletableFuture<Integer> cf = syncCf.thenApplyAsync(s -> s.length() * 2);
         cf.exceptionally(ex -> 42)
                 .thenAccept(System.out::println);
     }

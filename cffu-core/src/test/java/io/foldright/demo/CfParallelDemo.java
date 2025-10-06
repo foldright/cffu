@@ -11,7 +11,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
 
-import static io.foldright.test_utils.TestUtils.sleep;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
@@ -38,10 +37,12 @@ public class CfParallelDemo {
     }
 
     static void parApplyFailFastAsyncDemo() {
-        Function<Integer, Integer> fn = x -> x + 1;
-        final List<Integer> list = asList(42, 43, 44);
-
+        ////////////////////////////////////////////////////////////////////////
         // wrap data with action to CompletableFutures first, AWKWARD and COMPLEX! 😖
+        ////////////////////////////////////////////////////////////////////////
+        Function<Integer, Integer> fn = x -> x + 1;
+        List<Integer> list = asList(42, 43, 44);
+
         @SuppressWarnings("unchecked")
         CompletableFuture<Integer>[] cfs = new CompletableFuture[list.size()];
         for (int i = 0; i < list.size(); i++) {
@@ -53,7 +54,9 @@ public class CfParallelDemo {
         cffuFactory.allResultsFailFastOf(cfs).thenAccept(System.out::println);
         // output: [43, 44, 45]
 
+        ////////////////////////////////////////////////////////////////////////
         // just parallel process multiple data, fresh and cool 😋
+        ////////////////////////////////////////////////////////////////////////
         CfParallelUtils.parApplyFailFastAsync(
                 asList(42, 43, 44),
                 x -> x + 1
@@ -69,10 +72,12 @@ public class CfParallelDemo {
     }
 
     static void thenParApplyFailFastAsyncDemo() {
-        Function<Integer, Integer> fn = x -> x + 1;
-        final CompletableFuture<List<Integer>> cf = completedFuture(asList(42, 43, 44));
-
+        ////////////////////////////////////////////////////////////////////////
         // wrap data with action to CompletableFutures first, AWKWARD and COMPLEX! 😖
+        ////////////////////////////////////////////////////////////////////////
+        Function<Integer, Integer> fn = x -> x + 1;
+        CompletableFuture<List<Integer>> cf = completedFuture(asList(42, 43, 44));
+
         cf.thenCompose(list -> {
             @SuppressWarnings("unchecked")
             CompletableFuture<Integer>[] cfs = new CompletableFuture[list.size()];
@@ -83,7 +88,7 @@ public class CfParallelDemo {
             return CompletableFutureUtils.allResultsFailFastOf(cfs);
         }).thenAccept(System.out::println);
         // output: [43, 44, 45]
-        final MCffu<Integer, List<Integer>> mCffu = cffuFactory.completedMCffu(asList(42, 43, 44));
+        MCffu<Integer, List<Integer>> mCffu = cffuFactory.completedMCffu(asList(42, 43, 44));
         mCffu.thenCompose(list -> {
             @SuppressWarnings("unchecked")
             CompletableFuture<Integer>[] cfs = new CompletableFuture[list.size()];
@@ -95,7 +100,9 @@ public class CfParallelDemo {
         }).thenAccept(System.out::println);
         // output: [43, 44, 45]
 
+        ////////////////////////////////////////////////////////////////////////
         // just parallel process multiple data, fresh and cool 😋
+        ////////////////////////////////////////////////////////////////////////
         CfParallelUtils.thenParApplyFailFastAsync(cf, x -> x + 1)
                 .thenAccept(System.out::println);
         // output: [43, 44, 45]
@@ -104,5 +111,13 @@ public class CfParallelDemo {
         // output: [43, 44, 45]
 
         sleep(1000);
+    }
+
+    private static void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            // ignore
+        }
     }
 }
