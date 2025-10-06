@@ -60,6 +60,9 @@ Welcome 👏💖
     - [2.12 `anyOf` method that returns specific types](#212-anyof-method-that-returns-specific-types)
     - [2.13 `allOf/anyOf` methods that accept broader input types](#213-allofanyof-methods-that-accept-broader-input-types)
     - [more feature documentation](#more-feature-documentation)
+  - [3. Orchestration Methods of `cffu` library and Best Practices](#3-orchestration-methods-of-cffu-library-and-best-practices)
+    - [3.1 Orchestration Method Groups](#31-orchestration-method-groups)
+    - [3.2 Best Practices for Selecting Orchestration Methods 🏆](#32-best-practices-for-selecting-orchestration-methods-)
 - [🔌 API Docs](#-api-docs)
 - [🍪 Dependencies](#-dependencies)
 - [📚 More Resources](#-more-resources)
@@ -412,7 +415,7 @@ public class AnySuccessDemo {
 
 ### 2.4 support for setting default business thread pool
 
-The default thread pool used by `CompletableFuture` async execution (i.e., `*Async` methods)
+The default thread pool used by `CompletableFuture` async execution (aka. `*Async` methods)
 is `ForkJoinPool.commonPool()`; using this default thread pool in business is very dangerous❗
 
 - `ForkJoinPool.commonPool()` has about as many threads as CPUs, suitable for executing CPU-intensive tasks;
@@ -779,6 +782,120 @@ You can refer to:
   - [`CompletableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu2/CompletableFutureUtils.java),
     [`CfIterableUtils.java`](cffu-core/src/main/java/io/foldright/cffu2/CfIterableUtils.java),
     [`CfParallelUtils.java`](cffu-core/src/main/java/io/foldright/cffu2/CfParallelUtils.java)
+
+## 3. Orchestration Methods of `cffu` library and Best Practices
+
+Orchestration methods refer to methods with multiple inputs,
+where inputs are logic that needs to be executed concurrently.
+The `cffu` library supports 3 forms of multiple inputs:
+
+1. Multiple `Action`s
+2. Multiple data (processed by the same `Action`)
+3. Multiple `CompletableFuture`s
+
+Compared to other simpler concurrent programming approaches
+(including [structured concurrency](https://openjdk.org/jeps/525)),
+the ability to flexibly and efficiently orchestrate multiple inputs may be the greatest advantage of `CompletableFuture`.
+
+For concurrent execution strategies in orchestration, see the documentation above:
+[2.5 efficient and flexible concurrent execution strategies (`AllFailFast` / `AnySuccess` / `AllSuccess` / `MostSuccess`)](#25-efficient-and-flexible-concurrent-execution-strategies-allfailfast--anysuccess--allsuccess--mostsuccess).
+
+### 3.1 Orchestration Method Groups
+
+1\) **Multiple `Action` Inputs**
+
+Supports 3 different types (varargs array, collection, heterogeneous `Tuple`) with 3 groups of variant methods
+
+- Multiple parameter varargs input, input type is array type
+  - Corresponding method groups:
+    - `CompletableFutureUtils#M*` methods, aka. `Multi-Actions(M*) Methods`
+    - `CompletableFutureUtils#thenM*` methods, aka. `Then-Multi-Actions(thenM*) Methods`
+- Collection input, input type is `Iterable`
+  - Corresponding method groups:
+    - `CfIterableUtils#M*`, aka. `Multi-Actions(M*) Methods`
+    - `CfIterableUtils#thenM*`, aka. `Then-Multi-Actions(thenM*) Methods`
+  - These method names are the same as the "multiple parameter varargs input" above,
+    but differ in parameter types for multiple `Action` inputs (`Iterable` vs. array)
+- Heterogeneous different types of `Action` inputs, input type is `Tuple`
+  - Corresponding method groups:
+    - `CfTupleUtils#MTuple*`, aka. `Multi-Actions(M*) Methods`
+    - `CfTupleUtils#thenMTuple*`, aka. `Then-Multi-Actions(thenM*) Methods`
+
+When there is (single same) data input to multiple `Action`s for processing,
+this is Multiple Instruction Single Data (`MISD`) style parallel processing.
+
+2\) **Multiple Data Inputs**
+
+Using a single same `Action` to asynchronously process multiple data in parallel,
+aka. Multiple Instruction Single Data (`MISD`) style processing.
+
+Corresponding method groups:
+
+- `CfParallelUtils#Par*` methods, aka. `Multi-Actions(M*) Methods`
+- `CfParallelUtils#thenPar*` methods, aka. `Then-Multi-Actions(thenM*) Methods`
+
+In business logic, collections should be used to hold multiple data rather than arrays,
+so varargs array type method variants are not provided.  
+\# If you have array type data, converting to a collection is simple; for example, call the method
+[`Arrays.asList(...)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Arrays.html#asList(T...)).
+
+3\) **Multiple `CompletableFuture` Inputs**
+
+Like multiple `Action` inputs, supports 3 different types (varargs array, collection, heterogeneous `Tuple`)
+with 3 groups of variant methods
+
+- Multiple parameter varargs input, input type is array type
+  - Corresponding method group `CompletableFutureUtils#*Of`
+- Collection input, input type is `Iterable`
+  - Corresponding method group `CfIterableUtils#*Of`
+  - These method names are the same as the "multiple parameter varargs input" above,
+    but differ in parameter types for multiple `Action` inputs (`Iterable` vs. array)
+- Heterogeneous different types input, input type is `Tuple`
+  - Corresponding method group `CfTupleUtils#*TupleOf`
+
+### 3.2 Best Practices for Selecting Orchestration Methods 🏆
+
+1\) When business processing logic directly has multiple `Action`s
+
+Including `Action`s that can be written as `Lambda` literal in place.
+
+- When the number of `Action`s is fixed, prioritize using "multiple parameter varargs `Action`" methods,
+  aka. corresponding method groups:
+  - `CompletableFutureUtils#M*` methods, aka. `Multi-Actions(M*) Methods`
+  - `CompletableFutureUtils#thenM*` methods, aka. `Then-Multi-Actions(thenM*) Methods`
+- When the number of `Action`s is variable, prioritize using "`Action` collection" methods,
+  aka. corresponding method groups:
+  - `CfIterableUtils#M*`, aka. `Multi-Actions(M*) Methods`
+  - `CfIterableUtils#thenM*`, aka. `Then-Multi-Actions(thenM*) Methods`
+
+2\) When business processing logic has multiple data for asynchronous parallel processing
+
+Prioritize using "multiple parameter varargs `Action`" methods, aka. corresponding method groups:
+
+- `CfParallelUtils#Par*` methods, aka. `Multi-Actions(M*) Methods`
+- `CfParallelUtils#thenPar*` methods, aka. `Then-Multi-Actions(thenM*) Methods`
+
+3\) When business processing logic input only has multiple `CompletableFuture`s
+
+When methods from other modules or third-party libraries return `CompletableFuture`,
+you can only use method groups that input multiple `CompletableFuture`s for orchestration.
+
+Compared to the method groups above (multiple `Action`s/multiple data),
+these methods that input multiple `CompletableFuture`s:
+
+- **Will swallow exceptions**❗️ When multiple input `CompletableFuture`s are exceptional,
+  at most only one of these exceptions can be reported to the business through the returned `CF`,
+  while other exceptions are silently swallowed, affecting business problem troubleshooting
+- Additional wrapper logic code is cumbersome and obscures the business flow
+
+> In business development, these methods that input multiple `CompletableFuture`s
+> should be treated as lower-level basic methods, used only when necessary.
+>
+> In critical business logic, when using these methods, pay attention to
+> implementing good exception reporting logic (aka. don't swallow exceptions):
+> - For implementation reference, see `cffu` implementation code, such as `CompletableFutureUtils.mSupplyFailFastAsync()`
+> - The `cffu` library provides support utility class [`SwallowedExceptionHandleUtils`](https://foldright.io/api-docs/cffu2/2.0.0/io/foldright/cffu2/eh/SwallowedExceptionHandleUtils.html)
+    for implementing orchestration exception reporting
 
 # 🔌 API Docs
 
