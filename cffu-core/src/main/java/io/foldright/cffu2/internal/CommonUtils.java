@@ -75,8 +75,8 @@ public final class CommonUtils {
     // region# List Utility Methods
 
     /**
-     * Returns normal array list instead of unmodifiable({@link java.util.List#of}) or fixed-size
-     * ({@link Arrays#asList}) list. Safer for application code which may reuse the return list as normal collection.
+     * Returns a new {@link ArrayList} which is not unmodifiable({@link java.util.List#of}) or fixed-size
+     * ({@link Arrays#asList}) list. Safer for application code which may reuse the return list as a normal collection.
      */
     @Contract("_ -> new")
     @SafeVarargs
@@ -85,7 +85,7 @@ public final class CommonUtils {
     }
 
     /**
-     * Creates a new array with the specified size,
+     * Creates a new {@link ArrayList} with the specified size,
      * where each element is calculated by calling the specified init function.
      */
     @Contract("_, _ -> new")

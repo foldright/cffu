@@ -47,7 +47,7 @@ import static java.util.Objects.requireNonNull;
 @ThreadSafe
 public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
-    // region# Builder and Constructor Methods(including internal constructors and fields)
+    // region# Builder and Constructor Methods (including internal constructors and fields)
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -387,7 +387,7 @@ public final class CffuFactory {
 
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region## allOf* Methods(including mostSuccessResultsOf)
+    // region## allOf* Methods (including mostSuccessResultsOf)
     //
     //    CompletionStage<T>[] -> MCffu<T, List<T>>
     ////////////////////////////////////////////////////////////////////////////////
@@ -424,7 +424,7 @@ public final class CffuFactory {
      * This method differs from {@link #allResultsFailFastOf allResultsFailFastOf} method in that it's tolerant
      * of failed stages for any of the items, representing them as {@code valueIfFailed} in the result list.
      *
-     * @param valueIfFailed the value used as result if the input stage completed exceptionally
+     * @param valueIfFailed the value used as the result if the input stage completed exceptionally
      * @throws NullPointerException if the cfs param or any of its elements is {@code null}
      * @see Cffu#getSuccessNow(Object)
      * @see Futures#successfulAsList the equivalent Guava method successfulAsList()
@@ -449,7 +449,7 @@ public final class CffuFactory {
      * This method differs from {@link #allResultsFailFastOf allResultsFailFastOf} method in that it's tolerant of
      * failed or incomplete stages for any of the items, representing them as {@code valueIfNotSuccess} in the result list.
      *
-     * @param valueIfNotSuccess the value used as result if the input stage not completed normally
+     * @param valueIfNotSuccess the value used as the result if the input stage not completed normally
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
@@ -494,7 +494,7 @@ public final class CffuFactory {
      * If no stages are provided, returns a Cffu completed with the value {@code null}.
      * <p>
      * The successful results, if any, of the given stages are not reflected in the returned Cffu
-     * ({@code Cffu<Void>}), but may be obtained by inspecting them individually; Or using below methods
+     * ({@code Cffu<Void>}), but may be obtained by inspecting them individually; Or using the below methods
      * reflected results in the returned Cffu which are more convenient, safer and best-practice of concurrency:
      * <ul>
      * <li>{@link #allResultsFailFastOf  allResultsFailFastOf}, {@link TupleOps#allTupleFailFastOf allTupleFailFastOf}
@@ -520,7 +520,7 @@ public final class CffuFactory {
      * If no stages are provided, returns a Cffu completed with the value {@code null}.
      * <p>
      * The successful results, if any, of the given stages are not reflected in the returned Cffu
-     * ({@code Cffu<Void>}), but may be obtained by inspecting them individually; Or using below methods
+     * ({@code Cffu<Void>}), but may be obtained by inspecting them individually; Or using the below methods
      * reflected results in the returned Cffu which are more convenient, safer and best-practice of concurrency:
      * <ul>
      * <li>{@link #allResultsOf allResultsOf}, {@link TupleOps#allTupleOf allTupleOf}
@@ -566,8 +566,9 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is completed with the same successful result or exception of any of
-     * the given stages when one stage completes. If no stages are provided, returns an incomplete Cffu.
+     * Returns a new Cffu that is completed when any of the given stage complete, with the same result.
+     * Otherwise, if it completed exceptionally, the returned Cffu also does so, with a CompletionException
+     * holding this exception as its cause. If no stages are provided, returns an incomplete Cffu.
      * <p>
      * Comparing the any-<strong>complete</strong> behavior of this method, the any-<strong>success</strong> behavior of
      * method {@link #anySuccessOf anySuccessOf} is more responsive to user and generally more desired in the application.
@@ -813,7 +814,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
-        // NOTE: do NOT translate (ad hoc input)executor to screened executor; same as CompletableFuture.delayedExecutor
+        // NOTE: do NOT translate (ad hoc input) executor to screened executor; same as CompletableFuture.delayedExecutor
         return CompletableFutureUtils.delayedExecutor(delay, unit, cffuUnscreened(executor));
     }
 
@@ -1061,7 +1062,7 @@ public final class CffuFactory {
 
         // endregion
         ////////////////////////////////////////////////////////////
-        // region## allOf* Methods(including mostSuccessResultsOf)
+        // region## allOf* Methods (including mostSuccessResultsOf)
         //
         //    Iterable<CompletionStage<T>> -> MCffu<T, List<T>>
         ////////////////////////////////////////////////////////////
@@ -1151,7 +1152,7 @@ public final class CffuFactory {
      */
     public final class ParOps {
         ////////////////////////////////////////////////////////////////////////////////
-        // region# Par Methods(create by multiply data and one action)
+        // region# Par Methods (create by multiply data and one action)
         //
         //    - parApply* (Iterable, Function: T -> U)    -> MCffu<U, List<U>>
         //    - parAccept*(Iterable, Consumer: T -> Void) -> Cffu<Void>
@@ -1424,7 +1425,7 @@ public final class CffuFactory {
      * The tuple-based variants of methods from {@link CffuFactory}
      * for processing and composing multiple asynchronous actions and CompletableFutures in a type-safe manner.
      * <p>
-     * While {@link CffuFactory} uses array-based methods with varargs, this class uses strongly-typed tuples
+     * While {@link CffuFactory} uses array-based methods with varargs, this class uses strongly typed tuples
      * containing 2 to 5 elements. The tuple approach provides better type safety when working with a fixed number of
      * heterogeneous actions or CompletableFutures, as type mismatches are caught at compile time rather than runtime.
      *

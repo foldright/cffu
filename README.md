@@ -47,8 +47,8 @@ Welcome 👏💖
     - [1.3 dependencies (including `CompletableFutureUtils` utility class)](#13-dependencies-including-completablefutureutils-utility-class)
   - [2. `cffu` feature introduction](#2-cffu-feature-introduction)
     - [2.1 support for returning overall results of multiple input `CF`s](#21-support-for-returning-overall-results-of-multiple-input-cfs)
-    - [2.2 obtain all results from multiple `CF`s, supporting fail-fast instead of waiting unnecessarily and slows down business responsiveness](#22-obtain-all-results-from-multiple-cfs-supporting-fail-fast-instead-of-waiting-unnecessarily-and-slows-down-business-responsiveness)
-    - [2.3 retrieve the first successful result from multiple `CF`s, not the first completed but exceptional `CF`](#23-retrieve-the-first-successful-result-from-multiple-cfs-not-the-first-completed-but-exceptional-cf)
+    - [2.2 retrieve all results of multiple `CF`s with fail-fast support, instead of futile waiting that reduces business responsiveness](#22-retrieve-all-results-of-multiple-cfs-with-fail-fast-support-instead-of-futile-waiting-that-reduces-business-responsiveness)
+    - [2.3 retrieve the first successful result from multiple `CF`s, instead of the first completed but exceptional `CF`](#23-retrieve-the-first-successful-result-from-multiple-cfs-instead-of-the-first-completed-but-exceptional-cf)
     - [2.4 support for setting default business thread pool](#24-support-for-setting-default-business-thread-pool)
     - [2.5 efficient and flexible concurrent execution strategies (`AllFailFast` / `AnySuccess` / `AllSuccess` / `MostSuccess`)](#25-efficient-and-flexible-concurrent-execution-strategies-allfailfast--anysuccess--allsuccess--mostsuccess)
     - [2.6 support for directly running multiple `action`s instead of wrapping them into `Completablefuture`s first](#26-support-for-directly-running-multiple-actions-instead-of-wrapping-them-into-completablefutures-first)
@@ -61,8 +61,8 @@ Welcome 👏💖
     - [2.13 `allOf/anyOf` methods that accept broader input types](#213-allofanyof-methods-that-accept-broader-input-types)
     - [more feature documentation](#more-feature-documentation)
   - [3. Orchestration Methods of `cffu` library and Best Practices](#3-orchestration-methods-of-cffu-library-and-best-practices)
-    - [3.1 Orchestration Method Groups](#31-orchestration-method-groups)
-    - [3.2 Best Practices for Selecting Orchestration Methods 🏆](#32-best-practices-for-selecting-orchestration-methods-)
+    - [3.1 orchestration method groups](#31-orchestration-method-groups)
+    - [3.2 best practices for selecting orchestration methods 🏆](#32-best-practices-for-selecting-orchestration-methods-)
 - [🔌 API Docs](#-api-docs)
 - [🍪 Dependencies](#-dependencies)
 - [📚 More Resources](#-more-resources)
@@ -314,19 +314,19 @@ public class AllResultsOfDemo {
 > \# Complete runnable demo code can be found at
 > [`AllResultsOfDemo.java`](cffu-core/src/test/java/io/foldright/demo/AllResultsOfDemo.java).
 
-### 2.2 obtain all results from multiple `CF`s, supporting fail-fast instead of waiting unnecessarily and slows down business responsiveness
+
+### 2.2 retrieve all results of multiple `CF`s with fail-fast support, instead of futile waiting that reduces business responsiveness
 
 The `allOf` method of `CompletableFuture` waits for all input `CF`s to complete;
-even if one `CF` fails, it still waits for the remaining `CF`s to finish before returning a failed `CF`.
+even if a `CF` completes exceptionally, it still waits for all subsequent `CF`s to complete before returning an exceptional `CF`.
 
-For business logic, this "fail and keep waiting" strategy (`AllComplete`) slows down responsiveness.
+For business logic, this fail-and-continue-waiting strategy (`AllComplete`) reduces business responsiveness.
 
-What is often needed in business is to fail fast as soon as any input `CF` fails (`AllFailFast`), instead of futilely waiting.
+What business needs is to fail fast when an input `CF` fails, instead of futile waiting (`AllFailFast`).
 
-- `AllFailFast` is one of the most useful and common patterns in asynchronous task orchestration
-- `cffu` provides corresponding methods like `allResultsFailFastOf`
-  that support the `AllFailFast` concurrent execution strategy
-- Both `allOf` and `allResultsFailFastOf` return successful results only when all input `CF`s successful
+- `cffu` provides corresponding methods such as `allResultsFailFastOf` to support the `AllFailFast` concurrent execution strategy
+- `AllFailFast` concurrent execution strategy is the most useful and common pattern in asynchronous task orchestration
+- Both `AllFailFast` and `AllComplete` return **successful** results only when **all** inputs succeed
 
 For more details, see the article [How to implement the most common pattern in async task orchestration with `CompletableFuture` — fail fast](https://juejin.cn/post/7420597224546091059).
 
@@ -370,16 +370,16 @@ public class AllFastFailDemo {
 > \# Complete runnable demo code can be found at
 > [`AllFastFailDemo.java`](cffu-core/src/test/java/io/foldright/demo/AllFastFailDemo.java).
 
-### 2.3 retrieve the first successful result from multiple `CF`s, not the first completed but exceptional `CF`
+### 2.3 retrieve the first successful result from multiple `CF`s, instead of the first completed but exceptional `CF`
 
 The `anyOf` method of `CompletableFuture` returns the first completed `CF` without waiting for
-subsequent incomplete `CF`s; even if the first completed `CF` is exceptional(`AnyComplete`).
+subsequent incomplete `CF`s; even if the first completed `CF` is exceptional, it will return this exceptional `CF` result.
 
-What is often needed in business is the first *successful* `CF` result (`AnySuccess`).
+Business logic often needs the first **successful** `CF` result (`AnySuccess`), rather than the first completed but possibly exceptional `CF` (`AnyComplete`).
 
-- `AnySuccess` is one of the most useful and common patterns in asynchronous task composition
-- `cffu` provides methods such as `anySuccessOf` to support the `AnySuccess` concurrent execution strategy
-- `anySuccessOf` returns an exceptional result only when all input `CF`s complete exceptionally
+- `cffu` provides corresponding methods like `anySuccessOf` to support the `AnySuccess` concurrent execution strategy
+- The `AnySuccess` concurrent execution strategy is the most useful and common pattern in asynchronous task orchestration
+- The `AnySuccess` concurrent execution strategy only returns an **exceptional** result when **all** inputs are exceptional
 
 Example code:
 
@@ -492,7 +492,7 @@ public class DefaultExecutorSettingForCffu {
 
 ### 2.5 efficient and flexible concurrent execution strategies (`AllFailFast` / `AnySuccess` / `AllSuccess` / `MostSuccess`)
 
-In addition to the commonly used `AllFailFast` and `AllSuccess` concurrency strategies mentioned above,
+In addition to the most useful and common `AllFailFast` and `AnySuccess` concurrency strategies mentioned above,
 the `cffu` library also supports `AllSuccess` and `MostSuccess` strategies.
 
 A summary is as follows:
@@ -785,108 +785,114 @@ You can refer to:
 
 ## 3. Orchestration Methods of `cffu` library and Best Practices
 
-Orchestration methods refer to methods with multiple inputs,
-where inputs are logic that needs to be executed concurrently.
-The `cffu` library supports 3 forms of multiple inputs:
+Orchestration methods refer to **methods with multiple inputs**,
+where inputs are **logic that needs to be executed concurrently**.
+The `cffu` library supports 3 forms of inputs:
 
 1. Multiple `Action`s
 2. Multiple data (processed by the same `Action`)
 3. Multiple `CompletableFuture`s
 
-Compared to other simpler concurrent programming approaches
-(including [structured concurrency](https://openjdk.org/jeps/525)),
-the ability to flexibly and efficiently orchestrate multiple inputs may be the greatest advantage of `CompletableFuture`.
+Compared to other simpler concurrent programming approaches (including [structured concurrency](https://openjdk.org/jeps/525)),
+the ability to **flexibly and efficiently orchestrate** multiple inputs is the advantage of `CompletableFuture`.
 
-For concurrent execution strategies in orchestration, see the documentation above:
+For different concurrent execution strategies in orchestration, see the documentation above:
 [2.5 efficient and flexible concurrent execution strategies (`AllFailFast` / `AnySuccess` / `AllSuccess` / `MostSuccess`)](#25-efficient-and-flexible-concurrent-execution-strategies-allfailfast--anysuccess--allsuccess--mostsuccess).
 
-### 3.1 Orchestration Method Groups
+### 3.1 orchestration method groups
 
 1\) **Multiple `Action` Inputs**
 
-Supports 3 different types (varargs array, collection, heterogeneous `Tuple`) with 3 groups of variant methods
+Supports 3 parameter types for representing multiple `Action`s: varargs array, collection, and `Tuple`
+(different generic parameter types for multiple inputs). Corresponding to 3 groups of variant methods:
 
-- Multiple parameter varargs input, input type is array type
+- Multiple parameter varargs input, input type is **array type**
   - Corresponding method groups:
-    - `CompletableFutureUtils#M*` methods, aka. `Multi-Actions(M*) Methods`
-    - `CompletableFutureUtils#thenM*` methods, aka. `Then-Multi-Actions(thenM*) Methods`
-- Collection input, input type is `Iterable`
+    - `CompletableFutureUtils.M*` methods, aka. `Multi-Actions(M*) Methods`
+    - `CompletableFutureUtils.thenM*` methods, aka. `Then-Multi-Actions(thenM*) Methods`
+- Collection parameter input, input type is **`Iterable`**
   - Corresponding method groups:
-    - `CfIterableUtils#M*`, aka. `Multi-Actions(M*) Methods`
-    - `CfIterableUtils#thenM*`, aka. `Then-Multi-Actions(thenM*) Methods`
-  - These method names are the same as the "multiple parameter varargs input" above,
-    but differ in parameter types for multiple `Action` inputs (`Iterable` vs. array)
-- Heterogeneous different types of `Action` inputs, input type is `Tuple`
+    - `CfIterableUtils.M*`, aka. `Multi-Actions(M*) Methods`
+    - `CfIterableUtils.thenM*`, aka. `Then-Multi-Actions(thenM*) Methods`
+  - The method names and functionality of this group are the same as the "multiple parameter varargs input" above,
+    but the parameter types for multiple `Action` inputs are different (`Iterable` vs. array)
+- Multiple `Action` inputs with different generic parameter types, input type is **`Tuple`**
   - Corresponding method groups:
-    - `CfTupleUtils#MTuple*`, aka. `Multi-Actions(M*) Methods`
-    - `CfTupleUtils#thenMTuple*`, aka. `Then-Multi-Actions(thenM*) Methods`
+    - `CfTupleUtils.MTuple*`, aka. `Multi-Actions-Tuple(MTuple*) Methods`
+    - `CfTupleUtils.thenMTuple*`, aka. `Then-Multi-Actions-Tuple(thenMTuple*) Methods`
 
-When there is (single same) data input to multiple `Action`s for processing,
-this is Multiple Instruction Single Data (`MISD`) style parallel processing.
+multiple `Action`s perform asynchronous parallel processing on (single same) data, aka. Multiple Instruction, Single Data (`MISD`).
 
 2\) **Multiple Data Inputs**
 
-Using a single same `Action` to asynchronously process multiple data in parallel,
-aka. Multiple Instruction Single Data (`MISD`) style processing.
+Asynchronous parallel processing of multiple data through a single same `Action`, aka. Single Instruction, Multiple Data (`SIMD`).
 
 Corresponding method groups:
 
-- `CfParallelUtils#Par*` methods, aka. `Multi-Actions(M*) Methods`
-- `CfParallelUtils#thenPar*` methods, aka. `Then-Multi-Actions(thenM*) Methods`
+- `CfParallelUtils.Par*` methods, aka. `Multi-Data(Par*) Methods`
+- `CfParallelUtils.thenPar*` methods, aka. `Then-Multi-Data(thenPar*) Methods`
 
-In business logic, collections should be used to hold multiple data rather than arrays,
-so varargs array type method variants are not provided.  
-\# If you have array type data, converting to a collection is simple; for example, call the method
-[`Arrays.asList(...)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Arrays.html#asList(T...)).
+In business logic, collections should be used to hold multiple data rather than arrays;
+if business logic holds multiple data in array type, it can be easily converted to collection type,
+such as through the method [`Arrays.asList(...)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Arrays.html#asList(T...)).
+The `cffu` library no longer provides method variants with multiple parameter varargs array type inputs.
 
 3\) **Multiple `CompletableFuture` Inputs**
 
-Like multiple `Action` inputs, supports 3 different types (varargs array, collection, heterogeneous `Tuple`)
-with 3 groups of variant methods
+Like multiple `Action` inputs, supports 3 parameter types for representing multiple `CompletableFuture`s:
+varargs array, collection, and `Tuple` (different generic parameter types for multiple inputs).
+Corresponding to 3 groups of variant methods:
 
 - Multiple parameter varargs input, input type is array type
-  - Corresponding method group `CompletableFutureUtils#*Of`
+  - Corresponding method group `CompletableFutureUtils.*Of`
 - Collection input, input type is `Iterable`
-  - Corresponding method group `CfIterableUtils#*Of`
-  - These method names are the same as the "multiple parameter varargs input" above,
-    but differ in parameter types for multiple `Action` inputs (`Iterable` vs. array)
-- Heterogeneous different types input, input type is `Tuple`
-  - Corresponding method group `CfTupleUtils#*TupleOf`
+  - Corresponding method group `CfIterableUtils.*Of`
+  - The method names and functionality of this group are the same as the "multiple parameter varargs input" above,
+    but the parameter types for multiple `CompletableFuture` inputs are different (`Iterable` vs. array)
+- Heterogeneous inputs with different types, input type is `Tuple`
+  - Corresponding method group `CfTupleUtils.*TupleOf`
 
-### 3.2 Best Practices for Selecting Orchestration Methods 🏆
+### 3.2 best practices for selecting orchestration methods 🏆
 
 1\) When business processing logic directly has multiple `Action`s
 
-Including `Action`s that can be written as `Lambda` literal in place.
+Including `Action`s in the form of `Lambda` literal.
 
-- When the number of `Action`s is fixed, prioritize using "multiple parameter varargs `Action`" methods,
-  aka. corresponding method groups:
-  - `CompletableFutureUtils#M*` methods, aka. `Multi-Actions(M*) Methods`
-  - `CompletableFutureUtils#thenM*` methods, aka. `Then-Multi-Actions(thenM*) Methods`
-- When the number of `Action`s is variable, prioritize using "`Action` collection" methods,
-  aka. corresponding method groups:
-  - `CfIterableUtils#M*`, aka. `Multi-Actions(M*) Methods`
-  - `CfIterableUtils#thenM*`, aka. `Then-Multi-Actions(thenM*) Methods`
+- When the number of `Action`s is fixed/known,
+  use "multiple parameter varargs `Action`" methods, corresponding method groups:
+  - `CompletableFutureUtils.M*` methods, aka. `Multi-Actions(M*) Methods`
+  - `CompletableFutureUtils.thenM*` methods, aka. `Then-Multi-Actions(thenM*) Methods`
+- When the number of `Action`s is not fixed,
+  use "`Action` collection" methods, corresponding method groups:
+  - `CfIterableUtils.M*`, aka. `Multi-Actions(M*) Methods`
+  - `CfIterableUtils.thenM*`, aka. `Then-Multi-Actions(thenM*) Methods`
 
 2\) When business processing logic has multiple data for asynchronous parallel processing
 
-Prioritize using "multiple parameter varargs `Action`" methods, aka. corresponding method groups:
+Use "multiple data input" methods, corresponding method groups:
 
-- `CfParallelUtils#Par*` methods, aka. `Multi-Actions(M*) Methods`
-- `CfParallelUtils#thenPar*` methods, aka. `Then-Multi-Actions(thenM*) Methods`
+- `CfParallelUtils.Par*` methods, aka. `Multi-Data(Par*) Methods`
+- `CfParallelUtils.thenPar*` methods, aka. `Then-Multi-Data(thenPar*) Methods`
 
 3\) When business processing logic input only has multiple `CompletableFuture`s
 
-When methods from other modules or third-party libraries return `CompletableFuture`,
-you can only use method groups that input multiple `CompletableFuture`s for orchestration.
+Such as when methods from other modules or third-party libraries return `CompletableFuture`,
+you can only use methods that input multiple `CompletableFuture`s for orchestration.
 
-Compared to the method groups above (multiple `Action`s/multiple data),
-these methods that input multiple `CompletableFuture`s:
+- When the number of `CompletableFuture`s is fixed/known,
+  use "multiple parameter varargs `CompletableFuture`" methods, corresponding method groups:
+  - Corresponding method group `CompletableFutureUtils.*Of`
+- When the number of `CompletableFuture`s is not fixed,
+  use "`CompletableFuture` collection" methods, corresponding method groups:
+  - Corresponding method group `CfIterableUtils.*Of`
 
-- **Will swallow exceptions**❗️ When multiple input `CompletableFuture`s are exceptional,
-  at most only one of these exceptions can be reported to the business through the returned `CF`,
-  while other exceptions are silently swallowed, affecting business problem troubleshooting
-- Additional wrapper logic code is cumbersome and obscures the business flow
+Compared to the above method groups (multiple `Action`s/multiple data), these methods that input multiple `CompletableFuture`s:
+
+- **Will swallow exceptions**❗️
+  - When input `CompletableFuture`s throw multiple exceptions during execution,
+    at most only one of these exceptions can be reported to the business through the returned `CF`,
+    while other exceptions are silently swallowed, affecting business problem troubleshooting
+- Additional wrapper logic code is cumbersome and obscures the business process
 
 > In business development, these methods that input multiple `CompletableFuture`s
 > should be treated as lower-level basic methods, used only when necessary.

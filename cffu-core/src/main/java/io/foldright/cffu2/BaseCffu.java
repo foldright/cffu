@@ -248,8 +248,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
-     * need be declared to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
+     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -280,8 +280,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
-     * need be declared to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
+     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -340,8 +340,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
-     * need be declared to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
+     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -369,8 +369,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
-     * need be declared to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
+     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -398,8 +398,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
-     * need be declared to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
+     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -415,8 +415,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#allFailFastOf allFailFastOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
-     * to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the first argument is passed as a lambda, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -432,8 +432,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#allFailFastOf allFailFastOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
-     * to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the first argument is passed as a lambda, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -449,8 +449,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#allOf allOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
-     * to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the first argument is passed as a lambda, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -465,8 +465,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#allOf allOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
-     * to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the first argument is passed as a lambda, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -481,8 +481,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
-     * to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the first argument is passed as a lambda, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -498,8 +498,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
-     * to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the first argument is passed as a lambda, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -515,8 +515,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
-     * to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the first argument is passed as a lambda, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -532,8 +532,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the first argument is passed by lambda, need declare the lambda parameter type
-     * to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the first argument is passed as a lambda, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation error, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -1209,7 +1209,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new Cffu that, when this Cffu completes exceptionally with the given exceptionType,
      * is executed with the exception from this Cffu as the argument to the supplied function.
-     * Otherwise, the returned Cffu contains same result as this Cffu.
+     * Otherwise, the returned Cffu contains the same result as this Cffu.
      * <p>
      * <strong>"The exception from this Cffu"</strong> means the cause of the {@link ExecutionException}
      * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself;
@@ -1230,7 +1230,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new Cffu that, when this Cffu completes exceptionally with the given exceptionType,
      * is executed with the exception from this Cffu as the argument to the supplied function, using {@link #defaultExecutor()}.
-     * Otherwise, the returned Cffu contains same result as this Cffu.
+     * Otherwise, the returned Cffu contains the same result as this Cffu.
      * <p>
      * <strong>"The exception from this Cffu"</strong> means the cause of the {@link ExecutionException}
      * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself;
@@ -1252,7 +1252,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new Cffu that, when this Cffu completes exceptionally with the given exceptionType,
      * is executed with the exception from this Cffu as the argument to the supplied function, using the supplied Executor.
-     * Otherwise, the returned Cffu contains same result as this Cffu.
+     * Otherwise, the returned Cffu contains the same result as this Cffu.
      * <p>
      * <strong>"The exception from this Cffu"</strong> means the cause of the {@link ExecutionException}
      * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself;
@@ -1377,7 +1377,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <li>and/or all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously
      *    (i.e., the dependent Cffus/CompletableFutures are created using async methods).
      * </ul> In these cases, using this unsafe method avoids an unnecessary thread switching when timeout occurs; However,
-     * these conditions are difficult to guarantee in practice especially when the returned Cffu is used by others' codes.
+     * these conditions are difficult to guarantee in practice, especially when the returned Cffu is used by others' codes.
      * <p>
      * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} leaks if the future
      * completes exceptionally, more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
