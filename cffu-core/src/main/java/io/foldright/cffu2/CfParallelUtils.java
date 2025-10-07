@@ -45,7 +45,7 @@ import static java.util.Objects.requireNonNull;
  */
 public final class CfParallelUtils {
     ////////////////////////////////////////////////////////////////////////////////
-    // region# CF Factory Methods(create by multiply data and one action)
+    // region# CF Factory Methods (create by multiply data and one action)
     //
     //    - parApply* (Iterable, Function: T -> U)    -> CompletableFuture<List<U>>
     //    - parAccept*(Iterable, Consumer: T -> Void) -> CompletableFuture<Void>

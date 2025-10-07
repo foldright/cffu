@@ -45,8 +45,8 @@
     - [1.3 库依赖（包含`CompletableFutureUtils`工具类）](#13-%E5%BA%93%E4%BE%9D%E8%B5%96%E5%8C%85%E5%90%ABcompletablefutureutils%E5%B7%A5%E5%85%B7%E7%B1%BB)
   - [2. `cffu`功能介绍](#2-cffu%E5%8A%9F%E8%83%BD%E4%BB%8B%E7%BB%8D)
     - [2.1 支持返回多个输入`CF`的整体运行结果](#21-%E6%94%AF%E6%8C%81%E8%BF%94%E5%9B%9E%E5%A4%9A%E4%B8%AA%E8%BE%93%E5%85%A5cf%E7%9A%84%E6%95%B4%E4%BD%93%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C)
-    - [2.2 获取多个`CF`的所有结果，支持快速失败，而不是做于事无补的等待降低业务响应性](#22-%E8%8E%B7%E5%8F%96%E5%A4%9A%E4%B8%AAcf%E7%9A%84%E6%89%80%E6%9C%89%E7%BB%93%E6%9E%9C%E6%94%AF%E6%8C%81%E5%BF%AB%E9%80%9F%E5%A4%B1%E8%B4%A5%E8%80%8C%E4%B8%8D%E6%98%AF%E5%81%9A%E4%BA%8E%E4%BA%8B%E6%97%A0%E8%A1%A5%E7%9A%84%E7%AD%89%E5%BE%85%E9%99%8D%E4%BD%8E%E4%B8%9A%E5%8A%A1%E5%93%8D%E5%BA%94%E6%80%A7)
-    - [2.3 获取多个`CF`的任一结果，支持首个成功的`CF`结果，而不是首个完成但失败的`CF`](#23-%E8%8E%B7%E5%8F%96%E5%A4%9A%E4%B8%AAcf%E7%9A%84%E4%BB%BB%E4%B8%80%E7%BB%93%E6%9E%9C%E6%94%AF%E6%8C%81%E9%A6%96%E4%B8%AA%E6%88%90%E5%8A%9F%E7%9A%84cf%E7%BB%93%E6%9E%9C%E8%80%8C%E4%B8%8D%E6%98%AF%E9%A6%96%E4%B8%AA%E5%AE%8C%E6%88%90%E4%BD%86%E5%A4%B1%E8%B4%A5%E7%9A%84cf)
+    - [2.2 获取多个`CF`的所有结果，支持快速失败，而不是做于事无补的等待降低了业务响应性](#22-%E8%8E%B7%E5%8F%96%E5%A4%9A%E4%B8%AAcf%E7%9A%84%E6%89%80%E6%9C%89%E7%BB%93%E6%9E%9C%E6%94%AF%E6%8C%81%E5%BF%AB%E9%80%9F%E5%A4%B1%E8%B4%A5%E8%80%8C%E4%B8%8D%E6%98%AF%E5%81%9A%E4%BA%8E%E4%BA%8B%E6%97%A0%E8%A1%A5%E7%9A%84%E7%AD%89%E5%BE%85%E9%99%8D%E4%BD%8E%E4%BA%86%E4%B8%9A%E5%8A%A1%E5%93%8D%E5%BA%94%E6%80%A7)
+    - [2.3 Getting Any Result from Multiple `CF`s, Supporting the First Successful `CF` Result Instead of the First Completed but Failed `CF`](#23-getting-any-result-from-multiple-cfs-supporting-the-first-successful-cf-result-instead-of-the-first-completed-but-failed-cf)
     - [2.4 支持设置缺省的业务线程池](#24-%E6%94%AF%E6%8C%81%E8%AE%BE%E7%BD%AE%E7%BC%BA%E7%9C%81%E7%9A%84%E4%B8%9A%E5%8A%A1%E7%BA%BF%E7%A8%8B%E6%B1%A0)
     - [2.5 高效灵活的并发执行策略（`AllFailFast` / `AnySuccess` / `AllSuccess` / `MostSuccess`）](#25-%E9%AB%98%E6%95%88%E7%81%B5%E6%B4%BB%E7%9A%84%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E7%AD%96%E7%95%A5allfailfast--anysuccess--allsuccess--mostsuccess)
     - [2.6 支持直接运行多个`Action`，而不是要先包装成`CompletableFuture`](#26-%E6%94%AF%E6%8C%81%E7%9B%B4%E6%8E%A5%E8%BF%90%E8%A1%8C%E5%A4%9A%E4%B8%AAaction%E8%80%8C%E4%B8%8D%E6%98%AF%E8%A6%81%E5%85%88%E5%8C%85%E8%A3%85%E6%88%90completablefuture)
@@ -262,17 +262,17 @@ public class AllResultsOfDemo {
 
 > \# 完整可运行的Demo代码参见[`AllResultsOfDemo.java`](../cffu-core/src/test/java/io/foldright/demo/AllResultsOfDemo.java)。
 
-### 2.2 获取多个`CF`的所有结果，支持快速失败，而不是做于事无补的等待降低业务响应性
+### 2.2 获取多个`CF`的所有结果，支持快速失败，而不是做于事无补的等待降低了业务响应性
 
 `CompletableFuture`的`allOf`方法会等待所有输入`CF`运行完成；即使有`CF`失败了也要等待后续`CF`都运行完成，再返回一个失败的`CF`。
 
-对于业务逻辑来说，这样失败且继续等待的策略（`AllComplete`），减慢了业务响应性。
+对于业务逻辑来说，这样失败且继续等待的策略（`AllComplete`），降低了业务响应性。
 
-业务上想要的是，当有输入`CF`失败了则快速失败不再做于事无补的等待（`AllFailFast`）。
+业务需要的是，当有输入`CF`失败了则快速失败不再做于事无补的等待（`AllFailFast`）。
 
-- `AllFailFast`是异步任务编排中最常用有用的模式
 - `cffu`提供了相应的`allResultsFailFastOf`等方法，支持`AllFailFast`并发执行策略
-- `allOf` / `allResultsFailFastOf`两者都是，只有当所有的输入`CF`都成功时，才返回成功结果
+- `AllFailFast`并发执行策略是异步任务编排中最有用常用的模式
+- `AllFailFast` / `AllComplete`两者都是，仅当**所有的**输入都成功时，才返回**成功的**结果
 
 更多说明可以看看文章[`CompletableFuture`如何实现异步任务编排中最常用的模式 —— 快速失败](https://juejin.cn/post/7420597224546091059)。
 
@@ -315,15 +315,15 @@ public class AllFastFailDemo {
 
 > \# 完整可运行的Demo代码参见[`AllFastFailDemo.java`](../cffu-core/src/test/java/io/foldright/demo/AllFastFailDemo.java)。
 
-### 2.3 获取多个`CF`的任一结果，支持首个成功的`CF`结果，而不是首个完成但失败的`CF`
+### 2.3 Getting Any Result from Multiple `CF`s, Supporting the First Successful `CF` Result Instead of the First Completed but Failed `CF`
 
-`CompletableFuture`的`anyOf`方法返回首个完成的`CF`，不会等待后续没有完成的`CF`赛马模式；即使首个完成的`CF`是失败的，也会返回这个失败的`CF`结果。
+The `anyOf` method of `CompletableFuture` returns the first completed `CF` without waiting for subsequent uncompleted `CF`s; even if the first completed `CF` fails, it will return this failed `CF` result.
 
-对于业务逻辑来说，想要的是首个成功的`CF`结果（`AnySuccess`），而不是首个完成但失败的`CF`（`AnyComplete`）。
+Business logic often needs the first successful `CF` result (`AnySuccess`), rather than the first completed but possibly failed `CF` (`AnyComplete`).
 
-- `AnySuccess`是异步任务编排中最常用有用的模式
-- `cffu`提供了相应的`anySuccessOf`等方法，支持`AnySuccess`并发执行策略
-- `anySuccessOf`只有当所有的输入`CF`都失败时，才返回失败结果
+- `cffu` provides corresponding methods like `anySuccessOf` to support the `AnySuccess` concurrent execution strategy
+- The `AnySuccess` concurrent execution strategy is the most useful and common pattern in asynchronous task orchestration
+- The `AnySuccess` concurrent execution strategy only returns a **failed** result when **all** inputs fail
 
 示例代码如下：
 
@@ -422,7 +422,7 @@ public class DefaultExecutorSettingForCffu {
 
 ### 2.5 高效灵活的并发执行策略（`AllFailFast` / `AnySuccess` / `AllSuccess` / `MostSuccess`）
 
-除了上面提到`AllFailFast`与`AllSuccess`这2个业务最常用有用并发执行策略，`cffu`库还支持`AllSuccess`、`MostSuccess`。
+除了上面提到`AllFailFast`与`AnySuccess`这2个业务最常用有用并发执行策略，`cffu`库还支持`AllSuccess`、`MostSuccess`。
 
 汇总说明如下：
 
@@ -668,91 +668,97 @@ public class CfParallelDemo {
 
 ## 3. `cffu`库提供的编排方法及其最佳实践
 
-编排方法指有多个输入的方法；其中输入指需要并发执行的逻辑。`cffu`库支持3种多输入的形式：
+编排方法 指 **有多个输入**的方法，其中输入 指 **需要并发执行的逻辑**。
+
+`cffu`库支持3种形式的输入：
 
 1. 多`Action`
 2. 多数据（用相同`Action`处理各个数据）
 3. 多`CompletableFuture`
 
-相比其它更简单的并发编程方式（包含[结构化并发](https://openjdk.org/jeps/525)），
-能对多个输入进行灵活高效编排，可能是`CompletableFuture`的最大优势。
+相比其它更简单的并发编程方式（包含[结构化并发](https://openjdk.org/jeps/525)），能对多个输入进行**灵活高效的编排**，是`CompletableFuture`的优势。
 
-关于编排的并发执行策略，参见上面的文档
+关于编排的不同并发执行策略，参见上面的文档
 [2.5 高效灵活的并发执行策略（`AllFailFast` / `AnySuccess` / `AllSuccess` / `MostSuccess`）](#25-%E9%AB%98%E6%95%88%E7%81%B5%E6%B4%BB%E7%9A%84%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E7%AD%96%E7%95%A5allfailfast--anysuccess--allsuccess--mostsuccess)。
 
 ### 3.1 编排方法分组
 
 1\) **输入多`Action`**
 
-支持3种不同类型（变参数组、集合、异质`Tuple`）3组变体方法
+支持3种表示多`Action`的参数类型：变参数组、集合 和 `Tuple`（多个输入的泛型参数类型不同）。对应3组变体方法：
 
-- 多参数变参输入，输入类型是数组类型
+- 多参数变参输入，输入类型是**数组类型**
   - 对应方法分组：
-    - `CompletableFutureUtils#M*`方法，即`Multi-Actions(M*) Methods`
-    - `CompletableFutureUtils#thenM*`方法，即`Then-Multi-Actions(thenM*) Methods`
-- 输入集合，输入类型是`Iterable`
+    - `CompletableFutureUtils.M*`方法，即`Multi-Actions(M*) Methods`
+    - `CompletableFutureUtils.thenM*`方法，即`Then-Multi-Actions(thenM*) Methods`
+- 集合参数输入，输入类型是 **`Iterable`**
   - 对应方法分组：
-    - `CfIterableUtils#M*`，即`Multi-Actions(M*) Methods`
-    - `CfIterableUtils#thenM*`，即`Then-Multi-Actions(thenM*) Methods`
-  - 这组方法名与上面「多参数变参输入」，用于输入的多`Action`的参数类型不同（`Iterable` vs. 数组）
-- 输入异质不同类型的`Action`，输入类型是`Tuple`
+    - `CfIterableUtils.M*`，即`Multi-Actions(M*) Methods`
+    - `CfIterableUtils.thenM*`，即`Then-Multi-Actions(thenM*) Methods`
+  - 这组方法的方法名与功能与上一组「多参数变参输入」一样，但多`Action`输入的参数类型不同（`Iterable` vs. 数组）
+- 泛型参数类型不同的多`Action`输入，输入类型是 **`Tuple`**
   - 对应方法分组：
-    - `CfTupleUtils#MTuple*`，即`Multi-Actions(M*) Methods`
-    - `CfTupleUtils#thenMTuple*`，即`Then-Multi-Actions(thenM*) Methods`
+    - `CfTupleUtils.MTuple*`，即`Multi-Actions-Tuple(MTuple*) Methods`
+    - `CfTupleUtils.thenMTuple*`，即`Then-Multi-Actions-Tuple(thenMTuple*) Methods`
 
-当有（单个相同的）数据输入给多个`Action`进行处理时，即 多指令单数据(`MISD`)风格并行处理。
+多个`Action`对（单个相同的）数据进行异步并行处理，即多指令单数据(`MISD`)。
 
 2\) **输入多个数据**
 
-用单个相同`Action`对于多个数据进行异步并行处理，即 多指令单数据(`MISD`)风格处理。
+对多个数据通过单个相同`Action`进行异步并行处理，即多指令单数据(`MISD`)。
 
 对应方法分组：
 
-- `CfParallelUtils#Par*`方法，即`Multi-Actions(M*) Methods`
-- `CfParallelUtils#thenPar*`方法，即`Then-Multi-Actions(thenM*) Methods`
+- `CfParallelUtils.Par*`方法，即`Multi-Data(Par*) Methods`
+- `CfParallelUtils.thenPar*`方法，即`Then-Multi-Data(thenPar*) Methods`
 
-在业务逻辑中，应该使用集合持有多个数据而不是数组，所以不再提供输入变参数组类型的方法变体。  
-\# 如果有的是数组类型数据，要转成集合也很简单；如调用[`Arrays.asList(...)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Arrays.html#asList(T...))方法即可。
+在业务逻辑中，应该使用集合持有多个数据而不是数组；如果业务逻辑持有的是数组类型的多个数据，也可以简单转换成集合类型，如通过方法[`Arrays.asList(...)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Arrays.html#asList(T...))。`cffu`库不再提供多参数变参数组类型输入的方法变体。
 
 3\) **输入多`CompletableFuture`**
 
-与输入多`Action`一样，支持3种不同类型（变参数组、集合、异质`Tuple`）3组变体方法
+与输入多`Action`一样，支持3种表示多`Action`的参数类型：变参数组、集合 和 `Tuple`（多个输入的泛型参数类型不同）。对应3组变体方法：
 
 - 多参数变参输入，输入类型是数组类型
-  - 对应方法分组 `CompletableFutureUtils#*Of`
+  - 对应方法分组 `CompletableFutureUtils.*Of`
 - 输入集合，输入类型是`Iterable`
-  - 对应方法分组`CfIterableUtils#*Of`
-  - 这组方法名与上面「多参数变参输入」，用于输入的多`Action`的参数类型不同（`Iterable` vs. 数组）
+  - 对应方法分组`CfIterableUtils.*Of`
+  - 这组方法的方法名与功能与上一组「多参数变参输入」一样，但多`CompletableFuture`输入的参数类型不同（`Iterable` vs. 数组）
 - 输入异质的不同类型，输入类型是`Tuple`
-  - 对应方法分组`CfTupleUtils#*TupleOf`
+  - 对应方法分组`CfTupleUtils.*TupleOf`
 
 ### 3.2 编排方法选用的最佳实践 🏆
 
 1\) 当业务处理逻辑直接有多个`Action`时
 
-包含`Action`可以就地写成`Lambda。
+包含直接写的`Lambda`表达式形式的`Action`。
 
-- 当`Action`个数固定的，优先使用「多参数变参`Action`」方法，即对应方法分组：
-  - `CompletableFutureUtils#M*`方法，即`Multi-Actions(M*) Methods`
-  - `CompletableFutureUtils#thenM*`方法，即`Then-Multi-Actions(thenM*) Methods`
-- 当`Action`个数不固定的，优先使用「`Action`集合」方法，即对应方法分组：
-  - `CfIterableUtils#M*`，即`Multi-Actions(M*) Methods`
-  - `CfIterableUtils#thenM*`，即`Then-Multi-Actions(thenM*) Methods`
+- 当`Action`个数固定/已知时，使用「多参数变参`Action`」方法，对应方法分组：
+  - `CompletableFutureUtils.M*`方法，即`Multi-Actions(M*) Methods`
+  - `CompletableFutureUtils.thenM*`方法，即`Then-Multi-Actions(thenM*) Methods`
+- 当`Action`个数不固定时，使用「`Action`集合」方法，对应方法分组：
+  - `CfIterableUtils.M*`，即`Multi-Actions(M*) Methods`
+  - `CfIterableUtils.thenM*`，即`Then-Multi-Actions(thenM*) Methods`
 
 2\) 当业务处理逻辑有多个数据进行异步并行处理时
 
-优先使用「多参数变参`Action`」方法，即对应方法分组：
+使用「输入多个数据」方法，对应方法分组：
 
-- `CfParallelUtils#Par*`方法，即`Multi-Actions(M*) Methods`
-- `CfParallelUtils#thenPar*`方法，即`Then-Multi-Actions(thenM*) Methods`
+- `CfParallelUtils.Par*`方法，即`Multi-Data(Par*) Methods`
+- `CfParallelUtils.thenPar*`方法，即`Then-Multi-Data(thenPar*) Methods`
 
 3\) 当业务处理逻辑输入只有多个`CompletableFuture`时
 
-如其它模块或三方库中方法返回的是`CompletableFuture`，要编排时只能使用输入多`CompletableFuture`的方法分组。
+如其它模块或三方库中方法返回的是`CompletableFuture`，要编排时只能使用输入多`CompletableFuture`的方法。
+
+- 当`CompletableFuture`个数固定/已知时，使用「多参数变参`CompletableFuture`」方法，对应方法分组：
+  - 对应方法分组`CfIterableUtils.*Of`
+- 当`CompletableFuture`个数不固定时，使用「`CompletableFuture`集合」方法，对应方法分组：
+  - 对应方法分组`CfIterableUtils.*Of`
 
 相比上面的方法分组（多`Action`/多数据），这些输入多个`CompletableFuture`的方法：
 
-- **会呑异常**❗️当输入`CompletableFuture`的运行抛出多个异常时，这些异常至多只能有一个能通过返回`CF`反馈给业务，其它的异常则被默默地呑掉，影响业务问题的排查
+- **会呑异常**❗️
+  - 当输入`CompletableFuture`的运行抛出多个异常时，这些异常至多只能有一个能通过返回`CF`反馈给业务，其它的异常则被默默地呑掉，影响业务问题的排查
 - 额外的包装逻辑代码繁琐，并且模糊了业务流程
 
 > 在业务开发中，可以将这些输入多个`CompletableFuture`的方法当作下层基础方法，仅在必要时才使用。

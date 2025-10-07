@@ -42,14 +42,14 @@ public final class CompletableFutureUtils {
      *    - return type CompletableFuture that may be a minimal-stage
      *    - forcefully cast to CompletableFuture<T> from any CompletableFuture<?>
      *    - return generic type T but constrained runtime type TupleX
-     * - methods with `0` suffix means no parameter validation, e.g.
+     * - methods with `0` suffix mean no parameter validation, e.g.
      *    - no null check
      *
-     * because these methods is not safe, caller logic SHOULD pay attention to keep implementation correct.
+     * because these methods are not safe, caller logic SHOULD pay attention to keep implementation correct.
      */
 
     ////////////////////////////////////////////////////////////////////////////////
-    // region# CF Factory Methods(including static methods of CF)
+    // region# CF Factory Methods (including static methods of CF)
     ////////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
@@ -367,7 +367,7 @@ public final class CompletableFutureUtils {
 
     // endregion
     ////////////////////////////////////////////////////////////
-    // region## allOf* Methods(including mostSuccessResultsOf)
+    // region## allOf* Methods (including mostSuccessResultsOf)
     //
     //    CompletionStage<T>[] -> CompletableFuture<List<T>>
     ////////////////////////////////////////////////////////////
@@ -404,7 +404,7 @@ public final class CompletableFutureUtils {
      * This method differs from {@link #allResultsFailFastOf allResultsFailFastOf} method in that it's tolerant
      * of failed stages for any of the items, representing them as {@code valueIfFailed} in the result list.
      *
-     * @param valueIfFailed the value used as result if the input stage completed exceptionally
+     * @param valueIfFailed the value used as the result if the input stage completed exceptionally
      * @throws NullPointerException if the cfs param or any of its elements is {@code null}
      * @see #getSuccessNow(CompletableFuture, Object)
      * @see Futures#successfulAsList the equivalent Guava method successfulAsList()
@@ -435,7 +435,7 @@ public final class CompletableFutureUtils {
      * This method differs from {@link #allResultsFailFastOf allResultsFailFastOf} method in that it's tolerant of
      * failed or incomplete stages for any of the items, representing them as {@code valueIfNotSuccess} in the result list.
      *
-     * @param valueIfNotSuccess the value used as result if the input stage not completed normally
+     * @param valueIfNotSuccess the value used as the result if the input stage not completed normally
      * @param timeout           how long to wait in units of {@code unit}
      * @param unit              a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
@@ -462,7 +462,7 @@ public final class CompletableFutureUtils {
      * or incomplete stages for any of the items, representing them as {@code valueIfNotSuccess} in the result list.
      *
      * @param executorWhenTimeout the executor to use for asynchronous execution when timeout
-     * @param valueIfNotSuccess   the value used as result if the input stage not completed normally
+     * @param valueIfNotSuccess   the value used as the result if the input stage not completed normally
      * @param timeout             how long to wait in units of {@code unit}
      * @param unit                a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
@@ -487,14 +487,14 @@ public final class CompletableFutureUtils {
         if (cfs.length == 1) {
             // defensive copy input cf to non-minimal-stage instance in order to
             // 1. avoid writing it by `cffuCompleteOnTimeout` and is able to read its result(`getSuccessNow`)
-            // 2. ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
+            // 2. ensure that the returned cf is not a minimal-stage instance (UnsupportedOperationException)
             final CompletableFuture<T> f = toNonMinCfCopy0(cfs[0]);
             return cffuCompleteOnTimeout(f, valueIfNotSuccess, timeout, unit, executorWhenTimeout)
                     .handle((unused, ex) -> arrayList(getSuccessNow(f, valueIfNotSuccess)));
         }
 
-        // 1. MUST be non-minimal-stage CF instances in order to read results(`getSuccessNow`), otherwise UnsupportedOpException.
-        // 2. SHOULD copy input cfs(by calling `exceptionally` method) to avoid memory leaks,
+        // 1. MUST be non-minimal-stage CF instances to read results(`getSuccessNow`), otherwise UnsupportedOpException.
+        // 2. SHOULD copy input cfs (by calling `exceptionally` method) to avoid memory leaks,
         //    otherwise all input cfs would be retained until output cf completes.
         CompletableFuture<T>[] cfArray = mapArray(cfs, CommonUtils::newCfArray,
                 s -> LLCF.<T>toNonMinCf0(s).exceptionally(v -> valueIfNotSuccess));
@@ -506,7 +506,7 @@ public final class CompletableFutureUtils {
      * Multi-Gets(MGet) the results in the <strong>same order</strong> of the given cfs arguments,
      * use the result value if the given stage is completed normally, else use the given valueIfNotSuccess
      *
-     * @param cfs MUST be *Non-Minimal* CF instances in order to read results(`getSuccessNow`),
+     * @param cfs MUST be *Non-Minimal* CF instances to read results(`getSuccessNow`),
      *            otherwise UnsupportedOperationException
      */
     static <T> ArrayList<T> mGetSuccessNow0(@Nullable T valueIfNotSuccess, CompletableFuture<? extends T>[] cfs) {
@@ -540,8 +540,8 @@ public final class CompletableFutureUtils {
     static <T> CompletableFuture<List<T>> allResultsOf0(boolean failFast, CompletionStage<? extends T>[] cfs) {
         final int len = cfs.length;
         if (len == 0) return completedFuture(arrayList());
-        // convert input cf to non-minimal-stage CF instance for SINGLE input in order to
-        // ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
+        // convert input cf to non-minimal-stage CF instance for SINGLE input to ensure that
+        // the returned cf is not a minimal-stage instance (UnsupportedOperationException)
         if (len == 1) return toNonMinCf0(cfs[0]).thenApply(CommonUtils::arrayList);
 
         final AtomicReferenceArray<T> results = new AtomicReferenceArray<>(len);
@@ -566,7 +566,7 @@ public final class CompletableFutureUtils {
         final CompletableFuture<Void>[] resultSetterCfs = newCfArray(stages.length);
         return fillArray(resultSetterCfs, i -> f_toCf0(stages[i]).<CompletableFuture<Void>>handle((v, ex) -> {
             if (ex == null) {
-                // atomically store value if slot has not been marked as unneeded with SENTINEL_UNNEEDED
+                // atomically store value if the slot has not been marked as unneeded with SENTINEL_UNNEEDED
                 results.compareAndSet(i, null, v);
                 return completedFuture(null);
             } else {
@@ -599,7 +599,7 @@ public final class CompletableFutureUtils {
      * If no stages are provided, returns a CompletableFuture completed with the value {@code null}.
      * <p>
      * The successful results, if any, of the given stages are not reflected in the returned CompletableFuture
-     * ({@code CompletableFuture<Void>}), but may be obtained by inspecting them individually; Or using below methods
+     * ({@code CompletableFuture<Void>}), but may be obtained by inspecting them individually; Or using the below methods
      * reflected results in the returned CompletableFuture which are more convenient, safer and best-practice of concurrency:
      * <ul>
      * <li>{@link #allResultsFailFastOf  allResultsFailFastOf}, {@link CfIterableUtils#allFailFastOf allFailFastOf},
@@ -625,8 +625,8 @@ public final class CompletableFutureUtils {
     static CompletableFuture<Void> allFailFastOf0(CompletionStage<?>[] cfs) {
         final int len = cfs.length;
         if (len == 0) return completedFuture(null);
-        // convert input cf to non-minimal-stage CF instance for SINGLE input in order to
-        // ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
+        // convert input cf to non-minimal-stage CF instance for SINGLE input to ensure that
+        // the returned cf is not a minimal-stage instance (UnsupportedOperationException)
         if (len == 1) return toNonMinCf0(cfs[0]).thenApply(unused -> null);
 
         final CompletableFuture<?>[] successOrBeIncomplete = newCfArray(len);
@@ -658,7 +658,7 @@ public final class CompletableFutureUtils {
      * If no stages are provided, returns a CompletableFuture completed with the value {@code null}.
      * <p>
      * The successful results, if any, of the given stages are not reflected in the returned CompletableFuture
-     * ({@code CompletableFuture<Void>}), but may be obtained by inspecting them individually; Or using below methods
+     * ({@code CompletableFuture<Void>}), but may be obtained by inspecting them individually; Or using the below methods
      * reflected results in the returned CompletableFuture which are more convenient, safer and best-practice of concurrency:
      * <ul>
      * <li>{@link #allResultsOf allResultsOf}, {@link CfIterableUtils#allResultsOf allResultsOf}
@@ -685,8 +685,9 @@ public final class CompletableFutureUtils {
     public static CompletableFuture<Void> allOf(CompletionStage<?>... cfs) {
         requireCfsAndEleNonNull(cfs);
         if (cfs.length == 0) return completedFuture(null);
-        // convert input cf to non-minimal-stage CF instance for SINGLE input in order to
-        // ensure that the returned cf is not minimal-stage instance(UnsupportedOperationException)
+        // convert input cf to non-minimal-stage CF instance
+        // or SINGLE input to ensure that
+        // the returned cf is not a minimal-stage instance (UnsupportedOperationException)
         if (cfs.length == 1) return toNonMinCf0(cfs[0]).thenApply(unused -> null);
         return CompletableFuture.allOf(f_toCfArray0(cfs));
     }
@@ -724,9 +725,9 @@ public final class CompletableFutureUtils {
     static <T> CompletableFuture<T> anySuccessOf0(CompletionStage<? extends T>[] cfs) {
         final int len = cfs.length;
         if (len == 0) return failedFuture(new NoCfsProvidedException());
-        // defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
+        // defensive copy input cf to non-minimal-stage instance for SINGLE input to ensure that
         // 1. avoid writing the input cf unexpectedly by caller code
-        // 2. the returned cf is not minimal-stage instance(UnsupportedOperationException)
+        // 2. the returned cf is not a minimal-stage instance (UnsupportedOperationException)
         if (len == 1) return toNonMinCfCopy0(cfs[0]);
 
         // NOTE: fill ONE MORE element of successOrBeIncompleteCfs LATER
@@ -742,8 +743,9 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is completed with the same successful result or exception of any of
-     * the given stages when one stage completes. If no stages are provided, returns an incomplete CompletableFuture.
+     * Returns a new CompletableFuture that is completed when any of the given stage complete, with the same result.
+     * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so, with a CompletionException
+     * holding this exception as its cause. If no stages are provided, returns an incomplete CompletableFuture.
      * <p>
      * Comparing the any-<strong>complete</strong> behavior(the complete one may be failed) of this method,
      * the any-<strong>success</strong> behavior of method {@link #anySuccessOf anySuccessOf}
@@ -760,9 +762,9 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<T> anyOf(CompletionStage<? extends T>... cfs) {
         requireCfsAndEleNonNull(cfs);
         if (cfs.length == 0) return new CompletableFuture<>();
-        // defensive copy input cf to non-minimal-stage instance for SINGLE input in order to ensure that
+        // defensive copy input cf to non-minimal-stage instance for SINGLE input to ensure that
         // 1. avoid writing the input cf unexpectedly by caller code
-        // 2. the returned cf is not minimal-stage instance(UnsupportedOperationException)
+        // 2. the returned cf is not a minimal-stage instance (UnsupportedOperationException)
         if (cfs.length == 1) return toNonMinCfCopy0(cfs[0]);
         return f_cast(CompletableFuture.anyOf(f_toCfArray0(cfs)));
     }
@@ -900,7 +902,7 @@ public final class CompletableFutureUtils {
     // endregion
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# CF Instance Methods(including new enhanced + backport methods)
+    // region# CF Instance Methods (including new enhanced + backport methods)
     ////////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
@@ -931,8 +933,8 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
-     * need be declared to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
+     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -940,9 +942,9 @@ public final class CompletableFutureUtils {
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
-        // defensive shallow copy of input array argument by `clone`,
+        // defensive shallow copy of the input array argument by `clone`,
         //   since it is used asynchronously in `thenCompose` and could be mutated by caller (NOT thread-safe)
-        // this same defensive copying pattern is used in similar methods below.
+        // this same defensive copying pattern is used in the similar methods below.
         return _thenMApplyFailFastAsync(cfThis, executor, fns, true);
     }
 
@@ -981,8 +983,8 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
-     * need be declared to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
+     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -1078,8 +1080,8 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
-     * need be declared to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
+     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -1125,8 +1127,8 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
-     * need be declared to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
+     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -1172,8 +1174,8 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the {@code executor} argument is passed by lambda, the {@code Runnable} lambda parameter type
-     * need be declared to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
+     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -1211,8 +1213,8 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
-     * to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -1230,8 +1232,8 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
-     * to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -1264,8 +1266,8 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allOf allOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
-     * to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -1281,8 +1283,8 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allOf allOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
-     * to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -1314,8 +1316,8 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
-     * to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -1332,8 +1334,8 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
-     * to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -1366,8 +1368,8 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
-     * to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -1384,8 +1386,8 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      * <p>
-     * <strong>NOTE:</strong> if the second argument is passed by lambda, need declare the lambda parameter type
-     * to avoid the compilation error, more info see <a href=
+     * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation errors, more info see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -1577,7 +1579,7 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture
      * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -1594,10 +1596,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when tow given stage both complete normally,
+     * Returns a new CompletableFuture that, when tow given stages both complete normally,
      * is executed using the default executor of parameter cfThis,
      * with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture
      * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -1614,7 +1616,7 @@ public final class CompletableFutureUtils {
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed using the supplied executor,
      * with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture
      * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -1637,7 +1639,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Implementation Note: Calling this method is necessary to keep the runtime type(including `minimal-stage`) of
+     * Implementation Note: Calling this method is necessary to keep the runtime type (including `minimal-stage`) of
      * return cf same as input `cfThis` argument. The runtime type of method {@link #allResultsFailFastOf(CompletionStage[])}
      * return cf is always CompletableFuture, does NOT keep the runtime type of input `cfThis` argument.
      */
@@ -1658,7 +1660,7 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture
      * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -1678,7 +1680,7 @@ public final class CompletableFutureUtils {
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed using the default executor of parameter cfThis,
      * with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture
      * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -1695,7 +1697,7 @@ public final class CompletableFutureUtils {
      * Returns a new CompletableFuture that, when tow given stage both complete normally,
      * is executed using the supplied executor,
      * with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture
      * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -1714,7 +1716,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when two given stages both complete normally, executes the given action.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture
      * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -1732,7 +1734,7 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when two given stages both complete normally,
      * executes the given action using the default executor of parameter cfThis.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture
      * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -1747,7 +1749,7 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when two given stages both complete normally,
      * executes the given action using the supplied executor.
-     * if any of the given stage complete exceptionally, then the returned CompletableFuture
+     * If any of the given stages complete exceptionally, then the returned CompletableFuture
      * also does so *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -1822,7 +1824,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Implementation Note: Calling this method is necessary to keep the runtime type(including `minimal-stage`) of
+     * Implementation Note: Calling this method is necessary to keep the runtime type (including `minimal-stage`) of
      * return cf same as input `cfThis` argument. The runtime type of method {@link #anySuccessOf(CompletionStage[])}
      * return cf is always CompletableFuture, does NOT keep the runtime type of input `cfThis` argument.
      */
@@ -1939,7 +1941,7 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when given stage completes exceptionally with the given exceptionType,
      * is executed with the exception from the given stage({@code argument cfThis}) as the argument to the supplied function.
-     * Otherwise, the returned stage contains same result as the given stage.
+     * Otherwise, the returned stage contains the same result as the given stage.
      * <p>
      * <strong>"The exception from the given stage({@code argument cfThis})"</strong> means the cause of
      * the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
@@ -1971,7 +1973,7 @@ public final class CompletableFutureUtils {
      * Returns a new CompletableFuture that, when given stage completes exceptionally with the given exceptionType,
      * is executed with the exception from the given stage({@code argument cfThis}) as the argument to the supplied
      * function, using the default executor of parameter the given stage.
-     * Otherwise, the returned stage contains same result as the given stage.
+     * Otherwise, the returned stage contains the same result as the given stage.
      * <p>
      * <strong>"The exception from the given stage({@code argument cfThis})"</strong> means the cause of
      * the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
@@ -1993,7 +1995,7 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when given stage completes exceptionally with the given exceptionType,
      * is executed with the exception from the given stage({@code argument cfThis}) as the argument to the supplied
-     * function, using the supplied Executor. Otherwise, the returned stage contains same result as the given stage.
+     * function, using the supplied Executor. Otherwise, the returned stage contains the same result as the given stage.
      * <p>
      * <strong>"The exception from the given stage({@code argument cfThis})"</strong> means the cause of
      * the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
@@ -2044,7 +2046,7 @@ public final class CompletableFutureUtils {
     /**
      * Returns a new CompletableFuture that, when given stage completes exceptionally, is executed with given
      * stage's exception as the argument to the supplied function, using the supplied Executor. Otherwise,
-     * if given stage completes normally, then the returned stage also completes normally with the same value.
+     * if the given stage completes normally, then the returned stage also completes normally with the same value.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catchingAsync(CompletionStage, Class, Function, Executor)}
@@ -2064,7 +2066,7 @@ public final class CompletableFutureUtils {
             CompletionStage<T> ret = cfThis.exceptionallyAsync(fn, executor);
             return f_selfTypeDownCast(ret);
         }
-        // below code is copied from CompletionStage#exceptionallyAsync
+        // the below code is copied from CompletionStage#exceptionallyAsync
         CompletionStage<T> ret = cfThis.handle((v, ex) -> (ex == null) ? cfThis :
                 cfThis.<T>handleAsync((v1, ex1) -> fn.apply(ex1), executor)
         ).thenCompose(x -> x);
@@ -2145,13 +2147,13 @@ public final class CompletableFutureUtils {
      * <li>and/or all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
      *    (i.e., the dependent CompletableFutures are created using async methods).
      * </ul> In these cases, using these unsafe methods avoids an unnecessary thread switching when timeout occurs; However, these
-     * conditions are difficult to guarantee in practice especially when the returned CompletableFuture is used by others' codes.
+     * conditions are difficult to guarantee in practice, especially when the returned CompletableFuture is used by others' codes.
      * <p>
      * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} method leaks if the
      * future completes exceptionally, more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
      * <a href="https://github.com/openjdk/jdk/pull/13059">PR review openjdk/jdk/13059</a>
      * and <a href="https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a">JDK bugfix commit</a>.
-     * The cffu backport logic(for Java 20-) has merged this JDK bugfix.
+     * The cffu backport logic (for Java 20-) has merged this JDK bugfix.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -2169,7 +2171,7 @@ public final class CompletableFutureUtils {
         if (IS_JAVA21_PLUS) {
             cfThis.orTimeout(timeout, unit);
         } else {
-            // below code is copied from CompletableFuture#orTimeout with small adoption
+            // the below code is copied from CompletableFuture#orTimeout with small adoption
             if (!cfThis.isDone()) {
                 ScheduledFuture<?> f = Delayer.delayToTimeoutCf(cfThis, timeout, unit);
                 peek0(cfThis, new FutureCanceller(f), "CFU#orTimeout");
@@ -2267,7 +2269,7 @@ public final class CompletableFutureUtils {
         if (IS_JAVA9_PLUS) {
             cfThis.completeOnTimeout(value, timeout, unit);
         } else {
-            // below code is copied from CompletableFuture#completeOnTimeout with small adoption
+            // the below code is copied from CompletableFuture#completeOnTimeout with small adoption
             if (!cfThis.isDone()) {
                 ScheduledFuture<?> f = Delayer.delayToCompleteCf(cfThis, value, timeout, unit);
                 peek0(cfThis, new FutureCanceller(f), "CFU#completeOnTimeout");
@@ -2391,7 +2393,7 @@ public final class CompletableFutureUtils {
             CompletionStage<T> ret = cfThis.exceptionallyCompose(fn);
             return f_selfTypeDownCast(ret);
         }
-        // below code is copied from CompletionStage.exceptionallyCompose
+        // the below code is copied from CompletionStage.exceptionallyCompose
         CompletionStage<T> ret = cfThis.handle((v, ex) -> (ex == null) ? cfThis : fn.apply(ex)).thenCompose(x -> x);
         return f_selfTypeDownCast(ret);
     }
@@ -2436,7 +2438,7 @@ public final class CompletableFutureUtils {
             CompletionStage<T> ret = cfThis.exceptionallyComposeAsync(fn, executor);
             return f_selfTypeDownCast(ret);
         }
-        // below code is copied from CompletionStage.exceptionallyComposeAsync
+        // the below code is copied from CompletionStage.exceptionallyComposeAsync
         CompletionStage<T> ret = cfThis.handle((v, ex) -> (ex == null) ? cfThis :
                 cfThis.handleAsync((v1, ex1) -> fn.apply(ex1), executor).thenCompose(x -> x)
         ).thenCompose(x -> x);
@@ -2595,7 +2597,7 @@ public final class CompletableFutureUtils {
      * @throws CancellationException if the computation was cancelled
      * @throws CompletionException   if given future completed exceptionally
      *                               or a completion computation threw an exception
-     *                               or the wait timed out(with the {@code TimeoutException} as its cause)
+     *                               or the wait timed out (with the {@code TimeoutException} as its cause)
      * @see CompletableFuture#join()
      */
     @Blocking
@@ -2650,7 +2652,7 @@ public final class CompletableFutureUtils {
             return cfThis.resultNow();
         }
 
-        // below code is copied from Future.resultNow
+        // the below code is copied from Future.resultNow
 
         if (!cfThis.isDone()) throw new IllegalStateException("Task has not completed");
         if (cfThis.isCancelled()) throw new IllegalStateException("Task was cancelled");
@@ -2697,7 +2699,7 @@ public final class CompletableFutureUtils {
             return cfThis.exceptionNow();
         }
 
-        // below code is copied from Future.exceptionNow
+        // the below code is copied from Future.exceptionNow
 
         if (!cfThis.isDone()) throw new IllegalStateException("Task has not completed");
         if (cfThis.isCancelled()) throw new IllegalStateException("Task was cancelled");
@@ -2733,7 +2735,7 @@ public final class CompletableFutureUtils {
             return CffuState.toCffuState(cfThis.state());
         }
 
-        // below code is copied from Future#state() with small adoption
+        // the below code is copied from Future#state() with small adoption
 
         if (!cfThis.isDone()) return CffuState.RUNNING;
         if (cfThis.isCancelled()) return CffuState.CANCELLED;
@@ -2769,7 +2771,7 @@ public final class CompletableFutureUtils {
      * Completes given CompletableFuture with the result of the given Supplier function invoked
      * from an asynchronous task using the default executor of parameter cfThis.
      *
-     * @param supplier a function returning the value to be used to complete given CompletableFuture
+     * @param supplier a function returning the value to be used to complete the given CompletableFuture
      * @return the given CompletableFuture
      * @see CompletableFuture#completeAsync(Supplier)
      */
@@ -2782,7 +2784,7 @@ public final class CompletableFutureUtils {
      * Completes given CompletableFuture with the result of the given Supplier function invoked
      * from an asynchronous task using the given executor.
      *
-     * @param supplier a function returning the value to be used to complete given CompletableFuture
+     * @param supplier a function returning the value to be used to complete the given CompletableFuture
      * @param executor the executor to use for asynchronous execution
      * @return the given CompletableFuture
      * @see CompletableFuture#completeAsync(Supplier, Executor)
@@ -2799,7 +2801,7 @@ public final class CompletableFutureUtils {
         } else {
             // NOTE: No need check minimal stage, because Java 8(not Java 9+) NOT support minimal stage
 
-            // below code is copied from CompletableFuture#completeAsync with small adoption
+            // the below code is copied from CompletableFuture#completeAsync with small adoption
             executor.execute(new CfCompleterBySupplier<>(cfThis, supplier));
         }
         return cfThis;
@@ -2809,7 +2811,7 @@ public final class CompletableFutureUtils {
      * If not already completed, completes given CompletableFuture with the exception result
      * of the given Supplier function invoked from an asynchronous task using the default executor of parameter cfThis.
      *
-     * @param supplier a function returning the value to be used to complete given CompletableFuture
+     * @param supplier a function returning the value to be used to complete the given CompletableFuture
      * @return the given CompletableFuture
      * @see CompletableFuture#completeExceptionally(Throwable)
      */
@@ -2823,7 +2825,7 @@ public final class CompletableFutureUtils {
      * If not already completed, completes given CompletableFuture with the exception result
      * of the given Supplier function invoked from an asynchronous task using the given executor.
      *
-     * @param supplier a function returning the value to be used to complete given CompletableFuture
+     * @param supplier a function returning the value to be used to complete the given CompletableFuture
      * @param executor the executor to use for asynchronous execution
      * @return the given CompletableFuture
      * @see CompletableFuture#completeExceptionally(Throwable)
@@ -2864,8 +2866,8 @@ public final class CompletableFutureUtils {
      * Returns a new CompletionStage that is completed normally with the same value as given CompletableFuture
      * when it completes normally, and cannot be independently completed or otherwise used in ways
      * not defined by the methods of interface {@link CompletionStage}.
-     * If given CompletableFuture completes exceptionally, then the returned CompletionStage completes exceptionally
-     * with a CompletionException with given exception as cause.
+     * If the given CompletableFuture completes exceptionally, then the returned CompletionStage completes exceptionally
+     * with a CompletionException with the given exception as a cause.
      * <p>
      * <strong>CAUTION:</strong> if run on old Java 8 (which does not support *minimal* CompletionStage),
      * this method just returns a *normal* CompletableFuture instance which is NOT a *minimal* CompletionStage.
@@ -2891,7 +2893,7 @@ public final class CompletableFutureUtils {
     public static Executor defaultExecutor(CompletionStage<?> cfThis) {
         requireNonNull(cfThis, "cfThis is null");
         // FIXME hard-code runtime type: CompletableFuture and Cffu...
-        //       need a SPI in order to support other CompletionStage subclasses equivalently
+        //       need a SPI to support other CompletionStage subclasses equivalently
         if (cfThis instanceof CompletableFuture)
             return IS_JAVA9_PLUS ? ((CompletableFuture<?>) cfThis).defaultExecutor() : ASYNC_POOL;
         if (cfThis instanceof BaseCffu) return ((BaseCffu<?, ?>) cfThis).defaultExecutor();
@@ -2951,7 +2953,7 @@ public final class CompletableFutureUtils {
      * The methods {@link CompletableFuture#exceptionally exceptionally*} in {@code CompletableFuture} and the
      * methods {@link CompletableFutureUtils#exceptionallyCompose CompletableFutureUtils#exceptionallyCompose*} /
      * {@link CompletableFutureUtils#catching catching*} in {@code CompletableFutureUtils} do not incorporate
-     * the {@code nonExSwallowed} logic, in order to maintain consistent and predictable behavior with the standard {@code CompletableFuture}.
+     * the {@code nonExSwallowed} logic, to maintain consistent and predictable behavior with the standard {@code CompletableFuture}.
      * It is recommended to use {@link Cffu} which has enhanced exception handling with the {@code nonExSwallowed} logic.
      * <p>
      * For more details on exception swallowing in exception handling methods, see the test cases in <a href=

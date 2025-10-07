@@ -3,7 +3,7 @@ package io.foldright.cffu2;
 // =============================================================================
 //# delay execution helper classes
 //
-//  below code is copied from CompletableFuture with small adoption
+//  the below code is copied from CompletableFuture with small adoption
 // =============================================================================
 
 import edu.umd.cs.findbugs.annotations.Nullable;
