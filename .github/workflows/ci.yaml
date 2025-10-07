@@ -30,11 +30,10 @@ jobs:
         with:
           # https://github.com/actions/setup-java?tab=readme-ov-file#install-multiple-jdks
           #
-          # image(ubuntu-latest/ubuntu-24.04) Included Software Java 8/11/17/21
-          #   https://github.com/actions/runner-images
+          # image(ubuntu-latest/ubuntu-24.04) included Java 8/11/17/21/25
+          #   https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md#java
           java-version: |
             9
-            25
           distribution: zulu
           cache: maven
 

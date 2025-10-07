@@ -22,12 +22,13 @@ jobs:
 
       - name: Cache local Maven repository
         uses: actions/cache@v4
+        # https://github.com/actions/cache/blob/main/examples.md#java---maven
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      # image(ubuntu-latest/ubuntu-24.04) Included Software Java 8/11/17/21
-      #   https://github.com/actions/runner-images
+      # image(ubuntu-latest/ubuntu-24.04) included Java 8/11/17/21/25
+      #   https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md#java
       - name: Run API checker
         run: scripts/run_api_checker.sh
