@@ -29,8 +29,8 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  * Low Level CompletableFuture utility methods for manipulating CompletableFuture. This class is for library writers,
  * the methods intended for end users are in the {@link CompletableFutureUtils} class.
  * <p>
- * In general, you should NEVER use this class, unless you understand the underlying logic of CompletableFuture
- * and need hack it. Because the methods are Low Level, use below the method name convention intentionally:
+ * In general, you should NEVER use this class unless you understand the underlying logic of CompletableFuture
+ * and need to hack it. Because the methods are Low Level, use below the method name convention intentionally:
  * <ul>
  * <li>methods with {@code f_} prefix means not type-safe, e.g.
  *    <ul>
@@ -46,7 +46,7 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  */
 public final class LLCF {
     ////////////////////////////////////////////////////////////////////////////////
-    // region# Internal Fields (Java version check for compatibility)
+    // region# Internal Fields (the Java version checks for compatibility)
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -55,14 +55,14 @@ public final class LLCF {
      */
     private static volatile int BLACK_HOLE = 0xCFF0;
 
-    // `CompletableFuture.completedStage` is the new method since java 9
+    // `CompletableFuture.completedStage` have been the new method since java 9
     static final boolean IS_JAVA9_PLUS = methodExists(() -> CompletableFuture.completedStage(null));
-    // `CompletableFuture.exceptionallyCompose` is the new method since java 12
+    // `CompletableFuture.exceptionallyCompose` have been the new method since java 12
     static final boolean IS_JAVA12_PLUS = methodExists(() ->
             completedFuture(null).exceptionallyCompose(ex -> null));
-    // `CompletableFuture.resultNow` is the new method since java 19
+    // `CompletableFuture.resultNow` have been the new method since java 19
     static final boolean IS_JAVA19_PLUS = methodExists(() -> completedFuture(null).resultNow());
-    // `List.reversed` is the new method since java 21
+    // `List.reversed` have been the new method since java 21
     static final boolean IS_JAVA21_PLUS = methodExists(() -> new ArrayList<>().reversed());
 
     private static boolean methodExists(Supplier<?> methodCallCheck) {
@@ -160,7 +160,7 @@ public final class LLCF {
     }
 
     /**
-     * Converts CompletionStage array to non-minimal-stage CompletableFuture array,
+     * Converts CompletionStage array to a non-minimal-stage CompletableFuture array,
      * reuse cf instances as many as possible. More info see method {@link #toNonMinCf0(CompletionStage)}.
      */
     @Contract(pure = true)
@@ -197,7 +197,7 @@ public final class LLCF {
      * the CompletableFuture API consistently uses CompletionStage type for minimal-stage instances
      * and reserves CompletableFuture type for non-minimal-stage instances only.
      * <p>
-     * This type contract for minimal-stage MUST be followed for end users APIs.
+     * This contract for minimal-stage type MUST be followed for end users APIs.
      */
     @Contract(pure = true)
     public static boolean isMinStageCf0(CompletableFuture<?> cf) {
@@ -206,7 +206,7 @@ public final class LLCF {
 
     /**
      * Forcefully casts a CompletionStage to a subclass, enabling a "self-type" cast. To maintain generic type safety,
-     * the generic type argument of the input stage and the return value should be identical. For more on the "self type",
+     * the generic type argument of the input stage and the return value should be identical. For more on the "self-type",
      * see "Item 2: Consider a builder when faced with many constructor parameters" in "Effective Java, Third Edition".
      * <p>
      * Example codes:
@@ -277,7 +277,7 @@ public final class LLCF {
     }
 
     /**
-     * Completes the given CompletableFuture with the exception(if non-null), otherwise with the value.
+     * Completes the given CompletableFuture with the exception (if non-null), otherwise with the value.
      * In general, you should NEVER use this method in application codes, use {@link
      * CompletableFuture#complete(Object)} or {@link CompletableFuture#completeExceptionally(Throwable)} instead.
      */
@@ -319,7 +319,7 @@ public final class LLCF {
 
     /**
      * Provides the "relay async" way to arrange execution of a new stage's computations that guarantees the execution
-     * of new stage's computations not in the caller thread and minimizes thread switching.
+     * of the new stage's computations not in the caller thread and minimizes thread switching.
      * <blockquote>
      * In {@link CompletionStage} (including subclass {@link CompletableFuture}),
      * execution of a new stage's computations may be arranged in any of three ways:
@@ -337,18 +337,18 @@ public final class LLCF {
      * <ul>
      * <li>If input cf is COMPLETED when computations execute, use "asynchronous execution" way (via supplied Executor);
      * Guarantee that a new stage's computations won't block the sequential codes of caller.
-     * <li>Otherwise, use "default execution" way; Save one thread switching.
+     * <li>Otherwise, use the "default execution" way; Save one thread switching.
      * </ul>
      * <p>
      * <strong>CAUTION:</strong> Because one more thread switching generally won't lead to performance problems and using
-     * "asynchronous execution"(methods with suffix <em>async</em>) is simpler, make wise use of "relay async" way when necessary.
+     * "asynchronous execution" (methods with suffix <em>async</em>) is simpler, make wise use of "relay async" way when necessary.
      * <p>
      * More info about the "relay async" way (including more description and example codes) see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/study/relayasync/RelayAsyncDescriptionAndExample.java"
      * >{@code RelayAsyncDescriptionAndExample.java}</a>
      *
-     * @param cfThis            the input stage(including CompletableFuture)
-     * @param relayComputations the computations to be arranged after input stage
+     * @param cfThis            the input stage (including CompletableFuture)
+     * @param relayComputations the computations to be arranged after the input stage
      * @param executor          the executor used for asynchronous execution
      * @return the return value of function {@code relayComputations}
      */
@@ -364,7 +364,7 @@ public final class LLCF {
         peek0(cfThis, (v, ex) -> {
             if (currentThread().equals(callerThread) && !returnedFromPeek0[0]) {
                 // If the action is running in the caller thread(same single thread) and `peek0` invocation does not
-                // return to caller(flag returnedFromPeek0 is false), the action is being executed synchronously.
+                // return to caller (flag returnedFromPeek0 is false), the action is being executed synchronously.
                 // To prevent blocking the caller's sequential code, use the supplied executor to complete the promise.
                 executor.execute(() -> completeCf0(promise, v, ex));
             } else {
@@ -427,7 +427,7 @@ public final class LLCF {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Null-checks user executor argument, and translates uses of commonPool to ASYNC_POOL in case parallelism disabled.
+     * Null-checks user executor argument and translates uses of commonPool to ASYNC_POOL in case parallelism disabled.
      */
     @Contract(pure = true)
     @SuppressWarnings("resource")
@@ -435,7 +435,7 @@ public final class LLCF {
         // Implementation note: CompletableFuture API methods already call this method internally; Only underlying
         // methods that directly use an executor need to call this method (e.g. CFU#hopExecutorIfAtCfDelayerThread)
         //
-        // below code is copied from CompletableFuture#screenExecutor with small adoption
+        // the below code is copied from CompletableFuture#screenExecutor with small adoption
         if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool()) return ASYNC_POOL;
         return requireNonNull(e, "executor is null");
     }
@@ -458,7 +458,7 @@ public final class LLCF {
 
     /**
      * Fallback if {@link ForkJoinPool#commonPool()} cannot support parallelism.
-     * code is copied from {@link CompletableFuture.ThreadPerTaskExecutor}.
+     * The code is copied from {@link CompletableFuture.ThreadPerTaskExecutor}.
      */
     @SuppressWarnings("JavadocReference")
     private static final class ThreadPerTaskExecutor implements Executor {
