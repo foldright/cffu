@@ -61,6 +61,9 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
             CompletableFutureUtils.mRunAnyAsync(*am.createRunnables(count))
             CompletableFutureUtils.mRunAnyAsync(testExecutor, *am.createRunnables(count, testExecutor))
 
+            CompletableFutureUtils.mRunAsyncAndForget(*am.createRunnables(count))
+            CompletableFutureUtils.mRunAsyncAndForget(testExecutor, *am.createRunnables(count, testExecutor))
+
             am.checkRunningExecutor()
         }
     }
@@ -139,6 +142,11 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
                 cfThis, testExecutor, *am.createConsumers(count, testExecutor)
             )
 
+            CompletableFutureUtils.thenMAcceptAsyncAndForget(cfThis, *am.createConsumers(count))
+            CompletableFutureUtils.thenMAcceptAsyncAndForget(
+                cfThis, testExecutor, *am.createConsumers(count, testExecutor)
+            )
+
             CompletableFutureUtils.thenMRunFailFastAsync(cfThis, *am.createRunnables(count))
             CompletableFutureUtils.thenMRunFailFastAsync(
                 cfThis, testExecutor, *am.createRunnables(count, testExecutor)
@@ -154,6 +162,11 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
 
             CompletableFutureUtils.thenMRunAnyAsync(cfThis, *am.createRunnables(count))
             CompletableFutureUtils.thenMRunAnyAsync(cfThis, testExecutor, *am.createRunnables(count, testExecutor))
+
+            CompletableFutureUtils.thenMRunAsyncAndForget(cfThis, *am.createRunnables(count))
+            CompletableFutureUtils.thenMRunAsyncAndForget(
+                cfThis, testExecutor, *am.createRunnables(count, testExecutor)
+            )
 
             am.checkRunningExecutor()
         }
@@ -316,6 +329,9 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
             CfIterableUtils.mRunAnyAsync(am.createRunnables(count).asList())
             CfIterableUtils.mRunAnyAsync(am.createRunnables(count, testExecutor).asList(), testExecutor)
 
+            CfIterableUtils.mRunAsyncAndForget(am.createRunnables(count).asList())
+            CfIterableUtils.mRunAsyncAndForget(am.createRunnables(count, testExecutor).asList(), testExecutor)
+
             am.checkRunningExecutor()
         }
     }
@@ -383,6 +399,11 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
                 cfThis, am.createConsumers(count, testExecutor).asList(), testExecutor
             )
 
+            CfIterableUtils.thenMAcceptAsyncAndForget(cfThis, am.createConsumers(count).asList())
+            CfIterableUtils.thenMAcceptAsyncAndForget(
+                cfThis, am.createConsumers(count, testExecutor).asList(), testExecutor
+            )
+
             CfIterableUtils.thenMRunFailFastAsync(cfThis, am.createRunnables(count).asList())
             CfIterableUtils.thenMRunFailFastAsync(
                 cfThis, am.createRunnables(count, testExecutor).asList(), testExecutor
@@ -398,6 +419,11 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
 
             CfIterableUtils.thenMRunAnyAsync(cfThis, am.createRunnables(count).asList())
             CfIterableUtils.thenMRunAnyAsync(cfThis, am.createRunnables(count, testExecutor).asList(), testExecutor)
+
+            CfIterableUtils.thenMRunAsyncAndForget(cfThis, am.createRunnables(count).asList())
+            CfIterableUtils.thenMRunAsyncAndForget(
+                cfThis, am.createRunnables(count, testExecutor).asList(), testExecutor
+            )
 
             am.checkRunningExecutor()
         }
@@ -438,6 +464,9 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
         CfParallelUtils.parAcceptAnyAsync(listOf(1), am.createConsumer())
         CfParallelUtils.parAcceptAnyAsync(listOf(1), am.createConsumer(testExecutor), testExecutor)
 
+        CfParallelUtils.parAcceptAsyncAndForget(listOf(1), am.createConsumer())
+        CfParallelUtils.parAcceptAsyncAndForget(listOf(1), am.createConsumer(testExecutor), testExecutor)
+
         am.checkRunningExecutor()
     }
 
@@ -477,6 +506,9 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
 
         CfParallelUtils.thenParAcceptAnyAsync(listCfThis, am.createConsumer())
         CfParallelUtils.thenParAcceptAnyAsync(listCfThis, am.createConsumer(testExecutor), testExecutor)
+
+        CfParallelUtils.thenParAcceptAsyncAndForget(listCfThis, am.createConsumer())
+        CfParallelUtils.thenParAcceptAsyncAndForget(listCfThis, am.createConsumer(testExecutor), testExecutor)
 
         am.checkRunningExecutor()
     }
@@ -884,6 +916,9 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
             testCffuFac.mRunAnyAsync(*am.createRunnables(count, testExecutor))
             testCffuFac.mRunAnyAsync(anotherExecutor, *am.createRunnables(count, anotherExecutor))
 
+            testCffuFac.mRunAsyncAndForget(*am.createRunnables(count, testExecutor))
+            testCffuFac.mRunAsyncAndForget(anotherExecutor, *am.createRunnables(count, anotherExecutor))
+
             am.checkRunningExecutor()
         }
     }
@@ -951,6 +986,10 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
             testCffuFac.iterableOps().mRunAnyAsync(am.createRunnables(count, testExecutor).asList())
             testCffuFac.iterableOps().mRunAnyAsync(am.createRunnables(count, anotherExecutor).asList(), anotherExecutor)
 
+            testCffuFac.iterableOps().mRunAsyncAndForget(am.createRunnables(count, testExecutor).asList())
+            testCffuFac.iterableOps()
+                .mRunAsyncAndForget(am.createRunnables(count, anotherExecutor).asList(), anotherExecutor)
+
             am.checkRunningExecutor()
         }
     }
@@ -1008,8 +1047,7 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
             )
 
             cfThis.iterableOps().thenMAcceptAsync(am.createConsumers(count, testExecutor).asList())
-            cfThis.iterableOps()
-                .thenMAcceptAsync(am.createConsumers(count, anotherExecutor).asList(), anotherExecutor)
+            cfThis.iterableOps().thenMAcceptAsync(am.createConsumers(count, anotherExecutor).asList(), anotherExecutor)
 
             cfThis.iterableOps().thenMAcceptAnySuccessAsync(am.createConsumers(count, testExecutor).asList())
             cfThis.iterableOps().thenMAcceptAnySuccessAsync(
@@ -1020,6 +1058,10 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
             cfThis.iterableOps().thenMAcceptAnyAsync(
                 am.createConsumers(count, anotherExecutor).asList(), anotherExecutor
             )
+
+            cfThis.iterableOps().thenMAcceptAsyncAndForget(am.createConsumers(count, testExecutor).asList())
+            cfThis.iterableOps()
+                .thenMAcceptAsyncAndForget(am.createConsumers(count, anotherExecutor).asList(), anotherExecutor)
 
             cfThis.iterableOps().thenMRunFailFastAsync(am.createRunnables(count, testExecutor).asList())
             cfThis.iterableOps().thenMRunFailFastAsync(
@@ -1037,6 +1079,10 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
             cfThis.iterableOps().thenMRunAnyAsync(am.createRunnables(count, testExecutor).asList())
             cfThis.iterableOps()
                 .thenMRunAnyAsync(am.createRunnables(count, anotherExecutor).asList(), anotherExecutor)
+
+            cfThis.iterableOps().thenMRunAsyncAndForget(am.createRunnables(count, testExecutor).asList())
+            cfThis.iterableOps()
+                .thenMRunAsyncAndForget(am.createRunnables(count, anotherExecutor).asList(), anotherExecutor)
 
             am.checkRunningExecutor()
         }
@@ -1078,6 +1124,9 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         testCffuFac.parOps().parAcceptAnyAsync(listOf(1), am.createConsumer(testExecutor))
         testCffuFac.parOps().parAcceptAnyAsync(listOf(1), am.createConsumer(anotherExecutor), anotherExecutor)
 
+        testCffuFac.parOps().parAcceptAsyncAndForget(listOf(1), am.createConsumer(testExecutor))
+        testCffuFac.parOps().parAcceptAsyncAndForget(listOf(1), am.createConsumer(anotherExecutor), anotherExecutor)
+
         am.checkRunningExecutor()
     }
 
@@ -1118,6 +1167,9 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
 
         listCfThis.parOps().thenParAcceptAnyAsync(am.createConsumer(testExecutor))
         listCfThis.parOps().thenParAcceptAnyAsync(am.createConsumer(anotherExecutor), anotherExecutor)
+
+        listCfThis.parOps().thenParAcceptAsyncAndForget(am.createConsumer(testExecutor))
+        listCfThis.parOps().thenParAcceptAsyncAndForget(am.createConsumer(anotherExecutor), anotherExecutor)
 
         am.checkRunningExecutor()
     }
@@ -1535,6 +1587,9 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
                 anotherExecutor, *am.createConsumers(count, anotherExecutor)
             )
 
+            cfThis.thenMAcceptAsyncAndForget(*am.createConsumers(count, testExecutor))
+            cfThis.thenMAcceptAsyncAndForget(anotherExecutor, *am.createConsumers(count, anotherExecutor))
+
             cfThis.thenMRunFailFastAsync(*am.createRunnables(count, testExecutor))
             cfThis.thenMRunFailFastAsync(
                 anotherExecutor, *am.createRunnables(count, anotherExecutor)
@@ -1550,6 +1605,9 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
 
             cfThis.thenMRunAnyAsync(*am.createRunnables(count, testExecutor))
             cfThis.thenMRunAnyAsync(anotherExecutor, *am.createRunnables(count, anotherExecutor))
+
+            cfThis.thenMRunAsyncAndForget(*am.createRunnables(count, testExecutor))
+            cfThis.thenMRunAsyncAndForget(anotherExecutor, *am.createRunnables(count, anotherExecutor))
 
             am.checkRunningExecutor()
         }

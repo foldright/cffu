@@ -12,6 +12,7 @@ import org.junit.jupiter.api.condition.JRE;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -117,11 +118,22 @@ class CffuTest {
         for (Cffu<List<Integer>> cf : cfs) {
             assertNull(cf.get());
         }
+
+        final AtomicInteger counter = new AtomicInteger();
+        final Consumer<Integer> addAndGet = counter::addAndGet;
+        Cffu<Integer> f = completed.thenMAcceptAsyncAndForget(addAndGet, addAndGet);
+        assertSame(completed, f);
+        f = completed.thenMAcceptAsyncAndForget(testExecutor, addAndGet, addAndGet);
+        assertSame(completed, f);
+
+        sleep(MEDIAN_WAIT_MS);
+        assertEquals(n * 4, counter.get());
+
     }
 
     @Test
     void test_thenMRun() throws Exception {
-        final Cffu<Integer> completed = testCffuFac.completedFuture(null);
+        final Cffu<Object> completed = testCffuFac.completedFuture(null);
         final Runnable runnable = TestUtils::snoreZzz;
 
         final long tick = System.currentTimeMillis();
@@ -141,6 +153,16 @@ class CffuTest {
         for (Cffu<Void> cf : cfs) {
             assertNull(cf.get());
         }
+
+        final AtomicInteger counter = new AtomicInteger();
+        final Runnable incrementAndGet = counter::incrementAndGet;
+        Cffu<Object> f = completed.thenMRunAsyncAndForget(incrementAndGet, incrementAndGet);
+        assertSame(completed, f);
+        f = completed.thenMRunAsyncAndForget(testExecutor, incrementAndGet, incrementAndGet);
+        assertSame(completed, f);
+
+        sleep(MEDIAN_WAIT_MS);
+        assertEquals(4, counter.get());
     }
 
     // endregion
@@ -591,6 +613,16 @@ class CffuTest {
         assertCfStillIncompleteIn(cf.iterableOps().thenMAcceptAnyAsync(emptyList()));
         assertNull(cf.iterableOps().thenMAcceptAnyAsync(asList(v -> {}, v -> {})).get());
         assertNull(cf.iterableOps().thenMAcceptAnyAsync(asList(v -> {}, v -> {}), testExecutor).get());
+
+        final AtomicInteger counter = new AtomicInteger();
+        final Consumer<Integer> addAndGet = counter::addAndGet;
+        Cffu<Integer> f = cf.iterableOps().thenMAcceptAsyncAndForget(asList(addAndGet, addAndGet));
+        assertSame(cf, f);
+        f = cf.iterableOps().thenMAcceptAsyncAndForget(asList(addAndGet, addAndGet), testExecutor);
+        assertSame(cf, f);
+
+        sleep(MEDIAN_WAIT_MS);
+        assertEquals(4 * n, counter.get());
     }
 
     @Test
@@ -615,6 +647,16 @@ class CffuTest {
         assertCfStillIncompleteIn(cf.iterableOps().thenMRunAnyAsync(emptyList()));
         assertNull(cf.iterableOps().thenMRunAnyAsync(asList(() -> {}, () -> {})).get());
         assertNull(cf.iterableOps().thenMRunAnyAsync(asList(() -> {}, () -> {}), testExecutor).get());
+
+        final AtomicInteger counter = new AtomicInteger();
+        final Runnable incrementAndGet = counter::incrementAndGet;
+        Cffu<Integer> f = cf.iterableOps().thenMRunAsyncAndForget(asList(incrementAndGet, incrementAndGet));
+        assertSame(cf, f);
+        f = cf.iterableOps().thenMRunAsyncAndForget(asList(incrementAndGet, incrementAndGet), testExecutor);
+        assertSame(cf, f);
+
+        sleep(MEDIAN_WAIT_MS);
+        assertEquals(4, counter.get());
     }
 
     // endregion

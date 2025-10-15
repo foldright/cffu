@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings({"RedundantThrows", "ThrowableNotThrown"})
 class CompletableFutureUtilsTest {
-    // region# CF Factory Methods(including static methods of CF)
+    // region# CF Factory Methods (including static methods of CF)
 
     // region## Multi-Actions(M*) Methods(create by actions)
 
@@ -125,6 +126,14 @@ class CompletableFutureUtilsTest {
         for (CompletableFuture<Void> cf : cfs) {
             assertNull(cf.get());
         }
+
+        final AtomicInteger counter = new AtomicInteger();
+        final Runnable incrementAndGet = counter::incrementAndGet;
+        mRunAsyncAndForget(incrementAndGet, incrementAndGet);
+        mRunAsyncAndForget(testExecutor, incrementAndGet, incrementAndGet);
+
+        sleep(MEDIAN_WAIT_MS);
+        assertEquals(4, counter.get());
     }
 
     // endregion
@@ -783,6 +792,16 @@ class CompletableFutureUtilsTest {
         for (CompletableFuture<Void> cf : cfs) {
             assertNull(cf.get());
         }
+
+        final AtomicInteger counter = new AtomicInteger();
+        final Runnable incrementAndGet = counter::incrementAndGet;
+        CompletableFuture<Object> f = thenMRunAsyncAndForget(completed, incrementAndGet, incrementAndGet);
+        assertSame(completed, f);
+        f = thenMRunAsyncAndForget(completed, testExecutor, incrementAndGet, incrementAndGet);
+        assertSame(completed, f);
+
+        sleep(MEDIAN_WAIT_MS);
+        assertEquals(4, counter.get());
     }
 
     @Test
@@ -810,6 +829,16 @@ class CompletableFutureUtilsTest {
         for (CompletableFuture<Void> cf : cfs) {
             assertNull(cf.get());
         }
+
+        final AtomicInteger counter = new AtomicInteger();
+        final Consumer<Integer> addAndGet = counter::addAndGet;
+        CompletableFuture<Integer> f = thenMAcceptAsyncAndForget(completed, addAndGet, addAndGet);
+        assertSame(completed, f);
+        f = thenMAcceptAsyncAndForget(completed, testExecutor, addAndGet, addAndGet);
+        assertSame(completed, f);
+
+        sleep(MEDIAN_WAIT_MS);
+        assertEquals(n * 4, counter.get());
     }
 
     @Test

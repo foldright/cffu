@@ -6,6 +6,7 @@ import io.foldright.cffu2.internal.CommonUtils;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -58,7 +59,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<List<U>> parApplyFailFastAsync(
             Iterable<? extends T> elements, Function<? super T, ? extends U> fn) {
         return parApplyFailFastAsync(elements, fn, ASYNC_POOL);
@@ -71,7 +72,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<List<U>> parApplyFailFastAsync(
             Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
         requireNonNull(elements, "elements is null");
@@ -96,7 +97,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<List<U>> parApplyAllSuccessAsync(
             Iterable<? extends T> elements, @Nullable U valueIfFailed, Function<? super T, ? extends U> fn) {
         return parApplyAllSuccessAsync(elements, valueIfFailed, fn, ASYNC_POOL);
@@ -109,7 +110,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<List<U>> parApplyAllSuccessAsync(
             Iterable<? extends T> elements, @Nullable U valueIfFailed, Function<? super T, ? extends U> fn, Executor executor) {
         requireNonNull(elements, "elements is null");
@@ -134,7 +135,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<List<U>> parApplyMostSuccessAsync(
             Iterable<? extends T> elements, @Nullable U valueIfNotSuccess,
             long timeout, TimeUnit unit, Function<? super T, ? extends U> fn) {
@@ -148,7 +149,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<List<U>> parApplyMostSuccessAsync(
             Iterable<? extends T> elements, @Nullable U valueIfNotSuccess,
             long timeout, TimeUnit unit, Function<? super T, ? extends U> fn, Executor executor) {
@@ -175,7 +176,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allResultsOf allResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<List<U>> parApplyAsync(
             Iterable<? extends T> elements, Function<? super T, ? extends U> fn) {
         return parApplyAsync(elements, fn, ASYNC_POOL);
@@ -188,7 +189,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allResultsOf allResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<List<U>> parApplyAsync(
             Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
         requireNonNull(elements, "elements is null");
@@ -213,7 +214,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<U> parApplyAnySuccessAsync(
             Iterable<? extends T> elements, Function<? super T, ? extends U> fn) {
         return parApplyAnySuccessAsync(elements, fn, ASYNC_POOL);
@@ -226,7 +227,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<U> parApplyAnySuccessAsync(
             Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
         requireNonNull(elements, "elements is null");
@@ -251,7 +252,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<U> parApplyAnyAsync(
             Iterable<? extends T> elements, Function<? super T, ? extends U> fn) {
         return parApplyAnyAsync(elements, fn, ASYNC_POOL);
@@ -264,7 +265,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<U> parApplyAnyAsync(
             Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
         requireNonNull(elements, "elements is null");
@@ -295,7 +296,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T> CompletableFuture<Void> parAcceptFailFastAsync(
             Iterable<? extends T> elements, Consumer<? super T> action) {
         return parAcceptFailFastAsync(elements, action, ASYNC_POOL);
@@ -308,7 +309,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T> CompletableFuture<Void> parAcceptFailFastAsync(
             Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
         requireNonNull(elements, "elements is null");
@@ -333,6 +334,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allOf allOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T> CompletableFuture<Void> parAcceptAsync(
             Iterable<? extends T> elements, Consumer<? super T> action) {
         return parAcceptAsync(elements, action, ASYNC_POOL);
@@ -345,6 +347,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allOf allOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T> CompletableFuture<Void> parAcceptAsync(
             Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
         requireNonNull(elements, "elements is null");
@@ -369,7 +372,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T> CompletableFuture<Void> parAcceptAnySuccessAsync(
             Iterable<? extends T> elements, Consumer<? super T> action) {
         return parAcceptAnySuccessAsync(elements, action, ASYNC_POOL);
@@ -382,7 +385,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T> CompletableFuture<Void> parAcceptAnySuccessAsync(
             Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
         requireNonNull(elements, "elements is null");
@@ -407,7 +410,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T> CompletableFuture<Void> parAcceptAnyAsync(
             Iterable<? extends T> elements, Consumer<? super T> action) {
         return parAcceptAnyAsync(elements, action, ASYNC_POOL);
@@ -420,7 +423,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `parAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `parAcceptAsyncAndForget`")
     public static <T> CompletableFuture<Void> parAcceptAnyAsync(
             Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
         requireNonNull(elements, "elements is null");
@@ -436,6 +439,36 @@ public final class CfParallelUtils {
         CompletableFuture<Void> ret = f_cast(CompletableFuture.anyOf(inputs));
         handleSwallowedExceptions(where, ret, inputs);
         return ret;
+    }
+
+    /**
+     * Processes multiple input elements in parallel and forget (return {@code void}).
+     * This method explicitly indicates that the caller will not care about any exceptions
+     * from actions and will not wait for the computations to complete ("fire-and-forget").
+     */
+    public static <T> void parAcceptAsyncAndForget(
+            Iterable<? extends T> elements, Consumer<? super T> action) {
+        parAcceptAsyncAndForget(elements, action, ASYNC_POOL);
+    }
+
+    /**
+     * Processes multiple input elements in parallel and forget (return {@code void}).
+     * This method explicitly indicates that the caller will not care about any exceptions
+     * from actions and will not wait for the computations to complete ("fire-and-forget").
+     */
+    public static <T> void parAcceptAsyncAndForget(
+            Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
+        requireNonNull(elements, "elements is null");
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
+        parAcceptAsyncAndForget0(elements, action, executor, "parAcceptAsyncAndForget");
+    }
+
+    private static <T> void parAcceptAsyncAndForget0(
+            Iterable<? extends T> elements, Consumer<? super T> action, Executor executor, String where) {
+        CompletableFuture<Void>[] inputs = wrapEleConsumer0(elements, action, executor);
+        handleAllSwallowedExceptions(where, inputs);
     }
 
     private static <T> CompletableFuture<Void>[] wrapEleConsumer0(
@@ -459,7 +492,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<List<U>> thenParApplyFailFastAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, Function<? super T, ? extends U> fn) {
         return thenParApplyFailFastAsync(cfThis, fn, defaultExecutor(cfThis));
@@ -472,7 +505,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<List<U>> thenParApplyFailFastAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, Function<? super T, ? extends U> fn, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
@@ -489,7 +522,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<List<U>> thenParApplyAllSuccessAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis,
             @Nullable U valueIfFailed, Function<? super T, ? extends U> fn) {
@@ -503,7 +536,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<List<U>> thenParApplyAllSuccessAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis,
             @Nullable U valueIfFailed, Function<? super T, ? extends U> fn, Executor executor) {
@@ -522,7 +555,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<List<U>> thenParApplyMostSuccessAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, @Nullable U valueIfNotSuccess,
             long timeout, TimeUnit unit, Function<? super T, ? extends U> fn) {
@@ -536,7 +569,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<List<U>> thenParApplyMostSuccessAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, @Nullable U valueIfNotSuccess,
             long timeout, TimeUnit unit, Function<? super T, ? extends U> fn, Executor executor) {
@@ -556,7 +589,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allResultsOf allResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<List<U>> thenParApplyAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, Function<? super T, ? extends U> fn) {
         return thenParApplyAsync(cfThis, fn, defaultExecutor(cfThis));
@@ -569,7 +602,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allResultsOf allResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<List<U>> thenParApplyAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, Function<? super T, ? extends U> fn, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
@@ -586,7 +619,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<U> thenParApplyAnySuccessAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, Function<? super T, ? extends U> fn) {
         return thenParApplyAnySuccessAsync(cfThis, fn, defaultExecutor(cfThis));
@@ -599,7 +632,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<U> thenParApplyAnySuccessAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, Function<? super T, ? extends U> fn, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
@@ -616,7 +649,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<U> thenParApplyAnyAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, Function<? super T, ? extends U> fn) {
         return thenParApplyAnyAsync(cfThis, fn, defaultExecutor(cfThis));
@@ -629,7 +662,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T, U> CompletableFuture<U> thenParApplyAnyAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, Function<? super T, ? extends U> fn, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
@@ -646,7 +679,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T> CompletableFuture<Void> thenParAcceptFailFastAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, Consumer<? super T> action) {
         return thenParAcceptFailFastAsync(cfThis, action, defaultExecutor(cfThis));
@@ -659,7 +692,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T> CompletableFuture<Void> thenParAcceptFailFastAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, Consumer<? super T> action, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
@@ -677,6 +710,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allOf allOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T> CompletableFuture<Void> thenParAcceptAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, Consumer<? super T> action) {
         return thenParAcceptAsync(cfThis, action, defaultExecutor(cfThis));
@@ -689,6 +723,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#allOf allOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T> CompletableFuture<Void> thenParAcceptAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, Consumer<? super T> action, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
@@ -705,7 +740,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T> CompletableFuture<Void> thenParAcceptAnySuccessAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, Consumer<? super T> action) {
         return thenParAcceptAnySuccessAsync(cfThis, action, defaultExecutor(cfThis));
@@ -718,7 +753,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T> CompletableFuture<Void> thenParAcceptAnySuccessAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, Consumer<? super T> action, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
@@ -736,7 +771,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T> CompletableFuture<Void> thenParAcceptAnyAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, Consumer<? super T> action) {
         return thenParAcceptAnyAsync(cfThis, action, defaultExecutor(cfThis));
@@ -749,7 +784,7 @@ public final class CfParallelUtils {
      * <p>
      * See the {@link CompletableFutureUtils#anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenParAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenParAcceptAsyncAndForget`")
     public static <T> CompletableFuture<Void> thenParAcceptAnyAsync(
             CompletableFuture<? extends Iterable<? extends T>> cfThis, Consumer<? super T> action, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
@@ -757,6 +792,35 @@ public final class CfParallelUtils {
         requireNonNull(executor, "executor is null");
 
         return cfThis.thenCompose(elements -> parAcceptAnyAsync0(elements, action, executor, "thenParAcceptAnyAsync"));
+    }
+
+    /**
+     * Processes elements from the result of parameter cfThis in parallel and forget (return {@code void}).
+     * This method explicitly indicates that the caller will not care about any exceptions
+     * from actions and will not wait for the computations to complete ("fire-and-forget").
+     *
+     * @return the given CompletableFuture
+     */
+    public static <T, F extends CompletionStage<? extends Iterable<? extends T>>> F thenParAcceptAsyncAndForget(
+            F cfThis, Consumer<? super T> action) {
+        return CfParallelUtils.thenParAcceptAsyncAndForget(cfThis, action, defaultExecutor(cfThis));
+    }
+
+    /**
+     * Processes elements from the result of parameter cfThis in parallel and forget (return {@code void}).
+     * This method explicitly indicates that the caller will not care about any exceptions
+     * from actions and will not wait for the computations to complete ("fire-and-forget").
+     *
+     * @return the given CompletableFuture
+     */
+    public static <T, F extends CompletionStage<? extends Iterable<? extends T>>> F thenParAcceptAsyncAndForget(
+            F cfThis, Consumer<? super T> action, Executor executor) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
+        cfThis.thenCompose(elements -> parAcceptAsync0(elements, action, executor, "thenParAcceptAsyncAndForget"));
+        return cfThis;
     }
 
     private CfParallelUtils() {}

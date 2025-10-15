@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static io.foldright.cffu2.CfParallelUtils.*;
 import static io.foldright.test_utils.TestUtils.*;
@@ -105,6 +107,14 @@ class CfParallelUtilsTest {
         assertCfStillIncompleteIn(parAcceptAnyAsync(emptyList(), (Integer x) -> {}));
         assertNull(parAcceptAnyAsync(asList(1, 2), x -> {}).get());
         assertNull(parAcceptAnyAsync(asList(1, 2), x -> {}, testExecutor).get());
+
+        final AtomicInteger counter = new AtomicInteger();
+        final Consumer<Integer> addAndGet = counter::addAndGet;
+        parAcceptAsyncAndForget(asList(1, 2), addAndGet);
+        parAcceptAsyncAndForget(asList(1, 2), addAndGet, testExecutor);
+
+        sleep(MEDIAN_WAIT_MS);
+        assertEquals((1 + 2) * 2, counter.get());
     }
 
     @Test
@@ -196,5 +206,13 @@ class CfParallelUtilsTest {
         assertCfStillIncompleteIn(thenParAcceptAnyAsync(cfEmpty, (Integer x) -> {}));
         assertNull(thenParAcceptAnyAsync(cf, x -> {}).get());
         assertNull(thenParAcceptAnyAsync(cf, x -> {}, testExecutor).get());
+
+        final AtomicInteger counter = new AtomicInteger();
+        final Consumer<Integer> addAndGet = counter::addAndGet;
+        thenParAcceptAsyncAndForget(cf, addAndGet);
+        thenParAcceptAsyncAndForget(cf, addAndGet, testExecutor);
+
+        sleep(MEDIAN_WAIT_MS);
+        assertEquals((1 + 2) * 2, counter.get());
     }
 }

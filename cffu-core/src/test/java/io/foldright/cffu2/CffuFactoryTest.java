@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static io.foldright.cffu2.CompletableFutureUtils.failedFuture;
@@ -58,6 +60,14 @@ class CffuFactoryTest {
         for (Cffu<Void> cf : cfs) {
             assertNull(cf.get());
         }
+
+        final AtomicInteger counter = new AtomicInteger();
+        final Runnable incrementAndGet = counter::incrementAndGet;
+        testCffuFac.mRunAsyncAndForget(incrementAndGet, incrementAndGet);
+        testCffuFac.mRunAsyncAndForget(testExecutor, incrementAndGet, incrementAndGet);
+
+        sleep(MEDIAN_WAIT_MS);
+        assertEquals(4, counter.get());
     }
 
     @Test
@@ -1042,6 +1052,15 @@ class CffuFactoryTest {
         assertCfStillIncompleteIn(testCffuFac.iterableOps().mRunAnyAsync(emptyList()));
         assertNull(testCffuFac.iterableOps().mRunAnyAsync(asList(() -> {}, () -> {})).get());
         assertNull(testCffuFac.iterableOps().mRunAnyAsync(asList(() -> {}, () -> {}), testExecutor).get());
+
+
+        final AtomicInteger counter = new AtomicInteger();
+        final Runnable incrementAndGet = counter::incrementAndGet;
+        testCffuFac.iterableOps().mRunAsyncAndForget(asList(incrementAndGet, incrementAndGet));
+        testCffuFac.iterableOps().mRunAsyncAndForget(asList(incrementAndGet, incrementAndGet), testExecutor);
+
+        sleep(MEDIAN_WAIT_MS);
+        assertEquals(4, counter.get());
     }
 
     @Test
@@ -1252,6 +1271,14 @@ class CffuFactoryTest {
         assertCfStillIncompleteIn(testCffuFac.parOps().parAcceptAnyAsync(emptyList(), (Integer x) -> {}));
         assertNull(testCffuFac.parOps().parAcceptAnyAsync(asList(1, 2), x -> {}).get());
         assertNull(testCffuFac.parOps().parAcceptAnyAsync(asList(1, 2), x -> {}, testExecutor).get());
+
+        final AtomicInteger counter = new AtomicInteger();
+        final Consumer<Integer> addAndGet = counter::addAndGet;
+        testCffuFac.parOps().parAcceptAsyncAndForget(asList(1, 2), addAndGet);
+        testCffuFac.parOps().parAcceptAsyncAndForget(asList(1, 2), addAndGet, testExecutor);
+
+        sleep(MEDIAN_WAIT_MS);
+        assertEquals((1 + 2) * 2, counter.get());
     }
 
     // endregion

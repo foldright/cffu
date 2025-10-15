@@ -235,7 +235,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> MCffu<U, List<U>> thenMApplyFailFastAsync(Function<? super T, ? extends U>... fns) {
         return thenMApplyFailFastAsync(fac.defaultExecutor, fns);
@@ -253,7 +253,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> MCffu<U, List<U>> thenMApplyFailFastAsync(Executor executor, Function<? super T, ? extends U>... fns) {
         return createMCffu(CompletableFutureUtils.thenMApplyFailFastAsync(cf, cffuScreened(executor), fns));
@@ -266,7 +266,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> MCffu<U, List<U>> thenMApplyAllSuccessAsync(
             @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
@@ -285,7 +285,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> MCffu<U, List<U>> thenMApplyAllSuccessAsync(
             Executor executor, @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
@@ -299,7 +299,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> MCffu<U, List<U>> thenMApplyMostSuccessAsync(
             @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
@@ -313,7 +313,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> MCffu<U, List<U>> thenMApplyMostSuccessAsync(
             Executor executor, @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
@@ -328,7 +328,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> MCffu<U, List<U>> thenMApplyAsync(Function<? super T, ? extends U>... fns) {
         return thenMApplyAsync(fac.defaultExecutor, fns);
@@ -345,7 +345,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> MCffu<U, List<U>> thenMApplyAsync(Executor executor, Function<? super T, ? extends U>... fns) {
         return createMCffu(CompletableFutureUtils.thenMApplyAsync(cf, cffuScreened(executor), fns));
@@ -357,7 +357,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> Cffu<U> thenMApplyAnySuccessAsync(Function<? super T, ? extends U>... fns) {
         return thenMApplyAnySuccessAsync(fac.defaultExecutor, fns);
@@ -374,7 +374,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> Cffu<U> thenMApplyAnySuccessAsync(Executor executor, Function<? super T, ? extends U>... fns) {
         return createCffu(CompletableFutureUtils.thenMApplyAnySuccessAsync(cf, cffuScreened(executor), fns));
@@ -386,7 +386,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> Cffu<U> thenMApplyAnyAsync(Function<? super T, ? extends U>... fns) {
         return thenMApplyAnyAsync(fac.defaultExecutor, fns);
@@ -403,7 +403,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> Cffu<U> thenMApplyAnyAsync(Executor executor, Function<? super T, ? extends U>... fns) {
         return createCffu(CompletableFutureUtils.thenMApplyAnyAsync(cf, cffuScreened(executor), fns));
@@ -420,7 +420,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final Cffu<Void> thenMAcceptFailFastAsync(Consumer<? super T>... actions) {
         return thenMAcceptFailFastAsync(fac.defaultExecutor, actions);
@@ -437,7 +437,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final Cffu<Void> thenMAcceptFailFastAsync(Executor executor, Consumer<? super T>... actions) {
         return createCffu(CompletableFutureUtils.thenMAcceptFailFastAsync(cf, cffuScreened(executor), actions));
@@ -455,6 +455,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     public final Cffu<Void> thenMAcceptAsync(Consumer<? super T>... actions) {
         return thenMAcceptAsync(fac.defaultExecutor, actions);
     }
@@ -471,6 +472,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     public final Cffu<Void> thenMAcceptAsync(Executor executor, Consumer<? super T>... actions) {
         return createCffu(CompletableFutureUtils.thenMAcceptAsync(cf, cffuScreened(executor), actions));
     }
@@ -486,7 +488,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAnySuccessAsync(Consumer<? super T>... actions) {
         return thenMAcceptAnySuccessAsync(fac.defaultExecutor, actions);
@@ -503,7 +505,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAnySuccessAsync(Executor executor, Consumer<? super T>... actions) {
         return createCffu(CompletableFutureUtils.thenMAcceptAnySuccessAsync(cf, cffuScreened(executor), actions));
@@ -520,7 +522,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAnyAsync(Consumer<? super T>... actions) {
         return thenMAcceptAnyAsync(fac.defaultExecutor, actions);
@@ -537,10 +539,47 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final Cffu<Void> thenMAcceptAnyAsync(Executor executor, Consumer<? super T>... actions) {
         return createCffu(CompletableFutureUtils.thenMAcceptAnyAsync(cf, cffuScreened(executor), actions));
+    }
+
+    /**
+     * Consumes the value of this cffu async by all input actions and forget (return {@code void}).
+     * This method explicitly indicates that the caller will not care about any exceptions
+     * from actions and will not wait for the computations to complete ("fire-and-forget").
+     * <p>
+     * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation errors; For more information, see <a href=
+     * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
+     *
+     * @return this Cffu
+     * @see #peekAsync(BiConsumer)
+     */
+    @SafeVarargs
+    public final F thenMAcceptAsyncAndForget(Consumer<? super T>... actions) {
+        return thenMAcceptAsyncAndForget(fac.defaultExecutor, actions);
+    }
+
+    /**
+     * Consumes the value of this cffu async by all input actions and forget (return {@code void}).
+     * This method explicitly indicates that the caller will not care about any exceptions
+     * from actions and will not wait for the computations to complete ("fire-and-forget").
+     * <p>
+     * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation errors; For more information, see <a href=
+     * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
+     *
+     * @return this Cffu
+     * @see #peekAsync(BiConsumer, Executor)
+     */
+    @SafeVarargs
+    public final F thenMAcceptAsyncAndForget(Executor executor, Consumer<? super T>... actions) {
+        CompletableFutureUtils.thenMAcceptAsyncAndForget(cf, cffuScreened(executor), actions);
+        return this_();
     }
 
     /**
@@ -549,7 +588,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsyncAndForget`")
     public final Cffu<Void> thenMRunFailFastAsync(Runnable... actions) {
         return thenMRunFailFastAsync(fac.defaultExecutor, actions);
     }
@@ -560,7 +599,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsyncAndForget`")
     public final Cffu<Void> thenMRunFailFastAsync(Executor executor, Runnable... actions) {
         return createCffu(CompletableFutureUtils.thenMRunFailFastAsync(cf, cffuScreened(executor), actions));
     }
@@ -571,6 +610,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#allOf allOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsyncAndForget`")
     public final Cffu<Void> thenMRunAsync(Runnable... actions) {
         return thenMRunAsync(fac.defaultExecutor, actions);
     }
@@ -581,6 +621,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#allOf allOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsyncAndForget`")
     public final Cffu<Void> thenMRunAsync(Executor executor, Runnable... actions) {
         return createCffu(CompletableFutureUtils.thenMRunAsync(cf, cffuScreened(executor), actions));
     }
@@ -591,7 +632,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsyncAndForget`")
     public final Cffu<Void> thenMRunAnySuccessAsync(Runnable... actions) {
         return thenMRunAnySuccessAsync(fac.defaultExecutor, actions);
     }
@@ -602,7 +643,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsyncAndForget`")
     public final Cffu<Void> thenMRunAnySuccessAsync(Executor executor, Runnable... actions) {
         return createCffu(CompletableFutureUtils.thenMRunAnySuccessAsync(cf, cffuScreened(executor), actions));
     }
@@ -613,7 +654,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsyncAndForget`")
     public final Cffu<Void> thenMRunAnyAsync(Runnable... actions) {
         return thenMRunAnyAsync(fac.defaultExecutor, actions);
     }
@@ -624,9 +665,34 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsyncAndForget`")
     public final Cffu<Void> thenMRunAnyAsync(Executor executor, Runnable... actions) {
         return createCffu(CompletableFutureUtils.thenMRunAnyAsync(cf, cffuScreened(executor), actions));
+    }
+
+    /**
+     * Runs all input actions async and forget (return {@code void}).
+     * This method explicitly indicates that the caller will not care about any exceptions
+     * from actions and will not wait for the computations to complete ("fire-and-forget").
+     *
+     * @return this Cffu
+     * @see #peek(BiConsumer)
+     */
+    public final F thenMRunAsyncAndForget(Runnable... actions) {
+        return thenMRunAsyncAndForget(fac.defaultExecutor, actions);
+    }
+
+    /**
+     * Runs all input actions async and forget (return {@code void}).
+     * This method explicitly indicates that the caller will not care about any exceptions
+     * from actions and will not wait for the computations to complete ("fire-and-forget").
+     *
+     * @return this Cffu
+     * @see #peekAsync(BiConsumer, Executor)
+     */
+    public final F thenMRunAsyncAndForget(Executor executor, Runnable... actions) {
+        CompletableFutureUtils.thenMRunAsyncAndForget(cf, cffuScreened(executor), actions);
+        return this_();
     }
 
     // endregion
@@ -2544,7 +2610,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMApplyFailFastAsync(Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U> MCffu<U, List<U>> thenMApplyFailFastAsync(Iterable<? extends Function<? super T, ? extends U>> fns) {
             return thenMApplyFailFastAsync(fns, fac.defaultExecutor);
         }
@@ -2552,7 +2618,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMApplyFailFastAsync(Executor, Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U> MCffu<U, List<U>> thenMApplyFailFastAsync(Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
             return createMCffu(CfIterableUtils.thenMApplyFailFastAsync(cf, fns, cffuScreened(executor)));
         }
@@ -2560,7 +2626,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMApplyAllSuccessAsync(Object, Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U> MCffu<U, List<U>> thenMApplyAllSuccessAsync(
                 @Nullable U valueIfFailed, Iterable<? extends Function<? super T, ? extends U>> fns) {
             return thenMApplyAllSuccessAsync(valueIfFailed, fns, fac.defaultExecutor);
@@ -2569,7 +2635,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMApplyAllSuccessAsync(Executor, Object, Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U> MCffu<U, List<U>> thenMApplyAllSuccessAsync(
                 @Nullable U valueIfFailed, Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
             return createMCffu(CfIterableUtils.thenMApplyAllSuccessAsync(cf, valueIfFailed, fns, cffuScreened(executor)));
@@ -2578,7 +2644,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMApplyMostSuccessAsync(Object, long, TimeUnit, Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U> MCffu<U, List<U>> thenMApplyMostSuccessAsync(
                 @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
                 Iterable<? extends Function<? super T, ? extends U>> fns) {
@@ -2588,7 +2654,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMApplyMostSuccessAsync(Executor, Object, long, TimeUnit, Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U> MCffu<U, List<U>> thenMApplyMostSuccessAsync(
                 @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
                 Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
@@ -2599,7 +2665,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMApplyAsync(Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U> MCffu<U, List<U>> thenMApplyAsync(Iterable<? extends Function<? super T, ? extends U>> fns) {
             return thenMApplyAsync(fns, fac.defaultExecutor);
         }
@@ -2607,7 +2673,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMApplyAsync(Executor, Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U> MCffu<U, List<U>> thenMApplyAsync(Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
             return createMCffu(CfIterableUtils.thenMApplyAsync(cf, fns, cffuScreened(executor)));
         }
@@ -2615,7 +2681,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMApplyAnySuccessAsync(Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U> Cffu<U> thenMApplyAnySuccessAsync(Iterable<? extends Function<? super T, ? extends U>> fns) {
             return thenMApplyAnySuccessAsync(fns, fac.defaultExecutor);
         }
@@ -2623,7 +2689,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMApplyAnySuccessAsync(Executor, Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U> Cffu<U> thenMApplyAnySuccessAsync(Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
             return createCffu(CfIterableUtils.thenMApplyAnySuccessAsync(cf, fns, cffuScreened(executor)));
         }
@@ -2631,7 +2697,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMApplyAnyAsync(Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U> Cffu<U> thenMApplyAnyAsync(Iterable<? extends Function<? super T, ? extends U>> fns) {
             return thenMApplyAnyAsync(fns, fac.defaultExecutor);
         }
@@ -2639,7 +2705,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMApplyAnyAsync(Executor, Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U> Cffu<U> thenMApplyAnyAsync(Iterable<? extends Function<? super T, ? extends U>> fns, Executor executor) {
             return createCffu(CfIterableUtils.thenMApplyAnyAsync(cf, fns, cffuScreened(executor)));
         }
@@ -2647,7 +2713,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMAcceptFailFastAsync(Consumer[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public Cffu<Void> thenMAcceptFailFastAsync(Iterable<? extends Consumer<? super T>> actions) {
             return thenMAcceptFailFastAsync(actions, fac.defaultExecutor);
         }
@@ -2655,7 +2721,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMAcceptFailFastAsync(Executor, Consumer[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public Cffu<Void> thenMAcceptFailFastAsync(Iterable<? extends Consumer<? super T>> actions, Executor executor) {
             return createCffu(CfIterableUtils.thenMAcceptFailFastAsync(cf, actions, cffuScreened(executor)));
         }
@@ -2663,6 +2729,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMAcceptAsync(Consumer[])}.
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public Cffu<Void> thenMAcceptAsync(Iterable<? extends Consumer<? super T>> actions) {
             return thenMAcceptAsync(actions, fac.defaultExecutor);
         }
@@ -2670,6 +2737,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMAcceptAsync(Executor, Consumer[])}.
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public Cffu<Void> thenMAcceptAsync(Iterable<? extends Consumer<? super T>> actions, Executor executor) {
             return createCffu(CfIterableUtils.thenMAcceptAsync(cf, actions, cffuScreened(executor)));
         }
@@ -2677,7 +2745,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMAcceptAnySuccessAsync(Consumer[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public Cffu<Void> thenMAcceptAnySuccessAsync(Iterable<? extends Consumer<? super T>> actions) {
             return thenMAcceptAnySuccessAsync(actions, fac.defaultExecutor);
         }
@@ -2685,7 +2753,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMAcceptAnySuccessAsync(Executor, Consumer[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public Cffu<Void> thenMAcceptAnySuccessAsync(Iterable<? extends Consumer<? super T>> actions, Executor executor) {
             return createCffu(CfIterableUtils.thenMAcceptAnySuccessAsync(cf, actions, cffuScreened(executor)));
         }
@@ -2693,7 +2761,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMAcceptAnyAsync(Consumer[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public Cffu<Void> thenMAcceptAnyAsync(Iterable<? extends Consumer<? super T>> actions) {
             return thenMAcceptAnyAsync(actions, fac.defaultExecutor);
         }
@@ -2701,15 +2769,30 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMAcceptAnyAsync(Executor, Consumer[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public Cffu<Void> thenMAcceptAnyAsync(Iterable<? extends Consumer<? super T>> actions, Executor executor) {
             return createCffu(CfIterableUtils.thenMAcceptAnyAsync(cf, actions, cffuScreened(executor)));
         }
 
         /**
+         * Iterable variant of {@link BaseCffu#thenMAcceptAsyncAndForget(Consumer[])}.
+         */
+        public F thenMAcceptAsyncAndForget(Iterable<? extends Consumer<? super T>> actions) {
+            return thenMAcceptAsyncAndForget(actions, fac.defaultExecutor);
+        }
+
+        /**
+         * Iterable variant of {@link BaseCffu#thenMAcceptAsyncAndForget(Executor, Consumer[])}.
+         */
+        public F thenMAcceptAsyncAndForget(Iterable<? extends Consumer<? super T>> actions, Executor executor) {
+            CfIterableUtils.thenMAcceptAsyncAndForget(cf, actions, cffuScreened(executor));
+            return this_();
+        }
+
+        /**
          * Iterable variant of {@link BaseCffu#thenMRunFailFastAsync(Runnable...)}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsyncAndForget`")
         public Cffu<Void> thenMRunFailFastAsync(Iterable<? extends Runnable> actions) {
             return thenMRunFailFastAsync(actions, fac.defaultExecutor);
         }
@@ -2717,7 +2800,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMRunFailFastAsync(Executor, Runnable...)}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsyncAndForget`")
         public Cffu<Void> thenMRunFailFastAsync(Iterable<? extends Runnable> actions, Executor executor) {
             return createCffu(CfIterableUtils.thenMRunFailFastAsync(cf, actions, cffuScreened(executor)));
         }
@@ -2725,6 +2808,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMRunAsync(Runnable...)}.
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsyncAndForget`")
         public Cffu<Void> thenMRunAsync(Iterable<? extends Runnable> actions) {
             return thenMRunAsync(actions, fac.defaultExecutor);
         }
@@ -2732,6 +2816,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMRunAsync(Executor, Runnable...)}.
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsyncAndForget`")
         public Cffu<Void> thenMRunAsync(Iterable<? extends Runnable> actions, Executor executor) {
             return createCffu(CfIterableUtils.thenMRunAsync(cf, actions, cffuScreened(executor)));
         }
@@ -2739,7 +2824,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMRunAnySuccessAsync(Runnable...)}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsyncAndForget`")
         public Cffu<Void> thenMRunAnySuccessAsync(Iterable<? extends Runnable> actions) {
             return thenMRunAnySuccessAsync(actions, fac.defaultExecutor);
         }
@@ -2747,7 +2832,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMRunAnySuccessAsync(Executor, Runnable...)}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsyncAndForget`")
         public Cffu<Void> thenMRunAnySuccessAsync(Iterable<? extends Runnable> actions, Executor executor) {
             return createCffu(CfIterableUtils.thenMRunAnySuccessAsync(cf, actions, cffuScreened(executor)));
         }
@@ -2755,7 +2840,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMRunAnyAsync(Runnable...)}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsyncAndForget`")
         public Cffu<Void> thenMRunAnyAsync(Iterable<? extends Runnable> actions) {
             return thenMRunAnyAsync(actions, fac.defaultExecutor);
         }
@@ -2763,9 +2848,24 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Iterable variant of {@link BaseCffu#thenMRunAnyAsync(Executor, Runnable...)}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMRunAsyncAndForget`")
         public Cffu<Void> thenMRunAnyAsync(Iterable<? extends Runnable> actions, Executor executor) {
             return createCffu(CfIterableUtils.thenMRunAnyAsync(cf, actions, cffuScreened(executor)));
+        }
+
+        /**
+         * Iterable variant of {@link BaseCffu#thenMRunAsyncAndForget(Runnable...)}.
+         */
+        public F thenMRunAsyncAndForget(Iterable<? extends Runnable> actions) {
+            return thenMRunAsyncAndForget(actions, fac.defaultExecutor);
+        }
+
+        /**
+         * Iterable variant of {@link BaseCffu#thenMRunAsyncAndForget(Executor, Runnable...)}.
+         */
+        public F thenMRunAsyncAndForget(Iterable<? extends Runnable> actions, Executor executor) {
+            CfIterableUtils.thenMRunAsyncAndForget(cf, actions, cffuScreened(executor));
+            return this_();
         }
 
         private IterableOps() {}
@@ -2790,7 +2890,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Tuple variant of {@link #thenMApplyFailFastAsync(Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleFailFastAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
             return thenMApplyTupleFailFastAsync(fn1, fn2, fac.defaultExecutor);
@@ -2799,7 +2899,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Tuple variant of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleFailFastAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2, Executor executor) {
             return createCffu(CfTupleUtils.thenMApplyTupleFailFastAsync(cf, fn1, fn2, cffuScreened(executor)));
@@ -2808,7 +2908,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Tuple variant of {@link #thenMApplyFailFastAsync(Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleFailFastAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3) {
@@ -2818,7 +2918,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Tuple variant of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleFailFastAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3, Executor executor) {
@@ -2828,7 +2928,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Tuple variant of {@link #thenMApplyFailFastAsync(Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleFailFastAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
@@ -2838,7 +2938,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Tuple variant of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleFailFastAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4, Executor executor) {
@@ -2848,7 +2948,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Tuple variant of {@link #thenMApplyFailFastAsync(Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleFailFastAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
@@ -2859,7 +2959,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Tuple variant of {@link #thenMApplyFailFastAsync(Executor, Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleFailFastAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
@@ -2873,7 +2973,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * If any of the provided functions fails, its corresponding position will contain {@code null}
          * (which is indistinguishable from the function having a successful value of {@code null}).
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyAllSuccessTupleAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
             return thenMApplyAllSuccessTupleAsync(fn1, fn2, fac.defaultExecutor);
@@ -2885,7 +2985,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * If any of the provided functions fails, its corresponding position will contain {@code null}
          * (which is indistinguishable from the function having a successful value of {@code null}).
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyAllSuccessTupleAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2, Executor executor) {
             return createCffu(CfTupleUtils.thenMApplyAllSuccessTupleAsync(cf, fn1, fn2, cffuScreened(executor)));
@@ -2897,7 +2997,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * If any of the provided functions fails, its corresponding position will contain {@code null}
          * (which is indistinguishable from the function having a successful value of {@code null}).
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyAllSuccessTupleAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3) {
@@ -2910,7 +3010,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * If any of the provided functions fails, its corresponding position will contain {@code null}
          * (which is indistinguishable from the function having a successful value of {@code null}).
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyAllSuccessTupleAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3, Executor executor) {
@@ -2923,7 +3023,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * If any of the provided functions fails, its corresponding position will contain {@code null}
          * (which is indistinguishable from the function having a successful value of {@code null}).
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyAllSuccessTupleAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
@@ -2936,7 +3036,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * If any of the provided functions fails, its corresponding position will contain {@code null}
          * (which is indistinguishable from the function having a successful value of {@code null}).
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyAllSuccessTupleAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4, Executor executor) {
@@ -2949,7 +3049,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * If any of the provided functions fails, its corresponding position will contain {@code null}
          * (which is indistinguishable from the function having a successful value of {@code null}).
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyAllSuccessTupleAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
@@ -2963,7 +3063,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * If any of the provided functions fails, its corresponding position will contain {@code null}
          * (which is indistinguishable from the function having a successful value of {@code null}).
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyAllSuccessTupleAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
@@ -2978,7 +3078,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
          * (which is indistinguishable from the supplier having a successful value of {@code null}).
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyMostSuccessTupleAsync(
                 long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
             return thenMApplyMostSuccessTupleAsync(timeout, unit, fn1, fn2, fac.defaultExecutor);
@@ -2991,7 +3091,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
          * (which is indistinguishable from the supplier having a successful value of {@code null}).
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyMostSuccessTupleAsync(
                 long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Executor executor) {
@@ -3006,7 +3106,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
          * (which is indistinguishable from the supplier having a successful value of {@code null}).
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyMostSuccessTupleAsync(
                 long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
                 Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3) {
@@ -3020,7 +3120,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
          * (which is indistinguishable from the supplier having a successful value of {@code null}).
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyMostSuccessTupleAsync(
                 long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
                 Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3, Executor executor) {
@@ -3035,7 +3135,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
          * (which is indistinguishable from the supplier having a successful value of {@code null}).
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyMostSuccessTupleAsync(
                 long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
@@ -3049,7 +3149,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
          * (which is indistinguishable from the supplier having a successful value of {@code null}).
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyMostSuccessTupleAsync(
                 long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4, Executor executor) {
@@ -3064,7 +3164,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
          * (which is indistinguishable from the supplier having a successful value of {@code null}).
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyMostSuccessTupleAsync(
                 long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
                 Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
@@ -3079,7 +3179,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
          * If any of the provided suppliers is not completed normally, its corresponding position will contain {@code null}
          * (which is indistinguishable from the supplier having a successful value of {@code null}).
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyMostSuccessTupleAsync(
                 long timeout, TimeUnit unit, Function<? super T, ? extends U1> fn1,
                 Function<? super T, ? extends U2> fn2, Function<? super T, ? extends U3> fn3,
@@ -3091,7 +3191,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Tuple variant of {@link #thenMApplyAsync(Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2) {
             return thenMApplyTupleAsync(fn1, fn2, fac.defaultExecutor);
@@ -3100,7 +3200,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Tuple variant of {@link #thenMApplyAsync(Executor, Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2> Cffu<Tuple2<U1, U2>> thenMApplyTupleAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2, Executor executor) {
             return createCffu(CfTupleUtils.thenMApplyTupleAsync(cf, fn1, fn2, cffuScreened(executor)));
@@ -3109,7 +3209,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Tuple variant of {@link #thenMApplyAsync(Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3) {
@@ -3119,7 +3219,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Tuple variant of {@link #thenMApplyAsync(Executor, Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3> Cffu<Tuple3<U1, U2, U3>> thenMApplyTupleAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3, Executor executor) {
@@ -3129,7 +3229,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Tuple variant of {@link #thenMApplyAsync(Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4) {
@@ -3139,7 +3239,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Tuple variant of {@link #thenMApplyAsync(Executor, Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3, U4> Cffu<Tuple4<U1, U2, U3, U4>> thenMApplyTupleAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4, Executor executor) {
@@ -3149,7 +3249,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Tuple variant of {@link #thenMApplyAsync(Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,
@@ -3160,7 +3260,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
         /**
          * Tuple variant of {@link #thenMApplyAsync(Executor, Function[])}.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenMAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
         public <U1, U2, U3, U4, U5> Cffu<Tuple5<U1, U2, U3, U4, U5>> thenMApplyTupleAsync(
                 Function<? super T, ? extends U1> fn1, Function<? super T, ? extends U2> fn2,
                 Function<? super T, ? extends U3> fn3, Function<? super T, ? extends U4> fn4,

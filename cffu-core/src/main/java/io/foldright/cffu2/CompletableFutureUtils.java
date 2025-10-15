@@ -66,7 +66,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyFailFastAsync(Supplier<? extends T>... suppliers) {
         return mSupplyFailFastAsync(ASYNC_POOL, suppliers);
@@ -78,7 +78,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyFailFastAsync(
             Executor executor, Supplier<? extends T>... suppliers) {
@@ -97,7 +97,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyAllSuccessAsync(
             @Nullable T valueIfFailed, Supplier<? extends T>... suppliers) {
@@ -110,7 +110,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyAllSuccessAsync(
             Executor executor, @Nullable T valueIfFailed, Supplier<? extends T>... suppliers) {
@@ -129,7 +129,7 @@ public final class CompletableFutureUtils {
      * See the {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[]) mostSuccessResultsOf}
      * documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyMostSuccessAsync(
             @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit, Supplier<? extends T>... suppliers) {
@@ -143,7 +143,7 @@ public final class CompletableFutureUtils {
      * See the {@link #mostSuccessResultsOf(Executor, Object, long, TimeUnit, CompletionStage[]) mostSuccessResultsOf}
      * documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyMostSuccessAsync(
             Executor executor, @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit,
@@ -163,7 +163,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyAsync(Supplier<? extends T>... suppliers) {
         return mSupplyAsync(ASYNC_POOL, suppliers);
@@ -175,7 +175,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mSupplyAsync(Executor executor, Supplier<? extends T>... suppliers) {
         requireNonNull(executor, "executor is null");
@@ -193,7 +193,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<T> mSupplyAnySuccessAsync(Supplier<? extends T>... suppliers) {
         return mSupplyAnySuccessAsync(ASYNC_POOL, suppliers);
@@ -205,7 +205,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<T> mSupplyAnySuccessAsync(
             Executor executor, Supplier<? extends T>... suppliers) {
@@ -224,7 +224,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<T> mSupplyAnyAsync(Supplier<? extends T>... suppliers) {
         return mSupplyAnyAsync(ASYNC_POOL, suppliers);
@@ -236,7 +236,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<T> mSupplyAnyAsync(Executor executor, Supplier<? extends T>... suppliers) {
         requireNonNull(executor, "executor is null");
@@ -258,7 +258,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     public static CompletableFuture<Void> mRunFailFastAsync(Runnable... actions) {
         return mRunFailFastAsync(ASYNC_POOL, actions);
     }
@@ -269,7 +269,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     public static CompletableFuture<Void> mRunFailFastAsync(Executor executor, Runnable... actions) {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
@@ -286,6 +286,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allOf allOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     public static CompletableFuture<Void> mRunAsync(Runnable... actions) {
         return mRunAsync(ASYNC_POOL, actions);
     }
@@ -296,6 +297,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allOf allOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     public static CompletableFuture<Void> mRunAsync(Executor executor, Runnable... actions) {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
@@ -312,7 +314,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     public static CompletableFuture<Void> mRunAnySuccessAsync(Runnable... actions) {
         return mRunAnySuccessAsync(ASYNC_POOL, actions);
     }
@@ -323,7 +325,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     public static CompletableFuture<Void> mRunAnySuccessAsync(Executor executor, Runnable... actions) {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
@@ -340,7 +342,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     public static CompletableFuture<Void> mRunAnyAsync(Runnable... actions) {
         return mRunAnyAsync(ASYNC_POOL, actions);
     }
@@ -351,7 +353,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `mRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `mRunAsyncAndForget`")
     public static CompletableFuture<Void> mRunAnyAsync(Executor executor, Runnable... actions) {
         requireNonNull(executor, "executor is null");
         requireArrayAndEleNonNull("action", actions);
@@ -360,6 +362,28 @@ public final class CompletableFutureUtils {
         CompletableFuture<Void> ret = f_cast(CompletableFuture.anyOf(inputs));
         handleSwallowedExceptions("mRunAnyAsync", ret, inputs);
         return ret;
+    }
+
+    /**
+     * Runs all input actions async and forget (return {@code void}).
+     * This method explicitly indicates that the caller will not care about any exceptions
+     * from actions and will not wait for the computations to complete ("fire-and-forget").
+     */
+    public static void mRunAsyncAndForget(Runnable... actions) {
+        mRunAsyncAndForget(ASYNC_POOL, actions);
+    }
+
+    /**
+     * Runs all input actions async and forget (return {@code void}).
+     * This method explicitly indicates that the caller will not care about any exceptions
+     * from actions and will not wait for the computations to complete ("fire-and-forget").
+     */
+    public static void mRunAsyncAndForget(Executor executor, Runnable... actions) {
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("action", actions);
+
+        CompletableFuture<Void>[] inputs = wrapRunnables0(executor, actions);
+        handleAllSwallowedExceptions("mRunAsyncAndForget", inputs);
     }
 
     private static CompletableFuture<Void>[] wrapRunnables0(Executor executor, Runnable[] actions) {
@@ -919,7 +943,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
@@ -937,7 +961,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
@@ -969,7 +993,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
@@ -987,7 +1011,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAllSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor,
@@ -1019,7 +1043,7 @@ public final class CompletableFutureUtils {
      * See the {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])
      * mostSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, @Nullable U valueIfNotSuccess,
@@ -1035,7 +1059,7 @@ public final class CompletableFutureUtils {
      * See the {@link #mostSuccessResultsOf(Executor, Object, long, TimeUnit, CompletionStage[])
      * mostSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyMostSuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, @Nullable U valueIfNotSuccess,
@@ -1066,7 +1090,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
@@ -1084,7 +1108,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T, U> CompletableFuture<List<U>> thenMApplyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
@@ -1113,7 +1137,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
@@ -1131,7 +1155,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
@@ -1160,7 +1184,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnyAsync(
             CompletableFuture<? extends T> cfThis, Function<? super T, ? extends U>... fns) {
@@ -1178,7 +1202,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T, U> CompletableFuture<U> thenMApplyAnyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Function<? super T, ? extends U>... fns) {
@@ -1217,7 +1241,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptFailFastAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
@@ -1236,7 +1260,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptFailFastAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
@@ -1271,6 +1295,7 @@ public final class CompletableFutureUtils {
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
     @SafeVarargs
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     public static <T> CompletableFuture<Void> thenMAcceptAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
         return thenMAcceptAsync(cfThis, defaultExecutor(cfThis), actions);
@@ -1287,6 +1312,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
@@ -1320,7 +1346,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
@@ -1338,7 +1364,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnySuccessAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
@@ -1372,7 +1398,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnyAsync(
             CompletableFuture<? extends T> cfThis, Consumer<? super T>... actions) {
@@ -1390,7 +1416,7 @@ public final class CompletableFutureUtils {
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMAcceptAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public static <T> CompletableFuture<Void> thenMAcceptAnyAsync(
             CompletableFuture<? extends T> cfThis, Executor executor, Consumer<? super T>... actions) {
@@ -1412,6 +1438,60 @@ public final class CompletableFutureUtils {
         });
     }
 
+    /**
+     * Consumes the value of cfThis async by all input actions and forget (return {@code void}).
+     * This method explicitly indicates that the caller will not care about any exceptions
+     * from actions and will not wait for the computations to complete ("fire-and-forget").
+     * <p>
+     * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation errors; For more information, see <a href=
+     * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
+     *
+     * @return the given CompletableFuture
+     * @see #peekAsync(CompletionStage, BiConsumer)
+     */
+    @Contract("_, _ -> param1")
+    @SafeVarargs
+    public static <T, F extends CompletionStage<? extends T>> F thenMAcceptAsyncAndForget(
+            F cfThis, Consumer<? super T>... actions) {
+        return thenMAcceptAsyncAndForget(cfThis, defaultExecutor(cfThis), actions);
+    }
+
+    /**
+     * Consumes the value of cfThis async by all input actions and forget (return {@code void}).
+     * This method explicitly indicates that the caller will not care about any exceptions
+     * from actions and will not wait for the computations to complete ("fire-and-forget").
+     * <p>
+     * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
+     * needs to be explicitly declared to avoid the compilation errors; For more information, see <a href=
+     * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
+     * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
+     *
+     * @return the given CompletableFuture
+     * @see #peekAsync(CompletionStage, BiConsumer, Executor)
+     */
+    @Contract("_, _, _ -> param1")
+    @SafeVarargs
+    public static <T, F extends CompletionStage<? extends T>> F thenMAcceptAsyncAndForget(
+            F cfThis, Executor executor, Consumer<? super T>... actions) {
+        return _thenMAcceptAsyncAndForget(cfThis, executor, actions, true);
+    }
+
+    static <T, F extends CompletionStage<? extends T>> F _thenMAcceptAsyncAndForget(
+            F cfThis, Executor executor, Consumer<? super T>[] actions, boolean defensiveCopy) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("action", actions);
+
+        final Consumer<? super T>[] copy = defensiveCopy ? actions.clone() : actions;
+        cfThis.thenAccept(v -> {
+            CompletableFuture<Void>[] inputs = wrapConsumers0(executor, v, copy);
+            handleAllSwallowedExceptions("thenMAcceptAsyncAndForget", inputs);
+        });
+        return cfThis;
+    }
+
     private static <T> CompletableFuture<Void>[] wrapConsumers0(Executor executor, T v, Consumer<? super T>[] actions) {
         return mapArray(actions, CommonUtils::newCfArray, a -> CompletableFuture.runAsync(() -> a.accept(v), executor));
     }
@@ -1422,7 +1502,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunFailFastAsync(CompletableFuture<?> cfThis, Runnable... actions) {
         return thenMRunFailFastAsync(cfThis, defaultExecutor(cfThis), actions);
     }
@@ -1433,7 +1513,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunFailFastAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         return _thenMRunFailFastAsync(cfThis, executor, actions, true);
@@ -1496,7 +1576,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunAnySuccessAsync(CompletableFuture<?> cfThis, Runnable... actions) {
         return thenMRunAnySuccessAsync(cfThis, defaultExecutor(cfThis), actions);
     }
@@ -1507,7 +1587,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunAnySuccessAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         return _thenMRunAnySuccessAsync(cfThis, executor, actions, true);
@@ -1534,7 +1614,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunAnyAsync(CompletableFuture<?> cfThis, Runnable... actions) {
         return thenMRunAnyAsync(cfThis, defaultExecutor(cfThis), actions);
     }
@@ -1545,7 +1625,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunAnyAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         return _thenMRunAnyAsync(cfThis, executor, actions, true);
@@ -1564,6 +1644,47 @@ public final class CompletableFutureUtils {
             handleSwallowedExceptions("thenMRunAnyAsync", ret, inputs);
             return ret;
         });
+    }
+
+    /**
+     * Runs all input actions async and forget (return {@code void}).
+     * This method explicitly indicates that the caller will not care about any exceptions
+     * from actions and will not wait for the computations to complete ("fire-and-forget").
+     *
+     * @return the given CompletableFuture
+     * @see #peekAsync(CompletionStage, BiConsumer)
+     */
+    @Contract("_, _ -> param1")
+    public static <F extends CompletionStage<?>> F thenMRunAsyncAndForget(F cfThis, Runnable... actions) {
+        return thenMRunAsyncAndForget(cfThis, defaultExecutor(cfThis), actions);
+    }
+
+    /**
+     * Runs all input actions async and forget (return {@code void}).
+     * This method explicitly indicates that the caller will not care about any exceptions
+     * from actions and will not wait for the computations to complete ("fire-and-forget").
+     *
+     * @return the given CompletableFuture
+     * @see #peekAsync(CompletionStage, BiConsumer, Executor)
+     */
+    @Contract("_, _, _ -> param1")
+    public static <F extends CompletionStage<?>> F thenMRunAsyncAndForget(
+            F cfThis, Executor executor, Runnable... actions) {
+        return _thenMRunAsyncAndForget(cfThis, executor, actions, true);
+    }
+
+    public static <F extends CompletionStage<?>> F _thenMRunAsyncAndForget(
+            F cfThis, Executor executor, Runnable[] actions, boolean defensiveCopy) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(executor, "executor is null");
+        requireArrayAndEleNonNull("action", actions);
+
+        final Runnable[] copy = defensiveCopy ? actions.clone() : actions;
+        cfThis.thenRunAsync(() -> {
+            CompletableFuture<Void>[] inputs = wrapRunnables0(executor, copy);
+            handleAllSwallowedExceptions("thenMRunAsyncAndForget", inputs);
+        });
+        return cfThis;
     }
 
     // endregion

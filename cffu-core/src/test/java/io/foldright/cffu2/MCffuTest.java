@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static io.foldright.test_utils.TestUtils.*;
 import static io.foldright.test_utils.TestingConstants.MEDIAN_WAIT_MS;
@@ -119,5 +121,13 @@ class MCffuTest {
         assertCfStillIncompleteIn(cfEmpty.parOps().thenParAcceptAnyAsync((Integer x) -> {}));
         assertNull(cf.parOps().thenParAcceptAnyAsync(x -> {}).get());
         assertNull(cf.parOps().thenParAcceptAnyAsync(x -> {}, testExecutor).get());
+
+        final AtomicInteger counter = new AtomicInteger();
+        final Consumer<Integer> addAndGet = counter::addAndGet;
+        cf.parOps().thenParAcceptAsyncAndForget(addAndGet);
+        cf.parOps().thenParAcceptAsyncAndForget(addAndGet, testExecutor);
+
+        sleep(MEDIAN_WAIT_MS);
+        assertEquals((1 + 2) * 2, counter.get());
     }
 }

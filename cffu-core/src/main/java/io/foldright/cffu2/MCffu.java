@@ -90,7 +90,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public <U> MCffu<U, List<U>> thenParApplyFailFastAsync(Function<? super E, ? extends U> fn) {
             return thenParApplyFailFastAsync(fn, fac.defaultExecutor);
         }
@@ -102,7 +102,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public <U> MCffu<U, List<U>> thenParApplyFailFastAsync(Function<? super E, ? extends U> fn, Executor executor) {
             return createMCffu(CfParallelUtils.thenParApplyFailFastAsync(cf, fn, cffuScreened(executor)));
         }
@@ -114,7 +114,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public <U> MCffu<U, List<U>> thenParApplyAllSuccessAsync(@Nullable U valueIfFailed, Function<? super E, ? extends U> fn) {
             return thenParApplyAllSuccessAsync(valueIfFailed, fn, fac.defaultExecutor);
         }
@@ -126,7 +126,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public <U> MCffu<U, List<U>> thenParApplyAllSuccessAsync(@Nullable U valueIfFailed, Function<? super E, ? extends U> fn, Executor executor) {
             return createMCffu(CfParallelUtils.thenParApplyAllSuccessAsync(cf, valueIfFailed, fn, cffuScreened(executor)));
         }
@@ -138,7 +138,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public <U> MCffu<U, List<U>> thenParApplyMostSuccessAsync(
                 @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit, Function<? super E, ? extends U> fn) {
             return thenParApplyMostSuccessAsync(valueIfNotSuccess, timeout, unit, fn, fac.defaultExecutor);
@@ -151,7 +151,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public <U> MCffu<U, List<U>> thenParApplyMostSuccessAsync(
                 @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit, Function<? super E, ? extends U> fn, Executor executor) {
             return createMCffu(CfParallelUtils.thenParApplyMostSuccessAsync(
@@ -165,7 +165,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public <U> MCffu<U, List<U>> thenParApplyAsync(Function<? super E, ? extends U> fn) {
             return thenParApplyAsync(fn, fac.defaultExecutor);
         }
@@ -177,7 +177,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public <U> MCffu<U, List<U>> thenParApplyAsync(Function<? super E, ? extends U> fn, Executor executor) {
             return createMCffu(CfParallelUtils.thenParApplyAsync(cf, fn, cffuScreened(executor)));
         }
@@ -189,7 +189,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public <U> Cffu<U> thenParApplyAnySuccessAsync(Function<? super E, ? extends U> fn) {
             return thenParApplyAnySuccessAsync(fn, fac.defaultExecutor);
         }
@@ -201,7 +201,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public <U> Cffu<U> thenParApplyAnySuccessAsync(Function<? super E, ? extends U> fn, Executor executor) {
             return createCffu(CfParallelUtils.thenParApplyAnySuccessAsync(cf, fn, cffuScreened(executor)));
         }
@@ -213,7 +213,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public <U> Cffu<U> thenParApplyAnyAsync(Function<? super E, ? extends U> fn) {
             return thenParApplyAnyAsync(fn, fac.defaultExecutor);
         }
@@ -225,7 +225,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public <U> Cffu<U> thenParApplyAnyAsync(Function<? super E, ? extends U> fn, Executor executor) {
             return createCffu(CfParallelUtils.thenParApplyAnyAsync(cf, fn, cffuScreened(executor)));
         }
@@ -237,7 +237,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public Cffu<Void> thenParAcceptFailFastAsync(Consumer<? super E> action) {
             return thenParAcceptFailFastAsync(action, fac.defaultExecutor);
         }
@@ -249,7 +249,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public Cffu<Void> thenParAcceptFailFastAsync(Consumer<? super E> action, Executor executor) {
             return createCffu(CfParallelUtils.thenParAcceptFailFastAsync(cf, action, cffuScreened(executor)));
         }
@@ -261,7 +261,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public Cffu<Void> thenParAcceptAsync(Consumer<? super E> action) {
             return thenParAcceptAsync(action, fac.defaultExecutor);
         }
@@ -273,7 +273,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public Cffu<Void> thenParAcceptAsync(Consumer<? super E> action, Executor executor) {
             return createCffu(CfParallelUtils.thenParAcceptAsync(cf, action, cffuScreened(executor)));
         }
@@ -285,7 +285,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public Cffu<Void> thenParAcceptAnySuccessAsync(Consumer<? super E> action) {
             return thenParAcceptAnySuccessAsync(action, fac.defaultExecutor);
         }
@@ -297,7 +297,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public Cffu<Void> thenParAcceptAnySuccessAsync(Consumer<? super E> action, Executor executor) {
             return createCffu(CfParallelUtils.thenParAcceptAnySuccessAsync(cf, action, cffuScreened(executor)));
         }
@@ -309,7 +309,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public Cffu<Void> thenParAcceptAnyAsync(Consumer<? super E> action) {
             return thenParAcceptAnyAsync(action, fac.defaultExecutor);
         }
@@ -321,9 +321,32 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * <p>
          * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer simple method `thenParAcceptAsync`")
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenParAcceptAsyncAndForget`")
         public Cffu<Void> thenParAcceptAnyAsync(Consumer<? super E> action, Executor executor) {
             return createCffu(CfParallelUtils.thenParAcceptAnyAsync(cf, action, cffuScreened(executor)));
+        }
+
+        /**
+         * Processes elements from the result of parameter cfThis in parallel and forget (return {@code void}).
+         * This method explicitly indicates that the caller will not care about any exceptions
+         * from actions and will not wait for the computations to complete ("fire-and-forget").
+         *
+         * @return this MCffu
+         */
+        public MCffu<E, T> thenParAcceptAsyncAndForget(Consumer<? super E> action) {
+            return thenParAcceptAsyncAndForget(action, fac.defaultExecutor);
+        }
+
+        /**
+         * Processes elements from the result of parameter cfThis in parallel and forget (return {@code void}).
+         * This method explicitly indicates that the caller will not care about any exceptions
+         * from actions and will not wait for the computations to complete ("fire-and-forget").
+         *
+         * @return this MCffu
+         */
+        public MCffu<E, T> thenParAcceptAsyncAndForget(Consumer<? super E> action, Executor executor) {
+            CfParallelUtils.thenParAcceptAsyncAndForget(cf, action, cffuScreened(executor));
+            return MCffu.this;
         }
 
         private ParOps() {}
