@@ -551,7 +551,7 @@ public final class CompletableFutureUtils {
         if (failFast) resultsSetter = allFailFastOf0(resultsSetterCfs);
         else resultsSetter = CompletableFuture.allOf(resultsSetterCfs);
 
-        return f_cast(resultsSetter.thenApply(unused -> toArrayList(results)));
+        return resultsSetter.thenApply(unused -> toArrayList(results));
     }
 
     /**
