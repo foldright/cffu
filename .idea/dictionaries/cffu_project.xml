@@ -14,6 +14,7 @@
       <w>Xjsr</w>
       <w>Xjvm</w>
       <w>Xlint</w>
+      <w>alnum</w>
       <w>archunit</w>
       <w>autoscan</w>
       <w>cffu</w>
