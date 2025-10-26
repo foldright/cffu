@@ -65,8 +65,10 @@ isValidVersion "$NEW_VERSION" || cu::die "invalid new version: $2"
 #  's#(\s*).*UPDATE to Alpha version WHEN RELEASE.*#\1<version>'"$NEW_ALPHA_VERSION"'</version>#' \
 #  pom.xml ./*/pom.xml ./*/*/pom.xml
 
-SEARCH_PATTERN="$(escapeLiteralForRegex "2.x-SNAPSHOT")|$(escapeLiteralForRegex "$OLD_VERSION")"
+readonly NON_VERSION_CHAR_REGEX='[^-.[:alnum:]]'
+
+SEARCH_PATTERN="(^|$NON_VERSION_CHAR_REGEX)($(escapeLiteralForRegex "2.x-SNAPSHOT")|$(escapeLiteralForRegex "$OLD_VERSION"))($NON_VERSION_CHAR_REGEX|$)"
 readonly SEARCH_PATTERN
 
 ignoreFailRg "$SEARCH_PATTERN" -l -g '!scripts/' |
-  myXargs sed -i -r "s#$SEARCH_PATTERN#$NEW_VERSION#g"
+  myXargs sed -i -r "s#$SEARCH_PATTERN#\1$NEW_VERSION\3#g"
