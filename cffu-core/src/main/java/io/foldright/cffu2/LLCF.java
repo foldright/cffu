@@ -6,10 +6,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -280,10 +277,59 @@ public final class LLCF {
      * Completes the given CompletableFuture with the exception (if non-null), otherwise with the value.
      * In general, you should NEVER use this method in application codes, use {@link
      * CompletableFuture#complete(Object)} or {@link CompletableFuture#completeExceptionally(Throwable)} instead.
+     *
+     * @see #completeCf0(CompletableFuture, Callable)
+     * @see #completeCf0(CompletableFuture, Runnable)
      */
     public static <T> boolean completeCf0(CompletableFuture<? super T> cf, @Nullable T value, @Nullable Throwable ex) {
         if (ex == null) return cf.complete(value);
         else return cf.completeExceptionally(ex);
+    }
+
+    /**
+     * Completes the given CompletableFuture with either the value returned by the callable
+     * or the exception thrown by the callable if it fails.
+     *
+     * @see #completeCf0(CompletableFuture, Object, Throwable)
+     * @see #completeCf0(CompletableFuture, Runnable)
+     */
+    public static <T> boolean completeCf0(CompletableFuture<? super T> cf, Supplier<? extends T> callable) {
+        try {
+            return cf.complete(callable.get());
+        } catch (Throwable ex) {
+            return cf.completeExceptionally(ex);
+        }
+    }
+
+    /**
+     * Completes the given CompletableFuture with either the value returned by the callable
+     * or the exception thrown by the callable if it fails.
+     *
+     * @see #completeCf0(CompletableFuture, Object, Throwable)
+     * @see #completeCf0(CompletableFuture, Runnable)
+     */
+    public static <T> boolean completeCf0(CompletableFuture<? super T> cf, Callable<? extends T> callable) {
+        try {
+            return cf.complete(callable.call());
+        } catch (Throwable ex) {
+            return cf.completeExceptionally(ex);
+        }
+    }
+
+    /**
+     * Completes the given CompletableFuture with either the value {@code null}
+     * when the runnable completes normally, or the exception thrown by the callable if it fails.
+     *
+     * @see #completeCf0(CompletableFuture, Object, Throwable)
+     * @see #completeCf0(CompletableFuture, Callable)
+     */
+    public static <T> boolean completeCf0(CompletableFuture<? super T> cf, Runnable runnable) {
+        try {
+            runnable.run();
+            return cf.complete(null);
+        } catch (Throwable ex) {
+            return cf.completeExceptionally(ex);
+        }
     }
 
     /**

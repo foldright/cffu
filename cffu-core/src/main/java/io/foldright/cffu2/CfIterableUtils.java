@@ -2,20 +2,20 @@ package io.foldright.cffu2;
 
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import io.foldright.cffu2.tuple.Tuple2;
 import org.jetbrains.annotations.Contract;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static io.foldright.cffu2.CompletableFutureUtils.*;
-import static io.foldright.cffu2.internal.CommonUtils.toArray;
+import static io.foldright.cffu2.eh.SwallowedExceptionHandleUtils.handleSwallowedExceptions;
+import static io.foldright.cffu2.internal.CommonUtils.*;
 
 
 /**
@@ -186,6 +186,120 @@ public final class CfIterableUtils {
      */
     public static CompletableFuture<Void> mRunAsync(Iterable<? extends Runnable> actions, Executor executor) {
         return CompletableFutureUtils.mRunAsync(executor, toRunnableArray(actions));
+    }
+
+    public static CompletableFuture<Void> mRunAsyncN(Iterable<? extends Runnable> actions, int parallelism) {
+        final Runnable[] actionArray = toRunnableArray(actions);
+        final int len = actionArray.length;
+        if (len <= parallelism) return CompletableFutureUtils.mRunAsync(actionArray);
+
+        final CompletableFuture<Void> latch = new CompletableFuture<>();
+
+        final CompletableFuture<Void>[] cfs = newCfArray(len);
+        // iterator of the rest ations(non first batch actions)
+        final SafeIterator<Runnable> restActionsIterator = SafeIterator.ofArrayRange(actionArray, parallelism, len);
+        // pre-create cfs for the rest ations that completes later
+        fillArrayRange(cfs, parallelism, len, i -> new CompletableFuture<>());
+
+        final BiConsumer<Void, Throwable> relayRunRestActions = (unused, ex) -> {
+            while (true) {
+                final Tuple2<Integer, Runnable> next = restActionsIterator.next();
+                if (next == null) break;
+
+                final Integer index = next._1;
+                final CompletableFuture<Void> f = cfs[index];
+                // release reference/memory ASAP
+                cfs[index] = null;
+                LLCF.completeCf0(f, next._2);
+            }
+        };
+        for (int i = 0; i < parallelism; i++) {
+            final CompletableFuture<Void> f = latch.thenRunAsync(actionArray[i]);
+            // release reference/memory ASAP
+            actionArray[i] = null;
+            // collect cfs of first batch actions
+            cfs[i] = f;
+            LLCF.peek0(f, relayRunRestActions, "mRunAsyncN");
+        }
+
+        CompletableFuture<Void> ret = CompletableFuture.allOf(cfs);
+        handleSwallowedExceptions("mRunAsyncN", ret, cfs);
+        // MUST permit through the latch after the all current-thread accesses of cfs to avoid data race
+        latch.complete(null);
+        return ret;
+    }
+
+    public static CompletableFuture<Void> mRunAsyncN2(Iterable<? extends Runnable> actions, int parallelism) {
+        final Runnable[] actionArray = toRunnableArray(actions);
+        final int len = actionArray.length;
+        if (len <= parallelism) return CompletableFutureUtils.mRunAsync(actionArray);
+
+        final CompletableFuture<Void> startingSignal = new CompletableFuture<>();
+
+        // create cfs for the ations that completes later
+        final CompletableFuture<Void>[] cfs = fillArray(newCfArray(len), i -> new CompletableFuture<>());
+        final SafeIterator<Runnable> actionIterator = SafeIterator.ofArray(actionArray);
+
+        final BiConsumer<Void, Throwable> relayRunActions = (unused, ex) -> {
+            while (true) {
+                final Tuple2<Integer, Runnable> next = actionIterator.next();
+                if (next == null) break;
+
+                final int index = next._1;
+                final CompletableFuture<Void> f = cfs[index];
+                // release reference/memory ASAP
+                cfs[index] = null;
+                LLCF.completeCf0(f, next._2);
+            }
+        };
+        for (int i = 0; i < parallelism; i++)
+            LLCF.peekAsync0(startingSignal, relayRunActions, "mRunAsyncN", LLCF.ASYNC_POOL);
+
+        CompletableFuture<Void> ret = CompletableFuture.allOf(cfs);
+        handleSwallowedExceptions("mRunAsyncN", ret, cfs);
+
+        // MUST trigger the starting signal after all current-thread accesses of cfs to avoid data race
+        startingSignal.complete(null);
+        return ret;
+    }
+
+    public static CompletableFuture<Void> mRunAsyncN3(Iterable<? extends Runnable> actions, int parallelism) {
+        final Callable<Void>[] actionArray = null; // toRunnableArray(actions);
+//         if (actionArray.length <= parallelism) return CompletableFutureUtils.mRunAsync(actionArray);
+
+        final CompletableFuture<Void> latch = new CompletableFuture<>();
+
+        final CompletableFuture<Void>[] cfs = runN(latch, actionArray, parallelism, "mRunAsyncN");
+        CompletableFuture<Void> ret = CompletableFuture.allOf(cfs);
+        handleSwallowedExceptions("mRunAsyncN", ret, cfs);
+        // MUST permit through the latch after the all current-thread accesses of cfs to avoid data race
+        latch.complete(null);
+        return ret;
+    }
+
+    private static <T> CompletableFuture<T>[] runN(
+            CompletableFuture<Void> startingSignal, Callable<T>[] actionArray, int parallelism, String where) {
+        final int len = actionArray.length;
+        // create cfs for the ations that completes later
+        final CompletableFuture<T>[] cfs = fillArray(newCfArray(len), i -> new CompletableFuture<>());
+        final SafeIterator<Callable<T>> actionIterator = SafeIterator.ofArray(actionArray);
+
+        final BiConsumer<Void, Throwable> relayRunActions = (unused, ex) -> {
+            while (true) {
+                final Tuple2<Integer, Callable<T>> next = actionIterator.next();
+                if (next == null) break;
+
+                final int index = next._1;
+                final CompletableFuture<T> f = cfs[index];
+                // release reference/memory ASAP
+                cfs[index] = null;
+                LLCF.completeCf0(f, next._2);
+            }
+        };
+        for (int i = 0; i < parallelism; i++)
+            LLCF.peekAsync0(startingSignal, relayRunActions, where, LLCF.ASYNC_POOL);
+
+        return cfs;
     }
 
     /**
@@ -606,4 +720,51 @@ public final class CfIterableUtils {
     }
 
     private CfIterableUtils() {}
+}
+
+/**
+ * Thread-safe and memory-efficient (release input elements ASAP) iterator.
+ */
+class SafeIterator<T> {
+    private final T[] elements;
+    /**
+     * Index of the element to be returned by subsequent call to {@link #next()}.
+     */
+    private int cursor;
+    private final int to;
+
+    private SafeIterator(T[] elements, int from, int to) {
+        this.elements = elements;
+        this.cursor = from;
+        this.to = to;
+    }
+
+    /**
+     * CAUTION: The array elements are <strong>cleared</strong> during iteration,
+     * pay attention to defensively copy the input array if needed.
+     */
+    public static <T> SafeIterator<T> ofArray(T[] elements) {
+        return new SafeIterator<>(elements, 0, elements.length);
+    }
+
+    /**
+     * CAUTION: The array elements are <strong>cleared</strong> during iteration,
+     * pay attention to defensively copy the input array if needed.
+     */
+    public static <T> SafeIterator<T> ofArrayRange(T[] elements, int from, int to) {
+        return new SafeIterator<>(elements, from, to);
+    }
+
+    /**
+     * Returns the next element and its index as a {@code Tuple2} in the iteration,
+     * or {@code null} if the iteration has no more elements.
+     */
+    public synchronized @Nullable Tuple2<Integer, T> next() {
+        if (cursor >= to) return null;
+
+        final Tuple2<Integer, T> ret = Tuple2.of(cursor, elements[cursor]);
+        // release reference/memory ASAP
+        elements[cursor++] = null;
+        return ret;
+    }
 }

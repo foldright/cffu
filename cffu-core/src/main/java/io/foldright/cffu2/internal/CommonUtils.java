@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -47,10 +48,19 @@ public final class CommonUtils {
     }
 
     /**
-     * Fills the input array where each element is calculated by calling the specified init function.
+     * Fills the specified array where each element is calculated by calling the specified init function.
      */
     public static <T> T[] fillArray(T[] array, IntFunction<T> init) {
         Arrays.setAll(array, init);
+        return array;
+    }
+
+    /**
+     * Fills the specified range of the specified array
+     * where each element is calculated by calling the specified init function.
+     */
+    public static <T> T[] fillArrayRange(T[] array, int from, int to, IntFunction<T> init) {
+        for (int i = from; i < to; i++) array[i] = init.apply(i);
         return array;
     }
 
@@ -120,6 +130,43 @@ public final class CommonUtils {
             @Nullable Iterable<? extends T> iterable, IntFunction<U[]> generator, Function<? super T, ? extends U> mapper) {
         if (iterable == null) return null;
         return StreamSupport.stream(iterable.spliterator(), false).map(mapper).toArray(generator);
+    }
+
+    /**
+     * Converts an Iterable to an array.
+     */
+    @Contract(value = "null -> null; !null -> !null")
+    public static @Nullable <T> Collection<? extends T> toCollection(@Nullable Iterable<? extends T> iterable) {
+        if (iterable == null) return null;
+        if (iterable instanceof Collection) {
+            return (Collection<? extends T>) iterable;
+        }
+        List<T> list = new ArrayList<>();
+        for (T e : iterable) list.add(e);
+        return list;
+    }
+
+    /**
+     * Converts an Iterable to an array.
+     */
+    @Contract(value = "null -> null; !null -> !null")
+    public static @Nullable <T> ArrayList<T> toArrayList(@Nullable Iterable<? extends T> iterable) {
+        if (iterable == null) return null;
+        if (iterable instanceof Collection) {
+            return new ArrayList<>((Collection<? extends T>) iterable);
+        }
+        ArrayList<T> list = new ArrayList<>();
+        for (T e : iterable) list.add(e);
+        return list;
+    }
+
+    /**
+     * Converts an Iterable to an array.
+     */
+    @Contract(value = "null -> null; !null -> !null")
+    public static @Nullable <T> CopyOnWriteArrayList<T> toCopyOnWriteArrayList(@Nullable Iterable<? extends T> iterable) {
+        if (iterable == null) return null;
+        return new CopyOnWriteArrayList<>(toCollection(iterable));
     }
 
     // endregion
