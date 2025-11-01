@@ -740,7 +740,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that is completed when any of the given stage complete, with the same result.
+     * Returns a new CompletableFuture that is completed when any of the given stages complete, with the same result.
      * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so, with a CompletionException
      * holding this exception as its cause. If no stages are provided, returns an incomplete CompletableFuture.
      * <p>
@@ -931,7 +931,7 @@ public final class CompletableFutureUtils {
      * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
-     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -981,7 +981,7 @@ public final class CompletableFutureUtils {
      * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
-     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -1078,7 +1078,7 @@ public final class CompletableFutureUtils {
      * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
-     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -1125,7 +1125,7 @@ public final class CompletableFutureUtils {
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
-     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -1172,7 +1172,7 @@ public final class CompletableFutureUtils {
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
-     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -1211,7 +1211,7 @@ public final class CompletableFutureUtils {
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
-     * needs to be explicitly declared to avoid the compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid the compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -1230,7 +1230,7 @@ public final class CompletableFutureUtils {
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
-     * needs to be explicitly declared to avoid the compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid the compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -1264,7 +1264,7 @@ public final class CompletableFutureUtils {
      * See the {@link #allOf allOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
-     * needs to be explicitly declared to avoid the compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid the compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -1281,7 +1281,7 @@ public final class CompletableFutureUtils {
      * See the {@link #allOf allOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
-     * needs to be explicitly declared to avoid the compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid the compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -1314,7 +1314,7 @@ public final class CompletableFutureUtils {
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
-     * needs to be explicitly declared to avoid the compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid the compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -1332,7 +1332,7 @@ public final class CompletableFutureUtils {
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
-     * needs to be explicitly declared to avoid the compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid the compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -1366,7 +1366,7 @@ public final class CompletableFutureUtils {
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
-     * needs to be explicitly declared to avoid the compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid the compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -1384,7 +1384,7 @@ public final class CompletableFutureUtils {
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the second argument is passed as a lambda literal, the lambda parameter type
-     * needs to be explicitly declared to avoid the compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid the compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -1574,7 +1574,7 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture that, when tow given stage both complete normally,
+     * Returns a new CompletableFuture that, when both of given stages complete normally,
      * is executed with the two results as arguments to the supplied function.
      * If any of the given stages complete exceptionally, then the returned CompletableFuture
      * also does so *without* waiting other incomplete given CompletionStage,
@@ -1593,7 +1593,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when tow given stages both complete normally,
+     * Returns a new CompletableFuture that, when both of given stages complete normally,
      * is executed using the default executor of parameter cfThis,
      * with the two results as arguments to the supplied function.
      * If any of the given stages complete exceptionally, then the returned CompletableFuture
@@ -1610,7 +1610,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when tow given stage both complete normally,
+     * Returns a new CompletableFuture that, when both of given stages complete normally,
      * is executed using the supplied executor,
      * with the two results as arguments to the supplied function.
      * If any of the given stages complete exceptionally, then the returned CompletableFuture
@@ -1655,7 +1655,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when tow given stage both complete normally,
+     * Returns a new CompletableFuture that, when both of given stages complete normally,
      * is executed with the two results as arguments to the supplied action.
      * If any of the given stages complete exceptionally, then the returned CompletableFuture
      * also does so *without* waiting other incomplete given CompletionStage,
@@ -1674,7 +1674,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when tow given stage both complete normally,
+     * Returns a new CompletableFuture that, when both of given stages complete normally,
      * is executed using the default executor of parameter cfThis,
      * with the two results as arguments to the supplied action.
      * If any of the given stages complete exceptionally, then the returned CompletableFuture
@@ -1691,7 +1691,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when tow given stage both complete normally,
+     * Returns a new CompletableFuture that, when both of given stages complete normally,
      * is executed using the supplied executor,
      * with the two results as arguments to the supplied action.
      * If any of the given stages complete exceptionally, then the returned CompletableFuture
@@ -1772,8 +1772,10 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture that, when either given stage success,
+     * Returns a new CompletableFuture that, when either of given stages success,
      * is executed with the corresponding result as argument to the supplied function.
+     * Otherwise, both complete exceptionally, the returned CompletableFuture also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param fn  the function to use to compute the value of the returned CompletableFuture
      * @param <U> the function's return type
@@ -1788,9 +1790,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when either given stage success,
+     * Returns a new CompletableFuture that, when either of given stages success,
      * is executed using the default executor of parameter cfThis,
      * with the corresponding result as argument to the supplied function.
+     * Otherwise, both complete exceptionally, the returned CompletableFuture also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param fn  the function to use to compute the value of the returned CompletableFuture
      * @param <U> the function's return type
@@ -1802,8 +1806,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when either given stage success,
+     * Returns a new CompletableFuture that, when either of given stages success,
      * is executed using the supplied executor, with the corresponding result as argument to the supplied function.
+     * Otherwise, both complete exceptionally, the returned CompletableFuture also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param fn       the function to use to compute the value of the returned CompletableFuture
      * @param executor the executor to use for asynchronous execution
@@ -1840,8 +1846,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when either given stage success,
+     * Returns a new CompletableFuture that, when either of given stages success,
      * is executed with the corresponding result as argument to the supplied action.
+     * Otherwise, both complete exceptionally, the returned CompletableFuture also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
@@ -1854,9 +1862,11 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when either given stage success,
+     * Returns a new CompletableFuture that, when either of given stages success,
      * is executed using the default executor of parameter cfThis,
      * with the corresponding result as argument to the supplied action.
+     * Otherwise, both complete exceptionally, the returned CompletableFuture also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
@@ -1866,8 +1876,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when either given stage success,
+     * Returns a new CompletableFuture that, when either of given stages success,
      * is executed using the supplied executor, with the corresponding result as argument to the supplied action.
+     * Otherwise, both complete exceptionally, the returned CompletableFuture also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param action   the action to perform before completing the returned CompletableFuture
      * @param executor the executor to use for asynchronous execution
@@ -1883,10 +1895,9 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when either given stage success, executes the given action.
-     * Otherwise, all two given CompletionStage complete exceptionally,
-     * the returned CompletableFuture also does so, with a CompletionException holding
-     * an exception from any of the given CompletionStage as its cause.
+     * Returns a new CompletableFuture that, when either of given stages success, executes the given action.
+     * Otherwise, both complete exceptionally, the returned CompletableFuture also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
@@ -1899,11 +1910,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when either given stage success, executes the given action
+     * Returns a new CompletableFuture that, when either of given stages success, executes the given action
      * using the default executor of parameter cfThis.
-     * Otherwise, all two given CompletionStage complete exceptionally,
-     * the returned CompletableFuture also does so, with a CompletionException holding
-     * an exception from any of the given CompletionStage as its cause.
+     * Otherwise, both complete exceptionally, the returned CompletableFuture also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
@@ -1913,11 +1923,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when either given stage success, executes the given action
+     * Returns a new CompletableFuture that, when either of given stages success, executes the given action
      * using the supplied executor.
-     * Otherwise, all two given CompletionStage complete exceptionally,
-     * the returned CompletableFuture also does so, with a CompletionException holding
-     * an exception from any of the given CompletionStage as its cause.
+     * Otherwise, both complete exceptionally, the returned CompletableFuture also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
@@ -1936,7 +1945,7 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletableFuture that, when given stage completes exceptionally with the given exceptionType,
+     * Returns a new CompletableFuture that, when the given stage completes exceptionally with the given exceptionType,
      * is executed with the exception from the given stage({@code argument cfThis}) as the argument to the supplied function.
      * Otherwise, the returned stage contains the same result as the given stage.
      * <p>
@@ -1967,7 +1976,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when given stage completes exceptionally with the given exceptionType,
+     * Returns a new CompletableFuture that, when the given stage completes exceptionally with the given exceptionType,
      * is executed with the exception from the given stage({@code argument cfThis}) as the argument to the supplied
      * function, using the default executor of parameter the given stage.
      * Otherwise, the returned stage contains the same result as the given stage.
@@ -1990,7 +1999,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when given stage completes exceptionally with the given exceptionType,
+     * Returns a new CompletableFuture that, when the given stage completes exceptionally with the given exceptionType,
      * is executed with the exception from the given stage({@code argument cfThis}) as the argument to the supplied
      * function, using the supplied Executor. Otherwise, the returned stage contains the same result as the given stage.
      * <p>
@@ -2023,9 +2032,9 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when given stage completes exceptionally, is executed with given
+     * Returns a new CompletableFuture that, when the given stage completes exceptionally, is executed with the given
      * stage's exception as the argument to the supplied function, using the default executor of parameter cfThis.
-     * Otherwise, if given stage completes normally, then the returned stage also completes normally with the same value.
+     * Otherwise, if the given stage completes normally, then the returned stage also completes normally with the same value.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catchingAsync(CompletionStage, Class, Function)}
@@ -2041,7 +2050,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletableFuture that, when given stage completes exceptionally, is executed with given
+     * Returns a new CompletableFuture that, when the given stage completes exceptionally, is executed with the given
      * stage's exception as the argument to the supplied function, using the supplied Executor. Otherwise,
      * if the given stage completes normally, then the returned stage also completes normally with the same value.
      * <p>
@@ -2085,7 +2094,7 @@ public final class CompletableFutureUtils {
      * <strong>CAUTION:</strong> This method returns a new CompletableFuture instead of {@code cfThis} to avoid
      * the subsequent usage of the <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor's thread; This behavior is
      * DIFFERENT from the original CF method {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and its backport
-     * method {@link #orTimeout orTimeout}. More info see the javadoc of {@link #orTimeout orTimeout} and the demo <a href=
+     * method {@link #orTimeout orTimeout}. For more information, see the Javadoc of {@link #orTimeout orTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
@@ -2105,7 +2114,7 @@ public final class CompletableFutureUtils {
      * <strong>CAUTION:</strong> This method returns a new CompletableFuture instead of {@code cfThis} to avoid
      * the subsequent usage of the <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor's thread; This behavior is
      * DIFFERENT from the original CF method {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and its backport
-     * method {@link #orTimeout orTimeout}. More info see the javadoc of {@link #orTimeout orTimeout} and the demo <a href=
+     * method {@link #orTimeout orTimeout}. For more information, see the Javadoc of {@link #orTimeout orTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
@@ -2129,7 +2138,7 @@ public final class CompletableFutureUtils {
      * if not otherwise completed before the given timeout.
      * <p>
      * <strong>CAUTION:</strong> {@link CompletableFuture#orTimeout CompletableFuture#orTimeout}
-     * and this backport method are <strong>UNSAFE</strong>!
+     * and this backport method is <strong>UNSAFE</strong>!
      * <p>
      * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
      * in CompletableFuture's internal <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor (including delay functionality).
@@ -2147,7 +2156,7 @@ public final class CompletableFutureUtils {
      * conditions are difficult to guarantee in practice, especially when the returned CompletableFuture is used by others' codes.
      * <p>
      * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} method leaks if the
-     * future completes exceptionally, more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
+     * future completes exceptionally; For more information, see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
      * <a href="https://github.com/openjdk/jdk/pull/13059">PR review openjdk/jdk/13059</a>
      * and <a href="https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a">JDK bugfix commit</a>.
      * The cffu backport logic (for Java 20-) has merged this JDK bugfix.
@@ -2163,12 +2172,12 @@ public final class CompletableFutureUtils {
         requireNonNull(unit, "unit is null");
         // NOTE: No need check minimal stage, because checked in cfThis.orTimeout() / cfThis.isDone() below
 
-        // because of bug JDK-8303742, delegate to CF#orTimeout for Java 21+(the bug were fixed at Java 21)
+        // because of bug JDK-8303742, delegate to CF#orTimeout for Java 21+(the bug was fixed at Java 21)
         // instead of Java 9+(CF#orTimeout were introduced since Java 9)
         if (IS_JAVA21_PLUS) {
             cfThis.orTimeout(timeout, unit);
         } else {
-            // the below code is copied from CompletableFuture#orTimeout with small adoption
+            // the below code is copied from CompletableFuture#orTimeout with small adaptions
             if (!cfThis.isDone()) {
                 ScheduledFuture<?> f = Delayer.delayToTimeoutCf(cfThis, timeout, unit);
                 peek0(cfThis, new FutureCanceller(f), "CFU#orTimeout");
@@ -2188,7 +2197,7 @@ public final class CompletableFutureUtils {
      * the subsequent usage of the <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor's thread; This behavior is
      * DIFFERENT from the original CF method {@link CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout}
      * and its backport method {@link #completeOnTimeout completeOnTimeout}.
-     * More info see the javadoc of {@link #completeOnTimeout completeOnTimeout} and the demo <a href=
+     * For more information, see the Javadoc of {@link #completeOnTimeout completeOnTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
@@ -2211,7 +2220,7 @@ public final class CompletableFutureUtils {
      * the subsequent usage of the <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor's thread; This behavior is
      * DIFFERENT from the original CF method {@link CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout}
      * and its backport method {@link #completeOnTimeout completeOnTimeout}.
-     * More info see the javadoc of {@link #completeOnTimeout completeOnTimeout} and the demo <a href=
+     * For more information, see the Javadoc of {@link #completeOnTimeout completeOnTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
@@ -2234,7 +2243,7 @@ public final class CompletableFutureUtils {
      * Completes given CompletableFuture with the given value if not otherwise completed before the given timeout.
      * <p>
      * <strong>CAUTION:</strong> {@link CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout}
-     * and this backport method are <strong>UNSAFE</strong>!
+     * and this backport method is <strong>UNSAFE</strong>!
      * <p>
      * When the wait timed out, the subsequent non-async actions of the dependent CompletableFutures are performed
      * in CompletableFuture's internal <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor (including delay functionality).
@@ -2249,7 +2258,7 @@ public final class CompletableFutureUtils {
      * <li>and/or all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
      *    (i.e., the dependent CompletableFutures are created using async methods).
      * </ul> In these cases, using these unsafe methods avoids an unnecessary thread switching when timeout occurs; However, these
-     * conditions are difficult to guarantee in practice especially when the returned CompletableFuture is used by others' codes.
+     * conditions are difficult to guarantee in practice, especially when the returned CompletableFuture is used by others' codes.
      *
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
@@ -2266,7 +2275,7 @@ public final class CompletableFutureUtils {
         if (IS_JAVA9_PLUS) {
             cfThis.completeOnTimeout(value, timeout, unit);
         } else {
-            // the below code is copied from CompletableFuture#completeOnTimeout with small adoption
+            // the below code is copied from CompletableFuture#completeOnTimeout with small adaptions
             if (!cfThis.isDone()) {
                 ScheduledFuture<?> f = Delayer.delayToCompleteCf(cfThis, value, timeout, unit);
                 peek0(cfThis, new FutureCanceller(f), "CFU#completeOnTimeout");
@@ -2280,12 +2289,12 @@ public final class CompletableFutureUtils {
     // region## Advanced Methods of CompletionStage(compose* and handle-like methods)
     //
     // NOTE about advanced meaning:
-    //   - `compose` methods, input function argument return CompletionStage
-    //   - handle successful and failed result together(handle*/whenComplete*/peek*)
+    //   - `compose` methods, input function argument returns CompletionStage
+    //   - handle the successful and failed result together(handle*/whenComplete*/peek*)
     ////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType, is composed
+     * Returns a new CompletionStage that, when the given stage completes exceptionally with the given exceptionType, is composed
      * using the results of the supplied function applied to the exception from the given stage({@code argument cfThis}).
      * <p>
      * <strong>"The exception from the given stage({@code argument cfThis})"</strong> means the cause of
@@ -2315,7 +2324,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType, is composed
+     * Returns a new CompletionStage that, when the given stage completes exceptionally with the given exceptionType, is composed
      * using the results of the supplied function applied to the exception from the given stage({@code argument cfThis}),
      * using the default executor of parameter the given stage.
      * <p>
@@ -2337,7 +2346,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new CompletionStage that, when given stage completes exceptionally with the given exceptionType, is composed
+     * Returns a new CompletionStage that, when the given stage completes exceptionally with the given exceptionType, is composed
      * using the results of the supplied function applied to the exception from the given stage({@code argument cfThis}),
      * using the supplied Executor.
      * <p>
@@ -2372,7 +2381,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when given CompletableFuture completes exceptionally,
-     * is composed using the results of the supplied function applied to given stage's exception.
+     * is composed using the results of the supplied function applied to the given stage's exception.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catchingCompose(CompletionStage, Class, Function)}
@@ -2397,7 +2406,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when given CompletableFuture completes exceptionally,
-     * is composed using the results of the supplied function applied to given stage's exception,
+     * is composed using the results of the supplied function applied to the given stage's exception,
      * using the default executor of parameter cfThis.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
@@ -2415,7 +2424,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that, when given CompletableFuture completes exceptionally, is composed using
-     * the results of the supplied function applied to given stage's exception, using the supplied Executor.
+     * the results of the supplied function applied to the given stage's exception, using the supplied Executor.
      * <p>
      * Just as catching {@code Throwable} is not best practice in general, this method handles the {@code Throwable};
      * <strong>Strongly recommend</strong> using {@link #catchingComposeAsync(CompletionStage, Class, Function, Executor)}
@@ -2571,7 +2580,7 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////
 
     /**
-     * Waits if necessary for at most the given time for the computation to complete,
+     * Waits if necessary for at most the given time for the computation to complete
      * and then retrieves its result value when complete, or throws an (unchecked) exception if completed exceptionally.
      * <p>
      * <strong>CAUTION:</strong> if the wait timed out, this method throws an (unchecked) {@link CompletionException}
@@ -2593,7 +2602,7 @@ public final class CompletableFutureUtils {
      * @return the result value
      * @throws CancellationException if the computation was cancelled
      * @throws CompletionException   if given future completed exceptionally
-     *                               or a completion computation threw an exception
+     *                               or a completion computation threw an exception,
      *                               or the wait timed out (with the {@code TimeoutException} as its cause)
      * @see CompletableFuture#join()
      */
@@ -2628,10 +2637,10 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns the computed result, without waiting.
+     * Returns the computed result without waiting.
      * <p>
      * This method is for cases where the caller knows that the task has already completed normally,
-     * for example when filtering a stream of Future objects for the successful tasks
+     * for example, when filtering a stream of Future objects for the successful tasks
      * and using a mapping operation to obtain a stream of results.
      *
      * <pre>{@code results = futures.stream()
@@ -2640,7 +2649,7 @@ public final class CompletableFutureUtils {
      *     .toList();}</pre>
      *
      * @return the computed result
-     * @throws IllegalStateException if the task has not completed or the task did not complete with a result
+     * @throws IllegalStateException if the task has not completed, or the task did not complete with a result
      */
     @Contract(pure = true)
     public static <T> @Nullable T resultNow(Future<? extends T> cfThis) {
@@ -2681,7 +2690,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns the exception thrown by the task, without waiting.
+     * Returns the exception thrown by the task without waiting.
      * <p>
      * This method is for cases where the caller knows that the task has already completed with an exception.
      *
@@ -2732,7 +2741,7 @@ public final class CompletableFutureUtils {
             return CffuState.toCffuState(cfThis.state());
         }
 
-        // the below code is copied from Future#state() with small adoption
+        // the below code is copied from Future#state() with small adaptions
 
         if (!cfThis.isDone()) return CffuState.RUNNING;
         if (cfThis.isCancelled()) return CffuState.CANCELLED;
@@ -2798,7 +2807,7 @@ public final class CompletableFutureUtils {
         } else {
             // NOTE: No need check minimal stage, because Java 8(not Java 9+) NOT support minimal stage
 
-            // the below code is copied from CompletableFuture#completeAsync with small adoption
+            // the below code is copied from CompletableFuture#completeAsync with small adaptions
             executor.execute(new CfCompleterBySupplier<>(cfThis, supplier));
         }
         return cfThis;
@@ -2908,7 +2917,7 @@ public final class CompletableFutureUtils {
      * to its cause exception. If the input exception is not a {@code CompletableFuture}/{@code ExecutionException}
      * or has no cause, contains a cyclic chain of CompletableFuture exceptions, or is null, returns the input exception.
      *
-     * @param ex the exception to be unwrapped, may be null
+     * @param ex the exception to be unwrapped may be null
      * @see com.google.common.base.Throwables#getRootCause(Throwable) Guava method Throwables#getRootCause(),
      * the loop detection code using fast and slow pointers is adapted from it
      */
@@ -2941,8 +2950,8 @@ public final class CompletableFutureUtils {
      * the error context is preserved by calling {@link Throwable#addSuppressed}.
      * <p>
      * Example usage with {@link CompletableFuture#exceptionally CompletableFuture#exceptionally},
-     * {@link CompletableFuture#exceptionallyCompose CompletableFuture#exceptionallyCompose}
-     * {@link CompletableFutureUtils#catching CompletableFutureUtils#catching}
+     * {@link CompletableFuture#exceptionallyCompose CompletableFuture#exceptionallyCompose},
+     * {@link CompletableFutureUtils#catching CompletableFutureUtils#catching},
      * or {@link CompletableFutureUtils#catchingCompose CompletableFutureUtils#catching}:
      * <pre>{@code  cf.exceptionally(nonExSwallowedFunction(fn, false));
      * CompletableFutureUtils.catching(cf, exceptionType, nonExSwallowedFunction(fallback, false));}</pre>

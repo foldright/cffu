@@ -42,7 +42,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * CffuFactory that contains configuration(e.g. default executor).
+     * CffuFactory that contains configuration (e.g. default executor).
      */
     final CffuFactory fac;
 
@@ -249,7 +249,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
-     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -281,7 +281,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * See the {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
-     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -341,7 +341,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
-     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -370,7 +370,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
-     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -399,7 +399,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the {@code executor} argument is passed as a lambda, the {@code Runnable} lambda parameter type
-     * needs to be explicitly declared to avoid compilation errors, more info see <a href=
+     * needs to be explicitly declared to avoid compilation errors; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
@@ -416,7 +416,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * See the {@link CffuFactory#allFailFastOf allFailFastOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the first argument is passed as a lambda, the lambda parameter type
-     * needs to be explicitly declared to avoid the compilation error, more info see <a href=
+     * needs to be explicitly declared to avoid the compilation error; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -433,7 +433,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * See the {@link CffuFactory#allFailFastOf allFailFastOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the first argument is passed as a lambda, the lambda parameter type
-     * needs to be explicitly declared to avoid the compilation error, more info see <a href=
+     * needs to be explicitly declared to avoid the compilation error; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -450,7 +450,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * See the {@link CffuFactory#allOf allOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the first argument is passed as a lambda, the lambda parameter type
-     * needs to be explicitly declared to avoid the compilation error, more info see <a href=
+     * needs to be explicitly declared to avoid the compilation error; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -466,7 +466,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * See the {@link CffuFactory#allOf allOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the first argument is passed as a lambda, the lambda parameter type
-     * needs to be explicitly declared to avoid the compilation error, more info see <a href=
+     * needs to be explicitly declared to avoid the compilation error; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -482,7 +482,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the first argument is passed as a lambda, the lambda parameter type
-     * needs to be explicitly declared to avoid the compilation error, more info see <a href=
+     * needs to be explicitly declared to avoid the compilation error; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -499,7 +499,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * See the {@link CffuFactory#anySuccessOf anySuccessOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the first argument is passed as a lambda, the lambda parameter type
-     * needs to be explicitly declared to avoid the compilation error, more info see <a href=
+     * needs to be explicitly declared to avoid the compilation error; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -516,7 +516,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the first argument is passed as a lambda, the lambda parameter type
-     * needs to be explicitly declared to avoid the compilation error, more info see <a href=
+     * needs to be explicitly declared to avoid the compilation error; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -533,7 +533,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * See the {@link CffuFactory#anyOf anyOf} documentation for the rules of result computation.
      * <p>
      * <strong>NOTE:</strong> if the first argument is passed as a lambda, the lambda parameter type
-     * needs to be explicitly declared to avoid the compilation error, more info see <a href=
+     * needs to be explicitly declared to avoid the compilation error; For more information, see <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/4952e8e1-20af-4967-a4a7-b8885b816203" alt="demo code" />
      */
@@ -641,7 +641,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -659,7 +659,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed using {@link #defaultExecutor()}, with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -677,7 +677,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed using the supplied executor, with the two results as arguments to the supplied function.
-     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -696,7 +696,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -713,7 +713,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed using {@link #defaultExecutor()}, with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -730,7 +730,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * is executed using the supplied executor, with the two results as arguments to the supplied action.
-     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -747,7 +747,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Returns a new Cffu that, when this Cffu and the other given stage both complete normally, executes the given action.
-     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -762,7 +762,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * executes the given action using {@link #defaultExecutor()}.
-     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -777,7 +777,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new Cffu that, when this Cffu and the other given stage both complete normally,
      * executes the given action using the supplied executor.
-     * if any of the given stage complete exceptionally, then the returned Cffu also does so
+     * If any of the given stages complete exceptionally, then the returned Cffu also does so
      * *without* waiting other incomplete given CompletionStage,
      * with a CompletionException holding this exception as its cause.
      *
@@ -948,6 +948,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
      * is executed with the corresponding result as argument to the supplied function.
+     * Otherwise, both complete exceptionally, the returned Cffu also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param other the other CompletionStage
      * @param fn    the function to use to compute the value of the returned Cffu
@@ -962,6 +964,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * Returns a new Cffu that, when either this or the other given stage complete normally,
      * is executed using {@link #defaultExecutor()},
      * with the corresponding result as argument to the supplied function.
+     * Otherwise, both complete exceptionally, the returned Cffu also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param other the other CompletionStage
      * @param fn    the function to use to compute the value of the returned Cffu
@@ -975,6 +979,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
      * is executed using the supplied executor, with the corresponding result as argument to the supplied function.
+     * Otherwise, both complete exceptionally, the returned Cffu also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param other    the other CompletionStage
      * @param fn       the function to use to compute the value of the returned Cffu
@@ -990,6 +996,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
      * is executed with the corresponding result as argument to the supplied action.
+     * Otherwise, both complete exceptionally, the returned Cffu also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
@@ -1002,6 +1010,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * Returns a new Cffu that, when either this or the other given stage complete normally,
      * is executed using {@link #defaultExecutor()},
      * with the corresponding result as argument to the supplied action.
+     * Otherwise, both complete exceptionally, the returned Cffu also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
@@ -1013,6 +1023,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
      * is executed using the supplied executor, with the corresponding result as argument to the supplied action.
+     * Otherwise, both complete exceptionally, the returned Cffu also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param other    the other CompletionStage
      * @param action   the action to perform before completing the returned Cffu
@@ -1025,8 +1037,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally, executes the given action.
-     * Otherwise, all two complete exceptionally, the returned Cffu also does so,
-     * with a CompletionException holding an exception from any of as its cause.
+     * Otherwise, both complete exceptionally, the returned Cffu also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
@@ -1038,8 +1050,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
      * executes the given action using {@link #defaultExecutor()}.
-     * Otherwise, all two complete exceptionally, the returned Cffu also does so,
-     * with a CompletionException holding an exception from any of as its cause.
+     * Otherwise, both complete exceptionally, the returned Cffu also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param other  the other CompletionStage
      * @param action the action to perform before completing the returned Cffu
@@ -1051,8 +1063,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a new Cffu that, when either this or the other given stage complete normally,
      * executes the given action using the supplied executor.
-     * Otherwise, all two complete exceptionally, the returned Cffu also does so,
-     * with a CompletionException holding an exception from any of as its cause.
+     * Otherwise, both complete exceptionally, the returned Cffu also does so,
+     * with a CompletionException holding an exception from either as its cause.
      *
      * @param other    the other CompletionStage
      * @param action   the action to perform before completing the returned Cffu
@@ -1347,7 +1359,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <strong>CAUTION:</strong> This method returns a new Cffu instead of this Cffu to avoid the subsequent usage of the
      * <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor's thread; This behavior is DIFFERENT from the original CF
      * method {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and its backport method {@link #unsafeOrTimeout unsafeOrTimeout}.
-     * More info see the javadoc of {@link #unsafeOrTimeout unsafeOrTimeout} and the demo <a href=
+     * For more information, see the Javadoc of {@link #unsafeOrTimeout unsafeOrTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
@@ -1380,10 +1392,10 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * these conditions are difficult to guarantee in practice, especially when the returned Cffu is used by others' codes.
      * <p>
      * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} leaks if the future
-     * completes exceptionally, more info see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
+     * completes exceptionally; For more information, see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
      * <a href="https://github.com/openjdk/jdk/pull/13059">PR review openjdk/jdk/13059</a>
      * and <a href="https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a">JDK bugfix commit</a>.
-     * The cffu backport logic(for Java 20-) has merged this JDK bugfix.
+     * The cffu backport logic (for Java 20-) has merged this JDK bugfix.
      *
      * @param timeout how long to wait before completing exceptionally with a TimeoutException, in units of {@code unit}
      * @param unit    a {@code TimeUnit} determining how to interpret the {@code timeout} parameter
@@ -1408,7 +1420,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * of the <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor's thread; This behavior is DIFFERENT from
      * the original CF method {@link CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout}
      * and its backport method {@link #unsafeCompleteOnTimeout unsafeCompleteOnTimeout}.
-     * More info see the javadoc of {@link #unsafeCompleteOnTimeout unsafeCompleteOnTimeout} and the demo <a href=
+     * For more information, see the Javadoc of {@link #unsafeCompleteOnTimeout unsafeCompleteOnTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
      * >DelayDysfunctionDemo</a>.
      *
@@ -1438,7 +1450,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <li>and/or all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously
      *    (i.e., the dependent Cffus/CompletableFutures are created using async methods).
      * </ul> In these cases, using this unsafe method avoids an unnecessary thread switching when timeout occurs; However,
-     * these conditions are difficult to guarantee in practice especially when the returned Cffu is used by others' codes.
+     * these conditions are difficult to guarantee in practice, especially when the returned Cffu is used by others' codes.
      *
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
@@ -1455,11 +1467,11 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# Advanced Methods(compose* and handle-like methods)
+    // region# Advanced Methods (compose* and handle-like methods)
     //
     // NOTE about advanced meaning:
-    //   - `compose` methods, input function argument return CompletionStage
-    //   - handle successful and failed result together(handle*/whenComplete*/peek*)
+    //   - `compose` methods, input function argument returns CompletionStage
+    //   - handle the successful and failed result together(handle*/whenComplete*/peek*)
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -1977,7 +1989,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * @throws CancellationException if the computation was cancelled
      * @throws CompletionException   if this future completed exceptionally
      *                               or a completion computation threw an exception
-     *                               or the wait timed out(with the {@code TimeoutException} as its cause)
+     *                               or the wait timed out (with the {@code TimeoutException} as its cause)
      * @see #orTimeout(long, TimeUnit)
      */
     @Blocking
@@ -2022,7 +2034,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * Returns the computed result, without waiting.
      * <p>
      * This method is for cases where the caller knows that the task has already completed normally,
-     * for example when filtering a stream of Future objects for the successful tasks
+     * for example, when filtering a stream of Future objects for the successful tasks
      * and using a mapping operation to obtain a stream of results.
      *
      * <pre>{@code results = futures.stream()
@@ -2031,7 +2043,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      *     .toList();}</pre>
      *
      * @return the computed result
-     * @throws IllegalStateException if the task has not completed or the task did not complete with a result
+     * @throws IllegalStateException if the task has not completed, or the task did not complete with a result
      */
     @Contract(pure = true)
     @Override
@@ -2167,7 +2179,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     @Contract("_, _ -> this")
     public final F completeAsync(Supplier<? extends T> supplier, Executor executor) {
         checkMinimalStage();
-        // NOTE: do NOT translate (ad hoc input)executor to screened executor; same as CompletableFuture.completeAsync
+        // NOTE: do NOT translate (ad hoc input) executor to screened executor; same as CompletableFuture.completeAsync
         CompletableFutureUtils.completeAsync(cf, supplier, cffuUnscreened(executor));
         return this_();
     }
@@ -2206,7 +2218,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     @Contract("_, _ -> this")
     public final F completeExceptionallyAsync(Supplier<? extends Throwable> supplier, Executor executor) {
         checkMinimalStage();
-        // NOTE: do NOT translate (ad hoc input)executor to screened executor; same as CompletableFuture.completeAsync
+        // NOTE: do NOT translate (ad hoc input) executor to screened executor; same as CompletableFuture.completeAsync
         CompletableFutureUtils.completeExceptionallyAsync(cf, supplier, cffuUnscreened(executor));
         return this_();
     }
@@ -2315,7 +2327,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      */
     @Contract(pure = true)
     public final F withCffuFactory(CffuFactory cffuFactory) {
-        // NOTE: Copy the underlying cf to ensure this method/with* methods create new Cffu instance with NEW cf instance,
+        // NOTE: Copy the underlying cf to ensure this method/with* methods create a new Cffu instance with NEW cf instance,
         //       preventing modifications/write methods to the new returned Cffu instance from affecting this Cffu in surprise
         return create(cffuFactory, isMinimalStage, copy0(cf));
     }
@@ -2401,7 +2413,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# Other Uncommon Methods(dangerous or trivial)
+    // region# Other Uncommon Methods (dangerous or trivial)
     //
     //  - dangerous
     //    - obtrudeValue(value)
@@ -2762,7 +2774,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * The tuple-based variants of methods from {@link Cffu}
      * for processing multiple asynchronous actions in a type-safe manner.
      * <p>
-     * While {@link Cffu} uses array-based methods with varargs, this class uses strongly-typed tuples
+     * While {@link Cffu} uses array-based methods with varargs, this class uses strongly typed tuples
      * containing 2 to 5 elements. The tuple approach provides better type safety when working with a fixed number of
      * heterogeneous actions, as type mismatches are caught at compile time rather than runtime.
      *

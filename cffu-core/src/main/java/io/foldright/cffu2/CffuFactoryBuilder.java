@@ -70,7 +70,7 @@ public final class CffuFactoryBuilder {
 
     /**
      * A poison object of type CffuFactory.
-     * because poison object is dysfunctional, in general you should NEVER use it in your application logic.
+     * Because the poison object is dysfunctional, in general you should NEVER use it in your application logic.
      */
     public static final CffuFactory POISON_FACTORY = _poisonObject();
 
@@ -82,7 +82,7 @@ public final class CffuFactoryBuilder {
 
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# Internal helpers(classes/methods/fields)
+    // region# Internal helpers (classes/methods/fields)
     ////////////////////////////////////////////////////////////////////////////////
 
     /**

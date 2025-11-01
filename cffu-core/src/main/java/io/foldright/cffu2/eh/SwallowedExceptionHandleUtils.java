@@ -31,7 +31,7 @@ import static java.util.Objects.requireNonNull;
 public final class SwallowedExceptionHandleUtils {
     /**
      * Handles all exceptions from multiple input {@code CompletionStage}s as swallowed exceptions,
-     * using {@link #cffuSwallowedExceptionHandler()} and calling back it with null attachment.
+     * using {@link #cffuSwallowedExceptionHandler()} and calling back it with {@code null} attachment.
      *
      * @param where the location where the exception occurs
      */
@@ -41,7 +41,7 @@ public final class SwallowedExceptionHandleUtils {
 
     /**
      * Handles all exceptions from multiple input {@code CompletionStage}s as swallowed exceptions,
-     * calling back the exceptionHandler with null attachment.
+     * calling back the exceptionHandler with {@code null} attachment.
      *
      * @param where            the location where the exception occurs
      * @param exceptionHandler the exception handler
@@ -75,7 +75,8 @@ public final class SwallowedExceptionHandleUtils {
 
     /**
      * Handles swallowed exceptions from multiple input {@code CompletionStage}s that are discarded (not propagated)
-     * by the output {@code CompletionStage}, using {@link #cffuSwallowedExceptionHandler()} and calling back it with null attachment.
+     * by the output {@code CompletionStage}, using {@link #cffuSwallowedExceptionHandler()}
+     * and calling it back with {@code null} attachment.
      *
      * @param where the location where the exception occurs
      */
@@ -86,7 +87,7 @@ public final class SwallowedExceptionHandleUtils {
 
     /**
      * Handles swallowed exceptions from multiple input {@code CompletionStage}s that are discarded (not propagated)
-     * by the output {@code CompletionStage}, calling back the exceptionHandler with null attachment.
+     * by the output {@code CompletionStage}, calling back the {@code exceptionHandler} with {@code null} attachment.
      *
      * @param where            the location where the exception occurs
      * @param exceptionHandler the exception handler

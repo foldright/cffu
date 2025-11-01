@@ -128,7 +128,7 @@ class CompletableFutureUtilsTest {
     }
 
     // endregion
-    // region## allOf* Methods(including mostSuccessResultsOf)
+    // region## allOf* Methods (including mostSuccessResultsOf)
 
     @Test
     void test_allOf_methods__success__trivial_case() throws Exception {

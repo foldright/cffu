@@ -16,7 +16,7 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 
 
 /**
- * This shows the usage of Multiple Actions methods(<b>M</b> Methods).
+ * This shows the usage of Multiple Actions methods (<b>M</b> Methods).
  * <p>
  * Run by maven: {@code
  * mvn -pl cffu-core test-compile exec:exec -Dexec.mainClass=io.foldright.demo.MultipleActionsDemo

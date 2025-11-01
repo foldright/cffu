@@ -33,7 +33,7 @@ public final class ExceptionInfo {
     /**
      * An optional attachment object that may contain additional context; can be {@code null}.
      * <p>
-     * The attachment object is provided through the attachments parameter of the handle methods in {@link SwallowedExceptionHandleUtils}.
+     * The attachment object is provided through the attachment parameter of the handle methods in {@link SwallowedExceptionHandleUtils}.
      *
      * @see SwallowedExceptionHandleUtils#handleAllSwallowedExceptions(String, Object[], ExceptionHandler, CompletionStage[])
      * @see SwallowedExceptionHandleUtils#handleSwallowedExceptions(String, Object[], ExceptionHandler, CompletionStage, CompletionStage[])

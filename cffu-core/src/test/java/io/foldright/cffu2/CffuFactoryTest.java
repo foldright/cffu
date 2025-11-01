@@ -173,7 +173,7 @@ class CffuFactoryTest {
     }
 
     // endregion
-    // region## allOf* Methods(including mostSuccessResultsOf)
+    // region## allOf* Methods (including mostSuccessResultsOf)
 
     @Test
     void test_allOf() throws Exception {

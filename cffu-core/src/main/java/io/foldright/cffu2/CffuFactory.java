@@ -566,7 +566,7 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Cffu that is completed when any of the given stage complete, with the same result.
+     * Returns a new Cffu that is completed when any of the given stages complete, with the same result.
      * Otherwise, if it completed exceptionally, the returned Cffu also does so, with a CompletionException
      * holding this exception as its cause. If no stages are provided, returns an incomplete Cffu.
      * <p>

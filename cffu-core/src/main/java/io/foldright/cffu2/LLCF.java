@@ -50,7 +50,7 @@ public final class LLCF {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * a naive black hole to prevent code elimination, more info see <a href=
+     * a naive black hole to prevent code elimination; For more information, see <a href=
      * "https://github.com/openjdk/jmh/blob/1.37/jmh-core/src/main/java/org/openjdk/jmh/infra/Blackhole.java">JMH black hole</a>
      */
     private static volatile int BLACK_HOLE = 0xCFF0;
@@ -117,7 +117,7 @@ public final class LLCF {
 
     /**
      * Forcefully converts CompletionStage array to CompletableFuture array, reuse cf instances as many as possible.
-     * This method is NOT type safe! More info see method {@link #f_toCf0(CompletionStage)}.
+     * This method is NOT type safe! For more information, see method {@link #f_toCf0(CompletionStage)}.
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] f_toCfArray0(CompletionStage<? extends T>[] stages) {
@@ -140,7 +140,7 @@ public final class LLCF {
 
     /**
      * Converts CompletionStage array to a CompletableFuture copy array. This method is NOT type safe!
-     * More info see method {@link #f_toCfCopy0(CompletionStage)}.
+     * For more information, see method {@link #f_toCfCopy0(CompletionStage)}.
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] f_toCfCopyArray0(CompletionStage<? extends T>[] stages) {
@@ -161,7 +161,7 @@ public final class LLCF {
 
     /**
      * Converts CompletionStage array to a non-minimal-stage CompletableFuture array,
-     * reuse cf instances as many as possible. More info see method {@link #toNonMinCf0(CompletionStage)}.
+     * reuse cf instances as many as possible. For more information, see method {@link #toNonMinCf0(CompletionStage)}.
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] toNonMinCfArray0(CompletionStage<? extends T>[] stages) {
@@ -183,7 +183,7 @@ public final class LLCF {
 
     /**
      * Converts CompletionStage array to a non-minimal-stage CompletableFuture copy array. This method is type safe.
-     * More info see method {@link #toNonMinCfCopy0(CompletionStage)}.
+     * For more information, see method {@link #toNonMinCfCopy0(CompletionStage)}.
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T>[] toNonMinCfCopyArray0(CompletionStage<? extends T>[] stages) {
@@ -329,7 +329,7 @@ public final class LLCF {
      * that employ the stage's default asynchronous execution facility),
      * <li>or custom "asynchronous execution" (via a supplied Executor).
      * </ul>
-     * <cite>— the javadoc of {@link CompletionStage}</cite>
+     * <cite>— the Javadoc of {@link CompletionStage}</cite>
      * </blockquote>
      * <p>
      * This {@code relayAsync0} method introduces the fourth way "relay async"
@@ -405,10 +405,10 @@ public final class LLCF {
      * Adds a suppressed exception to a target exception, first unwrapping the target exception
      * if it is a CompletionException or ExecutionException.
      * <p>
-     * Unwrapping target exception is necessary to ensures suppressed exceptions are properly preserved,
-     * because CompletableFuture internally wraps exceptions in CompletionException / ExecutionException, which can
+     * Unwrapping the target exception is necessary to ensures suppressed exceptions are properly preserved.
+     * Because CompletableFuture internally wraps exceptions in CompletionException / ExecutionException, which can
      * later be unwrapped and discarded during CompletableFuture processing (e.g. {@link CompletableFuture#exceptionNow}),
-     * potentially losing any suppressed exceptions that were attached to the wrapper.
+     * any suppressed exceptions attached to the wrapper are potentially lost.
      *
      * @param suppressed the exception to be added as a suppressed exception. If null, no action is taken
      * @param target     the target exception to add the suppressed exception to
@@ -435,7 +435,7 @@ public final class LLCF {
         // Implementation note: CompletableFuture API methods already call this method internally; Only underlying
         // methods that directly use an executor need to call this method (e.g. CFU#hopExecutorIfAtCfDelayerThread)
         //
-        // the below code is copied from CompletableFuture#screenExecutor with small adoption
+        // the below code is copied from CompletableFuture#screenExecutor with small adaptions
         if (!USE_COMMON_POOL && e == ForkJoinPool.commonPool()) return ASYNC_POOL;
         return requireNonNull(e, "executor is null");
     }
@@ -451,7 +451,7 @@ public final class LLCF {
      *
      * @see CompletableFutureUtils#defaultExecutor(CompletionStage)
      */
-    // field initialization code is copied from CompletableFuture#ASYNC_POOL with small adoption.
+    // field initialization code is copied from CompletableFuture#ASYNC_POOL with small adaptions.
     public static final Executor ASYNC_POOL = IS_JAVA9_PLUS
             ? completedFuture(null).defaultExecutor()
             : USE_COMMON_POOL ? ForkJoinPool.commonPool() : new ThreadPerTaskExecutor();

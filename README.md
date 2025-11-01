@@ -49,7 +49,7 @@ Welcome 👏💖
     - [2.1 support for returning overall results of multiple input `CF`s](#21-support-for-returning-overall-results-of-multiple-input-cfs)
     - [2.2 retrieve all results of multiple `CF`s with fail-fast support, instead of futile waiting that reduces business responsiveness](#22-retrieve-all-results-of-multiple-cfs-with-fail-fast-support-instead-of-futile-waiting-that-reduces-business-responsiveness)
     - [2.3 retrieve the first successful result from multiple `CF`s, instead of the first completed but exceptional `CF`](#23-retrieve-the-first-successful-result-from-multiple-cfs-instead-of-the-first-completed-but-exceptional-cf)
-    - [2.4 support for setting default business thread pool](#24-support-for-setting-default-business-thread-pool)
+    - [2.4 support for setting the default business thread pool](#24-support-for-setting-the-default-business-thread-pool)
     - [2.5 efficient and flexible concurrent execution strategies (`AllFailFast` / `AnySuccess` / `AllSuccess` / `MostSuccess`)](#25-efficient-and-flexible-concurrent-execution-strategies-allfailfast--anysuccess--allsuccess--mostsuccess)
     - [2.6 support for directly running multiple `action`s instead of wrapping them into `Completablefuture`s first](#26-support-for-directly-running-multiple-actions-instead-of-wrapping-them-into-completablefutures-first)
     - [2.7 Support for async parallel processing of collection data, instead of wrapping data and `Action` into `CompletableFuture`s first](#27-support-for-async-parallel-processing-of-collection-data-instead-of-wrapping-data-and-action-into-completablefutures-first)
@@ -148,7 +148,7 @@ and the industry has a large number of tools and frameworks available.
 > For a broad understanding of concurrency tools and frameworks, you can check out books like
 > "[Seven Concurrency Models in Seven Weeks](https://www.google.com/books/edition/Seven_Concurrency_Models_in_Seven_Weeks/TspYEQAAQBAJ)",
 > "[Programming Concurrency on the JVM](https://www.google.com/books/edition/Programming_Concurrency_on_the_JVM/xstYEQAAQBAJ)",
-> "[Learning Concurrent Programming in Scala (2nd Edition)](https://www.google.com/books/edition/Learning_Concurrent_Programming_in_Scala/D1QoDwAAQBAJ)".
+> "[Learning Concurrent Programming in Scala (Second Edition)](https://www.google.com/books/edition/Learning_Concurrent_Programming_in_Scala/D1QoDwAAQBAJ)".
 
 Among them, [`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)
 has its advantages:
@@ -206,7 +206,7 @@ Compared to calling static methods of the `CompletableFutureUtils` utility class
 If you don't want to introduce a new class (`Cffu` class) to your project and feel that
 this adds complexity, you can completely use the `cffu` library as a utility class:
 
-- Utility methods for optimizing `CompletableFuture` usage are very common in business projects
+- Utility methods for optimizing `CompletableFuture` usage are widespread in business projects
 - `CompletableFutureUtils` provides a series of practical, efficient, safe, and reliable utility methods
 - Some `cffu` features are not provided in this usage mode (and no suitable implementation approach has been found)  
   Such as support for setting default business thread pools and forbidding `obtrude` methods
@@ -218,7 +218,7 @@ you can migrate existing code that uses the `CompletableFuture` class to the `Cf
 
 1\) If you can modify code that uses `CompletableFuture`
 
-Migrating to the `Cffu` class involves 2 simple changes:
+Migrating to the `Cffu` class involves two simple changes:
 
 - In type declaration places, change the `CompletableFuture` class to the `Cffu` class
 - In `CompletableFuture` static method call places, change the class name `CompletableFuture` to a `cffuFactory` instance
@@ -285,10 +285,10 @@ Using these methods to get overall execution results of input `CF`s:
   you can continue chaining non-blocking operations,
   naturally reducing the use of blocking read methods (like `join` / `get`)
   and minimizing deadlock risk in business logic
-- Avoids complex thread safety issues and logic errors of
+- Avoids complex thread safety issues and logic errors by 
   directly implementing multithreaded read-write logic in business logic
 - Using "reliably implemented and tested" library-provided concurrency features
-  instead of implementing them directly is a best practice 🏆✅
+  instead of implementing them directly is the best practice 🏆✅
 
 Example code:
 
@@ -299,7 +299,7 @@ public class AllResultsOfDemo {
     CompletableFuture<Integer> cf2 = CompletableFuture.completedFuture(42);
 
     CompletableFuture<Void> all2 = CompletableFuture.allOf(cf1, cf2);
-    // result type is Void!
+    // the result type is Void!
     //
     // the result can be got by input argument `cf1.get()`, but it's cumbersome.
     // so we can see a lot of util methods to enhance `allOf` with the results in our project.
@@ -413,7 +413,7 @@ public class AnySuccessDemo {
 > \# Complete runnable demo code can be found at
 > [`AnySuccessDemo.java`](cffu-core/src/test/java/io/foldright/demo/AnySuccessDemo.java).
 
-### 2.4 support for setting default business thread pool
+### 2.4 support for setting the default business thread pool
 
 The default thread pool used by `CompletableFuture` async execution (aka. `*Async` methods)
 is `ForkJoinPool.commonPool()`; using this default thread pool in business is very dangerous❗
@@ -787,7 +787,7 @@ You can refer to:
 
 Orchestration methods refer to **methods with multiple inputs**,
 where inputs are **logic that needs to be executed concurrently**.
-The `cffu` library supports 3 forms of inputs:
+The `cffu` library supports three forms of inputs:
 
 1. Multiple `Action`s
 2. Multiple data (processed by the same `Action`)
@@ -803,8 +803,8 @@ For different concurrent execution strategies in orchestration, see the document
 
 1\) **Multiple `Action` Inputs**
 
-Supports 3 parameter types for representing multiple `Action`s: varargs array, collection, and `Tuple`
-(different generic parameter types for multiple inputs). Corresponding to 3 groups of variant methods:
+Supports 3-parameter types for representing multiple `Action`s: varargs array, collection, and `Tuple`
+(different generic parameter types for multiple inputs). Corresponding to three groups of variant methods:
 
 - Multiple parameter varargs input, input type is **array type**
   - Corresponding method groups:
@@ -821,7 +821,7 @@ Supports 3 parameter types for representing multiple `Action`s: varargs array, c
     - `CfTupleUtils.MTuple*`, aka. `Multi-Actions-Tuple(MTuple*) Methods`
     - `CfTupleUtils.thenMTuple*`, aka. `Then-Multi-Actions-Tuple(thenMTuple*) Methods`
 
-multiple `Action`s perform asynchronous parallel processing on (single same) data, aka. Multiple Instruction, Single Data (`MISD`).
+Multiple `Action`s perform asynchronous parallel processing on (single same) data, aka. Multiple Instruction, Single Data (`MISD`).
 
 2\) **Multiple Data Inputs**
 
@@ -833,23 +833,23 @@ Corresponding method groups:
 - `CfParallelUtils.thenPar*` methods, aka. `Then-Multi-Data(thenPar*) Methods`
 
 In business logic, collections should be used to hold multiple data rather than arrays;
-if business logic holds multiple data in array type, it can be easily converted to collection type,
+if business logic holds multiple data in array type, it can be easily converted to the collection type,
 such as through the method [`Arrays.asList(...)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Arrays.html#asList(T...)).
 The `cffu` library no longer provides method variants with multiple parameter varargs array type inputs.
 
 3\) **Multiple `CompletableFuture` Inputs**
 
-Like multiple `Action` inputs, supports 3 parameter types for representing multiple `CompletableFuture`s:
+Like multiple `Action` inputs, supports 3-parameter types for representing multiple `CompletableFuture`s:
 varargs array, collection, and `Tuple` (different generic parameter types for multiple inputs).
-Corresponding to 3 groups of variant methods:
+Corresponding to three groups of variant methods:
 
-- Multiple parameter varargs input, input type is array type
+- Multiple parameter varargs input, input type is the array type
   - Corresponding method group `CompletableFutureUtils.*Of`
 - Collection input, input type is `Iterable`
   - Corresponding method group `CfIterableUtils.*Of`
   - The method names and functionality of this group are the same as the "multiple parameter varargs input" above,
     but the parameter types for multiple `CompletableFuture` inputs are different (`Iterable` vs. array)
-- Heterogeneous inputs with different types, input type is `Tuple`
+- Heterogeneous inputs with different types, the input type is `Tuple`
   - Corresponding method group `CfTupleUtils.*TupleOf`
 
 ### 3.2 best practices for selecting orchestration methods 🏆

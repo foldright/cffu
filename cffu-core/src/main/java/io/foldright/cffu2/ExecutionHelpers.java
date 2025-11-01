@@ -3,7 +3,7 @@ package io.foldright.cffu2;
 // =============================================================================
 //# delay execution helper classes
 //
-//  the below code is copied from CompletableFuture with small adoption
+//  the below code is copied from CompletableFuture with small adaptions
 // =============================================================================
 
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -22,7 +22,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * Singleton delay scheduler, used only for starting and cancelling tasks
  * <p>
- * code is copied from {@link CompletableFuture.Delayer} with small adoption.
+ * code is copied from {@link CompletableFuture.Delayer} with small adaptions.
  */
 @SuppressWarnings("JavadocReference")
 final class Delayer {
@@ -36,7 +36,7 @@ final class Delayer {
     }
 
     /**
-     * @return a Future can be used to cancel the delayed task(timeout CF)
+     * @return a Future can be used to cancel the delayed task (timeout CF)
      * @see FutureCanceller
      */
     static ScheduledFuture<?> delayToTimeoutCf(CompletableFuture<?> cf, long delay, TimeUnit unit) {
@@ -44,7 +44,7 @@ final class Delayer {
     }
 
     /**
-     * @return a Future can be used to cancel the delayed task(complete CF)
+     * @return a Future can be used to cancel the delayed task (complete CF)
      * @see FutureCanceller
      */
     static <T> ScheduledFuture<?> delayToCompleteCf(
@@ -71,7 +71,7 @@ final class Delayer {
     ));
 
     /**
-     * Holds {@link #delayer} scheduler as field of static inner class for lazy loading(init only when needed).
+     * Holds {@link #delayer} scheduler as field of static inner class for lazy loading (init only when needed).
      * <p>
      * The lazy loading is need because {@link #atCfDelayerThread()} method of
      * class {@link Delayer} is used on {@code Java 9+}.
@@ -101,7 +101,7 @@ final class Delayer {
 /**
  * An executor wrapper with delayed execution.
  * <p>
- * code is copied from {@link CompletableFuture.DelayedExecutor} with small adoption.
+ * code is copied from {@link CompletableFuture.DelayedExecutor} with small adaptions.
  */
 @SuppressWarnings("JavadocReference")
 final class DelayedExecutor implements Executor {
@@ -126,9 +126,9 @@ final class DelayedExecutor implements Executor {
 // =============================================================================
 
 /**
- * Action to submit task(Runnable) to executor.
+ * Action to submit the task (Runnable) to executor.
  * <p>
- * code is copied from {@link CompletableFuture.TaskSubmitter} with small adoption.
+ * code is copied from {@link CompletableFuture.TaskSubmitter} with small adaptions.
  */
 @SuppressWarnings("JavadocReference")
 final class TaskSubmitter implements Runnable {
@@ -149,7 +149,7 @@ final class TaskSubmitter implements Runnable {
 /**
  * Action to cf.completeExceptionally with TimeoutException.
  * <p>
- * code is copied from {@link CompletableFuture.Timeout} with small adoption.
+ * code is copied from {@link CompletableFuture.Timeout} with small adaptions.
  */
 @SuppressWarnings("JavadocReference")
 final class CfTimeout implements Runnable {
@@ -166,7 +166,7 @@ final class CfTimeout implements Runnable {
 /**
  * Action to complete cf.
  * <p>
- * code is copied from {@link CompletableFuture.DelayedCompleter} with small adoption.
+ * code is copied from {@link CompletableFuture.DelayedCompleter} with small adaptions.
  */
 @SuppressWarnings("JavadocReference")
 final class CfCompleter<T> implements Runnable {
@@ -185,9 +185,9 @@ final class CfCompleter<T> implements Runnable {
 }
 
 /**
- * Action to cancel unneeded scheduled task by Future (for example timeouts).
+ * Action to cancel the unneeded scheduled task by Future (for example, timeouts).
  * <p>
- * code is copied from {@link CompletableFuture.Canceller} with small adoption.
+ * code is copied from {@link CompletableFuture.Canceller} with small adaptions.
  *
  * @see Delayer#delay(Runnable, long, TimeUnit)
  * @see Delayer#delayToTimeoutCf(CompletableFuture, long, TimeUnit)
@@ -201,7 +201,7 @@ final class FutureCanceller implements BiConsumer<Object, Throwable> {
 
     /**
      * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout(long, TimeUnit)}
-     * leaks if the future completes exceptionally, more info see
+     * leaks if the future completes exceptionally; For more information, see
      * <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
      * <a href="https://github.com/openjdk/jdk/pull/13059">PR review openjdk/jdk/13059</a>
      * and <a href="https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a">JDK bugfix commit</a>.
@@ -213,7 +213,7 @@ final class FutureCanceller implements BiConsumer<Object, Throwable> {
 }
 
 /**
- * code is copied from {@link CompletableFuture.AsyncSupply} with small adoption.
+ * code is copied from {@link CompletableFuture.AsyncSupply} with small adaptions.
  */
 @SuppressWarnings("JavadocReference")
 @SuppressFBWarnings("SE_BAD_FIELD")
@@ -258,7 +258,7 @@ final class CfCompleterBySupplier<T> extends ForkJoinTask<Void>
 }
 
 /**
- * code is copied from {@link CompletableFuture.AsyncSupply} with small adoption.
+ * code is copied from {@link CompletableFuture.AsyncSupply} with small adaptions.
  */
 @SuppressWarnings("JavadocReference")
 @SuppressFBWarnings("SE_BAD_FIELD")

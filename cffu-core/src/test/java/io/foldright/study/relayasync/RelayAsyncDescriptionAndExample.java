@@ -20,7 +20,7 @@ import static io.foldright.test_utils.TestUtils.sleep;
  * that employ the stage's default asynchronous execution facility),
  * <li>or custom "asynchronous execution" (via a supplied Executor).
  * </ul>
- * <cite>— the javadoc of {@link CompletionStage}</cite>
+ * <cite>— the Javadoc of {@link CompletionStage}</cite>
  * </blockquote>
  *
  * @see LLCF#relayAsync0

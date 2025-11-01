@@ -159,7 +159,7 @@ class CheckMinStageRuntimeTypeTests : AnnotationSpec() {
         CfTupleUtils.mSupplyTupleAsync({ n }, { s }, { d }, { n }, { s }, testExecutor)
             .shouldNotBeMinimalStage()
 
-        // allOf* Methods(including mostSuccessResultsOf)
+        // allOf* Methods (including mostSuccessResultsOf)
 
         CompletableFutureUtils.allResultsFailFastOf<String>().shouldNotBeMinimalStage()
         CompletableFutureUtils.allResultsFailFastOf(cfN).shouldNotBeMinimalStage()
@@ -620,7 +620,7 @@ class CheckMinStageRuntimeTypeTests : AnnotationSpec() {
         testCffuFac.tupleOps().mSupplyTupleAsync({ n }, { s }, { d }, { n }, { s }, testFjExecutor)
             .shouldNotBeMinimalStage()
 
-        // allOf* Methods(including mostSuccessResultsOf)
+        // allOf* Methods (including mostSuccessResultsOf)
 
         testCffuFac.allResultsFailFastOf<String>().shouldNotBeMinimalStage()
         testCffuFac.allResultsFailFastOf(cfN).shouldNotBeMinimalStage()

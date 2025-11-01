@@ -29,7 +29,7 @@ import static java.util.Objects.requireNonNull;
  * This Utility class provides tuple-based variants of methods from {@link CompletableFutureUtils}
  * for processing and composing multiple asynchronous actions and CompletableFutures in a type-safe manner.
  * <p>
- * While {@link CompletableFutureUtils} uses array-based methods with varargs, this class uses strongly-typed tuples
+ * While {@link CompletableFutureUtils} uses array-based methods with varargs, this class uses strongly typed tuples
  * containing 2 to 5 elements. The tuple approach provides better type safety when working with a fixed number of
  * heterogeneous actions or CompletableFutures, as type mismatches are caught at compile time rather than runtime.
  *
@@ -431,8 +431,8 @@ public final class CfTupleUtils {
 
     private static <T> CompletableFuture<T> f_mostSuccessTupleOf0(
             Executor executorWhenTimeout, long timeout, TimeUnit unit, CompletionStage<?>[] stages) {
-        // 1. MUST be non-minimal-stage CF instances in order to read results(`getSuccessNow`), otherwise UnsupportedOpException.
-        // 2. SHOULD copy input cfs(by calling `exceptionally` method) to avoid memory leaks,
+        // 1. MUST be non-minimal-stage CF instances to read results(`getSuccessNow`), otherwise UnsupportedOpException.
+        // 2. SHOULD copy input cfs (by calling `exceptionally` method) to avoid memory leaks,
         //    otherwise all input cfs would be retained until output cf completes.
         CompletableFuture<?>[] cfArray = mapArray(stages, CompletableFuture[]::new,
                 s -> LLCF.toNonMinCf0(s).exceptionally(v -> null));
