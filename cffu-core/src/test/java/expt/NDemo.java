@@ -6,11 +6,12 @@ import io.foldright.cffu2.LLCF;
 import io.foldright.cffu2.internal.CommonUtils;
 import io.foldright.cffu2.tuple.Tuple2;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.*;
 
 import static io.foldright.cffu2.internal.CommonUtils.toArray;
-import static java.lang.System.currentTimeMillis;
 
 
 public class NDemo {
@@ -22,18 +23,18 @@ public class NDemo {
         }).join();
 
         final ArrayList<Runnable> tasks = CommonUtils.arrayList(13, i -> () -> {
-//             logWithTimeAndThread("task %2s begin", i);
+            logWithTimeAndThread("task %2s begin", i);
             final int millis = 200 + ThreadLocalRandom.current().nextInt(800);
             sleep(millis);
-            logWithTimeAndThread("task %2s end, sleep %sms", i, millis);
+//             logWithTimeAndThread("task %2s end, sleep %sms", i, millis);
         });
-
-        logWithTimeAndThread("CfIterableUtils.mRunAsyncN2");
-        CfIterableUtils.mRunAsyncN2(tasks, 3).join();
-        ForkJoinPool.commonPool().awaitQuiescence(3, TimeUnit.SECONDS);
 
         logWithTimeAndThread("CfIterableUtils.mRunAsyncN");
         CfIterableUtils.mRunAsyncN(tasks, 3).join();
+        ForkJoinPool.commonPool().awaitQuiescence(3, TimeUnit.SECONDS);
+
+        logWithTimeAndThread("CfIterableUtils.mRunAsyncN2");
+        CfIterableUtils.mRunAsyncN2(tasks, 3).join();
         ForkJoinPool.commonPool().awaitQuiescence(3, TimeUnit.SECONDS);
 
         logWithTimeAndThread("N3");
@@ -136,9 +137,12 @@ public class NDemo {
         }
     }
 
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+
     private static void logWithTimeAndThread(String format, Object... args) {
-        String msg = String.format(format, args);
-        System.out.printf("%tF %<tT.%<tL |%s| %s%n", currentTimeMillis(), Thread.currentThread().getName(), msg);
+        final LocalDateTime now = LocalDateTime.now();
+        System.out.printf("%s |%s| %s%n", dateTimeFormatter.format(now),
+                Thread.currentThread().getName(), String.format(format, args));
     }
 }
 
