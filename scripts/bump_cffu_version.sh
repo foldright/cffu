@@ -35,15 +35,15 @@ myXargs() {
 # biz logic
 ################################################################################
 
-HEAD_COMMIT_ID=$(git rev-parse HEAD)
-readonly HEAD_COMMIT_ID REL_VERSION_INFO_FILE="next.release.version.info.$HEAD_COMMIT_ID"
+if [ "${1:-}" = --version-from-revapi ]; then
+  rm -rf cffu2.maven.metadata.tmp
+  scripts/run_api_checker.sh --skip-api-check
 
-if [ -f "$REL_VERSION_INFO_FILE" ]; then
+  HEAD_COMMIT_ID=$(git rev-parse HEAD)
+  readonly HEAD_COMMIT_ID
   # shellcheck disable=SC1090
-  source "$REL_VERSION_INFO_FILE"
-fi
+  source "next.release.version.info.$HEAD_COMMIT_ID"
 
-if [ -n "${API_CHECKER_NEXT_REL_VERSION:-}" ]; then
   readonly OLD_VERSION=$API_CHECKER_LATEST_REL_VERSION
   readonly NEW_VERSION=$API_CHECKER_NEXT_REL_VERSION
 else

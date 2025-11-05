@@ -30,9 +30,15 @@ jvu::switch_to_jdk 21
 # find released versions
 ########################################
 
-MAVEN_METADATA=$(curl -s https://repo1.maven.org/maven2/io/foldright/cffu2/maven-metadata.xml)
+readonly LOCAL_MAVEN_METADATA_FILE=cffu2.maven.metadata.tmp
+if [ -r "$LOCAL_MAVEN_METADATA_FILE" ]; then
+  MAVEN_METADATA=$(<"$LOCAL_MAVEN_METADATA_FILE")
+else
+  MAVEN_METADATA=$(curl -s https://repo1.maven.org/maven2/io/foldright/cffu2/maven-metadata.xml | tee "$LOCAL_MAVEN_METADATA_FILE")
+fi
 readonly MAVEN_METADATA
-cu::blue_echo "cat maven-metadata.xml:"
+
+cu::blue_echo "content of maven-metadata.xml:"
 echo "$MAVEN_METADATA"
 
 REL_VERSIONS=$(awk -F'</?version>' '/2\.[0-9]+\.[0-9]+<\/version>/{print $2}' <<<"$MAVEN_METADATA" | sort -V)
