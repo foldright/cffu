@@ -269,9 +269,9 @@ public final class LLCF {
         return (v, ex) -> {
             try {
                 action.accept(v, ex);
-            } catch (Throwable e) {
-                safeAddSuppressedEx(ex, e);
-                logUncaughtException(ERROR, where, e);
+            } catch (Throwable e1) {
+                safeAddSuppressedEx(ex, e1);
+                logUncaughtException(ERROR, where, e1);
             }
         };
     }

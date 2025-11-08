@@ -18,6 +18,7 @@ import static io.foldright.cffu2.LLCF.*;
 import static io.foldright.cffu2.eh.SwallowedExceptionHandleUtils.handleAllSwallowedExceptions;
 import static io.foldright.cffu2.eh.SwallowedExceptionHandleUtils.handleSwallowedExceptions;
 import static io.foldright.cffu2.internal.CommonUtils.*;
+import static java.lang.Thread.currentThread;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
@@ -2685,7 +2686,7 @@ public final class CompletableFutureUtils {
                 }
             }
         } finally {
-            if (interrupted) Thread.currentThread().interrupt();
+            if (interrupted) currentThread().interrupt();
         }
     }
 
@@ -2723,7 +2724,7 @@ public final class CompletableFutureUtils {
                 }
             }
         } finally {
-            if (interrupted) Thread.currentThread().interrupt();
+            if (interrupted) currentThread().interrupt();
         }
     }
 
@@ -2764,7 +2765,7 @@ public final class CompletableFutureUtils {
                 }
             }
         } finally {
-            if (interrupted) Thread.currentThread().interrupt();
+            if (interrupted) currentThread().interrupt();
         }
     }
 

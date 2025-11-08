@@ -167,9 +167,9 @@ public final class SwallowedExceptionHandleUtils {
     private static void safeHandle(ExceptionInfo info, ExceptionHandler handler) {
         try {
             handler.handle(info);
-        } catch (Throwable e) {
-            safeAddSuppressedEx(info.exception, e);
-            logUncaughtException(ERROR, "exceptionHandler(" + handler.getClass() + ")", e);
+        } catch (Throwable ex) {
+            safeAddSuppressedEx(info.exception, ex);
+            logUncaughtException(ERROR, "exceptionHandler(" + handler.getClass() + ")", ex);
         }
     }
 
