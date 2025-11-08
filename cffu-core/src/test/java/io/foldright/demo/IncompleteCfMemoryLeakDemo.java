@@ -27,7 +27,7 @@ public class IncompleteCfMemoryLeakDemo {
 }
 
 /*
-Output Sample(set `-Xmx256m -Xms256m` JVM option):
+Output Sample (set `-Xmx256m -Xms256m` JVM option):
 
 start IncompleteCfMemoryLeakDemo
 loop    0
