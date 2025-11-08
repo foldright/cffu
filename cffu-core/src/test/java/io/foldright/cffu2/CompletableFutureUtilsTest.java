@@ -30,7 +30,7 @@ import static java.util.function.Function.identity;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@SuppressWarnings("RedundantThrows")
+@SuppressWarnings({"RedundantThrows", "ThrowableNotThrown"})
 class CompletableFutureUtilsTest {
     // region# CF Factory Methods(including static methods of CF)
 
@@ -735,6 +735,12 @@ class CompletableFutureUtilsTest {
         final ExecutionException ee = assertThrowsExactly(ExecutionException.class,
                 () -> fromSyncCall(() -> {throw rte;}).get());
         assertSame(rte, ee.getCause());
+
+        final InterruptedException ie = new InterruptedException("foo");
+        final ExecutionException ee2 = assertThrowsExactly(ExecutionException.class,
+                () -> fromSyncCall(() -> {throw ie;}).get());
+        assertSame(ie, ee2.getCause());
+        assertTrue(Thread.interrupted());
     }
 
     // endregion
