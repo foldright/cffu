@@ -500,6 +500,10 @@
 						<failOnMissingConfigurationFiles>true</failOnMissingConfigurationFiles>
 						<checkDependencies>false</checkDependencies>
 						<analysisConfiguration>
+							<revapi.versions>
+								<!-- https://revapi.org/revapi-basic-features/0.13.1/versions.html -->
+								<enabled>true</enabled>
+							</revapi.versions>
 							<!--
 								Matching and Filtering Java Elements
 									how the java element matcher can be used with revapi.differences and revapi.filter
