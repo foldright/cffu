@@ -62,10 +62,10 @@ mvu::mvn_cmd -Dmaven.resources.skip -Dmaven.main.skip -Dmaven.compile.skip -Dkot
   -pl '.,cffu-core,cffu-ttl-executor-wrapper' \
   -Drevapi.oldVersion="$LATEST_REL_VERSION" revapi:update-release-properties
 
-cu::blue_echo "release.properties:"
+cu::head_line_echo "release.properties:"
 cat release.properties
 
-NEXT_REL_VERSION=$(awk -F'[=-]' '/developmentVersion=/ {print $2}' release.properties)
+NEXT_REL_VERSION=$(awk -F'[=-]' '/^releaseVersion=/ {print $2}' release.properties)
 readonly NEXT_REL_VERSION
 cu::yellow_echo "Next release version: $NEXT_REL_VERSION"
 
@@ -73,15 +73,16 @@ printf "API_CHECKER_NEXT_REL_VERSION=%s\nAPI_CHECKER_LATEST_REL_VERSION=%s\n" \
   "$NEXT_REL_VERSION" "$LATEST_REL_VERSION" >"next.release.version.info.$HEAD_COMMIT_ID"
 
 ########################################
-# check API to all released GA versions
+# check API to released GA versions
 ########################################
 
-if [ "${1:-}" = "--skip-api-check" ]; then
-  exit
+CHECK_VERSIONS=$REL_VERSIONS
+if [ "${1:-}" = "--only-latest-version" ]; then
+  CHECK_VERSIONS=$LATEST_REL_VERSION
 fi
 
 cu::head_line_echo "Check API compatibility by revapi:check"
-for v in $REL_VERSIONS; do
+for v in $CHECK_VERSIONS; do
   cu::blue_echo "Check API compatibility with released GA version $v"
   mvu::mvn_cmd -pl cffu-core,cffu-ttl-executor-wrapper \
     -Drevapi.oldVersion="$v" revapi:check
