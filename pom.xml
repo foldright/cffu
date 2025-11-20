@@ -4,7 +4,7 @@
 
 	<groupId>io.foldright</groupId>
 	<artifactId>cffu2-parent</artifactId>
-	<version>2.x-SNAPSHOT</version>
+	<version>2.0.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
 	<description>cffu parent</description>
@@ -842,7 +842,7 @@
 					About package-list vs.element-list
 						Can't link to JDK10 in Javadoc comments
 							https://stackoverflow.com/a/49498219/922688
-						Missing javadoc/package-list for release 5.1
+						Missing Javadoc/package-list for release 5.1
 							https://github.com/gradle/gradle/issues/8183
 							https://github.com/gradle/gradle/commit/5e88351dd456a5252d21f3a7ad25bff1b62a2fd2
 					Using the linkoffline Option
@@ -875,7 +875,7 @@
 							<detectOfflineLinks>false</detectOfflineLinks>
 							<additionalOptions>
 								<!--
-									Maven javadoc Search redirects to "/undefined/.." url - Stack Overflow
+									Maven Javadoc Search redirects to "/undefined/.." url - Stack Overflow
 									https://stackoverflow.com/questions/52326318
 								-->
 								<additionalOption>-html5</additionalOption>

@@ -21,9 +21,7 @@ public enum CffuState {
      */
     RUNNING {
         @Override
-        public Future.State toFutureState() {
-            return Future.State.RUNNING;
-        }
+        public Future.State toFutureState() {return Future.State.RUNNING;}
     },
     /**
      * The task completed with a result.
@@ -34,9 +32,7 @@ public enum CffuState {
      */
     SUCCESS {
         @Override
-        public Future.State toFutureState() {
-            return Future.State.SUCCESS;
-        }
+        public Future.State toFutureState() {return Future.State.SUCCESS;}
     },
     /**
      * The task completed with an exception.
@@ -47,9 +43,7 @@ public enum CffuState {
      */
     FAILED {
         @Override
-        public Future.State toFutureState() {
-            return Future.State.FAILED;
-        }
+        public Future.State toFutureState() {return Future.State.FAILED;}
     },
     /**
      * The task was cancelled.
@@ -59,9 +53,7 @@ public enum CffuState {
      */
     CANCELLED {
         @Override
-        public Future.State toFutureState() {
-            return Future.State.CANCELLED;
-        }
+        public Future.State toFutureState() {return Future.State.CANCELLED;}
     },
 
     ;

@@ -837,7 +837,7 @@ public final class CompletableFutureUtils {
         try {
             return completedFuture(callable.call());
         } catch (Throwable ex) {
-            if(ex instanceof InterruptedException) currentThread().interrupt();
+            if (ex instanceof InterruptedException) currentThread().interrupt();
             return failedFuture(ex);
         }
     }
