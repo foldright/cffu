@@ -37,7 +37,7 @@ myXargs() {
 
 if [ "${1:-}" = --version-from-revapi ]; then
   rm -rf cffu2.maven.metadata.tmp
-  scripts/run_api_checker.sh --skip-api-check
+  scripts/run_api_checker.sh --only-latest-version
 
   HEAD_COMMIT_ID=$(git rev-parse HEAD)
   readonly HEAD_COMMIT_ID
@@ -54,21 +54,12 @@ else
   readonly NEW_VERSION=$2
 fi
 
-isValidVersion "$OLD_VERSION" || cu::die "invalid old version: $1"
-isValidVersion "$NEW_VERSION" || cu::die "invalid new version: $2"
+isValidVersion "$OLD_VERSION" || cu::die "invalid old version: $OLD_VERSION"
+isValidVersion "$NEW_VERSION" || cu::die "invalid new version: $NEW_VERSION"
 
-#readonly ALPHA_SUFFIX=-Alpha
-#[[ $NEW_VERSION != *"$ALPHA_SUFFIX" ]] || cu::die "invalid new version, must NOT end with $ALPHA_SUFFIX: $2"
-#readonly NEW_ALPHA_VERSION=$2$ALPHA_SUFFIX
-
-#cu::log_then_run sed -i -r \
-#  's#(\s*).*UPDATE to Alpha version WHEN RELEASE.*#\1<version>'"$NEW_ALPHA_VERSION"'</version>#' \
-#  pom.xml ./*/pom.xml ./*/*/pom.xml
+cu::log_then_run scripts/bump_proj_pom_versions.sh "$NEW_VERSION"
 
 readonly NON_VERSION_CHAR_REGEX='[^-.[:alnum:]]'
-
-SEARCH_PATTERN="(^|$NON_VERSION_CHAR_REGEX)($(escapeLiteralForRegex "2.x-SNAPSHOT")|$(escapeLiteralForRegex "$OLD_VERSION"))($NON_VERSION_CHAR_REGEX|$)"
-readonly SEARCH_PATTERN
-
-ignoreFailRg "$SEARCH_PATTERN" -l -g '!scripts/' |
+SEARCH_PATTERN="(^|$NON_VERSION_CHAR_REGEX)($(escapeLiteralForRegex "$OLD_VERSION"))($NON_VERSION_CHAR_REGEX|$)"
+ignoreFailRg "$SEARCH_PATTERN" -l -g '!scripts/' -g '!pom.xml' |
   myXargs sed -i -r "s#$SEARCH_PATTERN#\1$NEW_VERSION\3#g"
