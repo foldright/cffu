@@ -201,6 +201,13 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
 				<version>3.20.0</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.vavr</groupId>
+				<artifactId>vavr</artifactId>
+				<version>0.10.7</version>
+				<scope>test</scope>
 			</dependency>
 
 			<!-- logging libs -->
