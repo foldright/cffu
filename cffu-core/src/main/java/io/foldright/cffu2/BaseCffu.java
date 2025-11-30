@@ -8,7 +8,6 @@ import io.foldright.cffu2.tuple.Tuple2;
 import io.foldright.cffu2.tuple.Tuple3;
 import io.foldright.cffu2.tuple.Tuple4;
 import io.foldright.cffu2.tuple.Tuple5;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.Contract;
 
@@ -25,8 +24,8 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * Base class providing shared functionality for {@link Cffu} and {@link MCffu} subclass implementations.
- * For application code, should always use type {@link Cffu} or {@link MCffu} rather than this type {@link BaseCffu}.
+ * Base class that provides shared functionality for {@link Cffu} and {@link MCffu} implementations.
+ * Application code should use {@link Cffu} or {@link MCffu} types directly rather than this base type {@link BaseCffu}.
  *
  * @param <T> The result type returned by this future's {@code join}
  * @param <F> the type of the implementation {@code BaseCffu}
@@ -35,7 +34,6 @@ import static java.util.Objects.requireNonNull;
  * @see Cffu
  * @see MCffu
  */
-@ApiStatus.Internal
 public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     // region# Internal constructor and fields
