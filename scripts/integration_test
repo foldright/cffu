@@ -38,7 +38,7 @@ readonly JDK_VERSIONS=(
 readonly MVU_MVN_OPTS=(
   "${MVU_DEFAULT_MVN_OPTS[@]}"
   -DperformRelease -Dcffu.exception.log.format=short
-  -P!gen-sign -P!enforce-project-version-when-release
+  -P!gen-sign -P!enforce-release-pom-version-when-perform-release
   ${CI_MORE_MVN_OPTS:+${CI_MORE_MVN_OPTS}}
   dependency:tree
 )
@@ -54,6 +54,17 @@ cd "$PROJECT_ROOT"
 jvu::switch_to_jdk "$default_build_jdk_version"
 
 cu::log_then_run scripts/gen_CffuApiCompatibilityTest.sh
+
+GIT_TAGS_OF_HEAD=$(git tag --points-at HEAD)
+GIT_CURRENT_BRANCH=$(git branch --show-current)
+readonly GIT_TAGS_OF_HEAD GIT_CURRENT_BRANCH
+if [ -n "$GIT_TAGS_OF_HEAD" ]; then
+  cu::yellow_echo "ENFORCE release pom version because on git tag($GIT_TAGS_OF_HEAD)!"
+  export ENFORCE_RELEASE_POM_VERSION=true
+elif [[ $GIT_CURRENT_BRANCH =~ (^|/)hotfix-|-hotfix$ ]]; then
+  cu::yellow_echo "ENFORCE release pom version because on hotfix branch($GIT_CURRENT_BRANCH)!"
+  export ENFORCE_RELEASE_POM_VERSION=true
+fi
 
 cu::head_line_echo "build and test with Java $default_build_jdk_version: $JAVA_HOME"
 mvu::mvn_cmd clean install -Dcffu.exception.log.format=

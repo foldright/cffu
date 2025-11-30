@@ -778,7 +778,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>enforce-project-version-when-release</id>
+			<id>enforce-release-pom-version-when-perform-release</id>
 			<activation>
 				<property>
 					<name>performRelease</name>
@@ -790,12 +790,12 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>enforce-project-version-when-github-actions-triggered-by-tag</id>
+			<id>enforce-release-pom-version</id>
 			<activation>
 				<property>
 					<!-- https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables -->
-					<name>env.GITHUB_REF_TYPE</name>
-					<value>tag</value>
+					<name>env.ENFORCE_RELEASE_POM_VERSION</name>
+					<value>true</value>
 				</property>
 			</activation>
 			<properties>

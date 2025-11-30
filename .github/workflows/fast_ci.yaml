@@ -25,4 +25,4 @@ jobs:
           distribution: microsoft
           cache: maven
       - name: Build and test with Java 21
-        run: ./mvnw -V --no-transfer-progress clean install
+        run: ./mvnw -V --no-transfer-progress -D enforcer.skip clean install
