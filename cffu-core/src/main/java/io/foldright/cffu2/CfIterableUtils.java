@@ -344,11 +344,7 @@ public final class CfIterableUtils {
     // endregion
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# CF Instance Methods
-    ////////////////////////////////////////////////////////////////////////////////
-
-    ////////////////////////////////////////////////////////////
-    // region## Then-Multi-Actions(thenM*) Methods
+    // region# CF Instance Methods, Then-Multi-Actions(thenM*) Methods
     //
     //    - thenMApply* (Iterable<Function>: T -> U)       -> CompletableFuture<List<U>>
     //    - thenMAccept*(Iterable<Consumer>: T -> Void)    -> CompletableFuture<Void>
@@ -576,7 +572,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#thenMRunFailFastAsync(CompletableFuture, Runnable...)}.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunFailFastAsync(
             CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions) {
         return thenMRunFailFastAsync(cfThis, actions, defaultExecutor(cfThis));
@@ -585,7 +581,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#thenMRunFailFastAsync(CompletableFuture, Executor, Runnable...)}.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunFailFastAsync(
             CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions, Executor executor) {
         return _thenMRunFailFastAsync(cfThis, executor, toRunnableArray(actions), false);
@@ -594,7 +590,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#thenMRunAsync(CompletableFuture, Runnable...)}.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunAsync(CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions) {
         return thenMRunAsync(cfThis, actions, defaultExecutor(cfThis));
     }
@@ -602,7 +598,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#thenMRunAsync(CompletableFuture, Executor, Runnable...)}.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunAsync(
             CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions, Executor executor) {
         return _thenMRunAsync(cfThis, executor, toRunnableArray(actions), false);
@@ -611,7 +607,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#thenMRunAnySuccessAsync(CompletableFuture, Runnable...)}.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunAnySuccessAsync(
             CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions) {
         return thenMRunAnySuccessAsync(cfThis, actions, defaultExecutor(cfThis));
@@ -620,7 +616,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#thenMRunAnySuccessAsync(CompletableFuture, Executor, Runnable...)}.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunAnySuccessAsync(
             CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions, Executor executor) {
         return _thenMRunAnySuccessAsync(cfThis, executor, toRunnableArray(actions), false);
@@ -629,7 +625,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#thenMRunAnyAsync(CompletableFuture, Runnable...)}.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunAnyAsync(CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions) {
         return thenMRunAnyAsync(cfThis, actions, defaultExecutor(cfThis));
     }
@@ -637,7 +633,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#thenMRunAnyAsync(CompletableFuture, Executor, Runnable...)}.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsync`")
     public static CompletableFuture<Void> thenMRunAnyAsync(
             CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions, Executor executor) {
         return _thenMRunAnyAsync(cfThis, executor, toRunnableArray(actions), false);

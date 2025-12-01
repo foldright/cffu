@@ -875,6 +875,9 @@ public final class CompletableFutureUtils {
      * Returns a new incomplete CompletableFuture of the type to be returned by a CompletionStage method.
      * <p>
      * In general, you won't use this method in application code, prefer other factory methods.
+     * <p>
+     * <strong>CAUTION:</strong> if running on Java 8 (where CompletableFuture does not yet have the newIncompleteFuture method),
+     * this method returns a plain CompletableFuture instance rather than an instance of the same class as parameter cfThis.
      *
      * @param <U> the type of the value
      * @see CompletableFuture#newIncompleteFuture()
@@ -1502,7 +1505,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunFailFastAsync(CompletableFuture<?> cfThis, Runnable... actions) {
         return thenMRunFailFastAsync(cfThis, defaultExecutor(cfThis), actions);
     }
@@ -1513,7 +1516,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allFailFastOf allFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunFailFastAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         return _thenMRunFailFastAsync(cfThis, executor, actions, true);
@@ -1540,6 +1543,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allOf allOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunAsync(CompletableFuture<?> cfThis, Runnable... actions) {
         return thenMRunAsync(cfThis, defaultExecutor(cfThis), actions);
     }
@@ -1550,6 +1554,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #allOf allOf} documentation for the rules of result computation.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         return _thenMRunAsync(cfThis, executor, actions, true);
@@ -1576,7 +1581,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunAnySuccessAsync(CompletableFuture<?> cfThis, Runnable... actions) {
         return thenMRunAnySuccessAsync(cfThis, defaultExecutor(cfThis), actions);
     }
@@ -1587,7 +1592,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anySuccessOf anySuccessOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunAnySuccessAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         return _thenMRunAnySuccessAsync(cfThis, executor, actions, true);
@@ -1614,7 +1619,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunAnyAsync(CompletableFuture<?> cfThis, Runnable... actions) {
         return thenMRunAnyAsync(cfThis, defaultExecutor(cfThis), actions);
     }
@@ -1625,7 +1630,7 @@ public final class CompletableFutureUtils {
      * <p>
      * See the {@link #anyOf anyOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer simple method `thenMRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunAnyAsync(
             CompletableFuture<?> cfThis, Executor executor, Runnable... actions) {
         return _thenMRunAnyAsync(cfThis, executor, actions, true);

@@ -1192,7 +1192,7 @@ public final class CffuFactory {
      */
     public final class ParOps {
         ////////////////////////////////////////////////////////////////////////////////
-        // region# Par Methods (create by multiply data and one action)
+        // Par Methods (create by multiply data and one action)
         //
         //    - parApply* (Iterable, Function: T -> U)    -> MCffu<U, List<U>>
         //    - parAccept*(Iterable, Consumer: T -> Void) -> Cffu<Void>
