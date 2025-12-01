@@ -525,16 +525,23 @@
 										<item>
 											<!-- https://revapi.org/revapi-java/0.28.4/element-matching.html#_package_matcher -->
 											<matcher>java-package</matcher>
-											<match>/.*\.internal\..*/</match>
-										</item>
-										<item>
-											<!-- https://revapi.org/revapi-java/0.28.4/element-matching.html#_package_matcher -->
-											<matcher>java</matcher>
-											<match>@org.jetbrains.annotations.ApiStatus.Internal ^*;</match>
+											<match>/.*\.internal(\..*)?/</match>
 										</item>
 									</exclude>
 								</elements>
 							</revapi.filter>
+							<revapi.differences>
+								<!-- https://revapi.org/revapi-basic-features/0.13.1/differences.html#_properties -->
+								<ignore>true</ignore>
+								<differences>
+									<item>
+										<regex>true</regex>
+										<code>java\.annotation\..*</code>
+										<annotationType>(edu\.umd\.cs\.findbugs\.annotations|org\.jetbrains\.annotations|javax\.annotation)\..*</annotationType>
+										<justification>ignore QA annotation changes</justification>
+									</item>
+								</differences>
+							</revapi.differences>
 						</analysisConfiguration>
 					</configuration>
 					<dependencies>
