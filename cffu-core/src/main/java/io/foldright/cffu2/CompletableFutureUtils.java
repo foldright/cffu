@@ -837,7 +837,7 @@ public final class CompletableFutureUtils {
         try {
             return completedFuture(callable.call());
         } catch (Throwable ex) {
-            if(ex instanceof InterruptedException) currentThread().interrupt();
+            if (ex instanceof InterruptedException) currentThread().interrupt();
             return failedFuture(ex);
         }
     }
@@ -851,6 +851,9 @@ public final class CompletableFutureUtils {
      * Returns a new incomplete CompletableFuture of the type to be returned by a CompletionStage method.
      * <p>
      * In general, you won't use this method in application code, prefer other factory methods.
+     * <p>
+     * <strong>CAUTION:</strong> if running on Java 8 (where CompletableFuture does not yet have the newIncompleteFuture method),
+     * this method returns a plain CompletableFuture instance rather than an instance of the same class as parameter cfThis.
      *
      * @param <U> the type of the value
      * @see CompletableFuture#newIncompleteFuture()

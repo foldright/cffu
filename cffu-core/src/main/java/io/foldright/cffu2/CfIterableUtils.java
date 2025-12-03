@@ -328,11 +328,7 @@ public final class CfIterableUtils {
     // endregion
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region# CF Instance Methods
-    ////////////////////////////////////////////////////////////////////////////////
-
-    ////////////////////////////////////////////////////////////
-    // region## Then-Multi-Actions(thenM*) Methods
+    // region# CF Instance Methods, Then-Multi-Actions(thenM*) Methods
     //
     //    - thenMApply* (Iterable<Function>: T -> U)       -> CompletableFuture<List<U>>
     //    - thenMAccept*(Iterable<Consumer>: T -> Void)    -> CompletableFuture<Void>

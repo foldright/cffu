@@ -79,8 +79,8 @@ public final class MCffu<E, T extends Iterable<? extends E>>
      */
     public final class ParOps {
         ////////////////////////////////////////////////////////////////////////////////
-        //    - thenParApply* (CF<Iterable>, Function: E -> U)    -> MCffu<U, List<U>>
-        //    - thenParAccept*(CF<Iterable>, Consumer: E -> Void) -> Cffu<Void>
+        // - thenParApply* (CF<Iterable>, Function: E -> U)    -> MCffu<U, List<U>>
+        // - thenParAccept*(CF<Iterable>, Consumer: E -> Void) -> Cffu<Void>
         ////////////////////////////////////////////////////////////////////////////////
 
         /**

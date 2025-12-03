@@ -2532,7 +2532,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      */
     public final class IterableOps {
         ////////////////////////////////////////////////////////////
-        // region## Then-Multi-Actions(thenM*) Methods
+        // Then-Multi-Actions(thenM*) Methods
         //
         //    - thenMApply* (Iterable<Function>: T -> U)       -> CompletableFuture<List<U>>
         //    - thenMAccept*(Iterable<Consumer>: T -> Void)    -> CompletableFuture<Void>
