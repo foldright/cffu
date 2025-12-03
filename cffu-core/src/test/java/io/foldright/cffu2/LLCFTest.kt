@@ -14,6 +14,8 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
+import org.apache.commons.lang3.JavaVersion
+import org.apache.commons.lang3.SystemUtils.isJavaVersionAtLeast
 import java.lang.Thread.currentThread
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.completedFuture
@@ -286,5 +288,12 @@ class LLCFTest : FunSpec({
         }, testExecutor)
         relayedOfCompleteLater.isDone.shouldBeFalse()
         relayedOfCompleteLater.join().shouldBeNull()
+    }
+
+    test("IS_JAVA*_PLUS") {
+        LLCF.IS_JAVA9_PLUS.shouldBe(isJavaVersionAtLeast(JavaVersion.JAVA_9))
+        LLCF.IS_JAVA12_PLUS.shouldBe(isJavaVersionAtLeast(JavaVersion.JAVA_12))
+        LLCF.IS_JAVA19_PLUS.shouldBe(isJavaVersionAtLeast(JavaVersion.JAVA_19))
+        LLCF.IS_JAVA21_PLUS.shouldBe(isJavaVersionAtLeast(JavaVersion.JAVA_21))
     }
 })
