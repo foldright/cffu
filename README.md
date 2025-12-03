@@ -22,7 +22,7 @@
 
 --------------------------------------------------------------------------------
 
-👉 Java CompletableFuture-Fu ("CF-Fu", pronounced "Shifu" 🦝) is a tiny 0-dependency library that improves
+👉 Java CompletableFuture-Fu ("CF-Fu", pronounced "Shifu" 🦝) is a tiny library that improves
 the [`CompletableFuture(CF)`](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)
 usage experience and reduces misuse, enabling more convenient, efficient, and safe use of `CF` in your application. 😋🚀🦺
 
