@@ -99,17 +99,14 @@
 		<dependency>
 			<groupId>com.github.spotbugs</groupId>
 			<artifactId>spotbugs-annotations</artifactId>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>jsr305</artifactId>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.jetbrains</groupId>
 			<artifactId>annotations</artifactId>
-			<optional>true</optional>
 		</dependency>
 
 		<!-- testing libs -->
@@ -170,29 +167,23 @@
 				<scope>import</scope>
 			</dependency>
 
-			<!--
-				QA libs
-				make qa libs optional, smaller deployment
-			-->
+			<!-- QA libs -->
 			<dependency>
 				<!-- https://spotbugs.readthedocs.io/en/stable/migration.html -->
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-annotations</artifactId>
 				<version>${spotbugs.annotations.version}</version>
-				<optional>true</optional>
 			</dependency>
 			<dependency>
 				<groupId>com.google.code.findbugs</groupId>
 				<artifactId>jsr305</artifactId>
 				<version>${jsr305.version}</version>
-				<optional>true</optional>
 			</dependency>
 			<dependency>
 				<!-- https://www.jetbrains.com/help/idea/annotating-source-code.html -->
 				<groupId>org.jetbrains</groupId>
 				<artifactId>annotations</artifactId>
 				<version>${jetbrains.annotations.version}</version>
-				<optional>true</optional>
 			</dependency>
 
 			<!-- implementation dependencies -->
