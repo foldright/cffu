@@ -21,8 +21,6 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
     private final Executor executor;
 
     private final Lock lock = new ReentrantLock();
-    private final LockHandler lockHandler = new LockHandler(lock);
-
     @GuardedBy("lock")
     private final Deque<Runnable> queue = new ArrayDeque<>();
     @GuardedBy("lock")
@@ -35,7 +33,7 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
 
     @Override
     public void execute(@NonNull Runnable command) {
-        final LockHandler.Unlocker unlocker = lockHandler.lock();
+        final IdempotentUnlocker unlocker = lock(lock);
         try {
             if (workerCount >= maxConcurrency) {
                 queue.add(command);
@@ -57,6 +55,7 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
             });
 
             returnedFromCmdRun[0] = true;
+
             if (unlocker.isLocking()) workerCount++;
         } finally {
             unlocker.unlock();
@@ -90,28 +89,25 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
         }
     }
 
-    private static class LockHandler {
+    @CheckReturnValue
+    private IdempotentUnlocker lock(Lock lock) {
+        lock.lock();
+        return new IdempotentUnlocker(lock);
+    }
+
+    private static class IdempotentUnlocker {
         private final Lock lock;
+        private final AtomicBoolean unlocked = new AtomicBoolean(false);
 
-        private LockHandler(Lock lock) {this.lock = lock;}
+        public IdempotentUnlocker(Lock lock) {this.lock = lock;}
 
-        @CheckReturnValue
-        public Unlocker lock() {
-            lock.lock();
-            return new Unlocker();
-        }
-
-        public class Unlocker {
-            private final AtomicBoolean unlocked = new AtomicBoolean(false);
-
-            public void unlock() {
-                if (unlocked.compareAndSet(false, true)) {
-                    lock.unlock();
-                }
+        public void unlock() {
+            if (unlocked.compareAndSet(false, true)) {
+                lock.unlock();
             }
-
-            public boolean isLocking() {return !unlocked.get();}
         }
+
+        public boolean isLocking() {return !unlocked.get();}
     }
 }
 
