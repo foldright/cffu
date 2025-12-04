@@ -1,14 +1,19 @@
 package io.foldright.study.concurrency_limit_executor;
 
+import edu.umd.cs.findbugs.annotations.CheckReturnValue;
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import javax.annotation.concurrent.GuardedBy;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static io.foldright.cffu2.internal.ExceptionLogger.Level.ERROR;
 import static io.foldright.cffu2.internal.ExceptionLogger.logUncaughtException;
+import static java.lang.Thread.currentThread;
 
 
 public final class ConcurrencyLimitExecutorByLock implements Executor {
@@ -16,6 +21,7 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
     private final Executor executor;
 
     private final Lock lock = new ReentrantLock();
+    private final LockHandler lockHandler = new LockHandler(lock);
 
     @GuardedBy("lock")
     private final Deque<Runnable> queue = new ArrayDeque<>();
@@ -28,55 +34,83 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
     }
 
     @Override
-    public void execute(Runnable command) {
-        lock.lock();
+    public void execute(@NonNull Runnable command) {
+        final LockHandler.Unlocker unlocker = lockHandler.lock();
         try {
-            if (workerCount < maxConcurrency) {
-                // FIXME may execute command synchronously.
-                executor.execute(new Worker(command));
-                // FIXME if execute synchronously, must NOT increment workerCount!
-                workerCount++;
-            } else {
+            if (workerCount >= maxConcurrency) {
                 queue.add(command);
+                return;
             }
+
+            final Thread callerThread = currentThread();
+            final boolean[] returnedFromCmdRun = {false};
+
+            executor.execute(() -> {
+                if (currentThread().equals(callerThread) && returnedFromCmdRun[0]) {
+                    // if execute synchronously, run input command only and must NOT increment workerCount!
+                    command.run();
+                    unlocker.unlock();
+                    return;
+                }
+
+                work(command);
+            });
+
+            returnedFromCmdRun[0] = true;
+            if (unlocker.isLocking()) workerCount++;
         } finally {
-            lock.unlock();
+            unlocker.unlock();
         }
     }
 
-    private class Worker implements Runnable {
-        Runnable firstTask;
+    private void work(Runnable firstTask) {
+        safeRun(firstTask);
 
-        public Worker(Runnable firstTask) {
-            this.firstTask = firstTask;
+        while (true) {
+            Runnable task;
+            try {
+                lock.lock();
+                task = queue.poll();
+                if (task == null && Thread.interrupted()) {
+                    workerCount--;
+                    break;
+                }
+            } finally {
+                lock.unlock();
+            }
+            if (task != null) safeRun(task);
+        }
+    }
+
+    private void safeRun(Runnable task) {
+        try {
+            task.run();
+        } catch (Throwable e) {
+            logUncaughtException(ERROR, "ConcurrencyLimitExecutorByLock#Worker", e);
+        }
+    }
+
+    private static class LockHandler {
+        private final Lock lock;
+
+        private LockHandler(Lock lock) {this.lock = lock;}
+
+        @CheckReturnValue
+        public Unlocker lock() {
+            lock.lock();
+            return new Unlocker();
         }
 
-        public void run() {
-            safeRun(firstTask);
+        public class Unlocker {
+            private final AtomicBoolean unlocked = new AtomicBoolean(false);
 
-            // FIXME if execute synchronously, must NOT relay run other tasks!
-            while (true) {
-                Runnable task;
-                try {
-                    lock.lock();
-                    task = queue.poll();
-                    if (task == null && Thread.currentThread().isInterrupted()) {
-                        workerCount--;
-                        break;
-                    }
-                } finally {
+            public void unlock() {
+                if (unlocked.compareAndSet(false, true)) {
                     lock.unlock();
                 }
-                if (task != null) safeRun(task);
             }
-        }
 
-        void safeRun(Runnable task) {
-            try {
-                task.run();
-            } catch (Throwable e) {
-                logUncaughtException(ERROR, "ConcurrencyLimitExecutorByLock#Worker", e);
-            }
+            public boolean isLocking() {return !unlocked.get();}
         }
     }
 }
