@@ -22,7 +22,7 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
 
     private final Lock lock = new ReentrantLock();
     @GuardedBy("lock")
-    private final Deque<Runnable> queue = new ArrayDeque<>();
+    private final Deque<Runnable> queue = new ArrayDeque<>(64);
     @GuardedBy("lock")
     private int workerCount = 0;
 
@@ -42,18 +42,15 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
 
             final Thread callerThread = currentThread();
             final boolean[] returnedFromCmdRun = {false};
-
             executor.execute(() -> {
                 if (currentThread().equals(callerThread) && !returnedFromCmdRun[0]) {
-                    // if execute synchronously, run input command only and must NOT increment workerCount!
+                    // If executing synchronously, run the input command only and do NOT increment workerCount!
                     command.run();
                     unlocker.unlock();
                     return;
                 }
-
                 work(command);
             });
-
             returnedFromCmdRun[0] = true;
 
             if (unlocker.isLocking()) workerCount++;
@@ -70,18 +67,21 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
             lock.lock();
             try {
                 task = queue.poll();
-                if (task == null && Thread.interrupted()) {
+                if (task == null) {
                     workerCount--;
                     break;
                 }
             } finally {
                 lock.unlock();
             }
-            if (task != null) safeRun(task);
+            safeRun(task);
         }
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static void safeRun(Runnable task) {
+        // NOTE: The interrupted status of the thread needs to be cleared before running the task.
+        Thread.interrupted();
         try {
             task.run();
         } catch (Throwable e) {
@@ -110,4 +110,3 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
         public boolean isLocking() {return !unlocked.get();}
     }
 }
-
