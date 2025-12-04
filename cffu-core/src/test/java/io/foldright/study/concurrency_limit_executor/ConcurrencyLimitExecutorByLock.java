@@ -32,9 +32,9 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
     @Override
     public void execute(@NonNull Runnable command) {
         lock.lock();
-        // NOTE: variable `unlocked` is only accessed by the caller thread (single-threaded),
+        // NOTE: variable `locking` is only accessed by the caller thread (single-threaded),
         // so no need to use AtomicBoolean
-        final boolean[] unlocked = {false};
+        final boolean[] locking = {true};
         try {
             if (workerCount >= maxConcurrency) {
                 queue.add(command);
@@ -49,7 +49,7 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
                     // If executing synchronously, run the input command only
                     workerCount++;
                     lock.unlock();
-                    unlocked[0] = true;
+                    locking[0] = false;
 
                     try {
                         // do NOT catch exception when executing synchronously, propagate exception to caller
@@ -65,9 +65,9 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
 
             // NOTE: do NOT move the statement below into the finally block,
             // because `workerCount` must NOT be incremented if `executor.execute()` throws an exception
-            if (!unlocked[0]) workerCount++;
+            if (locking[0]) workerCount++;
         } finally {
-            if (!unlocked[0]) lock.unlock();
+            if (locking[0]) lock.unlock();
         }
     }
 
