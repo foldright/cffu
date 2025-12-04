@@ -1,13 +1,11 @@
 package io.foldright.study.concurrency_limit_executor;
 
-import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import javax.annotation.concurrent.GuardedBy;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -33,7 +31,10 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
 
     @Override
     public void execute(@NonNull Runnable command) {
-        final IdempotentUnlocker unlocker = lock(lock);
+        lock.lock();
+        // NOTE: variable `unlocked` is only accessed by the caller thread (single-threaded),
+        // so no need to use AtomicBoolean
+        final boolean[] unlocked = {false};
         try {
             if (workerCount >= maxConcurrency) {
                 queue.add(command);
@@ -41,21 +42,26 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
             }
 
             final Thread callerThread = currentThread();
+            // NOTE: `returnedFromCmdRun` is only accessed by the caller thread (single-threaded) too.
             final boolean[] returnedFromCmdRun = {false};
             executor.execute(() -> {
                 if (currentThread().equals(callerThread) && !returnedFromCmdRun[0]) {
                     // If executing synchronously, run the input command only and do NOT increment workerCount!
+                    lock.unlock();
+                    unlocked[0] = true;
+
                     command.run();
-                    unlocker.unlock();
                     return;
                 }
                 work(command);
             });
             returnedFromCmdRun[0] = true;
 
-            if (unlocker.isLocking()) workerCount++;
+            // NOTE: do NOT move the statement below into the finally block,
+            // because `workerCount` must NOT be incremented if `executor.execute()` throws an exception
+            if (!unlocked[0]) workerCount++;
         } finally {
-            unlocker.unlock();
+            if (!unlocked[0]) lock.unlock();
         }
     }
 
@@ -87,26 +93,5 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
         } catch (Throwable e) {
             logUncaughtException(ERROR, "ConcurrencyLimitExecutorByLock#Worker", e);
         }
-    }
-
-    @CheckReturnValue
-    private IdempotentUnlocker lock(Lock lock) {
-        lock.lock();
-        return new IdempotentUnlocker(lock);
-    }
-
-    private static class IdempotentUnlocker {
-        private final Lock lock;
-        private final AtomicBoolean unlocked = new AtomicBoolean(false);
-
-        public IdempotentUnlocker(Lock lock) {this.lock = lock;}
-
-        public void unlock() {
-            if (unlocked.compareAndSet(false, true)) {
-                lock.unlock();
-            }
-        }
-
-        public boolean isLocking() {return !unlocked.get();}
     }
 }
