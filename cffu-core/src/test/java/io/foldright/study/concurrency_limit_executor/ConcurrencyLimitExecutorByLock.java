@@ -46,14 +46,20 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
             final boolean[] returnedFromCmdRun = {false};
             executor.execute(() -> {
                 if (currentThread().equals(callerThread) && !returnedFromCmdRun[0]) {
-                    // If executing synchronously, run the input command only and do NOT increment workerCount!
+                    // If executing synchronously, run the input command only
+                    workerCount++;
                     lock.unlock();
                     unlocked[0] = true;
 
-                    command.run();
-                    return;
+                    try {
+                        // do NOT catch exception when executing synchronously, propagate exception to caller
+                        command.run();
+                    } finally {
+                        decreaseWorkerCountWithLock();
+                    }
+                } else {
+                    work(command);
                 }
-                work(command);
             });
             returnedFromCmdRun[0] = true;
 
@@ -62,6 +68,15 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
             if (!unlocked[0]) workerCount++;
         } finally {
             if (!unlocked[0]) lock.unlock();
+        }
+    }
+
+    private void decreaseWorkerCountWithLock() {
+        lock.lock();
+        try {
+            workerCount--;
+        } finally {
+            lock.unlock();
         }
     }
 
