@@ -445,6 +445,8 @@ public final class CfParallelUtils {
      * Processes multiple input elements in parallel and forget (return {@code void}).
      * This method explicitly indicates that the caller will not care about any exceptions
      * from actions and will not wait for the computations to complete ("fire-and-forget").
+     *
+     * @since 2.1.0
      */
     public static <T> void parAcceptAsyncAndForget(
             Iterable<? extends T> elements, Consumer<? super T> action) {
@@ -455,6 +457,8 @@ public final class CfParallelUtils {
      * Processes multiple input elements in parallel and forget (return {@code void}).
      * This method explicitly indicates that the caller will not care about any exceptions
      * from actions and will not wait for the computations to complete ("fire-and-forget").
+     *
+     * @since 2.1.0
      */
     public static <T> void parAcceptAsyncAndForget(
             Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {
@@ -800,6 +804,7 @@ public final class CfParallelUtils {
      * from actions and will not wait for the computations to complete ("fire-and-forget").
      *
      * @return the given CompletableFuture
+     * @since 2.1.0
      */
     public static <T, F extends CompletionStage<? extends Iterable<? extends T>>> F thenParAcceptAsyncAndForget(
             F cfThis, Consumer<? super T> action) {
@@ -812,6 +817,7 @@ public final class CfParallelUtils {
      * from actions and will not wait for the computations to complete ("fire-and-forget").
      *
      * @return the given CompletableFuture
+     * @since 2.1.0
      */
     public static <T, F extends CompletionStage<? extends Iterable<? extends T>>> F thenParAcceptAsyncAndForget(
             F cfThis, Consumer<? super T> action, Executor executor) {

@@ -393,6 +393,8 @@ public final class CffuFactory {
      * Runs all input actions async and forget (return {@code void}).
      * This method explicitly indicates that the caller will not care about any exceptions
      * from actions and will not wait for the computations to complete ("fire-and-forget").
+     *
+     * @since 2.1.0
      */
     public void mRunAsyncAndForget(Runnable... actions) {
         mRunAsyncAndForget(defaultExecutor, actions);
@@ -402,6 +404,8 @@ public final class CffuFactory {
      * Runs all input actions async and forget (return {@code void}).
      * This method explicitly indicates that the caller will not care about any exceptions
      * from actions and will not wait for the computations to complete ("fire-and-forget").
+     *
+     * @since 2.1.0
      */
     public void mRunAsyncAndForget(Executor executor, Runnable... actions) {
         CompletableFutureUtils.mRunAsyncAndForget(cffuScreened(executor), actions);
@@ -843,6 +847,7 @@ public final class CffuFactory {
      *
      * @param maxConcurrency the maximum number of tasks that can run concurrently
      * @return the new concurrency limit executor
+     * @since 2.1.0
      */
     @Contract(pure = true)
     public Executor concurrencyLimitExecutor(int maxConcurrency) {
@@ -855,6 +860,7 @@ public final class CffuFactory {
      * @param maxConcurrency the maximum number of tasks that can run concurrently
      * @param executor       the base executor
      * @return the new concurrency limit executor
+     * @since 2.1.0
      */
     @Contract(pure = true)
     public Executor concurrencyLimitExecutor(int maxConcurrency, Executor executor) {
@@ -1108,6 +1114,8 @@ public final class CffuFactory {
 
         /**
          * Iterable variant of {@link CffuFactory#mRunAsyncAndForget(Runnable...)}.
+         *
+         * @since 2.1.0
          */
         public void mRunAsyncAndForget(Iterable<? extends Runnable> actions) {
             mRunAsyncAndForget(actions, defaultExecutor);
@@ -1116,6 +1124,8 @@ public final class CffuFactory {
 
         /**
          * Iterable variant of {@link CffuFactory#mRunAsyncAndForget(Executor, Runnable...)}.
+         *
+         * @since 2.1.0
          */
         public void mRunAsyncAndForget(Iterable<? extends Runnable> actions, Executor executor) {
             CfIterableUtils.mRunAsyncAndForget(actions, cffuScreened(executor));
@@ -1485,6 +1495,8 @@ public final class CffuFactory {
          * Processes multiple input elements in parallel and forget (return {@code void}).
          * This method explicitly indicates that the caller will not care about any exceptions
          * from actions and will not wait for the computations to complete ("fire-and-forget").
+         *
+         * @since 2.1.0
          */
         public <T> void parAcceptAsyncAndForget(
                 Iterable<? extends T> elements, Consumer<? super T> action) {
@@ -1497,6 +1509,8 @@ public final class CffuFactory {
          * into a Cffu using {@link CffuFactory#runAsync(Runnable, Executor)}.
          * <p>
          * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
+         *
+         * @since 2.1.0
          */
         public <T> void parAcceptAsyncAndForget(
                 Iterable<? extends T> elements, Consumer<? super T> action, Executor executor) {

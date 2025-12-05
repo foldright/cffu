@@ -559,6 +559,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      *
      * @return this Cffu
      * @see #peekAsync(BiConsumer)
+     * @since 2.1.0
      */
     @SafeVarargs
     public final F thenMAcceptAsyncAndForget(Consumer<? super T>... actions) {
@@ -577,6 +578,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      *
      * @return this Cffu
      * @see #peekAsync(BiConsumer, Executor)
+     * @since 2.1.0
      */
     @SafeVarargs
     public final F thenMAcceptAsyncAndForget(Executor executor, Consumer<? super T>... actions) {
@@ -679,6 +681,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      *
      * @return this Cffu
      * @see #peek(BiConsumer)
+     * @since 2.1.0
      */
     public final F thenMRunAsyncAndForget(Runnable... actions) {
         return thenMRunAsyncAndForget(fac.defaultExecutor, actions);
@@ -691,6 +694,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      *
      * @return this Cffu
      * @see #peekAsync(BiConsumer, Executor)
+     * @since 2.1.0
      */
     public final F thenMRunAsyncAndForget(Executor executor, Runnable... actions) {
         CompletableFutureUtils.thenMRunAsyncAndForget(cf, cffuScreened(executor), actions);
@@ -2778,6 +2782,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
         /**
          * Iterable variant of {@link BaseCffu#thenMAcceptAsyncAndForget(Consumer[])}.
+         *
+         * @since 2.1.0
          */
         public F thenMAcceptAsyncAndForget(Iterable<? extends Consumer<? super T>> actions) {
             return thenMAcceptAsyncAndForget(actions, fac.defaultExecutor);
@@ -2785,6 +2791,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
         /**
          * Iterable variant of {@link BaseCffu#thenMAcceptAsyncAndForget(Executor, Consumer[])}.
+         *
+         * @since 2.1.0
          */
         public F thenMAcceptAsyncAndForget(Iterable<? extends Consumer<? super T>> actions, Executor executor) {
             CfIterableUtils.thenMAcceptAsyncAndForget(cf, actions, cffuScreened(executor));
@@ -2857,6 +2865,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
         /**
          * Iterable variant of {@link BaseCffu#thenMRunAsyncAndForget(Runnable...)}.
+         *
+         * @since 2.1.0
          */
         public F thenMRunAsyncAndForget(Iterable<? extends Runnable> actions) {
             return thenMRunAsyncAndForget(actions, fac.defaultExecutor);
@@ -2864,6 +2874,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
         /**
          * Iterable variant of {@link BaseCffu#thenMRunAsyncAndForget(Executor, Runnable...)}.
+         *
+         * @since 2.1.0
          */
         public F thenMRunAsyncAndForget(Iterable<? extends Runnable> actions, Executor executor) {
             CfIterableUtils.thenMRunAsyncAndForget(cf, actions, cffuScreened(executor));

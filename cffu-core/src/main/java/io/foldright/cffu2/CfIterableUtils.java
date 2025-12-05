@@ -224,12 +224,15 @@ public final class CfIterableUtils {
 
     /**
      * Iterable variant of {@link CompletableFutureUtils#mRunAsync(Runnable...)}.
+     *
+     * @since 2.1.0
      */
     public static void mRunAsyncAndForget(Iterable<? extends Runnable> actions) {
         CompletableFutureUtils.mRunAsyncAndForget(toRunnableArray(actions));
     }
 
     /**
+     * @since 2.1.0
      * Iterable variant of {@link CompletableFutureUtils#mRunAsync(Executor, Runnable...)}.
      */
     public static void mRunAsyncAndForget(Iterable<? extends Runnable> actions, Executor executor) {
@@ -545,6 +548,8 @@ public final class CfIterableUtils {
 
     /**
      * Iterable variant of {@link CompletableFutureUtils#thenMAcceptAsyncAndForget(CompletionStage, Consumer[])}.
+     *
+     * @since 2.1.0
      */
     @Contract("_, _ -> param1")
     public static <T, F extends CompletionStage<? extends T>> F thenMAcceptAsyncAndForget(
@@ -554,6 +559,8 @@ public final class CfIterableUtils {
 
     /**
      * Iterable variant of {@link CompletableFutureUtils#thenMAcceptAsyncAndForget(CompletionStage, Executor, Consumer[])}.
+     *
+     * @since 2.1.0
      */
     @Contract("_, _, _ -> param1")
     public static <T, F extends CompletionStage<? extends T>> F thenMAcceptAsyncAndForget(
@@ -641,6 +648,8 @@ public final class CfIterableUtils {
 
     /**
      * Iterable variant of {@link CompletableFutureUtils#thenMRunAsyncAndForget(CompletionStage, Runnable...)}.
+     *
+     * @since 2.1.0
      */
     public static <F extends CompletionStage<?>> F thenMRunAsyncAndForget(F cfThis, Iterable<? extends Runnable> actions) {
         return thenMRunAsyncAndForget(cfThis, actions, defaultExecutor(cfThis));
@@ -648,6 +657,8 @@ public final class CfIterableUtils {
 
     /**
      * Iterable variant of {@link CompletableFutureUtils#thenMRunAsyncAndForget(CompletionStage, Executor, Runnable...)}.
+     *
+     * @since 2.1.0
      */
     public static <F extends CompletionStage<?>> F thenMRunAsyncAndForget(
             F cfThis, Iterable<? extends Runnable> actions, Executor executor) {

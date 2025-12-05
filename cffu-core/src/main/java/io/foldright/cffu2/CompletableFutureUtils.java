@@ -368,6 +368,8 @@ public final class CompletableFutureUtils {
      * Runs all input actions async and forget (return {@code void}).
      * This method explicitly indicates that the caller will not care about any exceptions
      * from actions and will not wait for the computations to complete ("fire-and-forget").
+     *
+     * @since 2.1.0
      */
     public static void mRunAsyncAndForget(Runnable... actions) {
         mRunAsyncAndForget(ASYNC_POOL, actions);
@@ -377,6 +379,8 @@ public final class CompletableFutureUtils {
      * Runs all input actions async and forget (return {@code void}).
      * This method explicitly indicates that the caller will not care about any exceptions
      * from actions and will not wait for the computations to complete ("fire-and-forget").
+     *
+     * @since 2.1.0
      */
     public static void mRunAsyncAndForget(Executor executor, Runnable... actions) {
         requireNonNull(executor, "executor is null");
@@ -930,6 +934,7 @@ public final class CompletableFutureUtils {
      *
      * @param maxConcurrency the maximum number of tasks that can run concurrently
      * @return the new concurrency limit executor
+     * @since 2.1.0
      */
     @Contract(pure = true)
     public static Executor concurrencyLimitExecutor(int maxConcurrency) {
@@ -942,6 +947,7 @@ public final class CompletableFutureUtils {
      * @param maxConcurrency the maximum number of tasks that can run concurrently
      * @param executor       the base executor
      * @return the new concurrency limit executor
+     * @since 2.1.0
      */
     @Contract(pure = true)
     public static Executor concurrencyLimitExecutor(int maxConcurrency, Executor executor) {
@@ -1476,6 +1482,7 @@ public final class CompletableFutureUtils {
      *
      * @return the given CompletableFuture
      * @see #peekAsync(CompletionStage, BiConsumer)
+     * @since 2.1.0
      */
     @Contract("_, _ -> param1")
     @SafeVarargs
@@ -1496,6 +1503,7 @@ public final class CompletableFutureUtils {
      *
      * @return the given CompletableFuture
      * @see #peekAsync(CompletionStage, BiConsumer, Executor)
+     * @since 2.1.0
      */
     @Contract("_, _, _ -> param1")
     @SafeVarargs
@@ -1681,6 +1689,7 @@ public final class CompletableFutureUtils {
      *
      * @return the given CompletableFuture
      * @see #peekAsync(CompletionStage, BiConsumer)
+     * @since 2.1.0
      */
     @Contract("_, _ -> param1")
     public static <F extends CompletionStage<?>> F thenMRunAsyncAndForget(F cfThis, Runnable... actions) {
@@ -1694,6 +1703,7 @@ public final class CompletableFutureUtils {
      *
      * @return the given CompletableFuture
      * @see #peekAsync(CompletionStage, BiConsumer, Executor)
+     * @since 2.1.0
      */
     @Contract("_, _, _ -> param1")
     public static <F extends CompletionStage<?>> F thenMRunAsyncAndForget(

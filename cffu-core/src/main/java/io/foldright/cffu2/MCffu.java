@@ -332,6 +332,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * from actions and will not wait for the computations to complete ("fire-and-forget").
          *
          * @return this MCffu
+         * @since 2.1.0
          */
         public MCffu<E, T> thenParAcceptAsyncAndForget(Consumer<? super E> action) {
             return thenParAcceptAsyncAndForget(action, fac.defaultExecutor);
@@ -343,6 +344,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
          * from actions and will not wait for the computations to complete ("fire-and-forget").
          *
          * @return this MCffu
+         * @since 2.1.0
          */
         public MCffu<E, T> thenParAcceptAsyncAndForget(Consumer<? super E> action, Executor executor) {
             CfParallelUtils.thenParAcceptAsyncAndForget(cf, action, cffuScreened(executor));

@@ -18,6 +18,9 @@ import static java.lang.Thread.currentThread;
 
 /**
  * @author Jerry Lee (oldratlee at gmail dot com)
+ * @see CompletableFutureUtils#concurrencyLimitExecutor(int)
+ * @see CffuFactory#concurrencyLimitExecutor(int)
+ * @since 2.1.0
  */
 final class ConcurrencyLimitExecutor implements Executor {
     private final int maxConcurrency;
