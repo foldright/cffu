@@ -1,11 +1,10 @@
 package io.foldright.study.concurrency_limit_executor
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.nulls.shouldBeNull
 import java.lang.Thread.currentThread
 import java.lang.Thread.sleep
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import java.util.concurrent.*
 import kotlin.random.Random
 
 private const val THREAD_COUNT = 8
@@ -13,14 +12,14 @@ private val executor: ExecutorService = Executors.newFixedThreadPool(THREAD_COUN
 
 class ConcurrencyLimitExecutorTest : FunSpec({
 
-    test("ConcurrencyLimitExecutorByLock") {
+    test("ConcurrencyLimitExecutorByLock mock run") {
         val concurrencyLimitExecutor = ConcurrencyLimitExecutorByLock(4, executor)
 
         val taskCount = THREAD_COUNT * 3
         val latch = CountDownLatch(taskCount)
         repeat(taskCount) {
             concurrencyLimitExecutor.execute {
-                val millis: Long = Random.nextLong(1000, 3000)
+                val millis: Long = Random.nextLong(100, 200)
                 logWithTimeAndThread("task %2d begin, then sleep %s ms", it, millis)
                 sleep(millis)
                 logWithTimeAndThread("task %2d end", it)
@@ -30,6 +29,26 @@ class ConcurrencyLimitExecutorTest : FunSpec({
         }
 
         latch.await()
+    }
+
+    test("sync execution mock run") {
+        val executor = ThreadPoolExecutor(
+            0, 1, 3, TimeUnit.SECONDS, SynchronousQueue(), ThreadPoolExecutor.CallerRunsPolicy()
+        )
+        val latch = CountDownLatch(1)
+        val concurrencyLimitExecutor = ConcurrencyLimitExecutorByLock(3, executor)
+        val f: Future<*> = executor.submit {
+            latch.await()
+        }
+
+        repeat(33) {
+            concurrencyLimitExecutor.execute {
+                println(currentThread().name)
+            }
+        }
+
+        latch.countDown()
+        f.get().shouldBeNull()
     }
 
     beforeSpec {

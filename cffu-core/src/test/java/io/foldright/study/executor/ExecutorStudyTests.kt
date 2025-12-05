@@ -93,12 +93,14 @@ class ExecutorStudyTests : FunSpec({
     test("CallerRunsPolicy of ThreadPoolExecutor: exception thrown by command is propagated to caller") {
         val callerThread = currentThread()
         val rte = RuntimeException("Boom!!!")
+
+        val latch = CountDownLatch(1)
         val executor = ThreadPoolExecutor(
-            1, 1, 3, TimeUnit.SECONDS, SynchronousQueue(), ThreadPoolExecutor.CallerRunsPolicy()
+            0, 1, 3, TimeUnit.SECONDS, SynchronousQueue(), ThreadPoolExecutor.CallerRunsPolicy()
         )
         val f: Future<*> = executor.submit {
             currentThread().shouldNotBeSameInstanceAs(callerThread)
-            sleep(1000)
+            latch.await()
         }
 
         shouldThrowExactly<RuntimeException> {
@@ -108,6 +110,7 @@ class ExecutorStudyTests : FunSpec({
             }
         }.shouldBeSameInstanceAs(rte)
 
+        latch.countDown()
         f.get().shouldBeNull()
     }
 

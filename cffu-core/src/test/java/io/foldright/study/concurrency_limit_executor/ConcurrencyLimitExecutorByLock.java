@@ -10,6 +10,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static io.foldright.cffu2.internal.ExceptionLogger.Level.ERROR;
+import static io.foldright.cffu2.internal.ExceptionLogger.Level.WARN;
+import static io.foldright.cffu2.internal.ExceptionLogger.logException;
 import static io.foldright.cffu2.internal.ExceptionLogger.logUncaughtException;
 import static java.lang.Thread.currentThread;
 
@@ -23,6 +25,8 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
     private final Deque<Runnable> queue = new ArrayDeque<>(64);
     @GuardedBy("lock")
     private int workerCount = 0;
+    @GuardedBy("lock")
+    private long syncExecutionTimes = 0;
 
     ConcurrencyLimitExecutorByLock(int maxConcurrency, Executor executor) {
         this.maxConcurrency = maxConcurrency;
@@ -48,6 +52,7 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
                 if (currentThread().equals(callerThread) && !returnedFromCmdRun[0]) {
                     // If executing synchronously, run the input command only
                     workerCount++;
+                    increaseSyncExecutionAndWarn();
                     lock.unlock();
                     locking[0] = false;
 
@@ -108,5 +113,16 @@ public final class ConcurrencyLimitExecutorByLock implements Executor {
         } catch (Throwable e) {
             logUncaughtException(ERROR, "ConcurrencyLimitExecutorByLock#Worker", e);
         }
+    }
+
+    @GuardedBy("lock")
+    private void increaseSyncExecutionAndWarn() {
+        if (!isPowerOfTwo(syncExecutionTimes++)) return;
+        logException(WARN, "Detected synchronous execution (" + syncExecutionTimes + " times) in delegate executor ("
+                + executor + "), which may prevent maximizing the concurrency limit (" + maxConcurrency + ")", null);
+    }
+
+    private static boolean isPowerOfTwo(long n) {
+        return n >= 0 && (n & (n - 1)) == 0;
     }
 }
