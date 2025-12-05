@@ -33,8 +33,20 @@ public final class ExceptionLogger {
 
     private static final LoggerAdapter logger = getLogger();
 
-    @SuppressWarnings("StatementWithEmptyBody")
     public static void logException(Level level, String msg, Throwable ex) {
+        log0(level, msg, ex);
+    }
+
+    public static void logUncaughtException(Level level, String where, Throwable ex) {
+        log0(level, "Uncaught exception occurred at " + where, ex);
+    }
+
+    public static void log(Level level, String msg) {
+        log0(level, msg, null);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    private static void log0(Level level, String msg, @Nullable Throwable ex) {
         final String fullFormat = "full";
         final String shortFormat = "short";
         final String noneFormat = "none";
@@ -47,10 +59,6 @@ public final class ExceptionLogger {
         } else {
             logger.log(level, msg, ex);
         }
-    }
-
-    public static void logUncaughtException(Level level, String where, Throwable ex) {
-        logException(level, "Uncaught exception occurred at " + where, ex);
     }
 
     public enum Level {ERROR, WARN}

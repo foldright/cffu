@@ -811,9 +811,8 @@ public final class CffuFactory {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns a new Executor that submits a task to the default executor
-     * after the given delay (or no delay if non-positive).
-     * Each delay commences upon invocation of the returned executor's {@code execute} method.
+     * Returns a new Executor that submits a task to the default executor after the given delay (or no delay
+     * if non-positive). Each delay commences upon invocation of the returned executor's {@code execute} method.
      *
      * @param delay how long to delay, in units of {@code unit}
      * @param unit  a {@code TimeUnit} determining how to interpret the {@code delay} parameter
@@ -825,9 +824,8 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Executor that submits a task to the given base executor
-     * after the given delay (or no delay if non-positive).
-     * Each delay commences upon invocation of the returned executor's {@code execute} method.
+     * Returns a new Executor that submits a task to the given base executor after the given delay (or no delay
+     * if non-positive). Each delay commences upon invocation of the returned executor's {@code execute} method.
      *
      * @param delay    how long to delay, in units of {@code unit}
      * @param unit     a {@code TimeUnit} determining how to interpret the {@code delay} parameter
@@ -838,6 +836,29 @@ public final class CffuFactory {
     public Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
         // NOTE: do NOT translate (ad hoc input) executor to screened executor; same as CompletableFuture.delayedExecutor
         return CompletableFutureUtils.delayedExecutor(delay, unit, cffuUnscreened(executor));
+    }
+
+    /**
+     * Returns a new Executor that submits a task to the default executor and limits the number of concurrent tasks.
+     *
+     * @param maxConcurrency the maximum number of tasks that can run concurrently
+     * @return the new concurrency limit executor
+     */
+    @Contract(pure = true)
+    public Executor concurrencyLimitExecutor(int maxConcurrency) {
+        return concurrencyLimitExecutor(maxConcurrency, defaultExecutor);
+    }
+
+    /**
+     * Returns a new Executor that submits a task to the given base executor and limits the number of concurrent tasks.
+     *
+     * @param maxConcurrency the maximum number of tasks that can run concurrently
+     * @param executor       the base executor
+     * @return the new concurrency limit executor
+     */
+    @Contract(pure = true)
+    public Executor concurrencyLimitExecutor(int maxConcurrency, Executor executor) {
+        return CompletableFutureUtils.concurrencyLimitExecutor(maxConcurrency, cffuUnscreened(executor));
     }
 
     // endregion

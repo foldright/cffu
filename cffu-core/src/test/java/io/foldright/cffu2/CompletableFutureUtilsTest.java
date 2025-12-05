@@ -20,6 +20,7 @@ import java.util.stream.IntStream;
 
 import static io.foldright.cffu2.CffuTestHelper.assertIsCfDefaultExecutor;
 import static io.foldright.cffu2.CompletableFutureUtils.*;
+import static io.foldright.cffu2.internal.CommonUtils.newCfArray;
 import static io.foldright.test_utils.TestUtils.*;
 import static io.foldright.test_utils.TestingConstants.*;
 import static io.foldright.test_utils.TestingExecutorUtils.*;
@@ -28,6 +29,7 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.function.Function.identity;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -762,6 +764,41 @@ class CompletableFutureUtilsTest {
         Executor delayer = delayedExecutor(1, MILLISECONDS);
         CompletableFuture.runAsync(() -> holder.set(testName), delayer).get();
         assertEquals(testName, holder.get());
+    }
+
+    @Test
+    void test_concurrencyLimitExecutor() {
+        final int maxConcurrency = 2;
+        testConcurrencyLimit(concurrencyLimitExecutor(maxConcurrency), maxConcurrency);
+        testConcurrencyLimit(concurrencyLimitExecutor(maxConcurrency, testExecutor), maxConcurrency);
+        testConcurrencyLimit(concurrencyLimitExecutor(maxConcurrency, testFjExecutor), maxConcurrency);
+    }
+
+    static void testConcurrencyLimit(Executor executor, int maxConcurrency) {
+        _testConcurrencyLimit0(executor, maxConcurrency, 0);
+        _testConcurrencyLimit0(executor, maxConcurrency, 5);
+        _testConcurrencyLimit0(executor, maxConcurrency, 10);
+    }
+
+    private static void _testConcurrencyLimit0(Executor executor, int maxConcurrency, int startInterval) {
+        executor.execute(() -> {throw new RuntimeException();});
+
+        final AtomicInteger concurrencyCount = new AtomicInteger();
+        final AtomicInteger max = new AtomicInteger();
+
+        final CompletableFuture<Void>[] cfs = newCfArray(100);
+        for (int i = 0; i < cfs.length; i++) {
+            cfs[i] = CompletableFuture.runAsync(() -> {
+                int current = concurrencyCount.incrementAndGet();
+                max.updateAndGet(v -> Math.max(v, current));
+                sleep(ThreadLocalRandom.current().nextInt(10));
+                concurrencyCount.decrementAndGet();
+            }, executor);
+            if (startInterval > 0) sleep(ThreadLocalRandom.current().nextInt(startInterval));
+        }
+
+        assertNull(CompletableFuture.allOf(cfs).join());
+        assertThat(max.get()).isLessThanOrEqualTo(maxConcurrency);
     }
 
     // endregion

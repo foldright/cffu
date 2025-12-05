@@ -1,4 +1,4 @@
-package io.foldright.study.concurrency_limit_executor
+package io.foldright.cffu2
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.nulls.shouldBeNull
@@ -12,8 +12,8 @@ private val executor: ExecutorService = Executors.newFixedThreadPool(THREAD_COUN
 
 class ConcurrencyLimitExecutorTest : FunSpec({
 
-    test("ConcurrencyLimitExecutorByLock mock run") {
-        val concurrencyLimitExecutor = ConcurrencyLimitExecutorByLock(4, executor)
+    test("ConcurrencyLimitExecutor mock run") {
+        val concurrencyLimitExecutor = ConcurrencyLimitExecutor(4, executor)
 
         val taskCount = THREAD_COUNT * 3
         val latch = CountDownLatch(taskCount)
@@ -27,7 +27,6 @@ class ConcurrencyLimitExecutorTest : FunSpec({
                 latch.countDown()
             }
         }
-
         latch.await()
     }
 
@@ -36,7 +35,7 @@ class ConcurrencyLimitExecutorTest : FunSpec({
             0, 1, 3, TimeUnit.SECONDS, SynchronousQueue(), ThreadPoolExecutor.CallerRunsPolicy()
         )
         val latch = CountDownLatch(1)
-        val concurrencyLimitExecutor = ConcurrencyLimitExecutorByLock(3, executor)
+        val concurrencyLimitExecutor = ConcurrencyLimitExecutor(3, executor)
         val f: Future<*> = executor.submit {
             latch.await()
         }
@@ -54,7 +53,7 @@ class ConcurrencyLimitExecutorTest : FunSpec({
     beforeSpec {
         // warmup executor
         (0..THREAD_COUNT).map {
-            executor.submit { Thread.sleep(100) }
+            executor.submit { sleep(100) }
         }.forEach { it.get() }
     }
 

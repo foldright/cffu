@@ -925,6 +925,29 @@ public final class CompletableFutureUtils {
                 : new DelayedExecutor(delay, unit, executor);
     }
 
+    /**
+     * Returns a new Executor that submits a task to the default executor and limits the number of concurrent tasks.
+     *
+     * @param maxConcurrency the maximum number of tasks that can run concurrently
+     * @return the new concurrency limit executor
+     */
+    @Contract(pure = true)
+    public static Executor concurrencyLimitExecutor(int maxConcurrency) {
+        return concurrencyLimitExecutor(maxConcurrency, ASYNC_POOL);
+    }
+
+    /**
+     * Returns a new Executor that submits a task to the given base executor and limits the number of concurrent tasks.
+     *
+     * @param maxConcurrency the maximum number of tasks that can run concurrently
+     * @param executor       the base executor
+     * @return the new concurrency limit executor
+     */
+    @Contract(pure = true)
+    public static Executor concurrencyLimitExecutor(int maxConcurrency, Executor executor) {
+        return new ConcurrencyLimitExecutor(maxConcurrency, executor);
+    }
+
     // endregion
     // endregion
     ////////////////////////////////////////////////////////////////////////////////

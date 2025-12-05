@@ -19,10 +19,10 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static io.foldright.cffu2.CompletableFutureUtils.failedFuture;
+import static io.foldright.cffu2.CompletableFutureUtilsTest.testConcurrencyLimit;
 import static io.foldright.test_utils.TestUtils.*;
 import static io.foldright.test_utils.TestingConstants.*;
-import static io.foldright.test_utils.TestingExecutorUtils.testCffuFac;
-import static io.foldright.test_utils.TestingExecutorUtils.testExecutor;
+import static io.foldright.test_utils.TestingExecutorUtils.*;
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -907,6 +907,14 @@ class CffuFactoryTest {
     // region# Delay Execution
 
     // tested in CffuApiCompatibilityTest#staticMethods_delayedExecutor
+
+    @Test
+    void test_concurrencyLimitExecutor() {
+        final int maxConcurrency = 2;
+        testConcurrencyLimit(testCffuFac.concurrencyLimitExecutor(maxConcurrency), maxConcurrency);
+        testConcurrencyLimit(testCffuFac.concurrencyLimitExecutor(maxConcurrency, testExecutor), maxConcurrency);
+        testConcurrencyLimit(testCffuFac.concurrencyLimitExecutor(maxConcurrency, testFjExecutor), maxConcurrency);
+    }
 
     // endregion
     // region# Getter Methods of CffuFactory properties
