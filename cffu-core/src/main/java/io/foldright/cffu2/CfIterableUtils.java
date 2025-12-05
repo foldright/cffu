@@ -640,7 +640,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#thenMRunAnyAsync(CompletableFuture, Executor, Runnable...)}.
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenMRunAsyncAndForget`")
     public static CompletableFuture<Void> thenMRunAnyAsync(
             CompletableFuture<?> cfThis, Iterable<? extends Runnable> actions, Executor executor) {
         return _thenMRunAnyAsync(cfThis, executor, toRunnableArray(actions), false);

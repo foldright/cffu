@@ -768,8 +768,12 @@ class CompletableFutureUtilsTest {
 
     @Test
     void test_concurrencyLimitExecutor() {
-        final int maxConcurrency = 2;
-        testConcurrencyLimit(concurrencyLimitExecutor(maxConcurrency), maxConcurrency);
+        final int maxConcurrency = 4;
+
+        final Executor executor = concurrencyLimitExecutor(maxConcurrency);
+        assertThat(executor.toString()).matches("ConcurrencyLimitExecutor#\\d+ \\(maxConcurrency: \\d+, executor: .*\\)");
+        testConcurrencyLimit(executor, maxConcurrency);
+
         testConcurrencyLimit(concurrencyLimitExecutor(maxConcurrency, testExecutor), maxConcurrency);
         testConcurrencyLimit(concurrencyLimitExecutor(maxConcurrency, testFjExecutor), maxConcurrency);
     }
@@ -786,7 +790,7 @@ class CompletableFutureUtilsTest {
         final AtomicInteger concurrencyCount = new AtomicInteger();
         final AtomicInteger max = new AtomicInteger();
 
-        final CompletableFuture<Void>[] cfs = newCfArray(100);
+        final CompletableFuture<Void>[] cfs = newCfArray(200);
         for (int i = 0; i < cfs.length; i++) {
             cfs[i] = CompletableFuture.runAsync(() -> {
                 int current = concurrencyCount.incrementAndGet();
@@ -798,7 +802,9 @@ class CompletableFutureUtilsTest {
         }
 
         assertNull(CompletableFuture.allOf(cfs).join());
-        assertThat(max.get()).isLessThanOrEqualTo(maxConcurrency);
+        final int actualMaxConcurrency = max.get();
+        System.err.printf("=== Actual maxConcurrency: %d, set maxConcurrency: %d ===%n", actualMaxConcurrency, maxConcurrency);
+        assertThat(actualMaxConcurrency).isLessThanOrEqualTo(maxConcurrency);
     }
 
     // endregion

@@ -6,6 +6,7 @@ import javax.annotation.concurrent.GuardedBy;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -23,6 +24,9 @@ import static java.lang.Thread.currentThread;
  * @since 2.1.0
  */
 final class ConcurrencyLimitExecutor implements Executor {
+    private static final AtomicInteger numberCounter = new AtomicInteger(1);
+
+    private final int number;
     private final int maxConcurrency;
     private final Executor executor;
 
@@ -35,6 +39,7 @@ final class ConcurrencyLimitExecutor implements Executor {
     private long syncExecutionTimes = 0;
 
     ConcurrencyLimitExecutor(int maxConcurrency, Executor executor) {
+        this.number = numberCounter.getAndIncrement();
         this.maxConcurrency = maxConcurrency;
         this.executor = executor;
     }
@@ -125,11 +130,18 @@ final class ConcurrencyLimitExecutor implements Executor {
     @GuardedBy("lock")
     private void increaseSyncExecutionAndWarn() {
         if (!isPowerOfTwo(syncExecutionTimes++)) return;
-        log(WARN, "Detected synchronous execution (" + syncExecutionTimes + " times) in delegate executor" +
-                " (" + executor + "), which likely prevent maximizing the concurrency limit (" + maxConcurrency + ")");
+        log(WARN, "ConcurrencyLimitExecutor#" + number + " detected synchronous execution ("
+                + syncExecutionTimes + " times) in base executor (" + executor
+                + "), which likely prevent maximizing the concurrency limit (" + maxConcurrency + ")");
     }
 
     private static boolean isPowerOfTwo(long n) {
         return n >= 0 && (n & (n - 1)) == 0;
+    }
+
+    @Override
+    public String toString() {
+        return "ConcurrencyLimitExecutor#" + number + " (maxConcurrency: "
+                + maxConcurrency+ ", executor: " + executor + ")";
     }
 }
