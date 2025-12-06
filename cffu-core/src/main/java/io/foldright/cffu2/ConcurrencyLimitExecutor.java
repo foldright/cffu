@@ -35,8 +35,12 @@ final class ConcurrencyLimitExecutor implements Executor {
     private final Deque<Runnable> queue = new ArrayDeque<>();
     @GuardedBy("lock")
     private int workerCount = 0;
+
+    // for debugging and monitoring
     @GuardedBy("lock")
     private long syncExecutionTimes = 0;
+    @GuardedBy("lock")
+    private long workerCountIncrementTimes = 0;
 
     ConcurrencyLimitExecutor(int maxConcurrency, Executor executor) {
         this.number = numberCounter.getAndIncrement();
@@ -63,8 +67,8 @@ final class ConcurrencyLimitExecutor implements Executor {
             executor.execute(() -> {
                 if (currentThread().equals(callerThread) && !returnedFromExecute[0]) {
                     // if executing synchronously, run the input command only
-                    workerCount++;
-                    increaseSyncExecutionAndWarn();
+                    increaseWorkerCount();
+                    warnLogSyncExecution();
                     lock.unlock();
                     locking[0] = false;
 
@@ -82,18 +86,9 @@ final class ConcurrencyLimitExecutor implements Executor {
 
             // NOTE: do NOT move the statement below into the `finally` block,
             // because `workerCount` must NOT be incremented if `executor.execute()` throws an exception
-            if (locking[0]) workerCount++;
+            if (locking[0]) increaseWorkerCount();
         } finally {
             if (locking[0]) lock.unlock();
-        }
-    }
-
-    private void decreaseWorkerCountWithLock() {
-        lock.lock();
-        try {
-            workerCount--;
-        } finally {
-            lock.unlock();
         }
     }
 
@@ -128,20 +123,41 @@ final class ConcurrencyLimitExecutor implements Executor {
     }
 
     @GuardedBy("lock")
-    private void increaseSyncExecutionAndWarn() {
-        if (!isPowerOfTwo(syncExecutionTimes++)) return;
+    private void increaseWorkerCount() {
+        workerCount++;
+
+        //  check the concurrency limit issue
+        if (!isPowerOfTwo(++workerCountIncrementTimes)) return;
+        if (workerCount > maxConcurrency) log(ERROR, "ConcurrencyLimitExecutor#" + number
+                + " has concurrency level " + workerCount + " that exceeds max concurrency (" + maxConcurrency + "),"
+                + " this should never happen - please report this issue to the cffu library!");
+    }
+
+    private void decreaseWorkerCountWithLock() {
+        lock.lock();
+        try {
+            workerCount--;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @GuardedBy("lock")
+    private void warnLogSyncExecution() {
+        if (!isPowerOfTwo(++syncExecutionTimes)) return;
         log(WARN, "ConcurrencyLimitExecutor#" + number + " detected synchronous execution ("
                 + syncExecutionTimes + " times) in base executor (" + executor
-                + "), which likely prevent maximizing the concurrency limit (" + maxConcurrency + ")");
+                + "), which likely prevent maximizing the concurrency limit"
+                + " (current concurrency level: " + workerCount + ", max concurrency: " + maxConcurrency + ")");
     }
 
     private static boolean isPowerOfTwo(long n) {
-        return n >= 0 && (n & (n - 1)) == 0;
+        return n > 0 && (n & (n - 1)) == 0;
     }
 
     @Override
     public String toString() {
         return "ConcurrencyLimitExecutor#" + number + " (maxConcurrency: "
-                + maxConcurrency+ ", executor: " + executor + ")";
+                + maxConcurrency + ", executor: " + executor + ")";
     }
 }
