@@ -951,7 +951,9 @@ public final class CompletableFutureUtils {
      */
     @Contract(pure = true)
     public static Executor concurrencyLimitExecutor(int maxConcurrency, Executor executor) {
-        return new ConcurrencyLimitExecutor(maxConcurrency, executor);
+        if (maxConcurrency <= 0) throw new IllegalArgumentException("maxConcurrency must be positive");
+        requireNonNull(executor, "executor is null");
+        return new ConcurrencyLimitExecutor(maxConcurrency, screenExecutor(executor));
     }
 
     // endregion

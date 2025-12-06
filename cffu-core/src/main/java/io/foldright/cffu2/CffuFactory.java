@@ -864,7 +864,7 @@ public final class CffuFactory {
      */
     @Contract(pure = true)
     public Executor concurrencyLimitExecutor(int maxConcurrency, Executor executor) {
-        return CompletableFutureUtils.concurrencyLimitExecutor(maxConcurrency, cffuUnscreened(executor));
+        return CompletableFutureUtils.concurrencyLimitExecutor(maxConcurrency, cffuScreened(executor));
     }
 
     // endregion
