@@ -66,15 +66,17 @@ final class ConcurrencyLimitExecutor implements Executor {
             // NOTE: `returnedFromExecute` is only accessed by the caller thread (single-threaded) too.
             final boolean[] returnedFromExecute = {false};
             executor.execute(() -> {
-                if (currentThread().equals(callerThread) && !returnedFromExecute[0]) {
-                    // if executing synchronously, run the input command only
+                final boolean isSyncExecution = currentThread().equals(callerThread) && !returnedFromExecute[0];
+                if (isSyncExecution) {
                     increaseWorkerCount();
                     warnLogSyncExecution();
                     lock.unlock();
                     locking[0] = false;
 
+                    // When executing synchronously:
+                    //  - execute only the input command
+                    //  - do NOT catch exceptions, let them propagate to the caller
                     try {
-                        // do NOT catch exception when executing synchronously, propagate exception to caller
                         command.run();
                     } finally {
                         decreaseWorkerCountWithLock();
