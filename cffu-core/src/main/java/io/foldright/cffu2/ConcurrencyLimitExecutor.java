@@ -21,6 +21,7 @@ import static java.lang.Thread.currentThread;
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @see CompletableFutureUtils#concurrencyLimitExecutor(int)
  * @see CffuFactory#concurrencyLimitExecutor(int)
+ * @see com.google.common.util.concurrent.MoreExecutors#newSequentialExecutor(Executor)
  * @since 2.1.0
  */
 final class ConcurrencyLimitExecutor implements Executor {
@@ -93,6 +94,8 @@ final class ConcurrencyLimitExecutor implements Executor {
     }
 
     private void work(Runnable firstTask) {
+        // remove the interrupt bit before the task
+        boolean interruptedDuringTask = Thread.interrupted();
         safeRun(firstTask);
 
         while (true) {
@@ -102,19 +105,21 @@ final class ConcurrencyLimitExecutor implements Executor {
                 task = queue.poll();
                 if (task == null) {
                     workerCount--;
+                    // ensure that if the thread was interrupted at all while processing, it is returned to
+                    // the base Executor interrupted so that it may handle the interruption if it likes.
+                    if (interruptedDuringTask) currentThread().interrupt();
                     break;
                 }
             } finally {
                 lock.unlock();
             }
+            // remove the interrupt bit before each task
+            interruptedDuringTask |= Thread.interrupted();
             safeRun(task);
         }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static void safeRun(Runnable task) {
-        // the interrupted status of the thread needs to be cleared before running the task.
-        Thread.interrupted();
         try {
             task.run();
         } catch (Throwable e) {

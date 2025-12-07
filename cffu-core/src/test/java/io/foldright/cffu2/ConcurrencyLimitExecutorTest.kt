@@ -12,7 +12,7 @@ private val executor: ExecutorService = Executors.newFixedThreadPool(THREAD_COUN
 
 class ConcurrencyLimitExecutorTest : FunSpec({
 
-    test("ConcurrencyLimitExecutor mock run") {
+    test("ConcurrencyLimitExecutor smoke test") {
         val concurrencyLimitExecutor = ConcurrencyLimitExecutor(4, executor)
 
         val taskCount = THREAD_COUNT * 3
@@ -30,7 +30,7 @@ class ConcurrencyLimitExecutorTest : FunSpec({
         latch.await()
     }
 
-    test("sync execution mock run") {
+    test("sync execution smoke test") {
         val executor = ThreadPoolExecutor(
             0, 1, 3, TimeUnit.SECONDS, SynchronousQueue(), ThreadPoolExecutor.CallerRunsPolicy()
         )
