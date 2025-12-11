@@ -106,7 +106,6 @@
 					<configuration>
 						<args>
 							<arg>-Werror</arg>
-							<arg>-Xjvm-default=all</arg>
 							<arg>-Xjsr305=warn</arg>
 						</args>
 					</configuration>
@@ -166,7 +165,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
-					<version>3.6.2</version>
+					<version>3.6.3</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>

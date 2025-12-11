@@ -78,14 +78,14 @@
 		<release.pom.version.regex>${ga.release.pom.version.regex}</release.pom.version.regex>
 		<maven.enforcer.pom.version.regex>${snapshot.pom.version.regex}</maven.enforcer.pom.version.regex>
 
-		<spotbugs.annotations.version>4.9.4</spotbugs.annotations.version>
+		<spotbugs.annotations.version>4.9.8</spotbugs.annotations.version>
 		<jsr305.version>3.0.2</jsr305.version>
 		<jetbrains.annotations.version>26.0.2-1</jetbrains.annotations.version>
 
-		<kotlin.version>2.2.20</kotlin.version>
+		<kotlin.version>2.3.0</kotlin.version>
 
 		<slf4j.version>2.0.17</slf4j.version>
-		<log4j2.version>2.25.2</log4j2.version>
+		<log4j2.version>2.25.3</log4j2.version>
 		<log4j2.slf4j.impl.aid>log4j-slf4j2-impl</log4j2.slf4j.impl.aid>
 		<guava.version>33.5.0-jre</guava.version>
 
@@ -378,7 +378,6 @@
 					<configuration>
 						<args>
 							<arg>-Werror</arg>
-							<arg>-Xjvm-default=all</arg>
 							<arg>-Xjsr305=warn</arg>
 						</args>
 					</configuration>
@@ -555,7 +554,7 @@
 					-->
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
-					<version>3.6.2</version>
+					<version>3.6.3</version>
 					<configuration>
 						<executable>${java.home}/bin/java</executable>
 						<classpathScope>test</classpathScope>
