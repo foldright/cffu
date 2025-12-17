@@ -82,7 +82,7 @@
 		<jsr305.version>3.0.2</jsr305.version>
 		<jetbrains.annotations.version>26.0.2-1</jetbrains.annotations.version>
 
-		<kotlin.version>2.2.20</kotlin.version>
+		<kotlin.version>2.3.0</kotlin.version>
 
 		<slf4j.version>2.0.17</slf4j.version>
 		<log4j2.version>2.25.2</log4j2.version>
@@ -385,7 +385,6 @@
 					<configuration>
 						<args>
 							<arg>-Werror</arg>
-							<arg>-Xjvm-default=all</arg>
 							<arg>-Xjsr305=warn</arg>
 						</args>
 					</configuration>
