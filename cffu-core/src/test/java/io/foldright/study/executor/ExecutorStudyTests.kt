@@ -1,5 +1,6 @@
 package io.foldright.study.executor
 
+import com.google.common.util.concurrent.MoreExecutors
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.inspectors.shouldForAll
@@ -14,17 +15,18 @@ import java.lang.Thread.sleep
 import java.util.concurrent.*
 
 
+private val oneThreadExecutor: ExecutorService = Executors.newFixedThreadPool(1)
+
 @Volatile
-private lateinit var executorThread: Thread
-private val executor: ExecutorService = Executors.newFixedThreadPool(1)
+private lateinit var theOneThread: Thread // the worker thread of the above executor
 
 class ExecutorStudyTests : FunSpec({
-    test("task interruption - InterruptedException") {
+    test("ThreadPoolExecutor: task interruption - InterruptedException") {
         val runThreads = CopyOnWriteArrayList<Thread>()
 
         run {
             val submitLatch = CountDownLatch(1)
-            val f: Future<*> = executor.submit {
+            val f: Future<*> = oneThreadExecutor.submit {
                 runThreads.add(currentThread())
                 submitLatch.countDown()
                 sleep(2_000)
@@ -32,32 +34,32 @@ class ExecutorStudyTests : FunSpec({
             // await submitted task start
             submitLatch.await()
 
-            executorThread.interrupt()
+            theOneThread.interrupt()
             sleep(50)
 
             shouldThrowExactly<ExecutionException> { f.get() }
                 .shouldHaveCauseInstanceOf<InterruptedException>()
-            executorThread.isInterrupted.shouldBeFalse()
+            theOneThread.isInterrupted.shouldBeFalse()
 
             currentThread().isInterrupted.shouldBeFalse()
         }
 
         // await the second submitted task finish
-        executor.submit { runThreads.add(currentThread()) }.get().shouldBeNull()
+        oneThreadExecutor.submit { runThreads.add(currentThread()) }.get().shouldBeNull()
         // interrupted status is unset
         currentThread().isInterrupted.shouldBeFalse()
 
         runThreads.shouldHaveSize(2)
         // thread is reused after interrupt (throw InterruptedException)
-        runThreads.shouldForAll { it === executorThread }
+        runThreads.shouldForAll { it === theOneThread }
     }
 
-    test("task interruption - isInterrupted") {
+    test("ThreadPoolExecutor: task interruption - isInterrupted") {
         val runThreads = CopyOnWriteArrayList<Thread>()
 
         run {
             val submitLatch = CountDownLatch(1)
-            val f: Future<*> = executor.submit {
+            val f: Future<*> = oneThreadExecutor.submit {
                 runThreads.add(currentThread())
                 submitLatch.countDown()
 
@@ -71,40 +73,40 @@ class ExecutorStudyTests : FunSpec({
             // await submitted task start
             submitLatch.await()
 
-            executorThread.interrupt()
+            theOneThread.interrupt()
             sleep(50)
 
             f.get().shouldBeNull()
             // thread is reused after interrupt (set isInterrupted)
-            executorThread.isInterrupted.shouldBeFalse()
+            theOneThread.isInterrupted.shouldBeFalse()
 
             currentThread().isInterrupted.shouldBeFalse()
         }
 
         // await the second submitted task finish
-        executor.submit { runThreads.add(currentThread()) }.get().shouldBeNull()
+        oneThreadExecutor.submit { runThreads.add(currentThread()) }.get().shouldBeNull()
         currentThread().isInterrupted.shouldBeFalse()
 
         runThreads.shouldHaveSize(2)
         // reuse thread
-        runThreads.shouldForAll { it === executorThread }
+        runThreads.shouldForAll { it === theOneThread }
     }
 
-    test("CallerRunsPolicy of ThreadPoolExecutor: exception thrown by command is propagated to caller") {
+    test("ThreadPoolExecutor/CallerRunsPolicy: exception thrown by command is propagated to caller") {
         val callerThread = currentThread()
         val rte = RuntimeException("Boom!!!")
 
         val latch = CountDownLatch(1)
-        val executor = ThreadPoolExecutor(
+        val oneThread = ThreadPoolExecutor(
             0, 1, 3, TimeUnit.SECONDS, SynchronousQueue(), ThreadPoolExecutor.CallerRunsPolicy()
         )
-        val f: Future<*> = executor.submit {
+        val f: Future<*> = oneThread.submit {
             currentThread().shouldNotBeSameInstanceAs(callerThread)
             latch.await()
         }
 
         shouldThrowExactly<RuntimeException> {
-            executor.execute {
+            oneThread.execute {
                 currentThread().shouldBeSameInstanceAs(callerThread)
                 throw rte
             }
@@ -114,12 +116,23 @@ class ExecutorStudyTests : FunSpec({
         f.get().shouldBeNull()
     }
 
+    test("MoreExecutors.directExecutor(): exception thrown by command is propagated to caller") {
+        val callerThread = currentThread()
+        val rte = RuntimeException("Boom!!!")
+        shouldThrowExactly<RuntimeException> {
+            MoreExecutors.directExecutor().execute {
+                currentThread().shouldBeSameInstanceAs(callerThread)
+                throw rte
+            }
+        }.shouldBeSameInstanceAs(rte)
+    }
+
     beforeSpec {
         // warmup and set executorThread
-        executor.submit({ executorThread = currentThread() }).get()
+        oneThreadExecutor.submit({ theOneThread = currentThread() }).get()
     }
 
     afterSpec {
-        executor.shutdownNow()
+        oneThreadExecutor.shutdownNow()
     }
 })

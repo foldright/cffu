@@ -1,5 +1,6 @@
 package io.foldright.cffu2;
 
+import com.google.common.util.concurrent.MoreExecutors;
 import io.foldright.cffu2.tuple.Tuple3;
 import io.foldright.test_utils.TestUtils;
 import org.junit.jupiter.api.Test;
@@ -777,6 +778,8 @@ class CompletableFutureUtilsTest {
 
         testConcurrencyLimit(concurrencyLimitExecutor(maxConcurrency, testExecutor), maxConcurrency);
         testConcurrencyLimit(concurrencyLimitExecutor(maxConcurrency, testFjExecutor), maxConcurrency);
+
+        _testConcurrencyLimit0(MoreExecutors.directExecutor(), 3, 0);
     }
 
     static void testConcurrencyLimit(Executor executor, int maxConcurrency) {
@@ -786,26 +789,21 @@ class CompletableFutureUtilsTest {
     }
 
     private static void _testConcurrencyLimit0(Executor executor, int maxConcurrency, int startInterval) {
-        executor.execute(() -> {throw new RuntimeException();});
-
-        final AtomicInteger concurrencyCount = new AtomicInteger();
-        final AtomicInteger max = new AtomicInteger();
-
         final CompletableFuture<Void>[] cfs = newCfArray(200);
+        ConcurrencyChecker concurrencyChecker = new ConcurrencyChecker(maxConcurrency);
         for (int i = 0; i < cfs.length; i++) {
             cfs[i] = CompletableFuture.runAsync(() -> {
-                int current = concurrencyCount.incrementAndGet();
-                max.updateAndGet(v -> Math.max(v, current));
+                concurrencyChecker.enter();
+
                 sleep(ThreadLocalRandom.current().nextInt(10));
-                concurrencyCount.decrementAndGet();
+
+                concurrencyChecker.leave();
             }, executor);
             if (startInterval > 0) sleep(ThreadLocalRandom.current().nextInt(startInterval));
         }
 
         assertNull(CompletableFuture.allOf(cfs).join());
-        final int actualMaxConcurrency = max.get();
-        System.err.printf("=== Actual maxConcurrency: %d, set maxConcurrency: %d ===%n", actualMaxConcurrency, maxConcurrency);
-        assertThat(actualMaxConcurrency).isLessThanOrEqualTo(maxConcurrency);
+        concurrencyChecker.check();
     }
 
     // endregion
