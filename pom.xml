@@ -257,13 +257,15 @@
 				<artifactId>kotlin-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>compile</id>
+						<id>kotlin-compile</id>
+						<phase>compile</phase>
 						<goals>
 							<goal>compile</goal>
 						</goals>
 					</execution>
 					<execution>
-						<id>test-compile</id>
+						<id>kotlin-test-compile</id>
+						<phase>test-compile</phase>
 						<goals>
 							<goal>test-compile</goal>
 						</goals>
