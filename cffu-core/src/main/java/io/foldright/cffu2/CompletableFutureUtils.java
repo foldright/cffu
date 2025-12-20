@@ -1747,7 +1747,7 @@ public final class CompletableFutureUtils {
         return _thenMRunAsyncAndForget(cfThis, executor, actions, true);
     }
 
-    public static <F extends CompletionStage<?>> F _thenMRunAsyncAndForget(
+    static <F extends CompletionStage<?>> F _thenMRunAsyncAndForget(
             F cfThis, Executor executor, Runnable[] actions, boolean defensiveCopy) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(executor, "executor is null");
