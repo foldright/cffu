@@ -232,7 +232,7 @@ Migrating to the `Cffu` class involves two simple changes:
 
 2\) If you cannot modify code that uses `CompletableFuture` (such as `CF` returned from external libraries)
 
-Use the [`CffuFactory.toCffu(CompletionStage)` method](https://foldright.io/api-docs/cffu2/2.0.4/io/foldright/cffu2/CffuFactory.html#toCffu(java.util.concurrent.CompletionStage))
+Use the [`CffuFactory.toCffu(CompletionStage)` method](https://foldright.io/api-docs/cffu2/2.0.6/io/foldright/cffu2/CffuFactory.html#toCffu(java.util.concurrent.CompletionStage))
 to convert `CompletableFuture` or `CompletionStage` to `Cffu` type.
 
 ### 1.3 dependencies (including `CompletableFutureUtils` utility class)
@@ -243,18 +243,18 @@ to convert `CompletableFuture` or `CompletionStage` to `Cffu` type.
   <dependency>
     <groupId>io.foldright</groupId>
     <artifactId>cffu2</artifactId>
-    <version>2.0.4</version>
+    <version>2.0.6</version>
   </dependency>
   ```
 - For `Gradle` projects:
 
   Gradle Kotlin DSL
   ```groovy
-  implementation("io.foldright:cffu2:2.0.4")
+  implementation("io.foldright:cffu2:2.0.6")
   ```
   Gradle Groovy DSL
   ```groovy
-  implementation 'io.foldright:cffu2:2.0.4'
+  implementation 'io.foldright:cffu2:2.0.6'
   ```
 
 ## 2. `cffu` feature introduction
@@ -689,7 +689,7 @@ You should only handle specific exceptions that the current business clearly und
 and can recover from, letting outer layers handle other exceptions;
 avoid masking bugs or incorrectly handling exceptions that you cannot recover from.
 
-`cffu` provides corresponding [`catching*` methods](https://foldright.io/api-docs/cffu2/2.0.4/io/foldright/cffu2/CompletableFutureUtils.html#catching(F,java.lang.Class,java.util.function.Function))
+`cffu` provides corresponding [`catching*` methods](https://foldright.io/api-docs/cffu2/2.0.6/io/foldright/cffu2/CompletableFutureUtils.html#catching(F,java.lang.Class,java.util.function.Function))
 that support specifying exception types to handle; compared to the `CF#exceptionally` method,
 it adds an exception type parameter, with similar usage, so no code example is provided.
 
@@ -721,18 +721,18 @@ Because timeout and delayed execution are basic functionalities, once they fail,
 
 The `cffu` library provides timeout-safe new implementation methods:
 
-- [`Cffu#orTimeout()`](https://foldright.io/api-docs/cffu2/2.0.4/io/foldright/cffu2/BaseCffu.html#orTimeout(long,java.util.concurrent.TimeUnit))
-  / [`Cffu#completeOnTimeoutTimeout()`](https://foldright.io/api-docs/cffu2/2.0.4/io/foldright/cffu2/BaseCffu.html#completeOnTimeout(java.lang.Object,long,java.util.concurrent.TimeUnit))
-- [`CFU#cffuOrTimeout()`](https://foldright.io/api-docs/cffu2/2.0.4/io/foldright/cffu2/CompletableFutureUtils.html#cffuOrTimeout(F,long,java.util.concurrent.TimeUnit))
-  / [`CFU#cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu2/2.0.4/io/foldright/cffu2/CompletableFutureUtils.html#cffuCompleteOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
+- [`Cffu#orTimeout()`](https://foldright.io/api-docs/cffu2/2.0.6/io/foldright/cffu2/BaseCffu.html#orTimeout(long,java.util.concurrent.TimeUnit))
+  / [`Cffu#completeOnTimeoutTimeout()`](https://foldright.io/api-docs/cffu2/2.0.6/io/foldright/cffu2/BaseCffu.html#completeOnTimeout(java.lang.Object,long,java.util.concurrent.TimeUnit))
+- [`CFU#cffuOrTimeout()`](https://foldright.io/api-docs/cffu2/2.0.6/io/foldright/cffu2/CompletableFutureUtils.html#cffuOrTimeout(F,long,java.util.concurrent.TimeUnit))
+  / [`CFU#cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu2/2.0.6/io/foldright/cffu2/CompletableFutureUtils.html#cffuCompleteOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
 
 Ensuring business logic won't execute in `CF`'s single-threaded `ScheduledThreadPoolExecutor`.
 
 For more information, see:
 
 - Problem demonstration [`DelayDysfunctionDemo.java`](https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java)
-- `cffu backport` method JavaDoc: [`CFU#orTimeout()`](https://foldright.io/api-docs/cffu2/2.0.4/io/foldright/cffu2/CompletableFutureUtils.html#orTimeout(F,long,java.util.concurrent.TimeUnit))
-  / [`CFU#completeOnTimeout()`](https://foldright.io/api-docs/cffu2/2.0.4/io/foldright/cffu2/CompletableFutureUtils.html#completeOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
+- `cffu backport` method JavaDoc: [`CFU#orTimeout()`](https://foldright.io/api-docs/cffu2/2.0.6/io/foldright/cffu2/CompletableFutureUtils.html#orTimeout(F,long,java.util.concurrent.TimeUnit))
+  / [`CFU#completeOnTimeout()`](https://foldright.io/api-docs/cffu2/2.0.6/io/foldright/cffu2/CompletableFutureUtils.html#completeOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
 - Article [Improper Use of `CompletableFuture` Timeout Functionality Causes Production Incidents](https://juejin.cn/post/7411686792342274089)
 
 ### 2.11 support for timeout-enabled `join` method
@@ -900,7 +900,7 @@ Compared to the above method groups (multiple `Action`s/multiple data), these me
 > In critical business logic, when using these methods, pay attention to
 > implementing good exception reporting logic (aka. don't swallow exceptions):
 > - For implementation reference, see `cffu` implementation code, such as `CompletableFutureUtils.mSupplyFailFastAsync()`
-> - The `cffu` library provides support utility class [`SwallowedExceptionHandleUtils`](https://foldright.io/api-docs/cffu2/2.0.4/io/foldright/cffu2/eh/SwallowedExceptionHandleUtils.html)
+> - The `cffu` library provides support utility class [`SwallowedExceptionHandleUtils`](https://foldright.io/api-docs/cffu2/2.0.6/io/foldright/cffu2/eh/SwallowedExceptionHandleUtils.html)
     for implementing orchestration exception reporting
 
 # 🔌 API Docs
@@ -920,18 +920,18 @@ Compared to the above method groups (multiple `Action`s/multiple data), these me
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu2</artifactId>
-      <version>2.0.4</version>
+      <version>2.0.6</version>
     </dependency>
     ```
   - For `Gradle` projects:
 
     Gradle Kotlin DSL
     ```groovy
-    implementation("io.foldright:cffu2:2.0.4")
+    implementation("io.foldright:cffu2:2.0.6")
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation 'io.foldright:cffu2:2.0.4'
+    implementation 'io.foldright:cffu2:2.0.6'
     ```
 - [📌 `TransmittableThreadLocal(TTL)`](https://github.com/alibaba/transmittable-thread-local) [`cffu executor wrapper SPI` implementation](cffu-ttl-executor-wrapper):
   - For `Maven` projects:
@@ -940,7 +940,7 @@ Compared to the above method groups (multiple `Action`s/multiple data), these me
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu2-ttl-executor-wrapper</artifactId>
-      <version>2.0.4</version>
+      <version>2.0.6</version>
       <scope>runtime</scope>
     </dependency>
     ```
@@ -948,11 +948,11 @@ Compared to the above method groups (multiple `Action`s/multiple data), these me
 
     Gradle Kotlin DSL
     ```groovy
-    runtimeOnly("io.foldright:cffu2-ttl-executor-wrapper:2.0.4")
+    runtimeOnly("io.foldright:cffu2-ttl-executor-wrapper:2.0.6")
     ```
     Gradle Groovy DSL
     ```groovy
-    runtimeOnly 'io.foldright:cffu2-ttl-executor-wrapper:2.0.4'
+    runtimeOnly 'io.foldright:cffu2-ttl-executor-wrapper:2.0.6'
     ```
 - `cffu bom`:
   - For `Maven` projects:
@@ -961,7 +961,7 @@ Compared to the above method groups (multiple `Action`s/multiple data), these me
     <dependency>
       <groupId>io.foldright</groupId>
       <artifactId>cffu2-bom</artifactId>
-      <version>2.0.4</version>
+      <version>2.0.6</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -970,11 +970,11 @@ Compared to the above method groups (multiple `Action`s/multiple data), these me
 
     Gradle Kotlin DSL
     ```groovy
-    implementation(platform("io.foldright:cffu2-bom:2.0.4"))
+    implementation(platform("io.foldright:cffu2-bom:2.0.6"))
     ```
     Gradle Groovy DSL
     ```groovy
-    implementation platform('io.foldright:cffu2-bom:2.0.4')
+    implementation platform('io.foldright:cffu2-bom:2.0.6')
     ```
 
 # 📚 More Resources
