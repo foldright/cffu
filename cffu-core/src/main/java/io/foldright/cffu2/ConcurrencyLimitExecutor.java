@@ -49,14 +49,12 @@ final class ConcurrencyLimitExecutor implements Executor {
     @SuppressFBWarnings("UL_UNRELEASED_LOCK")
     public void execute(Runnable command) {
         lock.lock();
-        // NOTE: variable `locking` is only accessed by the caller thread (single-threaded),
-        // so no need to use AtomicBoolean
+        // NOTE: variable `locking` is only accessed by the caller thread (single-threaded);
+        //       so no need to declare it as type AtomicBoolean for thread safety.
         final boolean[] locking = {true};
         try {
-            if (workerCount >= maxConcurrency) {
-                queue.add(command);
-                return;
-            }
+            queue.add(command);
+            if (workerCount >= maxConcurrency) return;
 
             final Thread callerThread = currentThread();
             // NOTE: `returnedFromExecute` is only accessed by the caller thread (single-threaded) too.
@@ -65,22 +63,26 @@ final class ConcurrencyLimitExecutor implements Executor {
                 @Override
                 public void run() {
                     final boolean isSyncExecution = currentThread().equals(callerThread) && !returnedFromExecute[0];
-                    if (isSyncExecution) {
-                        increaseWorkerCount();
+                    if (isSyncExecution) syncRun();
+                    else asyncWork();
+                }
+
+                private void syncRun() {
+                    try {
+                        incrementWorkerCount();
+                        queue.removeLastOccurrence(command);
                         warnLogSyncExecution();
+                    } finally {
                         lock.unlock();
                         locking[0] = false;
-
-                        // When executing synchronously:
-                        //  - execute only the input command
-                        //  - do NOT catch exceptions, let them propagate to the caller
-                        try {
-                            command.run();
-                        } finally {
-                            decreaseWorkerCountWithLock();
-                        }
-                    } else {
-                        work(command);
+                    }
+                    // For synchronous execution of a submitted task:
+                    //  - run the submitted command only, do NOT run other commands in the queue
+                    //  - do NOT catch exceptions, let them propagate to the caller
+                    try {
+                        command.run();
+                    } finally {
+                        decrementWorkerCountWithLock();
                     }
                 }
 
@@ -93,19 +95,19 @@ final class ConcurrencyLimitExecutor implements Executor {
             executor.execute(submittedTask);
             returnedFromExecute[0] = true;
 
-            // NOTE: do NOT move the statement below into the `finally` block,
-            // because `workerCount` must NOT be incremented if `executor.execute()` throws an exception
-            if (locking[0]) increaseWorkerCount();
+            // NOTE 1: if `locking` is true, the submitted task will run asynchronously;
+            //         increment worker count here in the `execute` method; otherwise, for synchronous execution,
+            //         the worker count is incremented within the submitted task before returning from `execute`.
+            // NOTE 2: do NOT move the worker count increment below into the `finally` block,
+            //         because `workerCount` must NOT be incremented if `executor.execute()` throws an exception.
+            if (locking[0]) incrementWorkerCount();
         } finally {
             if (locking[0]) lock.unlock();
         }
     }
 
-    private void work(Runnable firstTask) {
-        // remove the interrupt bit before the task
-        boolean interruptedDuringTask = Thread.interrupted();
-        safeRun(firstTask);
-
+    private void asyncWork() {
+        boolean interruptedDuringTask = false;
         while (true) {
             Runnable task;
             lock.lock();
@@ -116,28 +118,25 @@ final class ConcurrencyLimitExecutor implements Executor {
                     // ensure that if the thread was interrupted at all while processing, it is returned to
                     // the base Executor interrupted so that it may handle the interruption if it likes.
                     if (interruptedDuringTask) currentThread().interrupt();
-                    break;
+                    return;
                 }
             } finally {
                 lock.unlock();
             }
             // remove the interrupt bit before each task
             interruptedDuringTask |= Thread.interrupted();
-            safeRun(task);
-        }
-    }
-
-    private static void safeRun(Runnable task) {
-        try {
-            task.run();
-        } catch (Throwable e) {
-            logUncaughtException(ERROR, "ConcurrencyLimitExecutor#work", e);
+            // safely execute the task in `try-catch` block
+            try {
+                task.run();
+            } catch (Throwable e) {
+                logUncaughtException(ERROR, super.toString() + "#asyncWork", e);
+            }
         }
     }
 
     @GuardedBy("lock")
     @SuppressFBWarnings("AT_NONATOMIC_OPERATIONS_ON_SHARED_VARIABLE")
-    private void increaseWorkerCount() {
+    private void incrementWorkerCount() {
         workerCount++;
 
         //  check the concurrency limit issue
@@ -147,7 +146,7 @@ final class ConcurrencyLimitExecutor implements Executor {
                 + " this should never happen - please report this issue to the cffu library!");
     }
 
-    private void decreaseWorkerCountWithLock() {
+    private void decrementWorkerCountWithLock() {
         lock.lock();
         try {
             workerCount--;
