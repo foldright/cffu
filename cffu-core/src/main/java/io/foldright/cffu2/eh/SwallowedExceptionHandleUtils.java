@@ -9,11 +9,11 @@ import java.util.concurrent.CompletionStage;
 
 import static io.foldright.cffu2.CompletableFutureUtils.unwrapCfException;
 import static io.foldright.cffu2.LLCF.*;
+import static io.foldright.cffu2.internal.CffuLogger.Level.ERROR;
+import static io.foldright.cffu2.internal.CffuLogger.Level.WARN;
+import static io.foldright.cffu2.internal.CffuLogger.logException;
+import static io.foldright.cffu2.internal.CffuLogger.logUncaughtException;
 import static io.foldright.cffu2.internal.CommonUtils.requireArrayAndEleNonNull;
-import static io.foldright.cffu2.internal.ExceptionLogger.Level.ERROR;
-import static io.foldright.cffu2.internal.ExceptionLogger.Level.WARN;
-import static io.foldright.cffu2.internal.ExceptionLogger.logException;
-import static io.foldright.cffu2.internal.ExceptionLogger.logUncaughtException;
 import static java.util.Objects.requireNonNull;
 
 

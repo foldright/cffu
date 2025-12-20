@@ -7,6 +7,8 @@ module io.foldright.cffu2 {
     exports io.foldright.cffu2;
     exports io.foldright.cffu2.eh;
     exports io.foldright.cffu2.tuple;
+    exports io.foldright.cffu2.config;
+
     exports io.foldright.cffu2.spi;
 
     uses io.foldright.cffu2.spi.ExecutorWrapperProvider;

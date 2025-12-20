@@ -1,35 +1,27 @@
 package io.foldright.cffu2.internal;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
+import io.foldright.cffu2.config.CffuConfiguration.ExceptionLoggingFormat;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.spi.LocationAwareLogger;
 
 
 /**
  * <strong>Internal</strong> exception logging utility for the cffu library.
- * <p>
- * By default, uncaught exceptions are logged with their complete stack traces. The logging behavior can be configured
- * through the system property {@code cffu.exception.log.format} with the following values:
- * <ul>
- * <li>{@code full}: Log the complete exception stack trace (default)</li>
- * <li>{@code short}: Log only the exception message</li>
- * <li>{@code none}: Suppress all exception logging</li>
- * </ul>
- * <p>
- * Configure the logging format by either:
- * <ul>
- * <li>Setting the JVM argument {@code -Dcffu.exception.log.format=<value>} at startup</li>
- * <li>Calling {@code System.setProperty("cffu.exception.log.format", "<value>")} programmatically</li>
- * </ul>
  *
  * @author HuHao (995483610 at qq dot com)
  * @author Jerry Lee (oldratlee at gmail dot com)
+ * @see io.foldright.cffu2.config.CffuConfiguration#setExceptionLoggingFormat
  * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
  */
 @ApiStatus.Internal
-public final class ExceptionLogger {
-    private static final String FQCN = ExceptionLogger.class.getName();
+public final class CffuLogger {
+    private static final String FQCN = CffuLogger.class.getName();
     private static final String CFFU_PACKAGE_NAME = FQCN.replaceFirst("(\\.[^.]*){2}$", "");
+
+    @VisibleForTesting
+    static volatile ExceptionLoggingFormat exceptionLoggingFormat = initExceptionLoggingFormat();
 
     private static final LoggerAdapter logger = getLogger();
 
@@ -47,17 +39,33 @@ public final class ExceptionLogger {
 
     @SuppressWarnings("StatementWithEmptyBody")
     private static void log0(Level level, String msg, @Nullable Throwable ex) {
+        final ExceptionLoggingFormat format = exceptionLoggingFormat;
+        if (format == ExceptionLoggingFormat.NONE) {
+            // pass silently when explicitly silenced.
+        } else if (format == ExceptionLoggingFormat.SHORT) {
+            if (ex != null) msg = msg + ", exception: " + ex;
+            logger.log(level, msg + ", " + ex, null);
+        } else {
+            logger.log(level, msg, ex);
+        }
+    }
+
+    public static void setExceptionLoggingFormat(ExceptionLoggingFormat format) {
+        exceptionLoggingFormat = format;
+    }
+
+    private static ExceptionLoggingFormat initExceptionLoggingFormat() {
         final String fullFormat = "full";
         final String shortFormat = "short";
         final String noneFormat = "none";
 
         final String format = System.getProperty("cffu.exception.log.format", fullFormat);
         if (noneFormat.equalsIgnoreCase(format)) {
-            // pass silently when explicitly silenced.
+            return ExceptionLoggingFormat.NONE;
         } else if (shortFormat.equalsIgnoreCase(format)) {
-            logger.log(level, msg + ", " + ex, null);
+            return ExceptionLoggingFormat.SHORT;
         } else {
-            logger.log(level, msg, ex);
+            return ExceptionLoggingFormat.FULL;
         }
     }
 
@@ -102,5 +110,5 @@ public final class ExceptionLogger {
         }
     }
 
-    private ExceptionLogger() {}
+    private CffuLogger() {}
 }

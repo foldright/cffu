@@ -9,10 +9,10 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static io.foldright.cffu2.internal.ExceptionLogger.Level.ERROR;
-import static io.foldright.cffu2.internal.ExceptionLogger.Level.WARN;
-import static io.foldright.cffu2.internal.ExceptionLogger.log;
-import static io.foldright.cffu2.internal.ExceptionLogger.logUncaughtException;
+import static io.foldright.cffu2.internal.CffuLogger.Level.ERROR;
+import static io.foldright.cffu2.internal.CffuLogger.Level.WARN;
+import static io.foldright.cffu2.internal.CffuLogger.log;
+import static io.foldright.cffu2.internal.CffuLogger.logUncaughtException;
 import static java.lang.Thread.currentThread;
 
 

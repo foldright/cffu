@@ -16,10 +16,10 @@ import java.util.function.Supplier;
 
 import static io.foldright.cffu2.CompletableFutureUtils.newIncompleteFuture;
 import static io.foldright.cffu2.CompletableFutureUtils.unwrapCfException;
+import static io.foldright.cffu2.internal.CffuLogger.Level.ERROR;
+import static io.foldright.cffu2.internal.CffuLogger.logUncaughtException;
 import static io.foldright.cffu2.internal.CommonUtils.containsInArray;
 import static io.foldright.cffu2.internal.CommonUtils.mapArray;
-import static io.foldright.cffu2.internal.ExceptionLogger.Level.ERROR;
-import static io.foldright.cffu2.internal.ExceptionLogger.logUncaughtException;
 import static java.lang.Thread.currentThread;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
@@ -382,7 +382,7 @@ public final class LLCF {
      * the execution of subsequent stage's computations not in the cf delayer thread.
      *
      * @param executor used to trigger subsequent stage's computations
-     *                 if input CompletableFuture is trigger in cf delayer thread
+     *                 if input CompletableFuture is triggered in cf delayer thread
      */
     @Contract(pure = true)
     public static <F extends CompletableFuture<?>> F switchExecutorIfTriggersInCfDelayerThread(F cf, Executor executor) {
@@ -405,7 +405,7 @@ public final class LLCF {
      * Adds a suppressed exception to a target exception, first unwrapping the target exception
      * if it is a CompletionException or ExecutionException.
      * <p>
-     * Unwrapping the target exception is necessary to ensures suppressed exceptions are properly preserved.
+     * Unwrapping the target exception is necessary to ensure suppressed exceptions are properly preserved.
      * Because CompletableFuture internally wraps exceptions in CompletionException / ExecutionException, which can
      * later be unwrapped and discarded during CompletableFuture processing (e.g. {@link CompletableFuture#exceptionNow}),
      * any suppressed exceptions attached to the wrapper are potentially lost.
