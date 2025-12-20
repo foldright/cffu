@@ -771,7 +771,8 @@ class CompletableFutureUtilsTest {
         final int maxConcurrency = 4;
 
         final Executor executor = concurrencyLimitExecutor(maxConcurrency);
-        assertThat(executor.toString()).matches("ConcurrencyLimitExecutor@\\d{1,10} \\(maxConcurrency: \\d+, executor: .*\\)");
+        assertThat(executor.toString()).matches(
+                "io\\.foldright\\.cffu2\\.ConcurrencyLimitExecutor@[0-9A-Fa-f]{1,8} \\(maxConcurrency: \\d+, executor: .*\\)");
         testConcurrencyLimit(executor, maxConcurrency);
 
         testConcurrencyLimit(concurrencyLimitExecutor(maxConcurrency, testExecutor), maxConcurrency);

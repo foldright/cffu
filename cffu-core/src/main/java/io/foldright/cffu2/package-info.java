@@ -2,7 +2,7 @@
  *
  * A tiny library that improves the CompletableFuture(CF) usage experience and reduces misuse,
  * enabling more convenient, efficient, and safe use of CompletableFuture in your application. 😋🚀🦺
- * <p>
+ *
  * <ul>
  * <li>The core classes are {@link io.foldright.cffu2.Cffu}/{@link io.foldright.cffu2.CffuFactory}.
  * <li>the core util class {@link io.foldright.cffu2.CompletableFutureUtils} of {@link java.util.concurrent.CompletableFuture}

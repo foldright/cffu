@@ -13,7 +13,6 @@ import static io.foldright.cffu2.internal.ExceptionLogger.Level.ERROR;
 import static io.foldright.cffu2.internal.ExceptionLogger.Level.WARN;
 import static io.foldright.cffu2.internal.ExceptionLogger.log;
 import static io.foldright.cffu2.internal.ExceptionLogger.logUncaughtException;
-import static java.lang.System.identityHashCode;
 import static java.lang.Thread.currentThread;
 
 
@@ -21,9 +20,10 @@ import static java.lang.Thread.currentThread;
  * @author Jerry Lee (oldratlee at gmail dot com)
  * @see CompletableFutureUtils#concurrencyLimitExecutor(int)
  * @see CffuFactory#concurrencyLimitExecutor(int)
- * @see com.google.common.util.concurrent.MoreExecutors#newSequentialExecutor(Executor)
+ * @see com.google.common.util.concurrent.SequentialExecutor
  * @since 2.1.0
  */
+@SuppressWarnings("JavadocReference")
 final class ConcurrencyLimitExecutor implements Executor {
     private final int maxConcurrency;
     private final Executor executor;
@@ -61,26 +61,36 @@ final class ConcurrencyLimitExecutor implements Executor {
             final Thread callerThread = currentThread();
             // NOTE: `returnedFromExecute` is only accessed by the caller thread (single-threaded) too.
             final boolean[] returnedFromExecute = {false};
-            executor.execute(() -> {
-                final boolean isSyncExecution = currentThread().equals(callerThread) && !returnedFromExecute[0];
-                if (isSyncExecution) {
-                    increaseWorkerCount();
-                    warnLogSyncExecution();
-                    lock.unlock();
-                    locking[0] = false;
+            final Runnable submittedTask = new Runnable() {
+                @Override
+                public void run() {
+                    final boolean isSyncExecution = currentThread().equals(callerThread) && !returnedFromExecute[0];
+                    if (isSyncExecution) {
+                        increaseWorkerCount();
+                        warnLogSyncExecution();
+                        lock.unlock();
+                        locking[0] = false;
 
-                    // When executing synchronously:
-                    //  - execute only the input command
-                    //  - do NOT catch exceptions, let them propagate to the caller
-                    try {
-                        command.run();
-                    } finally {
-                        decreaseWorkerCountWithLock();
+                        // When executing synchronously:
+                        //  - execute only the input command
+                        //  - do NOT catch exceptions, let them propagate to the caller
+                        try {
+                            command.run();
+                        } finally {
+                            decreaseWorkerCountWithLock();
+                        }
+                    } else {
+                        work(command);
                     }
-                } else {
-                    work(command);
                 }
-            });
+
+                // overloads method toString for debugging and monitoring
+                @Override
+                public String toString() {
+                    return "Submitted task to " + ConcurrencyLimitExecutor.this + " (command: " + command + ")";
+                }
+            };
+            executor.execute(submittedTask);
             returnedFromExecute[0] = true;
 
             // NOTE: do NOT move the statement below into the `finally` block,
@@ -126,13 +136,14 @@ final class ConcurrencyLimitExecutor implements Executor {
     }
 
     @GuardedBy("lock")
+    @SuppressFBWarnings("AT_NONATOMIC_OPERATIONS_ON_SHARED_VARIABLE")
     private void increaseWorkerCount() {
         workerCount++;
 
         //  check the concurrency limit issue
         if (!isPowerOfTwo(++workerCountIncrementTimes)) return;
-        if (workerCount > maxConcurrency) log(ERROR, "ConcurrencyLimitExecutor#" + identityHashCode(this)
-                + " has concurrency level " + workerCount + " that exceeds max concurrency (" + maxConcurrency + "),"
+        if (workerCount > maxConcurrency) log(ERROR, super.toString() + " has concurrency level "
+                + workerCount + " that exceeds max concurrency (" + maxConcurrency + "),"
                 + " this should never happen - please report this issue to the cffu library!");
     }
 
@@ -148,19 +159,18 @@ final class ConcurrencyLimitExecutor implements Executor {
     @GuardedBy("lock")
     private void warnLogSyncExecution() {
         if (!isPowerOfTwo(++syncExecutionTimes)) return;
-        log(WARN, "ConcurrencyLimitExecutor#" + identityHashCode(this)
-                + " detected synchronous execution (" + syncExecutionTimes + " times) in base executor ("
-                + executor + "), which likely prevent maximizing the concurrency limit"
+        log(WARN, super.toString() + " detected synchronous execution (" + syncExecutionTimes + " times)" +
+                " in base executor (" + executor + "), which likely prevent maximizing the concurrency limit"
                 + " (current concurrency level: " + workerCount + ", max concurrency: " + maxConcurrency + ")");
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean isPowerOfTwo(long n) {
         return n > 0 && (n & (n - 1)) == 0;
     }
 
     @Override
     public String toString() {
-        return "ConcurrencyLimitExecutor@" + identityHashCode(this)
-                + " (maxConcurrency: " + maxConcurrency + ", executor: " + executor + ")";
+        return super.toString() + " (maxConcurrency: " + maxConcurrency + ", executor: " + executor + ")";
     }
 }
