@@ -895,7 +895,9 @@ public final class CompletableFutureUtils {
 
     // endregion
     ////////////////////////////////////////////////////////////
-    // region## Delay Execution(backport methods)
+    // region## Executors
+    //          - Delayed Execution (backport methods)
+    //          - Concurrency Limit Execution / Sequential Execution
     ////////////////////////////////////////////////////////////
 
     /**
@@ -954,6 +956,38 @@ public final class CompletableFutureUtils {
         if (maxConcurrency <= 0) throw new IllegalArgumentException("maxConcurrency must be positive");
         requireNonNull(executor, "executor is null");
         return new ConcurrencyLimitExecutor(maxConcurrency, screenExecutor(executor));
+    }
+
+    /**
+     * Returns an {@link Executor} that submits a task to the default executor
+     * and runs each task executed sequentially, such that no two tasks are running concurrently.
+     * <p>
+     * <strong>NOTE:</strong> Calling this method {@code CompletableFutureUtils.sequentialExecutor()}
+     * is the same as {@code CompletableFutureUtils.concurrencyLimitExecutor(1)}.
+     *
+     * @return the new sequential executor
+     * @see com.google.common.util.concurrent.MoreExecutors#newSequentialExecutor(Executor)
+     * @since 2.1.0
+     */
+    @Contract(pure = true)
+    public static Executor sequentialExecutor() {
+        return concurrencyLimitExecutor(1);
+    }
+
+    /**
+     * Returns an {@link Executor} that submits a task to the given base executor
+     * and runs each task executed sequentially, such that no two tasks are running concurrently.
+     * <p>
+     * <strong>NOTE:</strong> Calling this method {@code CompletableFutureUtils.sequentialExecutor(executor)}
+     * is the same as {@code CompletableFutureUtils.concurrencyLimitExecutor(1, executor)}.
+     *
+     * @return the new sequential executor
+     * @see com.google.common.util.concurrent.MoreExecutors#newSequentialExecutor(Executor)
+     * @since 2.1.0
+     */
+    @Contract(pure = true)
+    public static Executor sequentialExecutor(Executor executor) {
+        return concurrencyLimitExecutor(1, executor);
     }
 
     // endregion

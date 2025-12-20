@@ -770,7 +770,6 @@ class CompletableFutureUtilsTest {
     @Test
     void test_concurrencyLimitExecutor() {
         final int maxConcurrency = 4;
-
         final Executor executor = concurrencyLimitExecutor(maxConcurrency);
         assertThat(executor.toString()).matches(
                 "io\\.foldright\\.cffu2\\.ConcurrencyLimitExecutor@[0-9A-Fa-f]{1,8} \\(maxConcurrency: \\d+, executor: .*\\)");
@@ -779,7 +778,16 @@ class CompletableFutureUtilsTest {
         testConcurrencyLimit(concurrencyLimitExecutor(maxConcurrency, testExecutor), maxConcurrency);
         testConcurrencyLimit(concurrencyLimitExecutor(maxConcurrency, testFjExecutor), maxConcurrency);
 
-        _testConcurrencyLimit0(MoreExecutors.directExecutor(), 3, 0);
+        _testConcurrencyLimit0(concurrencyLimitExecutor(maxConcurrency, MoreExecutors.directExecutor()), maxConcurrency, 0);
+    }
+
+    @Test
+    void test_sequentialExecutor() {
+        testConcurrencyLimit(sequentialExecutor(), 1);
+        testConcurrencyLimit(sequentialExecutor(testExecutor), 1);
+        testConcurrencyLimit(sequentialExecutor(testFjExecutor), 1);
+
+        _testConcurrencyLimit0(sequentialExecutor(MoreExecutors.directExecutor()), 1, 0);
     }
 
     static void testConcurrencyLimit(Executor executor, int maxConcurrency) {
@@ -788,8 +796,8 @@ class CompletableFutureUtilsTest {
         _testConcurrencyLimit0(executor, maxConcurrency, 10);
     }
 
-    private static void _testConcurrencyLimit0(Executor executor, int maxConcurrency, int startInterval) {
-        final CompletableFuture<Void>[] cfs = newCfArray(200);
+    static void _testConcurrencyLimit0(Executor executor, int maxConcurrency, int startInterval) {
+        final CompletableFuture<Void>[] cfs = newCfArray(maxConcurrency > 1 ? 200 : 100);
         ConcurrencyChecker concurrencyChecker = new ConcurrencyChecker(maxConcurrency);
         for (int i = 0; i < cfs.length; i++) {
             cfs[i] = CompletableFuture.runAsync(() -> {

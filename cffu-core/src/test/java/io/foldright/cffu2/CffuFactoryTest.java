@@ -1,5 +1,6 @@
 package io.foldright.cffu2;
 
+import com.google.common.util.concurrent.MoreExecutors;
 import io.foldright.cffu2.tuple.Tuple2;
 import io.foldright.cffu2.tuple.Tuple3;
 import io.foldright.cffu2.tuple.Tuple4;
@@ -19,6 +20,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static io.foldright.cffu2.CompletableFutureUtils.failedFuture;
+import static io.foldright.cffu2.CompletableFutureUtils.sequentialExecutor;
+import static io.foldright.cffu2.CompletableFutureUtilsTest._testConcurrencyLimit0;
 import static io.foldright.cffu2.CompletableFutureUtilsTest.testConcurrencyLimit;
 import static io.foldright.test_utils.TestUtils.*;
 import static io.foldright.test_utils.TestingConstants.*;
@@ -910,10 +913,23 @@ class CffuFactoryTest {
 
     @Test
     void test_concurrencyLimitExecutor() {
-        final int maxConcurrency = 2;
-        testConcurrencyLimit(testCffuFac.concurrencyLimitExecutor(maxConcurrency), maxConcurrency);
+        final int maxConcurrency = 4;
+        final Executor executor = testCffuFac.concurrencyLimitExecutor(maxConcurrency);
+        assertThat(executor.toString()).matches(
+                "io\\.foldright\\.cffu2\\.ConcurrencyLimitExecutor@[0-9A-Fa-f]{1,8} \\(maxConcurrency: \\d+, executor: .*\\)");
+        testConcurrencyLimit(executor, maxConcurrency);
+
         testConcurrencyLimit(testCffuFac.concurrencyLimitExecutor(maxConcurrency, testExecutor), maxConcurrency);
         testConcurrencyLimit(testCffuFac.concurrencyLimitExecutor(maxConcurrency, testFjExecutor), maxConcurrency);
+    }
+
+    @Test
+    void test_sequentialExecutor() {
+        testConcurrencyLimit(testCffuFac.sequentialExecutor(), 1);
+        testConcurrencyLimit(testCffuFac.sequentialExecutor(testExecutor), 1);
+        testConcurrencyLimit(testCffuFac.sequentialExecutor(testFjExecutor), 1);
+
+        _testConcurrencyLimit0(sequentialExecutor(MoreExecutors.directExecutor()), 1, 0);
     }
 
     // endregion
