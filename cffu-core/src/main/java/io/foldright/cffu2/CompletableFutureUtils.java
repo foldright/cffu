@@ -871,9 +871,9 @@ public final class CompletableFutureUtils {
     }
 
     // endregion
-    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
     // region## Incomplete CompletableFuture Constructor
-    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
 
     /**
      * Returns a new incomplete CompletableFuture of the type to be returned by a CompletionStage method.
@@ -896,8 +896,8 @@ public final class CompletableFutureUtils {
     // endregion
     ////////////////////////////////////////////////////////////
     // region## Executors
-    //          - Delayed Execution (backport methods)
-    //          - Concurrency Limit Execution / Sequential Execution
+    //    - Delayed Execution (backport methods)
+    //    - Concurrency Limit Execution / Sequential Execution
     ////////////////////////////////////////////////////////////
 
     /**

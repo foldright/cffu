@@ -76,7 +76,7 @@ final class ConcurrencyLimitExecutor implements Executor {
                         lock.unlock();
                         locking[0] = false;
                     }
-                    // For synchronous execution of a submitted task:
+                    // For synchronous execution of the submitted task:
                     //  - run the submitted command only, do NOT run other commands in the queue
                     //  - do NOT catch exceptions, let them propagate to the caller
                     try {
@@ -86,7 +86,7 @@ final class ConcurrencyLimitExecutor implements Executor {
                     }
                 }
 
-                // overloads method toString for debugging and monitoring
+                // overrides method toString for debugging and monitoring
                 @Override
                 public String toString() {
                     return "Submitted task to " + ConcurrencyLimitExecutor.this + " (command: " + command + ")";
@@ -96,10 +96,10 @@ final class ConcurrencyLimitExecutor implements Executor {
             returnedFromExecute[0] = true;
 
             // NOTE 1: if `locking` is true, the submitted task will run asynchronously;
-            //         increment worker count here in the `execute` method; otherwise, for synchronous execution,
-            //         the worker count is incremented within the submitted task before returning from `execute`.
-            // NOTE 2: do NOT move the worker count increment below into the `finally` block,
-            //         because `workerCount` must NOT be incremented if `executor.execute()` throws an exception.
+            //   increment worker count here in the `execute` method; otherwise, for synchronous execution,
+            //   the worker count is incremented within the submitted task before returning from `execute`.
+            // NOTE 2: do NOT move the worker count increment below into the `finally` block, because `workerCount`
+            //   must NOT be incremented if `executor.execute()` throws exceptions (e.g. RejectedExecutionEx).
             if (locking[0]) incrementWorkerCount();
         } finally {
             if (locking[0]) lock.unlock();
@@ -138,7 +138,6 @@ final class ConcurrencyLimitExecutor implements Executor {
     @SuppressFBWarnings("AT_NONATOMIC_OPERATIONS_ON_SHARED_VARIABLE")
     private void incrementWorkerCount() {
         workerCount++;
-
         //  check the concurrency limit issue
         if (!isPowerOfTwo(++workerCountIncrementTimes)) return;
         if (workerCount > maxConcurrency) log(ERROR, super.toString() + " has concurrency level "
@@ -158,8 +157,8 @@ final class ConcurrencyLimitExecutor implements Executor {
     @GuardedBy("lock")
     private void warnLogSyncExecution() {
         if (!isPowerOfTwo(++syncExecutionTimes)) return;
-        log(WARN, super.toString() + " detected synchronous execution (" + syncExecutionTimes + " times)" +
-                " in base executor (" + executor + "), which likely prevent maximizing the concurrency limit"
+        log(WARN, super.toString() + " detected synchronous execution (" + syncExecutionTimes + " times)"
+                + " in base executor (" + executor + "), which likely prevent maximizing the concurrency limit"
                 + " (current concurrency level: " + workerCount + ", max concurrency: " + maxConcurrency + ")");
     }
 
