@@ -107,6 +107,7 @@ final class ConcurrencyLimitExecutor implements Executor {
         }
     }
 
+    @SuppressWarnings("ConstantValue")
     private void asyncWork() {
         boolean interruptedDuringTask = false;
         while (true) {
@@ -130,6 +131,8 @@ final class ConcurrencyLimitExecutor implements Executor {
             try {
                 task.run();
             } catch (Throwable e) {
+                // check for InterruptedEx from `task.run`, as other JVM languages may throw InterruptedEx
+                if (e instanceof InterruptedException) interruptedDuringTask = true;
                 logUncaughtException(ERROR, super.toString() + "#asyncWork", e);
             }
         }
