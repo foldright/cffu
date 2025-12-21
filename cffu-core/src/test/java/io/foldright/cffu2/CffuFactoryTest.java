@@ -914,10 +914,7 @@ class CffuFactoryTest {
     @Test
     void test_concurrencyLimitExecutor() {
         final int maxConcurrency = 4;
-        final Executor executor = testCffuFac.concurrencyLimitExecutor(maxConcurrency);
-        assertThat(executor.toString()).matches(
-                "io\\.foldright\\.cffu2\\.ConcurrencyLimitExecutor@[0-9A-Fa-f]{1,8} \\(maxConcurrency: \\d+, executor: .*\\)");
-        testConcurrencyLimit(executor, maxConcurrency);
+        testConcurrencyLimit(testCffuFac.concurrencyLimitExecutor(maxConcurrency), maxConcurrency);
 
         testConcurrencyLimit(testCffuFac.concurrencyLimitExecutor(maxConcurrency, testExecutor), maxConcurrency);
         testConcurrencyLimit(testCffuFac.concurrencyLimitExecutor(maxConcurrency, testFjExecutor), maxConcurrency);

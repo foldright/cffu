@@ -2,7 +2,9 @@ package io.foldright.cffu2;
 
 import com.google.common.util.concurrent.MoreExecutors;
 import io.foldright.cffu2.tuple.Tuple3;
+import io.foldright.test_utils.ConcurrencyChecker;
 import io.foldright.test_utils.TestUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -772,13 +774,15 @@ class CompletableFutureUtilsTest {
         final int maxConcurrency = 4;
         final Executor executor = concurrencyLimitExecutor(maxConcurrency);
         assertThat(executor.toString()).matches(
-                "io\\.foldright\\.cffu2\\.ConcurrencyLimitExecutor@[0-9A-Fa-f]{1,8} \\(maxConcurrency: \\d+, executor: .*\\)");
+                "io\\.foldright\\.cffu2\\.ConcurrencyLimitExecutor@[0-9A-Fa-f]{1,8} \\(maxConcurrency: \\d+, base executor: .*\\)");
         testConcurrencyLimit(executor, maxConcurrency);
 
         testConcurrencyLimit(concurrencyLimitExecutor(maxConcurrency, testExecutor), maxConcurrency);
         testConcurrencyLimit(concurrencyLimitExecutor(maxConcurrency, testFjExecutor), maxConcurrency);
 
         _testConcurrencyLimit0(concurrencyLimitExecutor(maxConcurrency, MoreExecutors.directExecutor()), maxConcurrency, 0);
+
+        Assertions.assertThrowsExactly(IllegalArgumentException.class, () -> concurrencyLimitExecutor(-1));
     }
 
     @Test

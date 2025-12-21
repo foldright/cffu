@@ -1,6 +1,7 @@
 package io.foldright.cffu2;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import javax.annotation.concurrent.GuardedBy;
 import java.util.ArrayDeque;
@@ -89,7 +90,7 @@ final class ConcurrencyLimitExecutor implements Executor {
                 // overrides method toString for debugging and monitoring
                 @Override
                 public String toString() {
-                    return "Submitted task to " + ConcurrencyLimitExecutor.this + " (command: " + command + ")";
+                    return "Submitted task (command: " + command + ") of " + ConcurrencyLimitExecutor.this;
                 }
             };
             executor.execute(submittedTask);
@@ -162,13 +163,13 @@ final class ConcurrencyLimitExecutor implements Executor {
                 + " (current concurrency level: " + workerCount + ", max concurrency: " + maxConcurrency + ")");
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private static boolean isPowerOfTwo(long n) {
+    @VisibleForTesting
+    static boolean isPowerOfTwo(long n) {
         return n > 0 && (n & (n - 1)) == 0;
     }
 
     @Override
     public String toString() {
-        return super.toString() + " (maxConcurrency: " + maxConcurrency + ", executor: " + executor + ")";
+        return super.toString() + " (maxConcurrency: " + maxConcurrency + ", base executor: " + executor + ")";
     }
 }
