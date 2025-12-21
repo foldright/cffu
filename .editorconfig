@@ -24,6 +24,8 @@ ij_any_keep_simple_methods_in_one_line = true
 ij_any_keep_simple_classes_in_one_line = true
 ij_any_keep_simple_lambdas_in_one_line = true
 
+ij_java_binary_operation_sign_on_next_line = true
+
 [*.{java,kt}]
 indent_size = 4
 ij_continuation_indent_size = 8
