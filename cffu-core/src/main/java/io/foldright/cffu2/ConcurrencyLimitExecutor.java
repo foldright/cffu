@@ -37,9 +37,9 @@ final class ConcurrencyLimitExecutor implements Executor {
 
     // for debugging and monitoring
     @GuardedBy("lock")
-    private long syncExecutionTimes = 0;
+    private long syncRunTimes = 0;
     @GuardedBy("lock")
-    private long workerCountIncrementTimes = 0;
+    private long exceedLimitTimes = 0;
 
     ConcurrencyLimitExecutor(int maxConcurrency, Executor executor) {
         this.maxConcurrency = maxConcurrency;
@@ -72,12 +72,12 @@ final class ConcurrencyLimitExecutor implements Executor {
                     try {
                         incrementWorkerCount();
                         queue.removeLastOccurrence(command);
-                        warnLogSyncExecution();
+                        warnLogSyncRunning();
                     } finally {
                         lock.unlock();
                         locking[0] = false;
                     }
-                    // For synchronous execution of the submitted task:
+                    // For synchronous running of the submitted task:
                     //  - run the submitted command only, do NOT run other commands in the queue
                     //  - do NOT catch exceptions, let them propagate to the caller
                     try {
@@ -97,7 +97,7 @@ final class ConcurrencyLimitExecutor implements Executor {
             returnedFromExecute[0] = true;
 
             // NOTE 1: if `locking` is true, the submitted task will run asynchronously;
-            //   increment worker count here in the `execute` method; otherwise, for synchronous execution,
+            //   increment worker count here in the `execute` method; otherwise, for synchronous running,
             //   the worker count is incremented within the submitted task before returning from `execute`.
             // NOTE 2: do NOT move the worker count increment below into the `finally` block, because `workerCount`
             //   must NOT be incremented if `executor.execute()` throws exceptions (e.g. RejectedExecutionEx).
@@ -140,10 +140,10 @@ final class ConcurrencyLimitExecutor implements Executor {
     private void incrementWorkerCount() {
         workerCount++;
         //  check the concurrency limit issue
-        if (!isPowerOfTwo(++workerCountIncrementTimes)) return;
-        if (workerCount > maxConcurrency) log(ERROR, super.toString() + " has concurrency level "
-                + workerCount + " that exceeds max concurrency (" + maxConcurrency + "),"
-                + " this should never happen - please report this issue to the cffu library!");
+        if (workerCount <= maxConcurrency) return;
+        if (isPowerOfTwo(++exceedLimitTimes)) log(ERROR, exceedLimitTimes + " concurrency limit violation(s)"
+                + " (current: " + workerCount + " > max: " + maxConcurrency + ") detected in " + this
+                + ". This should never happen - please report this issue to the cffu library!");
     }
 
     private void decrementWorkerCountWithLock() {
@@ -156,13 +156,20 @@ final class ConcurrencyLimitExecutor implements Executor {
     }
 
     @GuardedBy("lock")
-    private void warnLogSyncExecution() {
-        if (!isPowerOfTwo(++syncExecutionTimes)) return;
-        log(WARN, super.toString() + " detected synchronous execution (" + syncExecutionTimes + " times)"
-                + " in base executor (" + executor + "), which likely prevent maximizing the concurrency limit"
-                + " (current concurrency level: " + workerCount + ", max concurrency: " + maxConcurrency + ")");
+    private void warnLogSyncRunning() {
+        if (isPowerOfTwo(++syncRunTimes)) log(WARN, syncRunTimes + " synchronous execution(s) detected"
+                + " in base executor of " + this + " - base executor runs task on caller thread, likely prevent"
+                + "reaching max concurrency! (current: " + workerCount + ", max: " + maxConcurrency + ")");
     }
 
+    /**
+     * Checks if a number is a power of two. Used for throttling repetitive log volume by emitting logs
+     * only when the count reaches a power of two (1, 2, 4, 8, 16, 32, 64, ...). This exponential sampling strategy
+     * reduces log volume while ensuring that early occurrences are always captured for debugging and monitoring.
+     *
+     * @see <a href="https://books.google.com/books/about/Hacker_s_Delight.html?id=VicPJYM0I5QC">Algorithm reference:
+     * "Hacker's Delight" (2nd edition) by Henry S. Warren Jr., Chapter 3. Power-of-2 Boundaries</a>
+     */
     @VisibleForTesting
     static boolean isPowerOfTwo(long n) {
         return n > 0 && (n & (n - 1)) == 0;
