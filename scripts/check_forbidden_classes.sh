@@ -25,6 +25,9 @@ readonly forbidden_classes=(
   # prefer @edu.umd.cs.findbugs.annotations.DefaultAnnotationForParameters(NonNull.class)
   javax.annotation.ParametersAreNonnullByDefault
 
+  # prefer other QA annotations instead of guava
+  'com.google.common.annotations'
+
   # prefer static import methods of `Assertions`
   'org.junit.jupiter.api.Assertions;'
 )
@@ -34,5 +37,5 @@ PATTERN=$(printf '%s\n' "${forbidden_classes[@]}")
 readonly PATTERN MORE_RG_OPTIONS
 
 ! cu::log_then_run rg -f <(printf '%s\n' "$PATTERN") -F -n -C2 \
-  --ignore-vcs --glob='!scripts/' --glob='!package-info.java' \
+  --ignore-vcs --glob='!scripts/' --glob='!src/package-list/' --glob='!package-info.java' \
   ${MORE_RG_OPTIONS[@]:+"${MORE_RG_OPTIONS[@]}"}

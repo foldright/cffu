@@ -7,6 +7,7 @@ import javax.annotation.concurrent.GuardedBy;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -25,6 +26,8 @@ import static java.lang.Thread.currentThread;
  * @since 2.1.0
  */
 @SuppressWarnings("JavadocReference")
+@SuppressFBWarnings({"UL_UNRELEASED_LOCK", "AT_STALE_THREAD_WRITE_OF_PRIMITIVE",
+        "AT_NONATOMIC_OPERATIONS_ON_SHARED_VARIABLE"})
 final class ConcurrencyLimitExecutor implements Executor {
     private final int maxConcurrency;
     private final Executor executor;
@@ -34,6 +37,8 @@ final class ConcurrencyLimitExecutor implements Executor {
     private final Deque<Runnable> queue = new ArrayDeque<>();
     @GuardedBy("lock")
     private int workerCount = 0;
+    @GuardedBy("lock")
+    private int syncRunnerCount = 0;
 
     // for debugging and monitoring
     @GuardedBy("lock")
@@ -47,13 +52,16 @@ final class ConcurrencyLimitExecutor implements Executor {
     }
 
     @Override
-    @SuppressFBWarnings("UL_UNRELEASED_LOCK")
     public void execute(Runnable command) {
         lock.lock();
         // NOTE: variable `locking` is only accessed by the caller thread (single-threaded);
         //       so no need to declare it as type AtomicBoolean for thread safety.
         final boolean[] locking = {true};
         try {
+            if (syncRunnerCount >= maxConcurrency) throw new RejectedExecutionException("reject new task:"
+                    + " synchronous running task(s) (i.e. CallerRunsPolicy) already occupy"
+                    + " all concurrency slot(s) of " + ConcurrencyLimitExecutor.this);
+
             queue.add(command);
             if (workerCount >= maxConcurrency) return;
 
@@ -63,14 +71,16 @@ final class ConcurrencyLimitExecutor implements Executor {
             final Runnable submittedTask = new Runnable() {
                 @Override
                 public void run() {
-                    final boolean isSyncExecution = currentThread().equals(callerThread) && !returnedFromExecute[0];
-                    if (isSyncExecution) syncRun();
+                    boolean onCallerThread = currentThread().equals(callerThread);
+                    boolean isSyncRun = onCallerThread && !returnedFromExecute[0];
+                    if (isSyncRun) syncRun();
                     else asyncWork();
                 }
 
                 private void syncRun() {
                     try {
                         incrementWorkerCount();
+                        syncRunnerCount++;
                         queue.removeLastOccurrence(command);
                         warnLogSyncRunning();
                     } finally {
@@ -83,7 +93,13 @@ final class ConcurrencyLimitExecutor implements Executor {
                     try {
                         command.run();
                     } finally {
-                        decrementWorkerCountWithLock();
+                        lock.lock();
+                        try {
+                            workerCount--;
+                            syncRunnerCount--;
+                        } finally {
+                            lock.unlock();
+                        }
                     }
                 }
 
@@ -139,7 +155,6 @@ final class ConcurrencyLimitExecutor implements Executor {
     }
 
     @GuardedBy("lock")
-    @SuppressFBWarnings("AT_NONATOMIC_OPERATIONS_ON_SHARED_VARIABLE")
     private void incrementWorkerCount() {
         workerCount++;
         //  check the concurrency limit issue
@@ -147,15 +162,6 @@ final class ConcurrencyLimitExecutor implements Executor {
         if (isPowerOfTwo(++exceedLimitTimes)) log(ERROR, exceedLimitTimes + " concurrency limit violation(s)"
                 + " (current: " + workerCount + " > max: " + maxConcurrency + ") detected in " + this
                 + ". This should never happen - please report this issue to the cffu library!");
-    }
-
-    private void decrementWorkerCountWithLock() {
-        lock.lock();
-        try {
-            workerCount--;
-        } finally {
-            lock.unlock();
-        }
     }
 
     @GuardedBy("lock")
@@ -180,7 +186,9 @@ final class ConcurrencyLimitExecutor implements Executor {
 
     @Override
     public String toString() {
-        return super.toString() + " (maxConcurrency: " + maxConcurrency + ", base executor: " + executor + ")";
+        return super.toString() + " (current concurrency / worker count: " + workerCount
+                + ", synchronous runner count: " + syncRunnerCount + ", queue size: " + queue.size()
+                + ", max concurrency: " + maxConcurrency + ", base executor: " + executor + ")";
     }
 
     @Override
