@@ -182,4 +182,13 @@ final class ConcurrencyLimitExecutor implements Executor {
     public String toString() {
         return super.toString() + " (maxConcurrency: " + maxConcurrency + ", base executor: " + executor + ")";
     }
+
+    @Override
+    @SuppressWarnings("removal")
+    protected void finalize() throws Throwable {
+        if (!queue.isEmpty()) log(WARN, queue.size() + " queued task(s) remained"
+                + " when finalizing " + this + "; these tasks will be discarded!"
+                + " This indicates the base executor discarded tasks or shut down unexpectedly.");
+        super.finalize();
+    }
 }

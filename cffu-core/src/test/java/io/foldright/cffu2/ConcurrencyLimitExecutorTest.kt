@@ -214,9 +214,24 @@ class ConcurrencyLimitExecutorTest : FunSpec({
         shouldThrowExactly<RuntimeException> { executor.execute { throw rte } }.shouldBeSameInstanceAs(rte)
     }
 
+    test("test report in finalize") {
+        logWithTimeAndThread("${testCase.name.testName}: start")
+        val discardAllExecutor = Executor { r -> }
+        repeat(10) {
+            val concurrencyLimitExecutor = ConcurrencyLimitExecutor(1, discardAllExecutor)
+            repeat(it + 1) { concurrencyLimitExecutor.execute {} }
+        }
+        repeat(10) {
+            sleep(2)
+            logWithTimeAndThread("${testCase.name.testName}: gc")
+            System.gc()
+        }
+        logWithTimeAndThread("${testCase.name.testName}: end")
+    }
+
     beforeSpec {
         // warmup executor
-        (0..THREAD_COUNT).map {
+        List(THREAD_COUNT) {
             executor.submit { sleep(50) }
         }.forEach { it.get() }
     }
