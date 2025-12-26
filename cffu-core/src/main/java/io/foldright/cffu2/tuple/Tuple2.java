@@ -1,5 +1,6 @@
 package io.foldright.cffu2.tuple;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 
@@ -8,7 +9,9 @@ import java.util.Objects;
  *
  * @author Jerry Lee (oldratlee at gmail dot com)
  */
-public final class Tuple2<T1, T2> {
+public final class Tuple2<T1, T2> implements Serializable {
+    private static final long serialVersionUID = -6858695624564198288L;
+
     public final T1 _1;
     public final T2 _2;
 

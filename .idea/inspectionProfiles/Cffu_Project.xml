@@ -4,6 +4,11 @@
 		<inspection_tool class="BoundedWildcard" enabled="true" level="INFORMATION" enabled_by_default="true" editorAttributes="INFORMATION_ATTRIBUTES">
 			<scope name="Production" level="WARNING" enabled="true"/>
 		</inspection_tool>
+		<inspection_tool class="SerializableHasSerialVersionUIDField" enabled="true" level="ERROR" enabled_by_default="true"/>
+		<inspection_tool class="SerializableInnerClassHasSerialVersionUIDField" enabled="true" level="ERROR" enabled_by_default="true">
+			<option name="ignoreAnonymousInnerClasses" value="false"/>
+			<option name="superClassString" value="java.awt.Component"/>
+		</inspection_tool>
 		<inspection_tool class="Since15" enabled="false" level="ERROR" enabled_by_default="false"/>
 	</profile>
 </component>
