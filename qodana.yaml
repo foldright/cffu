@@ -9,3 +9,5 @@ projectJDK: "21"
 include:
   - name: BoundedWildcard
   - name: CheckDependencyLicenses
+  - name: SerializableInnerClassHasSerialVersionUIDField
+  - name: SerializableHasSerialVersionUIDField

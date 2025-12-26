@@ -219,6 +219,8 @@ final class FutureCanceller implements BiConsumer<Object, Throwable> {
 @SuppressFBWarnings("SE_BAD_FIELD")
 final class CfCompleterBySupplier<T> extends ForkJoinTask<Void>
         implements Runnable, CompletableFuture.AsynchronousCompletionTask {
+    private static final long serialVersionUID = 4465654102372072986L;
+
     private @Nullable CompletableFuture<? super T> dep;
     private @Nullable Supplier<? extends T> fn;
 
@@ -264,6 +266,8 @@ final class CfCompleterBySupplier<T> extends ForkJoinTask<Void>
 @SuppressFBWarnings("SE_BAD_FIELD")
 final class CfExCompleterBySupplier extends ForkJoinTask<Void>
         implements Runnable, CompletableFuture.AsynchronousCompletionTask {
+    private static final long serialVersionUID = -8839478315679555049L;
+
     private @Nullable CompletableFuture<?> dep;
     private @Nullable Supplier<? extends Throwable> fn;
 

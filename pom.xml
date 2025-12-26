@@ -542,6 +542,11 @@
 										<classQualifiedName>io.foldright.cffu2.BaseCffu</classQualifiedName>
 										<justification>BaseCffu is effective final class because its constructor is package private</justification>
 									</item>
+									<item>
+										<code>java.class.nowImplementsInterface</code>
+										<interface>java.io.Serializable</interface>
+										<justification>implementing tag interface Serializable won't break API compatibility</justification>
+									</item>
 								</differences>
 							</revapi.differences>
 						</analysisConfiguration>
