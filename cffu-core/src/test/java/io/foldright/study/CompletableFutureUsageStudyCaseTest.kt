@@ -118,8 +118,7 @@ class CompletableFutureUsageStudyCaseTest : FunSpec({
         val f = Blocker().use { blocker: Blocker ->
             CompletableFuture
                 .runAsync {
-                    // make sure build CF chain is finished before this `runAsync`
-                    // aka. this CF is not completed
+                    // make sure build CF chain is finished before this `runAsync`, i.e. this CF is not completed
                     blocker.block()
 
                     currentThread() shouldNotBe mainThread
@@ -275,10 +274,10 @@ class CompletableFutureUsageStudyCaseTest : FunSpec({
         }
         sequenceChecker.assertSeq("after thenApply", 1)
 
-        // `complete` invocation will trigger above task of `thenApply` f1
+        // `complete` invocation will trigger the above task of `thenApply` f1
         //
-        // since *non-async*,
-        // run task of `thenApply` f1 in-place(in mainThread), aka. immediately run in the `complete` invocation without submit task to executor
+        // since *non-async*, run the task of `thenApply` f1 in-place(in mainThread),
+        // i.e. immediately run in the `complete` invocation without submit the task to executor
         f0.complete("done")
         sequenceChecker.assertSeq("after complete", 3)
 
@@ -305,8 +304,8 @@ class CompletableFutureUsageStudyCaseTest : FunSpec({
 
         // `complete` invocation will trigger above `thenApply` f1
         //
-        // since *non-async*,
-        // run task in-place(in mainThread), aka. immediately run in the `complete` invocation without submit task to executor
+        // since *non-async*, run the task in-place(in mainThread),
+        // i.e. immediately run in the `complete` invocation without submitting the task to executor
         @Suppress("Since15") // completeAsync api is since java 9
         f0.completeAsync({
             sequenceChecker.assertSeq("in completeAsync", 2)

@@ -21,10 +21,10 @@ import static io.foldright.cffu2.internal.CommonUtils.toArray;
 /**
  * This utility class provides {@link Iterable}-based variants (including {@link Collection}, {@link List}, etc.) of
  * same-named varargs methods from {@link CompletableFutureUtils}. These methods handle multiple actions
- * and CompletableFutures with the same type (aka. homogeneous).
+ * and CompletableFutures with the same type, i.e. homogeneous.
  * <p>
  * While {@link CfTupleUtils} uses strongly typed tuples for handling different types of actions and
- * CompletableFutures (aka. heterogeneous), this class and {@link CompletableFutureUtils} work with homogeneous types,
+ * CompletableFutures, i.e. heterogeneous, this class and {@link CompletableFutureUtils} work with homogeneous types,
  * offering a flexible approach for handling collections of actions and CompletableFutures of the same type.
  *
  * @author Eric Lin (linqinghua4 at gmail dot com)
