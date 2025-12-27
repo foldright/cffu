@@ -125,7 +125,7 @@ public final class SwallowedExceptionHandleUtils {
                 final int idx = i;
                 peek0(unreferencedInputs[i], (v1, ex) -> {
                     if (ex == null) return;
-                    // if ex is returned to output cf(aka. not swallowed ex), do NOTHING
+                    // if ex is returned to output cf (i.e. not swallowed ex), do NOTHING
                     if (unwrapCfException(ex) == outputBizEx) return;
                     safeHandle(new ExceptionInfo(where, idx, ex, safeGet(attachments, idx)), exceptionHandler);
                 }, "handleSwallowedExceptions(handle the input cf)");

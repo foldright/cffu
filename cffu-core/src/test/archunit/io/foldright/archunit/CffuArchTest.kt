@@ -22,7 +22,7 @@ internal object CffuArchTest {
     @ArchTest
     private val constructorOfCffuFactory: ArchRule = run {
         val description = "only contain the constructors that only accessed by class CffuFactoryBuilder," +
-                " aka. accessing CffuFactory constructor is only allowed by class CffuFactoryBuilder"
+                " i.e. accessing CffuFactory constructor is only allowed by class CffuFactoryBuilder"
 
         val condition = object : ArchCondition<JavaClass>(description) {
             val cffuFactoryBuilderClass = CffuFactoryBuilder::class.java

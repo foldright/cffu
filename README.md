@@ -82,11 +82,11 @@ Welcome 👏💖
     - Such as methods `allResultsFailFastOf` / `mSupplyFailFastAsync` / `thenMApplyMostSuccessAsync`
   - Support for directly running multiple `Action`s instead of wrapping them into `CompletableFuture`s first
     - Such as methods `mSupplyAsync` / `mRunFailFastAsync` / `thenMApplyAllSuccessAsync`
-    - Aka. multiple instruction, single data (`MISD`) style processing
+    - i.e. multiple instruction, single data (`MISD`) style processing
   - Support for async parallel processing of collection data,
     instead of wrapping data with actions into `CompletableFuture`s first
     - Such as methods `CfParallelUtils#parApplyFailFastAsync` / `CfParallelUtils#thenParAcceptAnySuccessAsync`
-    - Aka. single instruction, multiple data (`SIMD`) style processing
+    - i.e. single instruction, multiple data (`SIMD`) style processing
   - Support for inputting collections of `CF`s / `Action`s instead of converting them to array first
     - Such as methods `CfIterableUtils#allResultsFailFastOf` /
       `CfIterableUtils#mSupplyFailFastAsync` / `CfIterableUtils#thenMApplyMostSuccessAsync`
@@ -415,7 +415,7 @@ public class AnySuccessDemo {
 
 ### 2.4 support for setting the default business thread pool
 
-The default thread pool used by `CompletableFuture` async execution (aka. `*Async` methods)
+The default thread pool used by `CompletableFuture` async execution (i.e. `*Async` methods)
 is `ForkJoinPool.commonPool()`; using this default thread pool in business is very dangerous❗
 
 - `ForkJoinPool.commonPool()` has about as many threads as CPUs, suitable for executing CPU-intensive tasks;
@@ -808,29 +808,29 @@ Supports 3-parameter types for representing multiple `Action`s: varargs array, c
 
 - Multiple parameter varargs input, input type is **array type**
   - Corresponding method groups:
-    - `CompletableFutureUtils.M*` methods, aka. `Multi-Actions(M*) Methods`
-    - `CompletableFutureUtils.thenM*` methods, aka. `Then-Multi-Actions(thenM*) Methods`
+    - `CompletableFutureUtils.M*` methods, i.e. `Multi-Actions(M*) Methods`
+    - `CompletableFutureUtils.thenM*` methods, i.e. `Then-Multi-Actions(thenM*) Methods`
 - Collection parameter input, input type is **`Iterable`**
   - Corresponding method groups:
-    - `CfIterableUtils.M*`, aka. `Multi-Actions(M*) Methods`
-    - `CfIterableUtils.thenM*`, aka. `Then-Multi-Actions(thenM*) Methods`
+    - `CfIterableUtils.M*`, i.e. `Multi-Actions(M*) Methods`
+    - `CfIterableUtils.thenM*`, i.e. `Then-Multi-Actions(thenM*) Methods`
   - The method names and functionality of this group are the same as the "multiple parameter varargs input" above,
     but the parameter types for multiple `Action` inputs are different (`Iterable` vs. array)
 - Multiple `Action` inputs with different generic parameter types, input type is **`Tuple`**
   - Corresponding method groups:
-    - `CfTupleUtils.MTuple*`, aka. `Multi-Actions-Tuple(MTuple*) Methods`
-    - `CfTupleUtils.thenMTuple*`, aka. `Then-Multi-Actions-Tuple(thenMTuple*) Methods`
+    - `CfTupleUtils.MTuple*`, i.e. `Multi-Actions-Tuple(MTuple*) Methods`
+    - `CfTupleUtils.thenMTuple*`, i.e. `Then-Multi-Actions-Tuple(thenMTuple*) Methods`
 
-Multiple `Action`s perform asynchronous parallel processing on (single same) data, aka. Multiple Instruction, Single Data (`MISD`).
+Multiple `Action`s perform asynchronous parallel processing on (single same) data, i.e. Multiple Instruction, Single Data (`MISD`).
 
 2\) **Multiple Data Inputs**
 
-Asynchronous parallel processing of multiple data through a single same `Action`, aka. Single Instruction, Multiple Data (`SIMD`).
+Asynchronous parallel processing of multiple data through a single same `Action`, i.e. Single Instruction, Multiple Data (`SIMD`).
 
 Corresponding method groups:
 
-- `CfParallelUtils.Par*` methods, aka. `Multi-Data(Par*) Methods`
-- `CfParallelUtils.thenPar*` methods, aka. `Then-Multi-Data(thenPar*) Methods`
+- `CfParallelUtils.Par*` methods, i.e. `Multi-Data(Par*) Methods`
+- `CfParallelUtils.thenPar*` methods, i.e. `Then-Multi-Data(thenPar*) Methods`
 
 In business logic, collections should be used to hold multiple data rather than arrays;
 if business logic holds multiple data in array type, it can be easily converted to the collection type,
@@ -860,19 +860,19 @@ Including `Action`s in the form of `Lambda` literal.
 
 - When the number of `Action`s is fixed/known,
   use "multiple parameter varargs `Action`" methods, corresponding method groups:
-  - `CompletableFutureUtils.M*` methods, aka. `Multi-Actions(M*) Methods`
-  - `CompletableFutureUtils.thenM*` methods, aka. `Then-Multi-Actions(thenM*) Methods`
+  - `CompletableFutureUtils.M*` methods, i.e. `Multi-Actions(M*) Methods`
+  - `CompletableFutureUtils.thenM*` methods, i.e. `Then-Multi-Actions(thenM*) Methods`
 - When the number of `Action`s is not fixed,
   use "`Action` collection" methods, corresponding method groups:
-  - `CfIterableUtils.M*`, aka. `Multi-Actions(M*) Methods`
-  - `CfIterableUtils.thenM*`, aka. `Then-Multi-Actions(thenM*) Methods`
+  - `CfIterableUtils.M*`, i.e. `Multi-Actions(M*) Methods`
+  - `CfIterableUtils.thenM*`, i.e. `Then-Multi-Actions(thenM*) Methods`
 
 2\) When business processing logic has multiple data for asynchronous parallel processing
 
 Use "multiple data input" methods, corresponding method groups:
 
-- `CfParallelUtils.Par*` methods, aka. `Multi-Data(Par*) Methods`
-- `CfParallelUtils.thenPar*` methods, aka. `Then-Multi-Data(thenPar*) Methods`
+- `CfParallelUtils.Par*` methods, i.e. `Multi-Data(Par*) Methods`
+- `CfParallelUtils.thenPar*` methods, i.e. `Then-Multi-Data(thenPar*) Methods`
 
 3\) When business processing logic input only has multiple `CompletableFuture`s
 
@@ -898,7 +898,7 @@ Compared to the above method groups (multiple `Action`s/multiple data), these me
 > should be treated as lower-level basic methods, used only when necessary.
 >
 > In critical business logic, when using these methods, pay attention to
-> implementing good exception reporting logic (aka. don't swallow exceptions):
+> implementing good exception reporting logic, i.e. don't swallow exceptions:
 > - For implementation reference, see `cffu` implementation code, such as `CompletableFutureUtils.mSupplyFailFastAsync()`
 > - The `cffu` library provides support utility class [`SwallowedExceptionHandleUtils`](https://foldright.io/api-docs/cffu2/2.0.6/io/foldright/cffu2/eh/SwallowedExceptionHandleUtils.html)
     for implementing orchestration exception reporting

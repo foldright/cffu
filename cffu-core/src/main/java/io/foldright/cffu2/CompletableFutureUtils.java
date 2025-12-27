@@ -453,7 +453,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is completed normally with a list containing the successful results of
-     * the given stages before the given timeout (aka as many results as possible in the given time);
+     * the given stages before the given timeout, i.e. as many results as possible in the given time;
      * The list of results is in the <strong>same order</strong> as the input list, and if any of given stages
      * complete exceptionally or are incomplete, their corresponding positions will contain {@code valueIfNotSuccess}
      * (which is indistinguishable from the stage having a successful value of {@code valueIfNotSuccess}).
@@ -479,7 +479,7 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is completed normally with a list containing the successful results of
-     * the given stages before the given timeout (aka as many results as possible in the given time);
+     * the given stages before the given timeout, i.e. as many results as possible in the given time;
      * The list of results is in the <strong>same order</strong> as the input list, and if any of given stages
      * complete exceptionally or are incomplete, their corresponding positions will contain {@code valueIfNotSuccess}
      * (which is indistinguishable from the stage having a successful value of {@code valueIfNotSuccess}).
@@ -2148,7 +2148,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>"The exception from the given stage({@code argument cfThis})"</strong> means the cause of
      * the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
-     * of exception, that exception itself; aka the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
+     * of exception, that exception itself, i.e. the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
      *                      the exception from argument cfThis. To avoid hiding bugs and other unrecoverable errors,
@@ -2180,7 +2180,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>"The exception from the given stage({@code argument cfThis})"</strong> means the cause of
      * the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
-     * of exception, that exception itself; aka the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
+     * of exception, that exception itself, i.e. the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
      *                      the exception from argument cfThis. To avoid hiding bugs and other unrecoverable errors,
@@ -2202,7 +2202,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>"The exception from the given stage({@code argument cfThis})"</strong> means the cause of
      * the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
-     * of exception, that exception itself; aka the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
+     * of exception, that exception itself, i.e. the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
      *                      the exception from argument cfThis. To avoid hiding bugs and other unrecoverable errors,
@@ -2347,8 +2347,8 @@ public final class CompletableFutureUtils {
      * Using {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and this backport method is appropriate only when:
      * <ul>
      * <li>the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods),
-     * <li>and/or all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
-     *    (i.e., the dependent CompletableFutures are created using async methods).
+     * <li>and/or all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously,
+     *    i.e. the dependent CompletableFutures are created using async methods.
      * </ul> In these cases, using these unsafe methods avoids an unnecessary thread switching when timeout occurs; However, these
      * conditions are difficult to guarantee in practice, especially when the returned CompletableFuture is used by others' codes.
      * <p>
@@ -2452,8 +2452,8 @@ public final class CompletableFutureUtils {
      * Using {@link CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout} and this backport method is appropriate only when:
      * <ul>
      * <li>the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods),
-     * <li>and/or all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously
-     *    (i.e., the dependent CompletableFutures are created using async methods).
+     * <li>and/or all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously,
+     *    i.e. the dependent CompletableFutures are created using async methods.
      * </ul> In these cases, using these unsafe methods avoids an unnecessary thread switching when timeout occurs; However, these
      * conditions are difficult to guarantee in practice, especially when the returned CompletableFuture is used by others' codes.
      *
@@ -2496,7 +2496,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>"The exception from the given stage({@code argument cfThis})"</strong> means the cause of
      * the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
-     * of exception, that exception itself; aka the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
+     * of exception, that exception itself, i.e. the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
      *                      the exception from argument cfThis. To avoid hiding bugs and other unrecoverable errors,
@@ -2527,7 +2527,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>"The exception from the given stage({@code argument cfThis})"</strong> means the cause of
      * the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
-     * of exception, that exception itself; aka the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
+     * of exception, that exception itself, i.e. the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
      *                      the exception from argument cfThis. To avoid hiding bugs and other unrecoverable errors,
@@ -2549,7 +2549,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>"The exception from the given stage({@code argument cfThis})"</strong> means the cause of
      * the {@link ExecutionException} thrown by {@code get()} or, if {@code get()} throws a different kind
-     * of exception, that exception itself; aka the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
+     * of exception, that exception itself, i.e. the exception is unwrapped by {@link #unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched against
      *                      the exception from argument cfThis. To avoid hiding bugs and other unrecoverable errors,

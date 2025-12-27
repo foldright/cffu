@@ -38,7 +38,7 @@ public class RelayAsyncDescriptionAndExample {
             // a simulating long-running computation...
             sleep(1000);
             // if input cf is COMPLETED when create a continuation stage (calling `thenApply`),
-            //   executes the long time computation SYNCHRONOUSLY (aka. in the caller thread);
+            //   executes the long time computation SYNCHRONOUSLY, i.e. in the caller thread;
             //   this SYNCHRONIZED execution leads to BLOCKing sequential codes of caller... ⚠️
             // otherwise, triggers the computation when input cf completes.
 

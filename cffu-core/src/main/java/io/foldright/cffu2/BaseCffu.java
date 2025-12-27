@@ -1296,8 +1296,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * Otherwise, the returned Cffu contains the same result as this Cffu.
      * <p>
      * <strong>"The exception from this Cffu"</strong> means the cause of the {@link ExecutionException}
-     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself;
-     * aka the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
+     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself,
+     * i.e. the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
      *                      against the exception from this Cffu. To avoid hiding bugs and other unrecoverable errors,
@@ -1317,8 +1317,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * Otherwise, the returned Cffu contains the same result as this Cffu.
      * <p>
      * <strong>"The exception from this Cffu"</strong> means the cause of the {@link ExecutionException}
-     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself;
-     * aka the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
+     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself,
+     * i.e. the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
      *                      against the exception from this Cffu. To avoid hiding bugs and other unrecoverable errors,
@@ -1339,8 +1339,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * Otherwise, the returned Cffu contains the same result as this Cffu.
      * <p>
      * <strong>"The exception from this Cffu"</strong> means the cause of the {@link ExecutionException}
-     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself;
-     * aka the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
+     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself,
+     * i.e. the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
      *                      against the exception from this Cffu. To avoid hiding bugs and other unrecoverable errors,
@@ -1458,8 +1458,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * instead of this method. Using this method is appropriate only when:
      * <ul>
      * <li>the returned Cffu is only read explicitly(e.g. by get/join/resultNow methods),
-     * <li>and/or all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously
-     *    (i.e., the dependent Cffus/CompletableFutures are created using async methods).
+     * <li>and/or all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously,
+     *    i.e. the dependent Cffus/CompletableFutures are created using async methods.
      * </ul> In these cases, using this unsafe method avoids an unnecessary thread switching when timeout occurs; However,
      * these conditions are difficult to guarantee in practice, especially when the returned Cffu is used by others' codes.
      * <p>
@@ -1519,8 +1519,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * completeOnTimeout} instead of this method. Using this method is appropriate only when:
      * <ul>
      * <li>the returned Cffu is only read explicitly(e.g. by get/join/resultNow methods),
-     * <li>and/or all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously
-     *    (i.e., the dependent Cffus/CompletableFutures are created using async methods).
+     * <li>and/or all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously,
+     *    i.e. the dependent Cffus/CompletableFutures are created using async methods.
      * </ul> In these cases, using this unsafe method avoids an unnecessary thread switching when timeout occurs; However,
      * these conditions are difficult to guarantee in practice, especially when the returned Cffu is used by others' codes.
      *
@@ -1616,8 +1616,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * is composed using the results of the supplied function applied to the exception from this Cffu.
      * <p>
      * <strong>"The exception from this Cffu"</strong> means the cause of the {@link ExecutionException}
-     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself;
-     * aka the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
+     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself,
+     * i.e. the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
      *                      against the exception from this Cffu. To avoid hiding bugs and other unrecoverable errors,
@@ -1637,8 +1637,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * the results of the supplied function applied to the exception from this Cffu using {@link #defaultExecutor()}.
      * <p>
      * <strong>"The exception from this Cffu"</strong> means the cause of the {@link ExecutionException}
-     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself;
-     * aka the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
+     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself,
+     * i.e. the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
      *                      against the exception from this Cffu. To avoid hiding bugs and other unrecoverable errors,
@@ -1658,8 +1658,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * the results of the supplied function applied to the exception from this Cffu, using the supplied Executor.
      * <p>
      * <strong>"The exception from this Cffu"</strong> means the cause of the {@link ExecutionException}
-     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself;
-     * aka the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
+     * thrown by {@code get()} or, if {@code get()} throws a different kind of exception, that exception itself,
+     * i.e. the exception is unwrapped by {@link CompletableFutureUtils#unwrapCfException(Throwable)}.
      *
      * @param exceptionType the exception type that triggers use of {@code fallback}. The exception type is matched
      *                      against the exception from this Cffu. To avoid hiding bugs and other unrecoverable errors,
@@ -2471,7 +2471,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Returns the estimated number of CompletableFuture(including Cffu wrapper)
-     * whose completions are awaiting completion of this Cffu(aka its underlying CompletableFuture).
+     * whose completions are awaiting completion of this Cffu, i.e. its underlying CompletableFuture.
      * This method is designed for use in monitoring system state, not for synchronization control.
      *
      * @return the estimated number of dependent CompletableFutures(including Cffu wrapper)
@@ -2580,7 +2580,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns a {@link CffuFactory.IterableOps} instance to access the {@link Iterable}-based variants
      * (including {@link Collection}, {@link List}, etc.) of same-named varargs methods from {@link Cffu}.
-     * These methods handle multiple actions and Futures with the same type (aka. homogeneous).
+     * These methods handle multiple actions and Futures with the same type, i.e. homogeneous.
      *
      * @see CfIterableUtils
      */
@@ -2602,7 +2602,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * The {@link Iterable}-based variants (including {@link Collection}, {@link List}, etc.) of
      * same-named varargs methods from {@link Cffu}.
-     * These methods handle multiple actions and Futures with the same type (aka. homogeneous).
+     * These methods handle multiple actions and Futures with the same type, i.e. homogeneous.
      */
     public final class IterableOps {
         ////////////////////////////////////////////////////////////

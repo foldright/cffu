@@ -464,7 +464,7 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is completed normally with a list containing the successful results of
-     * the given stages before the given timeout (aka as many results as possible in the given time);
+     * the given stages before the given timeout, i.e. as many results as possible in the given time;
      * The list of results is in the <strong>same order</strong> as the input list, and if any of given stages
      * complete exceptionally or are incomplete, their corresponding positions will contain {@code valueIfNotSuccess}
      * (which is indistinguishable from the stage having a successful value of {@code valueIfNotSuccess}).
@@ -937,7 +937,7 @@ public final class CffuFactory {
     /**
      * Returns a {@link IterableOps} instance to access the {@link Iterable}-based variants
      * (including {@link Collection}, {@link List}, etc.) of same-named varargs methods from {@link CffuFactory}.
-     * These methods handle multiple actions and Futures with the same type (aka. homogeneous).
+     * These methods handle multiple actions and Futures with the same type, aka. homogeneous.
      *
      * @see BaseCffu#iterableOps()
      * @see CfIterableUtils
@@ -970,7 +970,7 @@ public final class CffuFactory {
     /**
      * The {@link Iterable}-based variants (including {@link Collection}, {@link List}, etc.) of
      * same-named varargs methods from {@link CffuFactory}.
-     * These methods handle multiple actions and Futures with the same type (aka. homogeneous).
+     * These methods handle multiple actions and Futures with the same type, aka. homogeneous.
      */
     public final class IterableOps {
         ////////////////////////////////////////////////////////////
