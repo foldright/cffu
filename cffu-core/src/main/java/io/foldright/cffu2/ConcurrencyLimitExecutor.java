@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import static io.foldright.cffu2.internal.CffuLogger.Level.ERROR;
 import static io.foldright.cffu2.internal.CffuLogger.Level.WARN;
 import static io.foldright.cffu2.internal.CffuLogger.log;
-import static io.foldright.cffu2.internal.CffuLogger.logUncaughtException;
+import static io.foldright.cffu2.internal.CffuLogger.logException;
 import static java.lang.Thread.currentThread;
 
 
@@ -90,28 +90,30 @@ final class ConcurrencyLimitExecutor implements Executor {
                 }
 
                 private void syncRun() {
+                    // NOTE: simple increments CANNOT fail; keep two key counter-increments together atomically,
+                    //       do NOT separate them with other calls.
+                    workerCount++;
+                    syncRunnerCount++;
                     try {
-                        incrementWorkerCount();
-                        syncRunnerCount++;
-                        queue.removeLastOccurrence(command);
-                        warnLogSyncRunning();
-                    } finally {
-                        lock.unlock();
-                        locking[0] = false;
-                    }
-                    // For synchronous run (i.e. CallerRunsPolicy) of the submitted task:
-                    //  - run the submitted command only, do NOT run other commands in the queue
-                    //  - do NOT catch exceptions, let them propagate to the caller
-                    try {
+                        try {
+                            // place task removal before the report calls to ensure removal even if the report throws
+                            queue.removeLastOccurrence(command);
+                            reportExceedWorkerCount();
+                            reportSyncRunning();
+                        } finally {
+                            lock.unlock();
+                            locking[0] = false;
+                        }
+                        // For synchronous run (i.e. CallerRunsPolicy) of the submitted task:
+                        //  - run the submitted command only, do NOT run other commands in the queue
+                        //  - do NOT catch exceptions, let them propagate to the caller
                         command.run();
                     } finally {
                         lock.lock();
                         try {
                             workerCount--;
                             syncRunnerCount--;
-                        } finally {
-                            lock.unlock();
-                        }
+                        } finally {lock.unlock();}
                     }
                 }
 
@@ -132,7 +134,10 @@ final class ConcurrencyLimitExecutor implements Executor {
             //   worker count is already incremented inside `executor.execute()` before it returns.
             // NOTE 3: Do NOT move worker count increment into the `finally` block, because `workerCount`
             //   must NOT be incremented if `executor.execute` throws an exception (e.g. RejectedExecutionEx).
-            if (locking[0]) incrementWorkerCount();
+            if (locking[0]) {
+                workerCount++;
+                reportExceedWorkerCount();
+            }
         } finally {
             if (locking[0]) lock.unlock();
         }
@@ -141,38 +146,50 @@ final class ConcurrencyLimitExecutor implements Executor {
     @SuppressWarnings("ConstantValue")
     private void asyncWork() {
         boolean interruptedDuringTask = false;
-        while (true) {
-            Runnable task;
-            lock.lock();
-            try {
-                task = queue.poll();
-                if (task == null) {
-                    workerCount--;
-                    // ensure that if the thread was interrupted at all while processing, it is returned to
-                    // the base Executor interrupted so that it may handle the interruption if it likes.
-                    if (interruptedDuringTask) currentThread().interrupt();
-                    return;
+        // Track if `workerCount` was decremented in normal exit (queue is empty);
+        // if not (e.g. Error thrown from the while loop, especially the `task.run` try-catch block),
+        // the outer finally block will decrement it, ensuring the worker counter remains correct.
+        boolean workCountDecremented = false;
+        try {
+            while (true) {
+                Runnable task;
+                lock.lock();
+                try {
+                    task = queue.poll();
+                    if (task == null) {
+                        workerCount--;
+                        workCountDecremented = true;
+                        return;
+                    }
+                } finally {lock.unlock();}
+
+                // remove the interrupt bit before each task
+                interruptedDuringTask |= Thread.interrupted();
+                // safely execute the task in `try-catch` block
+                try {
+                    task.run();
+                } catch (Throwable e) { // sneaky checked exception
+                    // check for InterruptedEx from `task.run`, as other JVM languages may throw InterruptedEx
+                    if (e instanceof InterruptedException) interruptedDuringTask = true;
+                    logException(ERROR, "Exception while executing runnable " + task, e);
                 }
-            } finally {
-                lock.unlock();
             }
-            // remove the interrupt bit before each task
-            interruptedDuringTask |= Thread.interrupted();
-            // safely execute the task in `try-catch` block
-            try {
-                task.run();
-            } catch (Throwable e) {
-                // check for InterruptedEx from `task.run`, as other JVM languages may throw InterruptedEx
-                if (e instanceof InterruptedException) interruptedDuringTask = true;
-                logUncaughtException(ERROR, super.toString() + "#asyncWork", e);
+        } finally {
+            if (!workCountDecremented) {
+                lock.lock();
+                try {
+                    workerCount--;
+                } finally {lock.unlock();}
             }
+            // ensure that if the thread was interrupted at all while processing, it is returned to
+            // the base Executor interrupted so that it may handle the interruption if it likes.
+            if (interruptedDuringTask) currentThread().interrupt();
         }
     }
 
     @GuardedBy("lock")
-    private void incrementWorkerCount() {
-        workerCount++;
-        //  check the concurrency limit issue
+    private void reportExceedWorkerCount() {
+        // Check if worker count exceeds concurrency limit (should never happen)
         if (workerCount <= maxConcurrency) return;
         if (isPowerOfTwo(++exceedLimitTimes)) log(ERROR, exceedLimitTimes + " concurrency limit violation(s)"
                 + " (current: " + workerCount + " > max: " + maxConcurrency + ") detected in " + this
@@ -180,7 +197,7 @@ final class ConcurrencyLimitExecutor implements Executor {
     }
 
     @GuardedBy("lock")
-    private void warnLogSyncRunning() {
+    private void reportSyncRunning() {
         if (isPowerOfTwo(++syncRunTimes)) log(WARN, syncRunTimes + " synchronous execution(s) detected in " + this
                 + "; base executor runs task on caller thread (e.g. CallerRunsPolicy/DirectExecutor), which likely"
                 + " prevent reaching max concurrency (current: " + workerCount + ", max: " + maxConcurrency + ").");
