@@ -11,31 +11,31 @@ source "$SELF_DIR/bash-buddy/lib/common_utils.sh"
 
 readonly forbidden_classes=(
   # prefer edu.umd.cs.findbugs.annotations.Nullable
-  javax.annotation.Nullable
-  org.jetbrains.annotations.Nullable
+  'javax\.annotation\.Nullable'
+  'org\.jetbrains\.annotations\.Nullable'
 
   # prefer edu.umd.cs.findbugs.annotations.NonNull
-  javax.annotation.Nonnull
-  org.jetbrains.annotations.NotNull
+  'javax\.annotation\.Nonnull'
+  'org\.jetbrains\.annotations\.NotNull'
 
   # prefer edu.umd.cs.findbugs.annotations.CheckForNull
-  javax.annotation.CheckReturnValue
-  org.jetbrains.annotations.CheckReturnValue
+  'javax\.annotation\.CheckReturnValue'
+  'org\.jetbrains\.annotations\.CheckReturnValue'
 
   # prefer @edu.umd.cs.findbugs.annotations.DefaultAnnotationForParameters(NonNull.class)
-  javax.annotation.ParametersAreNonnullByDefault
+  'javax\.annotation\.ParametersAreNonnullByDefault'
 
   # prefer other QA annotations instead of guava
-  'com.google.common.annotations'
+  'com\.google\.common\.annotations'
 
   # prefer static import methods of `Assertions`
-  'org.junit.jupiter.api.Assertions;'
+  'org\.junit\.jupiter\.api\.Assertions(?![.;])'
 )
 
 PATTERN=$(printf '%s\n' "${forbidden_classes[@]}")
 [[ "${GITHUB_ACTIONS:-}" = true || -t 1 ]] && MORE_RG_OPTIONS=(--color=always)
 readonly PATTERN MORE_RG_OPTIONS
 
-! cu::log_then_run rg -f <(printf '%s\n' "$PATTERN") -F -n -C2 \
+! cu::log_then_run rg -Pn -C2 -f <(printf '%s\n' "$PATTERN") -w \
   --ignore-vcs --glob='!scripts/' --glob='!src/package-list/' --glob='!package-info.java' \
   ${MORE_RG_OPTIONS[@]:+"${MORE_RG_OPTIONS[@]}"}
