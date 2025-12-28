@@ -126,31 +126,34 @@ final class ConcurrencyLimitExecutor implements Executor {
     @SuppressWarnings("ConstantValue")
     private void asyncWork() {
         boolean interruptedDuringTask = false;
-        while (true) {
-            Runnable task;
-            lock.lock();
-            try {
-                task = queue.poll();
-                if (task == null) {
-                    workerCount--;
-                    // ensure that if the thread was interrupted at all while processing, it is returned to
-                    // the base Executor interrupted so that it may handle the interruption if it likes.
-                    if (interruptedDuringTask) currentThread().interrupt();
-                    return;
+        try {
+            while (true) {
+                Runnable task;
+                lock.lock();
+                try {
+                    task = queue.poll();
+                    if (task == null) {
+                        workerCount--;
+                        return;
+                    }
+                } finally {
+                    lock.unlock();
                 }
-            } finally {
-                lock.unlock();
+                // remove the interrupt bit before each task
+                interruptedDuringTask |= Thread.interrupted();
+                // safely execute the task in `try-catch` block
+                try {
+                    task.run();
+                } catch (Throwable e) {
+                    // check for InterruptedEx from `task.run`, as other JVM languages may throw InterruptedEx
+                    if (e instanceof InterruptedException) interruptedDuringTask = true;
+                    logUncaughtException(ERROR, super.toString() + "#asyncWork", e);
+                }
             }
-            // remove the interrupt bit before each task
-            interruptedDuringTask |= Thread.interrupted();
-            // safely execute the task in `try-catch` block
-            try {
-                task.run();
-            } catch (Throwable e) {
-                // check for InterruptedEx from `task.run`, as other JVM languages may throw InterruptedEx
-                if (e instanceof InterruptedException) interruptedDuringTask = true;
-                logUncaughtException(ERROR, super.toString() + "#asyncWork", e);
-            }
+        } finally {
+            // ensure that if the thread was interrupted at all while processing, it is returned to
+            // the base Executor interrupted so that it may handle the interruption if it likes.
+            if (interruptedDuringTask) currentThread().interrupt();
         }
     }
 
