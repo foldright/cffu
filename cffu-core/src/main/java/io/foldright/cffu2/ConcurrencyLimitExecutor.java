@@ -29,6 +29,7 @@ import static java.lang.Thread.currentThread;
 @SuppressFBWarnings({"UL_UNRELEASED_LOCK", "AT_STALE_THREAD_WRITE_OF_PRIMITIVE",
         "AT_NONATOMIC_OPERATIONS_ON_SHARED_VARIABLE"})
 final class ConcurrencyLimitExecutor implements Executor {
+
     private final int maxConcurrency;
     private final Executor executor;
 
@@ -58,9 +59,16 @@ final class ConcurrencyLimitExecutor implements Executor {
         //       so no need to declare it as type AtomicBoolean for thread safety.
         final boolean[] locking = {true};
         try {
-            if (syncRunnerCount >= maxConcurrency) throw new RejectedExecutionException("reject new task:"
-                    + " synchronous running task(s) (i.e. CallerRunsPolicy) already occupy"
-                    + " all concurrency slot(s) of " + ConcurrencyLimitExecutor.this);
+            // When ALL workers (up to the concurrency limit) are running synchronously (i.e. CallerRunsPolicy):
+            //  - Queuing the new task would delay its execution (until triggered by a later asynchronous task);
+            //    or even cause it to be DISCARDED (if all later submissions also run synchronously),
+            //    because synchronous runners only execute their own submitted task, not queued tasks.
+            //  - Running the new task synchronously or asynchronously would violate the concurrency limit!
+            // Therefore, rejecting the new task is the safe and correct option.
+            if (syncRunnerCount >= maxConcurrency) throw new RejectedExecutionException("Task rejected:"
+                    + " all " + maxConcurrency + " concurrency slot(s) are occupied by synchronous runner(s)"
+                    + " (base executor runs task on caller thread, e.g. CallerRunsPolicy/DirectExecutor);"
+                    + " cannot accept any more tasks in " + this);
 
             queue.add(command);
             if (workerCount >= maxConcurrency) return;
@@ -72,6 +80,10 @@ final class ConcurrencyLimitExecutor implements Executor {
                 @Override
                 public void run() {
                     boolean onCallerThread = currentThread().equals(callerThread);
+                    // Synchronous run (i.e. CallerRunsPolicy) is determined when BOTH conditions are satisfied:
+                    //  1. Task runs on the caller thread.
+                    //  2. `executor.execute()` hasn't returned yet (the task is running during the `execute` call).
+                    //     this rules out the edge case where the caller thread is later reused from a thread pool.
                     boolean isSyncRun = onCallerThread && !returnedFromExecute[0];
                     if (isSyncRun) syncRun();
                     else asyncWork();
@@ -87,7 +99,7 @@ final class ConcurrencyLimitExecutor implements Executor {
                         lock.unlock();
                         locking[0] = false;
                     }
-                    // For synchronous running of the submitted task:
+                    // For synchronous run (i.e. CallerRunsPolicy) of the submitted task:
                     //  - run the submitted command only, do NOT run other commands in the queue
                     //  - do NOT catch exceptions, let them propagate to the caller
                     try {
@@ -112,11 +124,14 @@ final class ConcurrencyLimitExecutor implements Executor {
             executor.execute(submittedTask);
             returnedFromExecute[0] = true;
 
-            // NOTE 1: if `locking` is true, the submitted task will run asynchronously;
-            //   increment worker count here in the `execute` method; otherwise, for synchronous running,
-            //   the worker count is incremented within the submitted task before returning from `execute`.
-            // NOTE 2: do NOT move the worker count increment below into the `finally` block, because `workerCount`
-            //   must NOT be incremented if `executor.execute()` throws exceptions (e.g. RejectedExecutionEx).
+            // NOTE 1: For synchronous runs:
+            //    - any exception will propagate to caller;
+            //    - `locking` is only set to false when the submitted task will run synchronously;
+            //   So if `locking` is still true here, task submission succeeded and the task will run asynchronously.
+            // NOTE 2: For asynchronous runs, increment worker count here; for synchronous runs,
+            //   worker count is already incremented inside `executor.execute()` before it returns.
+            // NOTE 3: Do NOT move worker count increment into the `finally` block, because `workerCount`
+            //   must NOT be incremented if `executor.execute` throws an exception (e.g. RejectedExecutionEx).
             if (locking[0]) incrementWorkerCount();
         } finally {
             if (locking[0]) lock.unlock();
@@ -166,18 +181,18 @@ final class ConcurrencyLimitExecutor implements Executor {
 
     @GuardedBy("lock")
     private void warnLogSyncRunning() {
-        if (isPowerOfTwo(++syncRunTimes)) log(WARN, syncRunTimes + " synchronous execution(s) detected"
-                + " in base executor of " + this + " - base executor runs task on caller thread, likely prevent"
-                + "reaching max concurrency! (current: " + workerCount + ", max: " + maxConcurrency + ")");
+        if (isPowerOfTwo(++syncRunTimes)) log(WARN, syncRunTimes + " synchronous execution(s) detected in " + this
+                + "; base executor runs task on caller thread (e.g. CallerRunsPolicy/DirectExecutor), which likely"
+                + " prevent reaching max concurrency (current: " + workerCount + ", max: " + maxConcurrency + ").");
     }
 
     /**
-     * Checks if a number is a power of two. Used for throttling repetitive log volume by emitting logs
-     * only when the count reaches a power of two (1, 2, 4, 8, 16, 32, 64, ...). This exponential sampling strategy
+     * Checks if a number is a power of two. Used for throttling repetitive log by emitting logs only when
+     * the count reaches a power of two (1, 2, 4, 8, 16, 32, 64, ...). This exponential sampling strategy
      * reduces log volume while ensuring that early occurrences are always captured for debugging and monitoring.
      *
-     * @see <a href="https://books.google.com/books/about/Hacker_s_Delight.html?id=VicPJYM0I5QC">Algorithm reference:
-     * "Hacker's Delight" (2nd edition) by Henry S. Warren Jr., Chapter 3. Power-of-2 Boundaries</a>
+     * @see <a href="https://books.google.com/books/about/Hacker_s_Delight.html?id=VicPJYM0I5QC">Algorithm
+     * reference: "Hacker's Delight" (2nd edition) by Henry S. Warren, Chapter 3. Power-of-2 Boundaries</a>
      */
     @VisibleForTesting
     static boolean isPowerOfTwo(long n) {
