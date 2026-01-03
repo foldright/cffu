@@ -11,23 +11,39 @@ import io.foldright.cffu2.internal.CffuLogger;
  */
 public final class CffuConfiguration {
     /**
-     * Sets the exception logging format for cffu operations.
+     * Sets the exception logging format for cffu operations programmatically at runtime.
      * <p>
-     * By default, (uncaught) exceptions are logged with their complete stack traces. The default logging behavior can be
-     * configured through the system property {@code cffu.exception.log.format} at JVM startup with the following values:
-     * <ul>
-     * <li>{@code full}: Log the complete exception stack trace (default)</li>
-     * <li>{@code short}: Log only the exception message</li>
-     * <li>{@code none}: Suppress all exception logging</li>
-     * </ul>
+     * By default, uncaught exceptions are logged with their complete stack traces
+     * (i.e. {@link ExceptionLogFormat#FULL}). The initial format can be configured via
+     * the system property {@code cffu.exception.log.format} at JVM startup, with values:
+     * {@code full}, {@code short}, or {@code none}.
      *
      * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
+     * @see ExceptionLogFormat
      */
-    public static void setExceptionLoggingFormat(ExceptionLoggingFormat format) {
-        CffuLogger.setExceptionLoggingFormat(format);
+    public static void setExceptionLogFormat(ExceptionLogFormat format) {
+        CffuLogger.setExceptionLogFormat(format);
     }
 
-    public enum ExceptionLoggingFormat {FULL, SHORT, NONE}
+    /**
+     * the exception logging format for cffu operations.
+     *
+     * @see #setExceptionLogFormat
+     */
+    public enum ExceptionLogFormat {
+        /**
+         * Log the complete exception stack trace (default)
+         */
+        FULL,
+        /**
+         * Log only the exception message
+         */
+        SHORT,
+        /**
+         * Suppress all exception logging
+         */
+        NONE
+    }
 
     private CffuConfiguration() {}
 }
