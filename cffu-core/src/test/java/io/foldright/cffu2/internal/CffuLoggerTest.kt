@@ -4,26 +4,28 @@ import io.foldright.cffu2.config.CffuConfiguration
 import io.kotest.core.spec.style.FunSpec
 
 
-private val exceptionLoggingFormat = CffuLogger.exceptionLoggingFormat
+private val exceptionLogFormat = CffuLogger.exceptionLogFormat
+
+private val logger = CffuLogger.getLogger(CffuLoggerTest::class.java)
 
 class CffuLoggerTest : FunSpec({
     val rte = RuntimeException("CffuLoggerTest")
 
     test("CffuLogger should not log exception stack trace by default") {
-        CffuConfiguration.setExceptionLoggingFormat(CffuConfiguration.ExceptionLoggingFormat.NONE)
-        CffuLogger.logException(CffuLogger.Level.WARN, "NONE - logException - Hello", rte)
-        CffuLogger.log(CffuLogger.Level.WARN, "NONE - log - Hello")
+        CffuConfiguration.setExceptionLogFormat(CffuConfiguration.ExceptionLogFormat.NONE)
+        logger.logException(CffuLogger.Level.WARN, "NONE - logException - Hello", rte)
+        logger.log(CffuLogger.Level.WARN, "NONE - log - Hello")
 
-        CffuConfiguration.setExceptionLoggingFormat(CffuConfiguration.ExceptionLoggingFormat.SHORT)
-        CffuLogger.logException(CffuLogger.Level.WARN, "SHORT - logException - Hello", rte)
-        CffuLogger.log(CffuLogger.Level.WARN, "SHORT - log - Hello")
+        CffuConfiguration.setExceptionLogFormat(CffuConfiguration.ExceptionLogFormat.SHORT)
+        logger.logException(CffuLogger.Level.WARN, "SHORT - logException - Hello", rte)
+        logger.log(CffuLogger.Level.WARN, "SHORT - log - Hello")
 
-        CffuConfiguration.setExceptionLoggingFormat(CffuConfiguration.ExceptionLoggingFormat.FULL)
-        CffuLogger.logException(CffuLogger.Level.WARN, "FULL - logException - Hello", rte)
-        CffuLogger.log(CffuLogger.Level.WARN, "FULL - log - Hello")
+        CffuConfiguration.setExceptionLogFormat(CffuConfiguration.ExceptionLogFormat.FULL)
+        logger.logException(CffuLogger.Level.WARN, "FULL - logException - Hello", rte)
+        logger.log(CffuLogger.Level.WARN, "FULL - log - Hello")
     }
 
     afterSpec {
-        CffuConfiguration.setExceptionLoggingFormat(exceptionLoggingFormat)
+        CffuLogger.exceptionLogFormat = exceptionLogFormat
     }
 })
