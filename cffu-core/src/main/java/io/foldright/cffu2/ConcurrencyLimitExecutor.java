@@ -1,6 +1,7 @@
 package io.foldright.cffu2;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.foldright.cffu2.internal.CffuLogger;
 import org.jetbrains.annotations.VisibleForTesting;
 
 import javax.annotation.concurrent.GuardedBy;
@@ -13,8 +14,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static io.foldright.cffu2.internal.CffuLogger.Level.ERROR;
 import static io.foldright.cffu2.internal.CffuLogger.Level.WARN;
-import static io.foldright.cffu2.internal.CffuLogger.log;
-import static io.foldright.cffu2.internal.CffuLogger.logException;
 import static java.lang.Thread.currentThread;
 
 
@@ -29,6 +28,7 @@ import static java.lang.Thread.currentThread;
 @SuppressFBWarnings({"UL_UNRELEASED_LOCK", "AT_STALE_THREAD_WRITE_OF_PRIMITIVE",
         "AT_NONATOMIC_OPERATIONS_ON_SHARED_VARIABLE"})
 final class ConcurrencyLimitExecutor implements Executor {
+    private static final CffuLogger logger = CffuLogger.getLogger(ConcurrencyLimitExecutor.class);
 
     private final int maxConcurrency;
     private final Executor executor;
@@ -171,7 +171,7 @@ final class ConcurrencyLimitExecutor implements Executor {
                 } catch (Throwable e) { // sneaky checked exception
                     // check for InterruptedEx from `task.run`, as other JVM languages may throw InterruptedEx
                     if (e instanceof InterruptedException) interruptedDuringTask = true;
-                    logException(ERROR, "Exception while executing runnable " + task, e);
+                    logger.logException(ERROR, "Exception while executing runnable " + task, e);
                 }
             }
         } finally {
@@ -191,16 +191,17 @@ final class ConcurrencyLimitExecutor implements Executor {
     private void reportExceedWorkerCount() {
         // Check if worker count exceeds concurrency limit (should never happen)
         if (workerCount <= maxConcurrency) return;
-        if (isPowerOfTwo(++exceedLimitTimes)) log(ERROR, exceedLimitTimes + " concurrency limit violation(s)"
+        if (isPowerOfTwo(++exceedLimitTimes)) logger.log(ERROR, exceedLimitTimes + " concurrency limit violation(s)"
                 + " (current: " + workerCount + " > max: " + maxConcurrency + ") detected in " + this
                 + ". This should never happen - please report this issue to the cffu library!");
     }
 
     @GuardedBy("lock")
     private void reportSyncRunning() {
-        if (isPowerOfTwo(++syncRunTimes)) log(WARN, syncRunTimes + " synchronous execution(s) detected in " + this
-                + "; base executor runs task on caller thread (e.g. CallerRunsPolicy/DirectExecutor), which likely"
-                + " prevent reaching max concurrency (current: " + workerCount + ", max: " + maxConcurrency + ").");
+        if (isPowerOfTwo(++syncRunTimes)) logger.log(WARN, syncRunTimes + " synchronous execution(s)"
+                + " detected in " + this + "; base executor runs task on caller thread"
+                + " (e.g. CallerRunsPolicy/DirectExecutor), which likely prevent reaching max concurrency"
+                + " (current: " + workerCount + ", max: " + maxConcurrency + ").");
     }
 
     /**
@@ -226,7 +227,7 @@ final class ConcurrencyLimitExecutor implements Executor {
     @Override
     @SuppressWarnings("removal")
     protected void finalize() throws Throwable {
-        if (!queue.isEmpty()) log(WARN, queue.size() + " queued task(s) remained"
+        if (!queue.isEmpty()) logger.log(WARN, queue.size() + " queued task(s) remained"
                 + " when finalizing " + this + "; these tasks will be discarded!"
                 + " This indicates the base executor discarded tasks or shut down unexpectedly.");
         super.finalize();
