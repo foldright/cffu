@@ -3,6 +3,7 @@ package io.foldright.cffu2.eh;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.foldright.cffu2.Cffu;
 import io.foldright.cffu2.internal.CommonUtils;
+import io.foldright.cffu2.internal.ExceptionLogger;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -12,8 +13,6 @@ import static io.foldright.cffu2.LLCF.*;
 import static io.foldright.cffu2.internal.CommonUtils.requireArrayAndEleNonNull;
 import static io.foldright.cffu2.internal.ExceptionLogger.Level.ERROR;
 import static io.foldright.cffu2.internal.ExceptionLogger.Level.WARN;
-import static io.foldright.cffu2.internal.ExceptionLogger.logException;
-import static io.foldright.cffu2.internal.ExceptionLogger.logUncaughtException;
 import static java.util.Objects.requireNonNull;
 
 
@@ -29,6 +28,8 @@ import static java.util.Objects.requireNonNull;
  * @see <a href="https://peps.python.org/pep-0020/">Errors should never pass silently. Unless explicitly silenced.</a>
  */
 public final class SwallowedExceptionHandleUtils {
+    private static final ExceptionLogger logger = ExceptionLogger.getLogger(SwallowedExceptionHandleUtils.class);
+
     /**
      * Handles all exceptions from multiple input {@code CompletionStage}s as swallowed exceptions,
      * using {@link #cffuSwallowedExceptionHandler()} and calling back it with {@code null} attachment.
@@ -143,7 +144,7 @@ public final class SwallowedExceptionHandleUtils {
 
     private static final ExceptionHandler CFFU_SWALLOWED_EX_HANDLER = exInfo -> {
         String msg = "Swallowed exception of cf" + (exInfo.index + 1) + " at " + exInfo.where;
-        logException(WARN, msg, exInfo.exception);
+        logger.logException(WARN, msg, exInfo.exception);
     };
 
     /**
@@ -169,7 +170,7 @@ public final class SwallowedExceptionHandleUtils {
             handler.handle(info);
         } catch (Throwable ex) {
             safeAddSuppressedEx(info.exception, ex);
-            logUncaughtException(ERROR, "exceptionHandler(" + handler.getClass() + ")", ex);
+            logger.logUncaughtException(ERROR, "exceptionHandler(" + handler.getClass() + ")", ex);
         }
     }
 

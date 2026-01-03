@@ -29,12 +29,17 @@ import org.slf4j.spi.LocationAwareLogger;
 @ApiStatus.Internal
 public final class ExceptionLogger {
     private static final String FQCN = ExceptionLogger.class.getName();
-    private static final String CFFU_PACKAGE_NAME = FQCN.replaceFirst("(\\.[^.]*){2}$", "");
 
-    private static final LoggerAdapter logger = getLogger();
+    private final LoggerAdapter logger;
+
+    private ExceptionLogger(LoggerAdapter logger) {this.logger = logger;}
+
+    public static ExceptionLogger getLogger(Class<?> clazz) {
+        return new ExceptionLogger(getLoggerAdapter(clazz));
+    }
 
     @SuppressWarnings("StatementWithEmptyBody")
-    public static void logException(Level level, String msg, Throwable ex) {
+    public void logException(Level level, String msg, Throwable ex) {
         final String fullFormat = "full";
         final String shortFormat = "short";
         final String noneFormat = "none";
@@ -49,20 +54,24 @@ public final class ExceptionLogger {
         }
     }
 
-    public static void logUncaughtException(Level level, String where, Throwable ex) {
+    public void logUncaughtException(Level level, String where, Throwable ex) {
         logException(level, "Uncaught exception occurred at " + where, ex);
     }
 
     public enum Level {ERROR, WARN}
 
+    private static volatile boolean slf4jUnavailable = false;
+
     /**
      * Returns a logger adapter that uses {@code SLF4J} if available, otherwise uses {@link java.util.logging}.
      */
-    private static LoggerAdapter getLogger() {
+    private static LoggerAdapter getLoggerAdapter(Class<?> clazz) {
+        if (slf4jUnavailable) return new JulLoggerAdapter(clazz);
         try {
-            return new Slf4jLoggerAdapter();
+            return new Slf4jLoggerAdapter(clazz);
         } catch (NoClassDefFoundError e) {
-            return new JulLoggerAdapter();
+            slf4jUnavailable = true;
+            return new JulLoggerAdapter(clazz);
         }
     }
 
@@ -71,7 +80,9 @@ public final class ExceptionLogger {
     }
 
     private static final class Slf4jLoggerAdapter implements LoggerAdapter {
-        private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CFFU_PACKAGE_NAME);
+        private final org.slf4j.Logger logger;
+
+        Slf4jLoggerAdapter(Class<?> clazz) {logger = org.slf4j.LoggerFactory.getLogger(clazz);}
 
         @Override
         public void log(Level level, String msg, @Nullable Throwable ex) {
@@ -86,13 +97,16 @@ public final class ExceptionLogger {
     }
 
     private static final class JulLoggerAdapter implements LoggerAdapter {
-        private final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CFFU_PACKAGE_NAME);
+        private final java.util.logging.Logger logger;
+
+        JulLoggerAdapter(Class<?> clazz) {logger = java.util.logging.Logger.getLogger(clazz.getName());}
 
         @Override
         public void log(Level level, String msg, @Nullable Throwable ex) {
-            logger.log(level == Level.ERROR ? java.util.logging.Level.SEVERE : java.util.logging.Level.WARNING, msg, ex);
+            java.util.logging.Level lvl = level == Level.ERROR
+                    ? java.util.logging.Level.SEVERE
+                    : java.util.logging.Level.WARNING;
+            logger.log(lvl, msg, ex);
         }
     }
-
-    private ExceptionLogger() {}
 }

@@ -2,6 +2,7 @@ package io.foldright.cffu2;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.foldright.cffu2.internal.CommonUtils;
+import io.foldright.cffu2.internal.ExceptionLogger;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ import static io.foldright.cffu2.CompletableFutureUtils.unwrapCfException;
 import static io.foldright.cffu2.internal.CommonUtils.containsInArray;
 import static io.foldright.cffu2.internal.CommonUtils.mapArray;
 import static io.foldright.cffu2.internal.ExceptionLogger.Level.ERROR;
-import static io.foldright.cffu2.internal.ExceptionLogger.logUncaughtException;
 import static java.lang.Thread.currentThread;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
@@ -55,6 +55,13 @@ public final class LLCF {
      */
     private static volatile int BLACK_HOLE = 0xCFF0;
 
+    // CAUTION: The initialization order of static fields matters. Do not place static fields
+    // before their dependencies, as this will result in using uninitialized dependency values.
+    //
+    // Dependencies:
+    // - IS_JAVA*_PLUS depends on BLACK_HOLE
+    // - MIN_STAGE_CLASS depends on IS_JAVA9_PLUS
+
     // `CompletableFuture.completedStage` have been the new method since java 9
     static final boolean IS_JAVA9_PLUS = methodExists(() -> CompletableFuture.completedStage(null));
     // `CompletableFuture.exceptionallyCompose` have been the new method since java 12
@@ -79,12 +86,7 @@ public final class LLCF {
             ? CompletableFuture.completedStage(null).getClass()
             : null;
 
-    // CAUTION: The initialization order of static fields matters. Do not place static fields
-    // before their dependencies, as this will result in using uninitialized dependency values.
-    //
-    // Dependencies:
-    // - IS_JAVA*_PLUS depends on BLACK_HOLE
-    // - MIN_STAGE_CLASS depends on IS_JAVA9_PLUS
+    private static final ExceptionLogger logger = ExceptionLogger.getLogger(LLCF.class);
 
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
@@ -271,7 +273,7 @@ public final class LLCF {
                 action.accept(v, ex);
             } catch (Throwable e1) {
                 safeAddSuppressedEx(ex, e1);
-                logUncaughtException(ERROR, where, e1);
+                logger.logUncaughtException(ERROR, where, e1);
             }
         };
     }
