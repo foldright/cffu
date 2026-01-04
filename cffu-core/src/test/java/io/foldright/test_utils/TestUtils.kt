@@ -13,12 +13,13 @@ import io.kotest.matchers.shouldBe
 import org.apache.commons.lang3.JavaVersion
 import org.apache.commons.lang3.SystemUtils
 import org.apache.commons.lang3.SystemUtils.isJavaVersionAtLeast
+import java.lang.Thread.currentThread
 import java.util.concurrent.*
 import java.util.function.Supplier
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// region# util methods for testing
+// region# util methods for CF testing
 ////////////////////////////////////////////////////////////////////////////////
 
 fun <T> incompleteCf(): CompletableFuture<T> = CompletableFuture()
@@ -49,7 +50,7 @@ fun <T> cancelledFuture(mayInterruptIfRunning: Boolean = false): CompletableFutu
 private val DEFAULT_EXECUTOR: Executor = Executor { /* do nothing */ }
 
 @JvmOverloads
-fun <T> supplyLater(value: T, millis: Long = MEDIAN_WAIT_MS) = Supplier<T> {
+fun <T> supplyLater(value: T, millis: Long = MEDIAN_WAIT_MS) = Supplier {
     sleep(millis)
     value
 }
@@ -105,17 +106,17 @@ fun assertCfStillIncompleteIn(
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * safe means works under java 8
+ * "safe" means works under java 8
  */
 @Suppress("UNUSED_PARAMETER")
 fun <T> safeNewFailedCompletableFuture(executorService: ExecutorService, t: Throwable): CompletableFuture<T> {
-    val failed: CompletableFuture<T> = CompletableFuture<T>()
+    val failed: CompletableFuture<T> = CompletableFuture()
     failed.completeExceptionally(t)
     return failed
 }
 
 /**
- * safe means works under java 8
+ * "safe" means works under java 8
  */
 fun <T> safeNewFailedCffu(executorService: ExecutorService, t: Throwable): Cffu<T> {
     return CffuFactory.builder(executorService).build().failedFuture(t)
@@ -151,7 +152,7 @@ fun sleep(millis: Long = SHORT_WAIT_MS) {
 }
 
 /**
- * sleep short time
+ * sleep a short time
  */
 @JvmOverloads
 fun nap(millis: Long = SHORT_WAIT_MS) {
@@ -159,7 +160,7 @@ fun nap(millis: Long = SHORT_WAIT_MS) {
 }
 
 /**
- * sleep long time
+ * sleep a long time
  */
 @JvmOverloads
 fun snoreZzz(millis: Long = MEDIAN_WAIT_MS) {
@@ -176,7 +177,15 @@ infix fun <T> List<T>.merge(other: List<T>): List<T> = mutableListOf<T>().apply 
     addAll(other)
 }
 
-fun addCurrentThreadName(names: List<String>) = names + Thread.currentThread().name
+fun rangeList(stop: Int) = rangeList(0, stop)
+fun rangeList(start: Int, stop: Int) = List(stop - start) { start + it }
+
+fun addCurrentThreadName(names: List<String>) = names + currentThread().name
+
+fun logWithTimeAndThread(format: String = "", vararg args: Any?) {
+    val msg = String.format(format, *args)
+    System.out.printf("%tF %<tT.%<tL |%s| %s%n", System.currentTimeMillis(), currentThread().name, msg)
+}
 
 // endregion
 ////////////////////////////////////////////////////////////////////////////////

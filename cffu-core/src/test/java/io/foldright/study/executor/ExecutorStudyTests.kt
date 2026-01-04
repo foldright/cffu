@@ -49,7 +49,7 @@ class ExecutorStudyTests : FunSpec({
         // interrupted status is unset
         currentThread().isInterrupted.shouldBeFalse()
 
-        runThreads.shouldHaveSize(2)
+        runThreads shouldHaveSize 2
         // thread is reused after interrupt (throw InterruptedException)
         runThreads.shouldForAll { it === theOneThread }
     }
@@ -87,7 +87,7 @@ class ExecutorStudyTests : FunSpec({
         oneThreadExecutor.submit { runThreads.add(currentThread()) }.get().shouldBeNull()
         currentThread().isInterrupted.shouldBeFalse()
 
-        runThreads.shouldHaveSize(2)
+        runThreads shouldHaveSize 2
         // reuse thread
         runThreads.shouldForAll { it === theOneThread }
     }
