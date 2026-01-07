@@ -65,7 +65,7 @@ public final class ConcurrencyLimitExecutorLockFree implements Executor {
 
         Tuple2<Runnable, TaskQueue> poll() {
             final Tuple2<Runnable, Queue<Runnable>> dequeue = tasks.dequeue();
-            return new Tuple2(dequeue._1, new TaskQueue(dequeue._2, workerCount));
+            return new Tuple2<>(dequeue._1, new TaskQueue(dequeue._2, workerCount));
         }
 
         TaskQueue pollAfterSchedule() {
