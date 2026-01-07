@@ -78,19 +78,19 @@
 		<release.pom.version.regex>${ga.release.pom.version.regex}</release.pom.version.regex>
 		<maven.enforcer.pom.version.regex>${snapshot.pom.version.regex}</maven.enforcer.pom.version.regex>
 
-		<spotbugs.annotations.version>4.9.4</spotbugs.annotations.version>
+		<spotbugs.annotations.version>4.10.5</spotbugs.annotations.version>
 		<jsr305.version>3.0.2</jsr305.version>
-		<jetbrains.annotations.version>26.0.2-1</jetbrains.annotations.version>
+		<jetbrains.annotations.version>26.1.0</jetbrains.annotations.version>
 
-		<kotlin.version>2.3.0</kotlin.version>
+		<kotlin.version>2.3.21</kotlin.version>
 
-		<slf4j.version>2.0.17</slf4j.version>
-		<log4j2.version>2.25.3</log4j2.version>
+		<slf4j.version>2.0.20</slf4j.version>
+		<log4j2.version>2.26.1</log4j2.version>
 		<log4j2.slf4j.impl.aid>log4j-slf4j2-impl</log4j2.slf4j.impl.aid>
-		<guava.version>33.5.0-jre</guava.version>
+		<guava.version>33.8.0-jre</guava.version>
 
 		<!-- testing dependencies versions -->
-		<junit5.version>5.14.1</junit5.version>
+		<junit5.version>5.14.4</junit5.version>
 		<kotest.version>5.9.1</kotest.version>
 	</properties>
 
@@ -148,7 +148,7 @@
 			<dependency>
 				<groupId>org.assertj</groupId>
 				<artifactId>assertj-bom</artifactId>
-				<version>3.27.6</version>
+				<version>3.27.7</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -200,13 +200,13 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.20.0</version>
+				<version>3.21.0</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>io.vavr</groupId>
 				<artifactId>vavr</artifactId>
-				<version>0.11.0</version>
+				<version>1.0.1</version>
 				<scope>test</scope>
 			</dependency>
 
@@ -376,7 +376,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>3.4.0</version>
+					<version>3.5.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.jetbrains.kotlin</groupId>
@@ -392,7 +392,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.14.1</version>
+					<version>3.15.0</version>
 					<configuration>
 						<!-- https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#compilerArgs -->
 						<compilerArgs>
@@ -404,7 +404,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.5.4</version>
+					<version>3.6.1</version>
 					<configuration>
 						<argLine>@{argLine} -ea</argLine>
 					</configuration>
@@ -423,7 +423,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.6.1</version>
+					<version>3.6.2</version>
 					<configuration>
 						<shadeSourcesContent>true</shadeSourcesContent>
 						<dependencyReducedPomLocation>
@@ -464,22 +464,22 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
-					<version>3.6.2</version>
+					<version>3.7.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.9.0</version>
+					<version>3.11.0</version>
 				</plugin>
 				<plugin>
 					<groupId>io.github.git-commit-id</groupId>
 					<artifactId>git-commit-id-maven-plugin</artifactId>
-					<version>9.0.2</version>
+					<version>10.0.1</version>
 				</plugin>
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.9.8.2</version>
+					<version>4.10.5.0</version>
 				</plugin>
 				<plugin>
 					<!--
@@ -562,7 +562,7 @@
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.14</version>
+					<version>0.8.16</version>
 				</plugin>
 				<plugin>
 					<!--
@@ -654,7 +654,7 @@
 				<dependency>
 					<groupId>com.tngtech.archunit</groupId>
 					<artifactId>archunit-junit5</artifactId>
-					<version>1.4.1</version>
+					<version>1.5.1</version>
 					<scope>test</scope>
 					<exclusions>
 						<exclusion>
@@ -673,7 +673,7 @@
 						-->
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
-						<version>3.6.1</version>
+						<version>3.6.2</version>
 						<executions>
 							<execution>
 								<id>add-test-source</id>
@@ -757,7 +757,7 @@
 							<dependency>
 								<groupId>org.codehaus.mojo</groupId>
 								<artifactId>extra-enforcer-rules</artifactId>
-								<version>1.11.0</version>
+								<version>1.12.1</version>
 							</dependency>
 						</dependencies>
 					</plugin>
@@ -1090,7 +1090,7 @@
 						<!-- https://central.sonatype.org/publish/publish-portal-maven/#publishing -->
 						<groupId>org.sonatype.central</groupId>
 						<artifactId>central-publishing-maven-plugin</artifactId>
-						<version>0.9.0</version>
+						<version>0.10.0</version>
 						<extensions>true</extensions>
 						<configuration>
 							<publishingServerId>central</publishingServerId>
