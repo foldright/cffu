@@ -14,7 +14,7 @@
 		<project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
 		<maven.deploy.skip>true</maven.deploy.skip>
 
-		<kotlin.version>2.3.0</kotlin.version>
+		<kotlin.version>2.3.20</kotlin.version>
 		<kotlin.compiler.jvmTarget>${maven.compiler.source}</kotlin.compiler.jvmTarget>
 
 		<!-- overridden by submodule -->
@@ -22,7 +22,7 @@
 		<demo.module.name/>
 
 		<!-- testing dependencies versions -->
-		<junit5.version>5.14.1</junit5.version>
+		<junit5.version>5.14.3</junit5.version>
 	</properties>
 
 	<modules>
@@ -97,7 +97,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>3.4.0</version>
+					<version>3.5.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.jetbrains.kotlin</groupId>
@@ -114,7 +114,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.14.1</version>
+					<version>3.15.0</version>
 					<configuration>
 						<!-- https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#compilerArgs -->
 						<compilerArgs>
@@ -126,7 +126,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.5.4</version>
+					<version>3.5.5</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>

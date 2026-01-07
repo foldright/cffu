@@ -80,17 +80,17 @@
 
 		<spotbugs.annotations.version>4.9.4</spotbugs.annotations.version>
 		<jsr305.version>3.0.2</jsr305.version>
-		<jetbrains.annotations.version>26.0.2-1</jetbrains.annotations.version>
+		<jetbrains.annotations.version>26.1.0</jetbrains.annotations.version>
 
-		<kotlin.version>2.3.0</kotlin.version>
+		<kotlin.version>2.3.10</kotlin.version>
 
 		<slf4j.version>2.0.17</slf4j.version>
-		<log4j2.version>2.25.3</log4j2.version>
+		<log4j2.version>2.25.4</log4j2.version>
 		<log4j2.slf4j.impl.aid>log4j-slf4j2-impl</log4j2.slf4j.impl.aid>
 		<guava.version>33.5.0-jre</guava.version>
 
 		<!-- testing dependencies versions -->
-		<junit5.version>5.14.1</junit5.version>
+		<junit5.version>5.14.3</junit5.version>
 		<kotest.version>5.9.1</kotest.version>
 	</properties>
 
@@ -148,7 +148,7 @@
 			<dependency>
 				<groupId>org.assertj</groupId>
 				<artifactId>assertj-bom</artifactId>
-				<version>3.27.6</version>
+				<version>3.27.7</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -206,7 +206,7 @@
 			<dependency>
 				<groupId>io.vavr</groupId>
 				<artifactId>vavr</artifactId>
-				<version>0.11.0</version>
+				<version>1.0.1</version>
 				<scope>test</scope>
 			</dependency>
 
@@ -376,7 +376,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>3.4.0</version>
+					<version>3.5.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.jetbrains.kotlin</groupId>
@@ -392,7 +392,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.14.1</version>
+					<version>3.15.0</version>
 					<configuration>
 						<!-- https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#compilerArgs -->
 						<compilerArgs>
@@ -404,7 +404,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.5.4</version>
+					<version>3.5.5</version>
 					<configuration>
 						<argLine>@{argLine} -ea</argLine>
 					</configuration>
@@ -423,7 +423,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.6.1</version>
+					<version>3.6.2</version>
 					<configuration>
 						<shadeSourcesContent>true</shadeSourcesContent>
 						<dependencyReducedPomLocation>
@@ -469,17 +469,17 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.9.0</version>
+					<version>3.10.0</version>
 				</plugin>
 				<plugin>
 					<groupId>io.github.git-commit-id</groupId>
 					<artifactId>git-commit-id-maven-plugin</artifactId>
-					<version>9.0.2</version>
+					<version>10.0.0</version>
 				</plugin>
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.9.8.2</version>
+					<version>4.9.8.3</version>
 				</plugin>
 				<plugin>
 					<!--
@@ -757,7 +757,7 @@
 							<dependency>
 								<groupId>org.codehaus.mojo</groupId>
 								<artifactId>extra-enforcer-rules</artifactId>
-								<version>1.11.0</version>
+								<version>1.12.0</version>
 							</dependency>
 						</dependencies>
 					</plugin>
@@ -1090,7 +1090,7 @@
 						<!-- https://central.sonatype.org/publish/publish-portal-maven/#publishing -->
 						<groupId>org.sonatype.central</groupId>
 						<artifactId>central-publishing-maven-plugin</artifactId>
-						<version>0.9.0</version>
+						<version>0.10.0</version>
 						<extensions>true</extensions>
 						<configuration>
 							<publishingServerId>central</publishingServerId>
