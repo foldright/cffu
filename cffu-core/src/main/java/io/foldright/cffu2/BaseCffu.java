@@ -54,6 +54,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * INTERNAL constructor.
      */
+    @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
     BaseCffu(CffuFactory cffuFactory, boolean isMinimalStage, CompletableFuture<T> cf) {
         this.fac = requireNonNull(cffuFactory, "cffuFactory is null");
         this.isMinimalStage = isMinimalStage;

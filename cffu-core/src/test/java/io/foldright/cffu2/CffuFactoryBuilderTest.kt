@@ -8,10 +8,11 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldStartWith
 
-@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class CffuFactoryBuilderTest : FunSpec({
     test("cffu (un)screened") {
+        @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         CffuFactoryBuilder.cffuScreened(null).shouldBeNull()
+        @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         CffuFactoryBuilder.cffuUnscreened(null).shouldBeNull()
 
         shouldThrowExactly<IllegalArgumentException> {
@@ -25,6 +26,7 @@ class CffuFactoryBuilderTest : FunSpec({
             .shouldContain(" original: ")
 
         shouldThrowExactly<NullPointerException> {
+            @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
             testCffuFac.defaultExecutor.execute(null)
         }
     }

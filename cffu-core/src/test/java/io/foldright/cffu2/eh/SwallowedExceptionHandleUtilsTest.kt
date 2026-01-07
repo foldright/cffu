@@ -11,7 +11,6 @@ import io.kotest.matchers.shouldBe
 import java.util.concurrent.CompletableFuture.completedFuture
 import java.util.concurrent.CopyOnWriteArrayList
 
-@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class SwallowedExceptionHandleUtilsTest : FunSpec({
 
     test("handleAllSwallowedExceptions") {
@@ -19,9 +18,11 @@ class SwallowedExceptionHandleUtilsTest : FunSpec({
         val eh = ExceptionHandler { eiList.add(it) }
 
         shouldThrowExactly<NullPointerException> {
+            @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
             handleAllSwallowedExceptions(null, eh, null, null)
         }.message shouldBe "where is null"
         shouldThrowExactly<NullPointerException> {
+            @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
             handleAllSwallowedExceptions("shouldThrowExactly", arrayOf(), null)
         }.message shouldBe "exceptionHandler is null"
         shouldThrowExactly<NullPointerException> {
@@ -90,12 +91,15 @@ class SwallowedExceptionHandleUtilsTest : FunSpec({
         val eh = ExceptionHandler { eiList.add(it) }
 
         shouldThrowExactly<NullPointerException> {
+            @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
             handleSwallowedExceptions(null, eh, null, null)
         }.message shouldBe "where is null"
         shouldThrowExactly<NullPointerException> {
+            @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
             handleSwallowedExceptions("shouldThrowExactly", arrayOf(), null, null)
         }.message shouldBe "exceptionHandler is null"
         shouldThrowExactly<NullPointerException> {
+            @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
             handleSwallowedExceptions("shouldThrowExactly", null, eh, null)
         }.message shouldBe "output is null"
         shouldThrowExactly<NullPointerException> {
