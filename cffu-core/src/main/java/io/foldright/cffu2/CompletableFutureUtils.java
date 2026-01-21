@@ -514,7 +514,7 @@ public final class CompletableFutureUtils {
             CompletionStage<? extends T>[] cfs) {
         if (cfs.length == 0) return completedFuture(arrayList());
         if (cfs.length == 1) {
-            // defensive copy input cf to non-minimal-stage instance in order to
+            // copy input cf to non-minimal-stage instance in order to
             // 1. avoid writing it by `cffuCompleteOnTimeout` and is able to read its result(`getSuccessNow`)
             // 2. ensure that the returned cf is not a minimal-stage instance (UnsupportedOperationException)
             final CompletableFuture<T> f = toNonMinCfCopy0(cfs[0]);
@@ -522,9 +522,8 @@ public final class CompletableFutureUtils {
                     .handle((unused, ex) -> arrayList(getSuccessNow(f, valueIfNotSuccess)));
         }
 
-        // 1. MUST be non-minimal-stage CF instances to read results(`getSuccessNow`), otherwise UnsupportedOpException.
-        // 2. SHOULD copy input cfs (by calling `exceptionally` method) to avoid memory leaks,
-        //    otherwise all input cfs would be retained until output cf completes.
+        // create new non-minimal-stage instances from input cfs by `toNonMinCf0`/`exceptionally`,
+        // so results are readable by `getSuccessNow` instead of throwing UnsupportedOpException.
         CompletableFuture<T>[] cfArray = mapArray(cfs, CommonUtils::newCfArray,
                 s -> LLCF.<T>toNonMinCf0(s).exceptionally(v -> valueIfNotSuccess));
         return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, timeout, unit, executorWhenTimeout)
@@ -756,12 +755,12 @@ public final class CompletableFutureUtils {
         // 2. the returned cf is not a minimal-stage instance (UnsupportedOperationException)
         if (len == 1) return toNonMinCfCopy0(cfs[0]);
 
-        // NOTE: fill ONE MORE element of successOrBeIncompleteCfs LATER
+        // NOTE: fill ONE MORE element of successOrBeIncomplete LATER
         final CompletableFuture<?>[] successOrBeIncomplete = newCfArray(len + 1);
         final CompletableFuture<Void>[] failedOrBeIncomplete = newCfArray(len);
         fill0(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
-        // NOTE: fill the ONE MORE element of successOrBeIncompleteCfs HERE:
+        // NOTE: fill the ONE MORE element of successOrBeIncomplete HERE:
         //       a cf that is completed exceptionally when all given cfs completed exceptionally, otherwise be incomplete
         successOrBeIncomplete[len] = CompletableFuture.allOf(failedOrBeIncomplete);
 
