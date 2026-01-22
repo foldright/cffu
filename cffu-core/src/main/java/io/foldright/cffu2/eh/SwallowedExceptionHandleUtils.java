@@ -114,8 +114,8 @@ public final class SwallowedExceptionHandleUtils {
         requireNonNull(output, "output is null");
         requireArrayAndEleNonNull("input", inputs);
 
-        // uses unreferenced cfs to prevent memory leaks, in case that
-        // some inputs complete quickly and retain large memory while other inputs or output continue running
+        // uses unreferenced CompletionStages to prevent memory leaks when some inputs complete quickly
+        // and hold large results in memory while other inputs or the output continue running.
         CompletionStage<Void>[] unreferencedInputs = unreferenced(inputs);
 
         // whether to swallow exceptions from inputs depends on the output's result,
@@ -149,7 +149,8 @@ public final class SwallowedExceptionHandleUtils {
 
     /**
      * Creates new CompletionStages that only observe exception results from the input CompletionStages,
-     * ensuring the original stages and their results can be garbage collected ASAP by avoiding references.
+     * ensuring the original stages and their results can be garbage collected ASAP
+     * by avoiding references to the original value results.
      */
     private static CompletionStage<Void>[] unreferenced(CompletionStage<?>[] stages) {
         return CommonUtils.mapArray(stages, CommonUtils::newStageArray, s -> {

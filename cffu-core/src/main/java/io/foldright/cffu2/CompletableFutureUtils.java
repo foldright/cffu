@@ -522,10 +522,9 @@ public final class CompletableFutureUtils {
                     .handle((unused, ex) -> arrayList(getSuccessNow(f, valueIfNotSuccess)));
         }
 
-        // create new non-minimal-stage instances from input cfs by `toNonMinCf0`/`exceptionally`,
+        // convert to non-minimal-stage instances from input cfs,
         // so results are readable by `getSuccessNow` instead of throwing UnsupportedOpException.
-        CompletableFuture<T>[] cfArray = mapArray(cfs, CommonUtils::newCfArray,
-                s -> LLCF.<T>toNonMinCf0(s).exceptionally(v -> valueIfNotSuccess));
+        CompletableFuture<T>[] cfArray = toNonMinCfArray0(cfs);
         return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, timeout, unit, executorWhenTimeout)
                 .handle((unused, ex) -> mGetSuccessNow0(valueIfNotSuccess, cfArray));
     }

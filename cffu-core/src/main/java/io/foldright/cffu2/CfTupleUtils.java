@@ -19,6 +19,7 @@ import java.util.function.Supplier;
 
 import static io.foldright.cffu2.CompletableFutureUtils.*;
 import static io.foldright.cffu2.LLCF.ASYNC_POOL;
+import static io.foldright.cffu2.LLCF.toNonMinCfArray0;
 import static io.foldright.cffu2.eh.SwallowedExceptionHandleUtils.handleAllSwallowedExceptions;
 import static io.foldright.cffu2.eh.SwallowedExceptionHandleUtils.handleSwallowedExceptions;
 import static io.foldright.cffu2.internal.CommonUtils.*;
@@ -431,11 +432,9 @@ public final class CfTupleUtils {
 
     private static <T> CompletableFuture<T> f_mostSuccessTupleOf0(
             Executor executorWhenTimeout, long timeout, TimeUnit unit, CompletionStage<?>[] stages) {
-        // 1. MUST be non-minimal-stage CF instances to read results(`getSuccessNow`), otherwise UnsupportedOpException.
-        // 2. SHOULD copy input cfs (by calling `exceptionally` method) to avoid memory leaks,
-        //    otherwise all input cfs would be retained until output cf completes.
-        CompletableFuture<?>[] cfArray = mapArray(stages, CompletableFuture[]::new,
-                s -> LLCF.toNonMinCf0(s).exceptionally(v -> null));
+        // convert to non-minimal-stage instances from input cfs,
+        // so results are readable by `getSuccessNow` instead of throwing UnsupportedOpException.
+        CompletableFuture<?>[] cfArray = toNonMinCfArray0(stages);
         return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, timeout, unit, executorWhenTimeout)
                 .handle((unused, ex) -> f_tupleOf0(mGetSuccessNow0(null, cfArray)));
     }
