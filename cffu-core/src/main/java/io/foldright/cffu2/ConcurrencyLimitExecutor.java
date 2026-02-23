@@ -58,10 +58,6 @@ final class ConcurrencyLimitExecutor implements Executor {
         //       so no need to declare it as type AtomicBoolean for thread safety.
         final boolean[] locking = {true};
         try {
-            if (syncRunnerCount >= maxConcurrency) throw new RejectedExecutionException("reject new task:"
-                    + " synchronous running task(s) (i.e. CallerRunsPolicy) already occupy"
-                    + " all concurrency slot(s) of " + ConcurrencyLimitExecutor.this);
-
             queue.add(command);
             if (workerCount >= maxConcurrency) return;
 
@@ -81,17 +77,34 @@ final class ConcurrencyLimitExecutor implements Executor {
                     try {
                         incrementWorkerCount();
                         syncRunnerCount++;
-                        queue.removeLastOccurrence(command);
+                        if (syncRunnerCount > maxConcurrency) {
+                            queue.removeLastOccurrence(command);
+                            throw new RejectedExecutionException("reject new task:"
+                                    + " synchronous running task(s) (i.e. CallerRunsPolicy) already occupy"
+                                    + " all concurrency slot(s) of " + ConcurrencyLimitExecutor.this);
+                        }
                         warnLogSyncRunning();
                     } finally {
                         lock.unlock();
                         locking[0] = false;
                     }
                     // For synchronous running of the submitted task:
-                    //  - run the submitted command only, do NOT run other commands in the queue
+                    //  - run all tasks in the queue until empty, as we act as a worker here
                     //  - do NOT catch exceptions, let them propagate to the caller
                     try {
-                        command.run();
+                        Runnable taskToRun = null;
+                        while (true) {
+                            lock.lock();
+                            try {
+                                taskToRun = queue.poll();
+                            } finally {
+                                lock.unlock();
+                            }
+                            if (taskToRun == null) {
+                                break;
+                            }
+                            taskToRun.run();
+                        }
                     } finally {
                         lock.lock();
                         try {
