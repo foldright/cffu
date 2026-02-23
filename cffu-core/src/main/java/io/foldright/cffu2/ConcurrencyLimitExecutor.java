@@ -7,9 +7,10 @@ import javax.annotation.concurrent.GuardedBy;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.Executor;
-import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import static java.util.Objects.requireNonNull;
 
 import static io.foldright.cffu2.internal.CffuLogger.Level.ERROR;
 import static io.foldright.cffu2.internal.CffuLogger.Level.WARN;
@@ -47,8 +48,10 @@ final class ConcurrencyLimitExecutor implements Executor {
     private long exceedLimitTimes = 0;
 
     ConcurrencyLimitExecutor(int maxConcurrency, Executor executor) {
+        if (maxConcurrency <= 0)
+            throw new IllegalArgumentException("maxConcurrency must be positive, got " + maxConcurrency);
         this.maxConcurrency = maxConcurrency;
-        this.executor = executor;
+        this.executor = requireNonNull(executor, "executor is null");
     }
 
     @Override
@@ -58,10 +61,6 @@ final class ConcurrencyLimitExecutor implements Executor {
         //       so no need to declare it as type AtomicBoolean for thread safety.
         final boolean[] locking = {true};
         try {
-            if (syncRunnerCount >= maxConcurrency) throw new RejectedExecutionException("reject new task:"
-                    + " synchronous running task(s) (i.e. CallerRunsPolicy) already occupy"
-                    + " all concurrency slot(s) of " + ConcurrencyLimitExecutor.this);
-
             queue.add(command);
             if (workerCount >= maxConcurrency) return;
 
@@ -81,25 +80,26 @@ final class ConcurrencyLimitExecutor implements Executor {
                     try {
                         incrementWorkerCount();
                         syncRunnerCount++;
-                        queue.removeLastOccurrence(command);
+                        queue.removeLast();
                         warnLogSyncRunning();
                     } finally {
                         lock.unlock();
                         locking[0] = false;
                     }
-                    // For synchronous running of the submitted task:
-                    //  - run the submitted command only, do NOT run other commands in the queue
-                    //  - do NOT catch exceptions, let them propagate to the caller
+                    // For synchronous running:
+                    //  - run the submitted command, do NOT catch exceptions, let them propagate to the caller
+                    //  - after the submitted command completes (normally or exceptionally),
+                    //    transition to asyncWork to drain remaining queued tasks
                     try {
                         command.run();
                     } finally {
                         lock.lock();
                         try {
-                            workerCount--;
                             syncRunnerCount--;
                         } finally {
                             lock.unlock();
                         }
+                        asyncWork();
                     }
                 }
 

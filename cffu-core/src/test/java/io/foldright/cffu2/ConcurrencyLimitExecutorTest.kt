@@ -156,13 +156,7 @@ class ConcurrencyLimitExecutorTest : FunSpec({
         f.get().shouldBeNull()
     }
 
-    /**
-     * ❗❗ TODO: Due to the limitation in the current ConcurrencyLimitExecutor implementation,
-     * if all tasks execute synchronously,
-     *  - the remaining tasks in the work queue cannot be executed!
-     *  - the task execution is only triggered by task submission.
-     */
-    test("sync execution at MoreExecutors.directExecutor(), multi-threaded submission").config(enabled = false) {
+    test("sync execution at MoreExecutors.directExecutor(), multi-threaded submission") {
         val concurrencyLimitExecutor = ConcurrencyLimitExecutor(3, MoreExecutors.directExecutor())
 
         val concurrencyChecker = ConcurrencyChecker(3)
