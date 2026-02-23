@@ -7,7 +7,6 @@ import javax.annotation.concurrent.GuardedBy;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.Executor;
-import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -58,10 +57,6 @@ final class ConcurrencyLimitExecutor implements Executor {
         //       so no need to declare it as type AtomicBoolean for thread safety.
         final boolean[] locking = {true};
         try {
-            if (syncRunnerCount >= maxConcurrency) throw new RejectedExecutionException("reject new task:"
-                    + " synchronous running task(s) (i.e. CallerRunsPolicy) already occupy"
-                    + " all concurrency slot(s) of " + ConcurrencyLimitExecutor.this);
-
             queue.add(command);
             if (workerCount >= maxConcurrency) return;
 
@@ -93,13 +88,7 @@ final class ConcurrencyLimitExecutor implements Executor {
                     try {
                         command.run();
                     } finally {
-                        lock.lock();
-                        try {
-                            workerCount--;
-                            syncRunnerCount--;
-                        } finally {
-                            lock.unlock();
-                        }
+                        ConcurrencyLimitExecutor.this.onSyncRunnerExitAndTryHandoff();
                     }
                 }
 
@@ -109,7 +98,14 @@ final class ConcurrencyLimitExecutor implements Executor {
                     return "Submitted task (command: " + command + ") of " + ConcurrencyLimitExecutor.this;
                 }
             };
-            executor.execute(submittedTask);
+            try {
+                executor.execute(submittedTask);
+            } catch (Throwable e) {
+                // rollback queued command when base executor rejects submission;
+                // otherwise the rejected task may remain in queue and run unexpectedly later.
+                if (locking[0]) queue.removeLastOccurrence(command);
+                throw e;
+            }
             returnedFromExecute[0] = true;
 
             // NOTE 1: if `locking` is true, the submitted task will run asynchronously;
@@ -120,6 +116,36 @@ final class ConcurrencyLimitExecutor implements Executor {
             if (locking[0]) incrementWorkerCount();
         } finally {
             if (locking[0]) lock.unlock();
+        }
+    }
+
+    private void onSyncRunnerExitAndTryHandoff() {
+        boolean shouldHandoff = false;
+        lock.lock();
+        try {
+            workerCount--;
+            syncRunnerCount--;
+            if (workerCount < maxConcurrency && !queue.isEmpty()) {
+                // reserve one worker slot and hand off queue draining outside the lock
+                incrementWorkerCount();
+                shouldHandoff = true;
+            }
+        } finally {
+            lock.unlock();
+        }
+
+        if (!shouldHandoff) return;
+        try {
+            executor.execute(this::asyncWork);
+        } catch (Throwable e) {
+            // rollback reserved worker slot on handoff failure
+            lock.lock();
+            try {
+                workerCount--;
+            } finally {
+                lock.unlock();
+            }
+            logUncaughtException(ERROR, super.toString() + "#onSyncRunnerExitAndTryHandoff", e);
         }
     }
 

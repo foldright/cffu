@@ -156,20 +156,14 @@ class ConcurrencyLimitExecutorTest : FunSpec({
         f.get().shouldBeNull()
     }
 
-    /**
-     * ❗❗ TODO: Due to the limitation in the current ConcurrencyLimitExecutor implementation,
-     * if all tasks execute synchronously,
-     *  - the remaining tasks in the work queue cannot be executed!
-     *  - the task execution is only triggered by task submission.
-     */
-    test("sync execution at MoreExecutors.directExecutor(), multi-threaded submission").config(enabled = false) {
+    test("sync execution at MoreExecutors.directExecutor(), multi-threaded submission") {
         val concurrencyLimitExecutor = ConcurrencyLimitExecutor(3, MoreExecutors.directExecutor())
 
         val concurrencyChecker = ConcurrencyChecker(3)
 
         val taskCount = 32
         val latch = CountDownLatch(taskCount)
-        repeat(taskCount) {
+        val futures = (0 until taskCount).map {
             testExecutor.submit {
                 logWithTimeAndThread("submit task %2d", it + 1)
                 concurrencyLimitExecutor.execute {
@@ -183,9 +177,40 @@ class ConcurrencyLimitExecutorTest : FunSpec({
                 }
             }
         }
-        latch.await()
+        futures.forEach { it.get(5, TimeUnit.SECONDS) }
+        latch.await(5, TimeUnit.SECONDS).shouldBeTrue()
 
         concurrencyChecker.check()
+    }
+
+    test("rejected submission should not remain in internal queue") {
+        val pool = Executors.newSingleThreadExecutor()
+        try {
+            val rejectFirst = booleanArrayOf(true)
+            val baseExecutor = Executor { task ->
+                if (rejectFirst[0]) {
+                    rejectFirst[0] = false
+                    throw RejectedExecutionException("intentional reject once")
+                }
+                pool.execute(task)
+            }
+            val concurrencyLimitExecutor = ConcurrencyLimitExecutor(1, baseExecutor)
+
+            val leakedTaskRan = booleanArrayOf(false)
+            shouldThrowExactly<RejectedExecutionException> {
+                concurrencyLimitExecutor.execute { leakedTaskRan[0] = true }
+            }
+
+            val acceptedTaskDone = CountDownLatch(1)
+            concurrencyLimitExecutor.execute { acceptedTaskDone.countDown() }
+            acceptedTaskDone.await(5, TimeUnit.SECONDS).shouldBeTrue()
+
+            // Give queued tasks a chance to run if leaked due to rollback bug.
+            sleep(100)
+            leakedTaskRan[0].shouldBeFalse()
+        } finally {
+            pool.shutdownNow()
+        }
     }
 
     test("isPowerOfTwo") {
