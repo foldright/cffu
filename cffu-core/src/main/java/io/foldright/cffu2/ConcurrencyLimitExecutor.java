@@ -7,7 +7,6 @@ import javax.annotation.concurrent.GuardedBy;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.Executor;
-import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -58,10 +57,6 @@ final class ConcurrencyLimitExecutor implements Executor {
         //       so no need to declare it as type AtomicBoolean for thread safety.
         final boolean[] locking = {true};
         try {
-            if (syncRunnerCount >= maxConcurrency) throw new RejectedExecutionException("reject new task:"
-                    + " synchronous running task(s) (i.e. CallerRunsPolicy) already occupy"
-                    + " all concurrency slot(s) of " + ConcurrencyLimitExecutor.this);
-
             queue.add(command);
             if (workerCount >= maxConcurrency) return;
 
@@ -93,13 +88,19 @@ final class ConcurrencyLimitExecutor implements Executor {
                     try {
                         command.run();
                     } finally {
+                        boolean scheduleAsyncWorker = false;
                         lock.lock();
                         try {
                             workerCount--;
                             syncRunnerCount--;
+                            if (!queue.isEmpty() && workerCount < maxConcurrency) {
+                                incrementWorkerCount();
+                                scheduleAsyncWorker = true;
+                            }
                         } finally {
                             lock.unlock();
                         }
+                        if (scheduleAsyncWorker) submitAsyncWorkerAfterSyncRun();
                     }
                 }
 
@@ -151,6 +152,20 @@ final class ConcurrencyLimitExecutor implements Executor {
                 if (e instanceof InterruptedException) interruptedDuringTask = true;
                 logUncaughtException(ERROR, super.toString() + "#asyncWork", e);
             }
+        }
+    }
+
+    private void submitAsyncWorkerAfterSyncRun() {
+        try {
+            executor.execute(this::asyncWork);
+        } catch (Throwable e) {
+            lock.lock();
+            try {
+                workerCount--;
+            } finally {
+                lock.unlock();
+            }
+            logUncaughtException(ERROR, super.toString() + "#submitAsyncWorkerAfterSyncRun", e);
         }
     }
 
