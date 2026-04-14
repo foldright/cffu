@@ -1,6 +1,13 @@
+.env*
+.mcp.json
+
+next.release.version.*
+
+*.local.*
+
 ### codecov
 /codecov*
-next.release.version.*
+
 
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
@@ -253,7 +260,8 @@ project/plugins/project/
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*

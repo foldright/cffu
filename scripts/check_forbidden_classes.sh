@@ -18,7 +18,7 @@ readonly forbidden_classes=(
   javax.annotation.Nonnull
   org.jetbrains.annotations.NotNull
 
-  # prefer edu.umd.cs.findbugs.annotations.CheckForNull
+  # prefer edu.umd.cs.findbugs.annotations.CheckReturnValue
   javax.annotation.CheckReturnValue
   org.jetbrains.annotations.CheckReturnValue
 
@@ -34,5 +34,5 @@ PATTERN=$(printf '%s\n' "${forbidden_classes[@]}")
 readonly PATTERN MORE_RG_OPTIONS
 
 ! cu::log_then_run rg -f <(printf '%s\n' "$PATTERN") -F -n -C2 \
-  --ignore-vcs --glob='!scripts/' --glob='!package-info.java' \
+  --ignore-vcs --glob='!*.md' --glob='!scripts/' --glob='!package-info.java' \
   ${MORE_RG_OPTIONS[@]:+"${MORE_RG_OPTIONS[@]}"}
