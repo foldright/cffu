@@ -1,6 +1,11 @@
+.env*
+.mcp.json
+
+next.release.version.*
+
 ### codecov
 /codecov*
-next.release.version.*
+
 
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
