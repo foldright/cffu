@@ -87,7 +87,7 @@
 		<slf4j.version>2.0.17</slf4j.version>
 		<log4j2.version>2.25.4</log4j2.version>
 		<log4j2.slf4j.impl.aid>log4j-slf4j2-impl</log4j2.slf4j.impl.aid>
-		<guava.version>33.5.0-jre</guava.version>
+		<guava.version>33.6.0-jre</guava.version>
 
 		<!-- testing dependencies versions -->
 		<junit5.version>5.14.3</junit5.version>
