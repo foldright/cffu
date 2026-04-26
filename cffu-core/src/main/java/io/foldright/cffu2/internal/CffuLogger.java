@@ -21,7 +21,7 @@ public final class CffuLogger {
     private static final String CFFU_PACKAGE_NAME = FQCN.replaceFirst("(\\.[^.]*){2}$", "");
 
     @VisibleForTesting
-    static volatile ExceptionLoggingFormat exceptionLoggingFormat = initExceptionLoggingFormat();
+    public static volatile ExceptionLoggingFormat exceptionLoggingFormat = initExceptionLoggingFormat();
 
     private static final LoggerAdapter logger = getLogger();
 

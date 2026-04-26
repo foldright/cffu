@@ -1,5 +1,6 @@
 package io.foldright.cffu2;
 
+import io.foldright.cffu2.internal.CffuLogger;
 import org.jetbrains.annotations.Contract;
 
 import java.util.concurrent.CompletableFuture;
@@ -33,6 +34,10 @@ public final class Cffu<T> extends BaseCffu<T, Cffu<T>> implements Future<T>, Co
      */
     Cffu(CffuFactory cffuFactory, boolean isMinimalStage, CompletableFuture<T> cf) {
         super(cffuFactory, isMinimalStage, cf);
+    }
+
+    static {
+        System.out.println(CffuLogger.exceptionLoggingFormat);
     }
 
     @Override

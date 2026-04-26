@@ -28,6 +28,7 @@ public final class CommonUtils {
     @SafeVarargs
     public static <T> T[] requireArrayAndEleNonNull(String varName, T... array) {
         requireNonNull(array, varName + "s is null");
+        System.out.println(CffuLogger.exceptionLoggingFormat);
         for (int i = 0; i < array.length; i++) requireNonNull(array[i], varName + (i + 1) + " is null");
         return array;
     }
