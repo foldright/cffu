@@ -11,3 +11,4 @@ include:
   - name: CheckDependencyLicenses
   - name: SerializableInnerClassHasSerialVersionUIDField
   - name: SerializableHasSerialVersionUIDField
+  - name: TestOnlyProblems
