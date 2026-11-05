@@ -3109,9 +3109,11 @@ public final class CompletableFutureUtils {
     /**
      * Returns the default Executor of parameter cfThis used for async methods that do not specify an Executor.
      * <p>
-     * The default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses of CompletableFuture)
-     * uses the {@link ForkJoinPool#commonPool()} if it supports more than one parallel thread, or else an Executor using one
-     * thread per async task. <strong>CAUTION:</strong> This executor may be not suitable for common business use(io intensive).
+     * The default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses of
+     * CompletableFuture) before Java 25 uses the {@link ForkJoinPool#commonPool()} if it supports more than one
+     * parallel thread, or else an Executor using one thread per async task. Since Java 25 it always uses
+     * {@link ForkJoinPool#commonPool()} (the JDK raises common-pool parallelism from 0 to 2, with no per-task thread
+     * fallback). <strong>CAUTION:</strong> This executor may be not suitable for common business use(io intensive).
      *
      * @see CompletableFuture#defaultExecutor()
      */
