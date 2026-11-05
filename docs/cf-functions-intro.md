@@ -61,10 +61,11 @@
 
 > 注：严格的说，`CompletableFuture`的缺省`executor`所使用的选择逻辑是：
 >
-> 当`ForkJoinPool.getCommonPoolParallelism() > 1`时，即`Runtime.getRuntime().availableProcessors() > 2`时，使用`ForkJoinPool.commonPool()`
+> Java 8–24：当`ForkJoinPool.getCommonPoolParallelism() > 1`时，即`Runtime.getRuntime().availableProcessors() > 2`时，使用`ForkJoinPool.commonPool()`
 > （现在机器的处理器个数一般都不止2个，无论线上服务器还是个人电脑）；
->
 > 否则使用`ThreadPerTaskExecutor`，即为每个任务新建一个线程来执行 🤯
+>
+> Java 25+：始终使用`ForkJoinPool.commonPool()`（`ForkJoinPool.asyncCommonPool()`；公共池并行度为 0 时会被改成 2），不再退回`ThreadPerTaskExecutor`。
 >
 > 具体确定的缺省逻辑，还是去查看`CompletableFuture`与`ForkJoinPool`类的源码实现。
 
