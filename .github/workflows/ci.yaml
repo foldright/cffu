@@ -11,7 +11,9 @@ jobs:
     name: Strong CI on OS ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest ]
+        # pinned: ubuntu-latest now is Ubuntu 26.04, which no longer pre-installs Java 8
+        #   https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2604-Readme.md#java
+        os: [ ubuntu-24.04 ]
       fail-fast: false
       max-parallel: 64
 
@@ -30,7 +32,7 @@ jobs:
         with:
           # https://github.com/actions/setup-java?tab=readme-ov-file#install-multiple-jdks
           #
-          # image(ubuntu-latest/ubuntu-24.04) included Java 8/11/17/21/25
+          # image(ubuntu-24.04) included Java 8/11/17/21/25
           #   https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md#java
           java-version: |
             9
