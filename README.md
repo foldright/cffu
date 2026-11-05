@@ -710,7 +710,9 @@ These `backport` methods are existing functionality of `CompletableFuture`, so n
 ### 2.10 timeout-safe new implementation of `orTimeout` / `completeOnTimeout`
 
 The `CF#orTimeout()` / `CF#completeOnTimeout()` methods use
-the internal single-threaded `ScheduledThreadPoolExecutor` of `CF` to trigger business logic execution
+`CF`'s internal single-thread delay scheduler
+(a `ScheduledThreadPoolExecutor` before Java 25, the `ForkJoinPool` common pool's delay scheduler since Java 25)
+to trigger business logic execution
 when timeouts occur, which can break CompletableFuture's timeout and delay functionality❗
 
 Because timeout and delayed execution are basic functionalities, once they fail, it can lead to:
@@ -726,7 +728,7 @@ The `cffu` library provides timeout-safe new implementation methods:
 - [`CFU#cffuOrTimeout()`](https://foldright.io/api-docs/cffu2/2.0.7/io/foldright/cffu2/CompletableFutureUtils.html#cffuOrTimeout(F,long,java.util.concurrent.TimeUnit))
   / [`CFU#cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu2/2.0.7/io/foldright/cffu2/CompletableFutureUtils.html#cffuCompleteOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
 
-Ensuring business logic won't execute in `CF`'s single-threaded `ScheduledThreadPoolExecutor`.
+Ensuring business logic won't execute in `CF`'s single-thread delay scheduler.
 
 For more information, see:
 
