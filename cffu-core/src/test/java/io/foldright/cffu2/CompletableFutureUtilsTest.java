@@ -6,6 +6,7 @@ import io.foldright.test_utils.ConcurrencyChecker;
 import io.foldright.test_utils.TestUtils;
 import org.junit.jupiter.api.Test;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1305,6 +1306,38 @@ class CompletableFutureUtilsTest {
             final Integer i = f.get();
             assertTrue(i == n || i == n + n);
         }
+    }
+
+    /**
+     * Before Java 21, the CF delayer leaks the timeout task if the future completes exceptionally,
+     * see <a href="https://bugs.openjdk.org/browse/JDK-8303742">JDK-8303742</a>.
+     */
+    @Test
+    void test_timeout_noLeakWhenCompletedExceptionally() throws Exception {
+        final List<WeakReference<CompletableFuture<Integer>>> refs = createTimeoutCfsThenCompleteExceptionally();
+
+        final long deadline = System.currentTimeMillis() + 10_000;
+        while (refs.stream().anyMatch(r -> r.get() != null) && System.currentTimeMillis() < deadline) {
+            System.gc();
+            Thread.sleep(10);
+        }
+        assertTrue(refs.stream().allMatch(r -> r.get() == null),
+                "timeout tasks are not cancelled, and leak the completed futures");
+    }
+
+    private static List<WeakReference<CompletableFuture<Integer>>> createTimeoutCfsThenCompleteExceptionally() {
+        final int round = 100;
+        List<WeakReference<CompletableFuture<Integer>>> refs = new ArrayList<>(round * 2);
+        for (int i = 0; i < round; i++) {
+            CompletableFuture<Integer> cf1 = orTimeout(incompleteCf(), 1, TimeUnit.HOURS);
+            cf1.completeExceptionally(rte);
+            refs.add(new WeakReference<>(cf1));
+
+            CompletableFuture<Integer> cf2 = completeOnTimeout(incompleteCf(), n, 1, TimeUnit.HOURS);
+            cf2.completeExceptionally(rte);
+            refs.add(new WeakReference<>(cf2));
+        }
+        return refs;
     }
 
     private static void sleepYield() throws InterruptedException {

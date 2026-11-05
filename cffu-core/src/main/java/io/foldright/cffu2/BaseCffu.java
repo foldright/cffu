@@ -1463,7 +1463,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * </ul> In these cases, using this unsafe method avoids an unnecessary thread switching when timeout occurs; However,
      * these conditions are difficult to guarantee in practice, especially when the returned Cffu is used by others' codes.
      * <p>
-     * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} leaks if the future
+     * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and
+     * {@link CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout} leak if the future
      * completes exceptionally; For more information, see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
      * <a href="https://github.com/openjdk/jdk/pull/13059">PR review openjdk/jdk/13059</a>
      * and <a href="https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a">JDK bugfix commit</a>.
@@ -1523,6 +1524,13 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      *    i.e. the dependent Cffus/CompletableFutures are created using async methods.
      * </ul> In these cases, using this unsafe method avoids an unnecessary thread switching when timeout occurs; However,
      * these conditions are difficult to guarantee in practice, especially when the returned Cffu is used by others' codes.
+     * <p>
+     * Note: Before Java 21(Java 20-), {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and
+     * {@link CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout} leak if the future
+     * completes exceptionally; For more information, see <a href="https://bugs.openjdk.org/browse/JDK-8303742">issue JDK-8303742</a>,
+     * <a href="https://github.com/openjdk/jdk/pull/13059">PR review openjdk/jdk/13059</a>
+     * and <a href="https://github.com/openjdk/jdk/commit/ded6a8131970ac2f7ae59716769e6f6bae3b809a">JDK bugfix commit</a>.
+     * The cffu backport logic (for Java 20-) has merged this JDK bugfix.
      *
      * @param value   the value to use upon timeout
      * @param timeout how long to wait before completing normally with the given value, in units of {@code unit}
