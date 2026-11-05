@@ -446,18 +446,22 @@ public final class LLCF {
     private static final boolean USE_COMMON_POOL = ForkJoinPool.getCommonPoolParallelism() > 1;
 
     /**
-     * Default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses
-     * of CompletableFuture) -- {@link ForkJoinPool#commonPool()} unless it cannot support parallelism.
+     * Default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses of
+     * CompletableFuture). Before Java 25: {@link ForkJoinPool#commonPool()} when its parallelism is greater than 1,
+     * otherwise an executor using one thread per async task. Since Java 25: always {@link ForkJoinPool#commonPool()}
+     * ({@code ForkJoinPool.asyncCommonPool()} raises parallelism from 0 to 2); there is no per-task thread fallback.
      *
      * @see CompletableFutureUtils#defaultExecutor(CompletionStage)
      */
-    // field initialization code is copied from CompletableFuture#ASYNC_POOL with small adaptions.
+    // Java 9+: CompletableFuture#defaultExecutor(), so this follows the JDK
+    // (Java 25+ is ForkJoinPool.asyncCommonPool(), always the common pool).
+    // Java 8: copied from CompletableFuture#ASYNC_POOL (USE_COMMON_POOL / ThreadPerTaskExecutor).
     public static final Executor ASYNC_POOL = IS_JAVA9_PLUS
             ? completedFuture(null).defaultExecutor()
             : USE_COMMON_POOL ? ForkJoinPool.commonPool() : new ThreadPerTaskExecutor();
 
     /**
-     * Fallback if {@link ForkJoinPool#commonPool()} cannot support parallelism.
+     * Java 8 fallback if {@link ForkJoinPool#commonPool()} cannot support parallelism.
      * The code is copied from {@link CompletableFuture.ThreadPerTaskExecutor}.
      */
     @SuppressWarnings("JavadocReference")
