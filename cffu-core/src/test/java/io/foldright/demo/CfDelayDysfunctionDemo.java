@@ -53,7 +53,9 @@ public class CfDelayDysfunctionDemo {
 
         allOf(subsequentCfs).join();
         // end in ~3.1 seconds(UNEXPECTED❗️), because all 3 subsequent tasks is executed
-        // in the SINGLE thread CompletableFutureDelayScheduler!
+        // in CompletableFuture's SINGLE-thread delay scheduler
+        // (thread CompletableFutureDelayScheduler before Java 25,
+        // ForkJoinPool.commonPool-delayScheduler since Java 25)!
         logWithTimeAndThread("dysfunctionDemo end in %dms", currentTimeMillis() - tick);
     }
 
@@ -124,7 +126,9 @@ public class CfDelayDysfunctionDemo {
 }
 
 /*
-Output Sample:
+Output Sample (Java 9–24). Since Java 25 the delay-scheduler thread is named
+ForkJoinPool.commonPool-delayScheduler instead of CompletableFutureDelayScheduler.
+The three sleep tasks still run one after another on that single thread.
 
 2024-09-01 00:00:00.223 |main| warmup pools begin
 2024-09-01 00:00:00.346 |main| warmup pools end

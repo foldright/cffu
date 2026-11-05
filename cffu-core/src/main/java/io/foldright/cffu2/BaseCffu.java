@@ -1354,8 +1354,10 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * Uses {@link #defaultExecutor()} as {@code executorWhenTimeout}.
      * <p>
-     * <strong>CAUTION:</strong> This method returns a new Cffu instead of this Cffu to avoid the subsequent usage of the
-     * <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor's thread; This behavior is DIFFERENT from the original CF
+     * <strong>CAUTION:</strong> This method returns a new Cffu instead of this Cffu to avoid the subsequent usage of
+     * CompletableFuture's internal <strong>SINGLE-thread</strong> delay scheduler thread
+     * (a {@code ScheduledThreadPoolExecutor} before Java 25, the {@code ForkJoinPool} common pool's delay scheduler
+     * since Java 25); This behavior is DIFFERENT from the original CF
      * method {@link CompletableFuture#orTimeout CompletableFuture#orTimeout} and its backport method {@link #unsafeOrTimeout unsafeOrTimeout}.
      * For more information, see the Javadoc of {@link #unsafeOrTimeout unsafeOrTimeout} and the demo <a href=
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/CfDelayDysfunctionDemo.java"
@@ -1376,8 +1378,10 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <strong>CAUTION:</strong> This method is <strong>UNSAFE</strong>!
      * <p>
      * When the wait timed out, the subsequent non-async actions of the dependent Cffus/CompletableFutures are performed
-     * in CompletableFuture's internal <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor (including delay functionality).
-     * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
+     * in CompletableFuture's internal <strong>SINGLE-thread</strong> delay scheduler
+     * (a {@code ScheduledThreadPoolExecutor} before Java 25, the {@code ForkJoinPool} common pool's delay scheduler
+     * since Java 25), which also provides the delay functionality.
+     * This means that the long-running subsequent non-async actions will block this scheduler thread, preventing it from
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
      * <strong>Strongly recommend</strong> using the safe method {@link #orTimeout(long, TimeUnit) orTimeout}
@@ -1416,7 +1420,9 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * Uses {@link #defaultExecutor()} as {@code executorWhenTimeout}.
      * <p>
      * <strong>CAUTION:</strong> This method returns a new Cffu instead of this Cffu to avoid the subsequent usage
-     * of the <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor's thread; This behavior is DIFFERENT from
+     * of CompletableFuture's internal <strong>SINGLE-thread</strong> delay scheduler thread
+     * (a {@code ScheduledThreadPoolExecutor} before Java 25, the {@code ForkJoinPool} common pool's delay scheduler
+     * since Java 25); This behavior is DIFFERENT from
      * the original CF method {@link CompletableFuture#completeOnTimeout CompletableFuture#completeOnTimeout}
      * and its backport method {@link #unsafeCompleteOnTimeout unsafeCompleteOnTimeout}.
      * For more information, see the Javadoc of {@link #unsafeCompleteOnTimeout unsafeCompleteOnTimeout} and the demo <a href=
@@ -1438,8 +1444,10 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <strong>CAUTION:</strong> This method is <strong>UNSAFE</strong>!
      * <p>
      * When the wait timed out, the subsequent non-async actions of the dependent Cffus/CompletableFutures are performed
-     * in CompletableFuture's internal <strong>SINGLE-thread</strong> ScheduledThreadPoolExecutor (including delay functionality).
-     * This means that the long-running subsequent non-async actions will block this executor thread, preventing it from
+     * in CompletableFuture's internal <strong>SINGLE-thread</strong> delay scheduler
+     * (a {@code ScheduledThreadPoolExecutor} before Java 25, the {@code ForkJoinPool} common pool's delay scheduler
+     * since Java 25), which also provides the delay functionality.
+     * This means that the long-running subsequent non-async actions will block this scheduler thread, preventing it from
      * handling other timeouts and delays, effectively breaking CompletableFuture's timeout and delay functionality.
      * <p>
      * <strong>Strongly recommend</strong> using the safe method {@link #completeOnTimeout(Object, long, TimeUnit)
