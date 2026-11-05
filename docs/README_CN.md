@@ -607,7 +607,7 @@ public class CfParallelDemo {
 
 ### 2.10 超时执行安全的`orTimeout` / `completeOnTimeout`新实现
 
-`CF#orTimeout()` / `CF#completeOnTimeout()`方法当超时时使用`CF`内部的单线程`ScheduledThreadPoolExecutor`来触发业务逻辑执行，会导致`CF`的超时与延迟执行基础功能失效❗️
+`CF#orTimeout()` / `CF#completeOnTimeout()`方法当超时时使用`CF`内部的单线程延迟调度器（Java 25 之前是`ScheduledThreadPoolExecutor`，Java 25 起是`ForkJoinPool`公共池的 delay scheduler）来触发业务逻辑执行，会导致`CF`的超时与延迟执行基础功能失效❗️
 
 因为超时与延迟执行是基础功能，一旦失效会导致：
 
@@ -621,7 +621,7 @@ public class CfParallelDemo {
 - [`CFU#cffuOrTimeout()`](https://foldright.io/api-docs/cffu2/2.0.7/io/foldright/cffu2/CompletableFutureUtils.html#cffuOrTimeout(F,long,java.util.concurrent.TimeUnit))
   / [`CFU#cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu2/2.0.7/io/foldright/cffu2/CompletableFutureUtils.html#cffuCompleteOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
 
-保证业务逻辑不会在`CF`的单线程`ScheduledThreadPoolExecutor`中执行。
+保证业务逻辑不会在`CF`的单线程延迟调度器中执行。
 
 更多说明参见：
 
