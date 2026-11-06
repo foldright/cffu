@@ -6,7 +6,7 @@ cffu (CompletableFuture-Fu) is a Java library that improves the `CompletableFutu
 
 - **Runtime support**: Java 8+ (bytecode target 1.8)
 - **Build requirement**: Java 21 (Maven enforcer requires Java 19+)
-- **Tested JDKs**: 8, 9, 11, 17, 21, 25 (authoritative list: `JDK_VERSIONS` in `scripts/integration_test`)
+- **Tested JDKs**: 8, 9, 11, 17, 21, 25, 27 (authoritative list: `JDK_VERSIONS` in `scripts/integration_test`)
 
 ## Engineering Principles
 
