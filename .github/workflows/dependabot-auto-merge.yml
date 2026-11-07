@@ -1,0 +1,38 @@
+name: Dependabot auto-merge
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  enable-auto-merge:
+    name: Enable auto-merge for Dependabot
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    # Only process PRs created by Dependabot; leave regular development PRs unchanged
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+
+    steps:
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Major bumps can change behavior or the Actions this repo runs.
+      # When one PR updates several dependencies, update-type is the highest bump.
+      - name: Enable squash auto-merge for patch and minor updates
+        if: >-
+          steps.metadata.outputs.update-type == 'version-update:semver-patch'
+          || steps.metadata.outputs.update-type == 'version-update:semver-minor'
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
