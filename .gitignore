@@ -1,9 +1,10 @@
+next.release.version.*
+
 .env*
 .mcp.json
 
-next.release.version.*
-
 *.local.*
+*.local
 
 ### codecov
 /codecov*
