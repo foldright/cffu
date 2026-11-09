@@ -2,7 +2,13 @@
 # https://docs.github.com/en/actions/quickstart
 
 name: Strong CI
-on: [ push, pull_request, workflow_dispatch ]
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches-ignore:
+      - 'dependabot/**'
+
 jobs:
   test:
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#choosing-github-hosted-runners
