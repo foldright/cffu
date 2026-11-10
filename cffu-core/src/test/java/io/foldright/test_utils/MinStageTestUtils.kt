@@ -226,7 +226,6 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
         get()
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         getNow(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
@@ -257,27 +256,27 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
         complete(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeAsync(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeAsync(null, null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeExceptionally(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeExceptionally(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeExceptionallyAsync(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeExceptionallyAsync(null, null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
@@ -306,7 +305,7 @@ private fun <T> Cffu<T>.shouldMinCffu(recursive: Boolean = false) {
         obtrudeValue(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         obtrudeException(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     if (recursive) newIncompleteFuture<T>().shouldNotMinCffu()
@@ -363,7 +362,6 @@ private fun Cffu<*>.shouldNotMinCffu(recursive: Boolean = false) {
         join()
     } else join()
 
-    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     if (isCompletedExceptionally) shouldThrowExactly<CompletionException> {
         getNow(null)
     } else getNow((null))
@@ -465,7 +463,6 @@ private fun MCffu<*, *>.shouldMinCffu(recursive: Boolean = false) {
         get()
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         getNow(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
@@ -496,27 +493,27 @@ private fun MCffu<*, *>.shouldMinCffu(recursive: Boolean = false) {
         complete(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeAsync(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeAsync(null, null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeExceptionally(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeExceptionally(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeExceptionallyAsync(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         completeExceptionallyAsync(null, null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
@@ -545,7 +542,7 @@ private fun MCffu<*, *>.shouldMinCffu(recursive: Boolean = false) {
         obtrudeValue(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     shouldThrowExactly<UnsupportedOperationException> {
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         obtrudeException(null)
     }.message shouldBe "unsupported because this is a minimal stage"
     if (recursive) newIncompleteFuture<Int>().shouldNotMinCffu()
@@ -602,7 +599,6 @@ private fun MCffu<*, *>.shouldNotMinCffu(recursive: Boolean = false) {
         join()
     } else join()
 
-    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     if (isCompletedExceptionally) shouldThrowExactly<CompletionException> {
         getNow(null)
     } else getNow((null))

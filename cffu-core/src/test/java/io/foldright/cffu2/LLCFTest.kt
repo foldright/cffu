@@ -108,7 +108,7 @@ class LLCFTest : FunSpec({
             }
         }
 
-        arrayOf(
+        arrayOf<CompletionStage<Int>>(
             completedFuture(n),
             testCffuFac.completedFuture(n),
         ).forEach { s ->

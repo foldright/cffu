@@ -34,6 +34,7 @@ import static java.util.Objects.requireNonNull;
  * @see Cffu
  * @see MCffu
  */
+@SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
 public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>, CompletionStage<T> {
     ////////////////////////////////////////////////////////////////////////////////
     // region# Internal constructor and fields
