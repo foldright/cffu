@@ -805,6 +805,32 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<!--
+									Maven <= 3.9 Super POM profile "release-profile" (activated by performRelease=true)
+									binds maven-source-plugin:jar-no-fork (this execution) and maven-javadoc-plugin:jar
+									(attach-javadocs below). Maven 3.10 removes that profile, so those classifier jars
+									are no longer created unless the project binds the goals itself.
+									Keep this execution id: on 3.9 it merges with the Super POM execution
+									instead of attaching the sources jar twice.
+
+									Super POM file is org/apache/maven/model/pom-4.0.0.xml.
+									3.9.16 still contains <id>release-profile</id> with those two goals:
+										https://github.com/apache/maven/blob/maven-3.9.16/maven-model-builder/src/main/resources/org/apache/maven/model/pom-4.0.0.xml
+										rendered: https://maven.apache.org/ref/3.9.16/maven-model-builder/super-pom.html
+									3.10.0 has no profiles section and no release-profile:
+										https://github.com/apache/maven/blob/maven-3.10.0/maven-model-builder/src/main/resources/org/apache/maven/model/pom-4.0.0.xml
+										rendered: https://maven.apache.org/ref/3.10.0/maven-model-builder/super-pom.html
+									Removal: https://github.com/apache/maven/pull/11999
+									Release notes: https://maven.apache.org/docs/3.10.0/release-notes.html
+								-->
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
@@ -897,6 +923,17 @@
 							</additionalJOptions>
 						</configuration>
 						<executions>
+							<execution>
+								<!--
+									Same binding as gen-src / attach-sources. Maven <= 3.9 Super POM
+									release-profile binds this goal (javadoc:jar) when performRelease=true;
+									Maven 3.10 has no such profile. Same execution id so 3.9 merges it.
+								-->
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
 							<execution>
 								<!--
 									Aggregating Javadocs For Multi-Projects
