@@ -20,7 +20,7 @@ class CFUTests : FunSpec({
                     { throw new },
                     false
                 )!!.apply(null)
-            }.shouldBeSameInstanceAs(new)
+            } shouldBeSameInstanceAs new
             new.suppressed.shouldBeEmpty()
         }
 
@@ -31,7 +31,7 @@ class CFUTests : FunSpec({
                 CompletableFutureUtils.nonExSwallowedFunction<RuntimeException, Int>(
                     { throw new }, false
                 )!!.apply(original)
-            }.shouldBeSameInstanceAs(new)
+            } shouldBeSameInstanceAs new
             new.suppressed.shouldContainExactly(original)
             original.suppressed.shouldBeEmpty()
         }
@@ -43,7 +43,7 @@ class CFUTests : FunSpec({
                 CompletableFutureUtils.nonExSwallowedFunction<RuntimeException, Int>(
                     { throw new }, true
                 )!!.apply(original)
-            }.shouldBeSameInstanceAs(new)
+            } shouldBeSameInstanceAs new
             new.suppressed.shouldBeEmpty()
             original.suppressed.shouldContainExactly(new)
         }
@@ -60,7 +60,7 @@ class CFUTests : FunSpec({
                 CompletableFutureUtils.nonExSwallowedBiFunction<Int, RuntimeException?, Int>(
                     { _, _ -> throw new }, false
                 )!!.apply(42, null)
-            }.shouldBeSameInstanceAs(new)
+            } shouldBeSameInstanceAs new
             new.suppressed.shouldBeEmpty()
         }
 
@@ -72,7 +72,7 @@ class CFUTests : FunSpec({
                 CompletableFutureUtils.nonExSwallowedBiFunction<Int, RuntimeException, Int>(
                     { _, _ -> throw new }, false
                 )!!.apply(42, original)
-            }.shouldBeSameInstanceAs(new)
+            } shouldBeSameInstanceAs new
             new.suppressed.shouldContainExactly(original)
             original.suppressed.shouldBeEmpty()
         }
@@ -84,7 +84,7 @@ class CFUTests : FunSpec({
                 CompletableFutureUtils.nonExSwallowedBiFunction<Int, RuntimeException, Int>(
                     { _, _ -> throw new }, true
                 )!!.apply(42, original)
-            }.shouldBeSameInstanceAs(new)
+            } shouldBeSameInstanceAs new
             new.suppressed.shouldBeEmpty()
             original.suppressed.shouldContainExactly(new)
         }
@@ -101,7 +101,7 @@ class CFUTests : FunSpec({
                 CompletableFutureUtils.nonExSwallowedBiConsumer<Int, RuntimeException?>(
                     { _, _ -> throw new }, false
                 )!!.accept(42, null)
-            }.shouldBeSameInstanceAs(new)
+            } shouldBeSameInstanceAs new
             new.suppressed.shouldBeEmpty()
         }
 
@@ -113,7 +113,7 @@ class CFUTests : FunSpec({
                 CompletableFutureUtils.nonExSwallowedBiConsumer<Int, RuntimeException>(
                     { _, _ -> throw new }, false
                 )!!.accept(42, original)
-            }.shouldBeSameInstanceAs(new)
+            } shouldBeSameInstanceAs new
             new.suppressed.shouldContainExactly(original)
             original.suppressed.shouldBeEmpty()
         }
@@ -125,7 +125,7 @@ class CFUTests : FunSpec({
                 CompletableFutureUtils.nonExSwallowedBiConsumer<Int, RuntimeException>(
                     { _, _ -> throw new }, true
                 )!!.accept(42, original)
-            }.shouldBeSameInstanceAs(new)
+            } shouldBeSameInstanceAs new
             new.suppressed.shouldBeEmpty()
             original.suppressed.shouldContainExactly(new)
         }

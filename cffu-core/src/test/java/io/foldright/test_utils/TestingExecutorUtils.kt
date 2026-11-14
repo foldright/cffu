@@ -135,9 +135,7 @@ fun assertRunningInCfAsyncPool(submittingThread: Thread) {
 
 fun warmupExecutorService(vararg executors: ExecutorService) {
     executors.flatMap { executor ->
-        (0 until THREAD_COUNT_OF_POOL * 2).map {
-            executor.submit { nap() }
-        }
+        List(THREAD_COUNT_OF_POOL * 2) { executor.submit { nap() } }
     }.forEach { f: Future<*> -> f.get() }
 }
 

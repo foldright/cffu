@@ -49,7 +49,7 @@ class ExecutorStudyTests : FunSpec({
         // interrupted status is unset
         currentThread().isInterrupted.shouldBeFalse()
 
-        runThreads.shouldHaveSize(2)
+        runThreads shouldHaveSize 2
         // thread is reused after interrupt (throw InterruptedException)
         runThreads.shouldForAll { it === theOneThread }
     }
@@ -87,7 +87,7 @@ class ExecutorStudyTests : FunSpec({
         oneThreadExecutor.submit { runThreads.add(currentThread()) }.get().shouldBeNull()
         currentThread().isInterrupted.shouldBeFalse()
 
-        runThreads.shouldHaveSize(2)
+        runThreads shouldHaveSize 2
         // reuse thread
         runThreads.shouldForAll { it === theOneThread }
     }
@@ -101,16 +101,16 @@ class ExecutorStudyTests : FunSpec({
             0, 1, 3, TimeUnit.SECONDS, SynchronousQueue(), ThreadPoolExecutor.CallerRunsPolicy()
         )
         val f: Future<*> = oneThread.submit {
-            currentThread().shouldNotBeSameInstanceAs(callerThread)
+            currentThread() shouldNotBeSameInstanceAs callerThread
             latch.await()
         }
 
         shouldThrowExactly<RuntimeException> {
             oneThread.execute {
-                currentThread().shouldBeSameInstanceAs(callerThread)
+                currentThread() shouldBeSameInstanceAs callerThread
                 throw rte
             }
-        }.shouldBeSameInstanceAs(rte)
+        } shouldBeSameInstanceAs rte
 
         latch.countDown()
         f.get().shouldBeNull()
@@ -121,10 +121,10 @@ class ExecutorStudyTests : FunSpec({
         val rte = RuntimeException("Boom!!!")
         shouldThrowExactly<RuntimeException> {
             MoreExecutors.directExecutor().execute {
-                currentThread().shouldBeSameInstanceAs(callerThread)
+                currentThread() shouldBeSameInstanceAs callerThread
                 throw rte
             }
-        }.shouldBeSameInstanceAs(rte)
+        } shouldBeSameInstanceAs rte
     }
 
     beforeSpec {
