@@ -177,8 +177,8 @@ class CompletableFutureUsageStudyCaseTest : FunSpec({
 
         val threadNameList = forks.reduce { acc, f -> acc.thenCombine(f, ::merge) }.get()
 
-        threadNameList.shouldHaveSize(THREAD_COUNT_OF_POOL * times)
-        threadNameList.toSet().shouldHaveSize(THREAD_COUNT_OF_POOL)
+        threadNameList shouldHaveSize THREAD_COUNT_OF_POOL * times
+        threadNameList.toSet() shouldHaveSize THREAD_COUNT_OF_POOL
     }
 
     test("execution thread/executor behavior: then*Async operations of CF, run in switched thread(re-submit task into Executor)") {
