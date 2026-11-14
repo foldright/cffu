@@ -5,9 +5,18 @@ name: Fast CI
 on:
   workflow_dispatch:
   pull_request:
+  merge_group:
   push:
+    # Skip duplicate push-triggered runs for branches whose checks already run via
+    # pull_request or merge_group. This does not disable PR/merge-queue CI.
     branches-ignore:
-      - 'dependabot/**'
+      - 'dependabot/**'        # Dependabot version-update PR branches
+      - 'gh-readonly-queue/**' # temporary merge-queue branches; checks run on merge_group
+      - 'devin/**'             # Devin session PR branches
+      - 'copilot/**'           # GitHub Copilot coding agent PR branches
+      - 'cursor/**'            # Cursor Cloud Agent PR branches
+      - 'claude/**'            # Claude Code Action PR branches (default branch_prefix)
+      - 'codex/**'             # OpenAI Codex PR branches (default branch format)
 
 jobs:
   test:
