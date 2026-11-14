@@ -6,13 +6,14 @@
 version: 2
 updates:
   - package-ecosystem: maven
-    directory: /
+    directories:
+      - "/"
+      - "/demos"
     schedule:
       interval: daily
-  - package-ecosystem: maven
-    directory: demos
-    schedule:
-      interval: daily
+    groups:
+      maven-dependencies:
+        group-by: dependency-name
   - package-ecosystem: github-actions
     directory: /
     schedule:
