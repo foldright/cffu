@@ -5,9 +5,11 @@ name: Fast CI
 on:
   workflow_dispatch:
   pull_request:
+  merge_group:
   push:
     branches-ignore:
       - 'dependabot/**'
+      - 'gh-readonly-queue/**'
 
 jobs:
   test:
