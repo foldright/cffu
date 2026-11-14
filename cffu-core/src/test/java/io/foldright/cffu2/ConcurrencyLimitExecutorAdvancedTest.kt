@@ -1,6 +1,8 @@
 package io.foldright.cffu2
 
 import io.foldright.test_utils.ConcurrencyChecker
+import io.foldright.test_utils.logWithTimeAndThread
+import io.foldright.test_utils.rangeList
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -120,7 +122,7 @@ class ConcurrencyLimitExecutorAdvancedTest : FunSpec({
         // Verify all tasks executed exactly once
         concurrencyChecker.check()
         completedTasks shouldHaveSize totalTasks
-        completedTasks shouldContainExactlyInAnyOrder (0 until totalTasks).toList()
+        completedTasks shouldContainExactlyInAnyOrder rangeList(totalTasks)
     }
 
     test("executor.execute() throws exception - exception propagation") {
@@ -213,7 +215,7 @@ class ConcurrencyLimitExecutorAdvancedTest : FunSpec({
         latch.await(60, TimeUnit.SECONDS) shouldBe true
         concurrencyChecker.check()
         executedTasks shouldHaveSize taskCount
-        executedTasks shouldContainExactlyInAnyOrder (0 until taskCount).toList()
+        executedTasks shouldContainExactlyInAnyOrder rangeList(taskCount)
     }
 
     test("interrupt status restoration - comprehensive") {
@@ -295,7 +297,7 @@ class ConcurrencyLimitExecutorAdvancedTest : FunSpec({
         // With maxConcurrency=1, execution should be strictly serial
         executionOrder shouldHaveSize taskCount
         // Verify order is preserved (since it's serial)
-        executionOrder shouldBe (0 until taskCount).toList()
+        executionOrder shouldBe rangeList(taskCount)
     }
 
     test("maxConcurrency boundary - large maxConcurrency value (1000)") {
@@ -391,8 +393,3 @@ class ConcurrencyLimitExecutorAdvancedTest : FunSpec({
         executor.shutdownNow()
     }
 })
-
-private fun logWithTimeAndThread(format: String = "", vararg args: Any?) {
-    val msg = String.format(format, *args)
-    System.out.printf("%tF %<tT.%<tL |%s| %s%n", System.currentTimeMillis(), currentThread().name, msg)
-}

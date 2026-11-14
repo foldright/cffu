@@ -13,6 +13,7 @@ import io.kotest.matchers.shouldBe
 import org.apache.commons.lang3.JavaVersion
 import org.apache.commons.lang3.SystemUtils
 import org.apache.commons.lang3.SystemUtils.isJavaVersionAtLeast
+import java.lang.Thread.currentThread
 import java.util.concurrent.*
 import java.util.function.Supplier
 
@@ -176,7 +177,15 @@ infix fun <T> List<T>.merge(other: List<T>): List<T> = mutableListOf<T>().apply 
     addAll(other)
 }
 
-fun addCurrentThreadName(names: List<String>) = names + Thread.currentThread().name
+fun rangeList(stop: Int) = rangeList(0, stop)
+fun rangeList(start: Int, stop: Int) = List(stop - start) { start + it }
+
+fun addCurrentThreadName(names: List<String>) = names + currentThread().name
+
+fun logWithTimeAndThread(format: String = "", vararg args: Any?) {
+    val msg = String.format(format, *args)
+    System.out.printf("%tF %<tT.%<tL |%s| %s%n", System.currentTimeMillis(), currentThread().name, msg)
+}
 
 // endregion
 ////////////////////////////////////////////////////////////////////////////////

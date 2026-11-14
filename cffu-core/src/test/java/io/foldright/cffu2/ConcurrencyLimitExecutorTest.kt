@@ -3,6 +3,8 @@ package io.foldright.cffu2
 import com.google.common.util.concurrent.MoreExecutors
 import io.foldright.cffu2.ConcurrencyLimitExecutor.isPowerOfTwo
 import io.foldright.test_utils.ConcurrencyChecker
+import io.foldright.test_utils.logWithTimeAndThread
+import io.foldright.test_utils.rangeList
 import io.foldright.test_utils.testExecutor
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
@@ -12,7 +14,6 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.string.shouldMatch
 import io.kotest.matchers.types.shouldBeSameInstanceAs
-import java.lang.Thread.currentThread
 import java.lang.Thread.sleep
 import java.util.concurrent.*
 import kotlin.random.Random
@@ -106,7 +107,7 @@ class ConcurrencyLimitExecutorTest : FunSpec({
         latch.await()
 
         concurrencyChecker.check()
-        results shouldContainExactlyInAnyOrder (0 until taskCount).toList()
+        results shouldContainExactlyInAnyOrder rangeList(taskCount)
     }
 
     test("sync executor (MoreExecutors.directExecutor), single-threaded submission") {
@@ -250,8 +251,3 @@ class ConcurrencyLimitExecutorTest : FunSpec({
         executor.shutdownNow()
     }
 })
-
-private fun logWithTimeAndThread(format: String = "", vararg args: Any?) {
-    val msg = String.format(format, *args)
-    System.out.printf("%tF %<tT.%<tL |%s| %s%n", System.currentTimeMillis(), currentThread().name, msg)
-}
