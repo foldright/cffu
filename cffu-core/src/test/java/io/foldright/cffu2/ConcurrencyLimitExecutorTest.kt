@@ -20,14 +20,21 @@ import kotlin.random.Random
 private const val THREAD_COUNT = 8
 private val executor: ExecutorService = Executors.newFixedThreadPool(THREAD_COUNT)
 
+/**
+ * Simple test cases for ConcurrencyLimitExecutor:
+ * - Single-threaded submission
+ * - Simple and internal methods
+ *
+ * @see ConcurrencyLimitExecutorAdvancedTest
+ */
 class ConcurrencyLimitExecutorTest : FunSpec({
 
-    test("common case, single-threaded submission") {
+    test("asynchronous executor, single-threaded submission, simple test case (all tasks succeed)") {
         val maxConcurrency = 4
         val concurrencyLimitExecutor = ConcurrencyLimitExecutor(maxConcurrency, executor)
         val concurrencyChecker = ConcurrencyChecker(maxConcurrency)
 
-        val taskCount = THREAD_COUNT * 3
+        val taskCount = THREAD_COUNT * 9
         val latch = CountDownLatch(taskCount)
         repeat(taskCount) { index ->
             concurrencyLimitExecutor.execute {
@@ -47,13 +54,13 @@ class ConcurrencyLimitExecutorTest : FunSpec({
         concurrencyChecker.check()
     }
 
-    test("InterruptedException/RuntimeException, single-threaded submission") {
+    test("asynchronous executor, single-threaded submission, task is exceptional: RuntimeException/InterruptedException/Thread.interrupted()") {
         val maxConcurrency = 4
         val concurrencyLimitExecutor = ConcurrencyLimitExecutor(maxConcurrency, executor)
         val concurrencyChecker = ConcurrencyChecker(maxConcurrency)
         val results = CopyOnWriteArrayList<Int>()
 
-        val taskCount = THREAD_COUNT * 4
+        val taskCount = maxConcurrency * 8
         val latch = CountDownLatch(taskCount)
         val indexes: List<Int> = (0 until taskCount).toList()
         val tasks = indexes.map { index ->
@@ -62,23 +69,25 @@ class ConcurrencyLimitExecutorTest : FunSpec({
                     results.add(index)
                     concurrencyChecker.enter()
 
-                    val millis: Long = Random.nextLong(100, 200)
+                    val millis: Long = Random.nextLong(50, 150)
                     logWithTimeAndThread("task %2d begin, then sleep %s ms", index, millis)
                     sleep(millis)
                     logWithTimeAndThread("task %2d end", index)
                 } catch (ex: Throwable) {
-                    println("caught: $ex")
+                    println("caught (index: $index): $ex")
                     throw ex
                 } finally {
                     concurrencyChecker.leave()
                     latch.countDown()
 
-                    if (index > taskCount / 2 && index % 2 == 0) {
-                        when (index / 2 % 3) {
-                            0 -> throw RuntimeException("intentional exception (index: $index)")
-                            1 -> throw InterruptedException("intentional exception (index: $index)")
+                    if (index > taskCount / 2) {
+                        when (index % 4) {
+                            0 -> throw RuntimeException("intentional RuntimeException (index: $index)")
+                            // internal interruption, output is InterruptedException
+                            1 -> throw InterruptedException("intentional InterruptedException (index: $index)")
                             2 -> {
-                                println("interrupted currentThread")
+                                // internal interruption, output is the Interrupted thread status
+                                println("interrupted currentThread (index: $index)")
                                 Thread.interrupted()
                             }
                         }
@@ -91,7 +100,8 @@ class ConcurrencyLimitExecutorTest : FunSpec({
         }
 
         sleep(100)
-        (0 until maxConcurrency).forEach { index ->
+        // external interruption
+        repeat(taskCount) { index ->
             (tasks[index] as? FutureTask<*>)?.cancel(true)
         }
         latch.await()
@@ -100,7 +110,7 @@ class ConcurrencyLimitExecutorTest : FunSpec({
         results.shouldContainExactlyInAnyOrder((0 until taskCount).toList())
     }
 
-    test("sync execution at MoreExecutors.directExecutor(), single-threaded submission") {
+    test("sync executor (MoreExecutors.directExecutor), single-threaded submission") {
         val maxConcurrency = 3
         val concurrencyLimitExecutor = ConcurrencyLimitExecutor(maxConcurrency, MoreExecutors.directExecutor())
         val concurrencyChecker = ConcurrencyChecker(1)
@@ -123,7 +133,7 @@ class ConcurrencyLimitExecutorTest : FunSpec({
         concurrencyChecker.check()
     }
 
-    test("sync execution at ThreadPoolExecutor/CallerRunsPolicy, single-threaded submission") {
+    test("sync executor (ThreadPoolExecutor/CallerRunsPolicy), single-threaded submission") {
         val executor = ThreadPoolExecutor(
             0, 1, 3, TimeUnit.SECONDS, SynchronousQueue(), ThreadPoolExecutor.CallerRunsPolicy()
         )
@@ -214,7 +224,7 @@ class ConcurrencyLimitExecutorTest : FunSpec({
         shouldThrowExactly<RuntimeException> { executor.execute { throw rte } }.shouldBeSameInstanceAs(rte)
     }
 
-    test("test report in finalize") {
+    test("check report in finalize, check by eye 🫣") {
         logWithTimeAndThread("${testCase.name.testName}: start")
         val discardAllExecutor = Executor { r -> }
         repeat(10) {
