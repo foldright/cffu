@@ -62,8 +62,7 @@ class ConcurrencyLimitExecutorTest : FunSpec({
 
         val taskCount = maxConcurrency * 8
         val latch = CountDownLatch(taskCount)
-        val indexes: List<Int> = (0 until taskCount).toList()
-        val tasks = indexes.map { index ->
+        val tasks = List(taskCount) { index ->
             val r = Runnable {
                 try {
                     results.add(index)
@@ -107,7 +106,7 @@ class ConcurrencyLimitExecutorTest : FunSpec({
         latch.await()
 
         concurrencyChecker.check()
-        results.shouldContainExactlyInAnyOrder((0 until taskCount).toList())
+        results shouldContainExactlyInAnyOrder (0 until taskCount).toList()
     }
 
     test("sync executor (MoreExecutors.directExecutor), single-threaded submission") {
@@ -221,12 +220,13 @@ class ConcurrencyLimitExecutorTest : FunSpec({
         }
 
         val rte = RuntimeException("foo")
-        shouldThrowExactly<RuntimeException> { executor.execute { throw rte } }.shouldBeSameInstanceAs(rte)
+        shouldThrowExactly<RuntimeException> { executor.execute { throw rte } }
+            .shouldBeSameInstanceAs(rte)
     }
 
     test("check report in finalize, check by eye 🫣") {
         logWithTimeAndThread("${testCase.name.testName}: start")
-        val discardAllExecutor = Executor { r -> }
+        val discardAllExecutor = Executor { }
         repeat(10) {
             val concurrencyLimitExecutor = ConcurrencyLimitExecutor(1, discardAllExecutor)
             repeat(it + 1) { concurrencyLimitExecutor.execute {} }

@@ -39,13 +39,13 @@ class LLCFTest : FunSpec({
         )
         LLCF.toNonMinCfArray0(minStages).forEachIndexed { idx, f ->
             if (isJava9Plus()) {
-                f.shouldNotBeSameInstanceAs(minStages[idx])
+                f shouldNotBeSameInstanceAs minStages[idx]
             } else {
                 if (idx == 0)
-                    f.shouldBeSameInstanceAs(minStages[idx])
+                    f shouldBeSameInstanceAs minStages[idx]
                 else {
-                    f.shouldNotBeSameInstanceAs(minStages[idx])
-                    f.shouldBeSameInstanceAs((minStages[idx] as Cffu<Int>).cffuUnwrap())
+                    f shouldNotBeSameInstanceAs minStages[idx]
+                    f shouldBeSameInstanceAs (minStages[idx] as Cffu<Int>).cffuUnwrap()
                 }
             }
             f.shouldBeCompleted()
@@ -60,10 +60,10 @@ class LLCFTest : FunSpec({
         )
         LLCF.toNonMinCfArray0(cfs).forEachIndexed { idx, f ->
             if (idx == 0)
-                f.shouldBeSameInstanceAs(cfs[idx])
+                f shouldBeSameInstanceAs cfs[idx]
             else {
-                f.shouldNotBeSameInstanceAs(cfs[idx])
-                f.shouldBeSameInstanceAs((cfs[idx] as Cffu<Int>).cffuUnwrap())
+                f shouldNotBeSameInstanceAs cfs[idx]
+                f shouldBeSameInstanceAs (cfs[idx] as Cffu<Int>).cffuUnwrap()
             }
             f.shouldBeCompleted()
             f.join() shouldBe n
@@ -128,12 +128,12 @@ class LLCFTest : FunSpec({
             if (isJava9Plus()) {
                 LLCF.isMinStageCf0(f).shouldBeTrue()
 
-                f.shouldBeSameInstanceAs(minStages[idx])
+                f shouldBeSameInstanceAs minStages[idx]
                 f.shouldBeMinimalStage()
             } else {
                 LLCF.isMinStageCf0(f).shouldBeFalse()
 
-                f.shouldNotBeSameInstanceAs(s)
+                f shouldNotBeSameInstanceAs s
                 f.shouldBeCompleted()
                 f.join() shouldBe idx
             }
@@ -147,12 +147,12 @@ class LLCFTest : FunSpec({
             if (isJava9Plus()) {
                 LLCF.isMinStageCf0(f).shouldBeTrue()
 
-                f.shouldBeSameInstanceAs(minCffu.cffuUnwrap())
+                f shouldBeSameInstanceAs minCffu.cffuUnwrap()
                 f.shouldBeMinimalStage()
             } else {
                 LLCF.isMinStageCf0(f).shouldBeFalse()
 
-                f.shouldNotBeSameInstanceAs(minCffu.cffuUnwrap())
+                f shouldNotBeSameInstanceAs minCffu.cffuUnwrap()
                 f.shouldBeCompleted()
                 f.join() shouldBe idx
             }
@@ -163,7 +163,7 @@ class LLCFTest : FunSpec({
             testCffuFac.completedFuture(n),
         )
         LLCF.f_toCfCopyArray0(cfs).forEachIndexed { idx, f ->
-            f.shouldNotBeSameInstanceAs(cfs[idx])
+            f shouldNotBeSameInstanceAs cfs[idx]
             f.shouldBeCompleted()
             f.join() shouldBe n
 
@@ -179,7 +179,7 @@ class LLCFTest : FunSpec({
             testCffuFac.completedFuture(n),
         )
         LLCF.toNonMinCfCopyArray0(stages).forEachIndexed { idx, f ->
-            f.shouldNotBeSameInstanceAs(stages[idx])
+            f shouldNotBeSameInstanceAs stages[idx]
             f.shouldBeCompleted()
             f.join() shouldBe n
 
@@ -255,7 +255,7 @@ class LLCFTest : FunSpec({
         val cf = CompletableFuture<Int>()
         val ex = RuntimeException("foo")
         LLCF.completeCf0(cf, n, ex).shouldBeTrue()
-        cf.shouldCompleteExceptionallyWith(ex)
+        cf shouldCompleteExceptionallyWith ex
 
         LLCF.completeCf0(cf, n, ex).shouldBeFalse()
     }
@@ -266,7 +266,7 @@ class LLCFTest : FunSpec({
         val completed = completedFuture(21);
         val relayed = relayAsync0(completed, { f ->
             f.thenApply { v ->
-                mainThread.shouldNotBeSameInstanceAs(currentThread())
+                mainThread shouldNotBeSameInstanceAs currentThread()
                 currentThread().belongsTo(testExecutor)
 
                 v * 2;
@@ -276,14 +276,14 @@ class LLCFTest : FunSpec({
 
         val completeLater = CompletableFuture.supplyAsync({
             sleep(200);
-            mainThread.shouldNotBeSameInstanceAs(currentThread())
+            mainThread shouldNotBeSameInstanceAs currentThread()
 
             currentThread();
         })
         val relayedOfCompleteLater = relayAsync0(completeLater, { f ->
             f.thenAccept { v ->
-                currentThread().shouldBeSameInstanceAs(currentThread())
-                currentThread().shouldBeSameInstanceAs(v)
+                currentThread() shouldBeSameInstanceAs currentThread()
+                currentThread() shouldBeSameInstanceAs v
             }
         }, testExecutor)
         relayedOfCompleteLater.isDone.shouldBeFalse()
@@ -291,9 +291,9 @@ class LLCFTest : FunSpec({
     }
 
     test("IS_JAVA*_PLUS") {
-        LLCF.IS_JAVA9_PLUS.shouldBe(isJavaVersionAtLeast(JavaVersion.JAVA_9))
-        LLCF.IS_JAVA12_PLUS.shouldBe(isJavaVersionAtLeast(JavaVersion.JAVA_12))
-        LLCF.IS_JAVA19_PLUS.shouldBe(isJavaVersionAtLeast(JavaVersion.JAVA_19))
-        LLCF.IS_JAVA21_PLUS.shouldBe(isJavaVersionAtLeast(JavaVersion.JAVA_21))
+        LLCF.IS_JAVA9_PLUS shouldBe isJavaVersionAtLeast(JavaVersion.JAVA_9)
+        LLCF.IS_JAVA12_PLUS shouldBe isJavaVersionAtLeast(JavaVersion.JAVA_12)
+        LLCF.IS_JAVA19_PLUS shouldBe isJavaVersionAtLeast(JavaVersion.JAVA_19)
+        LLCF.IS_JAVA21_PLUS shouldBe isJavaVersionAtLeast(JavaVersion.JAVA_21)
     }
 })

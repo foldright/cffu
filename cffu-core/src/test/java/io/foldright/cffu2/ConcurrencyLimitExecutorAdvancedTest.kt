@@ -37,7 +37,7 @@ class ConcurrencyLimitExecutorAdvancedTest : FunSpec({
         val concurrencyLimitExecutor = ConcurrencyLimitExecutor(maxConcurrency, syncExecutor)
 
         // Submit maxConcurrency tasks that will block, occupying all slots with synchronous runners
-        val submissionThreads = (0 until maxConcurrency).map { index ->
+        val submissionThreads = List(maxConcurrency) { index ->
             Thread {
                 concurrencyLimitExecutor.execute {
                     logWithTimeAndThread("blocking task %d waiting", index)
@@ -89,7 +89,7 @@ class ConcurrencyLimitExecutorAdvancedTest : FunSpec({
         val latch = CountDownLatch(totalTasks)
 
         // Launch multiple threads that concurrently submit tasks
-        val submitterThreads = (0 until submitterThreadCount).map { threadIndex ->
+        val submitterThreads = List(submitterThreadCount) { threadIndex ->
             Thread {
                 repeat(tasksPerThread) { taskIndex ->
                     val taskId = threadIndex * tasksPerThread + taskIndex
@@ -119,8 +119,8 @@ class ConcurrencyLimitExecutorAdvancedTest : FunSpec({
 
         // Verify all tasks executed exactly once
         concurrencyChecker.check()
-        completedTasks.shouldHaveSize(totalTasks)
-        completedTasks.shouldContainExactlyInAnyOrder((0 until totalTasks).toList())
+        completedTasks shouldHaveSize totalTasks
+        completedTasks shouldContainExactlyInAnyOrder (0 until totalTasks).toList()
     }
 
     test("executor.execute() throws exception - exception propagation") {
@@ -212,8 +212,8 @@ class ConcurrencyLimitExecutorAdvancedTest : FunSpec({
 
         latch.await(60, TimeUnit.SECONDS) shouldBe true
         concurrencyChecker.check()
-        executedTasks.shouldHaveSize(taskCount)
-        executedTasks.shouldContainExactlyInAnyOrder((0 until taskCount).toList())
+        executedTasks shouldHaveSize taskCount
+        executedTasks shouldContainExactlyInAnyOrder (0 until taskCount).toList()
     }
 
     test("interrupt status restoration - comprehensive") {
@@ -237,10 +237,12 @@ class ConcurrencyLimitExecutorAdvancedTest : FunSpec({
                             throw e // Let it propagate
                         }
                     }
+
                     1 -> {
                         // Task that sets interrupt flag
                         currentThread().interrupt()
                     }
+
                     2 -> {
                         // Normal task
                         sleep(10)
@@ -291,7 +293,7 @@ class ConcurrencyLimitExecutorAdvancedTest : FunSpec({
         concurrencyChecker.check()
 
         // With maxConcurrency=1, execution should be strictly serial
-        executionOrder.shouldHaveSize(taskCount)
+        executionOrder shouldHaveSize taskCount
         // Verify order is preserved (since it's serial)
         executionOrder shouldBe (0 until taskCount).toList()
     }

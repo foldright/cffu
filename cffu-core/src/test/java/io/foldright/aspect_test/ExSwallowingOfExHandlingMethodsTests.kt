@@ -135,7 +135,7 @@ class ExSwallowingOfExHandlingMethodsTests : FunSpec({
 
         ee.cause shouldBe original
         // the new exception is not swallowed ✅
-        if (isJava9Plus()) original.suppressed.shouldHaveSingleElement(new)
+        if (isJava9Plus()) original.suppressed shouldHaveSingleElement new
         // the new exception is swallowed in Java 8 ❗️
         else original.suppressed.shouldBeEmpty()
 
@@ -154,7 +154,7 @@ class ExSwallowingOfExHandlingMethodsTests : FunSpec({
 
         ee.cause shouldBe original
         // the new exception is not swallowed ✅
-        if (isJava9Plus()) original.suppressed.shouldHaveSingleElement(new)
+        if (isJava9Plus()) original.suppressed shouldHaveSingleElement new
         // the new exception is swallowed in Java 8 ❗️
         else original.suppressed.shouldBeEmpty()
 
@@ -177,7 +177,7 @@ class ExSwallowingOfExHandlingMethodsTests : FunSpec({
 
         ee.cause shouldBe new
         // the original exception is not swallowed ✅
-        new.suppressed.shouldHaveSingleElement(original)
+        new.suppressed shouldHaveSingleElement original
 
         original.suppressed.shouldBeEmpty()
     }
@@ -194,7 +194,7 @@ class ExSwallowingOfExHandlingMethodsTests : FunSpec({
 
         ee.cause shouldBe new
         // the original exception is not swallowed ✅
-        new.suppressed.shouldHaveSingleElement(original)
+        new.suppressed shouldHaveSingleElement original
 
         original.suppressed.shouldBeEmpty()
     }
@@ -211,7 +211,7 @@ class ExSwallowingOfExHandlingMethodsTests : FunSpec({
 
         ee.cause shouldBe new
         // the original exception is not swallowed ✅
-        new.suppressed.shouldHaveSingleElement(original)
+        new.suppressed shouldHaveSingleElement original
 
         original.suppressed.shouldBeEmpty()
     }
@@ -228,7 +228,7 @@ class ExSwallowingOfExHandlingMethodsTests : FunSpec({
 
         ee.cause shouldBe new
         // the original exception is not swallowed ✅
-        new.suppressed.shouldHaveSingleElement(original)
+        new.suppressed shouldHaveSingleElement original
 
         original.suppressed.shouldBeEmpty()
     }
@@ -245,7 +245,7 @@ class ExSwallowingOfExHandlingMethodsTests : FunSpec({
 
         ee.cause shouldBe new
         // the original exception is not swallowed ✅
-        new.suppressed.shouldHaveSingleElement(original)
+        new.suppressed shouldHaveSingleElement original
 
         original.suppressed.shouldBeEmpty()
     }
@@ -262,7 +262,7 @@ class ExSwallowingOfExHandlingMethodsTests : FunSpec({
 
         ee.cause shouldBe new
         // the original exception is not swallowed ✅
-        new.suppressed.shouldHaveSingleElement(original)
+        new.suppressed shouldHaveSingleElement original
 
         original.suppressed.shouldBeEmpty()
     }
@@ -279,7 +279,7 @@ class ExSwallowingOfExHandlingMethodsTests : FunSpec({
 
         ee.cause shouldBe new
         // the original exception is not swallowed ✅
-        new.suppressed.shouldHaveSingleElement(original)
+        new.suppressed shouldHaveSingleElement original
 
         original.suppressed.shouldBeEmpty()
     }
@@ -296,7 +296,7 @@ class ExSwallowingOfExHandlingMethodsTests : FunSpec({
 
         ee.cause shouldBe new
         // the original exception is not swallowed ✅
-        new.suppressed.shouldHaveSingleElement(original)
+        new.suppressed shouldHaveSingleElement original
 
         original.suppressed.shouldBeEmpty()
     }
@@ -313,7 +313,7 @@ class ExSwallowingOfExHandlingMethodsTests : FunSpec({
 
         ee.cause shouldBe new
         // the original exception is not swallowed ✅
-        new.suppressed.shouldHaveSingleElement(original)
+        new.suppressed shouldHaveSingleElement original
 
         original.suppressed.shouldBeEmpty()
     }
@@ -330,7 +330,7 @@ class ExSwallowingOfExHandlingMethodsTests : FunSpec({
 
         ee.cause shouldBe new
         // the original exception is not swallowed ✅
-        new.suppressed.shouldHaveSingleElement(original)
+        new.suppressed shouldHaveSingleElement original
 
         original.suppressed.shouldBeEmpty()
     }
@@ -347,7 +347,7 @@ class ExSwallowingOfExHandlingMethodsTests : FunSpec({
 
         ee.cause shouldBe original
         // the new exception is not swallowed ✅
-        original.suppressed.shouldHaveSingleElement(new)
+        original.suppressed shouldHaveSingleElement new
 
         new.suppressed.shouldBeEmpty()
     }
@@ -364,7 +364,7 @@ class ExSwallowingOfExHandlingMethodsTests : FunSpec({
 
         ee.cause shouldBe original
         // the new exception is not swallowed ✅
-        original.suppressed.shouldHaveSingleElement(new)
+        original.suppressed shouldHaveSingleElement new
 
         new.suppressed.shouldBeEmpty()
     }
