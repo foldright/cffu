@@ -1154,11 +1154,10 @@ class CffuFactoryTest {
         CompletableFuture<String> future1 = CompletableFuture.completedFuture("result1");
         assertNull(testCffuFac.iterableOps().allFailFastOf(singletonList(future1)).join());
 
-        // Test with multiple completed futures
+        // completed + failed + incomplete: fail-fast, independent of commonPool scheduling
         RuntimeException rte = new RuntimeException();
-        CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {throw rte;});
-        CompletableFuture<Void> future3 = CompletableFuture.runAsync(() -> sleep(LONG_WAIT_MS));
-        assertCfWithEx(testCffuFac.iterableOps().allFailFastOf(asList(future1, future2, future3)), rte);
+        assertCfWithEx(testCffuFac.iterableOps().allFailFastOf(
+                asList(future1, failedFuture(rte), incompleteCf())), rte);
     }
 
     @Test
@@ -1170,13 +1169,10 @@ class CffuFactoryTest {
         CompletableFuture<String> future1 = CompletableFuture.completedFuture("result1");
         assertNull(testCffuFac.iterableOps().allOf(singletonList(future1)).join());
 
-        assertTrue(ForkJoinPool.commonPool().awaitQuiescence(2, MINUTES));
-
-        // Test with multiple completed futures
+        // completed + failed + incomplete: allOf waits for incomplete (not fail-fast)
         RuntimeException rte = new RuntimeException();
-        CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {throw rte;});
-        CompletableFuture<Void> future3 = CompletableFuture.runAsync(() -> sleep(LONG_WAIT_MS));
-        assertCfStillIncompleteIn(testCffuFac.iterableOps().allOf(asList(future1, future2, future3)), MEDIAN_WAIT_MS, MILLISECONDS);
+        assertCfStillIncompleteIn(testCffuFac.iterableOps().allOf(
+                asList(future1, failedFuture(rte), incompleteCf())), MEDIAN_WAIT_MS, MILLISECONDS);
     }
 
     @Test
