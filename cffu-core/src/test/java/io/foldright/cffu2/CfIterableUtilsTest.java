@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static io.foldright.cffu2.CfIterableUtils.*;
+import static io.foldright.cffu2.CompletableFutureUtils.failedFuture;
 import static io.foldright.test_utils.TestUtils.*;
 import static io.foldright.test_utils.TestingConstants.*;
 import static io.foldright.test_utils.TestingExecutorUtils.testExecutor;
@@ -166,11 +167,9 @@ class CfIterableUtilsTest {
         CompletableFuture<String> future1 = CompletableFuture.completedFuture("result1");
         assertNull(allFailFastOf(singletonList(future1)).join());
 
-        // Test with multiple completed futures
+        // completed + failed + incomplete: fail-fast, independent of commonPool scheduling
         RuntimeException rte = new RuntimeException();
-        CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {throw rte;});
-        CompletableFuture<Void> future3 = CompletableFuture.runAsync(() -> sleep(LONG_WAIT_MS));
-        assertCfWithEx(allFailFastOf(asList(future1, future2, future3)), rte);
+        assertCfWithEx(allFailFastOf(asList(future1, failedFuture(rte), incompleteCf())), rte);
     }
 
     @Test
@@ -182,13 +181,9 @@ class CfIterableUtilsTest {
         CompletableFuture<String> future1 = CompletableFuture.completedFuture("result1");
         assertNull(allOf(singletonList(future1)).join());
 
-        assertTrue(ForkJoinPool.commonPool().awaitQuiescence(2, MINUTES));
-
-        // Test with multiple completed futures
+        // completed + failed + incomplete: allOf waits for incomplete (not fail-fast)
         RuntimeException rte = new RuntimeException();
-        CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {throw rte;});
-        CompletableFuture<Void> future3 = CompletableFuture.runAsync(() -> sleep(LONG_WAIT_MS));
-        assertCfStillIncompleteIn(allOf(asList(future1, future2, future3)), MEDIAN_WAIT_MS, MILLISECONDS);
+        assertCfStillIncompleteIn(allOf(asList(future1, failedFuture(rte), incompleteCf())), MEDIAN_WAIT_MS, MILLISECONDS);
     }
 
     @Test
