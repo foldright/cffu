@@ -11,7 +11,8 @@ import java.util.function.Consumer;
 import static io.foldright.cffu2.CfIterableUtils.*;
 import static io.foldright.cffu2.CompletableFutureUtils.failedFuture;
 import static io.foldright.test_utils.TestUtils.*;
-import static io.foldright.test_utils.TestingConstants.*;
+import static io.foldright.test_utils.TestingConstants.MEDIAN_WAIT_MS;
+import static io.foldright.test_utils.TestingConstants.n;
 import static io.foldright.test_utils.TestingExecutorUtils.testExecutor;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -195,15 +196,9 @@ class CfIterableUtilsTest {
         CompletableFuture<String> future1 = CompletableFuture.completedFuture("result1");
         assertEquals("result1", anySuccessOf(singletonList(future1)).join());
 
-        assertTrue(ForkJoinPool.commonPool().awaitQuiescence(2, MINUTES));
-
-        // Test with multiple completed futures
-        CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> {throw new RuntimeException();});
-        CompletableFuture<String> future3 = CompletableFuture.supplyAsync(() -> {
-            sleep(MEDIAN_WAIT_MS);
-            return "";
-        });
-        assertEquals("result1", anySuccessOf(asList(future2, future1, future3)).join());
+        // failed + completed + incomplete: first success wins, independent of commonPool scheduling
+        assertEquals("result1", anySuccessOf(
+                asList(failedFuture(new RuntimeException()), future1, incompleteCf())).join());
     }
 
     @Test
@@ -214,15 +209,8 @@ class CfIterableUtilsTest {
         CompletableFuture<String> future1 = CompletableFuture.completedFuture("result1");
         assertEquals("result1", anyOf(singletonList(future1)).join());
 
-        assertTrue(ForkJoinPool.commonPool().awaitQuiescence(2, MINUTES));
-
-        // Test with multiple completed futures
-        CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> {throw new RuntimeException();});
-        CompletableFuture<String> future3 = CompletableFuture.supplyAsync(() -> {
-            sleep(MEDIAN_WAIT_MS);
-            return "";
-        });
-        assertTrue(asList("result1", "result2", "result3").contains(anyOf(asList(future1, future2, future3)).join()));
+        // completed + incomplete: first completed wins, independent of commonPool scheduling
+        assertEquals("result1", anyOf(asList(future1, incompleteCf(), incompleteCf())).join());
     }
 
     @Test

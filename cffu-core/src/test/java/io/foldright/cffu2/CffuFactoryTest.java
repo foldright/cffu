@@ -423,21 +423,21 @@ class CffuFactoryTest {
         assertEquals(n, testCffuFac.anySuccessOf(
                 incompleteCf(),
                 incompleteCf(),
-                CompletableFuture.supplyAsync(supplyLater(anotherN)),
+                completeLaterCf(anotherN),
                 completedFuture(n)
         ).get());
         // success then failed
         assertEquals(n, testCffuFac.anySuccessOf(
                 incompleteCf(),
                 incompleteCf(),
-                CompletableFuture.supplyAsync(supplyLater(rte)),
+                completeExceptionallyLaterCf(rte),
                 completedFuture(n)
         ).get());
 
         // all success
         assertEquals(n, testCffuFac.anySuccessOf(
-                CompletableFuture.supplyAsync(supplyLater(anotherN)),
-                CompletableFuture.supplyAsync(supplyLater(anotherN)),
+                completeLaterCf(anotherN),
+                completeLaterCf(anotherN),
                 completedFuture(n)
         ).get());
 
@@ -1184,15 +1184,9 @@ class CffuFactoryTest {
         CompletableFuture<String> future1 = CompletableFuture.completedFuture("result1");
         assertEquals("result1", testCffuFac.iterableOps().anySuccessOf(singletonList(future1)).join());
 
-        assertTrue(ForkJoinPool.commonPool().awaitQuiescence(2, MINUTES));
-
-        // Test with multiple completed futures
-        CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> {throw new RuntimeException();});
-        CompletableFuture<String> future3 = CompletableFuture.supplyAsync(() -> {
-            sleep(MEDIAN_WAIT_MS);
-            return "";
-        });
-        assertEquals("result1", testCffuFac.iterableOps().anySuccessOf(asList(future2, future1, future3)).join());
+        // failed + completed + incomplete: first success wins, independent of commonPool scheduling
+        assertEquals("result1", testCffuFac.iterableOps().anySuccessOf(
+                asList(failedFuture(new RuntimeException()), future1, incompleteCf())).join());
     }
 
     @Test
@@ -1203,15 +1197,9 @@ class CffuFactoryTest {
         CompletableFuture<String> future1 = CompletableFuture.completedFuture("result1");
         assertEquals("result1", testCffuFac.iterableOps().anyOf(singletonList(future1)).join());
 
-        assertTrue(ForkJoinPool.commonPool().awaitQuiescence(2, MINUTES));
-
-        // Test with multiple completed futures
-        CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> {throw new RuntimeException();});
-        CompletableFuture<String> future3 = CompletableFuture.supplyAsync(() -> {
-            sleep(MEDIAN_WAIT_MS);
-            return "";
-        });
-        assertTrue(asList("result1", "result2", "result3").contains(testCffuFac.iterableOps().anyOf(asList(future1, future2, future3)).join()));
+        // completed + incomplete: first completed wins, independent of commonPool scheduling
+        assertEquals("result1", testCffuFac.iterableOps().anyOf(
+                asList(future1, incompleteCf(), incompleteCf())).join());
     }
 
     @Test
