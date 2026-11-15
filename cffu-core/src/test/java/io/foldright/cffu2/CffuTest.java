@@ -236,10 +236,7 @@ class CffuTest {
 
     @Test
     void bothFailFast() throws Exception {
-        Cffu<Integer> cf = testCffuFac.supplyAsync(() -> {
-            snoreZzz(LONG_WAIT_MS);
-            return n;
-        });
+        Cffu<Integer> cf = testCffuFac.newIncompleteCffu();
         final Cffu<Integer> failed = testCffuFac.failedFuture(rte);
 
         final Runnable runnable = () -> {};
@@ -421,10 +418,7 @@ class CffuTest {
 
         // Incomplete Future -> join before timeout
 
-        Cffu<Integer> cffu = testCffuFac.supplyAsync(() -> {
-            snoreZzz();
-            return n;
-        });
+        Cffu<Integer> cffu = testCffuFac.supplyAsync(supplyLater(n));
         assertEquals(n, cffu.join(LONG_WAIT_MS, MILLISECONDS));
     }
 

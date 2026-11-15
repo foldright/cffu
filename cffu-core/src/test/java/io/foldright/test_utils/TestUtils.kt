@@ -30,6 +30,18 @@ fun <T> completeLaterCf(value: T, millis: Long = MEDIAN_WAIT_MS): CompletableFut
 }
 
 @JvmOverloads
+fun <T> completeExceptionallyLaterCf(
+    ex: Throwable, millis: Long = MEDIAN_WAIT_MS, executor: Executor = DEFAULT_EXECUTOR
+): CompletableFuture<T> {
+    val action = Supplier<T> {
+        sleep(millis)
+        throw ex
+    }
+    return if (executor === DEFAULT_EXECUTOR) CompletableFuture.supplyAsync(action)
+    else CompletableFuture.supplyAsync(action, executor)
+}
+
+@JvmOverloads
 fun <T> completeLaterCf(
     value: () -> T, millis: Long = MEDIAN_WAIT_MS, executor: Executor = DEFAULT_EXECUTOR
 ): CompletableFuture<T> {
