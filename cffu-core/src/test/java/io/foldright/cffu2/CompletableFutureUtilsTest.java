@@ -231,10 +231,7 @@ class CompletableFutureUtilsTest {
                 // allResultsOf: the ex of first given cf argument win, even subsequent cf failed early.
                 //   ❗dependent on the implementation behavior of `CF.allOf`️
                 allResultsOf(
-                        CompletableFuture.supplyAsync(() -> {
-                            snoreZzz();
-                            throw rte;
-                        }),
+                        completeExceptionallyLaterCf(rte),
                         failedFuture(anotherRte),
                         failedFuture(ex1),
                         failedFuture(ex2)
@@ -290,10 +287,7 @@ class CompletableFutureUtilsTest {
                 // allResultsFailFastOf: the ex of first given cf argument win, even subsequent cf failed early.
                 //   ❗dependent on the implementation behavior of `CF.allOf`️
                 allResultsFailFastOf(
-                        CompletableFuture.supplyAsync(() -> {
-                            snoreZzz();
-                            throw rte;
-                        }),
+                        completeExceptionallyLaterCf(rte),
                         failedFuture(anotherRte),
                         failedFuture(ex1),
                         failedFuture(ex2)
@@ -349,10 +343,7 @@ class CompletableFutureUtilsTest {
                 // allFailFastOf: the ex of first complete(in time) cf argument win, even subsequent cf failed early.
                 //   ❗dependent on the implementation behavior of `CF.allOf`️
                 allFailFastOf(
-                        CompletableFuture.supplyAsync(() -> {
-                            snoreZzz();
-                            throw rte;
-                        }),
+                        completeExceptionallyLaterCf(rte),
                         failedFuture(anotherRte),
                         failedFuture(ex1),
                         failedFuture(ex2)
@@ -408,10 +399,7 @@ class CompletableFutureUtilsTest {
                 // allOf: the ex of first complete(in time) cf argument win, even subsequent cf failed early.
                 //   ❗dependent on the implementation behavior of `CF.allOf`️
                 allOf(
-                        CompletableFuture.supplyAsync(() -> {
-                            snoreZzz();
-                            throw rte;
-                        }),
+                        completeExceptionallyLaterCf(rte),
                         failedFuture(anotherRte),
                         failedFuture(ex1),
                         failedFuture(ex2)
@@ -584,10 +572,7 @@ class CompletableFutureUtilsTest {
                 // anyOf: the ex of first failed cf argument win.
                 //   ❗dependent on the implementation behavior of `CF.anyOf`️
                 anyOf(
-                        CompletableFuture.supplyAsync(() -> {
-                            snoreZzz();
-                            throw rte;
-                        }),
+                        completeExceptionallyLaterCf(rte),
                         failedFuture(anotherRte),
                         failedFuture(ex1),
                         failedFuture(ex2)
@@ -612,10 +597,7 @@ class CompletableFutureUtilsTest {
                 // anySuccessOf: the ex of first failed cf argument win, even subsequent cf failed early.
                 //   ❗dependent on the implementation behavior of `CF.allOf`️
                 anySuccessOf(
-                        CompletableFuture.supplyAsync(() -> {
-                            snoreZzz();
-                            throw rte;
-                        }),
+                        completeExceptionallyLaterCf(rte),
                         failedFuture(anotherRte),
                         failedFuture(ex1),
                         failedFuture(ex2)
@@ -638,23 +620,14 @@ class CompletableFutureUtilsTest {
         assertEquals(n, anyOf(
                 incompleteCf(),
                 incompleteCf(),
-                CompletableFuture.supplyAsync(() -> {
-                    snoreZzz();
-                    return anotherN;
-                }),
+                completeLaterCf(anotherN),
                 completedFuture(n)
         ).get());
 
         // wait/success then success
         assertEquals(n, anyOf(
-                CompletableFuture.supplyAsync(() -> {
-                    snoreZzz();
-                    return anotherN;
-                }),
-                CompletableFuture.supplyAsync(() -> {
-                    snoreZzz();
-                    return anotherN;
-                }),
+                completeLaterCf(anotherN),
+                completeLaterCf(anotherN),
                 completedFuture(n)
         ).get());
 
@@ -662,20 +635,14 @@ class CompletableFutureUtilsTest {
         assertEquals(n, anyOf(
                 incompleteCf(),
                 incompleteCf(),
-                CompletableFuture.supplyAsync(() -> {
-                    snoreZzz();
-                    throw rte;
-                }),
+                completeExceptionallyLaterCf(rte),
                 completedFuture(n)
         ).get());
 
         // failed then success
         assertSame(rte, assertThrowsExactly(ExecutionException.class, () ->
                 anyOf(
-                        CompletableFuture.supplyAsync(() -> {
-                            snoreZzz();
-                            return n;
-                        }),
+                        completeLaterCf(n),
                         failedFuture(rte),
                         failedFuture(rte)
                 ).get()
@@ -687,23 +654,14 @@ class CompletableFutureUtilsTest {
         assertEquals(n, anySuccessOf(
                 incompleteCf(),
                 incompleteCf(),
-                CompletableFuture.supplyAsync(() -> {
-                    snoreZzz();
-                    return anotherN;
-                }),
+                completeLaterCf(anotherN),
                 completedFuture(n)
         ).get());
 
         // wait/success then success
         assertEquals(n, anySuccessOf(
-                CompletableFuture.supplyAsync(() -> {
-                    snoreZzz();
-                    return anotherN;
-                }),
-                CompletableFuture.supplyAsync(() -> {
-                    snoreZzz();
-                    return anotherN;
-                }),
+                completeLaterCf(anotherN),
+                completeLaterCf(anotherN),
                 completedFuture(n)
         ).get());
 
@@ -711,19 +669,13 @@ class CompletableFutureUtilsTest {
         assertEquals(n, anySuccessOf(
                 incompleteCf(),
                 incompleteCf(),
-                CompletableFuture.supplyAsync(() -> {
-                    snoreZzz();
-                    throw rte;
-                }),
+                completeExceptionallyLaterCf(rte),
                 completedFuture(n)
         ).get());
 
         // failed then success
         assertEquals(n, anySuccessOf(
-                CompletableFuture.supplyAsync(() -> {
-                    snoreZzz();
-                    return n;
-                }),
+                completeLaterCf(n),
                 failedFuture(rte),
                 failedFuture(rte)
         ).get());
