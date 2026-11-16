@@ -125,44 +125,44 @@ class ConcurrencyLimitExecutorAdvancedTest : FunSpec({
         completedTasks shouldContainExactlyInAnyOrder rangeList(totalTasks)
     }
 
-    test("executor.execute() throws exception - exception propagation") {
+    test("executor.execute() throws exception - rejected tasks never run later") {
         val maxConcurrency = 3
         val attemptCount = AtomicInteger(0)
+        val rejectedTaskRunCount = AtomicInteger(0)
 
-        // Create a mock executor that always rejects
-        val alwaysRejectExecutor = Executor { r ->
-            attemptCount.incrementAndGet()
-            throw RejectedExecutionException("Always reject")
+        // Create a mock executor that rejects the first five submissions, then accepts tasks.
+        val transientRejectExecutor = Executor { command ->
+            if (attemptCount.incrementAndGet() <= 5) throw RejectedExecutionException("Reject first five")
+            executor.execute(command)
         }
 
-        val concurrencyLimitExecutor = ConcurrencyLimitExecutor(maxConcurrency, alwaysRejectExecutor)
+        val concurrencyLimitExecutor = ConcurrencyLimitExecutor(maxConcurrency, transientRejectExecutor)
         val rejectedCount = AtomicInteger(0)
 
-        // Submit tasks - all should be rejected and exception should propagate
+        // Rejected tasks must not remain queued and run after the base executor starts accepting work.
         repeat(5) { index ->
             val exception = shouldThrowExactly<RejectedExecutionException> {
                 concurrencyLimitExecutor.execute {
-                    logWithTimeAndThread("task $index - should never run")
+                    rejectedTaskRunCount.incrementAndGet()
+                    logWithTimeAndThread("rejected task $index should never run")
                 }
             }
             rejectedCount.incrementAndGet()
-            exception.message shouldBe "Always reject"
+            exception.message shouldBe "Reject first five"
             logWithTimeAndThread("task $index rejected as expected")
         }
 
-        // All 5 submissions should be rejected
         rejectedCount.get() shouldBeExactly 5
         attemptCount.get() shouldBeExactly 5
 
-        // Now use a working executor to verify state is not corrupted
-        val workingExecutor = ConcurrencyLimitExecutor(maxConcurrency, executor)
         val finalLatch = CountDownLatch(3)
         repeat(3) {
-            workingExecutor.execute {
+            concurrencyLimitExecutor.execute {
                 finalLatch.countDown()
             }
         }
         finalLatch.await(2, TimeUnit.SECONDS) shouldBe true
+        rejectedTaskRunCount.get() shouldBeExactly 0
     }
 
     test("queue boundary - single task") {
