@@ -13,6 +13,7 @@ import io.kotest.matchers.string.shouldContain
 import java.lang.Thread.currentThread
 import java.lang.Thread.sleep
 import java.util.concurrent.*
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.random.Random
 
@@ -163,6 +164,29 @@ class ConcurrencyLimitExecutorAdvancedTest : FunSpec({
             }
         }
         finalLatch.await(2, TimeUnit.SECONDS) shouldBe true
+    }
+
+    test("base executor rejects once - the rejected task never runs") {
+        val ran = CopyOnWriteArrayList<String>()
+        val rejectNext = AtomicBoolean(true)
+        val base = Executor { r ->
+            if (rejectNext.getAndSet(false)) throw RejectedExecutionException("reject once")
+            else executor.execute(r)
+        }
+        val concurrencyLimitExecutor = ConcurrencyLimitExecutor(1, base)
+
+        shouldThrowExactly<RejectedExecutionException> {
+            concurrencyLimitExecutor.execute { ran.add("rejected") }
+        }
+
+        val latch = CountDownLatch(1)
+        concurrencyLimitExecutor.execute {
+            ran.add("accepted")
+            latch.countDown()
+        }
+        latch.await(2, TimeUnit.SECONDS) shouldBe true
+
+        ran shouldBe listOf("accepted")
     }
 
     test("queue boundary - single task") {
