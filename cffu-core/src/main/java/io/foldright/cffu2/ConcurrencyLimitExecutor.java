@@ -33,6 +33,11 @@ final class ConcurrencyLimitExecutor implements Executor {
     private final int maxConcurrency;
     private final Executor executor;
 
+    // Invariants guarded by `lock` (hold at every lock release, assuming base executor does not silently drop tasks):
+    //  1. 0 <= syncRunnerCount <= workerCount <= maxConcurrency;
+    //     `workerCount - syncRunnerCount` is the count of active `asyncWork()` workers draining `queue`,
+    //     while `syncRunnerCount` runners only execute their own submitted task outside `lock`.
+    //  2. Liveness (no orphaned task): if `!queue.isEmpty()`, then `workerCount - syncRunnerCount >= 1`.
     private final Lock lock = new ReentrantLock();
     @GuardedBy("lock")
     private final Deque<Runnable> queue = new ArrayDeque<>();
@@ -55,8 +60,9 @@ final class ConcurrencyLimitExecutor implements Executor {
     @Override
     public void execute(Runnable command) {
         lock.lock();
-        // NOTE: variable `locking` is only accessed by the caller thread (single-threaded);
-        //       so no need to declare it as type AtomicBoolean for thread safety.
+        // `locking[0]` is true iff this caller frame has held `lock` continuously since entry
+        // (i.e. `submittedTask` has NOT entered `syncRun()`), because ONLY `syncRun()` sets `locking[0]` to false.
+        // NOTE: only accessed by the caller thread (single-threaded), so no AtomicBoolean is needed.
         final boolean[] locking = {true};
         try {
             // When ALL workers (up to the concurrency limit) are running synchronously (i.e. CallerRunsPolicy):
@@ -70,7 +76,7 @@ final class ConcurrencyLimitExecutor implements Executor {
                     + " (base executor runs task on caller thread, e.g. CallerRunsPolicy/DirectExecutor);"
                     + " cannot accept any more tasks in " + this);
 
-            queue.add(command);
+            queue.addLast(command);
             if (workerCount >= maxConcurrency) return;
 
             final Thread callerThread = currentThread();
@@ -96,13 +102,16 @@ final class ConcurrencyLimitExecutor implements Executor {
                     syncRunnerCount++;
                     try {
                         try {
-                            // place task removal before the report calls to ensure removal even if the report throws
+                            // place task removal before the report calls to ensure removal even if the report throws.
+                            //
+                            // `removeLastOccurrence` scans from the end, matching the just-added `command` in O(1)
+                            // without touching earlier equal tasks in `queue`.
                             queue.removeLastOccurrence(command);
                             reportExceedWorkerCount();
                             reportSyncRunning();
                         } finally {
-                            lock.unlock();
                             locking[0] = false;
+                            lock.unlock();
                         }
                         // For synchronous run (i.e. CallerRunsPolicy) of the submitted task:
                         //  - run the submitted command only, do NOT run other commands in the queue
@@ -123,28 +132,32 @@ final class ConcurrencyLimitExecutor implements Executor {
                     return "Submitted task (command: " + command + ") of " + ConcurrencyLimitExecutor.this;
                 }
             };
-            // `command` is already queued. If submission fails, no worker was started
-            // (this thread still holds `lock`) and `workerCount` is not incremented below,
-            // so drop `command`; otherwise the next successful submission runs a task
-            // the caller was told was rejected.
-            // A synchronous run clears `locking` and removes `command` before `command.run()`,
-            // so an exception from the task itself must propagate with the queue left as-is.
             try {
                 executor.execute(submittedTask);
-            } catch (Throwable t) {
+            } catch (Throwable ex) {
+                // Above `queue.addLast(command)` already appended `command` to the end of `queue`.
+                //
+                // If `executor.execute` throws, distinguish submission failure from synchronous task failure:
+                //  - `locking[0]` is true:
+                //    - `syncRun()` never ran
+                //    - and this thread has held `lock` continuously since `queue.addLast(command)`,
+                //      so no existing async worker could have polled `command` either.
+                //    Roll back `command` from the end of `queue`;
+                //    otherwise an existing worker or a later submission would run a rejected task.
+                //  - `locking[0]` is false:
+                //    - `syncRun()` has already removed `command` and unlocked `lock`
+                //    - `ex` was thrown during synchronous execution (e.g. `command.run()`)
+                //    Leave `queue` untouched (must NOT access `queue` without `lock`) and rethrow `ex`.
+                // Assumes base `executor.execute` did not schedule `submittedTask` asynchronously before throwing.
                 if (locking[0]) queue.removeLastOccurrence(command);
-                throw t;
+                throw ex;
             }
             returnedFromExecute[0] = true;
 
-            // NOTE 1: For synchronous runs:
-            //    - any exception will propagate to caller;
-            //    - `locking` is only set to false when the submitted task will run synchronously;
-            //   So if `locking` is still true here, task submission succeeded and the task will run asynchronously.
-            // NOTE 2: For asynchronous runs, increment worker count here; for synchronous runs,
-            //   worker count is already incremented inside `executor.execute()` before it returns.
-            // NOTE 3: Do NOT move worker count increment into the `finally` block, because `workerCount`
-            //   must NOT be incremented if `executor.execute` throws an exception (e.g. RejectedExecutionEx).
+            // If `locking[0]` is still true here, submission succeeded without entering `syncRun()`,
+            // so `submittedTask` will run asynchronously (`syncRun()` already updated `workerCount` on the sync path).
+            // NOTE: Do NOT move `workerCount++` into the `finally` block below,
+            //       as `workerCount` must not be incremented when `executor.execute` throws.
             if (locking[0]) {
                 workerCount++;
                 reportExceedWorkerCount();
@@ -166,7 +179,7 @@ final class ConcurrencyLimitExecutor implements Executor {
                 Runnable task;
                 lock.lock();
                 try {
-                    task = queue.poll();
+                    task = queue.pollFirst();
                     if (task == null) {
                         workerCount--;
                         workCountDecremented = true;
@@ -179,10 +192,10 @@ final class ConcurrencyLimitExecutor implements Executor {
                 // safely execute the task in `try-catch` block
                 try {
                     task.run();
-                } catch (Throwable e) { // sneaky checked exception
+                } catch (Throwable ex) { // sneaky checked exception
                     // check for InterruptedEx from `task.run`, as other JVM languages may throw InterruptedEx
-                    if (e instanceof InterruptedException) interruptedDuringTask = true;
-                    logger.logException(ERROR, "Exception while executing runnable " + task, e);
+                    if (ex instanceof InterruptedException) interruptedDuringTask = true;
+                    logger.logException(ERROR, "Exception while executing runnable " + task, ex);
                 }
             }
         } finally {

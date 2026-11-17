@@ -10,6 +10,7 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import java.lang.Thread.currentThread
 import java.lang.Thread.sleep
 import java.util.concurrent.*
@@ -187,6 +188,97 @@ class ConcurrencyLimitExecutorAdvancedTest : FunSpec({
         latch.await(2, TimeUnit.SECONDS) shouldBe true
 
         ran shouldBe listOf("accepted")
+    }
+
+    test("synchronous task throws after re-queuing itself - queued task still runs") {
+        val basePool = ThreadPoolExecutor(
+            1, 1, 0, TimeUnit.SECONDS, SynchronousQueue(), ThreadPoolExecutor.CallerRunsPolicy()
+        )
+        try {
+            val concurrencyLimitExecutor = ConcurrencyLimitExecutor(2, basePool)
+            val workerStarted = CountDownLatch(1)
+            val unblockWorker = CountDownLatch(1)
+
+            // Occupy the single pool thread with an async worker (workerCount = 1, syncRunnerCount = 0)
+            concurrencyLimitExecutor.execute {
+                workerStarted.countDown()
+                unblockWorker.await()
+            }
+            workerStarted.await(2, TimeUnit.SECONDS) shouldBe true
+
+            val runCount = AtomicInteger(0)
+            val drained = CountDownLatch(1)
+            val rte = RuntimeException("sync boom")
+            lateinit var selfReschedulingTask: Runnable
+            selfReschedulingTask = Runnable {
+                if (runCount.incrementAndGet() == 1) {
+                    // Runs synchronously via CallerRunsPolicy (workerCount = 2, syncRunnerCount = 1);
+                    // both submissions below hit `workerCount >= maxConcurrency` and queue in FIFO order.
+                    concurrencyLimitExecutor.execute(selfReschedulingTask)
+                    concurrencyLimitExecutor.execute { drained.countDown() }
+                    throw rte
+                }
+            }
+
+            shouldThrowExactly<RuntimeException> {
+                concurrencyLimitExecutor.execute(selfReschedulingTask)
+            } shouldBeSameInstanceAs rte
+
+            unblockWorker.countDown()
+            drained.await(2, TimeUnit.SECONDS) shouldBe true
+            runCount.get() shouldBeExactly 2
+        } finally {
+            basePool.shutdownNow()
+        }
+    }
+
+    test("base executor rejects while active worker has equal task queued - drops rejected tail task only") {
+        class KeyedTask(val key: Int, val tag: String, val onRun: (String) -> Unit) : Runnable {
+            override fun run() = onRun(tag)
+            override fun equals(other: Any?): Boolean = other is KeyedTask && key == other.key
+            override fun hashCode(): Int = key
+        }
+
+        val basePool = ThreadPoolExecutor(
+            1, 1, 0, TimeUnit.SECONDS, ArrayBlockingQueue(1), ThreadPoolExecutor.AbortPolicy()
+        )
+        try {
+            val concurrencyLimitExecutor = ConcurrencyLimitExecutor(3, basePool)
+            val workerStarted = CountDownLatch(1)
+            val unblockWorker = CountDownLatch(1)
+
+            // 1st submission: starts worker #1 on basePool's single thread (workerCount = 1)
+            concurrencyLimitExecutor.execute {
+                workerStarted.countDown()
+                unblockWorker.await()
+            }
+            workerStarted.await(2, TimeUnit.SECONDS) shouldBe true
+
+            val ranTags = CopyOnWriteArrayList<String>()
+            val acceptedTask = KeyedTask(1, "accepted") { ranTags.add(it) }
+            val rejectedTask = KeyedTask(1, "rejected") { ranTags.add(it) }
+
+            // 2nd submission: queues `acceptedTask` in CLE and parks worker #2 in basePool's queue(1) (workerCount = 2)
+            concurrencyLimitExecutor.execute(acceptedTask)
+
+            // 3rd submission: queues `rejectedTask` at CLE tail, then basePool's AbortPolicy rejects worker #3
+            shouldThrowExactly<RejectedExecutionException> {
+                concurrencyLimitExecutor.execute(rejectedTask)
+            }
+            concurrencyLimitExecutor.toString() shouldContain "worker count: 2"
+            concurrencyLimitExecutor.toString() shouldContain "queue size: 1"
+
+            // Release worker #1 with no further submissions; worker #1 and worker #2 drain CLE queue and exit
+            unblockWorker.countDown()
+            basePool.shutdown()
+            basePool.awaitTermination(2, TimeUnit.SECONDS) shouldBe true
+
+            ranTags shouldBe listOf("accepted")
+            concurrencyLimitExecutor.toString() shouldContain "worker count: 0"
+            concurrencyLimitExecutor.toString() shouldContain "queue size: 0"
+        } finally {
+            basePool.shutdownNow()
+        }
     }
 
     test("queue boundary - single task") {
