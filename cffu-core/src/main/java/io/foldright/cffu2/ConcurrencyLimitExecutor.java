@@ -123,7 +123,18 @@ final class ConcurrencyLimitExecutor implements Executor {
                     return "Submitted task (command: " + command + ") of " + ConcurrencyLimitExecutor.this;
                 }
             };
-            executor.execute(submittedTask);
+            // `command` is already queued. If submission fails, no worker was started
+            // (this thread still holds `lock`) and `workerCount` is not incremented below,
+            // so drop `command`; otherwise the next successful submission runs a task
+            // the caller was told was rejected.
+            // A synchronous run clears `locking` and removes `command` before `command.run()`,
+            // so an exception from the task itself must propagate with the queue left as-is.
+            try {
+                executor.execute(submittedTask);
+            } catch (Throwable t) {
+                if (locking[0]) queue.removeLastOccurrence(command);
+                throw t;
+            }
             returnedFromExecute[0] = true;
 
             // NOTE 1: For synchronous runs:
