@@ -29,3 +29,5 @@ class CffuLoggerTest : FunSpec({
         CffuLogger.exceptionLogFormat = exceptionLogFormat
     }
 })
+
+fun peekCffuLoggerExceptionLogFormat(): CffuConfiguration.ExceptionLogFormat = exceptionLogFormat

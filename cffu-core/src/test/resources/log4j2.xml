@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
 	<Appenders>
-		<Console name="Console" target="SYSTEM_OUT">
+		<!--
+		follow="true":
+			re-resolve the target stream (System.out) on every write,
+			instead of caching the PrintStream reference at appender initialization (the default).
+		This lets a test capture log output via System.setOut:
+			e.g. ConcurrencyLimitExecutorTest.captureConsole swaps System.out/err
+			with a ByteArrayOutputStream to assert on the discard report text;
+		Without follow, the appender would keep writing to the original JVM stdout and the capture would see nothing.
+		-->
+		<Console name="Console" target="SYSTEM_OUT" follow="true">
 			<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} (%F:%L) - %msg%n"/>
 		</Console>
 	</Appenders>

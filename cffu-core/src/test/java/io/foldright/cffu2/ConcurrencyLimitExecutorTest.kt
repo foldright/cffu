@@ -2,20 +2,30 @@ package io.foldright.cffu2
 
 import com.google.common.util.concurrent.MoreExecutors
 import io.foldright.cffu2.ConcurrencyLimitExecutor.isPowerOfTwo
+import io.foldright.cffu2.config.CffuConfiguration
+import io.foldright.cffu2.internal.CffuLogger
+import io.foldright.cffu2.internal.peekCffuLoggerExceptionLogFormat
 import io.foldright.test_utils.ConcurrencyChecker
 import io.foldright.test_utils.logWithTimeAndThread
 import io.foldright.test_utils.rangeList
-import io.foldright.test_utils.testExecutor
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldMatch
 import io.kotest.matchers.types.shouldBeSameInstanceAs
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 import java.lang.Thread.sleep
 import java.util.concurrent.*
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.logging.Handler
+import java.util.logging.LogRecord
+import java.util.logging.Logger
 import kotlin.random.Random
 
 private const val THREAD_COUNT = 8
@@ -166,38 +176,6 @@ class ConcurrencyLimitExecutorTest : FunSpec({
         f.get().shouldBeNull()
     }
 
-    /**
-     * ❗❗ TODO: Due to the limitation in the current ConcurrencyLimitExecutor implementation,
-     * if all tasks execute synchronously,
-     *  - the remaining tasks in the work queue cannot be executed!
-     *  - the task execution is only triggered by task submission.
-     */
-    test("sync execution at MoreExecutors.directExecutor(), multi-threaded submission").config(enabled = false) {
-        val concurrencyLimitExecutor = ConcurrencyLimitExecutor(3, MoreExecutors.directExecutor())
-
-        val concurrencyChecker = ConcurrencyChecker(3)
-
-        val taskCount = 32
-        val latch = CountDownLatch(taskCount)
-        repeat(taskCount) {
-            testExecutor.submit {
-                logWithTimeAndThread("submit task %2d", it + 1)
-                concurrencyLimitExecutor.execute {
-                    concurrencyChecker.enter()
-
-                    sleep(Random.nextLong(10, 20))
-                    logWithTimeAndThread("running task %2d", it + 1)
-
-                    concurrencyChecker.leave()
-                    latch.countDown()
-                }
-            }
-        }
-        latch.await()
-
-        concurrencyChecker.check()
-    }
-
     test("isPowerOfTwo") {
         isPowerOfTwo(-100).shouldBeFalse()
         isPowerOfTwo(-1).shouldBeFalse()
@@ -225,19 +203,47 @@ class ConcurrencyLimitExecutorTest : FunSpec({
             .shouldBeSameInstanceAs(rte)
     }
 
-    test("check report in finalize, check by eye 🫣") {
-        logWithTimeAndThread("${testCase.name.testName}: start")
-        val discardAllExecutor = Executor { }
-        repeat(10) {
-            val concurrencyLimitExecutor = ConcurrencyLimitExecutor(1, discardAllExecutor)
-            repeat(it + 1) { concurrencyLimitExecutor.execute {} }
+    test("finalize reports queued tasks that will be discarded") {
+        // Clean up any leftover objects from previous tests before GC-finalize output capture.
+        System.gc()
+
+        val previousFormat = peekCffuLoggerExceptionLogFormat()
+        CffuLogger.setExceptionLogFormat(CffuConfiguration.ExceptionLogFormat.FULL)
+
+        try {
+            var report = ""
+            ConsoleCapture().use { capture ->
+                // The local references die when this returns, so a later GC can finalize them.
+                abandonQueuedExecutors()
+
+                val deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5)
+                while (System.nanoTime() < deadline) {
+                    System.gc()
+                    sleep(20)
+                    report = capture.text()
+                    if (report.contains("queued task(s) remained")) break
+                }
+                report shouldContain "queued task(s) remained when finalizing "
+                report shouldContain "these tasks will be discarded"
+            }
+            println("=============== report ===============\n$report======================================")
+        } finally {
+            CffuLogger.setExceptionLogFormat(previousFormat)
         }
-        repeat(10) {
-            sleep(2)
-            logWithTimeAndThread("${testCase.name.testName}: gc")
-            System.gc()
-        }
-        logWithTimeAndThread("${testCase.name.testName}: end")
+    }
+
+    test("base executor silently drops the worker - slot leaks and queued tasks stay queued") {
+        val concurrencyLimitExecutor = ConcurrencyLimitExecutor(1, Executor {})
+        val ran = AtomicInteger()
+
+        // execute() returns without running the worker, but the concurrency slot is still taken
+        concurrencyLimitExecutor.execute { ran.incrementAndGet() }
+        concurrencyLimitExecutor.execute { ran.incrementAndGet() }
+
+        ran.get() shouldBe 0
+        val stuck = concurrencyLimitExecutor.toString()
+        stuck shouldContain "worker count: 1"
+        stuck shouldContain "queue size: 2"
     }
 
     beforeSpec {
@@ -251,3 +257,59 @@ class ConcurrencyLimitExecutorTest : FunSpec({
         executor.shutdownNow()
     }
 })
+
+/** Executors with a non-empty queue, kept reachable only until this method returns. */
+private fun abandonQueuedExecutors() {
+    val discardAllExecutor = Executor { }
+    repeat(3) {
+        val concurrencyLimitExecutor = ConcurrencyLimitExecutor(3, discardAllExecutor)
+        repeat(it + 1) { concurrencyLimitExecutor.execute {} }
+    }
+}
+
+private const val UTF_8 = "UTF-8"
+
+/**
+ * Text of the discard report while a GC is in progress.
+ *
+ * slf4j-simple writes to `System.err`. log4j2 writes to `System.out`
+ * (`follow="true"` in the test config, so it sees [System.setOut]).
+ * Without SLF4J, [CffuLogger] uses JUL, whose console handler keeps the
+ * original stream, so those records are collected from a handler directly.
+ */
+private class ConsoleCapture : AutoCloseable {
+    private val jul = Logger.getLogger(ConcurrencyLimitExecutor::class.java.name)
+    private val julMessages = StringBuffer()
+    private val handler = object : Handler() {
+        override fun publish(record: LogRecord) {
+            julMessages.append(record.message).append('\n')
+        }
+
+        override fun flush() {}
+        override fun close() {}
+    }
+    private val previousOut = System.out
+    private val previousErr = System.err
+    private val buffer = ByteArrayOutputStream()
+    private val captured = PrintStream(buffer, true, UTF_8)
+
+    init {
+        jul.addHandler(handler)
+        System.setOut(captured)
+        System.setErr(captured)
+    }
+
+    fun text(): String {
+        // The finalizer thread writes while the test thread reads.
+        synchronized(captured) {
+            captured.flush()
+            return buffer.toString(UTF_8) + julMessages
+        }
+    }
+
+    override fun close() {
+        jul.removeHandler(handler)
+        System.setOut(previousOut)
+        System.setErr(previousErr)
+    }
+}
