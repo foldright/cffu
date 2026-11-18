@@ -77,6 +77,9 @@ mvu::mvn_cmd clean install -Dcffu.exception.log.format=
 # shellcheck disable=SC2034
 readonly MVN_OPTS_FOR_JAVA8=(
   -P!default-logging-dependencies
+  # test usage `ThreadPerTaskExecutor` as screen executor of `CompletableFuture`
+  #   by setting `-D option java.util.concurrent.ForkJoinPool.common.parallelism=1`
+  -Djava.util.concurrent.ForkJoinPool.common.parallelism=1
 )
 # shellcheck disable=SC2034
 readonly MVN_OPTS_FOR_JAVA11=(
@@ -111,10 +114,6 @@ for jdk_version in "${JDK_VERSIONS[@]}"; do
     mvu::mvn_cmd ${!mvn_opts_for_java_version_var_name:+"${!mvn_opts_for_java_version_var_name}"}
     "${SUREFIRE_TEST_GOAL[@]}"
   )
-
-  # test usage `ThreadPerTaskExecutor` as screen executor of `CompletableFuture`
-  #   by setting `-D option java.util.concurrent.ForkJoinPool.common.parallelism=1`
-  [ "$jdk_version" = 8 ] && "${cmd_line[@]}" -Djava.util.concurrent.ForkJoinPool.common.parallelism=1
 
   "${cmd_line[@]}"
 done
