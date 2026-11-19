@@ -845,10 +845,15 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Executor that submits a task to the default executor and limits the number of concurrent tasks.
+     * Returns a new Executor that submits tasks to this factory's default executor
+     * and runs at most {@code maxConcurrency} of them at a time.
+     * <p>
+     * See {@link #concurrencyLimitExecutor(int, Executor)} and
+     * {@link CompletableFutureUtils#concurrencyLimitExecutor(int, Executor)}.
      *
-     * @param maxConcurrency the maximum number of tasks that can run concurrently
+     * @param maxConcurrency the maximum number of tasks that can run concurrently; must be positive
      * @return the new concurrency limit executor
+     * @throws IllegalArgumentException if {@code maxConcurrency} is not positive
      * @since 2.1.0
      */
     @Contract(pure = true)
@@ -857,11 +862,23 @@ public final class CffuFactory {
     }
 
     /**
-     * Returns a new Executor that submits a task to the given base executor and limits the number of concurrent tasks.
+     * Returns a new Executor that submits tasks to the given base executor
+     * and runs at most {@code maxConcurrency} of them at a time.
+     * <p>
+     * The base executor is screened the same way as other {@code CffuFactory} async methods:
+     * the Java 8 common-pool fallback, plus {@link io.foldright.cffu2.spi.ExecutorWrapperProvider}
+     * SPI wrappers when a provider is installed (for example the TTL executor wrapper).
+     * Queueing, caller-thread runs, and {@link RejectedExecutionException} when caller-thread runs
+     * fill every slot are specified by
+     * {@link CompletableFutureUtils#concurrencyLimitExecutor(int, Executor)}.
+     * <p>
+     * {@link #sequentialExecutor(Executor)} is this method with {@code maxConcurrency == 1}.
      *
-     * @param maxConcurrency the maximum number of tasks that can run concurrently
+     * @param maxConcurrency the maximum number of tasks that can run concurrently; must be positive
      * @param executor       the base executor
      * @return the new concurrency limit executor
+     * @throws IllegalArgumentException if {@code maxConcurrency} is not positive
+     * @throws NullPointerException     if {@code executor} is null
      * @since 2.1.0
      */
     @Contract(pure = true)
@@ -875,6 +892,8 @@ public final class CffuFactory {
      * <p>
      * <strong>NOTE:</strong> Calling this method {@code cffuFactory.sequentialExecutor()}
      * is the same as {@code cffuFactory.concurrencyLimitExecutor(1)}.
+     * See {@link CompletableFutureUtils#concurrencyLimitExecutor(int, Executor)} for
+     * caller-thread execution and rejection behavior.
      *
      * @return the new sequential executor
      * @see com.google.common.util.concurrent.MoreExecutors#newSequentialExecutor(Executor)
@@ -891,8 +910,13 @@ public final class CffuFactory {
      * <p>
      * <strong>NOTE:</strong> Calling this method {@code cffuFactory.sequentialExecutor(executor)}
      * is the same as {@code cffuFactory.concurrencyLimitExecutor(1, executor)}.
+     * See {@link CompletableFutureUtils#concurrencyLimitExecutor(int, Executor)} for
+     * caller-thread execution and rejection behavior.
+     * With an asynchronous base executor, tasks start in submission order and do not overlap.
      *
+     * @param executor the base executor
      * @return the new sequential executor
+     * @throws NullPointerException if {@code executor} is null
      * @see com.google.common.util.concurrent.MoreExecutors#newSequentialExecutor(Executor)
      * @since 2.1.0
      */

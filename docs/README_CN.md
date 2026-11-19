@@ -57,6 +57,7 @@
     - [2.11 支持超时的`join`方法](#211-%E6%94%AF%E6%8C%81%E8%B6%85%E6%97%B6%E7%9A%84join%E6%96%B9%E6%B3%95)
     - [2.12 返回具体类型的`anyOf`方法](#212-%E8%BF%94%E5%9B%9E%E5%85%B7%E4%BD%93%E7%B1%BB%E5%9E%8B%E7%9A%84anyof%E6%96%B9%E6%B3%95)
     - [2.13 输入宽泛类型的`allOf/anyOf`方法](#213-%E8%BE%93%E5%85%A5%E5%AE%BD%E6%B3%9B%E7%B1%BB%E5%9E%8B%E7%9A%84allofanyof%E6%96%B9%E6%B3%95)
+    - [2.14 限制同时运行的任务数](#214-%E9%99%90%E5%88%B6%E5%90%8C%E6%97%B6%E8%BF%90%E8%A1%8C%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%95%B0)
     - [更多功能说明](#%E6%9B%B4%E5%A4%9A%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E)
   - [3. `cffu`库提供的编排方法及其最佳实践](#3-cffu%E5%BA%93%E6%8F%90%E4%BE%9B%E7%9A%84%E7%BC%96%E6%8E%92%E6%96%B9%E6%B3%95%E5%8F%8A%E5%85%B6%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5)
     - [3.1 编排方法分组](#31-%E7%BC%96%E6%8E%92%E6%96%B9%E6%B3%95%E5%88%86%E7%BB%84)
@@ -101,6 +102,8 @@
     - `whenComplete`方法可能会修改`CF`的结果，返回`CF`的结果与输入并不一定一致
   - 支持超时的`join(timeout, unit)`方法
   - 支持禁止强制篡改，`CffuFactoryBuilder#forbidObtrudeMethods`方法
+  - 限制并发度的执行器，`concurrencyLimitExecutor` / `sequentialExecutor`（自 2.1.0 起）
+    - 限制提交到某个基础执行器上同时运行的任务数；上限为 1 时即顺序执行
   - 在类方法附加完善的代码质量注解，在编码时`IDE`能尽早提示出问题
     - 如`@NonNull`、`@Nullable`、`@CheckReturnValue`、`@Contract`等
 - 🧩 缺失的基本功能，除了上面面向安全而新实现的方法，还有
@@ -657,6 +660,60 @@ public class CfParallelDemo {
 
 方法使用简单类似，不附代码示例。
 
+### 2.14 限制同时运行的任务数
+
+自 2.1.0 起，`cffu` 可以限制同时运行的任务数。
+`sequentialExecutor` 就是上限为 1 的同一设施
+（对应 Guava 的 `MoreExecutors.newSequentialExecutor`）。
+
+| 方法 | 任务跑在 |
+| --- | --- |
+| `CompletableFutureUtils.concurrencyLimitExecutor(maxConcurrency)` | 缺省异步执行器（`LLCF.ASYNC_POOL`） |
+| `CompletableFutureUtils.concurrencyLimitExecutor(maxConcurrency, executor)` | 传入的基础执行器 |
+| `CompletableFutureUtils.sequentialExecutor()` / `sequentialExecutor(executor)` | 同上，且 `maxConcurrency == 1` |
+| 同名的 `CffuFactory` 方法 | 省略执行器参数时，用该 factory 的缺省执行器 |
+
+`maxConcurrency` 必须为正数，否则抛出 `IllegalArgumentException`。执行器参数不能为 `null`。
+
+基础执行器异步运行任务时（普通线程池）：
+
+- 同时运行的任务不超过 `maxConcurrency`。
+- 槽位占满后继续提交的任务进入队列，按提交顺序（FIFO）在有空槽时启动。
+- 因此 `sequentialExecutor` 在异步基础执行器上按提交顺序逐个执行，任务之间不重叠。
+- 异步 worker 上某个任务抛出的异常会被记录，不阻止该 worker 继续执行队列中的后续任务。
+  任务抛出的 `InterruptedException`（含其它 JVM 语言）会在该 worker 结束时恢复到 worker 线程上。
+
+```java
+ExecutorService businessPool = Executors.newFixedThreadPool(32);
+Executor atMost4 = CompletableFutureUtils.concurrencyLimitExecutor(4, businessPool);
+
+List<CompletableFuture<Void>> stages = new ArrayList<>();
+for (Request request : requests) {
+  stages.add(CompletableFuture.runAsync(() -> handle(request), atMost4));
+}
+CompletableFuture.allOf(stages.toArray(CompletableFuture[]::new)).join();
+
+// 一次只跑一个，使用该 factory 的缺省执行器
+Executor oneAtATime = cffuFactory.sequentialExecutor();
+```
+
+约束：
+
+- 基础执行器应在自己的线程上运行任务。如果它在调用线程上运行 worker
+  （direct executor，或饱和后使用 `CallerRunsPolicy` 的线程池），
+  则只会在调用线程上运行刚刚提交的那一个任务，异常传播给调用方，并且不会启动队列中的其它任务。
+  这类调用线程运行占满全部槽位后，后续 `execute` 抛出 `RejectedExecutionException`，新任务不会入队。
+  单线程提交也无法把并发度打满到 `maxConcurrency`。
+  出现调用线程运行时会打警告日志，按 1、2、4、8…… 次采样，不是每次都打。
+- 任务会先入内部队列，再交给基础执行器。如果这次调用抛出异常（例如线程池已关闭），
+  并且当时没有异步 worker 正在排空队列，该任务不会启动。
+  限制执行器之后被垃圾回收时队列仍非空，cffu 会打警告日志，说明这些任务将被丢弃。
+  `toString` 会带上当前 worker 数、调用线程运行数、队列长度、上限和基础执行器。
+- `CffuFactory` 对基础执行器的处理与它的其它异步方法相同，包括已安装的
+  `ExecutorWrapperProvider` SPI 包装（classpath 上有 TTL 模块时即 TTL 包装）。
+  `CompletableFutureUtils` 只做 `screenExecutor`（Java 8 在公共池不能并行时的回退），
+  不会套 SPI 包装。需要把 ThreadLocal 传到任务上时，用 factory 方法。
+
 ### 更多功能说明
 
 可以参见：
@@ -665,6 +722,8 @@ public class CfParallelDemo {
 - 实现源码，如
   - [`Cffu.java`](../cffu-core/src/main/java/io/foldright/cffu2/Cffu.java)、[`MCffu.java`](../cffu-core/src/main/java/io/foldright/cffu2/MCffu.java)、[`BaseCffu.java`](../cffu-core/src/main/java/io/foldright/cffu2/BaseCffu.java)、[`CffuFactory.java`](../cffu-core/src/main/java/io/foldright/cffu2/CffuFactory.java)
   - [`CompletableFutureUtils.java`](../cffu-core/src/main/java/io/foldright/cffu2/CompletableFutureUtils.java)、[`CfIterableUtils.java`](../cffu-core/src/main/java/io/foldright/cffu2/CfIterableUtils.java)、[`CfParallelUtils.java`](../cffu-core/src/main/java/io/foldright/cffu2/CfParallelUtils.java)
+  - [`ConcurrencyLimitExecutor.java`](../cffu-core/src/main/java/io/foldright/cffu2/ConcurrencyLimitExecutor.java)
+    （`concurrencyLimitExecutor` / `sequentialExecutor` 的包内实现）
 
 ## 3. `cffu`库提供的编排方法及其最佳实践
 

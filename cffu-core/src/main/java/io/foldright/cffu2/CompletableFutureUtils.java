@@ -931,10 +931,16 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new Executor that submits a task to the default executor and limits the number of concurrent tasks.
+     * Returns a new Executor that submits tasks to the default executor
+     * ({@link LLCF#ASYNC_POOL}) and runs at most {@code maxConcurrency} of them at a time.
+     * <p>
+     * See {@link #concurrencyLimitExecutor(int, Executor)} for queueing, caller-thread execution,
+     * and rejection behavior. This overload does not apply {@code ExecutorWrapperProvider} SPI wrappers;
+     * use {@link CffuFactory#concurrencyLimitExecutor(int)} when those wrappers (for example TTL) must wrap the base executor.
      *
-     * @param maxConcurrency the maximum number of tasks that can run concurrently
+     * @param maxConcurrency the maximum number of tasks that can run concurrently; must be positive
      * @return the new concurrency limit executor
+     * @throws IllegalArgumentException if {@code maxConcurrency} is not positive
      * @since 2.1.0
      */
     @Contract(pure = true)
@@ -943,11 +949,41 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Returns a new Executor that submits a task to the given base executor and limits the number of concurrent tasks.
+     * Returns a new Executor that submits tasks to the given base executor
+     * and runs at most {@code maxConcurrency} of them at a time.
+     * <p>
+     * {@link #sequentialExecutor(Executor)} is this method with {@code maxConcurrency == 1}.
+     * When asynchronous workers already occupy every slot, further tasks are queued and started
+     * in submission order (FIFO) as slots free. Exceptions from a task on an asynchronous worker
+     * are logged and do not stop that worker from running later queued tasks.
+     * {@link InterruptedException} thrown by a task is treated as an interrupt of the worker thread
+     * and is restored when the worker finishes.
+     * <p>
+     * <strong>Caller-thread base executors.</strong> If the base executor runs the worker on the
+     * submitting thread (a direct executor, or a pool that uses {@code CallerRunsPolicy}),
+     * only the task passed to that {@code execute} call runs, and its exception propagates to the caller.
+     * That run does not start other queued tasks. A warning is logged for these runs, sampled at
+     * counts 1, 2, 4, 8, and so on. If such caller-thread runs already occupy every slot,
+     * {@code execute} throws {@link RejectedExecutionException} and does not queue the task.
+     * A base executor that always runs on the caller therefore cannot keep a backlog of work:
+     * extra submissions are rejected once every slot is taken by a caller-thread run.
+     * <p>
+     * <strong>Base executor rejection.</strong> The task is placed on the internal queue before the
+     * base executor is called. If that call throws (for example the base executor is shut down) and no
+     * asynchronous worker is already draining the queue, the task is not started. If this executor is
+     * later garbage-collected with tasks still queued, a warning is logged that those tasks will be discarded.
+     * <p>
+     * {@code executor} is screened with {@link LLCF#screenExecutor(Executor)}: {@code null} is rejected,
+     * and on Java 8 {@link java.util.concurrent.ForkJoinPool#commonPool()} is replaced when that pool's
+     * parallelism is 1 or less. This method does not apply {@link io.foldright.cffu2.spi.ExecutorWrapperProvider}
+     * SPI wrappers. {@link CffuFactory#concurrencyLimitExecutor(int, Executor)} does, using the same path as
+     * other {@code CffuFactory} async methods.
      *
-     * @param maxConcurrency the maximum number of tasks that can run concurrently
+     * @param maxConcurrency the maximum number of tasks that can run concurrently; must be positive
      * @param executor       the base executor
      * @return the new concurrency limit executor
+     * @throws IllegalArgumentException if {@code maxConcurrency} is not positive
+     * @throws NullPointerException     if {@code executor} is null
      * @since 2.1.0
      */
     @Contract(pure = true)
@@ -963,6 +999,7 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>NOTE:</strong> Calling this method {@code CompletableFutureUtils.sequentialExecutor()}
      * is the same as {@code CompletableFutureUtils.concurrencyLimitExecutor(1)}.
+     * See {@link #concurrencyLimitExecutor(int, Executor)} for caller-thread execution and rejection behavior.
      *
      * @return the new sequential executor
      * @see com.google.common.util.concurrent.MoreExecutors#newSequentialExecutor(Executor)
@@ -979,8 +1016,12 @@ public final class CompletableFutureUtils {
      * <p>
      * <strong>NOTE:</strong> Calling this method {@code CompletableFutureUtils.sequentialExecutor(executor)}
      * is the same as {@code CompletableFutureUtils.concurrencyLimitExecutor(1, executor)}.
+     * See {@link #concurrencyLimitExecutor(int, Executor)} for caller-thread execution and rejection behavior.
+     * With an asynchronous base executor, tasks start in submission order and do not overlap.
      *
+     * @param executor the base executor
      * @return the new sequential executor
+     * @throws NullPointerException if {@code executor} is null
      * @see com.google.common.util.concurrent.MoreExecutors#newSequentialExecutor(Executor)
      * @since 2.1.0
      */

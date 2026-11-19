@@ -19,9 +19,28 @@ import static java.lang.Thread.currentThread;
 
 
 /**
+ * Runs at most {@code maxConcurrency} tasks at a time on a base executor.
+ * Application code constructs this through
+ * {@link CompletableFutureUtils#concurrencyLimitExecutor(int, Executor)} or
+ * {@link CffuFactory#concurrencyLimitExecutor(int, Executor)}.
+ * <p>
+ * {@code queue}, {@code workerCount}, and {@code syncRunnerCount} are guarded by {@code lock}.
+ * User tasks run outside the lock.
+ * <ul>
+ * <li>An asynchronous worker (the base executor did not run the worker on the submitting thread
+ *     before {@code execute} returned) polls the queue until it is empty, then decrements
+ *     {@code workerCount}. Queue order is FIFO.
+ * <li>A synchronous run (the base executor invoked the worker on the submitting thread inside
+ *     {@code execute}, as a direct executor or {@code CallerRunsPolicy} does) runs only the task
+ *     just submitted. It does not drain the queue. While {@code syncRunnerCount >= maxConcurrency},
+ *     {@code execute} throws {@link RejectedExecutionException} before the task is queued.
+ * <li>If the base {@code execute} throws, {@code workerCount} is left unchanged. The task already
+ *     queued for that attempt stays queued unless another asynchronous worker drains it.
+ * </ul>
+ *
  * @author Jerry Lee (oldratlee at gmail dot com)
- * @see CompletableFutureUtils#concurrencyLimitExecutor(int)
- * @see CffuFactory#concurrencyLimitExecutor(int)
+ * @see CompletableFutureUtils#concurrencyLimitExecutor(int, Executor)
+ * @see CffuFactory#concurrencyLimitExecutor(int, Executor)
  * @see com.google.common.util.concurrent.SequentialExecutor
  * @since 2.1.0
  */

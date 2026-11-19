@@ -59,6 +59,7 @@ Welcome 👏💖
     - [2.11 support for timeout-enabled `join` method](#211-support-for-timeout-enabled-join-method)
     - [2.12 `anyOf` method that returns specific types](#212-anyof-method-that-returns-specific-types)
     - [2.13 `allOf/anyOf` methods that accept broader input types](#213-allofanyof-methods-that-accept-broader-input-types)
+    - [2.14 limit how many tasks run at once](#214-limit-how-many-tasks-run-at-once)
     - [more feature documentation](#more-feature-documentation)
   - [3. Orchestration Methods of `cffu` library and Best Practices](#3-orchestration-methods-of-cffu-library-and-best-practices)
     - [3.1 orchestration method groups](#31-orchestration-method-groups)
@@ -112,6 +113,8 @@ Welcome 👏💖
       and the returned `CF` result may not be consistent with the input
   - Support for timeout-enabled `join(timeout, unit)` method
   - Support for the forbidding `obtrude` methods via `CffuFactoryBuilder#forbidObtrudeMethods` method
+  - Concurrency-limited executors, `concurrencyLimitExecutor` / `sequentialExecutor` (since 2.1.0)
+    - Cap how many tasks run at once on a base executor, including a limit of 1 (sequential execution)
   - Complete code quality annotations attached to class methods,
     enabling `IDE`s to provide early problem warnings during coding
     - Such as `@NonNull`, `@Nullable`, `@CheckReturnValue`, `@Contract`, etc.
@@ -771,6 +774,60 @@ making them more convenient to use.
 
 The method usage is simple and similar, so no code example is provided.
 
+### 2.14 limit how many tasks run at once
+
+Since 2.1.0, `cffu` can cap how many submitted tasks run at the same time.
+`sequentialExecutor` is the same facility with a limit of 1
+(the same role as Guava `MoreExecutors.newSequentialExecutor`).
+
+| Method | Runs tasks on |
+| --- | --- |
+| `CompletableFutureUtils.concurrencyLimitExecutor(maxConcurrency)` | the default async executor (`LLCF.ASYNC_POOL`) |
+| `CompletableFutureUtils.concurrencyLimitExecutor(maxConcurrency, executor)` | the given base executor |
+| `CompletableFutureUtils.sequentialExecutor()` / `sequentialExecutor(executor)` | the same, with `maxConcurrency == 1` |
+| `CffuFactory` methods of the same names | the factory default executor when the executor argument is omitted |
+
+`maxConcurrency` must be positive (`IllegalArgumentException` otherwise). The executor argument must be non-null.
+
+With an asynchronous base executor (a normal thread pool):
+
+- At most `maxConcurrency` tasks run at once.
+- Tasks submitted while every slot is busy are queued and started in submission order (FIFO) as slots free.
+- `sequentialExecutor` therefore runs tasks one at a time, in submission order, without overlap.
+- An exception from a task is logged and does not stop the worker from running later queued tasks.
+  `InterruptedException` thrown by a task (including from other JVM languages) is restored on the worker thread when that worker finishes.
+
+```java
+ExecutorService businessPool = Executors.newFixedThreadPool(32);
+Executor atMost4 = CompletableFutureUtils.concurrencyLimitExecutor(4, businessPool);
+
+List<CompletableFuture<Void>> stages = new ArrayList<>();
+for (Request request : requests) {
+  stages.add(CompletableFuture.runAsync(() -> handle(request), atMost4));
+}
+CompletableFuture.allOf(stages.toArray(CompletableFuture[]::new)).join();
+
+// one at a time, on this factory's default executor
+Executor oneAtATime = cffuFactory.sequentialExecutor();
+```
+
+Constraints:
+
+- Pass a base executor that runs tasks on its own threads. If it runs the worker on the caller
+  (a direct executor, or a saturated pool with `CallerRunsPolicy`), only the task just submitted runs,
+  on the caller, and its exception propagates to the caller. That run does not start other queued tasks.
+  Once those caller-thread runs occupy every slot, further `execute` calls throw `RejectedExecutionException`
+  and the new task is not queued. A single-threaded submitter also cannot fill `maxConcurrency` this way.
+  cffu logs a warning for caller-thread runs, sampled at counts 1, 2, 4, 8, and so on.
+- The task is queued before the base executor is called. If that call throws (the pool is shut down, for example)
+  and no asynchronous worker is already draining the queue, the task never starts. If the limit executor is
+  later garbage-collected with tasks still queued, cffu logs a warning that those tasks will be discarded.
+  `toString` reports the current worker count, caller-thread runner count, queue size, limit, and base executor.
+- `CffuFactory` screens the base executor the same way as its other async methods, including
+  `ExecutorWrapperProvider` SPI wrappers (the TTL wrapper, when that module is on the classpath).
+  `CompletableFutureUtils` only applies `screenExecutor` (the Java 8 common-pool fallback when parallelism is disabled).
+  It does not apply SPI wrappers. Use the factory methods when thread-local transmission has to follow the task.
+
 ### more feature documentation
 
 You can refer to:
@@ -784,6 +841,8 @@ You can refer to:
   - [`CompletableFutureUtils.java`](cffu-core/src/main/java/io/foldright/cffu2/CompletableFutureUtils.java),
     [`CfIterableUtils.java`](cffu-core/src/main/java/io/foldright/cffu2/CfIterableUtils.java),
     [`CfParallelUtils.java`](cffu-core/src/main/java/io/foldright/cffu2/CfParallelUtils.java)
+  - [`ConcurrencyLimitExecutor.java`](cffu-core/src/main/java/io/foldright/cffu2/ConcurrencyLimitExecutor.java)
+    (package-private implementation of `concurrencyLimitExecutor` / `sequentialExecutor`)
 
 ## 3. Orchestration Methods of `cffu` library and Best Practices
 
