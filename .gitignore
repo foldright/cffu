@@ -6,6 +6,13 @@ next.release.version.*
 *.local.*
 *.local
 
+/.agents/
+/.claude/
+/.cursor/
+/.devin/
+/.junie/
+/.opencode/
+
 ### codecov
 /codecov*
 
