@@ -34,6 +34,7 @@
       <w>moditect</w>
       <w>mvnw</w>
       <w>oldratlee</w>
+      <w>opencode</w>
       <w>ossrh</w>
       <w>revapi</w>
       <w>ripgrep</w>
@@ -43,6 +44,7 @@
       <w>synchronizers</w>
       <w>throwables</w>
       <w>unscreened</w>
+      <w>worktreeinclude</w>
       <w>wrappee</w>
     </words>
   </dictionary>
