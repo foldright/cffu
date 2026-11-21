@@ -77,8 +77,17 @@ mvu::mvn_cmd clean install -Dcffu.exception.log.format=
 # shellcheck disable=SC2034
 readonly MVN_OPTS_FOR_JAVA8=(
   -P!default-logging-dependencies
-  # test usage `ThreadPerTaskExecutor` as screen executor of `CompletableFuture`
-  #   by setting `-D option java.util.concurrent.ForkJoinPool.common.parallelism=1`
+  # Java 8 only: LLCF.ASYNC_POOL's inner ternary is
+  #   USE_COMMON_POOL ? ForkJoinPool.commonPool() : new ThreadPerTaskExecutor()
+  # and both USE_COMMON_POOL and ASYNC_POOL are static finals.
+  # ForkJoinPool reads `java.util.concurrent.ForkJoinPool.common.parallelism`
+  # in its own static initializer, which runs before any test can call System.setProperty,
+  # so one JVM executes exactly one arm.
+  #
+  # parallelism=1 (this run) takes `new ThreadPerTaskExecutor()`, the fallback
+  # CompletableFuture uses when the common pool cannot run tasks in parallel.
+  # The commonPool() arm is a second Java 8 JVM later in this script;
+  # do not drop this -D or that arm's opposite side becomes uncovered again.
   -Djava.util.concurrent.ForkJoinPool.common.parallelism=1
 )
 # shellcheck disable=SC2034
@@ -116,4 +125,18 @@ for jdk_version in "${JDK_VERSIONS[@]}"; do
   )
 
   "${cmd_line[@]}"
+
+  # Second Java 8 JVM for the other ASYNC_POOL arm. Do not merely omit -D:
+  # the default parallelism is availableProcessors()-1, which is still 1
+  # on a 2-core machine, so USE_COMMON_POOL would stay false.
+  # parallelism=2 forces `ForkJoinPool.commonPool()` during LLCF's static init.
+  #
+  # In CI, jacoco:prepare-agent is configured with append=true, so this JVM's data
+  # is merged into jacoco.exec; a later JDK's jacoco:report is what Codecov uploads.
+  #
+  # Surefire promotes Maven -D user properties into the forked test JVM
+  # (the parallelism=1 run above depends on the same mechanism).
+  if [ "$jdk_version" = 8 ]; then
+    "${cmd_line[@]}" -Djava.util.concurrent.ForkJoinPool.common.parallelism=2
+  fi
 done
