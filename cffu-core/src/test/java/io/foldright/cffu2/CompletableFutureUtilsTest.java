@@ -5,6 +5,8 @@ import io.foldright.cffu2.tuple.Tuple3;
 import io.foldright.test_utils.ConcurrencyChecker;
 import io.foldright.test_utils.TestUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -1562,6 +1564,64 @@ class CompletableFutureUtilsTest {
     }
 
     @Test
+    @EnabledForJreRange(min = JRE.JAVA_19)
+    void test_toCffuState_null() {
+        assertThrowsExactly(NullPointerException.class, () -> CffuState.toCffuState(null));
+    }
+
+    @Test
+    void test_getSuccessNow_whenJoinThrowsDespiteNormalCompletionCheck() {
+        // join() throwing here is the obtrudeException race: isDone && !isCompletedExceptionally
+        // passed, then the future was forced exceptional before join().
+        JoinThrowsCf<Integer> completionEx = new JoinThrowsCf<>();
+        completionEx.complete(n);
+        completionEx.joinThrow = rte;
+        assertEquals(anotherN, getSuccessNow(completionEx, anotherN));
+        assertNull(getSuccessNow(completionEx, null));
+
+        JoinThrowsCf<Integer> cancellationEx = new JoinThrowsCf<>();
+        cancellationEx.complete(n);
+        cancellationEx.joinThrow = new CancellationException("obtrude");
+        assertEquals(anotherN, getSuccessNow(cancellationEx, anotherN));
+    }
+
+    /**
+     * Covers the Java 18- fallback in {@code resultNow}/{@code exceptionNow}/{@code state}:
+     * retry after {@link InterruptedException}, restore the interrupt flag, and treat
+     * {@code get()} throwing {@link CancellationException} as cancelled.
+     * On Java 19+ this exercises the JDK {@link Future} default methods instead.
+     */
+    @Test
+    void test_resultNow_exceptionNow_state_interruptAndInconsistentFuture() {
+        Thread.interrupted();
+        try {
+            ScriptedFuture<Integer> interruptedThenValue = new ScriptedFuture<>(true, false,
+                    new InterruptedException("once"), n);
+            assertEquals(n, resultNow(interruptedThenValue));
+            assertTrue(currentThread().isInterrupted());
+            Thread.interrupted();
+
+            String cancelledMsg = assertThrowsExactly(IllegalStateException.class, () ->
+                    resultNow(new ScriptedFuture<>(true, false, new CancellationException("inconsistent")))
+            ).getMessage();
+            assertEquals("Task was cancelled", cancelledMsg);
+
+            ScriptedFuture<Integer> interruptedThenFail = new ScriptedFuture<>(true, false,
+                    new InterruptedException("once"), new ExecutionException(rte));
+            assertSame(rte, exceptionNow(interruptedThenFail));
+            assertTrue(currentThread().isInterrupted());
+            Thread.interrupted();
+
+            ScriptedFuture<Integer> interruptedThenSuccess = new ScriptedFuture<>(true, false,
+                    new InterruptedException("once"), n);
+            assertSame(CffuState.SUCCESS, state(interruptedThenSuccess));
+            assertTrue(currentThread().isInterrupted());
+        } finally {
+            Thread.interrupted();
+        }
+    }
+
+    @Test
     void test_write() throws Exception {
         ////////////////////////////////////////
         // completeAsync
@@ -1700,6 +1760,60 @@ class CompletableFutureUtilsTest {
     private static class CustomizedExecutorCf<T> extends CompletableFuture<T> {
         public Executor defaultExecutor() {
             return testFjExecutor;
+        }
+    }
+
+    private static final class JoinThrowsCf<T> extends CompletableFuture<T> {
+        volatile Throwable joinThrow;
+
+        @Override
+        public T join() {
+            Throwable t = joinThrow;
+            if (t instanceof CancellationException) throw (CancellationException) t;
+            if (t != null) throw new CompletionException(t);
+            return super.join();
+        }
+    }
+
+    /**
+     * A non-{@link CompletableFuture} / non-{@link BaseCffu} Future with scripted {@code get()} outcomes.
+     */
+    private static final class ScriptedFuture<T> implements Future<T> {
+        private final boolean done;
+        private final boolean cancelled;
+        private final Object[] outcomes;
+        private int index;
+
+        ScriptedFuture(boolean done, boolean cancelled, Object... outcomes) {
+            this.done = done;
+            this.cancelled = cancelled;
+            this.outcomes = outcomes;
+        }
+
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) {return false;}
+
+        @Override
+        public boolean isCancelled() {return cancelled;}
+
+        @Override
+        public boolean isDone() {return done;}
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public T get() throws InterruptedException, ExecutionException {
+            Object o = outcomes[Math.min(index++, outcomes.length - 1)];
+            if (o instanceof InterruptedException) throw (InterruptedException) o;
+            if (o instanceof ExecutionException) throw (ExecutionException) o;
+            if (o instanceof CancellationException) throw (CancellationException) o;
+            if (o instanceof RuntimeException) throw (RuntimeException) o;
+            if (o instanceof Error) throw (Error) o;
+            return (T) o;
+        }
+
+        @Override
+        public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException {
+            return get();
         }
     }
 

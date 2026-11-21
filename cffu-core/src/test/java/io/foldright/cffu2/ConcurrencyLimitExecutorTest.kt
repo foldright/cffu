@@ -41,7 +41,8 @@ import kotlin.random.Random
  * `CallerRunsPolicy` becomes synchronous only once its pool is saturated.
  *
  * Diagnostics: `toString` while idle, running and drained; the submitted task's `toString`;
- * `isPowerOfTwo`; the finalize report for tasks still queued.
+ * `isPowerOfTwo`; the finalize report for tasks still queued; caller-thread reuse after
+ * `execute` returns; an Error escaping the drain loop still releasing the slot.
  *
  * @see ConcurrencyLimitExecutorRejectionTest
  * @see ConcurrencyLimitExecutorBulkSubmissionTest
@@ -366,6 +367,70 @@ class ConcurrencyLimitExecutorTest : FunSpec({
         val rte = RuntimeException("foo")
         shouldThrowExactly<RuntimeException> { executor.execute { throw rte } }
             .shouldBeSameInstanceAs(rte)
+    }
+
+    test("caller thread reused after execute returns drains every queued task") {
+        // The pool's only thread calls execute(), which queues the worker and returns.
+        // That same thread later runs the worker (thread-pool reuse): on the caller
+        // thread, but execute() has already returned, so this is asyncWork and it
+        // drains the queue. syncRun would run only the first task and leave the second queued.
+        val pool = Executors.newSingleThreadExecutor()
+        try {
+            val concurrencyLimitExecutor = ConcurrencyLimitExecutor(1, pool)
+            val ran = CopyOnWriteArrayList<String>()
+            val done = CountDownLatch(2)
+            pool.submit {
+                concurrencyLimitExecutor.execute {
+                    ran.add("first")
+                    done.countDown()
+                }
+                concurrencyLimitExecutor.execute {
+                    ran.add("second")
+                    done.countDown()
+                }
+            }.get(5, TimeUnit.SECONDS)
+            done.await(5, TimeUnit.SECONDS) shouldBe true
+            ran shouldBe listOf("first", "second")
+        } finally {
+            pool.shutdownNow()
+        }
+    }
+
+    test("async worker still releases the slot if Error escapes the drain loop") {
+        val taskStarted = CountDownLatch(1)
+        val boom = Error("intentional toString Error")
+        val exploding = object : Runnable {
+            override fun run() {
+                taskStarted.countDown()
+                throw RuntimeException("intentional task failure")
+            }
+
+            override fun toString(): String = throw boom
+        }
+        val workerError = AtomicReference<Throwable>()
+        val workerDone = CountDownLatch(1)
+        val catching = Executor { r ->
+            executor.execute {
+                try {
+                    r.run()
+                } catch (t: Throwable) {
+                    workerError.set(t)
+                } finally {
+                    workerDone.countDown()
+                }
+            }
+        }
+        val concurrencyLimitExecutor = ConcurrencyLimitExecutor(1, catching)
+        concurrencyLimitExecutor.execute(exploding)
+
+        taskStarted.await(5, TimeUnit.SECONDS) shouldBe true
+        workerDone.await(5, TimeUnit.SECONDS) shouldBe true
+        workerError.get() shouldBeSameInstanceAs boom
+
+        // maxConcurrency is 1. The second task runs only if the dead worker released its slot.
+        val second = CountDownLatch(1)
+        concurrencyLimitExecutor.execute { second.countDown() }
+        second.await(5, TimeUnit.SECONDS) shouldBe true
     }
 
     test("isPowerOfTwo") {
