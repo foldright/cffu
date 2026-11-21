@@ -457,7 +457,9 @@ public final class LLCF {
      */
     // Java 9+: CompletableFuture#defaultExecutor(), so this follows the JDK
     // (Java 25+ is ForkJoinPool.asyncCommonPool(), always the common pool).
-    // Java 8: copied from CompletableFuture#ASYNC_POOL (USE_COMMON_POOL / ThreadPerTaskExecutor).
+    // The inner ternary is not evaluated there.
+    // Java 8: copied from CompletableFuture#ASYNC_POOL.
+    //   USE_COMMON_POOL ? ForkJoinPool.commonPool() : new ThreadPerTaskExecutor()
     public static final Executor ASYNC_POOL = IS_JAVA9_PLUS
             ? completedFuture(null).defaultExecutor()
             : USE_COMMON_POOL ? ForkJoinPool.commonPool() : new ThreadPerTaskExecutor();
