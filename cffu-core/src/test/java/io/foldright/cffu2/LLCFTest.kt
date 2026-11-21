@@ -12,6 +12,7 @@ import io.kotest.matchers.future.shouldCompleteExceptionallyWith
 import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import org.apache.commons.lang3.JavaVersion
@@ -21,6 +22,9 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.completedFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executor
+import java.util.concurrent.ForkJoinPool
+import java.util.concurrent.atomic.AtomicInteger
 
 class LLCFTest : FunSpec({
     val testExecutor = createThreadPool("CheckMinStageRuntimeTypeTests", queueCapacity = 1000_000)
@@ -288,6 +292,38 @@ class LLCFTest : FunSpec({
         }, testExecutor)
         relayedOfCompleteLater.isDone.shouldBeFalse()
         relayedOfCompleteLater.join().shouldBeNull()
+    }
+
+    test("relayAsync0 completes on the caller thread after peek0 returns") {
+        // Completing the input stage on the caller thread after peek0 has returned
+        // covers `onCallerThread && returnedFromPeek0` (direct complete, no extra hop).
+        val hops = AtomicInteger()
+        val recordingExecutor = Executor { r ->
+            hops.incrementAndGet()
+            testExecutor.execute(r)
+        }
+        val incomplete = incompleteCf<Int>()
+        val relayed = relayAsync0(incomplete, { f -> f.thenApply { v -> v * 2 } }, recordingExecutor)
+        relayed.isDone.shouldBeFalse()
+
+        incomplete.complete(21)
+        relayed.join() shouldBe 21 * 2
+        hops.get() shouldBeExactly 0
+    }
+
+    test("ASYNC_POOL on Java 8 follows USE_COMMON_POOL") {
+        // Java 9+ uses CompletableFuture.defaultExecutor(); the inner ternary is Java 8 only.
+        // On Java 8 both flags are static finals, latched from ForkJoinPool parallelism
+        // at class init, so this JVM checks only the arm it was started with:
+        //   parallelism > 1 -> commonPool()
+        //   parallelism <= 1 -> ThreadPerTaskExecutor
+        if (!LLCF.IS_JAVA9_PLUS) {
+            if (ForkJoinPool.getCommonPoolParallelism() > 1) {
+                LLCF.ASYNC_POOL shouldBeSameInstanceAs ForkJoinPool.commonPool()
+            } else {
+                LLCF.ASYNC_POOL.javaClass.name shouldEndWith "\$ThreadPerTaskExecutor"
+            }
+        }
     }
 
     test("IS_JAVA*_PLUS") {
