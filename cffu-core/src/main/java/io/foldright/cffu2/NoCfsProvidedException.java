@@ -5,7 +5,7 @@ import java.util.concurrent.CompletionStage;
 
 
 /**
- * Exception indicates that NO cfs({@link CompletionStage}, including subclass {@link Cffu} /
+ * Exception indicates that NO cfs({@link CompletionStage}, including {@link Cffu} and
  * {@link CompletableFuture}) are provided for methods that require cf arguments.
  *
  * @author Jerry Lee (oldratlee at gmail dot com)

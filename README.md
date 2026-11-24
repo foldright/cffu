@@ -114,7 +114,7 @@ Welcome 👏💖
   - Support for the forbidding `obtrude` methods via `CffuFactoryBuilder#forbidObtrudeMethods` method
   - Complete code quality annotations attached to class methods,
     enabling `IDE`s to provide early problem warnings during coding
-    - Such as `@NonNull`, `@Nullable`, `@CheckReturnValue`, `@Contract`, etc.
+    - Such as `@NonNull`, `@Nullable`, `@CheckReturnValue`, and `@Contract`
 - 🧩 Missing basic functionality, in addition to the safety-oriented new implementations above, including:
   - Async exception completion, `completeExceptionallyAsync` method
   - Non-blocking retrieval of successful results, returning specified default values
@@ -415,7 +415,7 @@ public class AnySuccessDemo {
 
 ### 2.4 support for setting the default business thread pool
 
-The default thread pool used by `CompletableFuture` async execution (i.e. `*Async` methods)
+The default thread pool used by `CompletableFuture` `*Async` methods that do not take an `Executor`
 is `ForkJoinPool.commonPool()`; using this default thread pool in business is very dangerous❗
 
 - `ForkJoinPool.commonPool()` has about as many threads as CPUs, suitable for executing CPU-intensive tasks;
@@ -900,7 +900,7 @@ Compared to the above method groups (multiple `Action`s/multiple data), these me
 > should be treated as lower-level basic methods, used only when necessary.
 >
 > In critical business logic, when using these methods, pay attention to
-> implementing good exception reporting logic, i.e. don't swallow exceptions:
+> implementing good exception reporting logic. In particular, do not swallow exceptions:
 > - For implementation reference, see `cffu` implementation code, such as `CompletableFutureUtils.mSupplyFailFastAsync()`
 > - The `cffu` library provides support utility class [`SwallowedExceptionHandleUtils`](https://foldright.io/api-docs/cffu2/2.0.7/io/foldright/cffu2/eh/SwallowedExceptionHandleUtils.html)
     for implementing orchestration exception reporting

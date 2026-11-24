@@ -70,7 +70,7 @@ public final class CffuFactoryBuilder {
 
     /**
      * A poison object of type CffuFactory.
-     * Because the poison object is dysfunctional, in general you should NEVER use it in your application logic.
+     * Because the poison object is dysfunctional, application code must not use it.
      */
     public static final CffuFactory POISON_FACTORY = _poisonObject();
 
@@ -109,9 +109,9 @@ public final class CffuFactoryBuilder {
         private CffuDefaultExecutor(Executor defaultExecutor) {
             requireNonNull(defaultExecutor, "defaultExecutor is null");
             if (defaultExecutor instanceof CffuDefaultExecutor)
-                throw new IllegalArgumentException("input defaultExecutor should never be a CffuDefaultExecutor");
+                throw new IllegalArgumentException("defaultExecutor must not be a CffuDefaultExecutor");
             if (defaultExecutor instanceof CffuMadeExecutor)
-                throw new IllegalArgumentException("input defaultExecutor should never be a CffuMadeExecutor");
+                throw new IllegalArgumentException("defaultExecutor must not be a CffuMadeExecutor");
             original = defaultExecutor;
             screened = wrapExecutorWithProviders(LLCF.screenExecutor(defaultExecutor), defaultExecutor);
         }
@@ -146,7 +146,7 @@ public final class CffuFactoryBuilder {
 
     private static CffuMadeExecutor wrapExecutorWithProviders(Executor executor, Executor original) {
         if (executor instanceof CffuMadeExecutor)
-            throw new IllegalArgumentException("input executor should never be a CffuMadeExecutor");
+            throw new IllegalArgumentException("executor must not be a CffuMadeExecutor");
 
         for (ExecutorWrapperProvider provider : EXECUTOR_WRAPPER_PROVIDERS) {
             Supplier<String> msg = () -> provider + "(class: " + provider.getClass().getName() + ") return null";

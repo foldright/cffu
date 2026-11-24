@@ -950,9 +950,9 @@ class CffuFactoryTest {
 
         assertSame(fac2, fac2.withDefaultExecutor(fac2.defaultExecutor()));
 
-        assertEquals("input defaultExecutor should never be a CffuDefaultExecutor", assertThrowsExactly(
+        assertEquals("defaultExecutor must not be a CffuDefaultExecutor", assertThrowsExactly(
                 IllegalArgumentException.class, () -> fac2.withDefaultExecutor(fac2.defaultExecutor)).getMessage());
-        assertEquals("input defaultExecutor should never be a CffuMadeExecutor", assertThrowsExactly(
+        assertEquals("defaultExecutor must not be a CffuMadeExecutor", assertThrowsExactly(
                 IllegalArgumentException.class, () -> fac2.withDefaultExecutor(fac2.defaultExecutor.screened)).getMessage());
     }
 

@@ -431,9 +431,9 @@ public final class CfTupleUtils {
 
     private static <T> CompletableFuture<T> f_mostSuccessTupleOf0(
             Executor executorWhenTimeout, long timeout, TimeUnit unit, CompletionStage<?>[] stages) {
-        // 1. MUST be non-minimal-stage CF instances to read results(`getSuccessNow`), otherwise UnsupportedOpException.
+        // 1. MUST be non-minimal stage CF instances to read results(`getSuccessNow`), otherwise, UnsupportedOpException.
         // 2. SHOULD copy input cfs (by calling `exceptionally` method) to avoid memory leaks,
-        //    otherwise all input cfs would be retained until output cf completes.
+        //    otherwise, all input cfs would be retained until output cf completes.
         CompletableFuture<?>[] cfArray = mapArray(stages, CompletableFuture[]::new,
                 s -> LLCF.toNonMinCf0(s).exceptionally(v -> null));
         return cffuCompleteOnTimeout(CompletableFuture.allOf(cfArray), null, timeout, unit, executorWhenTimeout)

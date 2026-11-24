@@ -17,10 +17,10 @@ class CffuFactoryBuilderTest : FunSpec({
 
         shouldThrowExactly<IllegalArgumentException> {
             CffuFactoryBuilder.cffuScreened(testCffuFac.defaultExecutor.screened)
-        }.message shouldBe "input executor should never be a CffuMadeExecutor"
+        }.message shouldBe "executor must not be a CffuMadeExecutor"
         shouldThrowExactly<IllegalArgumentException> {
             CffuFactoryBuilder.cffuUnscreened(testCffuFac.defaultExecutor.screened)
-        }.message shouldBe "input executor should never be a CffuMadeExecutor"
+        }.message shouldBe "executor must not be a CffuMadeExecutor"
 
         testCffuFac.defaultExecutor.screened.toString().shouldStartWith("CffuMadeExecutor, wrappee: ")
             .shouldContain(" original: ")

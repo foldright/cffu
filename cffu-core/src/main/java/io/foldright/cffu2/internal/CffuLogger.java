@@ -78,7 +78,7 @@ public final class CffuLogger {
     private static volatile boolean slf4jUnavailable = false;
 
     /**
-     * Returns a logger adapter that uses {@code SLF4J} if available, otherwise uses {@link java.util.logging}.
+     * Returns a logger adapter that uses {@code SLF4J} if available, otherwise, uses {@link java.util.logging}.
      */
     private static LoggerAdapter getLoggerAdapter(Class<?> clazz) {
         if (slf4jUnavailable) return new JulLoggerAdapter(clazz);

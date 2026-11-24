@@ -29,15 +29,15 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
  * Low Level CompletableFuture utility methods for manipulating CompletableFuture. This class is for library writers,
  * the methods intended for end users are in the {@link CompletableFutureUtils} class.
  * <p>
- * In general, you should NEVER use this class unless you understand the underlying logic of CompletableFuture
- * and need to hack it. Because the methods are Low Level, use below the method name convention intentionally:
+ * Do not use this class unless you understand the underlying logic of CompletableFuture and need to manipulate
+ * it directly. Because the methods are Low Level, use below the method name convention intentionally:
  * <ul>
- * <li>methods with {@code f_} prefix means not type-safe, e.g.
+ * <li>methods with {@code f_} prefix mean not type-safe, e.g.
  *    <ul>
- *    <li>return type CompletableFuture that may be a minimal-stage
+ *    <li>return type CompletableFuture that may be a minimal stage
  *    <li>forcefully cast to {@code CompletableFuture<T>} from any {@code CompletableFuture<?>}
  *    </ul>
- * <li>methods with {@code 0} suffix means no parameter validation, e.g.
+ * <li>methods with {@code 0} suffix mean no parameter validation, e.g.
  *    <ul><li>no null check</li></ul>
  * </ul>
  *
@@ -105,9 +105,10 @@ public final class LLCF {
     /**
      * Forcefully converts CompletionStage to CompletableFuture, reuse cf instances as many as possible.
      * <p>
-     * <strong>CAUTION:</strong> This method is NOT type safe! Because reused the CF instance, The returned cf
-     * may be a minimal-stage, MUST NOT be written or read(explicitly) (e.g. {@link CompletableFuture#complete});
-     * Otherwise, the caller usage of cf may throw UnsupportedOperationException.
+     * <strong>CAUTION:</strong> This method is NOT type safe! Because the CF instance is reused, the returned cf
+     * may be a minimal stage, and then it must not be written or explicitly read
+     * (e.g. {@link CompletableFuture#complete}, {@code get}, {@code join}).
+     * Otherwise, those calls may throw UnsupportedOperationException.
      */
     @Contract(pure = true)
     @SuppressWarnings("unchecked")
@@ -129,14 +130,15 @@ public final class LLCF {
     /**
      * Converts CompletionStage to a CompletableFuture copy.
      * <p>
-     * <strong>CAUTION:</strong> This method is NOT type safe! Because reused the CF instance, The returned cf
-     * may be a minimal-stage, MUST NOT be written or read(explicitly) (e.g. {@link CompletableFuture#complete});
-     * Otherwise, the caller usage of cf may throw UnsupportedOperationException.
+     * <strong>CAUTION:</strong> This method is NOT type safe! When the input is a minimal stage, it is returned
+     * as-is (a copy of a minimal stage is still a minimal stage), so the returned cf may be a minimal stage,
+     * and then it must not be written or explicitly read (e.g. {@link CompletableFuture#complete},
+     * {@code get}, {@code join}). Otherwise, those calls may throw UnsupportedOperationException.
      */
     @Contract(pure = true)
     public static <T> CompletableFuture<T> f_toCfCopy0(CompletionStage<? extends T> stage) {
         final CompletableFuture<T> f = f_toCf0(stage);
-        // because minimal-stage is not writable, defensive copy is unneeded, directly return minimal-stage instance.
+        // because minimal stage is not writable, defensive copy is unneeded, directly return minimal stage instance.
         return isMinStageCf0(f) ? f : copy0(f);
     }
 
@@ -150,7 +152,7 @@ public final class LLCF {
     }
 
     /**
-     * Converts CompletionStage to non-minimal-stage CompletableFuture, reuse cf instances as many as possible.
+     * Converts CompletionStage to non-minimal stage CompletableFuture, reuse cf instances as many as possible.
      * <p>
      * <strong>CAUTION:</strong> because reused the CF instance, if the caller need defensive copy
      * instead of writing it directly, use method {@link #toNonMinCfCopy0(CompletionStage)}).
@@ -162,7 +164,7 @@ public final class LLCF {
     }
 
     /**
-     * Converts CompletionStage array to a non-minimal-stage CompletableFuture array,
+     * Converts CompletionStage array to a non-minimal stage CompletableFuture array,
      * reuse cf instances as many as possible. For more information, see method {@link #toNonMinCf0(CompletionStage)}.
      */
     @Contract(pure = true)
@@ -171,10 +173,10 @@ public final class LLCF {
     }
 
     /**
-     * Converts CompletionStage to a non-minimal-stage CompletableFuture copy. This method is type safe.
+     * Converts CompletionStage to a non-minimal stage CompletableFuture copy. This method is type safe.
      * <p>
      * Implementation Note: The returned instances of calling {@code copy} methods
-     * ({@link CompletableFuture#copy}) on minimal-stage instances is still minimal-stage
+     * ({@link CompletableFuture#copy}) on minimal stage instances is still minimal stage
      * (e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().copy()}).
      */
     @Contract(pure = true)
@@ -184,7 +186,7 @@ public final class LLCF {
     }
 
     /**
-     * Converts CompletionStage array to a non-minimal-stage CompletableFuture copy array. This method is type safe.
+     * Converts CompletionStage array to a non-minimal stage CompletableFuture copy array. This method is type safe.
      * For more information, see method {@link #toNonMinCfCopy0(CompletionStage)}.
      */
     @Contract(pure = true)
@@ -193,13 +195,13 @@ public final class LLCF {
     }
 
     /**
-     * Checks if the given {@code CompletableFuture} instance is a minimal-stage.
+     * Checks if the given {@code CompletableFuture} instance is a minimal stage.
      * <p>
-     * Implementation Note: While minimal-stage is implemented as a private subclass of CompletableFuture,
-     * the CompletableFuture API consistently uses CompletionStage type for minimal-stage instances
-     * and reserves CompletableFuture type for non-minimal-stage instances only.
+     * Implementation Note: While minimal stage is implemented as a private subclass of CompletableFuture,
+     * the CompletableFuture API consistently uses CompletionStage type for minimal stage instances
+     * and reserves CompletableFuture type for non-minimal stage instances only.
      * <p>
-     * This contract for minimal-stage type MUST be followed for end users APIs.
+     * This contract for minimal stage type MUST be followed for end users APIs.
      */
     @Contract(pure = true)
     public static boolean isMinStageCf0(CompletableFuture<?> cf) {
@@ -208,7 +210,7 @@ public final class LLCF {
 
     /**
      * Forcefully casts a CompletionStage to a subclass, enabling a "self-type" cast. To maintain generic type safety,
-     * the generic type argument of the input stage and the return value should be identical. For more on the "self-type",
+     * the generic type argument of the input stage and the return value must be identical. For more on the "self-type",
      * see "Item 2: Consider a builder when faced with many constructor parameters" in "Effective Java, Third Edition".
      * <p>
      * Example codes:
@@ -235,7 +237,7 @@ public final class LLCF {
      * The uncaught exceptions thrown by the action are reported.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
-     * the given action and other actions added to the input stage cannot be guaranteed. The action should be treated
+     * the given action and other actions added to the input stage cannot be guaranteed. The action must be treated
      * as "fire and forget" - do not make any assumptions about timing or execution sequence.
      *
      * @see CompletableFutureUtils#peek(CompletionStage, BiConsumer)
@@ -254,7 +256,7 @@ public final class LLCF {
      * The uncaught exceptions thrown by the action are reported.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
-     * the given action and other actions added to the input stage cannot be guaranteed. The action should be treated
+     * the given action and other actions added to the input stage cannot be guaranteed. The action must be treated
      * as "fire and forget" - do not make any assumptions about timing or execution sequence.
      *
      * @see CompletableFutureUtils#peekAsync(CompletionStage, BiConsumer, Executor)
@@ -279,9 +281,9 @@ public final class LLCF {
     }
 
     /**
-     * Completes the given CompletableFuture with the exception (if non-null), otherwise with the value.
-     * In general, you should NEVER use this method in application codes, use {@link
-     * CompletableFuture#complete(Object)} or {@link CompletableFuture#completeExceptionally(Throwable)} instead.
+     * Completes the given CompletableFuture with the exception (if non-null), otherwise, with the value.
+     * Do not use this method in application code; use {@link CompletableFuture#complete(Object)}
+     * or {@link CompletableFuture#completeExceptionally(Throwable)} instead.
      */
     public static <T> boolean completeCf0(CompletableFuture<? super T> cf, @Nullable T value, @Nullable Throwable ex) {
         if (ex == null) return cf.complete(value);
@@ -292,7 +294,7 @@ public final class LLCF {
      * Equivalent method of {@link CompletableFuture#copy()} with {Java 8} backwards compatibility.
      * <p>
      * Implementation Note: The returned instances of calling {@code copy}/{@code thenApply} methods
-     * ({@link CompletableFuture#copy}) on minimal-stage instances is still minimal-stage
+     * ({@link CompletableFuture#copy}) on minimal stage instances is still minimal stage
      * (e.g. {@code minimalCompletionStage().copy()}, {@code completedStage().thenApply(...)}).
      *
      * @see CompletableFutureUtils#copy(CompletableFuture)
@@ -323,7 +325,7 @@ public final class LLCF {
      * Provides the "relay async" way to arrange execution of a new stage's computations that guarantees the execution
      * of the new stage's computations not in the caller thread and minimizes thread switching.
      * <blockquote>
-     * In {@link CompletionStage} (including subclass {@link CompletableFuture}),
+     * In {@link CompletionStage} (including {@link CompletableFuture}),
      * execution of a new stage's computations may be arranged in any of three ways:
      * <ul>
      * <li>"default execution",
@@ -450,7 +452,7 @@ public final class LLCF {
     /**
      * Default executor of CompletableFuture(<strong>NOT</strong> including the customized subclasses of
      * CompletableFuture). Before Java 25: {@link ForkJoinPool#commonPool()} when its parallelism is greater than 1,
-     * otherwise an executor using one thread per async task. Since Java 25: always {@link ForkJoinPool#commonPool()}
+     * otherwise, an executor using one thread per async task. Since Java 25: always {@link ForkJoinPool#commonPool()}
      * ({@code ForkJoinPool.asyncCommonPool()} raises parallelism from 0 to 2); there is no per-task thread fallback.
      *
      * @see CompletableFutureUtils#defaultExecutor(CompletionStage)

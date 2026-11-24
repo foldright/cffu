@@ -464,9 +464,9 @@ public final class CffuFactory {
 
     /**
      * Returns a new Cffu that is completed normally with a list containing the successful results of
-     * the given stages before the given timeout, i.e. as many results as possible in the given time;
-     * The list of results is in the <strong>same order</strong> as the input list, and if any of given stages
-     * complete exceptionally or are incomplete, their corresponding positions will contain {@code valueIfNotSuccess}
+     * the given stages before the given timeout; The list of results is in the <strong>same order</strong>
+     * as the input list, and if any of given stages complete exceptionally or are incomplete,
+     * their corresponding positions will contain {@code valueIfNotSuccess}
      * (which is indistinguishable from the stage having a successful value of {@code valueIfNotSuccess}).
      * If no stages are provided, returns a Cffu completed with the value empty list.
      * <p>
@@ -936,7 +936,7 @@ public final class CffuFactory {
 
     /**
      * Returns a {@link IterableOps} instance to access the {@link Iterable}-based variants
-     * (including {@link Collection}, {@link List}, etc.) of same-named varargs methods from {@link CffuFactory}.
+     * (including {@link Collection} and {@link List}) of same-named varargs methods from {@link CffuFactory}.
      * These methods handle multiple actions and Futures with the same type, aka. homogeneous.
      *
      * @see BaseCffu#iterableOps()
@@ -968,7 +968,7 @@ public final class CffuFactory {
     }
 
     /**
-     * The {@link Iterable}-based variants (including {@link Collection}, {@link List}, etc.) of
+     * The {@link Iterable}-based variants (including {@link Collection} and {@link List}) of
      * same-named varargs methods from {@link CffuFactory}.
      * These methods handle multiple actions and Futures with the same type, aka. homogeneous.
      */
@@ -1257,7 +1257,7 @@ public final class CffuFactory {
      */
     public final class ParOps {
         ////////////////////////////////////////////////////////////////////////////////
-        // Par Methods (create by multiply data and one action)
+        // Par Methods (create by multiple data and one action)
         //
         //    - parApply* (Iterable, Function: T -> U)    -> MCffu<U, List<U>>
         //    - parAccept*(Iterable, Consumer: T -> Void) -> Cffu<Void>

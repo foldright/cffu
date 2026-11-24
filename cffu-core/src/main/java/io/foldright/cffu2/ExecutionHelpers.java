@@ -185,7 +185,7 @@ final class CfCompleter<T> implements Runnable {
 }
 
 /**
- * Action to cancel the unneeded scheduled task by Future (for example, timeouts).
+ * Action to cancel the unneeded scheduled task by Future (e.g. timeouts).
  * <p>
  * code is copied from {@link CompletableFuture.Canceller} with small adaptions.
  *

@@ -19,7 +19,7 @@ import static io.foldright.cffu2.internal.CommonUtils.toArray;
 
 
 /**
- * This utility class provides {@link Iterable}-based variants (including {@link Collection}, {@link List}, etc.) of
+ * This utility class provides {@link Iterable}-based variants (including {@link Collection} and {@link List}) of
  * same-named varargs methods from {@link CompletableFutureUtils}. These methods handle multiple actions
  * and CompletableFutures with the same type, i.e. homogeneous.
  * <p>

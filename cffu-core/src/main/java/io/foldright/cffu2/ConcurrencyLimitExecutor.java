@@ -65,7 +65,8 @@ final class ConcurrencyLimitExecutor implements Executor {
         // NOTE: only accessed by the caller thread (single-threaded), so no AtomicBoolean is needed.
         final boolean[] locking = {true};
         try {
-            // When ALL workers (up to the concurrency limit) are running synchronously (i.e. CallerRunsPolicy):
+            // When ALL workers (up to the concurrency limit) are running synchronously
+            // (e.g. CallerRunsPolicy or a direct executor):
             //  - Queuing the new task would delay its execution (until triggered by a later asynchronous task);
             //    or even cause it to be DISCARDED (if all later submissions also run synchronously),
             //    because synchronous runners only execute their own submitted task, not queued tasks.
@@ -86,7 +87,8 @@ final class ConcurrencyLimitExecutor implements Executor {
                 @Override
                 public void run() {
                     boolean onCallerThread = currentThread().equals(callerThread);
-                    // Synchronous run (i.e. CallerRunsPolicy) is determined when BOTH conditions are satisfied:
+                    // Synchronous run (e.g. CallerRunsPolicy or a direct executor) is determined
+                    // when BOTH conditions are satisfied:
                     //  1. Task runs on the caller thread.
                     //  2. `executor.execute()` hasn't returned yet (the task is running during the `execute` call).
                     //     this rules out the edge case where the caller thread is later reused from a thread pool.
@@ -113,7 +115,7 @@ final class ConcurrencyLimitExecutor implements Executor {
                             locking[0] = false;
                             lock.unlock();
                         }
-                        // For synchronous run (i.e. CallerRunsPolicy) of the submitted task:
+                        // For a synchronous run (e.g. CallerRunsPolicy or a direct executor) of the submitted task:
                         //  - run the submitted command only, do NOT run other commands in the queue
                         //  - do NOT catch exceptions, let them propagate to the caller
                         command.run();
@@ -143,7 +145,7 @@ final class ConcurrencyLimitExecutor implements Executor {
                 //    - and this thread has held `lock` continuously since `queue.addLast(command)`,
                 //      so no existing async worker could have polled `command` either.
                 //    Roll back `command` from the end of `queue`;
-                //    otherwise an existing worker or a later submission would run a rejected task.
+                //    otherwise, an existing worker or a later submission would run a rejected task.
                 //  - `locking[0]` is false:
                 //    - `syncRun()` has already removed `command` and unlocked `lock`
                 //    - `ex` was thrown during synchronous execution (e.g. `command.run()`)
@@ -213,11 +215,12 @@ final class ConcurrencyLimitExecutor implements Executor {
 
     @GuardedBy("lock")
     private void reportExceedWorkerCount() {
-        // Check if worker count exceeds concurrency limit (should never happen)
+        // Invariant: workerCount must not exceed maxConcurrency.
         if (workerCount <= maxConcurrency) return;
         if (isPowerOfTwo(++exceedLimitTimes)) logger.log(ERROR, exceedLimitTimes + " concurrency limit violation(s)"
                 + " (current: " + workerCount + " > max: " + maxConcurrency + ") detected in " + this
-                + ". This should never happen - please report this issue to the cffu library!");
+                + ". Invariant violated: workerCount must not exceed maxConcurrency."
+                + " Please report this issue to the cffu library!");
     }
 
     @GuardedBy("lock")

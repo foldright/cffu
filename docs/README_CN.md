@@ -82,7 +82,7 @@
     - 即 多指令单数据(`MISD`)风格处理
   - 支持异步并行处理集合数据，而不是先包装数据与`Action`成`CompletableFuture`
     - 如方法`CfParallelUtils#parApplyFailFastAsync` / `CfParallelUtils#thenParAcceptAnySuccessAsync`
-    - 即 多指令单数据(`MISD`)风格处理
+    - 即 单指令多数据(`SIMD`)风格处理
   - 支持输入`CF`与`Action`的集合，而不是先转换集合成数据类型
     - 如方法`CfIterableUtils#allResultsFailFastOf` /
       `CfIterableUtils#mSupplyFailFastAsync` / `CfIterableUtils#thenMApplyMostSuccessAsync`
@@ -102,7 +102,7 @@
   - 支持超时的`join(timeout, unit)`方法
   - 支持禁止强制篡改，`CffuFactoryBuilder#forbidObtrudeMethods`方法
   - 在类方法附加完善的代码质量注解，在编码时`IDE`能尽早提示出问题
-    - 如`@NonNull`、`@Nullable`、`@CheckReturnValue`、`@Contract`等
+    - 如`@NonNull`、`@Nullable`、`@CheckReturnValue`、`@Contract`
 - 🧩 缺失的基本功能，除了上面面向安全而新实现的方法，还有
   - 异步异常完成，`completeExceptionallyAsync`方法
   - 非阻塞地获取成功结果，对于失败的或还在运行中的`CF`则返回指定的缺省值，`getSuccessNow`方法
@@ -358,7 +358,7 @@ public class AnySuccessDemo {
 
 ### 2.4 支持设置缺省的业务线程池
 
-`CompletableFuture`异步执行（即`*Async`方法）使用的缺省线程池是`ForkJoinPool.commonPool()`；业务中使用这个缺省线程池是很危险的❗
+`CompletableFuture`未传入`Executor`的`*Async`方法使用的缺省线程池是`ForkJoinPool.commonPool()`；业务中使用这个缺省线程池是很危险的❗
 
 - `ForkJoinPool.commonPool()`差不多是`CPU`个线程，合适执行`CPU`密集的任务；对于业务逻辑，往往有很多等待操作（如网络`IO`、阻塞等待）并不是`CPU`密集的，导致业务处理能力低下 🐌
 - `ForkJoinPool`使用的是无界队列；当大流量时任务会堆积，导致内存耗尽服务崩溃 🚨  
@@ -490,13 +490,13 @@ public class ConcurrencyStrategyDemo {
 
 - 繁琐
 - 模糊了业务流程
-- 简单包装多个`Action`成`CF`提交给`allOf/anyOf`的做法（业务代码往往是这样实现的），**会呑异常**❗️
-  - 当输入`Action`的运行抛出多个异常时，这些异常至多只能有一个能通过返回`CF`反馈给业务，其它的异常则被默默地呑掉，影响业务问题的排查
+- 简单包装多个`Action`成`CF`提交给`allOf/anyOf`的做法（业务代码往往是这样实现的），**会吞异常**❗️
+  - 当输入`Action`的运行抛出多个异常时，这些异常至多只能有一个能通过返回`CF`反馈给业务，其它的异常则被默默地吞掉，影响业务问题的排查
 
 `cffu`提供了直接运行多个`Action`的方法，解决上述问题：
 
 - 方便直接明了地表达与编排业务流程
-- 不呑异常，方便排查业务问题
+- 不吞异常，方便排查业务问题
   - 当多个输入`Action`的运行抛出多个异常时，会打印日志报告出没有在返回`CF`中反馈给业务的异常
 
 这些多`Action`的方法也配套实现了「不同的并发执行策略」与「返回多个输入`CF`结果」的支持。
@@ -543,7 +543,7 @@ public class MultipleActionsDemo {
 ### 2.7 支持异步并行处理集合数据，而不是先包装数据与`Action`成`CompletableFuture`
 
 对于多个数据进行异步并行处理是业务常见需求，但使用`CompletableFuture`实现会比较繁琐复杂；
-也模糊了业务流程，且简单实现**会呑异常**❗
+也模糊了业务流程，且简单实现**会吞异常**❗
 
 `cffu`提供了异步并行处理的方法，解决上述问题。
 
@@ -705,7 +705,7 @@ public class CfParallelDemo {
 
 2\) **输入多个数据**
 
-对多个数据通过单个相同`Action`进行异步并行处理，即多指令单数据(`MISD`)。
+对多个数据通过单个相同`Action`进行异步并行处理，即单指令多数据(`SIMD`)。
 
 对应方法分组：
 
@@ -716,7 +716,7 @@ public class CfParallelDemo {
 
 3\) **输入多`CompletableFuture`**
 
-与输入多`Action`一样，支持3种表示多`Action`的参数类型：变参数组、集合 和 `Tuple`（多个输入的泛型参数类型不同）。对应3组变体方法：
+与输入多`Action`一样，支持3种表示多`CompletableFuture`的参数类型：变参数组、集合 和 `Tuple`（多个输入的泛型参数类型不同）。对应3组变体方法：
 
 - 多参数变参输入，输入类型是数组类型
   - 对应方法分组 `CompletableFutureUtils.*Of`
@@ -757,13 +757,13 @@ public class CfParallelDemo {
 
 相比上面的方法分组（多`Action`/多数据），这些输入多个`CompletableFuture`的方法：
 
-- **会呑异常**❗️
-  - 当输入`CompletableFuture`的运行抛出多个异常时，这些异常至多只能有一个能通过返回`CF`反馈给业务，其它的异常则被默默地呑掉，影响业务问题的排查
+- **会吞异常**❗️
+  - 当输入`CompletableFuture`的运行抛出多个异常时，这些异常至多只能有一个能通过返回`CF`反馈给业务，其它的异常则被默默地吞掉，影响业务问题的排查
 - 额外的包装逻辑代码繁琐，并且模糊了业务流程
 
 > 在业务开发中，可以将这些输入多个`CompletableFuture`的方法当作下层基础方法，仅在必要时才使用。
 >
-> 在关键业务逻辑中，使用这些方法注意实现好异常报告逻辑（即不要呑异常）：
+> 在关键业务逻辑中，使用这些方法注意实现好异常报告逻辑（尤其是不要吞异常）：
 > - 如何实现可以参考`cffu`实现代码，如`CompletableFutureUtils.mSupplyFailFastAsync()`
 > - `cffu`库提供了实现编排异常报告的支持工具类[`SwallowedExceptionHandleUtils`](https://foldright.io/api-docs/cffu2/2.0.7/io/foldright/cffu2/eh/SwallowedExceptionHandleUtils.html)
 

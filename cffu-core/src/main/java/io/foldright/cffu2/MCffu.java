@@ -14,8 +14,8 @@ import static io.foldright.cffu2.CffuFactoryBuilder.cffuScreened;
 
 
 /**
- * Cffu with result type {@link Iterable}, i.e. multiply data/collection,
- * {@code MCffu<E, List<E>>} is same as {@code Cffu<List<E>>} except with more methods.
+ * A Cffu whose result is an {@link Iterable} of elements, e.g. a collection.
+ * {@code MCffu<E, List<E>>} is same as {@code Cffu<List<E>>} except with more methods (e.g. {@link ParOps}).
  *
  * @param <T> The result collection type returned by this future's {@code join}
  * @param <E> the data element type of result collection

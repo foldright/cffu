@@ -39,14 +39,14 @@ public final class CompletableFutureUtils {
     /*
      * Implementation Note about the name convention of internal methods:
      *
-     * - methods with `f_` prefix means not type-safe, e.g.
-     *    - return type CompletableFuture that may be a minimal-stage
+     * - methods with `f_` prefix mean not type-safe, e.g.
+     *    - return type CompletableFuture that may be a minimal stage
      *    - forcefully cast to CompletableFuture<T> from any CompletableFuture<?>
      *    - return generic type T but constrained runtime type TupleX
      * - methods with `0` suffix mean no parameter validation, e.g.
      *    - no null check
      *
-     * because these methods are not safe, caller logic SHOULD pay attention to keep implementation correct.
+     * because these methods are not safe, callers must keep the implementation correct.
      */
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -453,9 +453,9 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is completed normally with a list containing the successful results of
-     * the given stages before the given timeout, i.e. as many results as possible in the given time;
-     * The list of results is in the <strong>same order</strong> as the input list, and if any of given stages
-     * complete exceptionally or are incomplete, their corresponding positions will contain {@code valueIfNotSuccess}
+     * the given stages before the given timeout; The list of results is in the <strong>same order</strong>
+     * as the input list, and if any of given stages complete exceptionally or are incomplete,
+     * their corresponding positions will contain {@code valueIfNotSuccess}
      * (which is indistinguishable from the stage having a successful value of {@code valueIfNotSuccess}).
      * If no stages are provided, returns a CompletableFuture completed with the value empty list.
      * <p>
@@ -479,9 +479,9 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is completed normally with a list containing the successful results of
-     * the given stages before the given timeout, i.e. as many results as possible in the given time;
-     * The list of results is in the <strong>same order</strong> as the input list, and if any of given stages
-     * complete exceptionally or are incomplete, their corresponding positions will contain {@code valueIfNotSuccess}
+     * the given stages before the given timeout; The list of results is in the <strong>same order</strong>
+     * as the input list, and if any of given stages complete exceptionally or are incomplete,
+     * their corresponding positions will contain {@code valueIfNotSuccess}
      * (which is indistinguishable from the stage having a successful value of {@code valueIfNotSuccess}).
      * If no stages are provided, returns a CompletableFuture completed with the value empty list.
      * <p>
@@ -514,15 +514,15 @@ public final class CompletableFutureUtils {
             CompletionStage<? extends T>[] cfs) {
         if (cfs.length == 0) return completedFuture(arrayList());
         if (cfs.length == 1) {
-            // copy input cf to non-minimal-stage instance in order to
+            // copy input cf to non-minimal stage instance in order to
             // 1. avoid writing it by `cffuCompleteOnTimeout` and is able to read its result(`getSuccessNow`)
-            // 2. ensure that the returned cf is not a minimal-stage instance (UnsupportedOperationException)
+            // 2. ensure that the returned cf is not a minimal stage instance (UnsupportedOperationException)
             final CompletableFuture<T> f = toNonMinCfCopy0(cfs[0]);
             return cffuCompleteOnTimeout(f, valueIfNotSuccess, timeout, unit, executorWhenTimeout)
                     .handle((unused, ex) -> arrayList(getSuccessNow(f, valueIfNotSuccess)));
         }
 
-        // create new non-minimal-stage instances from input cfs by `toNonMinCf0`/`exceptionally`,
+        // create new non-minimal stage instances from input cfs by `toNonMinCf0`/`exceptionally`,
         // so results are readable by `getSuccessNow` instead of throwing UnsupportedOpException.
         CompletableFuture<T>[] cfArray = mapArray(cfs, CommonUtils::newCfArray,
                 s -> LLCF.<T>toNonMinCf0(s).exceptionally(v -> valueIfNotSuccess));
@@ -534,7 +534,7 @@ public final class CompletableFutureUtils {
      * Multi-Gets(MGet) the results in the <strong>same order</strong> of the given cfs arguments,
      * use the result value if the given stage is completed normally, else use the given valueIfNotSuccess
      *
-     * @param cfs MUST be non-minimal CF instances to read results(`getSuccessNow`), otherwise UnsupportedOperationException
+     * @param cfs MUST be non-minimal CF instances to read results(`getSuccessNow`), otherwise, UnsupportedOperationException
      */
     static <T> ArrayList<T> mGetSuccessNow0(@Nullable T valueIfNotSuccess, CompletableFuture<? extends T>[] cfs) {
         return arrayList(cfs.length, i -> getSuccessNow(cfs[i], valueIfNotSuccess));
@@ -567,8 +567,8 @@ public final class CompletableFutureUtils {
     static <T> CompletableFuture<List<T>> allResultsOf0(boolean failFast, CompletionStage<? extends T>[] cfs) {
         final int len = cfs.length;
         if (len == 0) return completedFuture(arrayList());
-        // convert input cf to non-minimal-stage CF instance for SINGLE input to ensure that
-        // the returned cf is not a minimal-stage instance (UnsupportedOperationException)
+        // convert input cf to non-minimal stage CF instance for SINGLE input to ensure that
+        // the returned cf is not a minimal stage instance (UnsupportedOperationException)
         if (len == 1) return toNonMinCf0(cfs[0]).thenApply(CommonUtils::arrayList);
 
         final AtomicReferenceArray<T> results = new AtomicReferenceArray<>(len);
@@ -651,8 +651,8 @@ public final class CompletableFutureUtils {
     static CompletableFuture<Void> allFailFastOf0(CompletionStage<?>[] cfs) {
         final int len = cfs.length;
         if (len == 0) return completedFuture(null);
-        // convert input cf to non-minimal-stage CF instance for SINGLE input to ensure that
-        // the returned cf is not a minimal-stage instance (UnsupportedOperationException)
+        // convert input cf to non-minimal stage CF instance for SINGLE input to ensure that
+        // the returned cf is not a minimal stage instance (UnsupportedOperationException)
         if (len == 1) return toNonMinCf0(cfs[0]).thenApply(unused -> null);
 
         final CompletableFuture<?>[] successOrBeIncomplete = newCfArray(len);
@@ -661,7 +661,7 @@ public final class CompletableFutureUtils {
         fill0(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of failedOrBeIncomplete HERE:
-        //       a cf that is completed normally when all given cfs completed normally, otherwise be incomplete
+        //       a cf that is completed normally when all given cfs completed normally, otherwise, be incomplete
         failedOrBeIncomplete[len] = CompletableFuture.allOf(successOrBeIncomplete);
 
         return f_cast(CompletableFuture.anyOf(failedOrBeIncomplete));
@@ -711,8 +711,8 @@ public final class CompletableFutureUtils {
     public static CompletableFuture<Void> allOf(CompletionStage<?>... cfs) {
         requireCfsAndEleNonNull(cfs);
         if (cfs.length == 0) return completedFuture(null);
-        // convert input cf to non-minimal-stage CF instance for SINGLE input to ensure that
-        // the returned cf is not a minimal-stage instance (UnsupportedOperationException)
+        // convert input cf to non-minimal stage CF instance for SINGLE input to ensure that
+        // the returned cf is not a minimal stage instance (UnsupportedOperationException)
         if (cfs.length == 1) return toNonMinCf0(cfs[0]).thenApply(unused -> null);
         return CompletableFuture.allOf(f_toCfArray0(cfs));
     }
@@ -750,9 +750,9 @@ public final class CompletableFutureUtils {
     static <T> CompletableFuture<T> anySuccessOf0(CompletionStage<? extends T>[] cfs) {
         final int len = cfs.length;
         if (len == 0) return failedFuture(new NoCfsProvidedException());
-        // defensive copy input cf to non-minimal-stage instance for SINGLE input to ensure that
+        // defensive copy input cf to non-minimal stage instance for SINGLE input to ensure that
         // 1. avoid writing the input cf unexpectedly by caller code
-        // 2. the returned cf is not a minimal-stage instance (UnsupportedOperationException)
+        // 2. the returned cf is not a minimal stage instance (UnsupportedOperationException)
         if (len == 1) return toNonMinCfCopy0(cfs[0]);
 
         // NOTE: fill ONE MORE element of successOrBeIncomplete LATER
@@ -761,7 +761,7 @@ public final class CompletableFutureUtils {
         fill0(cfs, successOrBeIncomplete, failedOrBeIncomplete);
 
         // NOTE: fill the ONE MORE element of successOrBeIncomplete HERE:
-        //       a cf that is completed exceptionally when all given cfs completed exceptionally, otherwise be incomplete
+        //       a cf that is completed exceptionally when all given cfs completed exceptionally, otherwise, be incomplete
         successOrBeIncomplete[len] = CompletableFuture.allOf(failedOrBeIncomplete);
 
         return f_cast(CompletableFuture.anyOf(successOrBeIncomplete));
@@ -787,9 +787,9 @@ public final class CompletableFutureUtils {
     public static <T> CompletableFuture<T> anyOf(CompletionStage<? extends T>... cfs) {
         requireCfsAndEleNonNull(cfs);
         if (cfs.length == 0) return new CompletableFuture<>();
-        // defensive copy input cf to non-minimal-stage instance for SINGLE input to ensure that
+        // defensive copy input cf to non-minimal stage instance for SINGLE input to ensure that
         // 1. avoid writing the input cf unexpectedly by caller code
-        // 2. the returned cf is not a minimal-stage instance (UnsupportedOperationException)
+        // 2. the returned cf is not a minimal stage instance (UnsupportedOperationException)
         if (cfs.length == 1) return toNonMinCfCopy0(cfs[0]);
         return f_cast(CompletableFuture.anyOf(f_toCfArray0(cfs)));
     }
@@ -1832,7 +1832,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Implementation Note: Calling this method is necessary to keep the runtime type (including `minimal-stage`) of
+     * Implementation Note: Calling this method is necessary to keep the runtime type (including `minimal stage`) of
      * return cf same as input `cfThis` argument. The runtime type of method {@link #allResultsFailFastOf(CompletionStage[])}
      * return cf is always CompletableFuture, does NOT keep the runtime type of input `cfThis` argument.
      */
@@ -2023,7 +2023,7 @@ public final class CompletableFutureUtils {
     }
 
     /**
-     * Implementation Note: Calling this method is necessary to keep the runtime type (including `minimal-stage`) of
+     * Implementation Note: Calling this method is necessary to keep the runtime type (including `minimal stage`) of
      * return cf same as input `cfThis` argument. The runtime type of method {@link #anySuccessOf(CompletionStage[])}
      * return cf is always CompletableFuture, does NOT keep the runtime type of input `cfThis` argument.
      */
@@ -2282,8 +2282,8 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is completed exceptionally with a {@link TimeoutException}
-     * when the given CompletableFuture is not completed before the given timeout; otherwise the returned
-     * CompletableFuture completed with the same successful result or exception of the given CompletableFuture.
+     * when the given CompletableFuture is not completed before the given timeout; otherwise, the returned
+     * CompletableFuture is completed with the same successful result or exception of the given CompletableFuture.
      * <p>
      * Uses the default executor of parameter cfThis as {@code executorWhenTimeout}.
      * <p>
@@ -2306,8 +2306,8 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is completed exceptionally with a {@link TimeoutException}
-     * when the given CompletableFuture is not completed before the given timeout; otherwise the returned
-     * CompletableFuture completed with the same successful result or exception of the given CompletableFuture.
+     * when the given CompletableFuture is not completed before the given timeout; otherwise, the returned
+     * CompletableFuture is completed with the same successful result or exception of the given CompletableFuture.
      * <p>
      * <strong>CAUTION:</strong> This method returns a new CompletableFuture instead of {@code cfThis} to avoid
      * the subsequent usage of CompletableFuture's internal <strong>SINGLE-thread</strong> delay scheduler thread
@@ -2353,7 +2353,7 @@ public final class CompletableFutureUtils {
      * <ul>
      * <li>the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods),
      * <li>and/or all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously,
-     *    i.e. the dependent CompletableFutures are created using async methods.
+     *    e.g. the dependents are created with async methods whose executor does not run tasks on the caller thread.
      * </ul> In these cases, using these unsafe methods avoids an unnecessary thread switching when timeout occurs; However, these
      * conditions are difficult to guarantee in practice, especially when the returned CompletableFuture is used by others' codes.
      * <p>
@@ -2391,8 +2391,8 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is completed normally with the given value
-     * when the given CompletableFuture is not completed before the given timeout; otherwise the returned
-     * CompletableFuture completed with the same successful result or exception of the given CompletableFuture.
+     * when the given CompletableFuture is not completed before the given timeout; otherwise, the returned
+     * CompletableFuture is completed with the same successful result or exception of the given CompletableFuture.
      * <p>
      * Uses the default executor of parameter cfThis as {@code executorWhenTimeout}.
      * <p>
@@ -2418,8 +2418,8 @@ public final class CompletableFutureUtils {
 
     /**
      * Returns a new CompletableFuture that is completed normally with the given value
-     * when the given CompletableFuture is not completed before the given timeout; otherwise the returned
-     * CompletableFuture completed with the same successful result or exception of the given CompletableFuture.
+     * when the given CompletableFuture is not completed before the given timeout; otherwise, the returned
+     * CompletableFuture is completed with the same successful result or exception of the given CompletableFuture.
      * <p>
      * <strong>CAUTION:</strong> This method returns a new CompletableFuture instead of {@code cfThis} to avoid
      * the subsequent usage of CompletableFuture's internal <strong>SINGLE-thread</strong> delay scheduler thread
@@ -2465,7 +2465,7 @@ public final class CompletableFutureUtils {
      * <ul>
      * <li>the returned CompletableFuture is only read explicitly(e.g. by get/join/resultNow methods),
      * <li>and/or all subsequent actions of dependent CompletableFutures are guaranteed to execute asynchronously,
-     *    i.e. the dependent CompletableFutures are created using async methods.
+     *    e.g. the dependents are created with async methods whose executor does not run tasks on the caller thread.
      * </ul> In these cases, using these unsafe methods avoids an unnecessary thread switching when timeout occurs; However, these
      * conditions are difficult to guarantee in practice, especially when the returned CompletableFuture is used by others' codes.
      * <p>
@@ -2684,7 +2684,7 @@ public final class CompletableFutureUtils {
      * will maintain its original result, regardless of whether the supplied action throws an exception or not.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
-     * the given action and other actions added to the input stage cannot be guaranteed. The given action should
+     * the given action and other actions added to the input stage cannot be guaranteed. The given action must
      * be treated as "fire and forget" - do not make any assumptions about timing or execution sequence.
      * <p>
      * Unlike method {@link CompletionStage#handle(BiFunction)} and like method
@@ -2719,7 +2719,7 @@ public final class CompletableFutureUtils {
      * will maintain its original result, regardless of whether the supplied action throws an exception or not.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
-     * the given action and other actions added to the input stage cannot be guaranteed. The given action should
+     * the given action and other actions added to the input stage cannot be guaranteed. The given action must
      * be treated as "fire and forget" - do not make any assumptions about timing or execution sequence.
      * <p>
      * Unlike method {@link CompletionStage#handleAsync(BiFunction)} and like method {@link
@@ -2751,7 +2751,7 @@ public final class CompletableFutureUtils {
      * will maintain its original result, regardless of whether the supplied action throws an exception or not.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
-     * the given action and other actions added to the input stage cannot be guaranteed. The given action should
+     * the given action and other actions added to the input stage cannot be guaranteed. The given action must
      * be treated as "fire and forget" - do not make any assumptions about timing or execution sequence.
      * <p>
      * Unlike method {@link CompletionStage#handleAsync(BiFunction, Executor)} and like method {@link
@@ -2859,7 +2859,7 @@ public final class CompletableFutureUtils {
      * Returns the computed result without waiting.
      * <p>
      * This method is for cases where the caller knows that the task has already completed normally,
-     * for example, when filtering a stream of Future objects for the successful tasks
+     * e.g. when filtering a stream of Future objects for the successful tasks
      * and using a mapping operation to obtain a stream of results.
      *
      * <pre>{@code results = futures.stream()

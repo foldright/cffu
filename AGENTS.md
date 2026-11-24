@@ -169,6 +169,12 @@ Two usage modes:
 wrappers are discovered via `ServiceLoader` (`META-INF/services` file and moditect `module-info.java`).
 When adding or renaming SPI classes, keep both in sync.
 
+## Wording
+
+Javadoc, comments, exception and log text, and the READMEs follow [docs/wording.md](docs/wording.md).
+Read that document before changing `must` / `should` / `may`, `i.e.` / `e.g.`, or a fixed term such as `minimal stage`.
+Do not apply those rules by rewriting text the document says to leave alone.
+
 ## Code Style
 
 See `.editorconfig`:

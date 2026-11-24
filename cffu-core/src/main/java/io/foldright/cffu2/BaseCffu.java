@@ -1424,8 +1424,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Returns a new Cffu that is completed exceptionally with a {@link TimeoutException}
-     * when this Cffu is not completed before the given timeout; otherwise the returned
-     * Cffu completed with the same successful result or exception of this Cffu.
+     * when this Cffu is not completed before the given timeout; otherwise, the returned
+     * Cffu is completed with the same successful result or exception of this Cffu.
      * <p>
      * Uses {@link #defaultExecutor()} as {@code executorWhenTimeout}.
      * <p>
@@ -1464,7 +1464,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <ul>
      * <li>the returned Cffu is only read explicitly(e.g. by get/join/resultNow methods),
      * <li>and/or all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously,
-     *    i.e. the dependent Cffus/CompletableFutures are created using async methods.
+     *    e.g. the dependents are created with async methods whose executor does not run tasks on the caller thread.
      * </ul> In these cases, using this unsafe method avoids an unnecessary thread switching when timeout occurs; However,
      * these conditions are difficult to guarantee in practice, especially when the returned Cffu is used by others' codes.
      * <p>
@@ -1489,8 +1489,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Returns a new Cffu that is completed normally with the given value
-     * when this Cffu is not completed before the given timeout; otherwise the returned
-     * Cffu completed with the same successful result or exception of this Cffu.
+     * when this Cffu is not completed before the given timeout; otherwise, the returned
+     * Cffu is completed with the same successful result or exception of this Cffu.
      * <p>
      * Uses {@link #defaultExecutor()} as {@code executorWhenTimeout}.
      * <p>
@@ -1530,7 +1530,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <ul>
      * <li>the returned Cffu is only read explicitly(e.g. by get/join/resultNow methods),
      * <li>and/or all subsequent actions of dependent Cffus/CompletableFutures are guaranteed to execute asynchronously,
-     *    i.e. the dependent Cffus/CompletableFutures are created using async methods.
+     *    e.g. the dependents are created with async methods whose executor does not run tasks on the caller thread.
      * </ul> In these cases, using this unsafe method avoids an unnecessary thread switching when timeout occurs; However,
      * these conditions are difficult to guarantee in practice, especially when the returned Cffu is used by others' codes.
      * <p>
@@ -1896,7 +1896,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * will maintain its original result, regardless of whether the supplied action throws an exception or not.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
-     * the given action and other actions added to the input stage cannot be guaranteed. The given action should
+     * the given action and other actions added to the input stage cannot be guaranteed. The given action must
      * be treated as "fire and forget" - do not make any assumptions about timing or execution sequence.
      * <p>
      * Unlike method {@link #handle(BiFunction)} and like method {@link #whenComplete(BiConsumer)},
@@ -1928,7 +1928,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * will maintain its original result, regardless of whether the supplied action throws an exception or not.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
-     * the given action and other actions added to the input stage cannot be guaranteed. The given action should
+     * the given action and other actions added to the input stage cannot be guaranteed. The given action must
      * be treated as "fire and forget" - do not make any assumptions about timing or execution sequence.
      * <p>
      * Unlike method {@link #handleAsync(BiFunction)} and like method {@link #whenCompleteAsync(BiConsumer)},
@@ -1959,7 +1959,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * will maintain its original result, regardless of whether the supplied action throws an exception or not.
      * <p>
      * <strong>CAUTION:</strong> Since this method returns the input stage directly, the execution order between
-     * the given action and other actions added to the input stage cannot be guaranteed. The given action should
+     * the given action and other actions added to the input stage cannot be guaranteed. The given action must
      * be treated as "fire and forget" - do not make any assumptions about timing or execution sequence.
      * <p>
      * Unlike method {@link #handleAsync(BiFunction, Executor)} and like method {@link
@@ -2123,7 +2123,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * Returns the computed result, without waiting.
      * <p>
      * This method is for cases where the caller knows that the task has already completed normally,
-     * for example, when filtering a stream of Future objects for the successful tasks
+     * e.g. when filtering a stream of Future objects for the successful tasks
      * and using a mapping operation to obtain a stream of results.
      *
      * <pre>{@code results = futures.stream()
@@ -2473,7 +2473,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <li>{@link CffuFactory#failedStage(Throwable)}
      * <li>{@link #minimalCompletionStage()}
      * <li>{@link CffuFactory#toCffu(CompletionStage)}, this method returns a {@code minimal stage}
-     *     when input a{@code minimal stage}, otherwise returns a normal stage.
+     *     when the input is a {@code minimal stage}, otherwise, returns a normal stage.
      * </ul>
      */
     @Contract(pure = true)
@@ -2546,8 +2546,8 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     /**
      * Returns the underlying CompletableFuture.
      * <p>
-     * <strong>CAUTION:</strong> This method is NOT type safe! The returned CompletableFuture may be a minimal-stage.
-     * In general, you should NEVER use this method, use {@link #toCompletableFuture()} instead.
+     * <strong>CAUTION:</strong> This method is NOT type safe! The returned CompletableFuture may be a minimal stage.
+     * Do not use this method in application code; use {@link #toCompletableFuture()} instead.
      *
      * @return the underlying CompletableFuture
      * @see #toCompletableFuture()
@@ -2596,7 +2596,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
 
     /**
      * Returns a {@link CffuFactory.IterableOps} instance to access the {@link Iterable}-based variants
-     * (including {@link Collection}, {@link List}, etc.) of same-named varargs methods from {@link Cffu}.
+     * (including {@link Collection} and {@link List}) of same-named varargs methods from {@link Cffu}.
      * These methods handle multiple actions and Futures with the same type, i.e. homogeneous.
      *
      * @see CfIterableUtils
@@ -2617,7 +2617,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
     }
 
     /**
-     * The {@link Iterable}-based variants (including {@link Collection}, {@link List}, etc.) of
+     * The {@link Iterable}-based variants (including {@link Collection} and {@link List}) of
      * same-named varargs methods from {@link Cffu}.
      * These methods handle multiple actions and Futures with the same type, i.e. homogeneous.
      */
