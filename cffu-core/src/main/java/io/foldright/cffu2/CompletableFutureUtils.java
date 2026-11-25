@@ -2166,7 +2166,7 @@ public final class CompletableFutureUtils {
         CompletionStage<T> ret = cfThis.handle((v, ex) -> {
             X bizEx = castOrNull(exceptionType, unwrapCfException(ex));
             if (bizEx == null) return cfThis;
-            return CompletableFuture.<T>completedFuture(fallback.apply(bizEx));
+            return CompletableFuture.completedFuture(fallback.apply(bizEx));
         }).thenCompose(x -> x);
         return f_selfTypeDownCast(ret);
     }
