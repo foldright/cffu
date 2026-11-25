@@ -94,6 +94,12 @@ workflow runs; use it for release-level verification, not routine iteration.
   `scripts/gen_CffuApiCompatibilityTest.sh` (CI regenerates it; needs `gsed` on macOS:
   `brew install gnu-sed`). After editing the source test, run the script instead of editing the target.
 
+### Raising coverage
+
+Writing a test for an uncovered line, or deciding to leave a line uncovered, follows
+[docs/writing-tests-for-coverage.md](docs/writing-tests-for-coverage.md).
+Read that document before editing tests for coverage. Other tasks leave it unread.
+
 ## Static Analysis and Quality Checks
 
 Run the relevant ones before finishing; all are run by CI:
