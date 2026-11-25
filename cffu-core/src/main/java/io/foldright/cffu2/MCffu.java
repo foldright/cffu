@@ -73,6 +73,9 @@ public final class MCffu<E, T extends Iterable<? extends E>>
 
     /**
      * The methods for parallel data processing.
+     * <p>
+     * If your input is an array, convert it to a {@code List}
+     * using {@link java.util.Arrays#asList Arrays.asList(elements)}.
      *
      * @see CffuFactory#parOps()
      * @see CfParallelUtils

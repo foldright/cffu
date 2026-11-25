@@ -33,6 +33,9 @@ import static java.util.Objects.requireNonNull;
  * <li>Instance methods that chain parallel operations on existing CompletableFutures(CompletionStages)</li>
  * </ul>
  * <p>
+ * If your input is an array, convert it to a {@code List}
+ * using {@link java.util.Arrays#asList Arrays.asList(elements)}.
+ * <p>
  * <strong>NOTE:</strong> For all methods, the input Iterable is allowed to contain {@code null} elements which are
  * passed directly to the sequential actions, matching CompletableFuture's behavior of allowing {@code null} values.
  * To skip processing {@code null} values, filter them out from the input collection beforehand.
