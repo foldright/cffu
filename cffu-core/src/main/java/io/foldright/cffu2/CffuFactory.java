@@ -99,6 +99,7 @@ public final class CffuFactory {
     //
     //    - Supplier<T> -> Cffu<T>
     //    - Runnable    -> Cffu<Void>
+    //    - Runnable    -> void       (fire-and-forget variants, no returned Cffu)
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -108,7 +109,7 @@ public final class CffuFactory {
      * @param supplier a function returning the value to be used to complete the returned Cffu
      * @param <T>      the function's return type
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `runAsyncAndForget`")
     public <T> Cffu<T> supplyAsync(Supplier<T> supplier) {
         return supplyAsync(supplier, defaultExecutor);
     }
@@ -121,7 +122,7 @@ public final class CffuFactory {
      * @param executor the executor to use for asynchronous execution
      * @param <T>      the function's return type
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `runAsyncAndForget`")
     public <T> Cffu<T> supplyAsync(Supplier<T> supplier, Executor executor) {
         return createCffu(CompletableFuture.supplyAsync(supplier, cffuScreened(executor)));
     }
@@ -132,7 +133,7 @@ public final class CffuFactory {
      *
      * @param action the action to run before completing the returned Cffu
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `runAsyncAndForget`")
     public Cffu<Void> runAsync(Runnable action) {
         return runAsync(action, defaultExecutor);
     }
@@ -144,9 +145,34 @@ public final class CffuFactory {
      * @param action   the action to run before completing the returned Cffu
      * @param executor the executor to use for asynchronous execution
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, prefer method `mRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `runAsyncAndForget`")
     public Cffu<Void> runAsync(Runnable action, Executor executor) {
         return createCffu(CompletableFuture.runAsync(action, cffuScreened(executor)));
+    }
+
+    /**
+     * Runs the action asynchronously and forgets (the action's result is {@code void}).
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     *
+     * @param action the action to run
+     * @since 2.1.0
+     */
+    public void runAsyncAndForget(Runnable action) {
+        runAsyncAndForget(action, defaultExecutor);
+    }
+
+    /**
+     * Runs the action asynchronously and forgets (the action's result is {@code void}).
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     *
+     * @param action   the action to run
+     * @param executor the executor to use for asynchronous execution
+     * @since 2.1.0
+     */
+    public void runAsyncAndForget(Runnable action, Executor executor) {
+        CompletableFutureUtils.runAsyncAndForget(action, cffuScreened(executor));
     }
 
     // endregion
@@ -828,7 +854,7 @@ public final class CffuFactory {
     // endregion
     // endregion
     ////////////////////////////////////////////////////////////////////////////////
-    // region## Executors
+    // region# Executors
     //    - Delayed Execution (backport methods)
     //    - Concurrency Limit Execution / Sequential Execution
     ////////////////////////////////////////////////////////////////////////////////

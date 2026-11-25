@@ -21,6 +21,7 @@ import static io.foldright.cffu2.internal.CommonUtils.*;
 import static java.lang.Thread.currentThread;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.CompletableFuture.runAsync;
 
 
 /**
@@ -53,6 +54,43 @@ public final class CompletableFutureUtils {
     // region# CF Factory Methods (including static methods of CF)
     ////////////////////////////////////////////////////////////////////////////////
 
+    ////////////////////////////////////////////////////////////
+    // region## Single-Action Methods(create by action)
+    //
+    //    - Supplier<T> -> CompletableFuture<T>
+    //    - Runnable    -> CompletableFuture<Void>
+    //    - Runnable    -> void       (fire-and-forget variants, no returned Cffu)
+    ////////////////////////////////////////////////////////////
+
+    /**
+     * Runs the action asynchronously and forgets (the action's result is {@code void}).
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     *
+     * @param action the action to run
+     * @since 2.1.0
+     */
+    public static void runAsyncAndForget(Runnable action) {
+        runAsyncAndForget(action, ASYNC_POOL);
+    }
+
+    /**
+     * Runs the action asynchronously and forgets (the action's result is {@code void}).
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     *
+     * @param action   the action to run
+     * @param executor the executor to use for asynchronous execution
+     * @since 2.1.0
+     */
+    public static void runAsyncAndForget(Runnable action, Executor executor) {
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
+        handleAllSwallowedExceptions("runAsyncAndForget", runAsync(action, executor));
+    }
+
+    // endregion
     ////////////////////////////////////////////////////////////
     // region## Multi-Actions(M*) Methods(create by actions)
     //
@@ -391,7 +429,7 @@ public final class CompletableFutureUtils {
     }
 
     private static CompletableFuture<Void>[] wrapRunnables0(Executor executor, Runnable[] actions) {
-        return mapArray(actions, CommonUtils::newCfArray, a -> CompletableFuture.runAsync(a, executor));
+        return mapArray(actions, CommonUtils::newCfArray, a -> runAsync(a, executor));
     }
 
     // endregion
@@ -1008,6 +1046,127 @@ public final class CompletableFutureUtils {
     ////////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
+    // region## Then-Single-Action Methods
+    //
+    //    - thenApply* (Function: T -> U)       -> CompletableFuture<U>
+    //    - thenAccept*(Consumer: T -> Void)    -> CompletableFuture<Void>
+    //    - thenRun*   (Runnable: Void -> Void) -> CompletableFuture<Void>
+    ////////////////////////////////////////////////////////////
+
+    /**
+     * Consumes the value of cfThis by the given action and forgets (the action's result is {@code void}).
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     *
+     * @param action the action to perform
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _ -> param1")
+    public static <T, F extends CompletionStage<? extends T>> F thenAcceptAndForget(
+            F cfThis, Consumer<? super T> action) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(action, "action is null");
+
+        handleAllSwallowedExceptions("thenAcceptAndForget", cfThis.thenAccept(action));
+        return cfThis;
+    }
+
+    /**
+     * Consumes the value of cfThis asynchronously by the given action and forgets
+     * (the action's result is {@code void}), using the default executor of parameter cfThis.
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     *
+     * @param action the action to perform
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _ -> param1")
+    public static <T, F extends CompletionStage<? extends T>> F thenAcceptAsyncAndForget(
+            F cfThis, Consumer<? super T> action) {
+        return thenAcceptAsyncAndForget(cfThis, action, defaultExecutor(cfThis));
+    }
+
+    /**
+     * Consumes the value of cfThis asynchronously by the given action and forgets
+     * (the action's result is {@code void}).
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     *
+     * @param action   the action to perform
+     * @param executor the executor to use for asynchronous execution
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _, _ -> param1")
+    public static <T, F extends CompletionStage<? extends T>> F thenAcceptAsyncAndForget(
+            F cfThis, Consumer<? super T> action, Executor executor) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
+        handleAllSwallowedExceptions("thenAcceptAsyncAndForget", cfThis.thenAcceptAsync(action, executor));
+        return cfThis;
+    }
+
+    /**
+     * Runs the action when cfThis completes normally and forgets (the action's result is {@code void}).
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     *
+     * @param action the action to perform
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _ -> param1")
+    public static <F extends CompletionStage<?>> F thenRunAndForget(F cfThis, Runnable action) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(action, "action is null");
+
+        handleAllSwallowedExceptions("thenRunAndForget", cfThis.thenRun(action));
+        return cfThis;
+    }
+
+    /**
+     * Runs the action asynchronously when cfThis completes normally and forgets
+     * (the action's result is {@code void}), using the default executor of parameter cfThis.
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     *
+     * @param action the action to perform
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _ -> param1")
+    public static <F extends CompletionStage<?>> F thenRunAsyncAndForget(F cfThis, Runnable action) {
+        return thenRunAsyncAndForget(cfThis, action, defaultExecutor(cfThis));
+    }
+
+    /**
+     * Runs the action asynchronously when cfThis completes normally and forgets
+     * (the action's result is {@code void}).
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     *
+     * @param action   the action to perform
+     * @param executor the executor to use for asynchronous execution
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _, _ -> param1")
+    public static <F extends CompletionStage<?>> F thenRunAsyncAndForget(
+            F cfThis, Runnable action, Executor executor) {
+        requireNonNull(cfThis, "cfThis is null");
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
+        handleAllSwallowedExceptions("thenRunAsyncAndForget", cfThis.thenRunAsync(action, executor));
+        return cfThis;
+    }
+
+    // endregion
+    ////////////////////////////////////////////////////////////
     // region## Then-Multi-Actions(thenM*) Methods
     //
     //    - thenMApply* (Function[]: T -> U)       -> CompletableFuture<List<U>>
@@ -1559,6 +1718,7 @@ public final class CompletableFutureUtils {
         return _thenMAcceptAsyncAndForget(cfThis, executor, actions, true);
     }
 
+    @Contract("_, _, _, _ -> param1")
     static <T, F extends CompletionStage<? extends T>> F _thenMAcceptAsyncAndForget(
             F cfThis, Executor executor, Consumer<? super T>[] actions, boolean defensiveCopy) {
         requireNonNull(cfThis, "cfThis is null");
@@ -1574,7 +1734,7 @@ public final class CompletableFutureUtils {
     }
 
     private static <T> CompletableFuture<Void>[] wrapConsumers0(Executor executor, T v, Consumer<? super T>[] actions) {
-        return mapArray(actions, CommonUtils::newCfArray, a -> CompletableFuture.runAsync(() -> a.accept(v), executor));
+        return mapArray(actions, CommonUtils::newCfArray, a -> runAsync(() -> a.accept(v), executor));
     }
 
     /**
@@ -1758,6 +1918,7 @@ public final class CompletableFutureUtils {
         return _thenMRunAsyncAndForget(cfThis, executor, actions, true);
     }
 
+    @Contract("_, _, _, _ -> param1")
     static <F extends CompletionStage<?>> F _thenMRunAsyncAndForget(
             F cfThis, Executor executor, Runnable[] actions, boolean defensiveCopy) {
         requireNonNull(cfThis, "cfThis is null");
@@ -1790,7 +1951,7 @@ public final class CompletableFutureUtils {
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `thenAcceptBoth`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenAcceptBothAndForget`")
     public static <T, U, V> CompletableFuture<V> thenCombineFailFast(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiFunction<? super T, ? super U, ? extends V> fn) {
@@ -1810,7 +1971,7 @@ public final class CompletableFutureUtils {
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `thenAcceptBothAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenAcceptBothAsyncAndForget`")
     public static <T, U, V> CompletableFuture<V> thenCombineFailFastAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiFunction<? super T, ? super U, ? extends V> fn) {
@@ -1827,7 +1988,7 @@ public final class CompletableFutureUtils {
      *
      * @param fn the function to use to compute the value of the returned CompletableFuture
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `thenAcceptBothAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenAcceptBothAsyncAndForget`")
     public static <T, U, V> CompletableFuture<V> thenCombineFailFastAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
@@ -1871,7 +2032,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `thenAcceptBoth`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenAcceptBothAndForget`")
     public static <T, U> CompletableFuture<Void> thenAcceptBothFailFast(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiConsumer<? super T, ? super U> action) {
@@ -1891,7 +2052,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `thenAcceptBothAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenAcceptBothAsyncAndForget`")
     public static <T, U> CompletableFuture<Void> thenAcceptBothFailFastAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiConsumer<? super T, ? super U> action) {
@@ -1908,7 +2069,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `thenAcceptBothAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `thenAcceptBothAsyncAndForget`")
     public static <T, U> CompletableFuture<Void> thenAcceptBothFailFastAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends U> other,
             BiConsumer<? super T, ? super U> action, Executor executor) {
@@ -1920,6 +2081,68 @@ public final class CompletableFutureUtils {
     }
 
     /**
+     * Consumes the values of cfThis and the other stage when both complete normally, and forgets
+     * (the action's result is {@code void}).
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     * A failure of either stage is not a result of this method: cfThis is returned as it is.
+     *
+     * @param action the action to perform
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _, _ -> param1")
+    public static <T, U, F extends CompletionStage<? extends T>> F thenAcceptBothAndForget(
+            F cfThis, CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
+        requireThisAndOtherNonNull(cfThis, other);
+        requireNonNull(action, "action is null");
+
+        handleAllSwallowedExceptions("thenAcceptBothAndForget", cfThis.thenAcceptBoth(other, action));
+        return cfThis;
+    }
+
+    /**
+     * Consumes the values of cfThis and the other stage asynchronously when both complete normally, and forgets
+     * (the action's result is {@code void}), using the default executor of parameter cfThis.
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     * A failure of either stage is not a result of this method: cfThis is returned as it is.
+     *
+     * @param action the action to perform
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _, _ -> param1")
+    public static <T, U, F extends CompletionStage<? extends T>> F thenAcceptBothAsyncAndForget(
+            F cfThis, CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
+        return thenAcceptBothAsyncAndForget(cfThis, other, action, defaultExecutor(cfThis));
+    }
+
+    /**
+     * Consumes the values of cfThis and the other stage asynchronously when both complete normally, and forgets
+     * (the action's result is {@code void}).
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     * A failure of either stage is not a result of this method: cfThis is returned as it is.
+     *
+     * @param action   the action to perform
+     * @param executor the executor to use for asynchronous execution
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _, _, _ -> param1")
+    public static <T, U, F extends CompletionStage<? extends T>> F thenAcceptBothAsyncAndForget(
+            F cfThis, CompletionStage<? extends U> other,
+            BiConsumer<? super T, ? super U> action, Executor executor) {
+        requireThisAndOtherNonNull(cfThis, other);
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
+        handleAllSwallowedExceptions("thenAcceptBothAsyncAndForget", cfThis.thenAcceptBothAsync(other, action, executor));
+        return cfThis;
+    }
+
+    /**
      * Returns a new CompletableFuture that, when two given stages both complete normally, executes the given action.
      * If any of the given stages complete exceptionally, then the returned CompletableFuture
      * also does so *without* waiting other incomplete given CompletionStage,
@@ -1927,7 +2150,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `runAfterBoth`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `runAfterBothAndForget`")
     public static CompletableFuture<Void> runAfterBothFailFast(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
         requireThisAndOtherNonNull(cfThis, other);
@@ -1945,7 +2168,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `runAfterBothAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `runAfterBothAsyncAndForget`")
     public static CompletableFuture<Void> runAfterBothFailFastAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
         return runAfterBothFailFastAsync(cfThis, other, action, defaultExecutor(cfThis));
@@ -1960,7 +2183,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `runAfterBothAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `runAfterBothAsyncAndForget`")
     public static CompletableFuture<Void> runAfterBothFailFastAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action, Executor executor) {
         requireThisAndOtherNonNull(cfThis, other);
@@ -1968,6 +2191,67 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
 
         return bothFailFast0(cfThis, other).thenRunAsync(action, executor);
+    }
+
+    /**
+     * Runs the action when cfThis and the other stage both complete normally, and forgets
+     * (the action's result is {@code void}).
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     * A failure of either stage is not a result of this method: cfThis is returned as it is.
+     *
+     * @param action the action to perform
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _, _ -> param1")
+    public static <F extends CompletionStage<?>> F runAfterBothAndForget(
+            F cfThis, CompletionStage<?> other, Runnable action) {
+        requireThisAndOtherNonNull(cfThis, other);
+        requireNonNull(action, "action is null");
+
+        handleAllSwallowedExceptions("runAfterBothAndForget", cfThis.runAfterBoth(other, action));
+        return cfThis;
+    }
+
+    /**
+     * Runs the action asynchronously when cfThis and the other stage both complete normally, and forgets
+     * (the action's result is {@code void}), using the default executor of parameter cfThis.
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     * A failure of either stage is not a result of this method: cfThis is returned as it is.
+     *
+     * @param action the action to perform
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _, _ -> param1")
+    public static <F extends CompletionStage<?>> F runAfterBothAsyncAndForget(
+            F cfThis, CompletionStage<?> other, Runnable action) {
+        return runAfterBothAsyncAndForget(cfThis, other, action, defaultExecutor(cfThis));
+    }
+
+    /**
+     * Runs the action asynchronously when cfThis and the other stage both complete normally, and forgets
+     * (the action's result is {@code void}).
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     * A failure of either stage is not a result of this method: cfThis is returned as it is.
+     *
+     * @param action   the action to perform
+     * @param executor the executor to use for asynchronous execution
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _, _, _ -> param1")
+    public static <F extends CompletionStage<?>> F runAfterBothAsyncAndForget(
+            F cfThis, CompletionStage<?> other, Runnable action, Executor executor) {
+        requireThisAndOtherNonNull(cfThis, other);
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
+        handleAllSwallowedExceptions("runAfterBothAsyncAndForget", cfThis.runAfterBothAsync(other, action, executor));
+        return cfThis;
     }
 
     // endregion
@@ -1988,7 +2272,7 @@ public final class CompletableFutureUtils {
      * @param fn  the function to use to compute the value of the returned CompletableFuture
      * @param <U> the function's return type
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `acceptEitherSuccess`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `acceptEitherAndForget`")
     public static <T, U> CompletableFuture<U> applyToEitherSuccess(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other, Function<? super T, ? extends U> fn) {
         requireThisAndOtherNonNull(cfThis, other);
@@ -2007,7 +2291,7 @@ public final class CompletableFutureUtils {
      * @param fn  the function to use to compute the value of the returned CompletableFuture
      * @param <U> the function's return type
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `acceptEitherSuccessAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `acceptEitherAsyncAndForget`")
     public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other, Function<? super T, ? extends U> fn) {
         return applyToEitherSuccessAsync(cfThis, other, fn, defaultExecutor(cfThis));
@@ -2023,7 +2307,7 @@ public final class CompletableFutureUtils {
      * @param executor the executor to use for asynchronous execution
      * @param <U>      the function's return type
      */
-    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, prefer method `acceptEitherSuccessAsync`")
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `acceptEitherAsyncAndForget`")
     public static <T, U> CompletableFuture<U> applyToEitherSuccessAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other,
             Function<? super T, ? extends U> fn, Executor executor) {
@@ -2061,6 +2345,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `acceptEitherAndForget`")
     public static <T> CompletableFuture<Void> acceptEitherSuccess(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other, Consumer<? super T> action) {
         requireThisAndOtherNonNull(cfThis, other);
@@ -2078,6 +2363,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `acceptEitherAsyncAndForget`")
     public static <T> CompletableFuture<Void> acceptEitherSuccessAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other, Consumer<? super T> action) {
         return acceptEitherSuccessAsync(cfThis, other, action, defaultExecutor(cfThis));
@@ -2092,6 +2378,7 @@ public final class CompletableFutureUtils {
      * @param action   the action to perform before completing the returned CompletableFuture
      * @param executor the executor to use for asynchronous execution
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `acceptEitherAsyncAndForget`")
     public static <T> CompletableFuture<Void> acceptEitherSuccessAsync(
             CompletableFuture<? extends T> cfThis, CompletionStage<? extends T> other,
             Consumer<? super T> action, Executor executor) {
@@ -2103,12 +2390,79 @@ public final class CompletableFutureUtils {
     }
 
     /**
+     * Consumes the first successful value of cfThis or the other stage, and forgets
+     * (the action's result is {@code void}).
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     * If both stages complete exceptionally, that failure is not a result of this method:
+     * cfThis is returned as it is.
+     *
+     * @param action the action to perform
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _, _ -> param1")
+    public static <T, F extends CompletionStage<? extends T>> F acceptEitherAndForget(
+            F cfThis, CompletionStage<? extends T> other, Consumer<? super T> action) {
+        requireThisAndOtherNonNull(cfThis, other);
+        requireNonNull(action, "action is null");
+
+        final CompletionStage<T> cf = f_selfTypeDownCast(cfThis);
+        handleAllSwallowedExceptions("acceptEitherAndForget", cf.acceptEither(other, action));
+        return cfThis;
+    }
+
+    /**
+     * Consumes the first successful value of cfThis or the other stage asynchronously, and forgets
+     * (the action's result is {@code void}), using the default executor of parameter cfThis.
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     * If both stages complete exceptionally, that failure is not a result of this method:
+     * cfThis is returned as it is.
+     *
+     * @param action the action to perform
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _, _ -> param1")
+    public static <T, F extends CompletionStage<? extends T>> F acceptEitherAsyncAndForget(
+            F cfThis, CompletionStage<? extends T> other, Consumer<? super T> action) {
+        return acceptEitherAsyncAndForget(cfThis, other, action, defaultExecutor(cfThis));
+    }
+
+    /**
+     * Consumes the first successful value of cfThis or the other stage asynchronously, and forgets
+     * (the action's result is {@code void}).
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     * If both stages complete exceptionally, that failure is not a result of this method:
+     * cfThis is returned as it is.
+     *
+     * @param action   the action to perform
+     * @param executor the executor to use for asynchronous execution
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _, _, _ -> param1")
+    public static <T, F extends CompletionStage<? extends T>> F acceptEitherAsyncAndForget(
+            F cfThis, CompletionStage<? extends T> other, Consumer<? super T> action, Executor executor) {
+        requireThisAndOtherNonNull(cfThis, other);
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
+        final CompletionStage<T> cf = f_selfTypeDownCast(cfThis);
+        handleAllSwallowedExceptions("acceptEitherAsyncAndForget", cf.acceptEitherAsync(other, action, executor));
+        return cfThis;
+    }
+
+    /**
      * Returns a new CompletableFuture that, when either of given stages success, executes the given action.
      * Otherwise, both complete exceptionally, the returned CompletableFuture also does so,
      * with a CompletionException holding an exception from either as its cause.
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `runAfterEitherAndForget`")
     public static CompletableFuture<Void> runAfterEitherSuccess(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
         requireThisAndOtherNonNull(cfThis, other);
@@ -2125,6 +2479,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `runAfterEitherAsyncAndForget`")
     public static CompletableFuture<Void> runAfterEitherSuccessAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action) {
         return runAfterEitherSuccessAsync(cfThis, other, action, defaultExecutor(cfThis));
@@ -2138,6 +2493,7 @@ public final class CompletableFutureUtils {
      *
      * @param action the action to perform before completing the returned CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, use method `runAfterEitherAsyncAndForget`")
     public static CompletableFuture<Void> runAfterEitherSuccessAsync(
             CompletableFuture<?> cfThis, CompletionStage<?> other, Runnable action, Executor executor) {
         requireThisAndOtherNonNull(cfThis, other);
@@ -2145,6 +2501,70 @@ public final class CompletableFutureUtils {
         requireNonNull(executor, "executor is null");
 
         return eitherSuccess0(cfThis, other).thenRunAsync(action, executor);
+    }
+
+    /**
+     * Runs the action when either cfThis or the other stage completes normally, and forgets
+     * (the action's result is {@code void}).
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     * If both stages complete exceptionally, that failure is not a result of this method:
+     * cfThis is returned as it is.
+     *
+     * @param action the action to perform
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _, _ -> param1")
+    public static <F extends CompletionStage<?>> F runAfterEitherAndForget(
+            F cfThis, CompletionStage<?> other, Runnable action) {
+        requireThisAndOtherNonNull(cfThis, other);
+        requireNonNull(action, "action is null");
+
+        handleAllSwallowedExceptions("runAfterEitherAndForget", cfThis.runAfterEither(other, action));
+        return cfThis;
+    }
+
+    /**
+     * Runs the action asynchronously when either cfThis or the other stage completes normally, and forgets
+     * (the action's result is {@code void}), using the default executor of parameter cfThis.
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     * If both stages complete exceptionally, that failure is not a result of this method:
+     * cfThis is returned as it is.
+     *
+     * @param action the action to perform
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _, _ -> param1")
+    public static <F extends CompletionStage<?>> F runAfterEitherAsyncAndForget(
+            F cfThis, CompletionStage<?> other, Runnable action) {
+        return runAfterEitherAsyncAndForget(cfThis, other, action, defaultExecutor(cfThis));
+    }
+
+    /**
+     * Runs the action asynchronously when either cfThis or the other stage completes normally, and forgets
+     * (the action's result is {@code void}).
+     * This method explicitly indicates that the caller will not care about any exception
+     * from the action and will not observe a completion event of the action ("fire-and-forget").
+     * If both stages complete exceptionally, that failure is not a result of this method:
+     * cfThis is returned as it is.
+     *
+     * @param action   the action to perform
+     * @param executor the executor to use for asynchronous execution
+     * @return the given CompletableFuture
+     * @since 2.1.0
+     */
+    @Contract("_, _, _, _ -> param1")
+    public static <F extends CompletionStage<?>> F runAfterEitherAsyncAndForget(
+            F cfThis, CompletionStage<?> other, Runnable action, Executor executor) {
+        requireThisAndOtherNonNull(cfThis, other);
+        requireNonNull(action, "action is null");
+        requireNonNull(executor, "executor is null");
+
+        handleAllSwallowedExceptions("runAfterEitherAsyncAndForget", cfThis.runAfterEitherAsync(other, action, executor));
+        return cfThis;
     }
 
     // endregion

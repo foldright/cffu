@@ -3,6 +3,7 @@ package io.foldright.cffu2;
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.foldright.cffu2.internal.CommonUtils;
+import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -809,6 +810,7 @@ public final class CfParallelUtils {
      * @return the given CompletableFuture
      * @since 2.1.0
      */
+    @Contract("_, _ -> param1")
     public static <T, F extends CompletionStage<? extends Iterable<? extends T>>> F thenParAcceptAsyncAndForget(
             F cfThis, Consumer<? super T> action) {
         return CfParallelUtils.thenParAcceptAsyncAndForget(cfThis, action, defaultExecutor(cfThis));
@@ -822,13 +824,14 @@ public final class CfParallelUtils {
      * @return the given CompletableFuture
      * @since 2.1.0
      */
+    @Contract("_, _, _ -> param1")
     public static <T, F extends CompletionStage<? extends Iterable<? extends T>>> F thenParAcceptAsyncAndForget(
             F cfThis, Consumer<? super T> action, Executor executor) {
         requireNonNull(cfThis, "cfThis is null");
         requireNonNull(action, "action is null");
         requireNonNull(executor, "executor is null");
 
-        cfThis.thenCompose(elements -> parAcceptAsync0(elements, action, executor, "thenParAcceptAsyncAndForget"));
+        cfThis.thenAccept(elements -> parAcceptAsyncAndForget0(elements, action, executor, "thenParAcceptAsyncAndForget"));
         return cfThis;
     }
 

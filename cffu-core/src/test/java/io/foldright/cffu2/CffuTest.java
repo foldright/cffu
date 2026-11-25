@@ -44,7 +44,38 @@ class CffuTest {
     //    - thenAccept*(Consumer): T -> Void
     //    - thenRun*(Runnable):    Void -> Void
 
-    // tested in implementation??
+    @Test
+    void test_singleActionAndForget() {
+        final Cffu<Integer> completed = testCffuFac.completedFuture(n);
+        final AtomicInteger counter = new AtomicInteger();
+
+        assertSame(completed, completed.thenAcceptAndForget(counter::addAndGet));
+        assertSame(completed, completed.thenAcceptAsyncAndForget(counter::addAndGet));
+        assertSame(completed, completed.thenAcceptAsyncAndForget(counter::addAndGet, testExecutor));
+        assertSame(completed, completed.thenRunAndForget(counter::incrementAndGet));
+        assertSame(completed, completed.thenRunAsyncAndForget(counter::incrementAndGet));
+        assertSame(completed, completed.thenRunAsyncAndForget(counter::incrementAndGet, testExecutor));
+
+        final Cffu<Integer> other = testCffuFac.completedFuture(anotherN);
+        assertSame(completed, completed.thenAcceptBothAndForget(other, (a, b) -> counter.addAndGet(a + b)));
+        assertSame(completed, completed.thenAcceptBothAsyncAndForget(other, (a, b) -> counter.addAndGet(a + b)));
+        assertSame(completed, completed.thenAcceptBothAsyncAndForget(other, (a, b) -> counter.addAndGet(a + b), testExecutor));
+        assertSame(completed, completed.runAfterBothAndForget(other, counter::incrementAndGet));
+        assertSame(completed, completed.runAfterBothAsyncAndForget(other, counter::incrementAndGet));
+        assertSame(completed, completed.runAfterBothAsyncAndForget(other, counter::incrementAndGet, testExecutor));
+
+        final Cffu<Integer> pending = testCffuFac.newIncompleteCffu();
+        assertSame(completed, completed.acceptEitherAndForget(pending, counter::addAndGet));
+        assertSame(completed, completed.acceptEitherAsyncAndForget(pending, counter::addAndGet));
+        assertSame(completed, completed.acceptEitherAsyncAndForget(pending, counter::addAndGet, testExecutor));
+        assertSame(completed, completed.runAfterEitherAndForget(pending, counter::incrementAndGet));
+        assertSame(completed, completed.runAfterEitherAsyncAndForget(pending, counter::incrementAndGet));
+        assertSame(completed, completed.runAfterEitherAsyncAndForget(pending, counter::incrementAndGet, testExecutor));
+
+        sleep(MEDIAN_WAIT_MS);
+        assertEquals(n, completed.join());
+        assertTrue(counter.get() > n);
+    }
 
     // endregion
     // region# Then-Multi-Actions(thenM*) Methods

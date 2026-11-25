@@ -660,6 +660,7 @@ public final class CfIterableUtils {
      *
      * @since 2.1.0
      */
+    @Contract("_, _ -> param1")
     public static <F extends CompletionStage<?>> F thenMRunAsyncAndForget(F cfThis, Iterable<? extends Runnable> actions) {
         return thenMRunAsyncAndForget(cfThis, actions, defaultExecutor(cfThis));
     }
@@ -669,6 +670,7 @@ public final class CfIterableUtils {
      *
      * @since 2.1.0
      */
+    @Contract("_, _, _ -> param1")
     public static <F extends CompletionStage<?>> F thenMRunAsyncAndForget(
             F cfThis, Iterable<? extends Runnable> actions, Executor executor) {
         return _thenMRunAsyncAndForget(cfThis, executor, toRunnableArray(actions), false);

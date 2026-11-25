@@ -182,6 +182,8 @@ Read that document before changing `must` / `should` / `may`, `i.e.` / `e.g.`, o
 Do not apply those rules by rewriting text the document says to leave alone.
 `@CheckReturnValue` placement and `explanation` text follow [docs/check-return-value.md](docs/check-return-value.md).
 Read that document before adding, removing, or rewriting the annotation.
+API design decisions follow [docs/api-design.md](docs/api-design.md). The current decision is `*AndForget`: method shape, placement, and `@Contract` limits.
+Read that document before adding or moving a `*AndForget` method, and before adding another API design decision.
 
 ## Code Style
 

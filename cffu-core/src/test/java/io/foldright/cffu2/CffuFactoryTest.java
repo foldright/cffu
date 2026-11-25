@@ -68,9 +68,11 @@ class CffuFactoryTest {
         final Runnable incrementAndGet = counter::incrementAndGet;
         testCffuFac.mRunAsyncAndForget(incrementAndGet, incrementAndGet);
         testCffuFac.mRunAsyncAndForget(testExecutor, incrementAndGet, incrementAndGet);
+        testCffuFac.runAsyncAndForget(incrementAndGet);
+        testCffuFac.runAsyncAndForget(incrementAndGet, testExecutor);
 
         sleep(MEDIAN_WAIT_MS);
-        assertEquals(4, counter.get());
+        assertEquals(6, counter.get());
     }
 
     @Test

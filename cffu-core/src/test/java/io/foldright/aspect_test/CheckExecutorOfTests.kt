@@ -64,6 +64,9 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
             CompletableFutureUtils.mRunAsyncAndForget(*am.createRunnables(count))
             CompletableFutureUtils.mRunAsyncAndForget(testExecutor, *am.createRunnables(count, testExecutor))
 
+            CompletableFutureUtils.runAsyncAndForget(am.createRunnable())
+            CompletableFutureUtils.runAsyncAndForget(am.createRunnable(testExecutor), testExecutor)
+
             am.checkRunningExecutor()
         }
     }
@@ -188,6 +191,18 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
         CompletableFutureUtils.runAfterBothFailFastAsync(cfThis, other, am.createFutureTask())
         CompletableFutureUtils.runAfterBothFailFastAsync(cfThis, other, am.createFutureTask(testExecutor), testExecutor)
 
+        CompletableFutureUtils.thenAcceptAsyncAndForget(cfThis, am.createConsumer())
+        CompletableFutureUtils.thenAcceptAsyncAndForget(cfThis, am.createConsumer(testExecutor), testExecutor)
+        CompletableFutureUtils.thenRunAsyncAndForget(cfThis, am.createRunnable())
+        CompletableFutureUtils.thenRunAsyncAndForget(cfThis, am.createRunnable(testExecutor), testExecutor)
+
+        CompletableFutureUtils.thenAcceptBothAsyncAndForget(cfThis, other, am.createBiConsumer())
+        CompletableFutureUtils.thenAcceptBothAsyncAndForget(
+            cfThis, other, am.createBiConsumer(testExecutor), testExecutor
+        )
+        CompletableFutureUtils.runAfterBothAsyncAndForget(cfThis, other, am.createRunnable())
+        CompletableFutureUtils.runAfterBothAsyncAndForget(cfThis, other, am.createRunnable(testExecutor), testExecutor)
+
         am.checkRunningExecutor()
     }
 
@@ -198,6 +213,13 @@ class CheckExecutorOfCompletableFutureUtilsMethodsTests : FunSpec({
         CompletableFutureUtils.applyToEitherSuccessAsync(
             cfThis, other, am.createFunctions(1, testExecutor)[0], testExecutor
         )
+
+        CompletableFutureUtils.acceptEitherAsyncAndForget(cfThis, other, am.createConsumers(1)[0])
+        CompletableFutureUtils.acceptEitherAsyncAndForget(
+            cfThis, other, am.createConsumers(1, testExecutor)[0], testExecutor
+        )
+        CompletableFutureUtils.runAfterEitherAsyncAndForget(cfThis, other, am.createRunnable())
+        CompletableFutureUtils.runAfterEitherAsyncAndForget(cfThis, other, am.createRunnable(testExecutor), testExecutor)
 
         CompletableFutureUtils.acceptEitherSuccessAsync(cfThis, other, am.createConsumers(1)[0])
         CompletableFutureUtils.acceptEitherSuccessAsync(
@@ -870,6 +892,8 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
 
         testCffuFac.runAsync(am.createRunnable(testExecutor))
         testCffuFac.runAsync(am.createRunnable(anotherExecutor), anotherExecutor)
+        testCffuFac.runAsyncAndForget(am.createRunnable(testExecutor))
+        testCffuFac.runAsyncAndForget(am.createRunnable(anotherExecutor), anotherExecutor)
 
         am.checkRunningExecutor()
     }
@@ -1531,6 +1555,11 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         cfThis.thenRunAsync(am.createRunnable(testExecutor))
         cfThis.thenRunAsync(am.createRunnable(anotherExecutor), anotherExecutor)
 
+        cfThis.thenAcceptAsyncAndForget(am.createConsumer(testExecutor))
+        cfThis.thenAcceptAsyncAndForget(am.createConsumer(anotherExecutor), anotherExecutor)
+        cfThis.thenRunAsyncAndForget(am.createRunnable(testExecutor))
+        cfThis.thenRunAsyncAndForget(am.createRunnable(anotherExecutor), anotherExecutor)
+
         am.checkRunningExecutor()
     }
 
@@ -1633,6 +1662,11 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         cfThis.runAfterBothAsync(other, am.createFutureTask(testExecutor))
         cfThis.runAfterBothAsync(other, am.createFutureTask(anotherExecutor), anotherExecutor)
 
+        cfThis.thenAcceptBothAsyncAndForget(other, am.createBiConsumer(testExecutor))
+        cfThis.thenAcceptBothAsyncAndForget(other, am.createBiConsumer(anotherExecutor), anotherExecutor)
+        cfThis.runAfterBothAsyncAndForget(other, am.createRunnable(testExecutor))
+        cfThis.runAfterBothAsyncAndForget(other, am.createRunnable(anotherExecutor), anotherExecutor)
+
         am.checkRunningExecutor()
     }
 
@@ -1648,6 +1682,11 @@ class CheckExecutorOfCffuMethodsTests : FunSpec({
         cfThis.acceptEitherSuccessAsync(other, am.createConsumers(1, anotherExecutor)[0], anotherExecutor)
         cfThis.acceptEitherAsync(other, am.createConsumers(1, testExecutor)[0])
         cfThis.acceptEitherAsync(other, am.createConsumers(1, anotherExecutor)[0], anotherExecutor)
+
+        cfThis.acceptEitherAsyncAndForget(other, am.createConsumers(1, testExecutor)[0])
+        cfThis.acceptEitherAsyncAndForget(other, am.createConsumers(1, anotherExecutor)[0], anotherExecutor)
+        cfThis.runAfterEitherAsyncAndForget(other, am.createRunnable(testExecutor))
+        cfThis.runAfterEitherAsyncAndForget(other, am.createRunnable(anotherExecutor), anotherExecutor)
 
         cfThis.runAfterEitherSuccessAsync(other, am.createFutureTask(testExecutor))
         cfThis.runAfterEitherSuccessAsync(other, am.createFutureTask(anotherExecutor), anotherExecutor)

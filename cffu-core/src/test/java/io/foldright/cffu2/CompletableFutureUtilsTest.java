@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
@@ -897,6 +898,65 @@ class CompletableFutureUtilsTest {
 
     // endregion
     // region## thenBoth* Methods(binary input) with fail-fast support
+
+    @Test
+    void test_singleAction_and_binary_AndForget() throws Exception {
+        final AtomicInteger counter = new AtomicInteger();
+        runAsyncAndForget(counter::incrementAndGet);
+        runAsyncAndForget(counter::incrementAndGet, testExecutor);
+        sleep(MEDIAN_WAIT_MS);
+        assertEquals(2, counter.get());
+
+        final CompletableFuture<Integer> completed = completedFuture(n);
+        assertSame(completed, thenAcceptAndForget(completed, counter::addAndGet));
+        assertEquals(2 + n, counter.get());
+
+        CompletableFuture<Integer> asyncAccept = thenAcceptAsyncAndForget(completed, counter::addAndGet);
+        assertSame(completed, asyncAccept);
+        asyncAccept = thenAcceptAsyncAndForget(completed, counter::addAndGet, testExecutor);
+        assertSame(completed, asyncAccept);
+
+        assertSame(completed, thenRunAndForget(completed, counter::incrementAndGet));
+        assertSame(completed, thenRunAsyncAndForget(completed, counter::incrementAndGet));
+        assertSame(completed, thenRunAsyncAndForget(completed, counter::incrementAndGet, testExecutor));
+
+        final CompletableFuture<Integer> other = completedFuture(anotherN);
+        assertSame(completed, thenAcceptBothAndForget(completed, other, (a, b) -> counter.addAndGet(a + b)));
+        assertSame(completed, thenAcceptBothAsyncAndForget(completed, other, (a, b) -> counter.addAndGet(a + b)));
+        assertSame(completed, thenAcceptBothAsyncAndForget(completed, other, (a, b) -> counter.addAndGet(a + b), testExecutor));
+        assertSame(completed, runAfterBothAndForget(completed, other, counter::incrementAndGet));
+        assertSame(completed, runAfterBothAsyncAndForget(completed, other, counter::incrementAndGet));
+        assertSame(completed, runAfterBothAsyncAndForget(completed, other, counter::incrementAndGet, testExecutor));
+
+        final CompletableFuture<Integer> pending = new CompletableFuture<>();
+        assertSame(completed, acceptEitherAndForget(completed, pending, counter::addAndGet));
+        assertSame(completed, acceptEitherAsyncAndForget(completed, pending, counter::addAndGet));
+        assertSame(completed, acceptEitherAsyncAndForget(completed, pending, counter::addAndGet, testExecutor));
+        assertSame(completed, runAfterEitherAndForget(completed, pending, counter::incrementAndGet));
+        assertSame(completed, runAfterEitherAsyncAndForget(completed, pending, counter::incrementAndGet));
+        assertSame(completed, runAfterEitherAsyncAndForget(completed, pending, counter::incrementAndGet, testExecutor));
+
+        sleep(MEDIAN_WAIT_MS);
+        assertEquals(n, completed.join());
+
+        final CompletableFuture<Integer> late = new CompletableFuture<>();
+        final AtomicInteger both = new AtomicInteger();
+        assertSame(completed, thenAcceptBothAndForget(completed, late, (a, b) -> both.addAndGet(a + b)));
+        assertEquals(0, both.get());
+        late.complete(anotherN);
+        assertEquals(n + anotherN, both.get());
+
+        final AtomicBoolean ran = new AtomicBoolean();
+        final CompletableFuture<Integer> failedOther = failedFuture(rte);
+        assertSame(completed, thenAcceptBothAndForget(completed, failedOther, (a, b) -> ran.set(true)));
+        sleep(SHORT_WAIT_MS);
+        assertFalse(ran.get());
+        assertEquals(n, completed.join());
+
+        final CompletableFuture<Integer> failed = failedFuture(rte);
+        assertSame(failed, thenAcceptAndForget(failed, v -> counter.incrementAndGet()));
+        assertSame(rte, assertThrowsExactly(CompletionException.class, failed::join).getCause());
+    }
 
     @Test
     void test_both() throws Exception {
