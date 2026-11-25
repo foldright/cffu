@@ -415,6 +415,7 @@ public final class CompletableFutureUtils {
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see Futures#allAsList the equivalent Guava method allAsList()
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> allResultsFailFastOf(CompletionStage<? extends T>... cfs) {
@@ -438,6 +439,7 @@ public final class CompletableFutureUtils {
      * @see #getSuccessNow(CompletableFuture, Object)
      * @see Futures#successfulAsList the equivalent Guava method successfulAsList()
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> allSuccessResultsOf(
@@ -470,6 +472,7 @@ public final class CompletableFutureUtils {
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see #getSuccessNow(CompletableFuture, Object)
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mostSuccessResultsOf(
@@ -497,6 +500,7 @@ public final class CompletableFutureUtils {
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see #getSuccessNow(CompletableFuture, Object)
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> mostSuccessResultsOf(
@@ -558,6 +562,7 @@ public final class CompletableFutureUtils {
      *
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<List<T>> allResultsOf(CompletionStage<? extends T>... cfs) {
@@ -643,6 +648,7 @@ public final class CompletableFutureUtils {
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see Futures#whenAllSucceed the equivalent Guava method whenAllSucceed()
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; forget to call its `join()` method?")
     @Contract(pure = true)
     public static CompletableFuture<Void> allFailFastOf(CompletionStage<?>... cfs) {
         return allFailFastOf0(requireCfsAndEleNonNull(cfs));
@@ -741,6 +747,7 @@ public final class CompletableFutureUtils {
      *
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<T> anySuccessOf(CompletionStage<? extends T>... cfs) {
@@ -782,6 +789,7 @@ public final class CompletableFutureUtils {
      *
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     @SafeVarargs
     public static <T> CompletableFuture<T> anyOf(CompletionStage<? extends T>... cfs) {
@@ -806,6 +814,7 @@ public final class CompletableFutureUtils {
      * @param <T> the type of the value
      * @return the exceptionally completed CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public static <T> CompletableFuture<T> failedFuture(Throwable ex) {
         requireNonNull(ex, "ex is null");
@@ -828,6 +837,7 @@ public final class CompletableFutureUtils {
      * @param <T>   the type of the value
      * @return the completed CompletionStage
      */
+    @CheckReturnValue(explanation = "should use the returned CompletionStage; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public static <T> CompletionStage<T> completedStage(@Nullable T value) {
         return IS_JAVA9_PLUS ? CompletableFuture.completedStage(value) : completedFuture(value);
@@ -844,6 +854,7 @@ public final class CompletableFutureUtils {
      * @param <T> the type of the value
      * @return the exceptionally completed CompletionStage
      */
+    @CheckReturnValue(explanation = "should use the returned CompletionStage; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public static <T> CompletionStage<T> failedStage(Throwable ex) {
         return IS_JAVA9_PLUS ? CompletableFuture.failedStage(ex) : failedFuture(ex);
@@ -886,6 +897,7 @@ public final class CompletableFutureUtils {
      * @see CompletableFuture#newIncompleteFuture()
      * @see CompletableFuture#CompletableFuture()
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public static <U> CompletableFuture<U> newIncompleteFuture(CompletableFuture<?> cfThis) {
         requireNonNull(cfThis, "cfThis is null");
@@ -3082,6 +3094,7 @@ public final class CompletableFutureUtils {
      *
      * @see CompletableFuture#copy()
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public static <T> CompletableFuture<T> copy(CompletableFuture<T> cfThis) {
         return copy0(requireNonNull(cfThis, "cfThis is null"));
@@ -3099,6 +3112,7 @@ public final class CompletableFutureUtils {
      *
      * @see CompletableFuture#minimalCompletionStage()
      */
+    @CheckReturnValue(explanation = "should use the returned CompletionStage; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public static <T> CompletionStage<T> minimalCompletionStage(CompletableFuture<T> cfThis) {
         requireNonNull(cfThis, "cfThis is null");

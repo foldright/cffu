@@ -107,7 +107,7 @@ Changing these makes the contract less accurate, or it edits a quotation.
 | --- | --- |
 | `Errors should never pass silently. Unless explicitly silenced.` | Quotation from Python PEP 20. |
 | `whenComplete`: the supplied action `should not throw` | The next sentences define the result if it throws. `must not` would contradict them. This matches the JDK. |
-| `@CheckReturnValue`: `should use the returned ...; otherwise, use ...` | There is a named alternative, so `should` is the right strength. |
+| `@CheckReturnValue`: `should use the returned ...; otherwise, use ...` | There is a named alternative, so `should` is the right strength. Which methods get the annotation, and the other `explanation` shapes, are in [check-return-value.md](check-return-value.md). |
 | README advice: handle specific exceptions, prefer collections to arrays, treat multi-`CompletableFuture` methods as lower-level | Recommendations, not prohibitions. |
 | `locking[0]` is true `iff` the caller still holds the lock (`i.e.` `syncRun()` has not run) | The two sides are the same condition. |
 | Default log format `i.e. ExceptionLogFormat.FULL` | The `i.e.` names that enum constant. |

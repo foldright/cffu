@@ -180,6 +180,8 @@ When adding or renaming SPI classes, keep both in sync.
 Javadoc, comments, exception and log text, and the READMEs follow [docs/wording.md](docs/wording.md).
 Read that document before changing `must` / `should` / `may`, `i.e.` / `e.g.`, or a fixed term such as `minimal stage`.
 Do not apply those rules by rewriting text the document says to leave alone.
+`@CheckReturnValue` placement and `explanation` text follow [docs/check-return-value.md](docs/check-return-value.md).
+Read that document before adding, removing, or rewriting the annotation.
 
 ## Code Style
 

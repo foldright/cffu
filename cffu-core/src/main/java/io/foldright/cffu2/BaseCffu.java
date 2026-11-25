@@ -238,7 +238,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> MCffu<U, List<U>> thenMApplyFailFastAsync(Function<? super T, ? extends U>... fns) {
         return thenMApplyFailFastAsync(fac.defaultExecutor, fns);
@@ -256,7 +256,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> MCffu<U, List<U>> thenMApplyFailFastAsync(Executor executor, Function<? super T, ? extends U>... fns) {
         return createMCffu(CompletableFutureUtils.thenMApplyFailFastAsync(cf, cffuScreened(executor), fns));
@@ -269,7 +269,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> MCffu<U, List<U>> thenMApplyAllSuccessAsync(
             @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
@@ -288,7 +288,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> MCffu<U, List<U>> thenMApplyAllSuccessAsync(
             Executor executor, @Nullable U valueIfFailed, Function<? super T, ? extends U>... fns) {
@@ -302,7 +302,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> MCffu<U, List<U>> thenMApplyMostSuccessAsync(
             @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit, Function<? super T, ? extends U>... fns) {
@@ -316,7 +316,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> MCffu<U, List<U>> thenMApplyMostSuccessAsync(
             Executor executor, @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
@@ -331,7 +331,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <p>
      * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> MCffu<U, List<U>> thenMApplyAsync(Function<? super T, ? extends U>... fns) {
         return thenMApplyAsync(fac.defaultExecutor, fns);
@@ -348,7 +348,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * "https://github.com/foldright/cffu/blob/2.x-dev/cffu-core/src/test/java/io/foldright/demo/LambdaCompilationErrorSolutionOfMultipleActionsMethodsDemo.java">
      * the demo code</a><br><img src="https://github.com/user-attachments/assets/0367d8a2-c3bd-414b-9f9a-4eaf64a16f96" alt="demo code" />
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `thenMAcceptAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `thenMAcceptAsyncAndForget`")
     @SafeVarargs
     public final <U> MCffu<U, List<U>> thenMApplyAsync(Executor executor, Function<? super T, ? extends U>... fns) {
         return createMCffu(CompletableFutureUtils.thenMApplyAsync(cf, cffuScreened(executor), fns));
@@ -2339,6 +2339,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * This method may be useful as a form of "defensive copying", to prevent clients from completing,
      * while still being able to arrange dependent actions.
      */
+    @CheckReturnValue(explanation = "should use the returned stage; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public final F copy() {
         return create(CompletableFutureUtils.copy(cf));
@@ -2353,6 +2354,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      *
      * @return the CompletableFuture
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the new stage is discarded")
     @Contract(pure = true)
     @Override
     public final CompletableFuture<T> toCompletableFuture() {
@@ -2375,6 +2377,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * <strong>CAUTION:</strong> if run on old Java 8 (which does not support *minimal* CompletionStage),
      * this method just returns a *normal* Cffu instance which is NOT a *minimal* CompletionStage.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletionStage; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public final CompletionStage<T> minimalCompletionStage() {
         return create(fac, true, (CompletableFuture<T>) CompletableFutureUtils.minimalCompletionStage(cf));
@@ -2394,6 +2397,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      *
      * @see #minimalCompletionStage()
      */
+    @CheckReturnValue(explanation = "should use the returned stage; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public final F withDefaultExecutor(Executor defaultExecutor) {
         return withCffuFactory(fac.withDefaultExecutor(defaultExecutor));
@@ -2414,6 +2418,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * @param cffuFactory cffuFactory contained configuration
      * @see #minimalCompletionStage()
      */
+    @CheckReturnValue(explanation = "should use the returned stage; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public final F withCffuFactory(CffuFactory cffuFactory) {
         // NOTE: Copy the underlying cf to ensure this method/with* methods create a new Cffu instance with NEW cf instance,
@@ -2552,6 +2557,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * @return the underlying CompletableFuture
      * @see #toCompletableFuture()
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the new stage is discarded")
     @Contract(pure = true)
     @SuppressFBWarnings("EI_EXPOSE_REP")
     public final CompletableFuture<T> cffuUnwrap() {
@@ -2568,6 +2574,7 @@ public abstract class BaseCffu<T, F extends BaseCffu<T, F>> implements Future<T>
      * @see CffuFactory#newIncompleteMCffu()
      * @see CompletableFuture#newIncompleteFuture()
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public final <U> Cffu<U> newIncompleteFuture() {
         return fac.newIncompleteCffu();

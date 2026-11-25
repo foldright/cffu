@@ -255,6 +255,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#allResultsFailFastOf(CompletionStage[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T> CompletableFuture<List<T>> allResultsFailFastOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
         return CompletableFutureUtils.allResultsFailFastOf(toStageArray(cfs));
@@ -263,6 +264,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#allSuccessResultsOf(Object, CompletionStage[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T> CompletableFuture<List<T>> allSuccessResultsOf(
             @Nullable T valueIfFailed, Iterable<? extends CompletionStage<? extends T>> cfs) {
@@ -272,6 +274,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T> CompletableFuture<List<T>> mostSuccessResultsOf(
             @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit, Iterable<? extends CompletionStage<? extends T>> cfs) {
@@ -281,6 +284,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#mostSuccessResultsOf(Executor, Object, long, TimeUnit, CompletionStage[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T> CompletableFuture<List<T>> mostSuccessResultsOf(
             @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit,
@@ -292,6 +296,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#allResultsOf}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T> CompletableFuture<List<T>> allResultsOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
         return CompletableFutureUtils.allResultsOf(toStageArray(cfs));
@@ -300,6 +305,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#allFailFastOf(CompletionStage[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; forget to call its `join()` method?")
     @Contract(pure = true)
     public static CompletableFuture<Void> allFailFastOf(Iterable<? extends CompletionStage<?>> cfs) {
         return CompletableFutureUtils.allFailFastOf(toStageArray(cfs));
@@ -308,6 +314,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#allOf(CompletionStage[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; forget to call its `join()` method?")
     @Contract(pure = true)
     public static CompletableFuture<Void> allOf(Iterable<? extends CompletionStage<?>> cfs) {
         return CompletableFutureUtils.allOf(toStageArray(cfs));
@@ -331,6 +338,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#anySuccessOf(CompletionStage[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T> CompletableFuture<T> anySuccessOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
         return CompletableFutureUtils.anySuccessOf(toStageArray(cfs));
@@ -339,6 +347,7 @@ public final class CfIterableUtils {
     /**
      * Iterable variant of {@link CompletableFutureUtils#anyOf(CompletionStage[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T> CompletableFuture<T> anyOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
         return CompletableFutureUtils.anyOf(toStageArray(cfs));

@@ -51,6 +51,7 @@ public final class MCffu<E, T extends Iterable<? extends E>>
      * @see Cffu#asMCffu(Cffu)
      * @see CffuFactory#toCffu(CompletionStage)
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public Cffu<T> asCffu() {
         return createCffu(cf);

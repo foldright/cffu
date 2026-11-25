@@ -537,6 +537,7 @@ public final class CfTupleUtils {
     /**
      * Tuple variant of {@link CompletableFutureUtils#allResultsFailFastOf(CompletionStage[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleFailFastOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
@@ -546,6 +547,7 @@ public final class CfTupleUtils {
     /**
      * Tuple variant of {@link CompletableFutureUtils#allResultsFailFastOf(CompletionStage[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleFailFastOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
@@ -555,6 +557,7 @@ public final class CfTupleUtils {
     /**
      * Tuple variant of {@link CompletableFutureUtils#allResultsFailFastOf(CompletionStage[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleFailFastOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
@@ -565,6 +568,7 @@ public final class CfTupleUtils {
     /**
      * Tuple variant of {@link CompletableFutureUtils#allResultsFailFastOf(CompletionStage[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleFailFastOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
@@ -578,6 +582,7 @@ public final class CfTupleUtils {
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allSuccessTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
@@ -590,6 +595,7 @@ public final class CfTupleUtils {
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allSuccessTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
@@ -602,6 +608,7 @@ public final class CfTupleUtils {
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allSuccessTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
@@ -615,6 +622,7 @@ public final class CfTupleUtils {
      * If any of the provided stages fails, its corresponding position will contain {@code null}
      * (which is indistinguishable from the stage having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allSuccessTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
@@ -629,6 +637,7 @@ public final class CfTupleUtils {
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mostSuccessTupleOf(
             long timeout, TimeUnit unit, CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
@@ -642,6 +651,7 @@ public final class CfTupleUtils {
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> mostSuccessTupleOf(
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
@@ -660,6 +670,7 @@ public final class CfTupleUtils {
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mostSuccessTupleOf(
             long timeout, TimeUnit unit,
@@ -674,6 +685,7 @@ public final class CfTupleUtils {
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> mostSuccessTupleOf(
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
@@ -692,6 +704,7 @@ public final class CfTupleUtils {
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mostSuccessTupleOf(
             long timeout, TimeUnit unit,
@@ -707,6 +720,7 @@ public final class CfTupleUtils {
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> mostSuccessTupleOf(
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
@@ -726,6 +740,7 @@ public final class CfTupleUtils {
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mostSuccessTupleOf(
             long timeout, TimeUnit unit,
@@ -741,6 +756,7 @@ public final class CfTupleUtils {
      * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
      * (which is indistinguishable from the supplier having a successful value of {@code null}).
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> mostSuccessTupleOf(
             Executor executorWhenTimeout, long timeout, TimeUnit unit,
@@ -756,6 +772,7 @@ public final class CfTupleUtils {
     /**
      * Tuple variant of {@link CompletableFutureUtils#allResultsOf(CompletionStage[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2> CompletableFuture<Tuple2<T1, T2>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
@@ -765,6 +782,7 @@ public final class CfTupleUtils {
     /**
      * Tuple variant of {@link CompletableFutureUtils#allResultsOf(CompletionStage[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2, T3> CompletableFuture<Tuple3<T1, T2, T3>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
@@ -774,6 +792,7 @@ public final class CfTupleUtils {
     /**
      * Tuple variant of {@link CompletableFutureUtils#allResultsOf(CompletionStage[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2, T3, T4> CompletableFuture<Tuple4<T1, T2, T3, T4>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
@@ -784,6 +803,7 @@ public final class CfTupleUtils {
     /**
      * Tuple variant of {@link CompletableFutureUtils#allResultsOf(CompletionStage[])}.
      */
+    @CheckReturnValue(explanation = "should use the returned CompletableFuture; otherwise, the result data is discarded")
     @Contract(pure = true)
     public static <T1, T2, T3, T4, T5> CompletableFuture<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
             CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,

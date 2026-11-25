@@ -1,5 +1,6 @@
 package io.foldright.cffu2;
 
+import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import org.jetbrains.annotations.Contract;
 
 import java.util.concurrent.CompletableFuture;
@@ -52,6 +53,7 @@ public final class Cffu<T> extends BaseCffu<T, Cffu<T>> implements Future<T>, Co
      * @see MCffu#asCffu()
      * @see CffuFactory#toMCffu(CompletionStage)
      */
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public static <E, U extends Iterable<? extends E>> MCffu<E, U> asMCffu(Cffu<U> cffu) {
         return new MCffu<>(cffu.fac, cffu.isMinimalStage, cffu.cf);

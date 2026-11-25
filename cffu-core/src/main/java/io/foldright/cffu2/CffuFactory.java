@@ -163,7 +163,7 @@ public final class CffuFactory {
      * <p>
      * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `mRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public final <E> MCffu<E, List<E>> mSupplyFailFastAsync(Supplier<? extends E>... suppliers) {
         return mSupplyFailFastAsync(defaultExecutor, suppliers);
@@ -175,7 +175,7 @@ public final class CffuFactory {
      * <p>
      * See the {@link #allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `mRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public final <E> MCffu<E, List<E>> mSupplyFailFastAsync(Executor executor, Supplier<? extends E>... suppliers) {
         return createMCffu(CompletableFutureUtils.mSupplyFailFastAsync(cffuScreened(executor), suppliers));
@@ -187,7 +187,7 @@ public final class CffuFactory {
      * <p>
      * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `mRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public final <E> MCffu<E, List<E>> mSupplyAllSuccessAsync(
             @Nullable E valueIfFailed, Supplier<? extends E>... suppliers) {
@@ -200,7 +200,7 @@ public final class CffuFactory {
      * <p>
      * See the {@link #allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `mRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public final <E> MCffu<E, List<E>> mSupplyAllSuccessAsync(
             Executor executor, @Nullable E valueIfFailed, Supplier<? extends E>... suppliers) {
@@ -214,7 +214,7 @@ public final class CffuFactory {
      * See the {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[]) mostSuccessResultsOf}
      * documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `mRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public final <E> MCffu<E, List<E>> mSupplyMostSuccessAsync(
             @Nullable E valueIfNotSuccess, long timeout, TimeUnit unit, Supplier<? extends E>... suppliers) {
@@ -228,7 +228,7 @@ public final class CffuFactory {
      * See the {@link #mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[]) mostSuccessResultsOf}
      * documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `mRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public final <E> MCffu<E, List<E>> mSupplyMostSuccessAsync(
             Executor executor, @Nullable E valueIfNotSuccess, long timeout, TimeUnit unit,
@@ -242,7 +242,7 @@ public final class CffuFactory {
      * <p>
      * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `mRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public final <E> MCffu<E, List<E>> mSupplyAsync(Supplier<? extends E>... suppliers) {
         return mSupplyAsync(defaultExecutor, suppliers);
@@ -254,7 +254,7 @@ public final class CffuFactory {
      * <p>
      * See the {@link #allResultsOf allResultsOf} documentation for the rules of result computation.
      */
-    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `mRunAsyncAndForget`")
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `mRunAsyncAndForget`")
     @SafeVarargs
     public final <E> MCffu<E, List<E>> mSupplyAsync(
             Executor executor, Supplier<? extends E>... suppliers) {
@@ -432,6 +432,7 @@ public final class CffuFactory {
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see Futures#allAsList the equivalent Guava method allAsList()
      */
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, the result data is discarded")
     @Contract(pure = true)
     @SafeVarargs
     public final <T> MCffu<T, List<T>> allResultsFailFastOf(CompletionStage<? extends T>... cfs) {
@@ -455,6 +456,7 @@ public final class CffuFactory {
      * @see Cffu#getSuccessNow(Object)
      * @see Futures#successfulAsList the equivalent Guava method successfulAsList()
      */
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, the result data is discarded")
     @Contract(pure = true)
     @SafeVarargs
     public final <T> MCffu<T, List<T>> allSuccessResultsOf(
@@ -481,6 +483,7 @@ public final class CffuFactory {
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see Cffu#getSuccessNow(Object)
      */
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, the result data is discarded")
     @Contract(pure = true)
     @SafeVarargs
     public final <T> MCffu<T, List<T>> mostSuccessResultsOf(
@@ -507,6 +510,7 @@ public final class CffuFactory {
      *
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, the result data is discarded")
     @Contract(pure = true)
     @SafeVarargs
     public final <T> MCffu<T, List<T>> allResultsOf(CompletionStage<? extends T>... cfs) {
@@ -534,6 +538,7 @@ public final class CffuFactory {
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      * @see Futures#whenAllSucceed the equivalent Guava method whenAllSucceed()
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; forget to call its `join()` method?")
     @Contract(pure = true)
     public Cffu<Void> allFailFastOf(CompletionStage<?>... cfs) {
         return createCffu(CompletableFutureUtils.allFailFastOf(cfs));
@@ -586,6 +591,7 @@ public final class CffuFactory {
      *
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
     @SafeVarargs
     public final <T> Cffu<T> anySuccessOf(CompletionStage<? extends T>... cfs) {
         return createCffu(CompletableFutureUtils.anySuccessOf(cfs));
@@ -601,6 +607,7 @@ public final class CffuFactory {
      *
      * @throws NullPointerException if the cfs param or any of its elements are {@code null}
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
     @Contract(pure = true)
     @SafeVarargs
     public final <T> Cffu<T> anyOf(CompletionStage<? extends T>... cfs) {
@@ -620,6 +627,7 @@ public final class CffuFactory {
      * @return the completed Cffu
      * @see #completedMCffu(Iterable)
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public <T> Cffu<T> completedFuture(@Nullable T value) {
         return createCffu(CompletableFuture.completedFuture(value));
@@ -633,6 +641,7 @@ public final class CffuFactory {
      * @return the exceptionally completed Cffu
      * @see #failedMCffu(Throwable)
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public <T> Cffu<T> failedFuture(Throwable ex) {
         return createCffu(CompletableFutureUtils.failedFuture(ex));
@@ -647,6 +656,7 @@ public final class CffuFactory {
      * @return the completed MCffu
      * @see #completedFuture(Object)
      */
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public <E, T extends Iterable<? extends E>> MCffu<E, T> completedMCffu(@Nullable T value) {
         return createMCffu(CompletableFuture.completedFuture(value));
@@ -661,6 +671,7 @@ public final class CffuFactory {
      * @return the exceptionally completed MCffu
      * @see #failedFuture(Throwable)
      */
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public <E, T extends Iterable<? extends E>> MCffu<E, T> failedMCffu(Throwable ex) {
         return createMCffu(CompletableFutureUtils.failedFuture(ex));
@@ -677,6 +688,7 @@ public final class CffuFactory {
      * @param <T>   The result type returned future
      * @return the completed CompletionStage
      */
+    @CheckReturnValue(explanation = "should use the returned CompletionStage; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public <T> CompletionStage<T> completedStage(@Nullable T value) {
         return new Cffu<>(this, true, (CompletableFuture<T>) CompletableFutureUtils.completedStage(value));
@@ -693,6 +705,7 @@ public final class CffuFactory {
      * @param <T> The result type returned future
      * @return the exceptionally completed CompletionStage
      */
+    @CheckReturnValue(explanation = "should use the returned CompletionStage; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public <T> CompletionStage<T> failedStage(Throwable ex) {
         return new Cffu<>(this, true, (CompletableFuture<T>) CompletableFutureUtils.<T>failedStage(ex));
@@ -743,6 +756,7 @@ public final class CffuFactory {
      * @see Cffu#withCffuFactory(CffuFactory)
      * @see CompletionStage#toCompletableFuture()
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public <T> Cffu<T> toCffu(CompletionStage<T> stage) {
         requireNonNull(stage, "stage is null");
@@ -765,6 +779,7 @@ public final class CffuFactory {
      * @see Cffu#withCffuFactory(CffuFactory)
      * @see CompletionStage#toCompletableFuture()
      */
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public <E, T extends Iterable<? extends E>> MCffu<E, T> toMCffu(CompletionStage<T> stage) {
         requireNonNull(stage, "stage is null");
@@ -789,6 +804,7 @@ public final class CffuFactory {
      * @see CompletableFuture#newIncompleteFuture()
      * @see CompletableFuture#CompletableFuture()
      */
+    @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public <T> Cffu<T> newIncompleteCffu() {
         return createCffu(new CompletableFuture<>());
@@ -803,6 +819,7 @@ public final class CffuFactory {
      * @see CompletableFuture#newIncompleteFuture()
      * @see CompletableFuture#CompletableFuture()
      */
+    @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, the new stage is discarded")
     @Contract(pure = true)
     public <E, T extends Iterable<? extends E>> MCffu<E, T> newIncompleteMCffu() {
         return createMCffu(new CompletableFuture<>());
@@ -1175,6 +1192,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#allResultsFailFastOf(CompletionStage[])}.
          */
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T> MCffu<T, List<T>> allResultsFailFastOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
             return createMCffu(CfIterableUtils.allResultsFailFastOf(cfs));
@@ -1183,6 +1201,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#allSuccessResultsOf(Object, CompletionStage[])}.
          */
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T> MCffu<T, List<T>> allSuccessResultsOf(
                 @Nullable T valueIfFailed, Iterable<? extends CompletionStage<? extends T>> cfs) {
@@ -1192,6 +1211,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#mostSuccessResultsOf(Object, long, TimeUnit, CompletionStage[])}.
          */
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T> MCffu<T, List<T>> mostSuccessResultsOf(
                 @Nullable T valueIfNotSuccess, long timeout, TimeUnit unit,
@@ -1202,6 +1222,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#allResultsOf}.
          */
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T> MCffu<T, List<T>> allResultsOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
             return createMCffu(CfIterableUtils.allResultsOf(cfs));
@@ -1210,6 +1231,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#allFailFastOf(CompletionStage[])}.
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; forget to call its `join()` method?")
         @Contract(pure = true)
         public Cffu<Void> allFailFastOf(Iterable<? extends CompletionStage<?>> cfs) {
             return createCffu(CfIterableUtils.allFailFastOf(cfs));
@@ -1218,6 +1240,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#allOf(CompletionStage[])}.
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; forget to call its `join()` method?")
         @Contract(pure = true)
         public Cffu<Void> allOf(Iterable<? extends CompletionStage<?>> cfs) {
             return createCffu(CfIterableUtils.allOf(cfs));
@@ -1233,6 +1256,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#anySuccessOf(CompletionStage[])}.
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T> Cffu<T> anySuccessOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
             return createCffu(CfIterableUtils.anySuccessOf(cfs));
@@ -1241,6 +1265,7 @@ public final class CffuFactory {
         /**
          * Iterable variant of {@link CffuFactory#anyOf(CompletionStage[])}.
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T> Cffu<T> anyOf(Iterable<? extends CompletionStage<? extends T>> cfs) {
             return createCffu(CfIterableUtils.anyOf(cfs));
@@ -1273,7 +1298,7 @@ public final class CffuFactory {
          * <p>
          * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `parAcceptAsyncAndForget`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `parAcceptAsyncAndForget`")
         public <T, U> MCffu<U, List<U>> parApplyFailFastAsync(
                 Iterable<? extends T> elements, Function<? super T, ? extends U> fn) {
             return parApplyFailFastAsync(elements, fn, defaultExecutor);
@@ -1286,7 +1311,7 @@ public final class CffuFactory {
          * <p>
          * See the {@link CffuFactory#allResultsFailFastOf allResultsFailFastOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `parAcceptAsyncAndForget`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `parAcceptAsyncAndForget`")
         public <T, U> MCffu<U, List<U>> parApplyFailFastAsync(
                 Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
             return createMCffu(CfParallelUtils.parApplyFailFastAsync(elements, fn, cffuScreened(executor)));
@@ -1299,7 +1324,7 @@ public final class CffuFactory {
          * <p>
          * See the {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `parAcceptAsyncAndForget`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `parAcceptAsyncAndForget`")
         public <T, U> MCffu<U, List<U>> parApplyAllSuccessAsync(
                 Iterable<? extends T> elements, @Nullable U valueIfFailed, Function<? super T, ? extends U> fn) {
             return parApplyAllSuccessAsync(elements, valueIfFailed, fn, defaultExecutor);
@@ -1312,7 +1337,7 @@ public final class CffuFactory {
          * <p>
          * See the {@link CffuFactory#allSuccessResultsOf allSuccessResultsOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `parAcceptAsyncAndForget`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `parAcceptAsyncAndForget`")
         public <T, U> MCffu<U, List<U>> parApplyAllSuccessAsync(
                 Iterable<? extends T> elements, @Nullable U valueIfFailed, Function<? super T, ? extends U> fn, Executor executor) {
             return createMCffu(CfParallelUtils.parApplyAllSuccessAsync(elements, valueIfFailed, fn, cffuScreened(executor)));
@@ -1325,7 +1350,7 @@ public final class CffuFactory {
          * <p>
          * See the {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `parAcceptAsyncAndForget`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `parAcceptAsyncAndForget`")
         public <T, U> MCffu<U, List<U>> parApplyMostSuccessAsync(
                 Iterable<? extends T> elements, @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
                 Function<? super T, ? extends U> fn) {
@@ -1339,7 +1364,7 @@ public final class CffuFactory {
          * <p>
          * See the {@link CffuFactory#mostSuccessResultsOf mostSuccessResultsOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `parAcceptAsyncAndForget`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `parAcceptAsyncAndForget`")
         public <T, U> MCffu<U, List<U>> parApplyMostSuccessAsync(
                 Iterable<? extends T> elements, @Nullable U valueIfNotSuccess, long timeout, TimeUnit unit,
                 Function<? super T, ? extends U> fn, Executor executor) {
@@ -1353,7 +1378,7 @@ public final class CffuFactory {
          * <p>
          * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `parAcceptAsyncAndForget`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `parAcceptAsyncAndForget`")
         public <T, U> MCffu<U, List<U>> parApplyAsync(
                 Iterable<? extends T> elements, Function<? super T, ? extends U> fn) {
             return parApplyAsync(elements, fn, defaultExecutor);
@@ -1366,7 +1391,7 @@ public final class CffuFactory {
          * <p>
          * See the {@link CffuFactory#allResultsOf allResultsOf} documentation for the rules of result computation.
          */
-        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, use method `parAcceptAsyncAndForget`")
+        @CheckReturnValue(explanation = "should use the returned MCffu; otherwise, use method `parAcceptAsyncAndForget`")
         public <T, U> MCffu<U, List<U>> parApplyAsync(
                 Iterable<? extends T> elements, Function<? super T, ? extends U> fn, Executor executor) {
             return createMCffu(CfParallelUtils.parApplyAsync(elements, fn, cffuScreened(executor)));
@@ -1955,6 +1980,7 @@ public final class CffuFactory {
         /**
          * Tuple variant of {@link #allResultsFailFastOf(CompletionStage[])}.
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleFailFastOf(
                 CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
@@ -1964,6 +1990,7 @@ public final class CffuFactory {
         /**
          * Tuple variant of {@link #allResultsFailFastOf(CompletionStage[])}.
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleFailFastOf(
                 CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
@@ -1973,6 +2000,7 @@ public final class CffuFactory {
         /**
          * Tuple variant of {@link #allResultsFailFastOf(CompletionStage[])}.
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleFailFastOf(
                 CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
@@ -1983,6 +2011,7 @@ public final class CffuFactory {
         /**
          * Tuple variant of {@link #allResultsFailFastOf(CompletionStage[])}.
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleFailFastOf(
                 CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
@@ -1996,6 +2025,7 @@ public final class CffuFactory {
          * If any of the provided stages fails, its corresponding position will contain {@code null}
          * (which is indistinguishable from the stage having a successful value of {@code null}).
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T1, T2> Cffu<Tuple2<T1, T2>> allSuccessTupleOf(
                 CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
@@ -2008,6 +2038,7 @@ public final class CffuFactory {
          * If any of the provided stages fails, its corresponding position will contain {@code null}
          * (which is indistinguishable from the stage having a successful value of {@code null}).
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allSuccessTupleOf(
                 CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
@@ -2020,6 +2051,7 @@ public final class CffuFactory {
          * If any of the provided stages fails, its corresponding position will contain {@code null}
          * (which is indistinguishable from the stage having a successful value of {@code null}).
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allSuccessTupleOf(
                 CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
@@ -2033,6 +2065,7 @@ public final class CffuFactory {
          * If any of the provided stages fails, its corresponding position will contain {@code null}
          * (which is indistinguishable from the stage having a successful value of {@code null}).
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allSuccessTupleOf(
                 CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
@@ -2047,6 +2080,7 @@ public final class CffuFactory {
          * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
          * (which is indistinguishable from the supplier having a successful value of {@code null}).
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T1, T2> Cffu<Tuple2<T1, T2>> mostSuccessTupleOf(
                 long timeout, TimeUnit unit, CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
@@ -2060,6 +2094,7 @@ public final class CffuFactory {
          * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
          * (which is indistinguishable from the supplier having a successful value of {@code null}).
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> mostSuccessTupleOf(
                 long timeout, TimeUnit unit,
@@ -2074,6 +2109,7 @@ public final class CffuFactory {
          * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
          * (which is indistinguishable from the supplier having a successful value of {@code null}).
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> mostSuccessTupleOf(
                 long timeout, TimeUnit unit,
@@ -2089,6 +2125,7 @@ public final class CffuFactory {
          * If any of the provided stages is not completed normally, its corresponding position will contain {@code null}
          * (which is indistinguishable from the supplier having a successful value of {@code null}).
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> mostSuccessTupleOf(
                 long timeout, TimeUnit unit,
@@ -2100,6 +2137,7 @@ public final class CffuFactory {
         /**
          * Tuple variant of {@link #allResultsOf(CompletionStage[])}.
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T1, T2> Cffu<Tuple2<T1, T2>> allTupleOf(
                 CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2) {
@@ -2109,6 +2147,7 @@ public final class CffuFactory {
         /**
          * Tuple variant of {@link #allResultsOf(CompletionStage[])}.
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T1, T2, T3> Cffu<Tuple3<T1, T2, T3>> allTupleOf(
                 CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3) {
@@ -2118,6 +2157,7 @@ public final class CffuFactory {
         /**
          * Tuple variant of {@link #allResultsOf(CompletionStage[])}.
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T1, T2, T3, T4> Cffu<Tuple4<T1, T2, T3, T4>> allTupleOf(
                 CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2,
@@ -2128,6 +2168,7 @@ public final class CffuFactory {
         /**
          * Tuple variant of {@link #allResultsOf(CompletionStage[])}.
          */
+        @CheckReturnValue(explanation = "should use the returned Cffu; otherwise, the result data is discarded")
         @Contract(pure = true)
         public <T1, T2, T3, T4, T5> Cffu<Tuple5<T1, T2, T3, T4, T5>> allTupleOf(
                 CompletionStage<? extends T1> cf1, CompletionStage<? extends T2> cf2, CompletionStage<? extends T3> cf3,
