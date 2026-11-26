@@ -97,6 +97,7 @@
 - 🦺 更安全的使用方式，如
   - 超时执行安全的`orTimeout` / `completeOnTimeout`方法新实现
     - `CF#orTimeout` / `CF#completeOnTimeout`方法会导致`CF`的超时与延迟执行基础功能失效❗️
+    - Java 9 到 20 上，这两个 JDK 方法在超时前异常完成时还会泄漏该 future（[JDK-8303742](https://bugs.openjdk.org/browse/JDK-8303742)）。cffu 的 backport 会取消这个超时任务。
   - 一定不会修改`CF`结果的`peek`处理方法
     - `whenComplete`方法可能会修改`CF`的结果，返回`CF`的结果与输入并不一定一致
   - 支持超时的`join(timeout, unit)`方法
@@ -622,6 +623,12 @@ public class CfParallelDemo {
   / [`CFU#cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu2/2.0.7/io/foldright/cffu2/CompletableFutureUtils.html#cffuCompleteOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
 
 保证业务逻辑不会在`CF`的单线程延迟调度器中执行。
+
+Java 9 到 20 上，`CompletableFuture.orTimeout` 与 `CompletableFuture.completeOnTimeout` 在超时前异常完成时会泄漏该 future（[JDK-8303742](https://bugs.openjdk.org/browse/JDK-8303742)）。二者共用的取消器不会取消已调度的超时任务，任务继续持有该 future。
+
+`CFU.orTimeout` 与 `CFU.completeOnTimeout` 只在 Java 21 及之后调用这两个 JDK 方法，该版本已包含修复。在 Java 20 及之前（包含 Java 8 的 backport）它们自己调度超时，并在 future 完成时取消超时任务，异常完成同样取消（`FutureCanceller`，通过 `whenComplete` 挂上）。`Cffu.orTimeout`、`Cffu.completeOnTimeout`、`CFU.cffuOrTimeout`、`CFU.cffuCompleteOnTimeout` 都调用这些 backport 方法，因此同一种完成也会取消超时任务。
+
+backport 方法仍然原地完成传入的 future。`cffu*` 方法以及 `Cffu.orTimeout` / `Cffu.completeOnTimeout` 返回新的 future，后续非异步动作不会在延迟调度器上执行。`CompletableFutureUtilsTest.test_timeout_noLeakWhenCompletedExceptionally` 检查带有未到期超时、且已异常完成的 future 可以被回收。
 
 更多说明参见：
 

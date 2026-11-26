@@ -107,6 +107,7 @@ Welcome 👏💖
 - 🦺 Safer usage way, such as:
   - Timeout-safe new implementation of `orTimeout` / `completeOnTimeout` methods
     - The `CF#orTimeout` / `CF#completeOnTimeout` methods can break CompletableFuture's timeout and delay functionality❗️
+    - On Java 9 through 20 those JDK methods also leak the future if it completes exceptionally before the timeout ([JDK-8303742](https://bugs.openjdk.org/browse/JDK-8303742)). The cffu backport cancels that timeout task.
   - `peek` processing method that definitely won't modify `CF` results
     - The `whenComplete` method may modify the `CF` result,
       and the returned `CF` result may not be consistent with the input
@@ -729,6 +730,12 @@ The `cffu` library provides timeout-safe new implementation methods:
   / [`CFU#cffuCompleteOnTimeout()`](https://foldright.io/api-docs/cffu2/2.0.7/io/foldright/cffu2/CompletableFutureUtils.html#cffuCompleteOnTimeout(F,T,long,java.util.concurrent.TimeUnit))
 
 Ensuring business logic won't execute in `CF`'s single-thread delay scheduler.
+
+On Java 9 through 20, `CompletableFuture.orTimeout` and `CompletableFuture.completeOnTimeout` leak the future if it completes exceptionally before the timeout ([JDK-8303742](https://bugs.openjdk.org/browse/JDK-8303742)). Their shared canceller leaves the scheduled timeout task running, and that task keeps the future reachable.
+
+`CFU.orTimeout` and `CFU.completeOnTimeout` call those JDK methods only on Java 21 and later, where the JDK includes the fix. On Java 20 and earlier, including the Java 8 backport, they schedule the timeout themselves and cancel it when the future completes, including exceptional completion (`FutureCanceller`, attached with `whenComplete`). `Cffu.orTimeout`, `Cffu.completeOnTimeout`, `CFU.cffuOrTimeout`, and `CFU.cffuCompleteOnTimeout` call these backport methods, so they cancel the timeout task in the same case.
+
+The backport methods still complete the given future in place. The `cffu*` methods and `Cffu.orTimeout` / `Cffu.completeOnTimeout` return a new future, so later non-async actions do not run on the delay scheduler. `CompletableFutureUtilsTest.test_timeout_noLeakWhenCompletedExceptionally` checks that an exceptionally completed future with a pending timeout can be collected.
 
 For more information, see:
 
